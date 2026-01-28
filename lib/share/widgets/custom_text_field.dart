@@ -21,6 +21,7 @@ class CustomTextField extends StatelessWidget {
         suffixIcon: suffix,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.blue)
         ),
       ),
     );
