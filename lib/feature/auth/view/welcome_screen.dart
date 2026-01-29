@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
-import '../../../core/router/routes.dart';
 import '../../../core/router/routes_name.dart';
+import '../../../share/widgets/button/outline_button.dart';
+import '../../../share/widgets/button/primary_button.dart';
 import '../../../utils/assets_path.dart';
+import '../../../utils/extension/string_extension.dart';
+
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -12,169 +16,153 @@ class WelcomeScreen extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Container(
-        // Full screen gradient background
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFFC9FFBF), Colors.white],
-          ),
-        ),
-        child: Column(
-          children: [
-            // TOP SECTION (Avatars) - Using percentage-based positioning
-            SizedBox(
-              height: size.height * 0.45,
-              width: double.infinity,
-              child: Stack(
-                children: [
-                  _avatar(
-                    AssetsPath.person1,
-                    topPercent: 0.22,
-                    leftPercent: 0.45,
-                    radius: 40,
-                    size: size,
-                  ),
-                  _avatar(
-                    AssetsPath.person2,
-                    topPercent: 0.09,
-                    leftPercent: 0.10,
-                    radius: 35,
-                    size: size,
-                  ),
-                  _avatar(
-                    AssetsPath.person2,
-                    topPercent: 0.34,
-                    rightPercent: 0.15,
-                    radius: 35,
-                    size: size,
-                  ),
-                  _avatar(
-                    AssetsPath.person3,
-                    topPercent: 0.11,
-                    rightPercent: 0.45,
-                    radius: 28,
-                    size: size,
-                  ),
-                  _avatar(
-                    AssetsPath.person4,
-                    topPercent: 0.35,
-                    leftPercent: 0.16,
-                    radius: 45,
-                    size: size,
-                  ),
-                  _avatar(
-                    AssetsPath.person5,
-                    topPercent: 0.25,
-                    leftPercent: 0.16,
-                    radius: 30,
-                    size: size,
-                  ),
-                  _avatar(
-                    AssetsPath.person6,
-                    topPercent: 0.10,
-                    rightPercent: 0.08,
-                    radius: 30,
-                    size: size,
-                  ),
+      body: Column(
+        children: [
+          // TOP SECTION (Avatars) - Using percentage-based positioning
+          Container(
+            height: size.height * 0.40,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFFD7FFCF),
+                  Color(0xFFF2FFF0),
+                  Colors.white,
                 ],
+                stops: [0.0, 0.6, 1.0],
               ),
             ),
-
-            const SizedBox(height: 24),
-
-            // LOTTIE ANIMATION
-            SizedBox(
-              width: 80,
-              height: 80,
-              child: Lottie.asset(AssetsPath.chatJson, fit: BoxFit.contain),
+            child: Stack(
+              children: [
+                _avatar(
+                  AssetsPath.person1,
+                  topPercent: 0.20,
+                  leftPercent: 0.45,
+                  radius: 40,
+                  size: size,
+                ),
+                _avatar(
+                  AssetsPath.person2,
+                  topPercent: 0.09,
+                  leftPercent: 0.10,
+                  radius: 35,
+                  size: size,
+                ),
+                _avatar(
+                  AssetsPath.person2,
+                  topPercent: 0.30,
+                  rightPercent: 0.15,
+                  radius: 35,
+                  size: size,
+                ),
+                _avatar(
+                  AssetsPath.person3,
+                  topPercent: 0.11,
+                  rightPercent: 0.45,
+                  radius: 28,
+                  size: size,
+                ),
+                _avatar(
+                  AssetsPath.person4,
+                  topPercent: 0.30,
+                  leftPercent: 0.16,
+                  radius: 45,
+                  size: size,
+                ),
+                _avatar(
+                  AssetsPath.person5,
+                  topPercent: 0.20,
+                  leftPercent: 0.16,
+                  radius: 30,
+                  size: size,
+                ),
+                _avatar(
+                  AssetsPath.person6,
+                  topPercent: 0.10,
+                  rightPercent: 0.08,
+                  radius: 30,
+                  size: size,
+                ),
+              ],
             ),
+          ),
 
-            //const SizedBox(height: 8),
 
-            // TITLE
-            const Text(
-              "Easy Chat With\nyour friends",
+          const SizedBox(height: 24),
+
+          // LOTTIE ANIMATION
+          SizedBox(
+            width: 80,
+            height: 80,
+            child: Lottie.asset(AssetsPath.chatJson, fit: BoxFit.contain),
+          ),
+
+          //const SizedBox(height: 8),
+
+          // TITLE
+          const Text(
+            "Easy Chat With\nyour friends",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 12),
+
+          // SUBTITLE
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
+              'welcome message'.tr,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 14, color: Colors.black),
             ),
+          ),
+          SizedBox(height: 40,),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: OutlineButton(
+              title: "Language",
+              onTap: () {
 
-            const SizedBox(height: 12),
-
-            // SUBTITLE
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 32),
-              child: Text(
-                "Keep up with your friends and makes your chat more enjoyable by signing quickly and easily",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: Colors.grey),
-              ),
+              },
+              borderColor: Colors.blue,
+              textColor: Colors.blue,
             ),
-            SizedBox(height: 4),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: OutlinedButton(
-                onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 52),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  side: const BorderSide(color: Colors.blue),
-                ),
-                child: const Text(
-                  "Language",
-                  style: TextStyle(color: Colors.blue),
-                ),
-              ),
+          ),
+          SizedBox(height: 8),
+
+          // LOGIN BUTTON
+          Padding(
+            padding:EdgeInsets.symmetric(horizontal: 24),
+            child: OutlineButton(
+              title: "Log In",
+              onTap: () {
+                context.pushNamed(RouteName.signIn);
+              },
+              borderColor: Colors.blue,
+              textColor: Colors.blue,
             ),
-            SizedBox(height: 8),
+          ),
 
-            // LOGIN BUTTON
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: OutlinedButton(
-                onPressed: () {
-                  AppRouter.router.pushNamed(RouteName.signIn);
-                },
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 52),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  side: const BorderSide(color: Colors.blue),
-                ),
-                child: const Text(
-                  "Login",
-                  style: TextStyle(color: Colors.blue),
-                ),
-              ),
-            ),
+          const SizedBox(height: 8),
 
-            const SizedBox(height: 8),
+          // SIGN UP BUTTON
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24),
+            child: PrimaryButton(
+              title: "Sign Up",
+              onTap: () {
+                context.pushNamed(RouteName.signUp);
+              },
+              backgroundColor: Colors.blue,
+              textColor: Colors.white,
+            )
+          ),
 
-            // SIGN UP BUTTON
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  minimumSize: const Size(double.infinity, 52),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                child: const Text("Sign Up"),
-              ),
-            ),
-
-            const SizedBox(height: 24),
-          ],
-        ),
+          const SizedBox(height: 24),
+        ],
       ),
     );
   }

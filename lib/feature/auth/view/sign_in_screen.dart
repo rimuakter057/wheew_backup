@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
-import '../../../share/widgets/custom_text_field.dart';
-import '../../../share/widgets/primary_button.dart';
+import 'package:go_router/go_router.dart';
+import 'package:platchatapp/core/router/routes_name.dart';
+import '../../../share/widgets/text_field/custom_text_field.dart';
+import '../../../share/widgets/button/primary_button.dart';
+import '../../../utils/extension/string_extension.dart';
 
 
 class SignInScreen extends StatelessWidget {
-  const SignInScreen({super.key});
+  SignInScreen({super.key});
+  final TextEditingController licenseController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-          title: const Text("Sign In"),
-      backgroundColor: Colors.white,
+        backgroundColor: Colors.white,
+        centerTitle: true,
+          title: Text('sign in'.tr),
       ),
       body:
       SingleChildScrollView(
@@ -28,13 +34,19 @@ class SignInScreen extends StatelessWidget {
               ),
         
               const SizedBox(height: 40),
-        
-              const CustomTextField(hint: "License Number or Nickname"),
+
+              /// Nickname
+              CustomTextField(
+                controller: licenseController,
+                title: 'nick_name'.tr,
+                hintText: 'nick_name_hint'.tr,
+              ),
               const SizedBox(height: 16),
-              const CustomTextField(
-                hint: "Password",
-                obscure: true,
-                suffix: Icon(Icons.visibility_off),
+              CustomTextField(
+                controller: passwordController,
+                title: 'confirm_password'.tr,
+                hintText: 'confirm_password'.tr,
+                isPassword: true,
               ),
         
               const SizedBox(height: 10),
@@ -49,7 +61,9 @@ class SignInScreen extends StatelessWidget {
               ),
         
               const SizedBox(height: 20),
-              PrimaryButton(title: "Sign In", onTap: () {}),
+              PrimaryButton(title: "Sign In", onTap: () {
+                context.goNamed(RouteName.chatList);
+              }),
             ],
           ),
         ),

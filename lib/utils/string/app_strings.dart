@@ -1,12 +1,12 @@
 import 'english.dart';
-import 'bangla.dart';
+import 'italian.dart';
 
 class AppStrings {
   static String currentLanguage = 'en';
 
   static final Map<String, Map<String, String>> _localizedValues = {
-    'en': en,
-    'bn': bn,
+    'en': english,
+    'it': italian,
   };
 
   static String text(String key) {
