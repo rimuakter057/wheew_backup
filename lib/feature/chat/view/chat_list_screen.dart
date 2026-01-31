@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../utils/extension/string_extension.dart';
+import '../../profile/view/app_menu_drawer.dart';
 import 'chat_tile.dart';
 
 class ChatListScreen extends StatelessWidget {
@@ -14,7 +15,21 @@ class ChatListScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text('all_chat'.tr, style: const TextStyle(color: Colors.black)),
+        actions: [
+          Builder(
+            builder: (context) {
+              return IconButton(
+                icon: const Icon(Icons.menu_outlined, color: Colors.black),
+                onPressed: () {
+                  Scaffold.of(context).openEndDrawer();
+                },
+              );
+            },
+          ),
+        ],
       ),
+
+      endDrawer: const AppMenuDrawer(),
 
       body: Column(
         children: [

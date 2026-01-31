@@ -5,4 +5,6 @@ class RouteName {
   static const signUp = 'signUp';
   static const chatList = 'chatList';
   static const inbox = 'inbox';
+  static const terms = 'terms';
+  static const profile = 'profile';
 }
