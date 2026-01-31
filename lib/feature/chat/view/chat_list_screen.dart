@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/router/routes_name.dart';
+import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../utils/extension/string_extension.dart';
 import '../../profile/view/app_menu_drawer.dart';
 import 'chat_tile.dart';
@@ -41,7 +42,7 @@ class ChatListScreen extends StatelessWidget {
                 hintText: 'search_here'.tr,
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(ResponsiveHelper.padding(30)),
                 ),
               ),
             ),

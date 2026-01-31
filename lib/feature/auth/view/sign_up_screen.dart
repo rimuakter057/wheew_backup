@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:platchatapp/feature/auth/view/terms_and_condition_screen.dart';
+import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../share/widgets/text_field/custom_text_field.dart';
 import '../../../share/widgets/button/primary_button.dart';
 import '../../../utils/extension/string_extension.dart';
@@ -33,7 +34,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(ResponsiveHelper.padding(20),),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -100,7 +101,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                     child: RichText(
                       text: TextSpan(
-                        style: const TextStyle(fontSize: 13, color: Colors.black),
+                        style: TextStyle(fontSize: ResponsiveHelper.titleFontSize(13), color: Colors.black),
                         children: [
                           TextSpan(text: 'i_agree_to'.tr),
                           const TextSpan(text: ' '),
@@ -135,7 +136,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               children: [
                 const Expanded(child: Divider()),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(12),),
                   child: Text('or'.tr),
                 ),
                 const Expanded(child: Divider()),

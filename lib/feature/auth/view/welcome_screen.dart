@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import '../../../core/router/routes_name.dart';
+import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../share/widgets/button/outline_button.dart';
 import '../../../share/widgets/button/primary_button.dart';
 import '../../../utils/assets_path.dart';
@@ -102,26 +103,26 @@ class WelcomeScreen extends StatelessWidget {
           //const SizedBox(height: 8),
 
           // TITLE
-          const Text(
+          Text(
             "Easy Chat With\nyour friends",
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: ResponsiveHelper.titleFontSize(28), fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 12),
 
           // SUBTITLE
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
+            padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(32)),
             child: Text(
               'welcome message'.tr,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14, color: Colors.black),
+              style: TextStyle(fontSize: ResponsiveHelper.titleFontSize(14), color: Colors.black),
             ),
           ),
           SizedBox(height: 40,),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(24)),
             child: OutlineButton(
               title: "Language",
               onTap: () {
@@ -135,7 +136,7 @@ class WelcomeScreen extends StatelessWidget {
 
           // LOGIN BUTTON
           Padding(
-            padding:EdgeInsets.symmetric(horizontal: 24),
+            padding:EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(24)),
             child: OutlineButton(
               title: "Log In",
               onTap: () {
@@ -150,7 +151,7 @@ class WelcomeScreen extends StatelessWidget {
 
           // SIGN UP BUTTON
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(24)),
             child: PrimaryButton(
               title: "Sign Up",
               onTap: () {

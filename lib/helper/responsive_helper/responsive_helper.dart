@@ -36,13 +36,16 @@ class ResponsiveHelper {
     return phoneSize;
   }
 
-  static titleFontSize(double phoneSize) {
+  /// Title FontSize
+
+  static double titleFontSize(double phoneSize) {
     if (_isTablet) {
       if (_screenWidth > 800) {
-        return phoneSize * 1.4; // iPad Pro
+        return phoneSize * 1.4;
       }
-      return phoneSize * 1.2; // iPad mini/regular
+      return phoneSize * 1.2;
     }
+    return phoneSize;
   }
 
   /// Get responsive spacing (for gaps between elements)
