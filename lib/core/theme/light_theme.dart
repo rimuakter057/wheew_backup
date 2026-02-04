@@ -10,7 +10,7 @@ final ThemeData lightTheme = ThemeData(
     backgroundColor: AppColors.backgroundColor,
     elevation: 0,
     centerTitle: true,
-    iconTheme: IconThemeData(color: AppColors.brandHoverColor),
+    //iconTheme: IconThemeData(color: AppColors.brandHoverColor),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(

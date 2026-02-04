@@ -7,4 +7,7 @@ class RouteName {
   static const inbox = 'inbox';
   static const terms = 'terms';
   static const profile = 'profile';
+  static const forgotPassword = 'forgot_password';
+  static const otp = 'otp';
+  static const resetPassword = 'reset_password';
 }

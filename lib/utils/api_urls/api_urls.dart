@@ -1,3 +1,4 @@
+/*
 import '../config/app_config.dart';
 
 class ApiUrls {
@@ -23,3 +24,4 @@ class ApiUrls {
   static String about() => '$base/manage/get-about-us';
   static String faq() => '$base/manage/get-faq';
 }
+*/

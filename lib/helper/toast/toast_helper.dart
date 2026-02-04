@@ -1,7 +1,6 @@
-/*
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:template_flutter/utils/enum/app_enum.dart';
+import '../../utils/enum/app_enum.dart';
 
 class AppToast {
   static void _show({
@@ -60,4 +59,3 @@ class AppToast {
 
   static void info({required String message}) => _show(message: message, type: AppToastType.info);
 }
-*/

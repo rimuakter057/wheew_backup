@@ -5,7 +5,7 @@ import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../share/widgets/button/outline_button.dart';
 import '../../../share/widgets/button/primary_button.dart';
-import '../../../utils/assets_path.dart';
+import '../../../utils/assets_path/assets_path.dart';
 import '../../../utils/extension/string_extension.dart';
 
 
@@ -30,7 +30,7 @@ class WelcomeScreen extends StatelessWidget {
                 colors: [
                   Color(0xFFD7FFCF),
                   Color(0xFFF2FFF0),
-                  Colors.white,
+                  Color(0xFFF5F7FA),
                 ],
                 stops: [0.0, 0.6, 1.0],
               ),
@@ -143,6 +143,7 @@ class WelcomeScreen extends StatelessWidget {
                 context.pushNamed(RouteName.signIn);
               },
               borderColor: Colors.blue,
+              //borderColor: Color(0xFF1F71B8),
               textColor: Colors.blue,
             ),
           ),
@@ -158,6 +159,7 @@ class WelcomeScreen extends StatelessWidget {
                 context.pushNamed(RouteName.signUp);
               },
               backgroundColor: Colors.blue,
+             //backgroundColor: const Color(0xFF1F71B8),
               textColor: Colors.white,
             )
           ),

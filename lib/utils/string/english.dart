@@ -1,29 +1,37 @@
 Map<String, String> english = {
 
+
+  //-----------Welcome Screen--------------
+
   'welcome message': "Keep up with your friends and makes your chat more enjoyable by signing quickly and easily",
   'sign_in' : 'Sign In',
   'sign_up' : 'Sign Up',
   'log_in' : 'Log In',
 
 
-  //----------Sign Up____
-  'nick_name': 'Nick Name',
-  'nick_name_hint': 'name',
-  'license_number': 'License Number',
-  'license_hint': 'ER23',
-  'password': 'Password',
-  'confirm_password': 'Confirm Password',
-  'agree_terms': 'I agree to the Terms & Condition and Privacy Policy',
-  'continue': 'Continue',
-  'or': 'OR',
-  'already_account': 'Already have an account?',
-  //----------------Terms and Condition-------------------------
+  //----------Sign Up------------------------
+  'nick_name' : 'Nick Name/Plate Number',
+  'nick_name_hint' : 'name',
+  'license_number' : 'License Number',
+  'license_hint' : 'ERA-238-HGS',
+  'password' : 'Password',
+  'confirm_password' : 'Confirm Password',
+  'agree_terms' : 'I agree to the Terms & Condition and Privacy Policy',
+  'continue' : 'Continue',
+  'or' : 'OR',
+  'already_account' : 'Already have an account?',
+  'verification_code' : 'Verification Code',
+  "we_sent_6_digit_code" : "We've sent a 6-digit code",
   "i_agree_to": "I agree to the",
   "terms_and_conditions": "Terms and Conditions",
 
+  //----------------Terms and Condition-------------------------
+
+
+
   'terms_and_condition': 'Terms & Condition',
-  "terms_and_conditions": "Terms and Conditions",
-  "agree_terms": "I agree to the Terms and Conditions",
+
+  //"agree_terms": "I agree to the Terms and Conditions",
 
   "terms_introduction_title": "Introduction",
   "terms_introduction_content": "These Terms & Conditions (\"Terms\") govern your use of our mobile application (\"the App\"). By downloading, accessing, or using the App, you agree to be bound by these Terms. If you do not agree, you must stop using the App immediately.",

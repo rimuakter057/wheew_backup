@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:platchatapp/feature/auth/view/welcome_screen.dart';
 import '../../core/router/routes.dart';
 import '../../core/router/routes_name.dart';
-import '../../utils/assets_path.dart';
+import '../../utils/assets_path/assets_path.dart';
 
 
 class SplashScreen extends StatefulWidget {
