@@ -123,7 +123,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     controller.isLoading
                         ? const CircularProgressIndicator()
                         : PrimaryButton(
-                      title: 'Hello',
+                      title: 'sign_in',
                       onTap: _handleLogin,
                     ),
                   ],

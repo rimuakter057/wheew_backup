@@ -1,85 +1,63 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class StorageService {
-  static SharedPreferences? _prefs;
+class SharePrefsHelper {
+  //===========================Get Data From Shared Preference===================
 
-  static Future<void> init() async {
-    _prefs = await SharedPreferences.getInstance();
+  static Future<String> getString(String key) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    return preferences.getString(key) ?? "";
   }
 
-  // Save credentials
-  static Future<void> saveCredentials({
-    required String identifier,
-    required String password,
-  }) async {
-    await _prefs?.setString('saved_identifier', identifier);
-    await _prefs?.setString('saved_password', password);
-    await _prefs?.setBool('remember_me', true);
+  static Future<List<String>> getLisOfString(String key) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    var getListData = preferences.getStringList(key);
+
+    return getListData!;
   }
 
-  // Get saved credentials
-  static Map<String, String?> getSavedCredentials() {
-    return {
-      'identifier': _prefs?.getString('saved_identifier'),
-      'password': _prefs?.getString('saved_password'),
-    };
+  static Future<bool?> getBool(String key) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    return preferences.getBool(key);
   }
 
-  // Check if remember me is enabled
-  static bool isRememberMeEnabled() {
-    return _prefs?.getBool('remember_me') ?? false;
+  static Future<int> getInt(String key) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getInt(key) ?? (-1);
   }
 
-  // Clear saved credentials
-  static Future<void> clearCredentials() async {
-    await _prefs?.remove('saved_identifier');
-    await _prefs?.remove('saved_password');
-    await _prefs?.setBool('remember_me', false);
+  //===========================Save Data To Shared Preference===================
+
+  static Future setString(String key, value) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setString(key, value);
   }
 
-  // Save token
-  static Future<void> saveToken(String token) async {
-    await _prefs?.setString('auth_token', token);
+  static Future<bool> setListOfString(String key, List<String> value) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    var setListData = await preferences.setStringList(key, value);
+
+    return setListData;
   }
 
-  // Get token
-  static String? getToken() {
-    return _prefs?.getString('auth_token');
+  static Future setBool(String key, bool value) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setBool(key, value);
   }
 
-  // Save user data
-  static Future<void> saveUserData({
-    required String userId,
-    required String nickName,
-    required String licenceId,
-    String? avatar,
-    String? role,
-  }) async {
-    await _prefs?.setString('user_id', userId);
-    await _prefs?.setString('nick_name', nickName);
-    await _prefs?.setString('licence_id', licenceId);
-    if (avatar != null) await _prefs?.setString('avatar', avatar);
-    if (role != null) await _prefs?.setString('role', role);
+  static Future setInt(String key, int value) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setInt(key, value);
   }
 
-  // Get user data
-  static Map<String, String?> getUserData() {
-    return {
-      'user_id': _prefs?.getString('user_id'),
-      'nick_name': _prefs?.getString('nick_name'),
-      'licence_id': _prefs?.getString('licence_id'),
-      'avatar': _prefs?.getString('avatar'),
-      'role': _prefs?.getString('role'),
-    };
-  }
+  //===========================Remove Value===================
 
-  // Clear all data (for logout)
-  static Future<void> clearAll() async {
-    await _prefs?.clear();
-  }
-
-  // Check if user is logged in
-  static bool isLoggedIn() {
-    return _prefs?.getString('auth_token') != null;
+  static Future remove(String key) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.remove(key);
   }
 }
+
