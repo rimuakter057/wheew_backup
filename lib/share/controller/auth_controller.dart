@@ -25,6 +25,7 @@ class AuthController extends GetxController {
   }) async {
     _setLoading(true);
 
+
     final Response loginRes = await _repo.login(
       identifier: identifier,
       password: password,
