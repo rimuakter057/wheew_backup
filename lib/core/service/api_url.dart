@@ -7,4 +7,5 @@ class ApiUrl {
   static const String login = '/auth/signin';
   static const String chatList = '/auth/me';
   static const String searchUsers = '/users/search';
+  static const String updateProfile = '/users/';
 }

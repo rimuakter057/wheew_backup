@@ -24,6 +24,7 @@ Map<String, String> english = {
   "we_sent_6_digit_code" : "We've sent a 6-digit code",
   "i_agree_to": "I agree to the",
   "terms_and_conditions": "Terms and Conditions",
+  'log_out' : 'Log Out',
 
   //----------------Terms and Condition-------------------------
 
