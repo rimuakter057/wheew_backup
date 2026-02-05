@@ -57,6 +57,7 @@ class AppMenuDrawer extends StatelessWidget {
               },
             ),
             SizedBox(height: 8),
+
             ListTile(
               leading: const Icon(Icons.description_outlined),
               title: Text('terms_and_condition'.tr),
@@ -68,14 +69,6 @@ class AppMenuDrawer extends StatelessWidget {
 
             const Spacer(),
 
-            /*ListTile(
-              leading: const Icon(Icons.logout),
-              title: Text('log_out'.tr),
-              onTap: () {
-                Navigator.pop(context);
-                context.pushNamed(RouteName.terms);
-              },
-            ),*/
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
               title: const Text(
@@ -85,7 +78,7 @@ class AppMenuDrawer extends StatelessWidget {
               onTap: () async {
                 await authController.logout();
                 if (context.mounted) {
-                  context.goNamed(RouteName.signIn);
+                  context.goNamed(RouteName.welcome);
                 }
               },
             ),
