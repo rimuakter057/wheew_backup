@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import '../../../share/controller/auth_controller.dart';
-import '../../../share/controller/profile_controller.dart';
+import '../../auth/repository/auth_controller.dart';
+import '../repository/profile_controller.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../utils/assets_path/assets_path.dart';
 

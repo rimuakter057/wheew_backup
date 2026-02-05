@@ -6,7 +6,7 @@ import '../../../core/router/route_path.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../core/service/api_checker.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
-import '../../../share/controller/auth_controller.dart';
+import '../repository/auth_controller.dart';
 import '../../../share/widgets/text_field/custom_text_field.dart';
 import '../../../share/widgets/button/primary_button.dart';
 import '../../../utils/toast_message/toast_message.dart';

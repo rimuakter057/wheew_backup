@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../share/controller/profile_controller.dart';
+import '../repository/profile_controller.dart';
 import '../../../share/widgets/avatar/user_avatar.dart';
 
 class ProfileScreen extends StatelessWidget {

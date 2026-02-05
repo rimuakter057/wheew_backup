@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:get/get.dart' hide Response;
 import 'package:http/http.dart';
-import 'package:platchatapp/feature/chat/repository/chat_repository.dart';
-
+import 'chat_repository.dart';
 import '../../../share/model/chat_model.dart';
 
 class ChatController extends GetxController {

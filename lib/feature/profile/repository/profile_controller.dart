@@ -5,8 +5,8 @@ import 'package:get/get.dart' hide Response;
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart';
-import '../../feature/profile/repository/profile_repository.dart';
-import '../model/user_model.dart';
+import 'profile_repository.dart';
+import '../../../share/model/user_model.dart';
 
 class ProfileController extends GetxController {
   final ProfileRepository _repo = ProfileRepository();
