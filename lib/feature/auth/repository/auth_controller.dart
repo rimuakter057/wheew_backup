@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:http/http.dart';
-import '../../core/service/api_checker.dart';
-import '../../core/service/storage_service.dart';
-import '../../feature/auth/repository/auth_repository.dart';
+import '../../../core/service/api_checker.dart';
+import '../../../core/service/storage_service.dart';
+import 'auth_repository.dart';
 
 class AuthController extends GetxController {
   final AuthRepository _repo = AuthRepository();

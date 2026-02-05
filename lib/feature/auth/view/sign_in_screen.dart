@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
-import '../../../share/controller/auth_controller.dart';
+import '../repository/auth_controller.dart';
 import '../../../share/widgets/text_field/custom_text_field.dart';
 import '../../../share/widgets/button/primary_button.dart';
 import '../../../utils/extension/string_extension.dart';

@@ -15,7 +15,7 @@ import 'package:platchatapp/feature/chat/view/inbox_screen.dart';
 import 'package:platchatapp/feature/profile/view/profile_screen.dart';
 import '../../feature/splash/splash_screen.dart';
 import '../../feature/auth/view/welcome_screen.dart';
-import '../../share/controller/auth_controller.dart';
+import '../../feature/auth/repository/auth_controller.dart';
 
 class AppRouter {
   static final navigatorKey = GlobalKey<NavigatorState>();

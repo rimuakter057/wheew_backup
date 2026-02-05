@@ -85,7 +85,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
-import '../../../share/controller/chat_controller.dart';
+import '../repository/chat_controller.dart';
 import '../../profile/view/app_menu_drawer.dart';
 import 'chat_tile.dart';
 
