@@ -5,45 +5,27 @@ import '../../../core/service/api_client.dart';
 import '../../../core/service/api_url.dart';
 
 class ProfileRepository {
+  /// Get user profile
   Future<http.Response> getProfile() async {
-    return await ApiClient.getData(uri: ApiUrl.updateProfile);
+    return await ApiClient.getData(
+      uri: ApiUrl.updateProfile,
+    );
   }
 
-  Future<http.Response> updateProfile({
-    String? nickName,
-    String? licenceId,
-    File? imageFile,
+  /// Update ONLY avatar
+  Future<http.Response> updateAvatar({
+    required File imageFile,
   }) async {
-    List<http.MultipartFile> files = [];
-    Map<String, String> fields = {};
-
-    // Add text fields
-    if (nickName != null && nickName.isNotEmpty) {
-      fields['nick_name'] = nickName;
-    }
-    if (licenceId != null && licenceId.isNotEmpty) {
-      fields['licence_id'] = licenceId;
-    }
-
-    // Add image file
-    if (imageFile != null) {
-      var stream = http.ByteStream(imageFile.openRead());
-      var length = await imageFile.length();
-      var multipartFile = http.MultipartFile(
-        'avatar', // Check your backend - might be 'image', 'profile_image', etc.
-        stream,
-        length,
-        filename: imageFile.path.split('/').last,
-        contentType: MediaType('image', 'jpeg'),
-      );
-      files.add(multipartFile);
-    }
+    final multipartFile = await http.MultipartFile.fromPath(
+      'avatar',
+      imageFile.path,
+      contentType: MediaType('image', 'jpeg'),
+    );
 
     return await ApiClient.multipartRequest(
       uri: ApiUrl.updateProfile,
-      method: 'PUT', // Or 'PATCH' - check your backend
-      fields: fields,
-      files: files.isNotEmpty ? files : null,
+      method: 'PATCH', // Changed from 'PUT' to 'PATCH'
+      files: [multipartFile],
     );
   }
 }

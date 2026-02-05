@@ -8,4 +8,5 @@ class ApiUrl {
   static const String chatList = '/auth/me';
   static const String searchUsers = '/users/search';
   static const String updateProfile = '/users/';
+
 }

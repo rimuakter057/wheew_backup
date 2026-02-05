@@ -24,24 +24,31 @@ class AppMenuDrawer extends StatelessWidget {
               child: Row(
                 children: [
                   Obx(() {
-                    return CircleAvatar(
-                      radius: 28,
-                      backgroundImage:
-                      profileController.profileImage.value != null
-                          ? FileImage(
-                          profileController.profileImage.value as File)
-                          : const AssetImage(AssetsPath.person3)
-                      as ImageProvider,
+                    final user = profileController.userProfile.value;
+
+                    return Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 28,
+                          backgroundImage:
+                              profileController.profileImage.value != null
+                              ? FileImage(profileController.profileImage.value!)
+                              : (user?.avatar != null
+                                        ? NetworkImage(user!.avatar!)
+                                        : const AssetImage(AssetsPath.person3))
+                                    as ImageProvider,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          user?.nickName ?? '',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
                     );
                   }),
-                  const SizedBox(width: 12),
-                  const Text(
-                    'Hasan',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -71,15 +78,11 @@ class AppMenuDrawer extends StatelessWidget {
 
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text(
-                'Logout',
-                style: TextStyle(color: Colors.red),
-              ),
+              title: const Text('Logout', style: TextStyle(color: Colors.red)),
               onTap: () async {
                 await authController.logout();
-                if (context.mounted) {
-                  context.goNamed(RouteName.welcome);
-                }
+                if (!context.mounted) return;
+                context.goNamed(RouteName.welcome);
               },
             ),
           ],
