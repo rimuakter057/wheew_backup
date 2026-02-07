@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
+import '../../../language/language_controller.dart';
 import '../../auth/repository/auth_controller.dart';
 import '../repository/profile_controller.dart';
 import '../../../core/router/routes_name.dart';
@@ -94,6 +95,29 @@ class AppMenuDrawer extends StatelessWidget {
                 context.pushNamed(RouteName.terms);
               },
             ),
+            SizedBox(height: ResponsiveHelper.spacing(8)),
+            ListTile(
+              leading: Icon(
+                Icons.translate,
+                size: ResponsiveHelper.iconSize(24),
+              ),
+              title: Text(
+                'Language',
+                style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
+              ),
+              subtitle: Obx(() {
+                final langController = Get.find<LanguageController>();
+                return Text(
+                  langController.currentLanguageDisplay,
+                  style: TextStyle(fontSize: ResponsiveHelper.fontSize(12)),
+                );
+              }),
+              onTap: () {
+                _showLanguageBottomSheet(context);
+              },
+            ),
+
+
 
             const Spacer(),
 
@@ -121,4 +145,38 @@ class AppMenuDrawer extends StatelessWidget {
       ),
     );
   }
+}
+
+void _showLanguageBottomSheet(BuildContext context) {
+  final LanguageController controller = Get.find<LanguageController>();
+
+  showModalBottomSheet(
+    context: context,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (_) {
+      return Obx(() {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: controller.availableLanguageNames.map((language) {
+            final isSelected =
+            controller.isLanguageSelected(language);
+
+            return ListTile(
+              leading: Icon(
+                Icons.check,
+                color: isSelected ? Colors.blue : Colors.transparent,
+              ),
+              title: Text(language),
+              onTap: () {
+                controller.saveLanguage(language);
+                Navigator.pop(context);
+              },
+            );
+          }).toList(),
+        );
+      });
+    },
+  );
 }

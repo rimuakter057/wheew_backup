@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 //import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -103,7 +104,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 },
               ),
               const Spacer(),
-              PrimaryButton(title: 'Verify'.tr, onTap: () {
+              PrimaryButton(title: 'vrify'.tr, onTap: () {
                 context.goNamed(RouteName.resetPassword);
               }),
             ],

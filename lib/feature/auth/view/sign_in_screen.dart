@@ -7,7 +7,7 @@ import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../repository/auth_controller.dart';
 import '../../../share/widgets/text_field/custom_text_field.dart';
 import '../../../share/widgets/button/primary_button.dart';
-import '../../../utils/extension/string_extension.dart';
+
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -53,7 +53,7 @@ class _SignInScreenState extends State<SignInScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
-          'sign_in',
+          'sign_in'.tr,
           style: TextStyle(fontSize: ResponsiveHelper.fontSize(18)),
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../utils/extension/string_extension.dart';
 
@@ -171,6 +172,7 @@ class _InboxScreenState extends State<InboxScreen>
             child: Text(
               text,
               style: TextStyle(
+                fontWeight: FontWeight.w500,
                 color: textColor,
                 fontSize: ResponsiveHelper.fontSize(14),
               ),
