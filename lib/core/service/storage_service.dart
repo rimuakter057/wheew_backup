@@ -60,4 +60,3 @@ class SharePrefsHelper {
     return preferences.remove(key);
   }
 }
-

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../utils/extension/string_extension.dart';
 
 class InboxScreen extends StatefulWidget {
@@ -35,7 +36,10 @@ class _InboxScreenState extends State<InboxScreen>
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
-        title: Text('inbox'.tr),
+        title: Text(
+          'inbox'.tr,
+          style: TextStyle(fontSize: ResponsiveHelper.fontSize(18)),
+        ),
       ),
       body: Column(
         children: [
@@ -44,7 +48,7 @@ class _InboxScreenState extends State<InboxScreen>
           /// Messages
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(ResponsiveHelper.padding(16)),
               children: [
                 _leftBubble(
                   text: 'Heyy!!! Alexx',
@@ -80,23 +84,23 @@ class _InboxScreenState extends State<InboxScreen>
   /// Chat Header
   Widget _chatHeader() {
     return Container(
-      margin: const EdgeInsets.all(12),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.all(ResponsiveHelper.padding(12)),
+      padding: EdgeInsets.all(ResponsiveHelper.padding(12)),
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
       ),
       child: Row(
         children: [
           CircleAvatar(
-            radius: 22,
+            radius: ResponsiveHelper.width(22),
             backgroundImage: const AssetImage('assets/images/person3.png'),
           ),
-          const SizedBox(width: 12),
-          const Text(
+          SizedBox(width: ResponsiveHelper.spacing(12)),
+          Text(
             'Georgina',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: ResponsiveHelper.fontSize(16),
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -104,7 +108,6 @@ class _InboxScreenState extends State<InboxScreen>
       ),
     );
   }
-
 
   /// Left Message Bubble
   Widget _leftBubble({required String text, required double delay}) {
@@ -154,16 +157,23 @@ class _InboxScreenState extends State<InboxScreen>
         child: FadeTransition(
           opacity: animation,
           child: Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(14),
-            constraints: const BoxConstraints(maxWidth: 260),
+            margin: EdgeInsets.only(bottom: ResponsiveHelper.spacing(12)),
+            padding: EdgeInsets.all(ResponsiveHelper.padding(14)),
+            constraints: BoxConstraints(
+              maxWidth: ResponsiveHelper.width(260),
+            ),
             decoration: BoxDecoration(
               color: color,
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(18),
+              ),
             ),
             child: Text(
               text,
-              style: TextStyle(color: textColor),
+              style: TextStyle(
+                color: textColor,
+                fontSize: ResponsiveHelper.fontSize(14),
+              ),
             ),
           ),
         ),
@@ -174,13 +184,22 @@ class _InboxScreenState extends State<InboxScreen>
   /// Message Input
   Widget _messageInput() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      padding: EdgeInsets.fromLTRB(
+        ResponsiveHelper.padding(16),
+        ResponsiveHelper.padding(8),
+        ResponsiveHelper.padding(16),
+        ResponsiveHelper.padding(16),
+      ),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        height: 56,
+        padding: EdgeInsets.symmetric(
+          horizontal: ResponsiveHelper.padding(16),
+        ),
+        height: ResponsiveHelper.buttonHeight(56),
         decoration: BoxDecoration(
           color: Colors.black87,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.borderRadius(16),
+          ),
         ),
         child: Row(
           children: [
@@ -188,20 +207,26 @@ class _InboxScreenState extends State<InboxScreen>
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Type here...',
-                  hintStyle: const TextStyle(color: Colors.white54),
+                  hintStyle: TextStyle(
+                    color: Colors.white54,
+                    fontSize: ResponsiveHelper.fontSize(16),
+                  ),
                   border: InputBorder.none,
                 ),
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: ResponsiveHelper.fontSize(16),
+                ),
               ),
             ),
             GestureDetector(
               onTap: () {
                 // send action
               },
-              child: const Icon(
+              child: Icon(
                 Icons.send_outlined,
                 color: Colors.white,
-                size: 22,
+                size: ResponsiveHelper.iconSize(22),
               ),
             ),
           ],
@@ -209,5 +234,4 @@ class _InboxScreenState extends State<InboxScreen>
       ),
     );
   }
-
 }

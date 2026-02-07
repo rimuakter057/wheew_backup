@@ -47,7 +47,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
-        title: Text('sign_up'.tr, style: const TextStyle(color: Colors.black)),
+        title: Text(
+          'sign_up'.tr,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: ResponsiveHelper.fontSize(18),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(ResponsiveHelper.padding(20)),
@@ -56,90 +62,138 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: ResponsiveHelper.spacing(30)),
 
-              const SizedBox(height: 30),
               /// Nickname
               CustomTextField(
                 controller: nicknameController,
                 title: 'nick_name'.tr,
                 hintText: 'nick_name_hint'.tr,
-                validator: (value) =>
-                (value == null || value.trim().isEmpty)
+                validator: (value) => (value == null || value.trim().isEmpty)
                     ? 'Nickname is required'
                     : null,
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: ResponsiveHelper.spacing(16)),
+
               /// Designation
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Select Designation',
-                      style: TextStyle(fontWeight: FontWeight.w500)),
-                  const SizedBox(height: 8),
+                  Text(
+                    'Select Designation',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: ResponsiveHelper.fontSize(14),
+                    ),
+                  ),
+                  SizedBox(height: ResponsiveHelper.spacing(8)),
                   DropdownButtonFormField2<String>(
                     value: selectedDesignation,
-                    hint: const Text('Select'),
+                    hint: Text(
+                      'Select',
+                      style: TextStyle(
+                        fontSize: ResponsiveHelper.fontSize(16),
+                      ),
+                    ),
                     isExpanded: true,
                     decoration: InputDecoration(
-                      contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveHelper.padding(12),
+                        vertical: ResponsiveHelper.padding(16),
+                      ),
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                              color: Colors.blue, width: 1.5)),
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveHelper.borderRadius(12),
+                        ),
+                        borderSide: BorderSide(
+                          color: Colors.blue,
+                          width: ResponsiveHelper.borderWidth(1.5),
+                        ),
+                      ),
                       focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide:
-                          const BorderSide(color: Colors.blue, width: 2)),
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveHelper.borderRadius(12),
+                        ),
+                        borderSide: BorderSide(
+                          color: Colors.blue,
+                          width: ResponsiveHelper.borderWidth(2),
+                        ),
+                      ),
                       enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide:
-                          const BorderSide(color: Colors.grey, width: 1.5)),
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveHelper.borderRadius(12),
+                        ),
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                          width: ResponsiveHelper.borderWidth(1.5),
+                        ),
+                      ),
                     ),
-                    items: const [
-                      DropdownMenuItem(value: 'owner', child: Text('Owner')),
+                    items: [
                       DropdownMenuItem(
-                          value: 'occasional_driver',
-                          child: Text('Occasional Driver')),
+                        value: 'owner',
+                        child: Text(
+                          'Owner',
+                          style: TextStyle(
+                            fontSize: ResponsiveHelper.fontSize(16),
+                          ),
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'occasional_driver',
+                        child: Text(
+                          'Occasional Driver',
+                          style: TextStyle(
+                            fontSize: ResponsiveHelper.fontSize(16),
+                          ),
+                        ),
+                      ),
                     ],
-                    onChanged: (value) => setState(() => selectedDesignation = value),
+                    onChanged: (value) =>
+                        setState(() => selectedDesignation = value),
                     validator: (value) =>
                     value == null ? 'Please select designation' : null,
                     dropdownStyleData: DropdownStyleData(
-                      maxHeight: 160,
+                      maxHeight: ResponsiveHelper.height(160),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveHelper.borderRadius(12),
+                        ),
                         boxShadow: const [
                           BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 8,
-                              offset: Offset(0, 4))
+                            color: Colors.black12,
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
+                          )
                         ],
                       ),
                     ),
-                    menuItemStyleData: const MenuItemStyleData(
-                      height: 48,
-                      padding: EdgeInsets.symmetric(horizontal: 16),
+                    menuItemStyleData: MenuItemStyleData(
+                      height: ResponsiveHelper.height(48),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveHelper.padding(16),
+                      ),
                     ),
                   ),
                 ],
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: ResponsiveHelper.spacing(16)),
+
               /// License Number
               CustomTextField(
                 controller: licenseController,
                 title: 'license_number'.tr,
                 hintText: 'license_hint'.tr,
-                validator: (value) =>
-                (value == null || value.trim().isEmpty)
+                validator: (value) => (value == null || value.trim().isEmpty)
                     ? 'License number is required'
                     : null,
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: ResponsiveHelper.spacing(16)),
+
               /// Password
               CustomTextField(
                 controller: passwordController,
@@ -157,7 +211,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: ResponsiveHelper.spacing(16)),
+
               /// Confirm Password
               CustomTextField(
                 controller: confirmPasswordController,
@@ -174,50 +229,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
-              //const SizedBox(height: 16),
 
-              /* /// Email (Recovery)
-              CustomTextField(
-                controller: emailController,
-                title: 'Email for Recovery password'.tr,
-                hintText: 'Enter your email',
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Email is required';
-                  }
-                  if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                    return 'Enter a valid email';
-                  }
-                  return null;
-                },
-              ),*/
+              SizedBox(height: ResponsiveHelper.spacing(12)),
 
-              const SizedBox(height: 12),
               /// Agree Terms
               Row(
                 children: [
-                  Checkbox(
+                  SizedBox(
+                    width: ResponsiveHelper.width(24),
+                    height: ResponsiveHelper.height(24),
+                    child: Checkbox(
                       value: agree,
                       activeColor: Colors.green,
                       onChanged: (value) =>
-                          setState(() => agree = value ?? false)),
+                          setState(() => agree = value ?? false),
+                    ),
+                  ),
+                  SizedBox(width: ResponsiveHelper.spacing(8)),
                   Expanded(
                     child: GestureDetector(
                       onTap: () => context.pushNamed(RouteName.terms),
                       child: RichText(
                         text: TextSpan(
                           style: TextStyle(
-                              fontSize: ResponsiveHelper.titleFontSize(13),
-                              color: Colors.black),
+                            fontSize: ResponsiveHelper.fontSize(13),
+                            color: Colors.black,
+                          ),
                           children: [
                             TextSpan(text: 'i_agree_to'.tr + ' '),
                             TextSpan(
                               text: 'terms_and_conditions'.tr,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: Colors.blue,
                                 decoration: TextDecoration.underline,
                                 fontWeight: FontWeight.bold,
+                                fontSize: ResponsiveHelper.fontSize(13),
                               ),
                             ),
                           ],
@@ -227,10 +273,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+
+              SizedBox(height: ResponsiveHelper.spacing(20)),
 
               /// Continue Button
-
               PrimaryButton(
                 title: 'continue'.tr,
                 onTap: () async {
@@ -244,10 +290,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     return;
                   }
 
-                  // ✅ Pass context to showLoadingDialog
                   showLoadingDialog(
                     message: 'Creating account...',
-                    context: context,  // 👈 Add this
+                    context: context,
                   );
 
                   try {
@@ -259,9 +304,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       designation: selectedDesignation!,
                     );
 
-                    hideLoadingDialog(context); // 👈 Pass context
+                    hideLoadingDialog(context);
 
-                    if (response.statusCode == 200 || response.statusCode == 201) {
+                    if (response.statusCode == 200 ||
+                        response.statusCode == 201) {
                       showSuccessToast('Registration successful!');
                       if (context.mounted) {
                         context.go(RoutePath.chatList);

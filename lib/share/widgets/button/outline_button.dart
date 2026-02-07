@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../helper/responsive_helper/responsive_helper.dart';
 
 class OutlineButton extends StatelessWidget {
   final String title;
@@ -23,22 +24,27 @@ class OutlineButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: height,
+      height: ResponsiveHelper.buttonHeight(height!),
       width: double.infinity,
       child: OutlinedButton(
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius!),
+            borderRadius: BorderRadius.circular(
+              ResponsiveHelper.borderRadius(borderRadius!),
+            ),
           ),
           side: BorderSide(
             color: borderColor!,
-            width: borderWidth!,
+            width: ResponsiveHelper.borderWidth(borderWidth!),
           ),
         ),
         child: Text(
           title,
-          style: TextStyle(color: textColor),
+          style: TextStyle(
+            color: textColor,
+            fontSize: ResponsiveHelper.fontSize(16),
+          ),
         ),
       ),
     );

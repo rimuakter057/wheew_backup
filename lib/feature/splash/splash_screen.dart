@@ -3,12 +3,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/router/routes_name.dart';
 import '../../core/service/storage_service.dart';
+import '../../helper/responsive_helper/responsive_helper.dart';
 import '../../utils/app_const/app_const.dart';
 import '../../utils/assets_path/assets_path.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
-  //static const String name = '/';
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -45,13 +45,18 @@ class _SplashScreenState extends State<SplashScreen> {
             const Spacer(),
             SvgPicture.asset(
               AssetsPath.logoSvg,
-              width: 240,
+              width: ResponsiveHelper.width(240),
             ),
-            const SizedBox(height: 12),
-            const Text('CONNECTING DRIVERS ONE PLATE AT A TIME'),
+            SizedBox(height: ResponsiveHelper.spacing(12)),
+            Text(
+              'CONNECTING DRIVERS ONE PLATE AT A TIME',
+              style: TextStyle(
+                fontSize: ResponsiveHelper.fontSize(12),
+              ),
+            ),
             const Spacer(),
             const CircularProgressIndicator(),
-            const SizedBox(height: 40),
+            SizedBox(height: ResponsiveHelper.spacing(40)),
           ],
         ),
       ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../utils/color/app_colors.dart';
-
 
 enum AppDialogType { info, success, warning, error, custom }
 
@@ -25,7 +25,7 @@ class AppDialog {
     Duration transitionDuration = const Duration(milliseconds: 350),
     Curve curve = Curves.easeOutBack,
     Curve reverseCurve = Curves.easeInCubic,
-    EdgeInsetsGeometry padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+    EdgeInsetsGeometry? padding,
     double maxWidth = 380,
   }) {
     IconData defaultIcon;
@@ -50,7 +50,7 @@ class AppDialog {
         break;
       case AppDialogType.custom:
         defaultIcon = Icons.circle;
-        typeColor = AppColors.brandHoverColor;
+        typeColor = AppColors.blue;
         break;
     }
 
@@ -63,7 +63,10 @@ class AppDialog {
               Navigator.pop(context, false);
               onCancel();
             },
-            child: Text(cancelText),
+            child: Text(
+              cancelText,
+              style: TextStyle(fontSize: ResponsiveHelper.fontSize(14)),
+            ),
           ),
         );
       }
@@ -71,13 +74,24 @@ class AppDialog {
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: typeColor,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(8),
+              ),
+            ),
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveHelper.padding(16),
+              vertical: ResponsiveHelper.padding(12),
+            ),
           ),
           onPressed: () {
             Navigator.pop(context, true);
             if (onConfirm != null) onConfirm();
           },
-          child: Text(confirmText),
+          child: Text(
+            confirmText,
+            style: TextStyle(fontSize: ResponsiveHelper.fontSize(14)),
+          ),
         ),
       );
     }
@@ -101,43 +115,73 @@ class AppDialog {
             scale: curvedAnimation,
             child: Center(
               child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: maxWidth),
+                constraints: BoxConstraints(
+                  maxWidth: ResponsiveHelper.width(maxWidth),
+                ),
                 child: Dialog(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.borderRadius(borderRadius),
+                    ),
+                  ),
                   backgroundColor: backgroundColor ?? AppColors.white,
                   elevation: 10,
                   child: Padding(
-                    padding: padding,
+                    padding: padding ??
+                        EdgeInsets.symmetric(
+                          horizontal: ResponsiveHelper.padding(20),
+                          vertical: ResponsiveHelper.padding(16),
+                        ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         if (icon != null || type != AppDialogType.custom)
                           Container(
-                            margin: const EdgeInsets.only(bottom: 12),
+                            margin: EdgeInsets.only(
+                              bottom: ResponsiveHelper.spacing(12),
+                            ),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: typeColor.withValues(alpha: 0.15),
                             ),
-                            padding: const EdgeInsets.all(12),
-                            child: icon ?? Icon(defaultIcon, color: typeColor, size: 38),
+                            padding: EdgeInsets.all(
+                              ResponsiveHelper.padding(12),
+                            ),
+                            child: icon ??
+                                Icon(
+                                  defaultIcon,
+                                  color: typeColor,
+                                  size: ResponsiveHelper.iconSize(38),
+                                ),
                           ),
                         if (title?.isNotEmpty ?? false)
                           Text(
                             title!,
                             textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
                               fontWeight: FontWeight.w600,
                               color: titleColor ?? AppColors.black,
+                              fontSize: ResponsiveHelper.fontSize(18),
                             ),
                           ),
                         if (subtitle?.isNotEmpty ?? false)
                           Padding(
-                            padding: const EdgeInsets.only(top: 8, bottom: 16),
+                            padding: EdgeInsets.only(
+                              top: ResponsiveHelper.spacing(8),
+                              bottom: ResponsiveHelper.spacing(16),
+                            ),
                             child: Text(
                               subtitle!,
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: subtitleColor ?? AppColors.white,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                color: subtitleColor ?? AppColors.black,
+                                fontSize: ResponsiveHelper.fontSize(14),
                               ),
                             ),
                           ),

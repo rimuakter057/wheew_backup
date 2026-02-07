@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../share/widgets/avatar/user_avatar.dart';
 
 class ChatTile extends StatelessWidget {
@@ -24,12 +25,23 @@ class ChatTile extends StatelessWidget {
       leading: UserAvatar(imagePath: imagePath),
       title: Text(
         name,
-        style: const TextStyle(fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: ResponsiveHelper.fontSize(16),
+        ),
       ),
-      subtitle: Text(message),
+      subtitle: Text(
+        message,
+        style: TextStyle(
+          fontSize: ResponsiveHelper.fontSize(14),
+        ),
+      ),
       trailing: Text(
         time,
-        style: const TextStyle(color: Colors.grey, fontSize: 12),
+        style: TextStyle(
+          color: Colors.grey,
+          fontSize: ResponsiveHelper.fontSize(12),
+        ),
       ),
     );
   }

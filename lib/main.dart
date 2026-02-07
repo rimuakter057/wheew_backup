@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
@@ -22,22 +21,15 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(375, 812),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (context, child) {
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      title: 'My App',
+      theme: lightTheme,
+      routerConfig: AppRouter.router,
+      builder: (context, widget) {
+        // Initialize ResponsiveHelper here, called once per route
         ResponsiveHelper.init(context);
-
-        return MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          title: 'My App',
-          theme: lightTheme,
-          routerConfig: AppRouter.router,
-          builder: (context, widget) {
-            return widget!;
-          },
-        );
+        return widget!;
       },
     );
   }

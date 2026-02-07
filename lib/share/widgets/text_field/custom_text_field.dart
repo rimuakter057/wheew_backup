@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
+import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../utils/color/app_colors.dart';
 import '../align/custom_align_text.dart';
 
@@ -12,7 +13,7 @@ class CustomTextField extends StatefulWidget {
     this.focusNode,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.next,
-    this.cursorColor = AppColors.brandHoverColor,
+    this.cursorColor = AppColors.blue,
     this.inputTextStyle,
     this.textAlignVertical = TextAlignVertical.center,
     this.textAlign = TextAlign.start,
@@ -111,10 +112,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if(widget.title != null)
-              CustomAlignText(text: widget.title ?? ""),
-            if(widget.title != null)
-              const Gap(8),
+            if (widget.title != null) CustomAlignText(text: widget.title ?? ""),
+            if (widget.title != null) Gap(ResponsiveHelper.spacing(8)),
             TextFormField(
               onTap: widget.onTap,
               autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -128,7 +127,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
               keyboardType: widget.keyboardType,
               textInputAction: widget.textInputAction,
               cursorColor: widget.cursorColor,
-              style: widget.inputTextStyle,
+              style: widget.inputTextStyle ??
+                  TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
               onChanged: widget.onChanged,
               maxLines: widget.maxLines,
               minLines: widget.minLines,
@@ -136,36 +136,71 @@ class _CustomTextFieldState extends State<CustomTextField> {
               validator: widget.validator,
               decoration: InputDecoration(
                 fillColor: widget.fillColor,
-                contentPadding: widget.contentPadding ?? const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                contentPadding: widget.contentPadding ??
+                    EdgeInsets.symmetric(
+                      horizontal: ResponsiveHelper.padding(12),
+                      vertical: ResponsiveHelper.padding(16),
+                    ),
                 isCollapsed: widget.isCollapsed,
                 isDense: widget.isDense,
                 errorMaxLines: 2,
+                errorStyle: TextStyle(fontSize: ResponsiveHelper.fontSize(12)),
                 hintText: displayHint,
+                hintStyle: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
                 filled: widget.fillColor != null,
                 prefixIcon: widget.prefixIcon,
                 prefix: widget.prefix,
                 suffix: widget.suffix,
-                suffixIcon: shouldObscure ? GestureDetector(
+                suffixIcon: shouldObscure
+                    ? GestureDetector(
                   onTap: toggle,
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
-                    child: obscureText ? const Icon(Icons.visibility_off_outlined, color: AppColors.brandHoverColor,) :
-                    const Icon(Icons.visibility_outlined, color: AppColors.brandHoverColor,),
+                    padding: EdgeInsets.all(ResponsiveHelper.padding(10)),
+                    child: obscureText
+                        ? Icon(
+                      Icons.visibility_off_outlined,
+                      color: AppColors.secondaryText,
+                      size: ResponsiveHelper.iconSize(20),
+                    )
+                        : Icon(
+                      Icons.visibility_outlined,
+                      color: AppColors.secondaryText,
+                      size: ResponsiveHelper.iconSize(20),
+                    ),
                   ),
-                ) : widget.suffixIcon,
+                )
+                    : widget.suffixIcon,
                 suffixIconColor: widget.suffixIconColor,
-                border: widget.border ?? OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.blue),
-                ),
-                focusedBorder: widget.focusedBorder ?? OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.blue, width: 2),
-                ),
-                enabledBorder: widget.enabledBorder ?? OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.grey),
-                ),
+                border: widget.border ??
+                    OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(12),
+                      ),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                        width: ResponsiveHelper.borderWidth(1),
+                      ),
+                    ),
+                focusedBorder: widget.focusedBorder ??
+                    OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(12),
+                      ),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                        width: ResponsiveHelper.borderWidth(2),
+                      ),
+                    ),
+                enabledBorder: widget.enabledBorder ??
+                    OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(12),
+                      ),
+                      borderSide: BorderSide(
+                        color: Colors.grey,
+                        width: ResponsiveHelper.borderWidth(1),
+                      ),
+                    ),
               ),
             ),
           ],

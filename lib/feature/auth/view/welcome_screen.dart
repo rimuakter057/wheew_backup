@@ -8,7 +8,6 @@ import '../../../share/widgets/button/primary_button.dart';
 import '../../../utils/assets_path/assets_path.dart';
 import '../../../utils/extension/string_extension.dart';
 
-
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
@@ -41,130 +40,141 @@ class WelcomeScreen extends StatelessWidget {
                   AssetsPath.person1,
                   topPercent: 0.20,
                   leftPercent: 0.45,
-                  radius: 40,
+                  radius: ResponsiveHelper.width(40),
                   size: size,
                 ),
                 _avatar(
                   AssetsPath.person2,
                   topPercent: 0.09,
                   leftPercent: 0.10,
-                  radius: 35,
+                  radius: ResponsiveHelper.width(35),
                   size: size,
                 ),
                 _avatar(
                   AssetsPath.person2,
                   topPercent: 0.30,
                   rightPercent: 0.15,
-                  radius: 35,
+                  radius: ResponsiveHelper.width(35),
                   size: size,
                 ),
                 _avatar(
                   AssetsPath.person3,
                   topPercent: 0.11,
                   rightPercent: 0.45,
-                  radius: 28,
+                  radius: ResponsiveHelper.width(28),
                   size: size,
                 ),
                 _avatar(
                   AssetsPath.person4,
                   topPercent: 0.30,
                   leftPercent: 0.16,
-                  radius: 45,
+                  radius: ResponsiveHelper.width(45),
                   size: size,
                 ),
                 _avatar(
                   AssetsPath.person5,
                   topPercent: 0.20,
                   leftPercent: 0.16,
-                  radius: 30,
+                  radius: ResponsiveHelper.width(30),
                   size: size,
                 ),
                 _avatar(
                   AssetsPath.person6,
                   topPercent: 0.10,
                   rightPercent: 0.08,
-                  radius: 30,
+                  radius: ResponsiveHelper.width(30),
                   size: size,
                 ),
               ],
             ),
           ),
 
-
-          const SizedBox(height: 24),
+          SizedBox(height: ResponsiveHelper.spacing(24)),
 
           // LOTTIE ANIMATION
           SizedBox(
-            width: 80,
-            height: 80,
+            width: ResponsiveHelper.width(80),
+            height: ResponsiveHelper.height(80),
             child: Lottie.asset(AssetsPath.chatJson, fit: BoxFit.contain),
           ),
-
-          //const SizedBox(height: 8),
 
           // TITLE
           Text(
             "Easy Chat With\nyour friends",
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: ResponsiveHelper.titleFontSize(28), fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: ResponsiveHelper.titleFontSize(28),
+              fontWeight: FontWeight.bold,
+            ),
           ),
 
-          const SizedBox(height: 12),
+          SizedBox(height: ResponsiveHelper.spacing(12)),
 
           // SUBTITLE
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(32)),
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveHelper.padding(32),
+            ),
             child: Text(
               'welcome message'.tr,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: ResponsiveHelper.titleFontSize(14), color: Colors.black),
+              style: TextStyle(
+                fontSize: ResponsiveHelper.fontSize(14),
+                color: Colors.black,
+              ),
             ),
           ),
-          SizedBox(height: 40,),
+
+          SizedBox(height: ResponsiveHelper.spacing(40)),
+
+          // LANGUAGE BUTTON
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(24)),
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveHelper.padding(24),
+            ),
             child: OutlineButton(
               title: "Language",
-              onTap: () {
-
-              },
+              onTap: () {},
               borderColor: Colors.blue,
               textColor: Colors.blue,
             ),
           ),
-          SizedBox(height: 8),
+
+          SizedBox(height: ResponsiveHelper.spacing(8)),
 
           // LOGIN BUTTON
           Padding(
-            padding:EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(24)),
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveHelper.padding(24),
+            ),
             child: OutlineButton(
               title: "Log In",
               onTap: () {
                 context.pushNamed(RouteName.signIn);
               },
               borderColor: Colors.blue,
-              //borderColor: Color(0xFF1F71B8),
               textColor: Colors.blue,
             ),
           ),
 
-          const SizedBox(height: 8),
+          SizedBox(height: ResponsiveHelper.spacing(8)),
 
           // SIGN UP BUTTON
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(24)),
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveHelper.padding(24),
+            ),
             child: PrimaryButton(
               title: "Sign Up",
               onTap: () {
                 context.pushNamed(RouteName.signUp);
               },
               backgroundColor: Colors.blue,
-             //backgroundColor: const Color(0xFF1F71B8),
               textColor: Colors.white,
-            )
+            ),
           ),
 
-          const SizedBox(height: 24),
+          SizedBox(height: ResponsiveHelper.spacing(24)),
         ],
       ),
     );
@@ -172,13 +182,13 @@ class WelcomeScreen extends StatelessWidget {
 
   // Avatar Widget with percentage-based positioning
   Widget _avatar(
-    String image, {
-    double? topPercent,
-    double? leftPercent,
-    double? rightPercent,
-    required double radius,
-    required Size size,
-  }) {
+      String image, {
+        double? topPercent,
+        double? leftPercent,
+        double? rightPercent,
+        required double radius,
+        required Size size,
+      }) {
     return Positioned(
       top: topPercent != null ? size.height * topPercent : null,
       left: leftPercent != null ? size.width * leftPercent : null,

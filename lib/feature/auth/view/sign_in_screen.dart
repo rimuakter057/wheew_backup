@@ -52,7 +52,10 @@ class _SignInScreenState extends State<SignInScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
-        title: Text('sign_in'),
+        title: Text(
+          'sign_in',
+          style: TextStyle(fontSize: ResponsiveHelper.fontSize(18)),
+        ),
       ),
       body: GetBuilder<AuthController>(
         builder: (controller) {
@@ -63,24 +66,28 @@ class _SignInScreenState extends State<SignInScreen> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    const SizedBox(height: 40),
+                    SizedBox(height: ResponsiveHelper.spacing(40)),
 
                     /// Logo
-                    Image.asset(AssetsPath.signLogo),
+                    Image.asset(
+                      AssetsPath.signLogo,
+                      width: ResponsiveHelper.width(200),
+                    ),
 
-                    const SizedBox(height: 40),
+                    SizedBox(height: ResponsiveHelper.spacing(40)),
 
                     /// Email or License ID
                     CustomTextField(
                       controller: licenseController,
                       title: 'Email or License ID',
                       hintText: 'Enter email or license ID',
-                      validator: (value) => (value == null || value.trim().isEmpty)
+                      validator: (value) =>
+                      (value == null || value.trim().isEmpty)
                           ? 'Email or License ID is required'
                           : null,
                     ),
 
-                    const SizedBox(height: 16),
+                    SizedBox(height: ResponsiveHelper.spacing(16)),
 
                     /// Password
                     CustomTextField(
@@ -99,9 +106,9 @@ class _SignInScreenState extends State<SignInScreen> {
                       },
                     ),
 
-                    const SizedBox(height: 10),
+                    SizedBox(height: ResponsiveHelper.spacing(10)),
 
-                    /// Forgot Password (Removed Remember Me)
+                    /// Forgot Password
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
@@ -112,12 +119,15 @@ class _SignInScreenState extends State<SignInScreen> {
                         },
                         child: Text(
                           'forgot_password',
-                          style: const TextStyle(color: Color(0xFFA5D6A7)),
+                          style: TextStyle(
+                            color: const Color(0xFFA5D6A7),
+                            fontSize: ResponsiveHelper.fontSize(14),
+                          ),
                         ),
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    SizedBox(height: ResponsiveHelper.spacing(20)),
 
                     /// Sign In Button
                     controller.isLoading

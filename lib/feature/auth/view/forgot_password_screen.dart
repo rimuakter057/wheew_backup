@@ -13,7 +13,10 @@ class ForgotPasswordScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Forgot password'),
+        title: Text(
+          'Forgot password',
+          style: TextStyle(fontSize: ResponsiveHelper.fontSize(18)),
+        ),
         centerTitle: true,
       ),
       body: Padding(
@@ -23,7 +26,7 @@ class ForgotPasswordScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 20),
+            SizedBox(height: ResponsiveHelper.spacing(20)),
 
             Text(
               'Forgot Password',
@@ -33,7 +36,7 @@ class ForgotPasswordScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 8),
+            SizedBox(height: ResponsiveHelper.spacing(8)),
 
             Text(
               "Don't worry enter your registered email",
@@ -43,7 +46,7 @@ class ForgotPasswordScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 24),
+            SizedBox(height: ResponsiveHelper.spacing(24)),
 
             CustomTextField(
               title: 'Email',
@@ -55,18 +58,17 @@ class ForgotPasswordScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               height: ResponsiveHelper.buttonHeight(50),
-              child: /*ElevatedButton(
-                onPressed: () {
-                  // go to verification screen
+              child: PrimaryButton(
+                title: 'Send OTP',
+                onTap: () {
+                  context.goNamed(RouteName.otp);
                 },
-                child: const Text('Send OTP'),
-              ),*/
-              PrimaryButton(title:'Send OTP', onTap: (){
-                context.goNamed(RouteName.otp);
-              }),
+              ),
             ),
+
+            SizedBox(height: ResponsiveHelper.spacing(20)),
           ],
-        )
+        ),
       ),
     );
   }

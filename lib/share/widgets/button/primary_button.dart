@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../helper/responsive_helper/responsive_helper.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String title;
@@ -21,19 +22,24 @@ class PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: height,
+      height: ResponsiveHelper.buttonHeight(height!),
       width: double.infinity,
       child: ElevatedButton(
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius!),
+            borderRadius: BorderRadius.circular(
+              ResponsiveHelper.borderRadius(borderRadius!),
+            ),
           ),
         ),
         child: Text(
           title,
-          style: TextStyle(color: textColor),
+          style: TextStyle(
+            color: textColor,
+            fontSize: ResponsiveHelper.fontSize(16),
+          ),
         ),
       ),
     );

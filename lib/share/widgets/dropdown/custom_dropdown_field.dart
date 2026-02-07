@@ -1,7 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../utils/color/app_colors.dart';
-
 
 class CustomDropdownField<T> extends StatelessWidget {
   final String hintText;
@@ -43,24 +43,32 @@ class CustomDropdownField<T> extends StatelessWidget {
       isExpanded: true,
       value: items.contains(value) ? value : null,
       decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+        contentPadding: EdgeInsets.symmetric(
+          vertical: ResponsiveHelper.padding(16),
+          horizontal: ResponsiveHelper.padding(12),
+        ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.borderRadius(15),
+          ),
           borderSide: BorderSide(
-            color: hasError ? AppColors.errorColor : AppColors.brandHoverColor,
-            width: 1.2,
+            color: hasError ? AppColors.errorColor : AppColors.blue,
+            width: ResponsiveHelper.borderWidth(1.2),
           ),
         ),
         filled: true,
         fillColor: fillColor ?? AppColors.white,
         errorText: errorText,
-        errorStyle: const TextStyle(color: AppColors.errorColor),
+        errorStyle: TextStyle(
+          color: AppColors.errorColor,
+          fontSize: ResponsiveHelper.fontSize(12),
+        ),
       ),
       hint: Text(
         hintText,
-        style: const TextStyle(
-          color: AppColors.brandHoverColor,
-          fontSize: 14,
+        style: TextStyle(
+          color: AppColors.secondaryText,
+          fontSize: ResponsiveHelper.fontSize(14),
         ),
       ),
       items: items
@@ -68,31 +76,37 @@ class CustomDropdownField<T> extends StatelessWidget {
         value: item,
         child: Text(
           labelBuilder?.call(item) ?? item.toString(),
-          style: const TextStyle(
-            color: AppColors.brandHoverColor,
-            fontSize: 14,
+          style: TextStyle(
+            color: AppColors.secondaryText,
+            fontSize: ResponsiveHelper.fontSize(14),
             fontWeight: FontWeight.w400,
           ),
         ),
-      )).toList(),
+      ))
+          .toList(),
       onChanged: enabled ? onChanged : null,
       validator: validationFunction,
-      style: const TextStyle(
-        color: AppColors.brandHoverColor,
-        fontSize: 14,
+      style: TextStyle(
+        color: AppColors.secondaryText,
+        fontSize: ResponsiveHelper.fontSize(14),
         fontWeight: FontWeight.w400,
       ),
-      buttonStyleData: const ButtonStyleData(
-        padding: EdgeInsets.only(right: 8),
+      buttonStyleData: ButtonStyleData(
+        padding: EdgeInsets.only(right: ResponsiveHelper.padding(8)),
       ),
-      iconStyleData: const IconStyleData(
-        icon: Icon(Icons.keyboard_arrow_down, color: AppColors.brandHoverColor),
-        iconSize: 24,
+      iconStyleData: IconStyleData(
+        icon: const Icon(
+          Icons.keyboard_arrow_down,
+          color: AppColors.black,
+        ),
+        iconSize: ResponsiveHelper.iconSize(24),
       ),
       dropdownStyleData: DropdownStyleData(
-        maxHeight: 300,
+        maxHeight: ResponsiveHelper.height(300),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.borderRadius(8),
+          ),
           color: AppColors.white,
           boxShadow: [
             BoxShadow(
@@ -103,8 +117,11 @@ class CustomDropdownField<T> extends StatelessWidget {
           ],
         ),
       ),
-      menuItemStyleData: const MenuItemStyleData(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      menuItemStyleData: MenuItemStyleData(
+        padding: EdgeInsets.symmetric(
+          horizontal: ResponsiveHelper.padding(16),
+          vertical: ResponsiveHelper.padding(10),
+        ),
       ),
     );
   }

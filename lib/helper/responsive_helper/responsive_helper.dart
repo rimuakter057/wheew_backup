@@ -1,6 +1,5 @@
-// ignore_for_file: unused_field
-
 import 'package:flutter/material.dart';
+
 
 /// Responsive Helper for perfect scaling on iPhone and iPad
 class ResponsiveHelper {
@@ -36,16 +35,16 @@ class ResponsiveHelper {
     return phoneSize;
   }
 
-  /// Title FontSize
 
+  /// Title FontSize
   static double titleFontSize(double phoneSize) {
     if (_isTablet) {
       if (_screenWidth > 800) {
-        return phoneSize * 1.4;
+        return phoneSize * 1.4; // iPad Pro
       }
-      return phoneSize * 1.2;
+      return phoneSize * 1.2; // iPad mini/regular
     }
-    return phoneSize;
+    return phoneSize; // Phone
   }
 
   /// Get responsive spacing (for gaps between elements)

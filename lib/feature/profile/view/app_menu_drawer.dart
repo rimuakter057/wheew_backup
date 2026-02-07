@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
+import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../auth/repository/auth_controller.dart';
 import '../repository/profile_controller.dart';
 import '../../../core/router/routes_name.dart';
@@ -16,11 +18,12 @@ class AppMenuDrawer extends StatelessWidget {
     final AuthController authController = Get.find<AuthController>();
 
     return Drawer(
+      backgroundColor: AppColors.white,
       child: SafeArea(
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(ResponsiveHelper.padding(20)),
               child: Obx(() {
                 final user = profileController.userProfile.value;
 
@@ -33,23 +36,23 @@ class AppMenuDrawer extends StatelessWidget {
                     // Avatar
                     profileController.profileImage.value != null
                         ? CircleAvatar(
-                      radius: 28,
+                      radius: ResponsiveHelper.width(28),
                       backgroundImage: FileImage(
                         profileController.profileImage.value!,
                       ),
                     )
                         : UserAvatar(
                       imagePath: user?.avatar,
-                      radius: 28,
+                      radius: ResponsiveHelper.width(28),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: ResponsiveHelper.spacing(12)),
                     // Nickname
                     Expanded(
                       child: Text(
                         user?.nickName ?? 'Loading...',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.w600,
-                          fontSize: 16,
+                          fontSize: ResponsiveHelper.fontSize(16),
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -62,18 +65,30 @@ class AppMenuDrawer extends StatelessWidget {
             const Divider(),
 
             ListTile(
-              leading: const Icon(Icons.person_outline),
-              title: const Text('Profile'),
+              leading: Icon(
+                Icons.person_outline,
+                size: ResponsiveHelper.iconSize(24),
+              ),
+              title: Text(
+                'Profile',
+                style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 context.pushNamed(RouteName.profile);
               },
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: ResponsiveHelper.spacing(8)),
 
             ListTile(
-              leading: const Icon(Icons.description_outlined),
-              title: Text('terms_and_condition'.tr),
+              leading: Icon(
+                Icons.description_outlined,
+                size: ResponsiveHelper.iconSize(24),
+              ),
+              title: Text(
+                'terms_and_condition'.tr,
+                style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 context.pushNamed(RouteName.terms);
@@ -83,8 +98,18 @@ class AppMenuDrawer extends StatelessWidget {
             const Spacer(),
 
             ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text('Logout', style: TextStyle(color: Colors.red)),
+              leading: Icon(
+                Icons.logout,
+                color: AppColors.errorColor,
+                size: ResponsiveHelper.iconSize(24),
+              ),
+              title: Text(
+                'Logout',
+                style: TextStyle(
+                  color: AppColors.errorColor,
+                  fontSize: ResponsiveHelper.fontSize(16),
+                ),
+              ),
               onTap: () async {
                 await authController.logout();
                 if (!context.mounted) return;
