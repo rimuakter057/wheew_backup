@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../auth/repository/auth_controller.dart';
 import '../repository/profile_controller.dart';
 import '../../../core/router/routes_name.dart';
-import '../../../utils/assets_path/assets_path.dart';
+import '../../../share/widgets/avatar/user_avatar.dart';
 
 class AppMenuDrawer extends StatelessWidget {
   const AppMenuDrawer({super.key});
@@ -21,36 +21,42 @@ class AppMenuDrawer extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  Obx(() {
-                    final user = profileController.userProfile.value;
+              child: Obx(() {
+                final user = profileController.userProfile.value;
 
-                    return Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 28,
-                          backgroundImage:
-                              profileController.profileImage.value != null
-                              ? FileImage(profileController.profileImage.value!)
-                              : (user?.avatar != null
-                                        ? NetworkImage(user!.avatar!)
-                                        : const AssetImage(AssetsPath.person3))
-                                    as ImageProvider,
+                // Debug prints
+                print('User profile: ${user?.nickName}');
+                print('Avatar: ${user?.avatar}');
+
+                return Row(
+                  children: [
+                    // Avatar
+                    profileController.profileImage.value != null
+                        ? CircleAvatar(
+                      radius: 28,
+                      backgroundImage: FileImage(
+                        profileController.profileImage.value!,
+                      ),
+                    )
+                        : UserAvatar(
+                      imagePath: user?.avatar,
+                      radius: 28,
+                    ),
+                    const SizedBox(width: 12),
+                    // Nickname
+                    Expanded(
+                      child: Text(
+                        user?.nickName ?? 'Loading...',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
                         ),
-                        const SizedBox(width: 12),
-                        Text(
-                          user?.nickName ?? '',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    );
-                  }),
-                ],
-              ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                );
+              }),
             ),
 
             const Divider(),
@@ -63,7 +69,7 @@ class AppMenuDrawer extends StatelessWidget {
                 context.pushNamed(RouteName.profile);
               },
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
 
             ListTile(
               leading: const Icon(Icons.description_outlined),
