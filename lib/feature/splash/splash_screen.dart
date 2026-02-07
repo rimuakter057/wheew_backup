@@ -1,46 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:platchatapp/feature/auth/view/welcome_screen.dart';
-import '../../core/router/routes.dart';
+import 'package:platchatapp/core/service/socket_service.dart';
 import '../../core/router/routes_name.dart';
-import '../../utils/assets_path.dart';
-
+import '../../core/service/storage_service.dart';
+import '../../helper/responsive_helper/responsive_helper.dart';
+import '../../utils/app_const/app_const.dart';
+import '../../utils/assets_path/assets_path.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
-  static const String name = '/';
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
     super.initState();
-    _moveToNextScreen();
+    _checkLoginAndNavigate();
   }
 
-  Future<void> _moveToNextScreen() async {
+  Future<void> _checkLoginAndNavigate() async {
     await Future.delayed(const Duration(seconds: 2));
-    //context.pushNamed(RouteName.welcome);
-    //AppRouter.router.go('/home');
-    AppRouter.router.pushNamed(RouteName.welcome);
 
+    if (!mounted) return;
+
+    final bool isLoggedIn =
+        await SharePrefsHelper.getBool(AppConst.isLoggedIn) ?? false;
+
+    if (isLoggedIn) {
+
+      await SocketApi.init(
+        onSocketConnect: () {
+          context.goNamed(RouteName.chatList);
+        },
+      );
+
+     // context.goNamed(RouteName.chatList);
+    } else {
+      context.goNamed(RouteName.welcome);
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Column(
           children: [
-            Spacer(),
-            SvgPicture.asset(AssetsPath.logoSvg,width: 240,),
-            SizedBox(height: 12,),
-            Text('CONNECTING DRIVERS ONE PLATE AT A TIME'),
-            Spacer(),
+            const Spacer(),
+            SvgPicture.asset(
+              AssetsPath.logoSvg,
+              width: ResponsiveHelper.width(240),
+            ),
+            SizedBox(height: ResponsiveHelper.spacing(12)),
+            Text(
+              'CONNECTING DRIVERS ONE PLATE AT A TIME',
+              style: TextStyle(
+                fontSize: ResponsiveHelper.fontSize(12),
+              ),
+            ),
+            const Spacer(),
+            const CircularProgressIndicator(),
+            SizedBox(height: ResponsiveHelper.spacing(40)),
           ],
         ),
       ),
