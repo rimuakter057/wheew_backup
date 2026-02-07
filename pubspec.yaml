@@ -38,6 +38,9 @@ dependencies:
   fluttertoast: ^8.2.4
   image_picker: ^1.2.1
   shared_preferences: ^2.5.4
+  socket_io_client: ^3.1.4
+  connectivity_plus: ^7.0.0
+  google_fonts: ^8.0.1
 
 
 
@@ -62,4 +65,5 @@ flutter:
   assets:
     - assets/logo/
     - assets/images/
+    - assets/icons/
     - assets/animations/

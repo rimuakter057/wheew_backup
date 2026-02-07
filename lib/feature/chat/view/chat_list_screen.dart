@@ -110,7 +110,7 @@ class ChatListScreen extends StatelessWidget {
                         message: chat.message,
                         time: chat.time,
                         imagePath: chat.imagePath ?? "assets/images/person1.png",
-                        onTap: () => context.pushNamed(RouteName.inbox),
+                        onTap: () => context.pushNamed(RouteName.message),
                       );
                     },
                   ),
