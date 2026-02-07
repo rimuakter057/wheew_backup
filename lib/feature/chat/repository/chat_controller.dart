@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:http/http.dart';
+import '../../../core/service/socket_service.dart';
 import 'chat_repository.dart';
 import '../../../share/model/chat_model.dart';
 
@@ -103,4 +106,19 @@ class ChatController extends GetxController {
     _isSearching = false;
     update();
   }
+
+  getAllConversation({int? page = 1}) async {
+    final payload = {"page": page.toString(), "limit": 10};
+
+    SocketApi.emitWithAck("fetch-chat-rooms", payload, ack: (value) {
+      debugPrint('===>> fetch-chat-rooms===================>> $value');
+    });
+
+  }
+
+
+
+
+
+
 }

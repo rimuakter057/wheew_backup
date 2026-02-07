@@ -16,6 +16,8 @@ class AppColors {
   static const Color brandHoverColor = Color(0xFF1070B7);
   static const Color softBrandColor = Color(0xFFE6ECF5);
   static const Color successColor = Color(0xFF28A745);
+  static const Color greyShade = Color(0xffEEF0F4);
+  static const Color blueBox=Color(0xFF0088FF);
   
 
 }

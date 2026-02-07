@@ -39,9 +39,9 @@ class _SignInScreenState extends State<SignInScreen> {
         rememberMe: true, // Always save login for auto-login
       );
 
-      if (success && mounted) {
-        context.goNamed(RouteName.chatList);
-      }
+      // if (success && mounted) {
+      //  // context.goNamed(RouteName.chatList);
+      // }
     }
   }
 

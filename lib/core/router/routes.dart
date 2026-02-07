@@ -12,6 +12,7 @@ import 'package:platchatapp/feature/auth/view/terms_and_condition_screen.dart';
 import 'package:platchatapp/feature/auth/view/otp_screen.dart';
 import 'package:platchatapp/feature/chat/view/chat_list_screen.dart';
 import 'package:platchatapp/feature/chat/view/inbox_screen.dart';
+import 'package:platchatapp/feature/chat/view/message_screen.dart';
 import 'package:platchatapp/feature/profile/view/profile_screen.dart';
 import '../../feature/splash/splash_screen.dart';
 import '../../feature/auth/view/welcome_screen.dart';
@@ -99,6 +100,12 @@ class AppRouter {
         name: RouteName.inbox,
         builder: (_, __) => const InboxScreen(),
       ),
+      GoRoute(
+        path: RoutePath.message,
+        name: RouteName.message,
+        builder: (_, __) => const MessageScreen(),
+      ),
+
       GoRoute(
         path: RoutePath.profile,
         name: RouteName.profile,

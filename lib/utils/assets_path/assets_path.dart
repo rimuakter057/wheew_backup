@@ -1,10 +1,15 @@
 class AssetsPath {
   static const String _logoBase = 'assets/logo/';
   static const String _imagesBase = 'assets/images/';
+  static const String _iconsBase = 'assets/icons/';
   static const String _animationBase = 'assets/animations/';
 
   // Logos
   static const String logoSvg = '${_logoBase}logo.svg';
+
+  //icons====================================
+  static const String send = '${_iconsBase}send.svg';
+
 
   // Animations
   static const String chatJson = '${_animationBase}Chat.json';

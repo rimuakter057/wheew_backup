@@ -5,6 +5,7 @@ class RoutePath {
   static const signUp = '/sign-up';
   static const chatList = '/chat-list';
   static const inbox = '/inbox';
+  static const message='/message';
   static const terms = '/terms';
   static const profile = '/profile';
   static const forgot_password = '/forgot-password';

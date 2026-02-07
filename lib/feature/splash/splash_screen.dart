@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:platchatapp/core/service/socket_service.dart';
 import '../../core/router/routes_name.dart';
 import '../../core/service/storage_service.dart';
 import '../../helper/responsive_helper/responsive_helper.dart';
@@ -30,7 +31,14 @@ class _SplashScreenState extends State<SplashScreen> {
         await SharePrefsHelper.getBool(AppConst.isLoggedIn) ?? false;
 
     if (isLoggedIn) {
-      context.goNamed(RouteName.chatList);
+
+      await SocketApi.init(
+        onSocketConnect: () {
+          context.goNamed(RouteName.chatList);
+        },
+      );
+
+     // context.goNamed(RouteName.chatList);
     } else {
       context.goNamed(RouteName.welcome);
     }
