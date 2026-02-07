@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Response;
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart';
+import 'package:platchatapp/core/router/routes_name.dart';
+import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import '../../../core/service/api_checker.dart';
 import '../../../core/service/storage_service.dart';
@@ -34,16 +37,25 @@ class AuthController extends GetxController {
 
     _setLoading(false);
 
+
+
     if (loginRes.statusCode == 200) {
       final data = jsonDecode(loginRes.body);
       final String token = data['token'];
+      final String userId=data['id'];
 
       // ✅ Save token
       await SharePrefsHelper.setString(AppConst.token, token);
+      await SharePrefsHelper.setString(AppConst.userID, userId);
       await SharePrefsHelper.setBool(AppConst.isLoggedIn, true);
-
-      // ✅ Save user data
       await _saveUserData(data);
+
+
+      await SocketApi.init(
+        onSocketConnect: () {
+          context.goNamed(RouteName.chatList);
+        },
+      );
 
       return true;
     } else {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
@@ -8,8 +9,29 @@ import '../repository/chat_controller.dart';
 import '../../profile/view/app_menu_drawer.dart';
 import 'chat_tile.dart';
 
-class ChatListScreen extends StatelessWidget {
+class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
+
+  @override
+  State<ChatListScreen> createState() => _ChatListScreenState();
+}
+
+class _ChatListScreenState extends State<ChatListScreen> {
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (!SocketApi.isConnected) {
+      SocketApi.init(
+        onSocketConnect: () {
+          debugPrint('=======================================Socket connected from ChatListScreen=====================');
+        },
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
