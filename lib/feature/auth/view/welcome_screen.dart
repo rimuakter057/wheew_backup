@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../share/widgets/button/outline_button.dart';
 import '../../../share/widgets/button/primary_button.dart';
+import '../../../share/widgets/button/toggle_button.dart';
 import '../../../utils/assets_path/assets_path.dart';
 import '../../../utils/extension/string_extension.dart';
 
@@ -110,34 +112,12 @@ class WelcomeScreen extends StatelessWidget {
 
           SizedBox(height: ResponsiveHelper.spacing(12)),
 
-          // SUBTITLE
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: ResponsiveHelper.padding(32),
-            ),
-            child: Text(
-              'welcome message'.tr,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: ResponsiveHelper.fontSize(14),
-                color: Colors.black,
-              ),
-            ),
-          ),
-
-          SizedBox(height: ResponsiveHelper.spacing(40)),
-
-          // LANGUAGE BUTTON
+          /// LANGUAGE BUTTON
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: ResponsiveHelper.padding(24),
             ),
-            child: OutlineButton(
-              title: "Language",
-              onTap: () {},
-              borderColor: Colors.blue,
-              textColor: Colors.blue,
-            ),
+            child: const LanguageToggleWidget(),
           ),
 
           SizedBox(height: ResponsiveHelper.spacing(8)),
