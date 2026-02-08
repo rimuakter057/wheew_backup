@@ -4,11 +4,13 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:http/http.dart';
+import 'package:platchatapp/feature/chat/model/chat_model.dart';
 import '../../../core/service/socket_service.dart';
 import 'chat_repository.dart';
-import '../../../share/model/chat_model.dart';
+
 
 class ChatController extends GetxController {
+
   final ChatRepository _repo = ChatRepository();
 
   bool _isLoading = false;
@@ -28,7 +30,7 @@ class ChatController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getChatList();
+    getChatSearchList();
   }
 
   @override
@@ -37,7 +39,7 @@ class ChatController extends GetxController {
     super.onClose();
   }
 
-  Future<void> getChatList() async {
+  Future<void> getChatSearchList() async {
     _isLoading = true;
     update();
 
@@ -117,7 +119,16 @@ class ChatController extends GetxController {
   }
 
 
+  ///=======================user chat list===================================================================
 
+
+Future <void> getAllUserChatList()async{
+
+
+
+
+
+}
 
 
 

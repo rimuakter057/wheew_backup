@@ -5,6 +5,7 @@ import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
 import 'core/router/routes.dart';
 import 'core/theme/light_theme.dart';
+import 'feature/chat/repository/chat_controller.dart';
 import 'helper/responsive_helper/responsive_helper.dart';
 
 void main() async {
@@ -13,6 +14,7 @@ void main() async {
   // Initialize controllers
   Get.put(AuthController());
   Get.put(ProfileController());
+  Get.put(ChatController());
 
 
 

@@ -17,21 +17,38 @@ class ChatListScreen extends StatefulWidget {
 }
 
 class _ChatListScreenState extends State<ChatListScreen> {
-
-
-  @override
-  void initState() {
-    super.initState();
-
-    if (!SocketApi.isConnected) {
-      SocketApi.init(
-        onSocketConnect: () {
-          debugPrint('=======================================Socket connected from ChatListScreen=====================');
-        },
-      );
-    }
-  }
-
+  final ChatController controller = Get.put(ChatController());
+  final ScrollController scrollController = ScrollController();
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   controller.fetchChatRooms();
+  //
+  //   scrollController.addListener(() {
+  //     if (scrollController.position.pixels >=
+  //         scrollController.position.maxScrollExtent - 100 &&
+  //         controller.hasMore &&
+  //         !controller.isLoadingMore.value) {
+  //       controller.fetchChatRooms();
+  //     }
+  //   });
+  //
+  //   if (!SocketApi.isConnected) {
+  //     SocketApi.init(
+  //       onSocketConnect: () {
+  //         debugPrint('Socket connected from ChatListScreen');
+  //       },
+  //     );
+  //   }
+  // }
+  //
+  // @override
+  // void dispose() {
+  //   scrollController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -64,21 +81,18 @@ class _ChatListScreenState extends State<ChatListScreen> {
         ],
       ),
       endDrawer: const AppMenuDrawer(),
-      body: GetBuilder<ChatController>(
-        init: ChatController(),
-        builder: (controller) {
-          // Determine which list to display
-          final displayList = controller.isSearching || controller.searchResults.isNotEmpty
-              ? controller.searchResults
-              : controller.chatList;
 
-          return Column(
-            children: [
-              // Search bar
-              Padding(
-                padding: EdgeInsets.all(ResponsiveHelper.padding(12)),
+      body: Column(
+        children: [
+          // Search bar (clickable)
+          Padding(
+            padding: EdgeInsets.all(ResponsiveHelper.padding(12)),
+            child: GestureDetector(
+              onTap: () {
+                context.pushNamed(RouteName.searchList);
+              },
+              child: AbsorbPointer(
                 child: TextField(
-                  onChanged: (value) => controller.searchUsers(value),
                   style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
                   decoration: InputDecoration(
                     hintText: 'search_here'.tr,
@@ -87,18 +101,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       Icons.search,
                       size: ResponsiveHelper.iconSize(24),
                     ),
-                    suffixIcon: controller.isSearching
-                        ? Padding(
-                      padding: EdgeInsets.all(ResponsiveHelper.padding(12)),
-                      child: SizedBox(
-                        width: ResponsiveHelper.width(20),
-                        height: ResponsiveHelper.height(20),
-                        child: CircularProgressIndicator(
-                          strokeWidth: ResponsiveHelper.borderWidth(2),
-                        ),
-                      ),
-                    )
-                        : null,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(
                         ResponsiveHelper.borderRadius(30),
@@ -107,41 +109,74 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   ),
                 ),
               ),
+            ),
+          ),
 
-              // Chat list
-              Expanded(
-                child: controller.isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : displayList.isEmpty
-                    ? Center(
-                  child: Text(
-                    'no_chats'.tr,
-                    style: TextStyle(
-                      fontSize: ResponsiveHelper.fontSize(16),
-                    ),
-                  ),
-                )
-                    : RefreshIndicator(
-                  onRefresh: () => controller.getChatList(),
-                  child: ListView.builder(
-                    itemCount: displayList.length,
-                    itemBuilder: (context, index) {
-                      final chat = displayList[index];
-                      return ChatTile(
-                        name: chat.name,
-                        message: chat.message,
-                        time: chat.time,
-                        imagePath: chat.imagePath ?? "assets/images/person1.png",
-                        onTap: () => context.pushNamed(RouteName.message),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
+          // // Expanded ListView for user chat list
+          // Expanded(
+          //   child: Obx(() {
+          //     final chatList = controller.userChatList;
+          //
+          //     // Loading indicator while first page is loading
+          //     if (controller.isLoadingChat.value && chatList.isEmpty) {
+          //       return const Center(child: CircularProgressIndicator());
+          //     }
+          //
+          //     // Empty list text
+          //     if (chatList.isEmpty) {
+          //       return Center(
+          //         child: Text(
+          //           'no_chats'.tr, // "No chats available" translation key
+          //           style: TextStyle(
+          //             fontSize: ResponsiveHelper.fontSize(16),
+          //             color: Colors.grey,
+          //           ),
+          //         ),
+          //       );
+          //     }
+          //
+          //     // List with pagination
+          //     return RefreshIndicator(
+          //       onRefresh: () => controller.fetchChatRooms(refresh: true),
+          //       child: ListView.builder(
+          //         controller: scrollController,
+          //         itemCount: chatList.length + 1, // +1 for loading more indicator
+          //         itemBuilder: (context, index) {
+          //           if (index == chatList.length) {
+          //             return controller.hasMore
+          //                 ? const Padding(
+          //               padding: EdgeInsets.all(8),
+          //               child: Center(
+          //                 child: CircularProgressIndicator(),
+          //               ),
+          //             )
+          //                 : const SizedBox.shrink();
+          //           }
+          //
+          //           final chat = chatList[index];
+          //           return ChatTile(
+          //             name: chat.otherUser?.nickName ?? "No Name",
+          //             message: chat.latestMessage?.message ?? "",
+          //             time: chat.latestMessage?.createdAt ?? "",
+          //             imagePath: chat.otherUser?.avatar ??
+          //                 "assets/images/person1.png",
+          //             onTap: () {
+          //               context.pushNamed(RouteName.message);
+          //             },
+          //           );
+          //         },
+          //       ),
+          //     );
+          //   }),
+          // )
+
+
+
+
+        ],
       ),
+
+
     );
   }
 }
