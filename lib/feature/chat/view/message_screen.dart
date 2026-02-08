@@ -45,6 +45,10 @@ class _MessageScreenState extends State<MessageScreen> {
     );
 
 
+    controller.sendNewListenMessage();
+
+
+
     controller.fetchRoomMessage(roomId: widget.roomId, refresh: true);
 
     // Scroll listener for pagination
@@ -82,117 +86,120 @@ class _MessageScreenState extends State<MessageScreen> {
           style: TextStyle(fontSize: ResponsiveHelper.fontSize(18)),
         ),
       ),
-      body: Column(
-        children: [
-          /// Fixed heading container
-          CustomContainer(
-            margin: EdgeInsets.all(ResponsiveHelper.width(16)),
-            backgroundColor: AppColors.greyShade,
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 22,
-                  backgroundImage: NetworkImage(
-                    ImageHandler.imagesHandle(widget.otherUserAvatar, isProfile: true),
+      body: RefreshIndicator(
+        onRefresh:  () => controller.fetchRoomMessage(roomId: widget.roomId),
+        child: Column(
+          children: [
+            /// Fixed heading container
+            CustomContainer(
+              margin: EdgeInsets.all(ResponsiveHelper.width(16)),
+              backgroundColor: AppColors.greyShade,
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 22,
+                    backgroundImage: NetworkImage(
+                      ImageHandler.imagesHandle(widget.otherUserAvatar, isProfile: true),
+                    ),
                   ),
-                ),
 
 
 
 
 
-                SizedBox(width: ResponsiveHelper.spacing(12)),
-                Text(
-                  widget.otherUserName,
-                  style: TextStyle(
-                    fontSize: ResponsiveHelper.fontSize(16),
-                    fontWeight: FontWeight.w600,
+                  SizedBox(width: ResponsiveHelper.spacing(12)),
+                  Text(
+                    widget.otherUserName,
+                    style: TextStyle(
+                      fontSize: ResponsiveHelper.fontSize(16),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
 
-          /// Chat messages list
-          Expanded(
-            child: Obx(() {
-              final messages = controller.userMessageList;
+            /// Chat messages list
+            Expanded(
+              child: Obx(() {
+                final messages = controller.userMessageList;
 
-              // 🔹 Only first page loading
-              if (controller.isLoadingMessage.value && messages.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
-              }
+                // 🔹 Only first page loading
+                if (controller.isLoadingMessage.value && messages.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              if (messages.isEmpty) {
-                return Center(
-                  child: Text(
-                    "No messages yet",
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                );
-              }
-
-              return ListView.builder(
-                controller: _scrollController,
-                padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.width(16), vertical: ResponsiveHelper.height(8)),
-                itemCount: messages.length + (controller.hasMoreMessage ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index == messages.length) {
-                    // 🔹 Only show bottom loading for pagination
-                    return controller.isLoadingMoreMessage.value
-                        ? const Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Center(child: CircularProgressIndicator()),
-                    )
-                        : const SizedBox.shrink();
-                  }
-
-                  final msg = messages[index];
-                  final bool isMine = msg.isMine == true;
-
-                  return Align(
-                    alignment:
-                    isMine ? Alignment.centerRight : Alignment.centerLeft,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-                      decoration: BoxDecoration(
-                        color: isMine ? AppColors.blueBox : AppColors.black,
-                        borderRadius: BorderRadius.only(
-                          topLeft: const Radius.circular(15),
-                          topRight: const Radius.circular(15),
-                          bottomLeft: isMine ? const Radius.circular(15) : Radius.zero,
-                          bottomRight: isMine ? Radius.zero : const Radius.circular(15),
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment:
-                        isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            msg.message ?? "",
-                            style: const TextStyle(color: AppColors.white),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            msg.createdAt != null
-                                ? DateFormat.jm().format(DateTime.parse(msg.createdAt!))
-                                : "",
-                            style: const TextStyle(color: Colors.white54, fontSize: 10),
-                          ),
-                        ],
-                      ),
+                if (messages.isEmpty) {
+                  return Center(
+                    child: Text(
+                      "No messages yet",
+                      style: TextStyle(color: Colors.grey),
                     ),
                   );
-                },
-              );
-            }),
-          ),
+                }
+
+                return ListView.builder(
+                  controller: _scrollController,
+                  padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.width(16), vertical: ResponsiveHelper.height(8)),
+                  itemCount: messages.length + (controller.hasMoreMessage ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == messages.length) {
+                      // 🔹 Only show bottom loading for pagination
+                      return controller.isLoadingMoreMessage.value
+                          ? const Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                          : const SizedBox.shrink();
+                    }
+
+                    final msg = messages[index];
+                    final bool isMine = msg.isMine == true;
+
+                    return Align(
+                      alignment:
+                      isMine ? Alignment.centerRight : Alignment.centerLeft,
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: isMine ? AppColors.blueBox : AppColors.black,
+                          borderRadius: BorderRadius.only(
+                            topLeft: const Radius.circular(15),
+                            topRight: const Radius.circular(15),
+                            bottomLeft: isMine ? const Radius.circular(15) : Radius.zero,
+                            bottomRight: isMine ? Radius.zero : const Radius.circular(15),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment:
+                          isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              msg.message ?? "",
+                              style: const TextStyle(color: AppColors.white),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              msg.createdAt != null
+                                  ? DateFormat.jm().format(DateTime.parse(msg.createdAt!))
+                                  : "",
+                              style: const TextStyle(color: Colors.white54, fontSize: 10),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }),
+            ),
 
 
-          /// Message Input Field
-          _messageInput(),
-        ],
+            /// Message Input Field
+            _messageInput(),
+          ],
+        ),
       ),
     );
   }
@@ -246,10 +253,13 @@ class _MessageScreenState extends State<MessageScreen> {
                 debugPrint("///////////////////////////////");
 
 
-               await controller.sendNewEmitMessage(
+                controller.sendNewEmitMessage(
                   receiverId:widget.receiverId,
                   message: _controller.text.toString(),
                 );
+
+
+                controller.sendNewListenMessage();
 
                 debugPrint(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
 
@@ -257,6 +267,10 @@ class _MessageScreenState extends State<MessageScreen> {
               },
               child: SvgPicture.asset(AssetsPath.send),
             ),
+
+
+
+
 
 
 
