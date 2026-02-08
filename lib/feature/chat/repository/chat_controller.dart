@@ -97,6 +97,27 @@ class ChatController extends GetxController {
     return completer.future; // UI থেকে await করা যাবে
   }
 
+ Future<void> sendNewListenMessage()async {
+
+
+   AppSocket.onEvent('message-sent', (value) {
+  debugPrint('====================== send new message============================ ');
+
+
+});
+
+  }
+
+
+
+
+
+
+
+
+
+
+
 
 
   ///=======================================================================
