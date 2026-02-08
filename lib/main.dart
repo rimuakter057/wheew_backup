@@ -1,20 +1,28 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
+import 'package:platchatapp/utils/string/AppTranslations.dart';
 import 'core/router/routes.dart';
 import 'core/theme/light_theme.dart';
 import 'feature/chat/repository/chat_controller.dart';
 import 'helper/responsive_helper/responsive_helper.dart';
-
+import 'language/language_controller.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize controllers
   Get.put(AuthController());
   Get.put(ProfileController());
+
   Get.put(ChatController());
+
+  Get.put(LanguageController());
+
+  // ✅ Register translations once
+  Get.addTranslations(AppTranslations().keys);
 
 
 
@@ -33,16 +41,35 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    final languageController = Get.find<LanguageController>();
+
+    return Obx(() => MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'My App',
       theme: lightTheme,
+
+      // ✅ GoRouter
       routerConfig: AppRouter.router,
+
+      // ✅ GetX locale (reactive)
+      locale: languageController.currentLocale.value,
+
+      supportedLocales: [
+        Locale('en', 'US'),
+        Locale('it', 'IT'),
+      ],
+
+      // ✅ CORRECT localization delegates
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+
       builder: (context, widget) {
-        // Initialize ResponsiveHelper here, called once per route
         ResponsiveHelper.init(context);
         return widget!;
       },
-    );
+    ));
   }
 }
