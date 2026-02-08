@@ -13,6 +13,7 @@ import 'package:platchatapp/feature/auth/view/otp_screen.dart';
 import 'package:platchatapp/feature/chat/view/chat_list_screen.dart';
 import 'package:platchatapp/feature/chat/view/inbox_screen.dart';
 import 'package:platchatapp/feature/chat/view/message_screen.dart';
+import 'package:platchatapp/feature/chat/view/serach_screen.dart';
 import 'package:platchatapp/feature/profile/view/profile_screen.dart';
 import '../../feature/splash/splash_screen.dart';
 import '../../feature/auth/view/welcome_screen.dart';
@@ -96,6 +97,12 @@ class AppRouter {
         builder: (_, __) => const ChatListScreen(),
       ),
       GoRoute(
+        path: RoutePath.searchList,
+        name: RouteName.searchList,
+        builder: (_, __) => const SearchListScreen(),
+      ),
+
+      GoRoute(
         path: RoutePath.inbox,
         name: RouteName.inbox,
         builder: (_, __) => const InboxScreen(),
@@ -103,8 +110,19 @@ class AppRouter {
       GoRoute(
         path: RoutePath.message,
         name: RouteName.message,
-        builder: (_, __) => const MessageScreen(),
+        builder: (context, state) {
+          final args = state.extra as Map<String, dynamic>;
+
+          return MessageScreen(
+            roomId: args['roomId']??'',
+            otherUserName: args['otherUserName']??"",
+            otherUserAvatar: args['otherUserAvatar']??'',
+            receiverId: args['receiverId']??'',
+          );
+        },
       ),
+
+
 
       GoRoute(
         path: RoutePath.profile,

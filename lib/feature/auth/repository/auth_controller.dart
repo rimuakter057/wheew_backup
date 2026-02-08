@@ -51,7 +51,7 @@ class AuthController extends GetxController {
       await _saveUserData(data);
 
 
-      await SocketApi.init(
+      await AppSocket.init(
         onSocketConnect: () {
           context.goNamed(RouteName.chatList);
         },

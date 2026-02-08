@@ -4,11 +4,165 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:http/http.dart';
+import 'package:platchatapp/core/service/api_client.dart';
+import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/feature/chat/model/chat_model.dart';
+import 'package:platchatapp/feature/chat/model/message_response_model.dart';
+import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
 import '../../../core/service/socket_service.dart';
 import 'chat_repository.dart';
-import '../../../share/model/chat_model.dart';
+
 
 class ChatController extends GetxController {
+
+  ///==============================================================
+
+
+  /// get all message list ================================================
+  RxList<Messages> userMessageList = <Messages>[].obs;
+
+  var isLoadingMessage = false.obs;     // first page
+  var isLoadingMoreMessage = false.obs; // pagination
+
+  int pageCount = 1;
+  final int limitCount = 10;
+  int totalCount = 0;
+
+  bool get hasMoreMessage => userMessageList.length < totalCount;
+
+  Future<void> fetchRoomMessage({
+    required String roomId,
+    bool refresh = false,
+  }) async {
+    if (refresh) {
+      pageCount = 1;
+      totalCount = 0;
+      userMessageList.clear();
+    }
+
+    if ((pageCount > 1 && isLoadingMoreMessage.value) ||
+        (pageCount == 1 && isLoadingMessage.value)) return;
+
+    if (pageCount == 1) {
+      isLoadingMessage.value = true;
+    } else {
+      isLoadingMoreMessage.value = true;
+    }
+
+    final uri = ApiUrl.getRoomMessage(
+      roomId: roomId,
+      page: pageCount,
+      limit: limitCount,
+    );
+
+    Response response = await ApiClient.getData(uri: uri);
+    final body = jsonDecode(response.body);
+
+    if (response.statusCode == 200 && body['messages'] != null) {
+      final data = MessageResponseModel.fromJson(body);
+      totalCount = data.total ?? 0;
+
+      if (data.messages != null && data.messages!.isNotEmpty) {
+        for (final msg in data.messages!) {
+          msg.isMine = msg.isMine == true;
+          userMessageList.add(msg);
+        }
+        pageCount++;
+      }
+    }
+
+    isLoadingMessage.value = false;
+    isLoadingMoreMessage.value = false;
+  }
+///socket========================
+
+  Future<dynamic> sendNewEmitMessage({
+    required String receiverId,
+    required String message,
+  }) {
+    final payload = {
+      'receiver_id': receiverId,
+      'message': message,
+    };
+
+    final completer = Completer<dynamic>();
+
+    AppSocket.emitWithAck("message", payload, ack: (value) {
+      completer.complete(value);
+
+      debugPrint("============sendNewEmitMessage success===============");
+
+    });
+
+    return completer.future; // UI থেকে await করা যাবে
+  }
+
+
+
+  ///=======================================================================
+
+
+
+
+
+  ///get all user chat list========================================================
+  RxList<Rooms> userChatList = <Rooms>[].obs;
+  var isLoadingChat = false.obs;
+  var isLoadingMore = false.obs;
+  int page = 1;
+  final int limit = 10;
+  int total = 0;
+  // fetch chat rooms
+  Future<void> fetchChatRooms({bool refresh = false}) async {
+    if (refresh) {
+      page = 1;
+      userChatList.clear();
+    }
+    if (isLoadingChat.value || isLoadingMore.value) return;
+
+    final isFirstPage = page == 1;
+    if (isFirstPage) {
+      isLoadingChat.value = true;
+    } else {
+      isLoadingMore.value = true;
+    }
+    // GET request
+    final uri = ApiUrl.getChatRooms(page: page, limit: limit);
+    Response response = await ApiClient.getData(uri: uri);
+
+    // decode JSON string to Map
+    final Map<String, dynamic> body = jsonDecode(response.body);
+
+    if (response.statusCode == 200 && body['rooms'] != null) {
+      final data = UserChatModel.fromJson(body);
+      total = data.total ?? 0;
+
+      if (data.rooms != null) {
+        userChatList.addAll(data.rooms!);
+        page++;
+      }
+    } else {
+      if (refresh) userChatList.clear();
+    }
+    isLoadingChat.value = false;
+    isLoadingMore.value = false;
+  }
+  bool get hasMore => userChatList.length < total;
+
+  ///=======================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+  ///==============search api section=========================================================
   final ChatRepository _repo = ChatRepository();
 
   bool _isLoading = false;
@@ -28,7 +182,7 @@ class ChatController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getChatList();
+    getChatSearchList();
   }
 
   @override
@@ -37,7 +191,7 @@ class ChatController extends GetxController {
     super.onClose();
   }
 
-  Future<void> getChatList() async {
+  Future<void> getChatSearchList() async {
     _isLoading = true;
     update();
 
@@ -109,12 +263,17 @@ class ChatController extends GetxController {
 
   getAllConversation({int? page = 1}) async {
     final payload = {"page": page.toString(), "limit": 10};
-
-    SocketApi.emitWithAck("fetch-chat-rooms", payload, ack: (value) {
+    AppSocket.emitWithAck("fetch-chat-rooms", payload, ack: (value) {
       debugPrint('===>> fetch-chat-rooms===================>> $value');
     });
 
+
   }
+
+
+  ///=======================user chat list===================================================================
+
+
 
 
 
@@ -122,3 +281,6 @@ class ChatController extends GetxController {
 
 
 }
+
+
+

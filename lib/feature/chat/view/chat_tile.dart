@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../share/widgets/avatar/user_avatar.dart';
 
@@ -22,24 +24,29 @@ class ChatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: onTap,
-      leading: UserAvatar(imagePath: imagePath),
+      leading: UserAvatar(
+          imagePath: imagePath
+      ),
       title: Text(
         name,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
+        style: GoogleFonts.questrial(
           fontSize: ResponsiveHelper.fontSize(16),
+          fontWeight: FontWeight.w600,
+          color: AppColors.messageSubtitle,
         ),
       ),
       subtitle: Text(
         message,
-        style: TextStyle(
+        style: GoogleFonts.questrial(
           fontSize: ResponsiveHelper.fontSize(14),
+          fontWeight: FontWeight.w400,
+          color: AppColors.messageSubtitle,
         ),
       ),
       trailing: Text(
         time,
-        style: TextStyle(
-          color: Colors.grey,
+        style: GoogleFonts.questrial(
+          color: AppColors.messageSubtitle,
           fontSize: ResponsiveHelper.fontSize(12),
         ),
       ),
