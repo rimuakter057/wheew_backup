@@ -10,11 +10,11 @@ import 'package:flutter/material.dart';
 
 import 'api_url.dart';
 
-class SocketApi {
-  factory SocketApi() => _instance;
-  SocketApi._internal();
+class AppSocket {
+  factory AppSocket() => _instance;
+  AppSocket._internal();
 
-  static final SocketApi _instance = SocketApi._internal();
+  static final AppSocket _instance = AppSocket._internal();
   static io.Socket? socket;
   static bool _isInitialized = false;
   static Function? _onSocketConnectCallback;
@@ -43,7 +43,7 @@ class SocketApi {
   ///<------------------ Internal Connect ------------------>
   static void _connectToSocket(String userId) {
     final socketUrl = ApiUrl.socketUrl(userId:userId);
-    debugPrint('🌐 Connecting socket with userId: $userId → $socketUrl');
+    debugPrint('Connecting socket with userId: $userId → $socketUrl');
 
     socket = io.io(
       socketUrl,

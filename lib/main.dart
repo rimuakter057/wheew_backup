@@ -18,7 +18,12 @@ void main() async {
 
 
 
-
+  // Initialize Socket
+  await AppSocket.init(
+    onSocketConnect: () {
+      debugPrint('===============================main Socket successfully connected=================');
+    },
+  );
 
   runApp(const App());
 }

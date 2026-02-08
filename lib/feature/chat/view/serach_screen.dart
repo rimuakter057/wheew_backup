@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
+import 'package:platchatapp/helper/data_converter/data_converter.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
@@ -24,13 +25,7 @@ class _SearchListScreenState extends State<SearchListScreen> {
   void initState() {
     super.initState();
 
-    if (!SocketApi.isConnected) {
-      SocketApi.init(
-        onSocketConnect: () {
-          debugPrint('Socket connected from SearchListScreen');
-        },
-      );
-    }
+
 
     // Auto focus the search field
     Future.delayed(const Duration(milliseconds: 200), () {
@@ -150,7 +145,8 @@ class _SearchListScreenState extends State<SearchListScreen> {
                       return ChatTile(
                         name: chat.name,
                         message: chat.message,
-                        time: chat.time,
+                        time: formatTime(chat.time),
+
                         imagePath: chat.imagePath ?? "assets/images/person1.png",
                         onTap: () => context.pushNamed(RouteName.message),
                       );

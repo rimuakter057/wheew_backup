@@ -110,8 +110,19 @@ class AppRouter {
       GoRoute(
         path: RoutePath.message,
         name: RouteName.message,
-        builder: (_, __) => const MessageScreen(),
+        builder: (context, state) {
+          final args = state.extra as Map<String, dynamic>;
+
+          return MessageScreen(
+            roomId: args['roomId']??'',
+            otherUserName: args['otherUserName']??"",
+            otherUserAvatar: args['otherUserAvatar']??'',
+            receiverId: args['receiverId']??'',
+          );
+        },
       ),
+
+
 
       GoRoute(
         path: RoutePath.profile,
