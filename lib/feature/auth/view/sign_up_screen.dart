@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_interpolation_to_compose_strings, use_build_context_synchronously
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,7 +29,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController licenseController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
-  TextEditingController();
+      TextEditingController();
 
   bool agree = false;
   String? selectedDesignation;
@@ -92,9 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     value: selectedDesignation,
                     hint: Text(
                       'Select',
-                      style: TextStyle(
-                        fontSize: ResponsiveHelper.fontSize(16),
-                      ),
+                      style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
                     ),
                     isExpanded: true,
                     decoration: InputDecoration(
@@ -153,7 +153,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onChanged: (value) =>
                         setState(() => selectedDesignation = value),
                     validator: (value) =>
-                    value == null ? 'Please select designation' : null,
+                        value == null ? 'Please select designation' : null,
                     dropdownStyleData: DropdownStyleData(
                       maxHeight: ResponsiveHelper.height(160),
                       decoration: BoxDecoration(
@@ -166,7 +166,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             color: Colors.black12,
                             blurRadius: 8,
                             offset: Offset(0, 4),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -187,9 +187,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: licenseController,
                 title: 'license_number'.tr,
                 hintText: 'license_hint'.tr,
-                validator: (value) => (value == null || value.trim().isEmpty)
-                    ? 'License number is required'
-                    : null,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'License number is required';
+                  } else if (value.trim().length < 7) {
+                    return 'License number must be at least 7 characters';
+                  }
+                  return null;
+                },
               ),
 
               SizedBox(height: ResponsiveHelper.spacing(16)),
@@ -322,7 +327,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     showErrorSnackBar('Error: $e');
                   }
                 },
-              )
+              ),
             ],
           ),
         ),
@@ -330,31 +335,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  void _handleSignUp() async {
-    if (!_formKey.currentState!.validate()) {
-      showErrorSnackBar('Please fill all fields');
-      return;
-    }
+  // void _handleSignUp() async {
+  //   if (!_formKey.currentState!.validate()) {
+  //     showErrorSnackBar('Please fill all fields');
+  //     return;
+  //   }
 
-    if (!agree) {
-      showErrorSnackBar('Please accept terms');
-      return;
-    }
+  //   if (!agree) {
+  //     showErrorSnackBar('Please accept terms');
+  //     return;
+  //   }
 
-    final success = await authController.registerAndLogin(
-      context: context,
-      licenceId: licenseController.text.trim(),
-      nickName: nicknameController.text.trim(),
-      password: passwordController.text.trim(),
-      confirmPassword: confirmPasswordController.text.trim(),
-      designation: selectedDesignation!,
+  //   final success = await authController.registerAndLogin(
+  //     context: context,
+  //     licenceId: licenseController.text.trim(),
+  //     nickName: nicknameController.text.trim(),
+  //     password: passwordController.text.trim(),
+  //     confirmPassword: confirmPasswordController.text.trim(),
+  //     designation: selectedDesignation!,
+  //   );
+
+  //   if (success && context.mounted) {
+  //     showSuccessToast('Registration successful!');
+  //     context.goNamed(RouteName.signIn);
+  //   }
+  // }
+
+  void showWarningSnackBar(String s) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(s, style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.red,
+      ),
     );
-
-    if (success && context.mounted) {
-      showSuccessToast('Registration successful!');
-      context.goNamed(RouteName.signIn);
-    }
   }
-
-  void showWarningSnackBar(String s) {}
 }
