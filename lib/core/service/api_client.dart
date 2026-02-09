@@ -149,7 +149,7 @@ class ApiClient {
       try {
         final prettyJson =
         JsonEncoder.withIndent('  ').convert(jsonDecode(response.body));
-        developer.log('Response Body:\n$prettyJson', name: 'API');
+       // developer.log('Response Body:\n$prettyJson', name: 'API');
       } catch (e) {
         developer.log('Response Body (raw): ${response.body}', name: 'API');
       }
