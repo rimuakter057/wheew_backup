@@ -42,13 +42,18 @@ class _MessageScreenState extends State<MessageScreen> {
 
     chatController.sendNewEmitMessage(
       receiverId: widget.receiverId,
-      message:chatController.messageController.text.toString(),
+      message: chatController.messageController.text.toString(),
     );
 
     chatController.sendNewListenMessage();
-    debugPrint("===============================room  id before call controller :${widget.roomId}");
+    chatController.errorListenMessage();
+    debugPrint(
+      "===============================room  id before call controller :${widget.roomId}",
+    );
     chatController.fetchRoomMessage(roomId: widget.roomId, refresh: true);
-    debugPrint("===============================room  id after call controller :${widget.roomId}");
+    debugPrint(
+      "===============================room  id after call controller :${widget.roomId}",
+    );
     // Scroll listener for pagination
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
@@ -63,7 +68,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   void dispose() {
-     //chatController. messageController.dispose();
+    //chatController. messageController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -159,22 +164,32 @@ class _MessageScreenState extends State<MessageScreen> {
                           ? Alignment.centerRight
                           : Alignment.centerLeft,
                       child: Container(
-                        margin:  EdgeInsets.symmetric(vertical:ResponsiveHelper.height(5) ),
-                        padding:  EdgeInsets.symmetric(
+                        margin: EdgeInsets.symmetric(
+                          vertical: ResponsiveHelper.height(5),
+                        ),
+                        padding: EdgeInsets.symmetric(
                           vertical: ResponsiveHelper.height(10),
-                          horizontal: ResponsiveHelper.width(14)
+                          horizontal: ResponsiveHelper.width(14),
                         ),
                         decoration: BoxDecoration(
                           color: isMine ? AppColors.blueBox : AppColors.black,
                           borderRadius: BorderRadius.only(
-                            topLeft:  Radius.circular(ResponsiveHelper.borderRadius(15)),
-                            topRight:  Radius.circular(ResponsiveHelper.borderRadius(15)),
+                            topLeft: Radius.circular(
+                              ResponsiveHelper.borderRadius(15),
+                            ),
+                            topRight: Radius.circular(
+                              ResponsiveHelper.borderRadius(15),
+                            ),
                             bottomLeft: isMine
-                                ?  Radius.circular(ResponsiveHelper.borderRadius(15))
+                                ? Radius.circular(
+                                    ResponsiveHelper.borderRadius(15),
+                                  )
                                 : Radius.zero,
                             bottomRight: isMine
                                 ? Radius.zero
-                                : Radius.circular(ResponsiveHelper.borderRadius(15)),
+                                : Radius.circular(
+                                    ResponsiveHelper.borderRadius(15),
+                                  ),
                           ),
                         ),
                         child: Column(
@@ -184,16 +199,16 @@ class _MessageScreenState extends State<MessageScreen> {
                           children: [
                             Text(
                               msg.message ?? "",
-                              style:  TextStyle(color: AppColors.white),
+                              style: TextStyle(color: AppColors.white),
                             ),
-                             SizedBox(height: ResponsiveHelper.height(4)),
+                            SizedBox(height: ResponsiveHelper.height(4)),
                             Text(
                               msg.createdAt != null
                                   ? DateFormat.jm().format(
                                       DateTime.parse(msg.createdAt!),
                                     )
                                   : "",
-                              style:  TextStyle(
+                              style: TextStyle(
                                 color: Colors.white54,
                                 fontSize: ResponsiveHelper.fontSize(14),
                               ),
@@ -237,7 +252,7 @@ class _MessageScreenState extends State<MessageScreen> {
           children: [
             Expanded(
               child: TextField(
-                controller:chatController.messageController,
+                controller: chatController.messageController,
                 decoration: InputDecoration(
                   hintText: 'Type here...',
                   fillColor: AppColors.black,
@@ -257,7 +272,8 @@ class _MessageScreenState extends State<MessageScreen> {
             GestureDetector(
               onTap: () async {
                 debugPrint("========================");
-                if (chatController.messageController.text.trim().isEmpty) return;
+                if (chatController.messageController.text.trim().isEmpty)
+                  return;
 
                 debugPrint("///////////////////////////////");
 
@@ -266,11 +282,11 @@ class _MessageScreenState extends State<MessageScreen> {
                   message: chatController.messageController.text.toString(),
                 );
 
-                chatController.sendNewListenMessage();
+
 
                 debugPrint(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
 
-               // chatController.messageController.clear();
+                // chatController.messageController.clear();
               },
               child: SvgPicture.asset(AssetsPath.send),
             ),
