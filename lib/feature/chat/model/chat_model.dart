@@ -51,7 +51,7 @@ class ChatModel {
   String? id;
   String? avatar;
   String? nickName;
-  Null designation;
+  String? designation;
   String? createdAt;
   ExistingRoom? existingRoom;
 

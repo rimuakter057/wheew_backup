@@ -131,7 +131,7 @@ class _SearchListScreenState extends State<SearchListScreen> {
                     : displayList.isEmpty
                     ? Center(
                   child: Text(
-                    'no_chats'.tr,
+                    ''.tr,
                     style: TextStyle(
                       fontSize: ResponsiveHelper.fontSize(16),
                     ),
