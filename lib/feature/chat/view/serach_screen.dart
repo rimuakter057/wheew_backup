@@ -144,15 +144,15 @@ class _SearchListScreenState extends State<SearchListScreen> {
                     itemBuilder: (context, index) {
                       final chat = displayList[index];
                       return ChatTile(
-                        name: chat.name,
-                        message: chat.message,
-                        time: formatTime(chat.time),
+                        name: chat.nickName.toString(),
+                        message: chat.designation.toString(),
+                        time: formatTime(chat.createdAt.toString()),
 
                         imagePath: chat.avatar ?? "assets/images/person1.png",
                         onTap: () => context.pushNamed(RouteName.message,
 
                           extra: {
-                            'otherUserName': chat.name,
+                            'otherUserName': chat.nickName,
                             'otherUserAvatar': chat.avatar?? AppConst.unknown,
                             'receiverId': chat.id,
                           },

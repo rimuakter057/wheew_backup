@@ -89,6 +89,9 @@ class ChatController extends GetxController {
     isLoadingMoreMessage.value = false;
   }
 
+
+
+
   ///socket========================
 
   final TextEditingController messageController = TextEditingController();
@@ -132,10 +135,54 @@ class ChatController extends GetxController {
   Future<void> sendNewListenMessage() async {
     AppSocket.onEvent('message-sent', (value) {
       debugPrint(
-        '====================== send new message============================ $value',
-      );
+        '====================== send new message============================ $value',);
+
+
+      if (roomID.value.isNotEmpty) {
+        fetchRoomMessage(roomId: roomID.value);
+
+        fetchChatRooms();
+
+        debugPrint(
+          '====================== fetchRoomMessage send new message============================ $fetchRoomMessage',);
+
+
+
+        debugPrint(
+          '====================== fetchRoomMessage send new message============================ $fetchChatRooms',);
+
+      }
+
+
     });
   }
+
+
+  Future<void> newMessage() async {
+    AppSocket.onEvent('message-sent', (value) {
+      debugPrint(
+        '====================== send new message============================ $value',);
+
+
+      if (roomID.value.isNotEmpty) {
+        fetchRoomMessage(roomId: roomID.value);
+
+        fetchChatRooms();
+
+        debugPrint(
+          '====================== fetchRoomMessage send new message============================ $fetchRoomMessage',);
+
+
+
+        debugPrint(
+          '====================== fetchRoomMessage send new message============================ $fetchChatRooms',);
+
+      }
+
+
+    });
+  }
+
 
   Future<void> errorListenMessage() async {
     AppSocket.onEvent('exception', (value) {

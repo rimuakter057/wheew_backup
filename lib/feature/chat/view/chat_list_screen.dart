@@ -153,55 +153,61 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   );
                 }
 
-                /// List + pagination
-                return ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  controller: scrollController,
-                  itemCount: chatList.length + 1,
-                  itemBuilder: (context, index) {
-                    /// Pagination loader
-                    if (index == chatList.length) {
-                      if (controller.isLoadingMore.value) {
-                        return const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
+                /// Nested Obx for pagination/loading inside ListView.builder
+                return Obx(() {
+                  return ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    controller: scrollController,
+                    itemCount: chatList.length + 1,
+                    itemBuilder: (context, index) {
+                      /// Pagination loader
+                      if (index == chatList.length) {
+                        if (controller.isLoadingMore.value) {
+                          return const Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
                       }
-                      return const SizedBox.shrink();
-                    }
 
-                    final room = chatList[index];
+                      final room = chatList[index];
 
-                    return ChatTile(
-                      name: room.otherUser?.nickName ?? "No Name",
-                      message: room.latestMessage?.message ?? "",
-                      time: formatTime(
-                          room.latestMessage?.createdAt ?? ""),
-                      imagePath: ImageHandler.imagesHandle(
-                        room.otherUser?.avatar ?? AppConst.unknown,
-                        isProfile: true,
-                      ),
-                      onTap: () {
-                        context.pushNamed(
-                          RouteName.message,
-                          extra: {
-                            'roomId': room.id ?? '',
-                            'otherUserName':
-                            room.otherUser?.nickName ?? 'User',
-                            'otherUserAvatar':
-                            room.otherUser?.avatar ?? AppConst.unknown,
-                            'receiverId':
-                            room.latestMessage?.receiverId ?? '',
-                          },
-                        );
-                      },
-                    );
-                  },
-                );
+                      return ChatTile(
+                        name: room.otherUser?.nickName ?? "No Name",
+                        message: room.latestMessage?.message ?? "",
+                        time: formatTime(room.latestMessage?.createdAt ?? ""),
+                        imagePath: ImageHandler.imagesHandle(
+                          room.otherUser?.avatar ?? AppConst.unknown,
+                          isProfile: true,
+                        ),
+                        onTap: () {
+                          context.pushNamed(
+                            RouteName.message,
+                            extra: {
+                              'roomId': room.id ?? '',
+                              'otherUserName': room.otherUser?.nickName ?? 'User',
+                              'otherUserAvatar':
+                              room.otherUser?.avatar ?? AppConst.unknown,
+                              'receiverId': room.latestMessage?.receiverId ?? '',
+                            },
+                          );
+                        },
+                      );
+                    },
+                  );
+                });
               }),
             ),
+
+
+
+
+
+
+
           ],
         ),
       ),
