@@ -159,25 +159,11 @@ class ChatController extends GetxController {
 
 
   Future<void> newMessage() async {
-    AppSocket.onEvent('message-sent', (value) {
+    AppSocket.onEvent('new-message', (value) {
       debugPrint(
-        '====================== send new message============================ $value',);
+        '====================== fetch new message============================ $value',);
 
 
-      if (roomID.value.isNotEmpty) {
-        fetchRoomMessage(roomId: roomID.value);
-
-        fetchChatRooms();
-
-        debugPrint(
-          '====================== fetchRoomMessage send new message============================ $fetchRoomMessage',);
-
-
-
-        debugPrint(
-          '====================== fetchRoomMessage send new message============================ $fetchChatRooms',);
-
-      }
 
 
     });
@@ -325,8 +311,8 @@ class ChatController extends GetxController {
       final data = jsonDecode(response.body);
 
       // Fix: Navigate nested structure - users.users array
-      if (data['users'] != null && data['users']['users'] != null) {
-        _searchResults = (data['users']['users'] as List)
+      if (data['users'] != null && data['users'] != null) {
+        _searchResults = (data['users'] as List)
             .map((user) => ChatModel.fromJson(user))
             .toList();
       } else {

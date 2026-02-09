@@ -54,6 +54,11 @@ class _MessageScreenState extends State<MessageScreen> {
     debugPrint(
       "===============================room  id after call controller :${widget.roomId}",
     );
+
+
+
+    chatController.newMessage();
+
     // Scroll listener for pagination
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
@@ -78,6 +83,11 @@ class _MessageScreenState extends State<MessageScreen> {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
+        leading: IconButton(
+            onPressed: () async {
+              chatController.fetchChatRooms();
+              Navigator.pop(context);
+            }, icon: Icon(Icons.arrow_back)),
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
