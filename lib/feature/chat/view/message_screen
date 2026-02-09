@@ -12,14 +12,14 @@ import 'package:platchatapp/utils/color/app_colors.dart';
 import '../repository/chat_controller.dart'; // Import your controller
 
 class MessageScreen extends StatefulWidget {
-  final String? roomId;
+  final String roomId;
   final String otherUserName;
   final String? otherUserAvatar;
   final String receiverId;
 
   const MessageScreen({
     super.key,
-    this.roomId,
+    required this.roomId,
     required this.otherUserName,
     this.otherUserAvatar,
     required this.receiverId,
@@ -30,40 +30,39 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  final ChatController chatController = Get.put(ChatController());
-  //final TextEditingController messageController = TextEditingController();
+  final ChatController controller = Get.put(ChatController());
+  final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     debugPrint("======================receiver id :${widget.receiverId}");
-    debugPrint("===============================room  id :${widget.roomId}");
 
-    chatController.sendNewEmitMessage(
+    controller.sendNewEmitMessage(
       receiverId: widget.receiverId,
-      message:chatController.messageController.text.toString(),
+      message: _controller.text.toString(),
     );
 
-    chatController.sendNewListenMessage();
-    debugPrint("===============================room  id before call controller :${widget.roomId}");
-    chatController.fetchRoomMessage(roomId: widget.roomId, refresh: true);
-    debugPrint("===============================room  id after call controller :${widget.roomId}");
+    controller.sendNewListenMessage();
+
+    controller.fetchRoomMessage(roomId: widget.roomId, refresh: true);
+
     // Scroll listener for pagination
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent - 100 &&
-          chatController.hasMoreMessage &&
-          !chatController.isLoadingMoreMessage.value) {
+          controller.hasMoreMessage &&
+          !controller.isLoadingMoreMessage.value) {
         // Load next page
-        chatController.fetchRoomMessage(roomId: widget.roomId);
+        controller.fetchRoomMessage(roomId: widget.roomId);
       }
     });
   }
 
   @override
   void dispose() {
-     //chatController. messageController.dispose();
+    _controller.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -81,7 +80,7 @@ class _MessageScreenState extends State<MessageScreen> {
         ),
       ),
       body: RefreshIndicator(
-        onRefresh: () => chatController.fetchRoomMessage(roomId: widget.roomId),
+        onRefresh: () => controller.fetchRoomMessage(roomId: widget.roomId),
         child: Column(
           children: [
             /// Fixed heading container
@@ -115,10 +114,10 @@ class _MessageScreenState extends State<MessageScreen> {
             /// Chat messages list
             Expanded(
               child: Obx(() {
-                final messages = chatController.userMessageList;
+                final messages = controller.userMessageList;
 
                 // 🔹 Only first page loading
-                if (chatController.isLoadingMessage.value && messages.isEmpty) {
+                if (controller.isLoadingMessage.value && messages.isEmpty) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
@@ -133,17 +132,16 @@ class _MessageScreenState extends State<MessageScreen> {
 
                 return ListView.builder(
                   controller: _scrollController,
-                  reverse: true,
                   padding: EdgeInsets.symmetric(
                     horizontal: ResponsiveHelper.width(16),
                     vertical: ResponsiveHelper.height(8),
                   ),
                   itemCount:
-                      messages.length + (chatController.hasMoreMessage ? 1 : 0),
+                      messages.length + (controller.hasMoreMessage ? 1 : 0),
                   itemBuilder: (context, index) {
                     if (index == messages.length) {
                       // 🔹 Only show bottom loading for pagination
-                      return chatController.isLoadingMoreMessage.value
+                      return controller.isLoadingMoreMessage.value
                           ? const Padding(
                               padding: EdgeInsets.all(8),
                               child: Center(child: CircularProgressIndicator()),
@@ -159,22 +157,22 @@ class _MessageScreenState extends State<MessageScreen> {
                           ? Alignment.centerRight
                           : Alignment.centerLeft,
                       child: Container(
-                        margin:  EdgeInsets.symmetric(vertical:ResponsiveHelper.height(5) ),
-                        padding:  EdgeInsets.symmetric(
-                          vertical: ResponsiveHelper.height(10),
-                          horizontal: ResponsiveHelper.width(14)
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 14,
                         ),
                         decoration: BoxDecoration(
                           color: isMine ? AppColors.blueBox : AppColors.black,
                           borderRadius: BorderRadius.only(
-                            topLeft:  Radius.circular(ResponsiveHelper.borderRadius(15)),
-                            topRight:  Radius.circular(ResponsiveHelper.borderRadius(15)),
+                            topLeft: const Radius.circular(15),
+                            topRight: const Radius.circular(15),
                             bottomLeft: isMine
-                                ?  Radius.circular(ResponsiveHelper.borderRadius(15))
+                                ? const Radius.circular(15)
                                 : Radius.zero,
                             bottomRight: isMine
                                 ? Radius.zero
-                                : Radius.circular(ResponsiveHelper.borderRadius(15)),
+                                : const Radius.circular(15),
                           ),
                         ),
                         child: Column(
@@ -184,18 +182,18 @@ class _MessageScreenState extends State<MessageScreen> {
                           children: [
                             Text(
                               msg.message ?? "",
-                              style:  TextStyle(color: AppColors.white),
+                              style: const TextStyle(color: AppColors.white),
                             ),
-                             SizedBox(height: ResponsiveHelper.height(4)),
+                            const SizedBox(height: 4),
                             Text(
                               msg.createdAt != null
                                   ? DateFormat.jm().format(
                                       DateTime.parse(msg.createdAt!),
                                     )
                                   : "",
-                              style:  TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white54,
-                                fontSize: ResponsiveHelper.fontSize(14),
+                                fontSize: 10,
                               ),
                             ),
                           ],
@@ -237,7 +235,7 @@ class _MessageScreenState extends State<MessageScreen> {
           children: [
             Expanded(
               child: TextField(
-                controller:chatController.messageController,
+                controller: _controller,
                 decoration: InputDecoration(
                   hintText: 'Type here...',
                   fillColor: AppColors.black,
@@ -257,20 +255,20 @@ class _MessageScreenState extends State<MessageScreen> {
             GestureDetector(
               onTap: () async {
                 debugPrint("========================");
-                if (chatController.messageController.text.trim().isEmpty) return;
+                if (_controller.text.trim().isEmpty) return;
 
                 debugPrint("///////////////////////////////");
 
-                chatController.sendNewEmitMessage(
+                controller.sendNewEmitMessage(
                   receiverId: widget.receiverId,
-                  message: chatController.messageController.text.toString(),
+                  message: _controller.text.toString(),
                 );
 
-                chatController.sendNewListenMessage();
+                controller.sendNewListenMessage();
 
                 debugPrint(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
 
-               // chatController.messageController.clear();
+                _controller.clear();
               },
               child: SvgPicture.asset(AssetsPath.send),
             ),
