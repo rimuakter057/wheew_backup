@@ -57,7 +57,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
 
 
-    chatController.newMessage();
+   //chatController.newMessage();
 
     // Scroll listener for pagination
     _scrollController.addListener(() {

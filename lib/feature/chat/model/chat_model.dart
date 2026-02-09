@@ -53,7 +53,7 @@ class ChatModel {
   String? nickName;
   String? designation;
   String? createdAt;
-  ExistingRoom? existingRoom;
+  ExistingRoom2? existingRoom;
 
   ChatModel(
       {this.id,
@@ -76,7 +76,7 @@ class ChatModel {
     createdAt = json['createdAt'];
 
     existingRoom = json['existingRoom'] != null
-        ? ExistingRoom.fromJson(json['existingRoom'])
+        ? ExistingRoom2.fromJson(json['existingRoom'])
         : null;
   }
 
@@ -147,17 +147,46 @@ class ChatModel {
 
 
 
-class ExistingRoom {
+// class ExistingRoom {
+//   String? id;
+//   String? user1Id;
+//   String? user2Id;
+//   String? createdAt;
+//   String? updatedAt;
+//
+//   ExistingRoom(
+//       {this.id, this.user1Id, this.user2Id, this.createdAt, this.updatedAt});
+//
+//   ExistingRoom.fromJson(Map<String, dynamic> json) {
+//     id = json['id'];
+//     user1Id = json['user1_id'];
+//     user2Id = json['user2_id'];
+//     createdAt = json['createdAt'];
+//     updatedAt = json['updatedAt'];
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = <String, dynamic>{};
+//     data['id'] = id;
+//     data['user1_id'] = user1Id;
+//     data['user2_id'] = user2Id;
+//     data['createdAt'] = createdAt;
+//     data['updatedAt'] = updatedAt;
+//     return data;
+//   }
+// }
+
+class ExistingRoom2 {
   String? id;
   String? user1Id;
   String? user2Id;
   String? createdAt;
   String? updatedAt;
 
-  ExistingRoom(
+  ExistingRoom2(
       {this.id, this.user1Id, this.user2Id, this.createdAt, this.updatedAt});
 
-  ExistingRoom.fromJson(Map<String, dynamic> json) {
+  ExistingRoom2.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     user1Id = json['user1_id'];
     user2Id = json['user2_id'];

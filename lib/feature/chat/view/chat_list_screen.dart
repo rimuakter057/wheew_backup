@@ -36,7 +36,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
         },
       );
     }
-
+    controller.newMessage();
     /// First API call
     controller.fetchChatRooms();
 

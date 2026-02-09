@@ -32,7 +32,7 @@ class ChatController extends GetxController {
   RxString roomID = "".obs;
 
   Future<void> fetchRoomMessage({String? roomId, bool refresh = false}) async {
-  //  if (roomId != null) roomID?.value = roomId;
+    //  if (roomId != null) roomID?.value = roomId;
 
     // Update roomID if provided
     if (roomId != null && roomId.isNotEmpty) {
@@ -43,7 +43,6 @@ class ChatController extends GetxController {
       debugPrint("❌ Room ID is empty, skipping fetch");
       return; // Skip API call if no room ID
     }
-
 
     debugPrint("================ RoomID=========== ${roomID?.value}");
 
@@ -89,9 +88,6 @@ class ChatController extends GetxController {
     isLoadingMoreMessage.value = false;
   }
 
-
-
-
   ///socket========================
 
   final TextEditingController messageController = TextEditingController();
@@ -135,8 +131,8 @@ class ChatController extends GetxController {
   Future<void> sendNewListenMessage() async {
     AppSocket.onEvent('message-sent', (value) {
       debugPrint(
-        '====================== send new message============================ $value',);
-
+        '====================== send new message============================ $value',
+      );
 
       if (roomID.value.isNotEmpty) {
         fetchRoomMessage(roomId: roomID.value);
@@ -144,31 +140,35 @@ class ChatController extends GetxController {
         fetchChatRooms();
 
         debugPrint(
-          '====================== fetchRoomMessage send new message============================ $fetchRoomMessage',);
-
-
+          '====================== fetchRoomMessage send new message============================ $fetchRoomMessage',
+        );
 
         debugPrint(
-          '====================== fetchRoomMessage send new message============================ $fetchChatRooms',);
-
+          '====================== fetchRoomMessage send new message============================ $fetchChatRooms',
+        );
       }
-
-
     });
   }
-
 
   Future<void> newMessage() async {
+    debugPrint('========== Call New Message');
     AppSocket.onEvent('new-message', (value) {
       debugPrint(
-        '====================== fetch new message============================ $value',);
+        '====================== fetch new message============================ $value',
+      );
 
+     // Map<String, dynamic> data = jsonDecode(value);
 
+      Messages model = Messages.fromJson(value);
 
+      debugPrint('=======cxxcx========= >> ${model.toJson()}');
 
+      if(model.chatRoomId == roomID.value){
+        userMessageList.insert(0, model);
+      }
+      fetchChatRooms();
     });
   }
-
 
   Future<void> errorListenMessage() async {
     AppSocket.onEvent('exception', (value) {
@@ -247,6 +247,7 @@ class ChatController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    newMessage();
     getChatSearchList();
   }
 
