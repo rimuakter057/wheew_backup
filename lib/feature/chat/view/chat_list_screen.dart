@@ -191,7 +191,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
                               'otherUserName': room.otherUser?.nickName ?? 'User',
                               'otherUserAvatar':
                               room.otherUser?.avatar ?? AppConst.unknown,
-                              'receiverId': room.latestMessage?.receiverId ?? '',
+                              'receiverId': room.otherUser?.id ?? '',
+
                             },
                           );
                         },
