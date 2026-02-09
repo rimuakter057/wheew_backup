@@ -12,13 +12,16 @@ import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
 import '../../../core/service/socket_service.dart';
 import 'chat_repository.dart';
 
+
 class ChatController extends GetxController {
+
   ///==============================================================
+
 
   /// get all message list ================================================
   RxList<Messages> userMessageList = <Messages>[].obs;
 
-  var isLoadingMessage = false.obs; // first page
+  var isLoadingMessage = false.obs;     // first page
   var isLoadingMoreMessage = false.obs; // pagination
 
   int pageCount = 1;
@@ -27,26 +30,10 @@ class ChatController extends GetxController {
 
   bool get hasMoreMessage => userMessageList.length < totalCount;
 
-  //RxString? roomID;
-  /// Room ID
-  RxString roomID = "".obs;
-
-  Future<void> fetchRoomMessage({String? roomId, bool refresh = false}) async {
-  //  if (roomId != null) roomID?.value = roomId;
-
-    // Update roomID if provided
-    if (roomId != null && roomId.isNotEmpty) {
-      roomID.value = roomId;
-    }
-
-    if (roomID.value.isEmpty) {
-      debugPrint("❌ Room ID is empty, skipping fetch");
-      return; // Skip API call if no room ID
-    }
-
-
-    debugPrint("================ RoomID=========== ${roomID?.value}");
-
+  Future<void> fetchRoomMessage({
+    required String roomId,
+    bool refresh = false,
+  }) async {
     if (refresh) {
       pageCount = 1;
       totalCount = 0;
@@ -54,8 +41,7 @@ class ChatController extends GetxController {
     }
 
     if ((pageCount > 1 && isLoadingMoreMessage.value) ||
-        (pageCount == 1 && isLoadingMessage.value))
-      return;
+        (pageCount == 1 && isLoadingMessage.value)) return;
 
     if (pageCount == 1) {
       isLoadingMessage.value = true;
@@ -64,7 +50,7 @@ class ChatController extends GetxController {
     }
 
     final uri = ApiUrl.getRoomMessage(
-      roomId: roomId ?? '',
+      roomId: roomId,
       page: pageCount,
       limit: limitCount,
     );
@@ -88,64 +74,69 @@ class ChatController extends GetxController {
     isLoadingMessage.value = false;
     isLoadingMoreMessage.value = false;
   }
+///socket========================
 
-  ///socket========================
-
-  final TextEditingController messageController = TextEditingController();
-
-  sendNewEmitMessage({required String receiverId, required String message}) {
-    final payload = {'receiver_id': receiverId, 'message': message};
+  Future<dynamic> sendNewEmitMessage({
+    required String receiverId,
+    required String message,
+  }) {
+    final payload = {
+      'receiver_id': receiverId,
+      'message': message,
+    };
 
     final completer = Completer<dynamic>();
 
-    /// 🔹 Create optimistic local message
-    final localTempMessage = Messages(
-      id: DateTime.now().millisecondsSinceEpoch.toString(), // temp id
-      receiverId: receiverId,
-      message: message,
-      createdAt: DateTime.now().toIso8601String(),
-      isMine: true,
-      isDelivered: false,
-      type: 'manual',
-    );
+    AppSocket.emitWithAck("message", payload, ack: (value) {
+      completer.complete(value);
 
-    /// 🔹 Add to UI immediately
-    userMessageList.insert(0, localTempMessage);
+      debugPrint("============sendNewEmitMessage success===============");
 
-    // userMessageList.add(localTempMessage);
-
-    messageController.clear();
-
-    AppSocket.emitWithAck(
-      "message",
-      payload,
-      ack: (value) {
-        // completer.complete(value);
-
-        debugPrint(
-          "============sendNewEmitMessage success=============== $value",
-        );
-      },
-    );
-  }
-
-  Future<void> sendNewListenMessage() async {
-    AppSocket.onEvent('message-sent', (value) {
-      debugPrint(
-        '====================== send new message============================ $value',
-      );
     });
+
+    return completer.future; // UI থেকে await করা যাবে
   }
 
-  Future<void> errorListenMessage() async {
+ Future<void> sendNewListenMessage()async {
+
+
+   AppSocket.onEvent('message-sent', (value) {
+  debugPrint('====================== send new message============================ ');
+
+
+});
+
+  }
+
+
+  Future<void> errorListenMessage()async {
+
+
     AppSocket.onEvent('exception', (value) {
-      debugPrint(
-        '====================== error message   $value============================ ',
-      );
+      debugPrint('====================== error message   $value============================ ');
+
+
     });
+
   }
+
+
+
+
+
+
+
+
+
+
+
+
 
   ///=======================================================================
+
+
+
+
 
   ///get all user chat list========================================================
   RxList<Rooms> userChatList = <Rooms>[].obs;
@@ -189,10 +180,20 @@ class ChatController extends GetxController {
     isLoadingChat.value = false;
     isLoadingMore.value = false;
   }
-
   bool get hasMore => userChatList.length < total;
 
   ///=======================================================================
+
+
+
+
+
+
+
+
+
+
+
 
   ///==============search api section=========================================================
   final ChatRepository _repo = ChatRepository();
@@ -295,14 +296,24 @@ class ChatController extends GetxController {
 
   getAllConversation({int? page = 1}) async {
     final payload = {"page": page.toString(), "limit": 10};
-    AppSocket.emitWithAck(
-      "fetch-chat-rooms",
-      payload,
-      ack: (value) {
-        debugPrint('===>> fetch-chat-rooms===================>> $value');
-      },
-    );
+    AppSocket.emitWithAck("fetch-chat-rooms", payload, ack: (value) {
+      debugPrint('===>> fetch-chat-rooms===================>> $value');
+    });
+
+
   }
 
+
   ///=======================user chat list===================================================================
+
+
+
+
+
+
+
+
 }
+
+
+

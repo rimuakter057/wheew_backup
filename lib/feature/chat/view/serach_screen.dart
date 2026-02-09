@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/helper/data_converter/data_converter.dart';
+import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
@@ -147,8 +148,16 @@ class _SearchListScreenState extends State<SearchListScreen> {
                         message: chat.message,
                         time: formatTime(chat.time),
 
-                        imagePath: chat.imagePath ?? "assets/images/person1.png",
-                        onTap: () => context.pushNamed(RouteName.message),
+                        imagePath: chat.avatar ?? "assets/images/person1.png",
+                        onTap: () => context.pushNamed(RouteName.message,
+
+                          extra: {
+                            'otherUserName': chat.name,
+                            'otherUserAvatar': chat.avatar?? AppConst.unknown,
+                            'receiverId': chat.id,
+                          },
+
+                        ),
                       );
                     },
                   ),
