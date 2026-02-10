@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:platchatapp/feature/profile/view/widgets/profile_avater_widgets.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/custom_container/custom_container.dart';
-import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../repository/chat_controller.dart'; // Import your controller
@@ -55,9 +53,7 @@ class _MessageScreenState extends State<MessageScreen> {
       "===============================room  id after call controller :${widget.roomId}",
     );
 
-
-
-   //chatController.newMessage();
+    //chatController.newMessage();
 
     // Scroll listener for pagination
     _scrollController.addListener(() {
@@ -84,10 +80,12 @@ class _MessageScreenState extends State<MessageScreen> {
       backgroundColor: AppColors.white,
       appBar: AppBar(
         leading: IconButton(
-            onPressed: () async {
-              chatController.fetchChatRooms();
-              Navigator.pop(context);
-            }, icon: Icon(Icons.arrow_back)),
+          onPressed: () async {
+            chatController.fetchChatRooms();
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
@@ -291,8 +289,6 @@ class _MessageScreenState extends State<MessageScreen> {
                   receiverId: widget.receiverId,
                   message: chatController.messageController.text.toString(),
                 );
-
-
 
                 debugPrint(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
 

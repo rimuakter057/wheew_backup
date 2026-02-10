@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' hide Response;
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
@@ -20,17 +20,13 @@ class ChatController extends GetxController {
     errorListenMessage();
   }
 
-
-
-
   @override
   void onInit() {
     super.onInit();
     initSocketListeners();
     getChatSearchList();
-     fetchChatRooms();
+    fetchChatRooms();
   }
-
 
   /// get all message list ================================================
   RxList<Messages> userMessageList = <Messages>[].obs;
@@ -61,7 +57,7 @@ class ChatController extends GetxController {
       return; // Skip API call if no room ID
     }
 
-    debugPrint("================ RoomID=========== ${roomID?.value}");
+    debugPrint("================ RoomID=========== ${roomID.value}");
 
     if (refresh) {
       pageCount = 1;
@@ -174,15 +170,18 @@ class ChatController extends GetxController {
         '====================== fetch new message============================ $value',
       );
 
-     // Map<String, dynamic> data = jsonDecode(value);
+      // Map<String, dynamic> data = jsonDecode(value);
 
       Messages model = Messages.fromJson(value);
 
       debugPrint('=======cxxcx========= >> ${model.toJson()}');
 
-      if(model.chatRoomId == roomID.value){
+      if (model.chatRoomId == roomID.value) {
         userMessageList.insert(0, model);
       }
+      debugPrint(
+        '====================== fetchRoomMessage send new message==========================',
+      );
       fetchChatRooms();
     });
   }
@@ -233,6 +232,8 @@ class ChatController extends GetxController {
         userChatList.addAll(data.rooms!);
         page++;
       }
+
+      userChatList.refresh();
     } else {
       if (refresh) userChatList.clear();
     }
@@ -260,7 +261,6 @@ class ChatController extends GetxController {
   List<ChatModel> get searchResults => _searchResults;
 
   Timer? _debounce;
-
 
   @override
   void onClose() {
@@ -337,7 +337,6 @@ class ChatController extends GetxController {
     _isSearching = false;
     update();
   }
-
 
   ///=======================user chat list===================================================================
 }

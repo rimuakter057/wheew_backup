@@ -56,24 +56,24 @@ class ApiClient {
 
     try {
       final response = await http
-          .post(
-        url,
-        headers: finalHeaders,
-        body: jsonEncode(body),
-      )
+          .post(url, headers: finalHeaders, body: jsonEncode(body))
           .timeout(const Duration(seconds: 30));
 
       // 📥 LOG RESPONSE
       developer.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       developer.log('📥 API RESPONSE', name: 'API');
       developer.log('Status Code: ${response.statusCode}', name: 'API');
-      developer.log('Status: ${_getStatusMessage(response.statusCode)}', name: 'API');
+      developer.log(
+        'Status: ${_getStatusMessage(response.statusCode)}',
+        name: 'API',
+      );
       developer.log('Headers: ${response.headers}', name: 'API');
 
       // Pretty print response body
       try {
-        final prettyJson =
-        JsonEncoder.withIndent('  ').convert(jsonDecode(response.body));
+        final prettyJson = JsonEncoder.withIndent(
+          '  ',
+        ).convert(jsonDecode(response.body));
         developer.log('Response Body:\n$prettyJson', name: 'API');
       } catch (e) {
         developer.log('Response Body (raw): ${response.body}', name: 'API');
@@ -98,8 +98,7 @@ class ApiClient {
     required String uri,
     Map<String, String>? headers,
     Map<String, String>? queryParams,
-  }) async
-  {
+  }) async {
     // Check internet first
     if (!await _checkConnection()) {
       developer.log('❌ No Internet Connection', name: 'API');
@@ -134,22 +133,24 @@ class ApiClient {
 
     try {
       final response = await http
-          .get(
-        url,
-        headers: finalHeaders,
-      )
+          .get(url, headers: finalHeaders)
           .timeout(const Duration(seconds: 30));
 
       // 📥 LOG RESPONSE
       developer.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      developer.log('URL: $url', name: 'API');
       developer.log('📥 API RESPONSE', name: 'API');
       developer.log('Status Code: ${response.statusCode}', name: 'API');
-      developer.log('Status: ${_getStatusMessage(response.statusCode)}', name: 'API');
+      developer.log(
+        'Status: ${_getStatusMessage(response.statusCode)}',
+        name: 'API',
+      );
 
       try {
-        final prettyJson =
-        JsonEncoder.withIndent('  ').convert(jsonDecode(response.body));
-       // developer.log('Response Body:\n$prettyJson', name: 'API');
+        final prettyJson = JsonEncoder.withIndent(
+          '  ',
+        ).convert(jsonDecode(response.body));
+        // developer.log('Response Body:\n$prettyJson', name: 'API');
       } catch (e) {
         developer.log('Response Body (raw): ${response.body}', name: 'API');
       }
@@ -284,8 +285,10 @@ class ApiClient {
     developer.log('URL: $url', name: 'API');
     developer.log('Headers: ${request.headers}', name: 'API');
     developer.log('Fields: ${request.fields}', name: 'API');
-    developer.log('Files: ${files?.map((f) => f.filename).toList()}',
-        name: 'API');
+    developer.log(
+      'Files: ${files?.map((f) => f.filename).toList()}',
+      name: 'API',
+    );
     developer.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
     try {
@@ -296,12 +299,15 @@ class ApiClient {
       developer.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       developer.log('📥 MULTIPART RESPONSE', name: 'API');
       developer.log('Status Code: ${response.statusCode}', name: 'API');
-      developer.log('Status: ${_getStatusMessage(response.statusCode)}',
-          name: 'API');
+      developer.log(
+        'Status: ${_getStatusMessage(response.statusCode)}',
+        name: 'API',
+      );
 
       try {
-        final prettyJson =
-        JsonEncoder.withIndent('  ').convert(jsonDecode(response.body));
+        final prettyJson = JsonEncoder.withIndent(
+          '  ',
+        ).convert(jsonDecode(response.body));
         developer.log('Response Body:\n$prettyJson', name: 'API');
       } catch (e) {
         developer.log('Response Body (raw): ${response.body}', name: 'API');
@@ -340,9 +346,7 @@ class ApiClient {
       case 500:
         return '❌ Server Error';
       default:
-        return statusCode >= 200 && statusCode < 300
-            ? '✅ Success'
-            : '❌ Error';
+        return statusCode >= 200 && statusCode < 300 ? '✅ Success' : '❌ Error';
     }
   }
 }

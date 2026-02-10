@@ -36,9 +36,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
         },
       );
     }
-   // controller.newMessage();
+    controller.newMessage();
+
     /// First API call
-   // controller.fetchChatRooms();
+    // controller.fetchChatRooms();
 
     /// Pagination listener
     scrollController.addListener(_onScroll);
@@ -46,7 +47,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
   void _onScroll() {
     if (scrollController.position.pixels >=
-        scrollController.position.maxScrollExtent - 100 &&
+            scrollController.position.maxScrollExtent - 100 &&
         controller.hasMore &&
         !controller.isLoadingMore.value) {
       controller.fetchChatRooms();
@@ -107,8 +108,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
                     style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
                     decoration: InputDecoration(
                       hintText: 'search_here'.tr,
-                      hintStyle:
-                      TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
+                      hintStyle: TextStyle(
+                        fontSize: ResponsiveHelper.fontSize(16),
+                      ),
                       prefixIcon: Icon(
                         Icons.search,
                         size: ResponsiveHelper.iconSize(24),
@@ -127,15 +129,16 @@ class _ChatListScreenState extends State<ChatListScreen> {
             /// Chat list
             Expanded(
               child: Obx(() {
-                final chatList = controller.userChatList;
+                // final chatList = controller.userChatList;
 
                 /// First load
-                if (controller.isLoadingChat.value && chatList.isEmpty) {
+                if (controller.isLoadingChat.value &&
+                    controller.userChatList.isEmpty) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
                 /// Empty state
-                if (chatList.isEmpty) {
+                if (controller.userChatList.isEmpty) {
                   return ListView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     children: [
@@ -158,22 +161,20 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   return ListView.builder(
                     physics: const AlwaysScrollableScrollPhysics(),
                     controller: scrollController,
-                    itemCount: chatList.length + 1,
+                    itemCount: controller.userChatList.length + 1,
                     itemBuilder: (context, index) {
                       /// Pagination loader
-                      if (index == chatList.length) {
+                      if (index == controller.userChatList.length) {
                         if (controller.isLoadingMore.value) {
                           return const Padding(
                             padding: EdgeInsets.all(8),
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
+                            child: Center(child: CircularProgressIndicator()),
                           );
                         }
                         return const SizedBox.shrink();
                       }
 
-                      final room = chatList[index];
+                      final room = controller.userChatList[index];
 
                       return ChatTile(
                         name: room.otherUser?.nickName ?? "No Name",
@@ -188,11 +189,11 @@ class _ChatListScreenState extends State<ChatListScreen> {
                             RouteName.message,
                             extra: {
                               'roomId': room.id ?? '',
-                              'otherUserName': room.otherUser?.nickName ?? 'User',
+                              'otherUserName':
+                                  room.otherUser?.nickName ?? 'User',
                               'otherUserAvatar':
-                              room.otherUser?.avatar ?? AppConst.unknown,
+                                  room.otherUser?.avatar ?? AppConst.unknown,
                               'receiverId': room.otherUser?.id ?? '',
-
                             },
                           );
                         },
@@ -202,13 +203,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 });
               }),
             ),
-
-
-
-
-
-
-
           ],
         ),
       ),
