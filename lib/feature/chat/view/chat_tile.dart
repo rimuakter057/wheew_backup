@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../share/widgets/avatar/user_avatar.dart';
 
@@ -8,6 +10,7 @@ class ChatTile extends StatelessWidget {
   final String time;
   final String? imagePath;
   final VoidCallback onTap;
+  final FontWeight fontWeight;
 
   const ChatTile({
     super.key,
@@ -16,31 +19,40 @@ class ChatTile extends StatelessWidget {
     required this.time,
     this.imagePath,
     required this.onTap,
+    required this.fontWeight,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       onTap: onTap,
-      leading: UserAvatar(imagePath: imagePath),
+      leading: UserAvatar(
+          imagePath: imagePath
+      ),
       title: Text(
         name,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
+        style: GoogleFonts.questrial(
           fontSize: ResponsiveHelper.fontSize(16),
+          fontWeight: FontWeight.w600,
+          color: AppColors.messageSubtitle,
         ),
       ),
       subtitle: Text(
         message,
-        style: TextStyle(
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: GoogleFonts.questrial(
           fontSize: ResponsiveHelper.fontSize(14),
+          fontWeight: fontWeight,
+          color: AppColors.messageSubtitle,
         ),
       ),
       trailing: Text(
         time,
-        style: TextStyle(
-          color: Colors.grey,
+        style: GoogleFonts.questrial(
+          color: AppColors.messageSubtitle,
           fontSize: ResponsiveHelper.fontSize(12),
+
         ),
       ),
     );

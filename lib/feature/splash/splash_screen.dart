@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (isLoggedIn) {
 
-      await SocketApi.init(
+      await AppSocket.init(
         onSocketConnect: () {
           context.goNamed(RouteName.chatList);
         },

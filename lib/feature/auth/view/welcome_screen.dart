@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import '../../../core/router/routes_name.dart';
@@ -8,7 +7,6 @@ import '../../../share/widgets/button/outline_button.dart';
 import '../../../share/widgets/button/primary_button.dart';
 import '../../../share/widgets/button/toggle_button.dart';
 import '../../../utils/assets_path/assets_path.dart';
-import '../../../utils/extension/string_extension.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -162,13 +160,13 @@ class WelcomeScreen extends StatelessWidget {
 
   // Avatar Widget with percentage-based positioning
   Widget _avatar(
-      String image, {
-        double? topPercent,
-        double? leftPercent,
-        double? rightPercent,
-        required double radius,
-        required Size size,
-      }) {
+    String image, {
+    double? topPercent,
+    double? leftPercent,
+    double? rightPercent,
+    required double radius,
+    required Size size,
+  }) {
     return Positioned(
       top: topPercent != null ? size.height * topPercent : null,
       left: leftPercent != null ? size.width * leftPercent : null,

@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:platchatapp/share/widgets/network_image/custom_network_image.dart';
+import 'package:platchatapp/utils/app_const/app_const.dart';
 import '../../../core/service/api_url.dart';
 
 class UserAvatar extends StatelessWidget {
   final String? imagePath;
   final double radius;
 
-  const UserAvatar({
-    super.key,
-    this.imagePath,
-    this.radius = 30,
-  });
+  const UserAvatar({super.key, this.imagePath, this.radius = 30});
 
   @override
   Widget build(BuildContext context) {
     // Check if it's a network image
     if (imagePath != null &&
         (imagePath!.startsWith('http') || imagePath!.startsWith('uploads'))) {
-
       final String imageUrl = imagePath!.startsWith('http')
           ? imagePath!
           : '${ApiUrl.baseUrl}/$imagePath';
@@ -31,7 +28,8 @@ class UserAvatar extends StatelessWidget {
             height: radius * 2,
             fit: BoxFit.cover,
             placeholder: (context, url) => const CircularProgressIndicator(),
-            errorWidget: (context, url, error) => const Icon(Icons.person),
+            errorWidget: (context, url, error) =>
+                CustomNetworkImage(imageUrl: AppConst.unknown),
           ),
         ),
       );
@@ -40,9 +38,7 @@ class UserAvatar extends StatelessWidget {
     // Local asset or default
     return CircleAvatar(
       radius: radius,
-      backgroundImage: imagePath != null
-          ? AssetImage(imagePath!)
-          : null,
+      backgroundImage: imagePath != null ? AssetImage(imagePath!) : null,
       child: imagePath == null ? const Icon(Icons.person) : null,
     );
   }
