@@ -87,7 +87,7 @@ class AppMenuDrawer extends StatelessWidget {
                 size: ResponsiveHelper.iconSize(24),
               ),
               title: Text(
-                'Terms & Condition'.tr,
+                'terms_and_conditions'.tr,
                 style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
               ),
               onTap: () {
