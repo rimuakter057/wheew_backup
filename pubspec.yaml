@@ -42,7 +42,7 @@ dependencies:
   flutter_localization: ^0.3.3
   socket_io_client: ^3.1.4
   connectivity_plus: ^7.0.0
-  google_fonts: ^8.0.1
+
 
 
 
