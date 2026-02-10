@@ -32,47 +32,52 @@ class _MessageScreenState extends State<MessageScreen> {
   //final TextEditingController messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
+
+
   @override
   void initState() {
     super.initState();
-    debugPrint("======================receiver id :${widget.receiverId}");
-    debugPrint("===============================room  id :${widget.roomId}");
 
-    chatController.sendNewEmitMessage(
-      receiverId: widget.receiverId,
-      message: chatController.messageController.text.toString(),
-    );
+    debugPrint("📨 Opening chat - Receiver: ${widget.receiverId}, Room: ${widget.roomId}");
 
-    chatController.sendNewListenMessage();
-    chatController.errorListenMessage();
-    debugPrint(
-      "===============================room  id before call controller :${widget.roomId}",
-    );
+    // ⭐ Async initialization
+    _initChat();
+
+    // Scroll listener
+    _scrollController.addListener(_onScroll);
+  }
+
+  Future<void> _initChat() async {
+    // Wait for build to complete
+    await Future.delayed(Duration.zero);
+
+    // Set room ID
+    chatController.roomID.value = widget.roomId??"";
+
+    // Fetch messages
     chatController.fetchRoomMessage(roomId: widget.roomId, refresh: true);
-    debugPrint(
-      "===============================room  id after call controller :${widget.roomId}",
-    );
 
-    //chatController.newMessage();
+    debugPrint("✅ Chat initialized for room: ${widget.roomId}");
+  }
 
-    // Scroll listener for pagination
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-              _scrollController.position.maxScrollExtent - 100 &&
-          chatController.hasMoreMessage &&
-          !chatController.isLoadingMoreMessage.value) {
-        // Load next page
-        chatController.fetchRoomMessage(roomId: widget.roomId);
-      }
-    });
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 100 &&
+        chatController.hasMoreMessage &&
+        !chatController.isLoadingMoreMessage.value) {
+      chatController.fetchRoomMessage(roomId: widget.roomId);
+    }
   }
 
   @override
   void dispose() {
-    //chatController. messageController.dispose();
     _scrollController.dispose();
+    chatController.roomID.value = ""; // Clear room ID
     super.dispose();
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -172,6 +177,7 @@ class _MessageScreenState extends State<MessageScreen> {
                           ? Alignment.centerRight
                           : Alignment.centerLeft,
                       child: Container(
+                        constraints: BoxConstraints(maxWidth: ResponsiveHelper.width(272)),
                         margin: EdgeInsets.symmetric(
                           vertical: ResponsiveHelper.height(5),
                         ),

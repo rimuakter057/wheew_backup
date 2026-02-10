@@ -24,6 +24,32 @@ class _ChatListScreenState extends State<ChatListScreen> {
   final ChatController controller = Get.find<ChatController>();
   final ScrollController scrollController = ScrollController();
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   /// Socket init (ONLY ONCE)
+  //   if (!AppSocket.isConnected) {
+  //     AppSocket.init(
+  //       onSocketConnect: () {
+  //         debugPrint('Socket connected from ChatListScreen');
+  //       },
+  //     );
+  //   }
+  //   controller.newMessage();
+  //   controller.fetchChatRooms(refresh: true);
+  //
+  //   /// First API call
+  //   // controller.fetchChatRooms();
+  //
+  //   /// Pagination listener
+  //   scrollController.addListener(_onScroll);
+  // }
+
+
+
+
+
   @override
   void initState() {
     super.initState();
@@ -36,14 +62,22 @@ class _ChatListScreenState extends State<ChatListScreen> {
         },
       );
     }
-    controller.newMessage();
 
-    /// First API call
-    // controller.fetchChatRooms();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.initSocketListeners(); // ⭐ এটা use করুন
+      controller.fetchChatRooms(refresh: true);
+    });
 
-    /// Pagination listener
     scrollController.addListener(_onScroll);
   }
+
+
+
+
+
+
+
+
 
   void _onScroll() {
     if (scrollController.position.pixels >=
@@ -157,7 +191,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 }
 
                 /// Nested Obx for pagination/loading inside ListView.builder
-                return Obx(() {
+
                   return ListView.builder(
                     physics: const AlwaysScrollableScrollPhysics(),
                     controller: scrollController,
@@ -179,6 +213,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       return ChatTile(
                         name: room.otherUser?.nickName ?? "No Name",
                         message: room.latestMessage?.message ?? "",
+                        fontWeight: room.latestMessage!.isRead==true?FontWeight.w400:FontWeight.w700,
                         time: formatTime(room.latestMessage?.createdAt ?? ""),
                         imagePath: ImageHandler.imagesHandle(
                           room.otherUser?.avatar ?? AppConst.unknown,
@@ -200,7 +235,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       );
                     },
                   );
-                });
+
               }),
             ),
           ],

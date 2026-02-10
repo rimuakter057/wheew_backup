@@ -10,6 +10,7 @@ class ChatTile extends StatelessWidget {
   final String time;
   final String? imagePath;
   final VoidCallback onTap;
+  final FontWeight fontWeight;
 
   const ChatTile({
     super.key,
@@ -18,6 +19,7 @@ class ChatTile extends StatelessWidget {
     required this.time,
     this.imagePath,
     required this.onTap,
+    required this.fontWeight,
   });
 
   @override
@@ -37,9 +39,11 @@ class ChatTile extends StatelessWidget {
       ),
       subtitle: Text(
         message,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: GoogleFonts.questrial(
           fontSize: ResponsiveHelper.fontSize(14),
-          fontWeight: FontWeight.w400,
+          fontWeight: fontWeight,
           color: AppColors.messageSubtitle,
         ),
       ),
@@ -48,6 +52,7 @@ class ChatTile extends StatelessWidget {
         style: GoogleFonts.questrial(
           color: AppColors.messageSubtitle,
           fontSize: ResponsiveHelper.fontSize(12),
+
         ),
       ),
     );
