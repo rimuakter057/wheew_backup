@@ -14,6 +14,23 @@ import 'chat_repository.dart';
 
 class ChatController extends GetxController {
   ///==============================================================
+  void initSocketListeners() {
+    newMessage();
+    sendNewListenMessage();
+    errorListenMessage();
+  }
+
+
+
+
+  @override
+  void onInit() {
+    super.onInit();
+    initSocketListeners();
+    getChatSearchList();
+     fetchChatRooms();
+  }
+
 
   /// get all message list ================================================
   RxList<Messages> userMessageList = <Messages>[].obs;
@@ -244,12 +261,6 @@ class ChatController extends GetxController {
 
   Timer? _debounce;
 
-  @override
-  void onInit() {
-    super.onInit();
-    newMessage();
-    getChatSearchList();
-  }
 
   @override
   void onClose() {
@@ -327,16 +338,6 @@ class ChatController extends GetxController {
     update();
   }
 
-  getAllConversation({int? page = 1}) async {
-    final payload = {"page": page.toString(), "limit": 10};
-    AppSocket.emitWithAck(
-      "fetch-chat-rooms",
-      payload,
-      ack: (value) {
-        debugPrint('===>> fetch-chat-rooms===================>> $value');
-      },
-    );
-  }
 
   ///=======================user chat list===================================================================
 }

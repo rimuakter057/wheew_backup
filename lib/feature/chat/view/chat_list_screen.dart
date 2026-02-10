@@ -36,9 +36,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
         },
       );
     }
-    controller.newMessage();
+   // controller.newMessage();
     /// First API call
-    controller.fetchChatRooms();
+   // controller.fetchChatRooms();
 
     /// Pagination listener
     scrollController.addListener(_onScroll);

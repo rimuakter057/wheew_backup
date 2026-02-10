@@ -15,10 +15,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   Get.put(AuthController());
-  Get.put(ProfileController());
-
   Get.put(ChatController());
-
+  Get.put(ProfileController());
   Get.put(LanguageController());
 
   // ✅ Register translations once
