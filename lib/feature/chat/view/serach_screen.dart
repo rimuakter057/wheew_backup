@@ -146,6 +146,7 @@ class _SearchListScreenState extends State<SearchListScreen> {
                       return ChatTile(
                         name: chat.nickName.toString(),
                         message: chat.designation.toString(),
+                        fontWeight:FontWeight.w400,
                         time: formatTime(chat.createdAt.toString()),
 
                         imagePath: chat.avatar ?? "assets/images/person1.png",

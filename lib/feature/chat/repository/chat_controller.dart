@@ -14,18 +14,25 @@ import 'chat_repository.dart';
 
 class ChatController extends GetxController {
   ///==============================================================
+  bool _listenersInitialized = false; // ⭐ Add this
+
   void initSocketListeners() {
+    if (_listenersInitialized) return; // ⭐ Prevent multiple calls
+    _listenersInitialized = true;
+
     newMessage();
     sendNewListenMessage();
     errorListenMessage();
+
+    debugPrint('✅ Socket listeners initialized');
   }
 
   @override
   void onInit() {
     super.onInit();
-    initSocketListeners();
+    //initSocketListeners();
     getChatSearchList();
-    fetchChatRooms();
+
   }
 
   /// get all message list ================================================
@@ -105,26 +112,80 @@ class ChatController extends GetxController {
 
   final TextEditingController messageController = TextEditingController();
 
+
+  //
+  // sendNewEmitMessage({required String receiverId, required String message}) {
+  //   final payload = {'receiver_id': receiverId, 'message': message};
+  //
+  //   final completer = Completer<dynamic>();
+  //
+  //   /// 🔹 Create optimistic local message
+  //   final localTempMessage = Messages(
+  //     id: DateTime.now().millisecondsSinceEpoch.toString(), // temp id
+  //     receiverId: receiverId,
+  //     message: message,
+  //     createdAt: DateTime.now().toIso8601String(),
+  //     isMine: true,
+  //     isDelivered: false,
+  //     type: 'manual',
+  //   );
+  //
+  //   /// 🔹 Add to UI immediately
+  //   userMessageList.insert(0, localTempMessage);
+  //
+  //   // userMessageList.add(localTempMessage);
+  //
+  //   messageController.clear();
+  //
+  //   AppSocket.emitWithAck(
+  //     "message",
+  //     payload,
+  //     ack: (value) {
+  //       // completer.complete(value);
+  //
+  //       debugPrint(
+  //         "============sendNewEmitMessage success=============== $value",
+  //       );
+  //     },
+  //   );
+  // }
+  //
+  //
+  //
+  // Future<void> sendNewListenMessage() async {
+  //   AppSocket.onEvent('message-sent', (value) {
+  //     debugPrint('📤 Message sent confirmation: $value');
+  //     // Optional: Server confirmation পেলে কিছু করতে চাইলে
+  //   });
+  // }
+  //
+
+
+
+
+
+
+
   sendNewEmitMessage({required String receiverId, required String message}) {
     final payload = {'receiver_id': receiverId, 'message': message};
 
-    final completer = Completer<dynamic>();
-
-    /// 🔹 Create optimistic local message
     final localTempMessage = Messages(
-      id: DateTime.now().millisecondsSinceEpoch.toString(), // temp id
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
       receiverId: receiverId,
+      senderId: '', // আপনার user ID এখানে দিতে পারেন
       message: message,
       createdAt: DateTime.now().toIso8601String(),
       isMine: true,
       isDelivered: false,
-      type: 'manual',
+      type: 'TEXT',
+      chatRoomId: roomID.value, // ⭐ Important
     );
 
-    /// 🔹 Add to UI immediately
+    // Message list এ add
     userMessageList.insert(0, localTempMessage);
 
-    // userMessageList.add(localTempMessage);
+    // Chat list এ instant update (optimistic)
+    updateChatRoomInListOptimistic(localTempMessage);
 
     messageController.clear();
 
@@ -132,59 +193,141 @@ class ChatController extends GetxController {
       "message",
       payload,
       ack: (value) {
-        // completer.complete(value);
-
-        debugPrint(
-          "============sendNewEmitMessage success=============== $value",
-        );
+        debugPrint("✅ Message sent successfully: $value");
       },
     );
   }
 
-  Future<void> sendNewListenMessage() async {
-    AppSocket.onEvent('message-sent', (value) {
-      debugPrint(
-        '====================== send new message============================ $value',
+  void updateChatRoomInListOptimistic(Messages newMessage) {
+    final roomIndex = userChatList.indexWhere(
+          (room) => room.id == newMessage.chatRoomId,
+    );
+
+    if (roomIndex != -1) {
+      List<Rooms> tempList = List.from(userChatList);
+      final room = tempList[roomIndex];
+
+      room.latestMessage = LatestMessage(
+        id: newMessage.id,
+        chatRoomId: newMessage.chatRoomId,
+        senderId: newMessage.senderId,
+        receiverId: newMessage.receiverId,
+        message: newMessage.message,
+        type: newMessage.type,
+        isRead: false,
+        isDelivered: false,
+        createdAt: newMessage.createdAt,
+        updatedAt: newMessage.updatedAt,
+        isMine: true,
       );
 
-      if (roomID.value.isNotEmpty) {
-        fetchRoomMessage(roomId: roomID.value);
+      tempList.removeAt(roomIndex);
+      tempList.insert(0, room);
+      userChatList.value = tempList;
 
-        fetchChatRooms();
+      debugPrint('✅ Chat list updated after sending message');
+    }
+  }
 
-        debugPrint(
-          '====================== fetchRoomMessage send new message============================ $fetchRoomMessage',
-        );
-
-        debugPrint(
-          '====================== fetchRoomMessage send new message============================ $fetchChatRooms',
-        );
-      }
+// message-sent event listener আর লাগবে না বা এভাবে রাখতে পারেন:
+  Future<void> sendNewListenMessage() async {
+    AppSocket.onEvent('message-sent', (value) {
+      debugPrint('📤 Message sent confirmation: $value');
+      // Optional: Server confirmation পেলে কিছু করতে চাইলে
     });
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   Future<void> newMessage() async {
     debugPrint('========== Call New Message');
     AppSocket.onEvent('new-message', (value) {
-      debugPrint(
-        '====================== fetch new message============================ $value',
-      );
-
-      // Map<String, dynamic> data = jsonDecode(value);
+      debugPrint('🔔 NEW MESSAGE RECEIVED: $value');  // ← এটা print হচ্ছে?
 
       Messages model = Messages.fromJson(value);
-
-      debugPrint('=======cxxcx========= >> ${model.toJson()}');
+      debugPrint('📨 Parsed Message: ${model.toJson()}');
+      debugPrint('🆔 Chat Room ID: ${model.chatRoomId}');  // ← এটা কি আসছে?
 
       if (model.chatRoomId == roomID.value) {
         userMessageList.insert(0, model);
+        debugPrint('✅ Added to message list');
       }
-      debugPrint(
-        '====================== fetchRoomMessage send new message==========================',
-      );
-      fetchChatRooms();
+
+      debugPrint('🔄 Calling updateChatRoomInList...');
+      updateChatRoomInList(model);
     });
   }
+
+  void updateChatRoomInList(Messages newMessage) {
+    final roomIndex = userChatList.indexWhere(
+          (room) => room.id == newMessage.chatRoomId,
+    );
+
+    if (roomIndex != -1) {
+
+      userChatList[roomIndex].latestMessage = LatestMessage(
+        id: newMessage.id,
+        chatRoomId: newMessage.chatRoomId,
+        senderId: newMessage.senderId,
+        receiverId: newMessage.receiverId,
+        message: newMessage.message,
+        type: newMessage.type,
+        isRead: newMessage.isRead,
+        isDelivered: newMessage.isDelivered,
+        createdAt: newMessage.createdAt,
+        updatedAt: newMessage.updatedAt,
+        isMine: newMessage.isMine,
+      );
+
+      if (newMessage.isMine == false && newMessage.chatRoomId != roomID.value) {
+        userChatList[roomIndex].unreadCount =
+            (userChatList[roomIndex].unreadCount ?? 0) + 1;
+      }
+
+      // ⭐ Room কে top এ move করার জন্য পুরো list recreate করুন
+      final updatedRoom = userChatList[roomIndex];
+      final newList = [updatedRoom];
+
+      for (int i = 0; i < userChatList.length; i++) {
+        if (i != roomIndex) {
+          newList.add(userChatList[i]);
+        }
+      }
+
+      userChatList.value = newList;
+
+      debugPrint('✅ UI should update now');
+    } else {
+      fetchChatRooms(refresh: true);
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   Future<void> errorListenMessage() async {
     AppSocket.onEvent('exception', (value) {
