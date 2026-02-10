@@ -296,7 +296,7 @@ class ChatController extends GetxController {
             (userChatList[roomIndex].unreadCount ?? 0) + 1;
       }
 
-      // ⭐ Room কে top এ move করার জন্য পুরো list recreate করুন
+
       final updatedRoom = userChatList[roomIndex];
       final newList = [updatedRoom];
 
@@ -309,7 +309,11 @@ class ChatController extends GetxController {
       userChatList.value = newList;
 
       debugPrint('✅ UI should update now');
-    } else {
+    }
+
+
+
+    else {
       fetchChatRooms(refresh: true);
     }
   }
