@@ -3,12 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
-/// Main snackbar function
+
 void showCustomSnackBar(
-    String? message, {
-      bool isError = true,
-      bool getXSnackBar = false,
-    }) {
+  String? message, {
+  bool isError = true,
+  bool getXSnackBar = false,
+}) {
   if (message != null && message.isNotEmpty) {
     if (getXSnackBar) {
       Get.showSnackbar(
@@ -17,14 +17,14 @@ void showCustomSnackBar(
           message: message,
           duration: const Duration(seconds: 3),
           snackStyle: SnackStyle.FLOATING,
-          margin: EdgeInsets.all(10.sp),
-          borderRadius: 8.r,
+          margin: EdgeInsets.all(10),
+          borderRadius: 8,
           isDismissible: true,
           dismissDirection: DismissDirection.horizontal,
           icon: Icon(
             isError ? Icons.error_outline : Icons.check_circle_outline,
             color: Colors.white,
-            size: 24.sp,
+            size: 24,
           ),
         ),
       );
@@ -33,23 +33,23 @@ void showCustomSnackBar(
         ScaffoldMessenger.of(Get.context!).showSnackBar(
           SnackBar(
             dismissDirection: DismissDirection.horizontal,
-            margin: EdgeInsets.all(10.sp),
+            margin: EdgeInsets.all(10),
             duration: const Duration(seconds: 3),
             backgroundColor: isError ? Colors.red : Colors.green,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.r),
+              borderRadius: BorderRadius.circular(8),
             ),
             content: Row(
               children: [
                 Icon(
                   isError ? Icons.error_outline : Icons.check_circle_outline,
                   color: Colors.white,
-                  size: 20.sp,
+                  size: 20,
                 ),
-                SizedBox(width: 8.w),
+                SizedBox(width: 8),
                 Expanded(
-                  child: Text(message, style: TextStyle(fontSize: 14.sp)),
+                  child: Text(message, style: TextStyle(fontSize: 14)),
                 ),
               ],
             ),
@@ -105,20 +105,20 @@ void showLoadingDialog({String? message, BuildContext? context}) {
         canPop: false,
         child: Center(
           child: Container(
-            padding: EdgeInsets.all(20.sp),
+            padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 const CircularProgressIndicator(),
                 if (message != null) ...[
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 16),
                   Text(
                     message,
-                    style: TextStyle(fontSize: 14.sp),
+                    style: TextStyle(fontSize: 14),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -136,20 +136,20 @@ void showLoadingDialog({String? message, BuildContext? context}) {
           canPop: false,
           child: Center(
             child: Container(
-              padding: EdgeInsets.all(20.sp),
+              padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const CircularProgressIndicator(),
                   if (message != null) ...[
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
                     Text(
                       message,
-                      style: TextStyle(fontSize: 14.sp),
+                      style: TextStyle(fontSize: 14),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -187,18 +187,18 @@ Future<bool> showConfirmationDialog({
   final dialogContext = context ?? Get.context;
 
   if (dialogContext == null) {
-    debugPrint('Warning: Cannot show confirmation dialog, no context available');
+    debugPrint(
+      'Warning: Cannot show confirmation dialog, no context available',
+    );
     return false;
   }
 
   final result = await showDialog<bool>(
     context: dialogContext,
     builder: (context) => AlertDialog(
-      title: Text(title, style: TextStyle(fontSize: 16.sp)),
-      content: Text(message, style: TextStyle(fontSize: 14.sp)),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.r),
-      ),
+      title: Text(title, style: TextStyle(fontSize: 16)),
+      content: Text(message, style: TextStyle(fontSize: 14)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
@@ -223,26 +223,26 @@ void showWarningSnackBar(String message, {bool getXSnackBar = false}) {
         message: message,
         duration: const Duration(seconds: 3),
         snackStyle: SnackStyle.FLOATING,
-        margin: EdgeInsets.all(10.sp),
-        borderRadius: 8.r,
+        margin: EdgeInsets.all(10),
+        borderRadius: 8,
         isDismissible: true,
-        icon: Icon(Icons.warning_amber_outlined, color: Colors.white, size: 24.sp),
+        icon: Icon(Icons.warning_amber_outlined, color: Colors.white, size: 24),
       ),
     );
   } else {
     if (Get.context != null) {
       ScaffoldMessenger.of(Get.context!).showSnackBar(
         SnackBar(
-          margin: EdgeInsets.all(10.sp),
+          margin: EdgeInsets.all(10),
           duration: const Duration(seconds: 3),
           backgroundColor: Colors.orange,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           content: Row(
             children: [
-              Icon(Icons.warning_amber_outlined, color: Colors.white, size: 20.sp),
-              SizedBox(width: 8.w),
-              Expanded(child: Text(message, style: TextStyle(fontSize: 14.sp))),
+              Icon(Icons.warning_amber_outlined, color: Colors.white, size: 20),
+              SizedBox(width: 8),
+              Expanded(child: Text(message, style: TextStyle(fontSize: 14))),
             ],
           ),
         ),
@@ -260,26 +260,30 @@ void showInfoSnackBar(String message, {bool getXSnackBar = false}) {
         message: message,
         duration: const Duration(seconds: 3),
         snackStyle: SnackStyle.FLOATING,
-        margin: EdgeInsets.all(10.sp),
-        borderRadius: 8.r,
+        margin: EdgeInsets.all(10),
+        borderRadius: 8,
         isDismissible: true,
-        icon: Icon(Icons.info_outline, color: Colors.white, size: 24.sp),
+        icon: Icon(Icons.info_outline, color: Colors.white, size: 24),
       ),
     );
   } else {
     if (Get.context != null) {
       ScaffoldMessenger.of(Get.context!).showSnackBar(
         SnackBar(
-          margin: EdgeInsets.all(10.sp),
+          margin: EdgeInsets.all(10),
           duration: const Duration(seconds: 3),
           backgroundColor: Colors.blue,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
           content: Row(
             children: [
-              Icon(Icons.info_outline, color: Colors.white, size: 20.sp),
-              SizedBox(width: 8.w),
-              Expanded(child: Text(message, style: TextStyle(fontSize: 14.sp))),
+              Icon(Icons.info_outline, color: Colors.white, size: 20),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(message, style: TextStyle(fontSize: 14)),
+              ),
             ],
           ),
         ),
