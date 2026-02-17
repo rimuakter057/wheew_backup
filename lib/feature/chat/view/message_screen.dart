@@ -8,20 +8,23 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/custom_container/custom_container.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
-import '../repository/chat_controller.dart'; // Import your controller
+import '../repository/chat_controller.dart';
 
 class MessageScreen extends StatefulWidget {
   final String? roomId;
   final String otherUserName;
   final String? otherUserAvatar;
   final String receiverId;
+ final bool? isBlockedByMe;
+ final bool? isBlockedMe;
+
 
   const MessageScreen({
     super.key,
     this.roomId,
     required this.otherUserName,
     this.otherUserAvatar,
-    required this.receiverId,
+    required this.receiverId, this.isBlockedByMe, this.isBlockedMe,
   });
 
   @override
@@ -39,9 +42,12 @@ class _MessageScreenState extends State<MessageScreen> {
   void initState() {
     super.initState();
 
+    debugPrint("isBlockedByMe==============: ${widget.isBlockedByMe}, isBlockedMe===============: ${widget.isBlockedMe}");
+
+
     debugPrint("📨 Opening chat - Receiver: ${widget.receiverId}, Room: ${widget.roomId}");
 
-    // ⭐ Async initialization
+
     _initChat();
 
     // Scroll listener
@@ -84,21 +90,7 @@ class _MessageScreenState extends State<MessageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      // appBar: AppBar(
-      //   leading: IconButton(
-      //     onPressed: () async {
-      //       chatController.fetchChatRooms();
-      //       Navigator.pop(context);
-      //     },
-      //     icon: Icon(Icons.arrow_back),
-      //   ),
-      //   backgroundColor: Colors.white,
-      //   centerTitle: true,
-      //   title: Text(
-      //     widget.otherUserName,
-      //     style: TextStyle(fontSize: ResponsiveHelper.fontSize(18)),
-      //   ),
-      // ),
+
       body: RefreshIndicator(
         onRefresh: () => chatController.fetchRoomMessage(roomId: widget.roomId),
         child: Column(
@@ -233,7 +225,7 @@ class _MessageScreenState extends State<MessageScreen> {
                           horizontal: ResponsiveHelper.width(14),
                         ),
                         decoration: BoxDecoration(
-                          color: isMine ? AppColors.blueBox : AppColors.black,
+                          color: isMine ? AppColors.blueBox : AppColors.green,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(
                               ResponsiveHelper.borderRadius(15),
@@ -253,28 +245,9 @@ class _MessageScreenState extends State<MessageScreen> {
                                   ),
                           ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: isMine
-                              ? CrossAxisAlignment.end
-                              : CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              msg.message ?? "",
-                              style: GoogleFonts.poppins(color: AppColors.white),
-                            ),
-                            SizedBox(height: ResponsiveHelper.height(4)),
-                            Text(
-                              msg.createdAt != null
-                                  ? DateFormat.jm().format(
-                                      DateTime.parse(msg.createdAt!),
-                                    )
-                                  : "",
-                              style: TextStyle(
-                                color: Colors.white54,
-                                fontSize: ResponsiveHelper.fontSize(14),
-                              ),
-                            ),
-                          ],
+                        child:       Text(
+                          msg.message ?? "",
+                          style: GoogleFonts.poppins(color: AppColors.white),
                         ),
                       ),
                     );
@@ -283,8 +256,24 @@ class _MessageScreenState extends State<MessageScreen> {
               }),
             ),
 
-            /// Message Input Field
-            _messageInput(),
+
+            /// Bottom widget (Blocked or Input)
+            if (widget.isBlockedByMe == true && widget.isBlockedMe == false)
+              BlockByMeWidget(
+                name: widget.otherUserName,
+                onUnblock: () {
+                 // chatController.unblockUser(widget.receiverId);
+                },
+              )
+            else if (widget.isBlockedMe == true && widget.isBlockedByMe == false)
+              const YouAreBlockedWidget()
+            else
+              _messageInput(),
+
+
+
+
+
           ],
         ),
       ),
@@ -304,7 +293,7 @@ class _MessageScreenState extends State<MessageScreen> {
         padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(16)),
         height: ResponsiveHelper.buttonHeight(56),
         decoration: BoxDecoration(
-          color: AppColors.black,
+          color: AppColors.green,
           borderRadius: BorderRadius.circular(
             ResponsiveHelper.borderRadius(16),
           ),
@@ -316,9 +305,9 @@ class _MessageScreenState extends State<MessageScreen> {
                 controller: chatController.messageController,
                 decoration: InputDecoration(
                   hintText: 'Type here...',
-                  fillColor: AppColors.black,
+                  fillColor: AppColors.green,
                   hintStyle: TextStyle(
-                    color: Colors.white54,
+                    color: AppColors.white,
                     fontSize: ResponsiveHelper.fontSize(16),
                   ),
                   border: InputBorder.none,
@@ -354,4 +343,146 @@ class _MessageScreenState extends State<MessageScreen> {
       ),
     );
   }
+
+
+
+
+}
+
+
+
+
+
+class BlockByMeWidget extends StatelessWidget {
+  final VoidCallback onUnblock;
+ final String name;
+  const BlockByMeWidget({
+    super.key,
+    required this.onUnblock, required this.name,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+width: double.infinity,
+      padding:  ResponsiveHelper.all(16),
+
+      margin:  ResponsiveHelper.all(12),
+
+      decoration: BoxDecoration(
+
+        color: Colors.blue.shade50,
+
+        borderRadius: BorderRadius.circular(12),
+
+        border: Border.all(
+          color: AppColors.blue,
+        ),
+
+      ),
+
+      child: Column(
+
+        children: [
+
+
+           Text(
+             "You've blocked $name",
+             style:GoogleFonts.poppins (
+               fontSize: ResponsiveHelper.fontSize(16),
+               fontWeight: FontWeight.w500,
+             ),
+           ),
+          SizedBox(height: ResponsiveHelper.spacing(4),),
+          Text(
+            "This user won't be able to message you until you unblock them.",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              fontSize: ResponsiveHelper.fontSize(14),
+              fontWeight: FontWeight.w400,
+              color: Colors.grey[600],
+            ),
+          ),
+          SizedBox(height: ResponsiveHelper.spacing(12),),
+
+          ElevatedButton(
+
+            onPressed: onUnblock,
+
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.blue
+            ),
+
+            child:  Text("Unblock",style:GoogleFonts.poppins(
+              fontSize: ResponsiveHelper.fontSize(16),
+              fontWeight: FontWeight.w500
+            ),),
+
+          ),
+
+        ],
+
+      ),
+
+    );
+  }
+}
+
+
+
+
+
+
+
+class YouAreBlockedWidget extends StatelessWidget {
+  const YouAreBlockedWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Container(
+
+      padding:  ResponsiveHelper.all(16),
+
+      margin:  ResponsiveHelper.all(12),
+
+      decoration: BoxDecoration(
+
+        color: Colors.grey.shade200,
+
+        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+
+      ),
+
+      child:  Row(
+
+        children: [
+
+          Icon(
+            Icons.lock,
+            color: Colors.grey,
+          ),
+
+          SizedBox(width: ResponsiveHelper.spacing(10)),
+
+          Expanded(
+            child: Text(
+              "You can't send message to this user",
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style:GoogleFonts.poppins (
+                fontSize: ResponsiveHelper.fontSize(14),
+                fontWeight: FontWeight.w500
+              ),
+            ),
+          ),
+
+        ],
+
+      ),
+
+    );
+
+  }
+
 }

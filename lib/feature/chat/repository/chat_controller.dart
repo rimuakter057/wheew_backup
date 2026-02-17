@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' hide Response;
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart';
+import 'package:platchatapp/core/service/api_checker.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/feature/chat/model/block_model.dart';
 import 'package:platchatapp/feature/chat/model/chat_model.dart';
 import 'package:platchatapp/feature/chat/model/message_response_model.dart';
 import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
@@ -113,58 +116,6 @@ class ChatController extends GetxController {
   final TextEditingController messageController = TextEditingController();
 
 
-  //
-  // sendNewEmitMessage({required String receiverId, required String message}) {
-  //   final payload = {'receiver_id': receiverId, 'message': message};
-  //
-  //   final completer = Completer<dynamic>();
-  //
-  //   /// 🔹 Create optimistic local message
-  //   final localTempMessage = Messages(
-  //     id: DateTime.now().millisecondsSinceEpoch.toString(), // temp id
-  //     receiverId: receiverId,
-  //     message: message,
-  //     createdAt: DateTime.now().toIso8601String(),
-  //     isMine: true,
-  //     isDelivered: false,
-  //     type: 'manual',
-  //   );
-  //
-  //   /// 🔹 Add to UI immediately
-  //   userMessageList.insert(0, localTempMessage);
-  //
-  //   // userMessageList.add(localTempMessage);
-  //
-  //   messageController.clear();
-  //
-  //   AppSocket.emitWithAck(
-  //     "message",
-  //     payload,
-  //     ack: (value) {
-  //       // completer.complete(value);
-  //
-  //       debugPrint(
-  //         "============sendNewEmitMessage success=============== $value",
-  //       );
-  //     },
-  //   );
-  // }
-  //
-  //
-  //
-  // Future<void> sendNewListenMessage() async {
-  //   AppSocket.onEvent('message-sent', (value) {
-  //     debugPrint('📤 Message sent confirmation: $value');
-  //     // Optional: Server confirmation পেলে কিছু করতে চাইলে
-  //   });
-  // }
-  //
-
-
-
-
-
-
 
   sendNewEmitMessage({required String receiverId, required String message}) {
     final payload = {'receiver_id': receiverId, 'message': message};
@@ -229,7 +180,7 @@ class ChatController extends GetxController {
     }
   }
 
-// message-sent event listener আর লাগবে না বা এভাবে রাখতে পারেন:
+
   Future<void> sendNewListenMessage() async {
     AppSocket.onEvent('message-sent', (value) {
       debugPrint('📤 Message sent confirmation: $value');
@@ -239,17 +190,7 @@ class ChatController extends GetxController {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+///new message==========================
 
   Future<void> newMessage() async {
     debugPrint('========== Call New Message');
@@ -321,18 +262,6 @@ class ChatController extends GetxController {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
   Future<void> errorListenMessage() async {
     AppSocket.onEvent('exception', (value) {
       debugPrint(
@@ -344,9 +273,16 @@ class ChatController extends GetxController {
   ///=======================================================================
 
   ///get all user chat list========================================================
+
+
+
+
   RxList<Rooms> userChatList = <Rooms>[].obs;
   var isLoadingChat = false.obs;
   var isLoadingMore = false.obs;
+
+
+
   int page = 1;
   final int limit = 10;
   int total = 0;
@@ -389,6 +325,86 @@ class ChatController extends GetxController {
   }
 
   bool get hasMore => userChatList.length < total;
+
+
+
+
+
+  ///get block list==============================================================
+
+
+
+
+
+  RxList<BlockModel> userBlockList = <BlockModel>[].obs;
+  var isLoadingBlock = false.obs;
+  Future<void> fetchBlockList({bool refresh = false}) async {
+
+    debugPrint("fetchBlockList called");
+
+    if (refresh) {
+      userBlockList.clear();
+    }
+
+    isLoadingBlock.value = true;
+
+    final uri = ApiUrl.blockList;
+
+    Response response = await ApiClient.getData(uri: uri);
+
+    debugPrint("status code: ${response.statusCode}");
+    debugPrint("body: ${response.body}");
+
+    if (response.statusCode == 200) {
+
+      final body = jsonDecode(response.body);
+
+      userBlockList.value =
+          (body['blockList'] as List)
+              .map((e) => BlockModel.fromJson(e))
+              .toList();
+
+      debugPrint("list length: ${userBlockList.length}");
+
+    }
+
+    isLoadingBlock.value = false;
+
+  }
+
+
+///unblock============================================
+
+
+
+
+  var isLoadingUnblock = false.obs;
+
+  Future<void> unblock(String id,) async {
+    isLoadingUnblock.value = true;
+
+    final body = {
+      "userId": id, // or whatever backend expects
+    };
+
+    final response = await ApiClient.patchData(
+
+      uri:ApiUrl.unblock,body: body,
+    );
+
+    isLoadingUnblock.value = false;
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+
+
+    }
+
+
+
+  }
+
+
+
 
   ///=======================================================================
 

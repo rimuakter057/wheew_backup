@@ -24,16 +24,23 @@ class UserChatModel {
   }
 }
 
+
+
 class Rooms {
   String? id;
+  bool?isBlockedByMe;
+  bool?isBlockedMe;
+
   OtherUser? otherUser;
   LatestMessage? latestMessage;
   int? unreadCount;
 
-  Rooms({this.id, this.otherUser, this.latestMessage, this.unreadCount});
+  Rooms({this.id, this.otherUser, this.latestMessage, this.unreadCount,this.isBlockedByMe,this.isBlockedMe});
 
   Rooms.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+isBlockedByMe=json['isBlockedByMe'];
+isBlockedMe=json["isBlockedMe"];
 
     otherUser = json['otherUser'] != null
         ? OtherUser.fromJson(json['otherUser'])
@@ -47,6 +54,9 @@ class Rooms {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
+   data["isBlockedByMe"]=isBlockedByMe;
+   data["isBlockedByMe"]=isBlockedMe;
+
 
     if (otherUser != null) {
       data['otherUser'] = otherUser!.toJson();

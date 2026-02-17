@@ -64,7 +64,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.initSocketListeners(); // ⭐ এটা use করুন
+      controller.initSocketListeners();
       controller.fetchChatRooms(refresh: true);
     });
 
@@ -229,6 +229,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
                               'otherUserAvatar':
                                   room.otherUser?.avatar ?? AppConst.unknown,
                               'receiverId': room.otherUser?.id ?? '',
+                          "isBlockedByMe":room.isBlockedByMe??false,
+                          "isBlockedMe":room.isBlockedMe??false,
+
+
                             },
                           );
                         },

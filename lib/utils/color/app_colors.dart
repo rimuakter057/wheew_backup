@@ -18,6 +18,7 @@ class AppColors {
   static const Color successColor = Color(0xFF28A745);
   static const Color greyShade = Color(0xffEEF0F4);
   static const Color blueBox=Color(0xFF0088FF);
+  static const Color green=Color(0xFF3BAA34);
   
 
 }

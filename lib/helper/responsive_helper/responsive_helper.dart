@@ -141,4 +141,21 @@ class ResponsiveHelper {
   }
 
 
+
+  /// EdgeInsets.all responsive
+  static EdgeInsets all(double value) {
+    return EdgeInsets.all(padding(value));
+  }
+
+  /// EdgeInsets.symmetric responsive
+  static EdgeInsets symmetric({double horizontal = 0, double vertical = 0}) {
+    return EdgeInsets.symmetric(
+      horizontal: padding(horizontal),
+      vertical: padding(vertical),
+    );
+  }
+
+
+
+
 }
