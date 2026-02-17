@@ -139,4 +139,6 @@ class ResponsiveHelper {
     }
     return phoneHeight;
   }
+
+
 }
