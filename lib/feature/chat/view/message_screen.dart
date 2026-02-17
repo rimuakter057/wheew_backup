@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -83,49 +84,95 @@ class _MessageScreenState extends State<MessageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () async {
-            chatController.fetchChatRooms();
-            Navigator.pop(context);
-          },
-          icon: Icon(Icons.arrow_back),
-        ),
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        title: Text(
-          widget.otherUserName,
-          style: TextStyle(fontSize: ResponsiveHelper.fontSize(18)),
-        ),
-      ),
+      // appBar: AppBar(
+      //   leading: IconButton(
+      //     onPressed: () async {
+      //       chatController.fetchChatRooms();
+      //       Navigator.pop(context);
+      //     },
+      //     icon: Icon(Icons.arrow_back),
+      //   ),
+      //   backgroundColor: Colors.white,
+      //   centerTitle: true,
+      //   title: Text(
+      //     widget.otherUserName,
+      //     style: TextStyle(fontSize: ResponsiveHelper.fontSize(18)),
+      //   ),
+      // ),
       body: RefreshIndicator(
         onRefresh: () => chatController.fetchRoomMessage(roomId: widget.roomId),
         child: Column(
           children: [
+            SizedBox(height: ResponsiveHelper.height(20),),
             /// Fixed heading container
             CustomContainer(
-              margin: EdgeInsets.all(ResponsiveHelper.width(16)),
+              margin: EdgeInsets.all(ResponsiveHelper.padding(16)),
+              vertical: ResponsiveHelper.padding(16),
+              horizontal: ResponsiveHelper.padding(0),
               backgroundColor: AppColors.greyShade,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CircleAvatar(
-                    radius: 22,
-                    backgroundImage: NetworkImage(
-                      ImageHandler.imagesHandle(
-                        widget.otherUserAvatar,
-                        isProfile: true,
+                  Row(
+                    children: [
+
+
+                      IconButton(
+                        onPressed: () async {
+                          chatController.fetchChatRooms();
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(Icons.arrow_back,color: AppColors.black),
                       ),
-                    ),
+
+                      CircleAvatar(
+                        radius: ResponsiveHelper.borderRadius(22),
+                        backgroundImage: NetworkImage(
+                          ImageHandler.imagesHandle(
+                            widget.otherUserAvatar,
+                            isProfile: true,
+                          ),
+                        ),
+                      ),
+                      
+                      SizedBox(width: ResponsiveHelper.spacing(12)),
+
+                      Text(
+                        widget.otherUserName,
+                        style: GoogleFonts.poppins(
+                          fontSize: ResponsiveHelper.fontSize(16),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
 
-                  SizedBox(width: ResponsiveHelper.spacing(12)),
-                  Text(
-                    widget.otherUserName,
-                    style: TextStyle(
-                      fontSize: ResponsiveHelper.fontSize(16),
-                      fontWeight: FontWeight.w600,
-                    ),
+                  PopupMenuButton<String>(
+                    icon: Icon(Icons.more_vert, color: Colors.black),
+                    color: AppColors.white,
+                    onSelected: (value) {
+
+                      print("Selected: $value");
+                    },
+                    itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                      PopupMenuItem<String>(
+                        value: "Block",
+                        child: Row(
+                          children: [
+                            Icon(Icons.block,size: ResponsiveHelper.iconSize(16),color: AppColors.black,),
+                            SizedBox(width: ResponsiveHelper.spacing(8),),
+                            Text("Block",style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400
+                            ),),
+                          ],
+                        ),
+                      ),
+
+
+                    ],
                   ),
+                 
                 ],
               ),
             ),
@@ -213,7 +260,7 @@ class _MessageScreenState extends State<MessageScreen> {
                           children: [
                             Text(
                               msg.message ?? "",
-                              style: TextStyle(color: AppColors.white),
+                              style: GoogleFonts.poppins(color: AppColors.white),
                             ),
                             SizedBox(height: ResponsiveHelper.height(4)),
                             Text(
