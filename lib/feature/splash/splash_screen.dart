@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import '../../core/router/routes_name.dart';

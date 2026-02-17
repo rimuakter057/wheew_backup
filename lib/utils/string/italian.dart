@@ -1,33 +1,56 @@
 final Map<String, String> italian = {
+
   // -------- Welcome Screen --------
-  'welcome_message':
-  'Tieni il passo con i tuoi amici e rendi la chat più piacevole registrandoti facilmente',
+  'splash': 'COLLEGAMENTO DEI PILOTI UNA PIASTRA ALLA VOLTA',
+  'welcome_message': 'Chat facile con\ni tuoi amici',
   'sign_in': 'Accedi',
   'sign_up': 'Registrati',
   'log_in': 'Accedi',
 
-  // -------- Sign Up --------
+  // -------- Sign In --------
   'nick_name': 'Nickname / Numero di targa',
+  'license_plate_or_nick_name': 'Targa o Nickname',
+  'enter_license_plate_or_nick_name': 'Inserisci la targa o il nickname',
+  'password': 'Password',
+  'enter_your_password': 'Inserisci la tua password',
+  'password_is_required': 'La password è obbligatoria',
+  'password_must_6_character': 'La password deve contenere almeno 6 caratteri',
+  'forgot_password': 'Password dimenticata?',
+
+  // -------- Sign Up --------
+  'nickname_is_required': 'Il nickname è obbligatorio',
+  'select_designation': 'Seleziona ruolo',
+  'select': 'Seleziona',
+  'owner': 'Proprietario',
+  'occasional_driver': 'Guidatore occasionale',
+  'please_select_designation': 'Seleziona un ruolo',
   'nick_name_hint': 'Nome',
   'license_number': 'Numero di licenza',
-  'license_hint': 'ERA-238-HGS',
-  'password': 'Password',
+  'type_here': 'Scrivi qui',
+  'license_number_is_required': 'Il numero di licenza è obbligatorio',
+  'license_number_must_be': 'Il numero di licenza deve contenere almeno 7 caratteri',
   'confirm_password': 'Conferma password',
-  'agree_terms': 'Accetto i Termini e Condizioni e l\'Informativa sulla privacy',
+  'confirm_your_password': 'Conferma la tua password',
+  'password_do_not_match': 'Le password non corrispondono',
+  'i_agree_to': 'Accetto i',
+  'agree_terms': 'Termini e Condizioni e Informativa sulla Privacy',
   'continue': 'Continua',
-  'or': 'O',
+  'please_fill_all_fields': 'Compila tutti i campi',
+  'please accept terms': 'Accetta i termini',
+  'creating_account': 'Creazione account...',
+  'registration_successful!': 'Registrazione completata con successo!',
+
+  //-------------------------------------------------------------
+
+  'or': 'OPPURE',
   'already_account': 'Hai già un account?',
   'verification_code': 'Codice di verifica',
   'we_sent_6_digit_code': 'Abbiamo inviato un codice a 6 cifre',
-  'i_agree_to': 'Accetto i',
+
   'terms_and_conditions': 'Termini e Condizioni',
   'log_out': 'Disconnetti',
 
-
   // ------------------All chat-------------------------
-
-  'all_chat':'Tutte le chat',
-  'search_here':'Cerca qui',
-
-
+  'all_chat': 'Tutte le chat',
+  'search_here': 'Cerca qui',
 };

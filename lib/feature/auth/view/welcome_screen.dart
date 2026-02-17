@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import '../../../core/router/routes_name.dart';
@@ -100,7 +101,7 @@ class WelcomeScreen extends StatelessWidget {
 
           // TITLE
           Text(
-            "Easy Chat With\nyour friends",
+            'welcome_message'.tr,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: ResponsiveHelper.titleFontSize(28),
@@ -126,7 +127,7 @@ class WelcomeScreen extends StatelessWidget {
               horizontal: ResponsiveHelper.padding(24),
             ),
             child: OutlineButton(
-              title: "Log In",
+              title:'sign_in'.tr,
               onTap: () {
                 context.pushNamed(RouteName.signIn);
               },
@@ -143,7 +144,7 @@ class WelcomeScreen extends StatelessWidget {
               horizontal: ResponsiveHelper.padding(24),
             ),
             child: PrimaryButton(
-              title: "Sign Up",
+              title: 'sign_up'.tr,
               onTap: () {
                 context.pushNamed(RouteName.signUp);
               },
