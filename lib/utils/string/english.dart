@@ -1,25 +1,54 @@
 final Map<String, String> english = {
   // -------- Welcome Screen --------
-  'welcome_message':
-  'Keep up with your friends and makes your chat more enjoyable by signing quickly and easily',
+  'splash': 'CONNECTING DRIVERS ONE PLATE AT A TIME',
+
+
+  'welcome_message':"Easy Chat With\nyour friends",
   'sign_in': 'Sign In',
   'sign_up': 'Sign Up',
   'log_in': 'Log In',
 
-  // -------- Sign Up --------
+  // -------- Sign In --------
   'nick_name': 'Nick Name/Plate Number',
+  'license_plate_or_nick_name': "License Plate or Nickname",
+  'enter_license_plate_or_nick_name': "Enter License Plate or Nickname",
+  'password': 'Password',
+  'enter_your_password': 'Enter your password',
+  'password_is_required': 'Password is required',
+  'password_must_6_character': 'Password must be at least 6 characters',
+  'forgot_password':'Forgot Password?',
+
+   // -------- Sign Up --------
+
+  'nickname_is_required': 'Nickname is required',
+  'select_designation':  'Select Designation',
+  'select':'Select',
+  'owner':'Owner',
+  'occasional_driver': 'Occasional Driver',
+  'please_select_designation': 'Please select designation',
   'nick_name_hint': 'Name',
   'license_number': 'License Number',
-  'license_hint': 'ERA-238-HGS',
-  'password': 'Password',
+  'type_here': 'Type here',
+  'license_number_is_required': 'License number is required',
+  'license_number_must_be': 'License number must be at least 7 characters',
   'confirm_password': 'Confirm Password',
-  'agree_terms': 'I agree to the Terms & Condition and Privacy Policy',
+  'confirm_your_password': 'Confirm your password',
+  'password_do_not_match': 'Passwords do not match',
+  'i_agree_to': 'I agree to the',
+  'agree_terms': 'Terms & Condition and Privacy Policy',
   'continue': 'Continue',
+  'please_fill_all_fields': 'Please fill all fields',
+  'please accept terms': 'Please accept terms',
+  'creating_account': 'Creating account...',
+  'registration_successful!': 'Registration successful!',
+
+  //-------------------------------------------------------------
+
   'or': 'OR',
   'already_account': 'Already have an account?',
   'verification_code': 'Verification Code',
   'we_sent_6_digit_code': "We've sent a 6-digit code",
-  'i_agree_to': 'I agree to the',
+
   'terms_and_conditions': 'Terms and Conditions',
   'log_out': 'Log Out',
 

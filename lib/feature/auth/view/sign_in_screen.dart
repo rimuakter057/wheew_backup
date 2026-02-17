@@ -79,8 +79,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     /// Email or License ID
                     CustomTextField(
                       controller: licenseController,
-                      title: 'Email or License ID',
-                      hintText: 'Enter email or license ID',
+                      title: 'license_plate_or_nick_name'.tr,
+                      hintText: 'enter_license_plate_or_nick_name'.tr,
                       validator: (value) =>
                       (value == null || value.trim().isEmpty)
                           ? 'Email or License ID is required'
@@ -92,15 +92,15 @@ class _SignInScreenState extends State<SignInScreen> {
                     /// Password
                     CustomTextField(
                       controller: passwordController,
-                      title: 'Password',
-                      hintText: 'Enter your password',
+                      title: 'password'.tr,
+                      hintText: 'enter_your_password'.tr,
                       isPassword: true,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Password is required';
+                          return 'password_is_required'.tr;
                         }
                         if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
+                          return 'password_must_6_character'.tr;
                         }
                         return null;
                       },
@@ -118,7 +118,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           context.pushNamed(RouteName.forgotPassword);
                         },
                         child: Text(
-                          'forgot_password',
+                          'forgot_password'.tr,
                           style: TextStyle(
                             color: const Color(0xFFA5D6A7),
                             fontSize: ResponsiveHelper.fontSize(14),
@@ -133,7 +133,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     controller.isLoading
                         ? const CircularProgressIndicator()
                         : PrimaryButton(
-                      title: 'sign_in',
+                      title: 'sign_in'.tr,
                       onTap: _handleLogin,
                     ),
                   ],

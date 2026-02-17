@@ -72,7 +72,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 title: 'nick_name'.tr,
                 hintText: 'nick_name_hint'.tr,
                 validator: (value) => (value == null || value.trim().isEmpty)
-                    ? 'Nickname is required'
+                    ?  'nickname_is_required'.tr
                     : null,
               ),
 
@@ -83,7 +83,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Select Designation',
+                    'select_designation'.tr,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: ResponsiveHelper.fontSize(14),
@@ -93,7 +93,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   DropdownButtonFormField2<String>(
                     value: selectedDesignation,
                     hint: Text(
-                      'Select',
+                      'select'.tr,
                       style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
                     ),
                     isExpanded: true,
@@ -134,7 +134,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       DropdownMenuItem(
                         value: 'owner',
                         child: Text(
-                          'Owner',
+                          'owner'.tr,
                           style: TextStyle(
                             fontSize: ResponsiveHelper.fontSize(16),
                           ),
@@ -143,7 +143,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       DropdownMenuItem(
                         value: 'occasional_driver',
                         child: Text(
-                          'Occasional Driver',
+                          'occasional_driver'.tr,
                           style: TextStyle(
                             fontSize: ResponsiveHelper.fontSize(16),
                           ),
@@ -153,7 +153,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onChanged: (value) =>
                         setState(() => selectedDesignation = value),
                     validator: (value) =>
-                        value == null ? 'Please select designation' : null,
+                        value == null ? 'please_select_designation'.tr : null,
                     dropdownStyleData: DropdownStyleData(
                       maxHeight: ResponsiveHelper.height(160),
                       decoration: BoxDecoration(
@@ -186,12 +186,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
               CustomTextField(
                 controller: licenseController,
                 title: 'license_number'.tr,
-                hintText: 'license_hint'.tr,
+                hintText: 'type_here'.tr,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'License number is required';
                   } else if (value.trim().length < 7) {
-                    return 'License number must be at least 7 characters';
+                    return 'license_number_must_be'.tr;
                   }
                   return null;
                 },
@@ -207,10 +207,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 isPassword: true,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Password is required';
+                    return 'password_is_required'.tr;
                   }
                   if (value.length < 6) {
-                    return 'Password must be at least 6 characters';
+                    return 'password_must_6_character'.tr;
                   }
                   return null;
                 },
@@ -226,10 +226,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 isPassword: true,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Confirm your password';
+                    return 'confirm_your_password'.tr;
                   }
                   if (value != passwordController.text) {
-                    return 'Passwords do not match';
+                    return 'password_do_not_match'.tr;
                   }
                   return null;
                 },
@@ -261,9 +261,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             color: Colors.black,
                           ),
                           children: [
-                            TextSpan(text: 'i_agree_to'.tr + ' '),
+                            TextSpan(text:  'i_agree_to'.tr + ' '),
                             TextSpan(
-                              text: 'terms_and_conditions'.tr,
+                              text: 'agree_terms'.tr,
                               style: TextStyle(
                                 color: Colors.blue,
                                 decoration: TextDecoration.underline,
@@ -286,17 +286,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 title: 'continue'.tr,
                 onTap: () async {
                   if (!_formKey.currentState!.validate()) {
-                    showErrorSnackBar('Please fill all fields');
+                    showErrorSnackBar('please_fill_all_fields'.tr);
                     return;
                   }
 
                   if (!agree) {
-                    showWarningSnackBar('Please accept terms');
+                    showWarningSnackBar( 'please accept terms'.tr);
                     return;
                   }
 
                   showLoadingDialog(
-                    message: 'Creating account...',
+                    message: 'creating_account'.tr,
                     context: context,
                   );
 
@@ -313,7 +313,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                     if (response.statusCode == 200 ||
                         response.statusCode == 201) {
-                      showSuccessToast('Registration successful!');
+                      showSuccessToast('registration_successful!'.tr);
                       if (context.mounted) {
                         context.go(RoutePath.chatList);
                       }
