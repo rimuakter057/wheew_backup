@@ -4,6 +4,10 @@ final Map<String, String> english = {
 
 
   'welcome_message':"Easy Chat With\nyour friends",
+  'welcome_message1':"Keep up with your friend ands makes",
+  'welcome_message2':"your chat more enjoyable by signing",
+  'welcome_message3':"quickly and easily",
+
   'sign_in': 'Sign In',
   'sign_up': 'Sign Up',
   'log_in': 'Log In',
@@ -41,13 +45,33 @@ final Map<String, String> english = {
   'please accept terms': 'Please accept terms',
   'creating_account': 'Creating account...',
   'registration_successful!': 'Registration successful!',
+  'age_confirmation': 'Age Confirmation',
+  '16_or_not':  'Are you over 16 ?',
+  'yes': "Yes",
+  'no':"No",
+
+  //------------------------------------------------------
+  "don't_worry_enter_your_email": "Don't worry enter your registered email",
+  "enter_your_email_here": "Enter your email here",
+  'send_otp':'Send OTP',
+  'email': "Email",
+
+  'enter_verification_code': "Enter Verification Code",
+
+  'verification_code': 'Verification Code',
+  'we_sent_6_digit_code': "We've sent a 6-digit code",
+  'send': "Send",
+  'reset_code': "Reset Code",
+  'new_password': 'New password',
+  'save': 'Save',
+
+
 
   //-------------------------------------------------------------
 
   'or': 'OR',
   'already_account': 'Already have an account?',
-  'verification_code': 'Verification Code',
-  'we_sent_6_digit_code': "We've sent a 6-digit code",
+
 
   'terms_and_conditions': 'Terms and Conditions',
   'log_out': 'Log Out',

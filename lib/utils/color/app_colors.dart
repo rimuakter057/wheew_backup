@@ -10,7 +10,7 @@ class AppColors {
   static const Color secondaryText = Color(0xFF555555);
   static const Color errorColor = Color(0xFFCC0F0F);
 
-  static const Color backgroundColor = Color(0xFFF5F7FA);
+  static const Color backgroundColor = Color(0xFFFFFFFF);
 
   static const Color borderColor = Color(0xFF1070B7);
   static const Color brandHoverColor = Color(0xFF1070B7);
