@@ -155,7 +155,7 @@ class _SearchListScreenState extends State<SearchListScreen> {
                           extra: {
                             'otherUserName': chat.nickName,
                             'otherUserAvatar': chat.avatar?? AppConst.unknown,
-                            'receiverId': chat.id,
+                            'receiverId': chat.existingRoom?.id??"",
                           },
 
                         ),

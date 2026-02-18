@@ -21,4 +21,9 @@ class ApiUrl {
   static const String searchUsers = '/users/search';
   static const String updateProfile = '/users/';
 
+
+
+  static const String blockList='/users/block-list';
+  static const String unblock='/users/unblock';
+  static const String block='/users/block';
 }
