@@ -9,6 +9,7 @@ class AuthRepository {
     required String password,
     required String confirmPassword,
     required String designation,
+    required String email,
   }) async {
     return await ApiClient.postData(
       uri: ApiUrl.register,
@@ -18,6 +19,7 @@ class AuthRepository {
         "password": password,
         "confirmPassword": confirmPassword,
         "designation": designation,
+        "email": email,
       },
     );
   }

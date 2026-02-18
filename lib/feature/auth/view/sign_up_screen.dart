@@ -4,6 +4,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../core/router/route_path.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../core/service/api_checker.dart';
@@ -28,10 +29,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController nicknameController = TextEditingController();
   final TextEditingController licenseController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
   bool agree = false;
+  bool agreeTerms = false;          // required
+  bool? agreeOtherTerms;            // optional (nullable)
+
   String? selectedDesignation;
 
   @override
@@ -39,6 +44,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     nicknameController.dispose();
     licenseController.dispose();
     passwordController.dispose();
+    emailController.dispose();
     confirmPasswordController.dispose();
     super.dispose();
   }
@@ -86,6 +92,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     'select_designation'.tr,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
+                      color: AppColors.secondaryText,
                       fontSize: ResponsiveHelper.fontSize(14),
                     ),
                   ),
@@ -198,6 +205,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
 
               SizedBox(height: ResponsiveHelper.spacing(16)),
+              /*CustomTextField(
+                title: 'email'.tr,
+                hintText: 'email_only_for_recover_password'.tr,
+              )*/
+              CustomTextField(
+                controller: emailController,
+                title: 'email'.tr,
+                hintText:'email_only_for_recover_password'.tr,
+                keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Email is required";
+                  }
+                  if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
+                    return "Enter valid email";
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: ResponsiveHelper.spacing(16)),
 
               /// Password
               CustomTextField(
@@ -278,6 +305,51 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ],
               ),
+              SizedBox(height: ResponsiveHelper.spacing(12)),
+
+              /// Other Terms
+              // Other Terms (Optional)
+              Row(
+                children: [
+                  SizedBox(
+                    width: ResponsiveHelper.width(24),
+                    height: ResponsiveHelper.height(24),
+                    child: Checkbox(
+                      value: agreeOtherTerms ?? false,
+                      tristate: true, // allows null
+                      activeColor: Colors.green,
+                      onChanged: (value) =>
+                          setState(() => agreeOtherTerms = value),
+                    ),
+                  ),
+                  SizedBox(width: ResponsiveHelper.spacing(8)),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => context.pushNamed(RouteName.terms),
+                      child: RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                            fontSize: ResponsiveHelper.fontSize(13),
+                            color: Colors.black,
+                          ),
+                          children: [
+                            TextSpan(text: 'i_agree_to1'.tr + ' '),
+                            TextSpan(
+                              text: 'agree_terms1'.tr,
+                              style: TextStyle(
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline,
+                                fontWeight: FontWeight.bold,
+                                fontSize: ResponsiveHelper.fontSize(13),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
 
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
@@ -304,6 +376,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     final response = await AuthRepository().register(
                       licenceId: licenseController.text.trim(),
                       nickName: nicknameController.text.trim(),
+                      email: emailController.text.trim(),
                       password: passwordController.text.trim(),
                       confirmPassword: confirmPasswordController.text.trim(),
                       designation: selectedDesignation!,
