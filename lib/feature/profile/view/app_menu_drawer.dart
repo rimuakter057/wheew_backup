@@ -71,7 +71,7 @@ class AppMenuDrawer extends StatelessWidget {
                 size: ResponsiveHelper.iconSize(24),
               ),
               title: Text(
-                'Profile',
+                'profile'.tr,
                 style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
               ),
               onTap: () {
@@ -102,7 +102,7 @@ class AppMenuDrawer extends StatelessWidget {
                 size: ResponsiveHelper.iconSize(24),
               ),
               title: Text(
-                'Block',
+                'block_'.tr,
                 style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
               ),
               onTap: () {
@@ -143,7 +143,7 @@ class AppMenuDrawer extends StatelessWidget {
                 size: ResponsiveHelper.iconSize(24),
               ),
               title: Text(
-                'Logout',
+                'logout'.tr,
                 style: TextStyle(
                   color: AppColors.errorColor,
                   fontSize: ResponsiveHelper.fontSize(16),

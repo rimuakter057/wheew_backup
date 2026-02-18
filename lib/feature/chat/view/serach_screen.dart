@@ -144,6 +144,7 @@ class _SearchListScreenState extends State<SearchListScreen> {
                     itemBuilder: (context, index) {
                       final chat = displayList[index];
                       return ChatTile(
+                        isBlock: false,
                         name: chat.nickName.toString(),
                         message: chat.designation.toString(),
                         fontWeight:FontWeight.w400,
