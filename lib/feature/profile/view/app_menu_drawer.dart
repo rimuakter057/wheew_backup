@@ -98,6 +98,21 @@ class AppMenuDrawer extends StatelessWidget {
             SizedBox(height: ResponsiveHelper.spacing(8)),
             ListTile(
               leading: Icon(
+                Icons.block,
+                size: ResponsiveHelper.iconSize(24),
+              ),
+              title: Text(
+                'Block',
+                style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                context.pushNamed(RouteName.block);
+              },
+            ),
+            SizedBox(height: ResponsiveHelper.spacing(8)),
+            ListTile(
+              leading: Icon(
                 Icons.translate,
                 size: ResponsiveHelper.iconSize(24),
               ),

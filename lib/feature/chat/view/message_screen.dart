@@ -3,25 +3,31 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
+import 'package:platchatapp/feature/chat/view/widgets/block_by_me_widget.dart';
+import 'package:platchatapp/feature/chat/view/widgets/block_me_widget.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/custom_container/custom_container.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
-import '../repository/chat_controller.dart'; // Import your controller
+import '../repository/chat_controller.dart';
 
 class MessageScreen extends StatefulWidget {
   final String? roomId;
   final String otherUserName;
   final String? otherUserAvatar;
   final String receiverId;
+ final bool? isBlockedByMe;
+ final bool? isBlockedMe;
+
 
   const MessageScreen({
     super.key,
     this.roomId,
     required this.otherUserName,
     this.otherUserAvatar,
-    required this.receiverId,
+    required this.receiverId, this.isBlockedByMe, this.isBlockedMe,
   });
 
   @override
@@ -39,13 +45,22 @@ class _MessageScreenState extends State<MessageScreen> {
   void initState() {
     super.initState();
 
+    debugPrint("isBlockedByMe==============: ${widget.isBlockedByMe}, isBlockedMe===============: ${widget.isBlockedMe}");
+
+
     debugPrint("📨 Opening chat - Receiver: ${widget.receiverId}, Room: ${widget.roomId}");
 
-    // ⭐ Async initialization
+    chatController.isBlockedByMe.value =
+        widget.isBlockedByMe ?? false;
+
     _initChat();
 
     // Scroll listener
     _scrollController.addListener(_onScroll);
+
+
+
+
   }
 
   Future<void> _initChat() async {
@@ -84,21 +99,7 @@ class _MessageScreenState extends State<MessageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      // appBar: AppBar(
-      //   leading: IconButton(
-      //     onPressed: () async {
-      //       chatController.fetchChatRooms();
-      //       Navigator.pop(context);
-      //     },
-      //     icon: Icon(Icons.arrow_back),
-      //   ),
-      //   backgroundColor: Colors.white,
-      //   centerTitle: true,
-      //   title: Text(
-      //     widget.otherUserName,
-      //     style: TextStyle(fontSize: ResponsiveHelper.fontSize(18)),
-      //   ),
-      // ),
+
       body: RefreshIndicator(
         onRefresh: () => chatController.fetchRoomMessage(roomId: widget.roomId),
         child: Column(
@@ -119,7 +120,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
                       IconButton(
                         onPressed: () async {
-                          chatController.fetchChatRooms();
+                          chatController.fetchChatRooms(refresh: true);
                           Navigator.pop(context);
                         },
                         icon: Icon(Icons.arrow_back,color: AppColors.black),
@@ -134,7 +135,7 @@ class _MessageScreenState extends State<MessageScreen> {
                           ),
                         ),
                       ),
-                      
+
                       SizedBox(width: ResponsiveHelper.spacing(12)),
 
                       Text(
@@ -147,32 +148,46 @@ class _MessageScreenState extends State<MessageScreen> {
                     ],
                   ),
 
+
                   PopupMenuButton<String>(
-                    icon: Icon(Icons.more_vert, color: Colors.black),
-                    color: AppColors.white,
+                    icon: Icon(Icons.more_vert, color: AppColors.black),
                     onSelected: (value) {
-
-                      print("Selected: $value");
+                      if (value == "Block") {
+                        chatController.block(widget.receiverId, context);
+                        chatController.isBlockedByMe.value = true;
+                      } else {
+                        chatController.unBlock(widget.receiverId, context);
+                        chatController.isBlockedByMe.value = false;
+                      }
                     },
-                    itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                    itemBuilder: (context) => [
                       PopupMenuItem<String>(
-                        value: "Block",
-                        child: Row(
+                        value: chatController.isBlockedByMe.value ? "Unblock" : "Block",
+                        child: Obx(() => Row(
                           children: [
-                            Icon(Icons.block,size: ResponsiveHelper.iconSize(16),color: AppColors.black,),
-                            SizedBox(width: ResponsiveHelper.spacing(8),),
-                            Text("Block",style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400
-                            ),),
+                            Icon(
+                              chatController.isBlockedByMe.value
+                                  ? Icons.lock_open
+                                  : Icons.block,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              chatController.isBlockedByMe.value ? "Unblock" : "Block",
+                            ),
                           ],
-                        ),
+                        )),
                       ),
-
-
                     ],
                   ),
-                 
+
+
+
+
+
+
+
+
+
                 ],
               ),
             ),
@@ -233,7 +248,7 @@ class _MessageScreenState extends State<MessageScreen> {
                           horizontal: ResponsiveHelper.width(14),
                         ),
                         decoration: BoxDecoration(
-                          color: isMine ? AppColors.blueBox : AppColors.black,
+                          color: isMine ? AppColors.blueBox : AppColors.green,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(
                               ResponsiveHelper.borderRadius(15),
@@ -253,28 +268,9 @@ class _MessageScreenState extends State<MessageScreen> {
                                   ),
                           ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: isMine
-                              ? CrossAxisAlignment.end
-                              : CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              msg.message ?? "",
-                              style: GoogleFonts.poppins(color: AppColors.white),
-                            ),
-                            SizedBox(height: ResponsiveHelper.height(4)),
-                            Text(
-                              msg.createdAt != null
-                                  ? DateFormat.jm().format(
-                                      DateTime.parse(msg.createdAt!),
-                                    )
-                                  : "",
-                              style: TextStyle(
-                                color: Colors.white54,
-                                fontSize: ResponsiveHelper.fontSize(14),
-                              ),
-                            ),
-                          ],
+                        child:       Text(
+                          msg.message ?? "",
+                          style: GoogleFonts.poppins(color: AppColors.white),
                         ),
                       ),
                     );
@@ -283,8 +279,26 @@ class _MessageScreenState extends State<MessageScreen> {
               }),
             ),
 
-            /// Message Input Field
-            _messageInput(),
+
+            Obx(() {
+              if (chatController.isBlockedByMe.value && widget.isBlockedMe != true) {
+                return BlockByMeWidget(
+                  name: widget.otherUserName,
+                  onUnblock: () {
+                    chatController.unBlock(widget.receiverId, context);
+                    chatController.isBlockedByMe.value = false;
+                  },
+                );
+              } else if (widget.isBlockedMe == true && chatController.isBlockedByMe.value == false) {
+                return const BlockMeWidget();
+              } else {
+                return _messageInput();
+              }
+            })
+
+
+
+
           ],
         ),
       ),
@@ -304,7 +318,7 @@ class _MessageScreenState extends State<MessageScreen> {
         padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(16)),
         height: ResponsiveHelper.buttonHeight(56),
         decoration: BoxDecoration(
-          color: AppColors.black,
+          color: AppColors.green,
           borderRadius: BorderRadius.circular(
             ResponsiveHelper.borderRadius(16),
           ),
@@ -316,9 +330,9 @@ class _MessageScreenState extends State<MessageScreen> {
                 controller: chatController.messageController,
                 decoration: InputDecoration(
                   hintText: 'Type here...',
-                  fillColor: AppColors.black,
+                  fillColor: AppColors.green,
                   hintStyle: TextStyle(
-                    color: Colors.white54,
+                    color: AppColors.white,
                     fontSize: ResponsiveHelper.fontSize(16),
                   ),
                   border: InputBorder.none,
@@ -354,4 +368,13 @@ class _MessageScreenState extends State<MessageScreen> {
       ),
     );
   }
+
+
+
+
 }
+
+
+
+
+

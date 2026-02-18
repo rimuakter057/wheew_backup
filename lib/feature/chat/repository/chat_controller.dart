@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' hide Response;
-// ignore: depend_on_referenced_packages
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/feature/chat/model/block_model.dart';
 import 'package:platchatapp/feature/chat/model/chat_model.dart';
 import 'package:platchatapp/feature/chat/model/message_response_model.dart';
 import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
@@ -113,58 +115,6 @@ class ChatController extends GetxController {
   final TextEditingController messageController = TextEditingController();
 
 
-  //
-  // sendNewEmitMessage({required String receiverId, required String message}) {
-  //   final payload = {'receiver_id': receiverId, 'message': message};
-  //
-  //   final completer = Completer<dynamic>();
-  //
-  //   /// 🔹 Create optimistic local message
-  //   final localTempMessage = Messages(
-  //     id: DateTime.now().millisecondsSinceEpoch.toString(), // temp id
-  //     receiverId: receiverId,
-  //     message: message,
-  //     createdAt: DateTime.now().toIso8601String(),
-  //     isMine: true,
-  //     isDelivered: false,
-  //     type: 'manual',
-  //   );
-  //
-  //   /// 🔹 Add to UI immediately
-  //   userMessageList.insert(0, localTempMessage);
-  //
-  //   // userMessageList.add(localTempMessage);
-  //
-  //   messageController.clear();
-  //
-  //   AppSocket.emitWithAck(
-  //     "message",
-  //     payload,
-  //     ack: (value) {
-  //       // completer.complete(value);
-  //
-  //       debugPrint(
-  //         "============sendNewEmitMessage success=============== $value",
-  //       );
-  //     },
-  //   );
-  // }
-  //
-  //
-  //
-  // Future<void> sendNewListenMessage() async {
-  //   AppSocket.onEvent('message-sent', (value) {
-  //     debugPrint('📤 Message sent confirmation: $value');
-  //     // Optional: Server confirmation পেলে কিছু করতে চাইলে
-  //   });
-  // }
-  //
-
-
-
-
-
-
 
   sendNewEmitMessage({required String receiverId, required String message}) {
     final payload = {'receiver_id': receiverId, 'message': message};
@@ -229,7 +179,7 @@ class ChatController extends GetxController {
     }
   }
 
-// message-sent event listener আর লাগবে না বা এভাবে রাখতে পারেন:
+
   Future<void> sendNewListenMessage() async {
     AppSocket.onEvent('message-sent', (value) {
       debugPrint('📤 Message sent confirmation: $value');
@@ -239,17 +189,7 @@ class ChatController extends GetxController {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+  ///new message==========================
 
   Future<void> newMessage() async {
     debugPrint('========== Call New Message');
@@ -321,18 +261,6 @@ class ChatController extends GetxController {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
   Future<void> errorListenMessage() async {
     AppSocket.onEvent('exception', (value) {
       debugPrint(
@@ -344,53 +272,181 @@ class ChatController extends GetxController {
   ///=======================================================================
 
   ///get all user chat list========================================================
-  RxList<Rooms> userChatList = <Rooms>[].obs;
+
+
+
+
+  // RxList<Rooms> userChatList = <Rooms>[].obs;
+  // var isLoadingChat = false.obs;
+  // var isLoadingMore = false.obs;
+  //
+  //
+  //
+  // int page = 1;
+  // final int limit = 10;
+  // int total = 0;
+  // // fetch chat rooms
+  // Future<void> fetchChatRooms({bool refresh = false}) async {
+  //   if (refresh) {
+  //     page = 1;
+  //     userChatList.clear();
+  //   }
+  //   if (isLoadingChat.value || isLoadingMore.value) return;
+  //
+  //   final isFirstPage = page == 1;
+  //   if (isFirstPage) {
+  //     isLoadingChat.value = true;
+  //   } else {
+  //     isLoadingMore.value = true;
+  //   }
+  //   // GET request
+  //   final uri = ApiUrl.getChatRooms(page: page, limit: limit);
+  //   Response response = await ApiClient.getData(uri: uri);
+  //
+  //   // decode JSON string to Map
+  //   final Map<String, dynamic> body = jsonDecode(response.body);
+  //
+  //   if (response.statusCode == 200 && body['rooms'] != null) {
+  //     final data = UserChatModel.fromJson(body);
+  //     total = data.total ?? 0;
+  //
+  //     if (data.rooms != null) {
+  //       userChatList.addAll(data.rooms!);
+  //       page++;
+  //     }
+  //
+  //     userChatList.refresh();
+  //   } else {
+  //     if (refresh) userChatList.clear();
+  //   }
+  //   isLoadingChat.value = false;
+  //   isLoadingMore.value = false;
+  // }
+  //
+  // bool get hasMore => userChatList.length < total;
+  //
+
+
+
+
+
+
+  RxList userChatList = [].obs;
   var isLoadingChat = false.obs;
   var isLoadingMore = false.obs;
   int page = 1;
   final int limit = 10;
   int total = 0;
-  // fetch chat rooms
-  Future<void> fetchChatRooms({bool refresh = false}) async {
+
+  bool _isFetching = false; // ✅ simple bool, reactive না
+
+  Future fetchChatRooms({bool refresh = false, bool loadMore = false}) async {
     if (refresh) {
       page = 1;
+      total = 0;
       userChatList.clear();
+      _isFetching = false;
     }
-    if (isLoadingChat.value || isLoadingMore.value) return;
 
-    final isFirstPage = page == 1;
-    if (isFirstPage) {
+    if (loadMore && !hasMore) return;
+
+    if (_isFetching) return; // ✅ এই guard দিয়ে multiple call বন্ধ
+    _isFetching = true;
+
+    if (page == 1) {
       isLoadingChat.value = true;
     } else {
       isLoadingMore.value = true;
     }
-    // GET request
-    final uri = ApiUrl.getChatRooms(page: page, limit: limit);
-    Response response = await ApiClient.getData(uri: uri);
 
-    // decode JSON string to Map
-    final Map<String, dynamic> body = jsonDecode(response.body);
+    try {
+      final uri = ApiUrl.getChatRooms(page: page, limit: limit);
+      Response response = await ApiClient.getData(uri: uri);
+      final body = Map<String, dynamic>.from(jsonDecode(response.body));
 
-    if (response.statusCode == 200 && body['rooms'] != null) {
-      final data = UserChatModel.fromJson(body);
-      total = data.total ?? 0;
+      if (response.statusCode == 200 && body['rooms'] != null) {
+        final data = UserChatModel.fromJson(body);
+        total = data.total ?? 0;
 
-      if (data.rooms != null) {
-        userChatList.addAll(data.rooms!);
-        page++;
+        if (data.rooms != null && data.rooms!.isNotEmpty) {
+          userChatList.addAll(data.rooms!);
+          page++;
+        }
+        userChatList.refresh();
+      } else {
+        if (refresh) userChatList.clear();
       }
-
-      userChatList.refresh();
-    } else {
-      if (refresh) userChatList.clear();
+    } catch (e) {
+      debugPrint('fetchChatRooms error: $e');
+    } finally {
+      isLoadingChat.value = false;
+      isLoadingMore.value = false;
+      _isFetching = false; // ✅ শেষে release করুন
     }
-    isLoadingChat.value = false;
-    isLoadingMore.value = false;
   }
 
   bool get hasMore => userChatList.length < total;
 
-  ///=======================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ///get block list==============================================================
+
+
+
+
+
+  RxList<BlockModel> userBlockList = <BlockModel>[].obs;
+  var isLoadingBlockList = false.obs;
+  Future<void> fetchBlockList({bool refresh = false}) async {
+
+    debugPrint("fetchBlockList called");
+
+    if (refresh) {
+      userBlockList.clear();
+    }
+
+    isLoadingBlockList.value = true;
+
+    final uri = ApiUrl.blockList;
+
+    Response response = await ApiClient.getData(uri: uri);
+
+    debugPrint("status code: ${response.statusCode}");
+    debugPrint("body: ${response.body}");
+
+    if (response.statusCode == 200) {
+
+      final body = jsonDecode(response.body);
+
+      userBlockList.value =
+          (body['blockList'] as List)
+              .map((e) => BlockModel.fromJson(e))
+              .toList();
+
+      debugPrint("list length: ${userBlockList.length}");
+
+    }
+
+    isLoadingBlockList.value = false;
+
+  }
+
 
   ///==============search api section=========================================================
   final ChatRepository _repo = ChatRepository();
@@ -485,5 +541,75 @@ class ChatController extends GetxController {
     update();
   }
 
-  ///=======================user chat list===================================================================
+///=======================user chat list===================================================================
+
+
+
+
+
+  ///patch block=====================================================
+  var isBlockedByMe = false.obs;
+  var isLoadingBlock = false.obs;
+
+  Future<void> block(String id, BuildContext context) async {
+    isLoadingBlock.value = true;
+
+    final body = {
+      "userId": id,
+    };
+
+    final response = await ApiClient.patchData(
+      uri: ApiUrl.block,
+      body: body,
+    );
+
+    isLoadingBlock.value = false;
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print("User blocked successfully");
+      showSnackBar(context, "User blocked successfully", bgColor: Colors.green);
+    } else {
+      print("Block failed: ${response.statusCode}");
+      showSnackBar(context, "Failed to block user", bgColor: Colors.red);
+    }
+  }
+  Future<void> unBlock(String id, BuildContext context) async {
+    final body = {
+      "userId": id,
+    };
+
+    final response = await ApiClient.patchData(
+      uri: ApiUrl.unblock,
+      body: body,
+    );
+
+    isLoadingBlockList.value = false;
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      debugPrint("User unblocked successfully");
+      showSnackBar(context, "User unblocked successfully", bgColor: Colors.green);
+    } else {
+      debugPrint("Unblock failed: ${response.statusCode}");
+      showSnackBar(context, "Failed to unblock user", bgColor: Colors.red);
+    }
+  }
+  void showSnackBar(BuildContext context, String message, {Color? bgColor}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: bgColor ?? Colors.black87,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
 }
+
+
+
+
+
+
+
+
+
