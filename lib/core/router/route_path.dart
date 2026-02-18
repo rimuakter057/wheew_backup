@@ -8,6 +8,7 @@ class RoutePath {
   static const inbox = '/inbox';
   static const message='/message';
   static const terms = '/terms';
+  static const block = '/block';
   static const profile = '/profile';
   static const forgot_password = '/forgot-password';
   static const otp = '/otp';

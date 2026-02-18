@@ -17,13 +17,44 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+
+  bool _isNavigated = false;
+
+
   @override
   void initState() {
     super.initState();
     _checkLoginAndNavigate();
   }
 
+  // Future<void> _checkLoginAndNavigate() async {
+  //   await Future.delayed(const Duration(seconds: 2));
+  //
+  //   if (!mounted) return;
+  //
+  //   final bool isLoggedIn =
+  //       await SharePrefsHelper.getBool(AppConst.isLoggedIn) ?? false;
+  //
+  //   if (isLoggedIn) {
+  //
+  //     await AppSocket.init(
+  //       onSocketConnect: () {
+  //         context.goNamed(RouteName.chatList);
+  //       },
+  //     );
+  //
+  //    // context.goNamed(RouteName.chatList);
+  //   } else {
+  //     context.goNamed(RouteName.welcome);
+  //   }
+  // }
+
+
+
+
+
   Future<void> _checkLoginAndNavigate() async {
+
     await Future.delayed(const Duration(seconds: 2));
 
     if (!mounted) return;
@@ -33,17 +64,56 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (isLoggedIn) {
 
+      /// timeout fallback (10 sec)
+      Future.delayed(const Duration(seconds: 10), () {
+
+        if (!_isNavigated && mounted) {
+
+          _showTimeoutMessage();
+
+        }
+
+      });
+
       await AppSocket.init(
+
         onSocketConnect: () {
-          context.goNamed(RouteName.chatList);
+
+          if (!_isNavigated && mounted) {
+
+            _isNavigated = true;
+
+            context.goNamed(RouteName.chatList);
+
+          }
+
         },
+
       );
 
-     // context.goNamed(RouteName.chatList);
     } else {
+
       context.goNamed(RouteName.welcome);
+
     }
+
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -71,4 +141,37 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
+
+
+
+
+
+
+
+
+
+
+
+  void _showTimeoutMessage() {
+
+    Get.snackbar(
+
+      "Connection Timeout",
+
+      "Server is not responding. Please try again.",
+
+      snackPosition: SnackPosition.BOTTOM,
+
+      backgroundColor: Colors.red,
+
+      colorText: Colors.white,
+
+      duration: const Duration(seconds: 4),
+
+    );
+
+  }
+
+
+
 }

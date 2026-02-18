@@ -10,6 +10,7 @@ import 'package:platchatapp/feature/auth/view/sign_in_screen.dart';
 import 'package:platchatapp/feature/auth/view/sign_up_screen.dart';
 import 'package:platchatapp/feature/auth/view/terms_and_condition_screen.dart';
 import 'package:platchatapp/feature/auth/view/otp_screen.dart';
+import 'package:platchatapp/feature/chat/view/block_list_screen.dart';
 import 'package:platchatapp/feature/chat/view/chat_list_screen.dart';
 import 'package:platchatapp/feature/chat/view/inbox_screen.dart';
 import 'package:platchatapp/feature/chat/view/message_screen.dart';
@@ -73,6 +74,13 @@ class AppRouter {
         name: RouteName.terms,
         builder: (_, __) => const TermsAndConditionsScreen(),
       ),
+
+      GoRoute(
+        path: RoutePath.block,
+        name: RouteName.block,
+        builder: (_, __) => const BlockListScreen(),
+      ),
+
       GoRoute(
         path: RoutePath.forgot_password,
         name: RouteName.forgotPassword,
@@ -118,6 +126,10 @@ class AppRouter {
             otherUserName: args['otherUserName']??"",
             otherUserAvatar: args['otherUserAvatar']??'',
             receiverId: args['receiverId']??'',
+            isBlockedByMe:args['isBlockedByMe']??'',
+            isBlockedMe:args['isBlockedMe']??'',
+
+
           );
         },
       ),

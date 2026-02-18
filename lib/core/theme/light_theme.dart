@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../../helper/responsive_helper/responsive_helper.dart';
+
+import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+
 import '../../utils/color/app_colors.dart';
 import '../../utils/config/app_config.dart';
 
@@ -14,22 +18,26 @@ final ThemeData lightTheme = ThemeData(
     centerTitle: true,
     //iconTheme: IconThemeData(color: AppColors.brandHoverColor),
   ),
-  elevatedButtonTheme: ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-      backgroundColor: AppColors.brandHoverColor,
-      foregroundColor: Colors.white,
-      minimumSize: const Size(186, 48),
-      padding: const EdgeInsets.all(10),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      textStyle: const TextStyle(
-        fontFamily: AppConfig.fontFamily,
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
+    /// Elevated Button ======================================
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.green,
+        minimumSize: Size(double.infinity, ResponsiveHelper.height(48)),
+        shadowColor: Colors.transparent,
+        padding: EdgeInsets.symmetric(
+          horizontal: ResponsiveHelper.width(32),
+          vertical: ResponsiveHelper.height(16),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(8)),
+        ),
+        foregroundColor: AppColors.white,
+        textStyle: GoogleFonts.inter(
+          fontSize: ResponsiveHelper.fontSize(16),
+          fontWeight: FontWeight.w500,
+        ),
       ),
     ),
-  ),
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       side: const BorderSide(color: AppColors.brandHoverColor, width: 1.5),
