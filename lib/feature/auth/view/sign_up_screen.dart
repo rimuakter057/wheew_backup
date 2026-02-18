@@ -388,7 +388,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         response.statusCode == 201) {
                       showSuccessToast('registration_successful!'.tr);
                       if (context.mounted) {
-                        context.go(RoutePath.chatList);
+                        context.go(RoutePath.signIn);
                       }
                     } else {
                       if (context.mounted) {
