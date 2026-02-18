@@ -388,23 +388,6 @@ class ChatController extends GetxController {
   bool get hasMore => userChatList.length < total;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   ///get block list==============================================================
 
 
@@ -548,7 +531,8 @@ class ChatController extends GetxController {
 
 
   ///patch block=====================================================
-  var isBlockedByMe = false.obs;
+  RxBool isBlockedByMe = false.obs;
+  RxBool isBlockedMe = false.obs;
   var isLoadingBlock = false.obs;
 
   Future<void> block(String id, BuildContext context) async {

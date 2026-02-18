@@ -77,4 +77,12 @@ final Map<String, String> italian = {
   // ------------------All chat-------------------------
   'all_chat': 'Tutte le chat',
   'search_here': 'Cerca qui',
+  'type_here1' : "Scrivi qui...",
+  'block_':"Bloccare",
+  "blocked_user":"Utente bloccato",
+  "unblock":"Sbloccare",
+  'logout':"Esci",
+  'profile':"Profilo",
+
+
 };

@@ -81,4 +81,15 @@ final Map<String, String> english = {
   'all_chat':'All Chat',
   'search_here':'Search here',
 
+  ///messaging===========================
+
+   'type_here1' :"Type here...",
+  'block_':"Block",
+  "blocked_user":"Blocked user",
+  "unblock":"Unblock",
+  'logout':"Logout",
+  'profile':"Profile"
+
+
+
 };

@@ -211,6 +211,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       final room = controller.userChatList[index];
 
                       return ChatTile(
+                        isBlock: false,
                         name: room.otherUser?.nickName ?? "No Name",
                         message: room.latestMessage?.message ?? "",
                         fontWeight: room.latestMessage!.isRead==true?FontWeight.w400:FontWeight.w700,

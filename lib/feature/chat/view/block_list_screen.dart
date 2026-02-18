@@ -48,7 +48,7 @@ class _BlockListScreenState extends State<BlockListScreen> {
         backgroundColor: AppColors.white,
         centerTitle: true,
         title: Text(
-          'Block',
+          'block_'.tr,
           style: GoogleFonts.poppins(
             color: AppColors.black,
             fontSize: ResponsiveHelper.fontSize(18),
@@ -97,14 +97,23 @@ class _BlockListScreenState extends State<BlockListScreen> {
               final block = controller.userBlockList[index];
 
               final user = block.blockedUser;
+              final blockedUserId=block.id;
 
               return ChatTile(
 
+                isBlock: true,
+                onUnblock: (){
+
+                  controller.unBlock(blockedUserId!, context);
+                  controller.isBlockedByMe.value = false;
+
+
+                },
                 /// Name show
                 name: user?.nickName ?? "Unknown",
 
                 /// message এর জায়গায় status
-                message: "Blocked user",
+                message: "blocked_user".tr,
 
                 /// font weight normal
                 fontWeight: FontWeight.w400,

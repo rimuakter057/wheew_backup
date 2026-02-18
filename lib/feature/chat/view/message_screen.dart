@@ -120,7 +120,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
                       IconButton(
                         onPressed: () async {
-                          chatController.fetchChatRooms(refresh: true);
+                         // chatController.fetchChatRooms(refresh: true);
                           Navigator.pop(context);
                         },
                         icon: Icon(Icons.arrow_back,color: AppColors.black),
@@ -281,7 +281,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
 
             Obx(() {
-              if (chatController.isBlockedByMe.value && widget.isBlockedMe != true) {
+              if (chatController.isBlockedByMe.value==true && chatController.isBlockedMe.value==false) {
                 return BlockByMeWidget(
                   name: widget.otherUserName,
                   onUnblock: () {
@@ -289,7 +289,7 @@ class _MessageScreenState extends State<MessageScreen> {
                     chatController.isBlockedByMe.value = false;
                   },
                 );
-              } else if (widget.isBlockedMe == true && chatController.isBlockedByMe.value == false) {
+              } else if (chatController.isBlockedMe == true && chatController.isBlockedByMe.value == false) {
                 return const BlockMeWidget();
               } else {
                 return _messageInput();
@@ -329,7 +329,7 @@ class _MessageScreenState extends State<MessageScreen> {
               child: TextField(
                 controller: chatController.messageController,
                 decoration: InputDecoration(
-                  hintText: 'Type here...',
+                  hintText: "type_here1".tr,
                   fillColor: AppColors.green,
                   hintStyle: TextStyle(
                     color: AppColors.white,
