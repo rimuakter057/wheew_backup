@@ -63,7 +63,7 @@ class _BlockListScreenState extends State<BlockListScreen> {
           // final chatList = controller.userChatList;
 
           /// First load
-          if (controller.isLoadingBlock.value &&
+          if (controller.isLoadingBlockList.value &&
               controller.userBlockList.isEmpty) {
             return const Center(child: CircularProgressIndicator());
           }

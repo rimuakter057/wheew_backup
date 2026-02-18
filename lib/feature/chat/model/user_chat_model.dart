@@ -1,3 +1,5 @@
+import 'message_response_model.dart';
+
 class UserChatModel {
   List<Rooms>? rooms;
   int? total;
@@ -155,3 +157,14 @@ class LatestMessage {
     return data;
   }
 }
+
+
+
+
+
+
+
+
+
+
+

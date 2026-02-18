@@ -84,7 +84,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
             scrollController.position.maxScrollExtent - 100 &&
         controller.hasMore &&
         !controller.isLoadingMore.value) {
-      controller.fetchChatRooms();
+      controller.fetchChatRooms(loadMore: true);
     }
   }
 

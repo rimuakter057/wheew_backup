@@ -3,6 +3,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
+import 'package:platchatapp/feature/chat/view/widgets/block_by_me_widget.dart';
+import 'package:platchatapp/feature/chat/view/widgets/block_me_widget.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/custom_container/custom_container.dart';
@@ -47,11 +50,17 @@ class _MessageScreenState extends State<MessageScreen> {
 
     debugPrint("📨 Opening chat - Receiver: ${widget.receiverId}, Room: ${widget.roomId}");
 
+    chatController.isBlockedByMe.value =
+        widget.isBlockedByMe ?? false;
 
     _initChat();
 
     // Scroll listener
     _scrollController.addListener(_onScroll);
+
+
+
+
   }
 
   Future<void> _initChat() async {
@@ -111,7 +120,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
                       IconButton(
                         onPressed: () async {
-                          chatController.fetchChatRooms();
+                          chatController.fetchChatRooms(refresh: true);
                           Navigator.pop(context);
                         },
                         icon: Icon(Icons.arrow_back,color: AppColors.black),
@@ -126,7 +135,7 @@ class _MessageScreenState extends State<MessageScreen> {
                           ),
                         ),
                       ),
-                      
+
                       SizedBox(width: ResponsiveHelper.spacing(12)),
 
                       Text(
@@ -139,32 +148,46 @@ class _MessageScreenState extends State<MessageScreen> {
                     ],
                   ),
 
+
                   PopupMenuButton<String>(
-                    icon: Icon(Icons.more_vert, color: Colors.black),
-                    color: AppColors.white,
+                    icon: Icon(Icons.more_vert, color: AppColors.black),
                     onSelected: (value) {
-
-                      print("Selected: $value");
+                      if (value == "Block") {
+                        chatController.block(widget.receiverId, context);
+                        chatController.isBlockedByMe.value = true;
+                      } else {
+                        chatController.unBlock(widget.receiverId, context);
+                        chatController.isBlockedByMe.value = false;
+                      }
                     },
-                    itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                    itemBuilder: (context) => [
                       PopupMenuItem<String>(
-                        value: "Block",
-                        child: Row(
+                        value: chatController.isBlockedByMe.value ? "Unblock" : "Block",
+                        child: Obx(() => Row(
                           children: [
-                            Icon(Icons.block,size: ResponsiveHelper.iconSize(16),color: AppColors.black,),
-                            SizedBox(width: ResponsiveHelper.spacing(8),),
-                            Text("Block",style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400
-                            ),),
+                            Icon(
+                              chatController.isBlockedByMe.value
+                                  ? Icons.lock_open
+                                  : Icons.block,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              chatController.isBlockedByMe.value ? "Unblock" : "Block",
+                            ),
                           ],
-                        ),
+                        )),
                       ),
-
-
                     ],
                   ),
-                 
+
+
+
+
+
+
+
+
+
                 ],
               ),
             ),
@@ -257,19 +280,21 @@ class _MessageScreenState extends State<MessageScreen> {
             ),
 
 
-            /// Bottom widget (Blocked or Input)
-            if (widget.isBlockedByMe == true && widget.isBlockedMe == false)
-              BlockByMeWidget(
-                name: widget.otherUserName,
-                onUnblock: () {
-                 // chatController.unblockUser(widget.receiverId);
-                },
-              )
-            else if (widget.isBlockedMe == true && widget.isBlockedByMe == false)
-              const YouAreBlockedWidget()
-            else
-              _messageInput(),
-
+            Obx(() {
+              if (chatController.isBlockedByMe.value && widget.isBlockedMe != true) {
+                return BlockByMeWidget(
+                  name: widget.otherUserName,
+                  onUnblock: () {
+                    chatController.unBlock(widget.receiverId, context);
+                    chatController.isBlockedByMe.value = false;
+                  },
+                );
+              } else if (widget.isBlockedMe == true && chatController.isBlockedByMe.value == false) {
+                return const BlockMeWidget();
+              } else {
+                return _messageInput();
+              }
+            })
 
 
 
@@ -353,136 +378,3 @@ class _MessageScreenState extends State<MessageScreen> {
 
 
 
-class BlockByMeWidget extends StatelessWidget {
-  final VoidCallback onUnblock;
- final String name;
-  const BlockByMeWidget({
-    super.key,
-    required this.onUnblock, required this.name,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-width: double.infinity,
-      padding:  ResponsiveHelper.all(16),
-
-      margin:  ResponsiveHelper.all(12),
-
-      decoration: BoxDecoration(
-
-        color: Colors.blue.shade50,
-
-        borderRadius: BorderRadius.circular(12),
-
-        border: Border.all(
-          color: AppColors.blue,
-        ),
-
-      ),
-
-      child: Column(
-
-        children: [
-
-
-           Text(
-             "You've blocked $name",
-             style:GoogleFonts.poppins (
-               fontSize: ResponsiveHelper.fontSize(16),
-               fontWeight: FontWeight.w500,
-             ),
-           ),
-          SizedBox(height: ResponsiveHelper.spacing(4),),
-          Text(
-            "This user won't be able to message you until you unblock them.",
-            textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
-              fontSize: ResponsiveHelper.fontSize(14),
-              fontWeight: FontWeight.w400,
-              color: Colors.grey[600],
-            ),
-          ),
-          SizedBox(height: ResponsiveHelper.spacing(12),),
-
-          ElevatedButton(
-
-            onPressed: onUnblock,
-
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.blue
-            ),
-
-            child:  Text("Unblock",style:GoogleFonts.poppins(
-              fontSize: ResponsiveHelper.fontSize(16),
-              fontWeight: FontWeight.w500
-            ),),
-
-          ),
-
-        ],
-
-      ),
-
-    );
-  }
-}
-
-
-
-
-
-
-
-class YouAreBlockedWidget extends StatelessWidget {
-  const YouAreBlockedWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Container(
-
-      padding:  ResponsiveHelper.all(16),
-
-      margin:  ResponsiveHelper.all(12),
-
-      decoration: BoxDecoration(
-
-        color: Colors.grey.shade200,
-
-        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
-
-      ),
-
-      child:  Row(
-
-        children: [
-
-          Icon(
-            Icons.lock,
-            color: Colors.grey,
-          ),
-
-          SizedBox(width: ResponsiveHelper.spacing(10)),
-
-          Expanded(
-            child: Text(
-              "You can't send message to this user",
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style:GoogleFonts.poppins (
-                fontSize: ResponsiveHelper.fontSize(14),
-                fontWeight: FontWeight.w500
-              ),
-            ),
-          ),
-
-        ],
-
-      ),
-
-    );
-
-  }
-
-}
