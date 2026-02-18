@@ -4,6 +4,10 @@ final Map<String, String> english = {
 
 
   'welcome_message':"Easy Chat With\nyour friends",
+  'welcome_message1':"Keep up with your friend ands makes",
+  'welcome_message2':"your chat more enjoyable by signing",
+  'welcome_message3':"quickly and easily",
+
   'sign_in': 'Sign In',
   'sign_up': 'Sign Up',
   'log_in': 'Log In',

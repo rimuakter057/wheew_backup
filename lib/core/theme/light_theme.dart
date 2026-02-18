@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../helper/responsive_helper/responsive_helper.dart';
 import '../../utils/color/app_colors.dart';
 import '../../utils/config/app_config.dart';
 
@@ -113,7 +115,7 @@ final ThemeData lightTheme = ThemeData(
       color: AppColors.errorColor,
     ),
   ),
-  textTheme: const TextTheme(
+  /*textTheme: const TextTheme(
     headlineLarge: TextStyle(
       fontFamily: AppConfig.fontFamily,
       fontSize: 32,
@@ -186,5 +188,39 @@ final ThemeData lightTheme = ThemeData(
       fontWeight: FontWeight.w500,
       color: AppColors.primaryText,
     ),
+  ),*/
+  /// Text Theme ==========================================
+  textTheme: GoogleFonts.poppinsTextTheme().copyWith(
+    titleLarge: GoogleFonts.poppins(
+      fontSize: 32,
+      fontWeight: FontWeight.w600,
+      color: AppColors.messageSubtitle,
+    ),
+    titleMedium: GoogleFonts.poppins(
+      fontSize: 24,
+      fontWeight: FontWeight.w600,
+      color: AppColors.black,
+    ),
+    titleSmall: GoogleFonts.poppins(
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      color: AppColors.black),
+    bodyMedium: GoogleFonts.poppins(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: AppColors.white,
+    ),
+    bodySmall: GoogleFonts.poppins(
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      color: AppColors.black,
+    ),
+    labelMedium: GoogleFonts.poppins(
+      fontSize: 12,
+      fontWeight: FontWeight.w500,
+      color: AppColors.black,
+    ),
   ),
+
+
 );

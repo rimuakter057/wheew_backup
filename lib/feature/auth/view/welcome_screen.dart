@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart';
+
+import 'package:platchatapp/utils/extension/base_extension.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../share/widgets/button/outline_button.dart';
 import '../../../share/widgets/button/primary_button.dart';
 import '../../../share/widgets/button/toggle_button.dart';
+import '../../../share/widgets/custom_image/custom_image.dart';
 import '../../../utils/assets_path/assets_path.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -14,165 +17,143 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    // Initialize responsive helper
+    ResponsiveHelper.init(context);
 
     return Scaffold(
-      body: Column(
-        children: [
-          // TOP SECTION (Avatars) - Using percentage-based positioning
-          Container(
-            height: size.height * 0.40,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFFD7FFCF),
-                  Color(0xFFF2FFF0),
-                  Color(0xFFF5F7FA),
-                ],
-                stops: [0.0, 0.6, 1.0],
+      body: SafeArea(
+        child: Column(
+          children: [
+            // TOP IMAGE
+            ClipRRect(
+              child: CustomImage(
+                imageSrc: AssetsPath.person0,
+                width: double.infinity,
+                fit: BoxFit.cover,
               ),
             ),
-            child: Stack(
+
+            SizedBox(height: ResponsiveHelper.spacing(24)),
+
+            // TITLE + FLOATING ICON
+            Stack(
+              alignment: Alignment.topCenter,
+              clipBehavior: Clip.none,
               children: [
-                _avatar(
-                  AssetsPath.person1,
-                  topPercent: 0.20,
-                  leftPercent: 0.45,
-                  radius: ResponsiveHelper.width(40),
-                  size: size,
+                // TEXT CONTENT
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: ResponsiveHelper.spacing(24),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        'welcome_message'.tr,
+                        textAlign: TextAlign.center,
+                        style: context.titleLarge.copyWith(
+                          fontSize: 40,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+
+                      SizedBox(height: ResponsiveHelper.spacing(4)),
+
+                      Text(
+                        'welcome_message1'.tr,
+                        textAlign: TextAlign.center,
+                        style: context.titleLarge.copyWith(
+                          fontSize: ResponsiveHelper.fontSize(16),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      Text(
+                        'welcome_message2'.tr,
+                        textAlign: TextAlign.center,
+                        style: context.titleLarge.copyWith(
+                          fontSize: ResponsiveHelper.fontSize(16),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      Text(
+                        'welcome_message3'.tr,
+                        textAlign: TextAlign.center,
+                        style: context.titleLarge.copyWith(
+                          fontSize: ResponsiveHelper.fontSize(16),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                _avatar(
-                  AssetsPath.person2,
-                  topPercent: 0.09,
-                  leftPercent: 0.10,
-                  radius: ResponsiveHelper.width(35),
-                  size: size,
-                ),
-                _avatar(
-                  AssetsPath.person2,
-                  topPercent: 0.30,
-                  rightPercent: 0.15,
-                  radius: ResponsiveHelper.width(35),
-                  size: size,
-                ),
-                _avatar(
-                  AssetsPath.person3,
-                  topPercent: 0.11,
-                  rightPercent: 0.45,
-                  radius: ResponsiveHelper.width(28),
-                  size: size,
-                ),
-                _avatar(
-                  AssetsPath.person4,
-                  topPercent: 0.30,
-                  leftPercent: 0.16,
-                  radius: ResponsiveHelper.width(45),
-                  size: size,
-                ),
-                _avatar(
-                  AssetsPath.person5,
-                  topPercent: 0.20,
-                  leftPercent: 0.16,
-                  radius: ResponsiveHelper.width(30),
-                  size: size,
-                ),
-                _avatar(
-                  AssetsPath.person6,
-                  topPercent: 0.10,
-                  rightPercent: 0.08,
-                  radius: ResponsiveHelper.width(30),
-                  size: size,
+
+                // FLOATING CHAT ICON
+                Positioned(
+                  top: -ResponsiveHelper.spacing(2),
+                  left:0,
+                  child: Container(
+                    width: ResponsiveHelper.width(40),
+                    height: ResponsiveHelper.height(40),
+                    /*decoration: const BoxDecoration(
+                      color: Colors.green,
+                      shape: BoxShape.circle,
+                    ),*/
+                    padding: const EdgeInsets.all(0),
+                    child: const CustomImage(
+                      imageSrc: AssetsPath.chat,
+                    ),
+                  ),
                 ),
               ],
             ),
-          ),
 
-          SizedBox(height: ResponsiveHelper.spacing(24)),
+            SizedBox(height: ResponsiveHelper.spacing(24)),
 
-          // LOTTIE ANIMATION
-          SizedBox(
-            width: ResponsiveHelper.width(80),
-            height: ResponsiveHelper.height(80),
-            child: Lottie.asset(AssetsPath.chatJson, fit: BoxFit.contain),
-          ),
-
-          // TITLE
-          Text(
-            'welcome_message'.tr,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: ResponsiveHelper.titleFontSize(28),
-              fontWeight: FontWeight.bold,
+            /// LANGUAGE TOGGLE
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveHelper.padding(24),
+              ),
+              child: const LanguageToggleWidget(),
             ),
-          ),
 
-          SizedBox(height: ResponsiveHelper.spacing(12)),
+            SizedBox(height: ResponsiveHelper.spacing(12)),
 
-          /// LANGUAGE BUTTON
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: ResponsiveHelper.padding(24),
+            // SIGN IN BUTTON
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveHelper.padding(24),
+              ),
+              child: OutlineButton(
+                title: 'sign_in'.tr,
+                onTap: () {
+                  context.pushNamed(RouteName.signIn);
+                },
+                borderColor: Colors.blue,
+                textColor: Colors.blue,
+              ),
             ),
-            child: const LanguageToggleWidget(),
-          ),
 
-          SizedBox(height: ResponsiveHelper.spacing(8)),
+            SizedBox(height: ResponsiveHelper.spacing(8)),
 
-          // LOGIN BUTTON
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: ResponsiveHelper.padding(24),
+            // SIGN UP BUTTON
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveHelper.padding(24),
+              ),
+              child: PrimaryButton(
+                title: 'sign_up'.tr,
+                onTap: () {
+                  context.pushNamed(RouteName.signUp);
+                },
+                backgroundColor: Colors.blue,
+                textColor: Colors.white,
+              ),
             ),
-            child: OutlineButton(
-              title:'sign_in'.tr,
-              onTap: () {
-                context.pushNamed(RouteName.signIn);
-              },
-              borderColor: Colors.blue,
-              textColor: Colors.blue,
-            ),
-          ),
 
-          SizedBox(height: ResponsiveHelper.spacing(8)),
-
-          // SIGN UP BUTTON
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: ResponsiveHelper.padding(24),
-            ),
-            child: PrimaryButton(
-              title: 'sign_up'.tr,
-              onTap: () {
-                context.pushNamed(RouteName.signUp);
-              },
-              backgroundColor: Colors.blue,
-              textColor: Colors.white,
-            ),
-          ),
-
-          SizedBox(height: ResponsiveHelper.spacing(24)),
-        ],
+            SizedBox(height: ResponsiveHelper.spacing(24)),
+          ],
+        ),
       ),
-    );
-  }
-
-  // Avatar Widget with percentage-based positioning
-  Widget _avatar(
-    String image, {
-    double? topPercent,
-    double? leftPercent,
-    double? rightPercent,
-    required double radius,
-    required Size size,
-  }) {
-    return Positioned(
-      top: topPercent != null ? size.height * topPercent : null,
-      left: leftPercent != null ? size.width * leftPercent : null,
-      right: rightPercent != null ? size.width * rightPercent : null,
-      child: CircleAvatar(radius: radius, backgroundImage: AssetImage(image)),
     );
   }
 }

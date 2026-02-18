@@ -2,10 +2,15 @@ final Map<String, String> italian = {
 
   // -------- Welcome Screen --------
   'splash': 'COLLEGAMENTO DEI PILOTI UNA PIASTRA ALLA VOLTA',
-  'welcome_message': 'Chat facile con\ni tuoi amici',
-  'sign_in': 'Accedi',
+
+  'welcome_message': 'La tua Targa,\n la tua chat',
+  'welcome_message1':"Vedi una targa, inizia a chattare:",
+  'welcome_message2':"registrati velocemente e connettiti",
+  'welcome_message3':"con un driver ovunque tu vada",
+
   'sign_up': 'Registrati',
   'log_in': 'Accedi',
+  'sign_in': 'Accedi',
 
   // -------- Sign In --------
   'nick_name': 'Nickname / Numero di targa',
