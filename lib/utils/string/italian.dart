@@ -11,6 +11,8 @@ final Map<String, String> italian = {
   'sign_up': 'Registrati',
   'log_in': 'Accedi',
   'sign_in': 'Accedi',
+  'do_not_account': "Non hai un account? ",
+  'already_account1': "Hai già un account",
 
   // -------- Sign In --------
   'nick_name': 'Nickname',

@@ -8,7 +8,6 @@ import '../repository/auth_controller.dart';
 import '../../../share/widgets/text_field/custom_text_field.dart';
 import '../../../share/widgets/button/primary_button.dart';
 
-
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
 
@@ -82,7 +81,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       title: 'license_plate_or_nick_name'.tr,
                       hintText: 'enter_license_plate_or_nick_name'.tr,
                       validator: (value) =>
-                      (value == null || value.trim().isEmpty)
+                          (value == null || value.trim().isEmpty)
                           ? 'Email or License ID is required'
                           : null,
                     ),
@@ -115,8 +114,8 @@ class _SignInScreenState extends State<SignInScreen> {
                         onPressed: controller.isLoading
                             ? null
                             : () {
-                          context.pushNamed(RouteName.forgotPassword);
-                        },
+                                context.pushNamed(RouteName.forgotPassword);
+                              },
                         child: Text(
                           'forgot_password'.tr,
                           style: TextStyle(
@@ -133,8 +132,40 @@ class _SignInScreenState extends State<SignInScreen> {
                     controller.isLoading
                         ? const CircularProgressIndicator()
                         : PrimaryButton(
-                      title: 'sign_in'.tr,
-                      onTap: _handleLogin,
+                            title: 'sign_in'.tr,
+                            onTap: _handleLogin,
+                          ),
+                    SizedBox(height: ResponsiveHelper.spacing(8)),
+
+                    Center(
+                      child: RichText(
+                        text: TextSpan(
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.black87,
+                            //fontStyle: FontStyle.italic,
+                          ),
+                          children: [
+                            TextSpan(text: 'do_not_account'.tr),
+                            WidgetSpan(
+                              child: GestureDetector(
+                                onTap: () {
+                                  context.pushNamed(RouteName.signUp);
+                                },
+                                child: Text(
+                                  "sign_up".tr,
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    //decoration: TextDecoration.underline,
+                                    fontWeight: FontWeight.w500,
+                                    //fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),

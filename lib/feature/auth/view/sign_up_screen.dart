@@ -401,6 +401,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   }
                 },
               ),
+              SizedBox(height: ResponsiveHelper.spacing(8)),
+
+              Center(
+                child: RichText(
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
+                      //fontStyle: FontStyle.italic,
+                    ),
+                    children: [
+                      TextSpan(text: 'already_account1'.tr),
+                      WidgetSpan(
+                        child: GestureDetector(
+                          onTap: () {
+                            context.pushNamed(RouteName.signIn);
+                          },
+                          child: Text(
+                            "sign_in".tr,
+                            style: TextStyle(
+                              color: Colors.blue,
+                              //decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.w500,
+                              //fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
             ],
           ),
         ),
