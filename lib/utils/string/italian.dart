@@ -13,7 +13,7 @@ final Map<String, String> italian = {
   'sign_in': 'Accedi',
 
   // -------- Sign In --------
-  'nick_name': 'Nickname / Numero di targa',
+  'nick_name': 'Nickname',
   'license_plate_or_nick_name': 'Targa o Nickname',
   'enter_license_plate_or_nick_name': 'Inserisci la targa o il nickname',
   'password': 'Password',
@@ -30,7 +30,7 @@ final Map<String, String> italian = {
   'occasional_driver': 'Guidatore occasionale',
   'please_select_designation': 'Seleziona un ruolo',
   'nick_name_hint': 'Nome',
-  'license_number': 'Numero di licenza',
+  'license_number': 'Numero di targa',
   'type_here': 'Scrivi qui',
   'license_number_is_required': 'Il numero di licenza è obbligatorio',
   'license_number_must_be': 'Il numero di licenza deve contenere almeno 7 caratteri',
@@ -49,6 +49,10 @@ final Map<String, String> italian = {
   '16_or_not':  'Hai più di 16 anni?',
   'yes': "SÌ",
   'no':"NO",
+  'email_only_for_recover_password': "Email solo per recuperare la password",
+
+  'i_agree_to1': "Acconsento all'utilizzo dei miei dati per ulteriori finalità -",
+  'agree_terms1':"Ulteriori informazioni",
 
   //------------------------------------------------------
   "don't_worry_enter_your_email": "Non preoccuparti, inserisci la tua email registrata",

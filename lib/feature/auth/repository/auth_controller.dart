@@ -69,6 +69,7 @@ class AuthController extends GetxController {
     required BuildContext context,
     required String licenceId,
     required String nickName,
+    required String email,
     required String password,
     required String confirmPassword,
     required String designation,
@@ -78,6 +79,7 @@ class AuthController extends GetxController {
     final Response registerRes = await _repo.register(
       licenceId: licenceId,
       nickName: nickName,
+      email: email,
       password: password,
       confirmPassword: confirmPassword,
       designation: designation,

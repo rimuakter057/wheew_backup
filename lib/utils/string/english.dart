@@ -13,7 +13,7 @@ final Map<String, String> english = {
   'log_in': 'Log In',
 
   // -------- Sign In --------
-  'nick_name': 'Nick Name/Plate Number',
+  'nick_name': 'Nick Name',
   'license_plate_or_nick_name': "License Plate or Nickname",
   'enter_license_plate_or_nick_name': "Enter License Plate or Nickname",
   'password': 'Password',
@@ -25,13 +25,13 @@ final Map<String, String> english = {
    // -------- Sign Up --------
 
   'nickname_is_required': 'Nickname is required',
-  'select_designation':  'Select Designation',
+  'select_designation': 'Select Designation',
   'select':'Select',
   'owner':'Owner',
   'occasional_driver': 'Occasional Driver',
   'please_select_designation': 'Please select designation',
   'nick_name_hint': 'Name',
-  'license_number': 'License Number',
+  'license_number': 'Plate Number',
   'type_here': 'Type here',
   'license_number_is_required': 'License number is required',
   'license_number_must_be': 'License number must be at least 7 characters',
@@ -49,6 +49,10 @@ final Map<String, String> english = {
   '16_or_not':  'Are you over 16 ?',
   'yes': "Yes",
   'no':"No",
+  'email_only_for_recover_password': "Email only for recover password",
+  'i_agree_to1': "I consent to the use of my data for additional purposes -",
+  'agree_terms1':"More information",
+
 
   //------------------------------------------------------
   "don't_worry_enter_your_email": "Don't worry enter your registered email",
