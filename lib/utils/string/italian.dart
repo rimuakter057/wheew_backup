@@ -45,12 +45,31 @@ final Map<String, String> italian = {
   'creating_account': 'Creazione account...',
   'registration_successful!': 'Registrazione completata con successo!',
 
+  'age_confirmation': "Conferma dell'età",
+  '16_or_not':  'Hai più di 16 anni?',
+  'yes': "SÌ",
+  'no':"NO",
+
+  //------------------------------------------------------
+  "don't_worry_enter_your_email": "Non preoccuparti, inserisci la tua email registrata",
+  "enter_your_email_here": "Inserisci qui la tua email",
+  'send_otp':'Invia OTP',
+  'email': "E-mail",
+  'enter_verification_code': "Inserisci il codice di verifica",
+  'verification_code': 'Codice di verifica',
+  'we_sent_6_digit_code': 'Abbiamo inviato un codice a 6 cifre',
+
+  'send': "Inviare",
+  'reset_code': "Codice di reset",
+  'new_password': 'Nuova password',
+  'save': 'Salva',
+
+
   //-------------------------------------------------------------
 
   'or': 'OPPURE',
   'already_account': 'Hai già un account?',
-  'verification_code': 'Codice di verifica',
-  'we_sent_6_digit_code': 'Abbiamo inviato un codice a 6 cifre',
+
 
   'terms_and_conditions': 'Termini e Condizioni',
   'log_out': 'Disconnetti',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/share/widgets/button/primary_button.dart';
 import 'package:platchatapp/share/widgets/text_field/custom_text_field.dart';
@@ -14,7 +15,7 @@ class ForgotPasswordScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Forgot password',
+          'forgot_password'.tr,
           style: TextStyle(fontSize: ResponsiveHelper.fontSize(18)),
         ),
         centerTitle: true,
@@ -29,7 +30,7 @@ class ForgotPasswordScreen extends StatelessWidget {
             SizedBox(height: ResponsiveHelper.spacing(20)),
 
             Text(
-              'Forgot Password',
+              'forgot_password'.tr,
               style: TextStyle(
                 fontSize: ResponsiveHelper.titleFontSize(20),
                 fontWeight: FontWeight.w600,
@@ -39,7 +40,7 @@ class ForgotPasswordScreen extends StatelessWidget {
             SizedBox(height: ResponsiveHelper.spacing(8)),
 
             Text(
-              "Don't worry enter your registered email",
+              "don't_worry_enter_your_email".tr,
               style: TextStyle(
                 fontSize: ResponsiveHelper.fontSize(14),
                 color: Colors.grey,
@@ -49,8 +50,8 @@ class ForgotPasswordScreen extends StatelessWidget {
             SizedBox(height: ResponsiveHelper.spacing(24)),
 
             CustomTextField(
-              title: 'Email',
-              hintText: 'Enter your email here',
+              title: 'email'.tr,
+              hintText: 'enter_your_email_here'.tr,
             ),
 
             const Spacer(),
@@ -59,7 +60,7 @@ class ForgotPasswordScreen extends StatelessWidget {
               width: double.infinity,
               height: ResponsiveHelper.buttonHeight(50),
               child: PrimaryButton(
-                title: 'Send OTP',
+                title: 'send_otp'.tr,
                 onTap: () {
                   context.goNamed(RouteName.otp);
                 },

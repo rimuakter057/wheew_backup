@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/share/widgets/button/primary_button.dart';
@@ -18,7 +19,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Reset Code'), centerTitle: true),
+      appBar: AppBar(title:Text('reset_code'.tr), centerTitle: true),
       body: Padding(
         padding: EdgeInsets.all(ResponsiveHelper.padding(20)),
         child: Column(
@@ -26,12 +27,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           children: [
             const SizedBox(height: 20),
 
-            CustomTextField(title: 'New password'),
+            CustomTextField(title: 'new_password'.tr),
             const SizedBox(height: 16),
-            CustomTextField(title: 'Confirm password'),
+            CustomTextField(title: 'confirm_password'.tr),
             const Spacer(),
             PrimaryButton(
-              title: 'Save',
+              title: 'save'.tr,
               onTap: () {
                 context.goNamed(RouteName.signIn);
               },

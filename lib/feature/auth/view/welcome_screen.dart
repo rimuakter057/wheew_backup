@@ -11,6 +11,7 @@ import '../../../share/widgets/button/primary_button.dart';
 import '../../../share/widgets/button/toggle_button.dart';
 import '../../../share/widgets/custom_image/custom_image.dart';
 import '../../../utils/assets_path/assets_path.dart';
+import '../../../utils/color/app_colors.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -136,7 +137,7 @@ class WelcomeScreen extends StatelessWidget {
             SizedBox(height: ResponsiveHelper.spacing(8)),
 
             // SIGN UP BUTTON
-            Padding(
+            /*Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: ResponsiveHelper.padding(24),
               ),
@@ -144,6 +145,19 @@ class WelcomeScreen extends StatelessWidget {
                 title: 'sign_up'.tr,
                 onTap: () {
                   context.pushNamed(RouteName.signUp);
+                },
+                backgroundColor: Colors.blue,
+                textColor: Colors.white,
+              ),
+            ),*/
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveHelper.padding(24),
+              ),
+              child: PrimaryButton(
+                title: 'sign_up'.tr,
+                onTap: () {
+                  _showAgeConfirmationDialog(context);
                 },
                 backgroundColor: Colors.blue,
                 textColor: Colors.white,
@@ -156,4 +170,95 @@ class WelcomeScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+void _showAgeConfirmationDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Text(
+          'age_confirmation'.tr,
+          textAlign: TextAlign.center,
+        ),
+        content: Text(
+          '16_or_not'.tr,
+          style: context.titleSmall,
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // NO BUTTON
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey.shade300,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Get.snackbar(
+                      'access_denied'.tr,
+                      'age_restriction_message'.tr,
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  },
+                  child: Text(
+                    'no'.tr,
+                    style: context.titleMedium.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.errorColor,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 4),
+
+                // YES BUTTON
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    context.pushNamed(RouteName.signUp);
+                  },
+                  child: Text(
+                    'yes'.tr,
+                    style: context.titleMedium.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    },
+  );
 }

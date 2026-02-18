@@ -104,7 +104,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 },
               ),
               const Spacer(),
-              PrimaryButton(title: 'vrify'.tr, onTap: () {
+              PrimaryButton(title: 'send'.tr, onTap: () {
                 context.goNamed(RouteName.resetPassword);
               }),
             ],
