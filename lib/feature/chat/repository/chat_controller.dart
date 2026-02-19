@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
@@ -333,7 +333,7 @@ class ChatController extends GetxController {
     if (_isFetching) return; // ✅ এই guard দিয়ে multiple call বন্ধ
     _isFetching = true;
 
-    if (page == 1) {
+    if (page.value == 1) {
       isLoadingChat.value = true;
     } else {
       isLoadingMore.value = true;
@@ -351,9 +351,7 @@ class ChatController extends GetxController {
         if (data.rooms != null && data.rooms!.isNotEmpty) {
           // userChatList.addAll(data.rooms!);
 
-          userChatList.value = List<Rooms>.from(
-            data.rooms!.map((e) => Rooms.fromJson(e.toJson())),
-          );
+          userChatList.value = List<Rooms>.from(data.rooms!.map((e) => e));
 
           //  userChatList.value = data.rooms!.map((e) => Rooms.fromJson(e)).toList();
           page++;

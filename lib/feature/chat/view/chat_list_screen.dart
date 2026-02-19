@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
+import 'package:platchatapp/feature/chat/view/message_screen.dart';
 import 'package:platchatapp/helper/data_converter/data_converter.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
@@ -212,18 +213,43 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         isProfile: true,
                       ),
                       onTap: () {
-                        context.pushNamed(
-                          RouteName.message,
-                          extra: {
-                            'roomId': room.id ?? '',
-                            'otherUserName': room.otherUser?.nickName ?? 'User',
-                            'otherUserAvatar':
-                                room.otherUser?.avatar ?? AppConst.unknown,
-                            'receiverId': room.otherUser?.id ?? '',
-                            "isBlockedByMe": room.isBlockedByMe,
-                            "isBlockedMe": room.isBlockedMe,
-                          },
+                        MessageInformation messageInformation =
+                            MessageInformation(
+                              roomID: room.id ?? '',
+                              otherUserName: room.otherUser?.nickName ?? 'User',
+                              otherUserAvatar:
+                                  room.otherUser?.avatar ?? AppConst.unknown,
+                              receiverId: room.otherUser?.id ?? '',
+                              isBlockedByMe: room.isBlockedByMe,
+                              isBlockedMe: room.isBlockedMe,
+                            );
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MessageScreen(
+                              roomId: messageInformation.roomID,
+                              otherUserName: messageInformation.otherUserName,
+                              otherUserAvatar:
+                                  messageInformation.otherUserAvatar,
+                              receiverId: messageInformation.receiverId,
+                              isBlockedByMe: messageInformation.isBlockedByMe,
+                              isBlockedMe: messageInformation.isBlockedMe,
+                            ),
+                          ),
                         );
+                        // context.pushNamed(
+                        //   RouteName.message,
+                        //   extra: {
+                        //     'roomId': room.id ?? '',
+                        //     'otherUserName': room.otherUser?.nickName ?? 'User',
+                        //     'otherUserAvatar':
+                        //         room.otherUser?.avatar ?? AppConst.unknown,
+                        //     'receiverId': room.otherUser?.id ?? '',
+                        //     "isBlockedByMe": room.isBlockedByMe,
+                        //     "isBlockedMe": room.isBlockedMe,
+                        //   },
+                        // );
                       },
                     );
                   },
