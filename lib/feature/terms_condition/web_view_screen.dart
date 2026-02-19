@@ -3,16 +3,16 @@ import 'package:get/get.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class PrivacyPolicyScreen extends StatefulWidget {
+class WebViewScreen extends StatefulWidget {
   final String url;
 
-  const PrivacyPolicyScreen({super.key, required this.url});
+  const WebViewScreen({super.key, required this.url});
 
   @override
-  State<PrivacyPolicyScreen> createState() => _PrivacyPolicyScreenState();
+  State<WebViewScreen> createState() => _WebViewScreenState();
 }
 
-class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
+class _WebViewScreenState extends State<WebViewScreen> {
   late final WebViewController _controller;
   bool isLoading = true;
 
@@ -38,14 +38,12 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'privacy_policy'.tr),
+      appBar: CustomAppBar(title:  'terms_and_conditions'.tr,),
       body: Stack(
         children: [
           WebViewWidget(controller: _controller), // Display WebView
           if (isLoading)
-            const Center(
-              child: CircularProgressIndicator(),
-            ), // loading indicator
+            const Center(child: CircularProgressIndicator()), // loading indicator
         ],
       ),
     );

@@ -1,10 +1,14 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings, use_build_context_synchronously
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/feature/privacy_policy/privacy_policy_screen.dart';
+import 'package:platchatapp/feature/terms_condition/web_view_screen.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../core/router/route_path.dart';
 import '../../../core/router/routes_name.dart';
@@ -288,6 +292,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                   SizedBox(width: ResponsiveHelper.spacing(8)),
+      Expanded(
+        child: RichText(
+          text: TextSpan(
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.black,
+            ),
+            children: [
+              TextSpan(
+                text: 'i_agree_to'.tr + ' ',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                  color: Colors.black,
+                ),
+              ),
+              TextSpan(
+                text: 'terms_and_conditions'.tr,
+                style: GoogleFonts.poppins(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                  fontSize: 14,
+                ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    // Terms & Conditions link open
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => WebViewScreen(
+                          url: ApiUrl.terms,
                   Expanded(
                     child: GestureDetector(
                       onTap: () => context.pushNamed(RouteName.terms),
@@ -337,8 +372,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ],
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
+              ),
+              TextSpan(
+                text: ' and ',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                  color: Colors.black,
+                ),
+              ),
+              TextSpan(
+                text: 'privacy_policy'.tr,
+                style: GoogleFonts.poppins(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                  fontSize: 14,
+                ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    // Privacy Policy link open
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => PrivacyPolicyScreen(
+                          url: ApiUrl.privacy
+                        ),
+                      ),
+                    );
+                  },
+              ),
+            ],
+          ),
+        ),
+      ),
                 ],
               ),
               SizedBox(height: ResponsiveHelper.spacing(12)),
