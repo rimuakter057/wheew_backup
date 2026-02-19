@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:platchatapp/utils/string/app_text_key.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../utils/color/app_colors.dart';
 import '../repository/profile_controller.dart';
@@ -15,7 +16,7 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Profile',
+          'profile'.tr,
           style: TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: ResponsiveHelper.fontSize(18),
@@ -34,7 +35,7 @@ class ProfileScreen extends StatelessWidget {
                   }
                 },
                 child: Text(
-                  controller.isEditing ? 'Save' : 'Edit',
+                  controller.isEditing ? 'save'.tr : 'edit'.tr,
                   style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
                 ),
               );

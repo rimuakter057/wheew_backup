@@ -4,6 +4,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../core/router/route_path.dart';
 import '../../../core/router/routes_name.dart';
@@ -55,11 +56,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
+        leading: IconButton(onPressed: (){
+          context.pop();
+        }, icon: Icon(Icons.arrow_back,size: ResponsiveHelper.iconSize(24),)),
         title: Text(
           'sign_up'.tr,
-          style: TextStyle(
+          style: GoogleFonts.poppins(
             color: Colors.black,
             fontSize: ResponsiveHelper.fontSize(18),
+            fontWeight: FontWeight.w500
           ),
         ),
       ),
@@ -266,6 +271,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
               /// Agree Terms
               Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
                     width: ResponsiveHelper.width(24),
@@ -288,16 +295,46 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             color: Colors.black,
                           ),
                           children: [
-                            TextSpan(text:  'i_agree_to'.tr + ' '),
+                            TextSpan(text:  'i_agree_to'.tr + ' ',style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14,
+                              color: AppColors.black
+
+
+
+                            )),
                             TextSpan(
-                              text: 'agree_terms'.tr,
-                              style: TextStyle(
-                                color: Colors.blue,
+                              text: 'terms_and_conditions'.tr,
+                              style: GoogleFonts.poppins(
+                                color: AppColors.blue,
                                 decoration: TextDecoration.underline,
-                                fontWeight: FontWeight.bold,
-                                fontSize: ResponsiveHelper.fontSize(13),
+
+                                fontSize: ResponsiveHelper.fontSize(14),
                               ),
                             ),
+
+                            TextSpan(
+                              text: 'and'.tr,
+                            style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                color: AppColors.black
+                            ),),
+
+                            TextSpan(
+                              text: 'privacy_policy'.tr,
+                              style: GoogleFonts.poppins(
+                                color: AppColors.blue,
+                                decoration: TextDecoration.underline,
+
+                                fontSize: ResponsiveHelper.fontSize(14),
+                              ),
+                            ),
+
+
+
+
+
                           ],
                         ),
                       ),
@@ -307,49 +344,49 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               SizedBox(height: ResponsiveHelper.spacing(12)),
 
-              /// Other Terms
-              // Other Terms (Optional)
-              Row(
-                children: [
-                  SizedBox(
-                    width: ResponsiveHelper.width(24),
-                    height: ResponsiveHelper.height(24),
-                    child: Checkbox(
-                      value: agreeOtherTerms ?? false,
-                      tristate: true, // allows null
-                      activeColor: Colors.green,
-                      onChanged: (value) =>
-                          setState(() => agreeOtherTerms = value),
-                    ),
-                  ),
-                  SizedBox(width: ResponsiveHelper.spacing(8)),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => context.pushNamed(RouteName.terms),
-                      child: RichText(
-                        text: TextSpan(
-                          style: TextStyle(
-                            fontSize: ResponsiveHelper.fontSize(13),
-                            color: Colors.black,
-                          ),
-                          children: [
-                            TextSpan(text: 'i_agree_to1'.tr + ' '),
-                            TextSpan(
-                              text: 'agree_terms1'.tr,
-                              style: TextStyle(
-                                color: Colors.blue,
-                                decoration: TextDecoration.underline,
-                                fontWeight: FontWeight.bold,
-                                fontSize: ResponsiveHelper.fontSize(13),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              // /// Other Terms
+              // // Other Terms (Optional)
+              // Row(
+              //   children: [
+              //     SizedBox(
+              //       width: ResponsiveHelper.width(24),
+              //       height: ResponsiveHelper.height(24),
+              //       child: Checkbox(
+              //         value: agreeOtherTerms ?? false,
+              //         tristate: true, // allows null
+              //         activeColor: Colors.green,
+              //         onChanged: (value) =>
+              //             setState(() => agreeOtherTerms = value),
+              //       ),
+              //     ),
+              //     SizedBox(width: ResponsiveHelper.spacing(8)),
+              //     Expanded(
+              //       child: GestureDetector(
+              //         onTap: () => context.pushNamed(RouteName.terms),
+              //         child: RichText(
+              //           text: TextSpan(
+              //             style: TextStyle(
+              //               fontSize: ResponsiveHelper.fontSize(13),
+              //               color: Colors.black,
+              //             ),
+              //             children: [
+              //               TextSpan(text: 'i_agree_to1'.tr + ' '),
+              //               TextSpan(
+              //                 text: 'agree_terms1'.tr,
+              //                 style: TextStyle(
+              //                   color: Colors.blue,
+              //                   decoration: TextDecoration.underline,
+              //                   fontWeight: FontWeight.bold,
+              //                   fontSize: ResponsiveHelper.fontSize(13),
+              //                 ),
+              //               ),
+              //             ],
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
 
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
@@ -406,10 +443,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
               Center(
                 child: RichText(
                   text: TextSpan(
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black87,
-                      //fontStyle: FontStyle.italic,
+                    style: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(14),
+                      color: AppColors.black,
+                      fontWeight: FontWeight.w400
+                     
                     ),
                     children: [
                       TextSpan(text: 'already_account1'.tr),
@@ -420,11 +458,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           },
                           child: Text(
                             "sign_in".tr,
-                            style: TextStyle(
-                              color: Colors.blue,
-                              //decoration: TextDecoration.underline,
-                              fontWeight: FontWeight.w500,
-                              //fontStyle: FontStyle.italic,
+                            style:   GoogleFonts.poppins(
+                                fontSize: ResponsiveHelper.fontSize(14),
+                                color: AppColors.blue,
+                                fontWeight: FontWeight.w600
+
                             ),
                           ),
                         ),

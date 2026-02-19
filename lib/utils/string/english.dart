@@ -1,3 +1,5 @@
+import 'package:platchatapp/utils/string/app_text_key.dart';
+
 final Map<String, String> english = {
   // -------- Welcome Screen --------
   'splash': 'CONNECTING DRIVERS ONE PLATE AT A TIME',
@@ -80,6 +82,8 @@ final Map<String, String> english = {
 
 
   'terms_and_conditions': 'Terms and Conditions',
+  'and':' and ',
+  'privacy_policy':'Privacy Policy',
   'log_out': 'Log Out',
 
   // ------------------All chat-------------------------
@@ -94,7 +98,12 @@ final Map<String, String> english = {
   "blocked_user":"Blocked user",
   "unblock":"Unblock",
   'logout':"Logout",
-  'profile':"Profile"
+  'profile':"Profile",
+  "edit":"Edit",
+  "you_can't_send":"You can't send message to this user",
+  "you've_blocked":"You've blocked",
+  "this_user_won't_be_able":"This user won't be able to message you until you unblock them."
+
 
 
 

@@ -8,7 +8,7 @@ import 'package:platchatapp/feature/auth/view/reset_password_screen.dart';
 import 'package:platchatapp/feature/auth/view/forgot_password_screen.dart';
 import 'package:platchatapp/feature/auth/view/sign_in_screen.dart';
 import 'package:platchatapp/feature/auth/view/sign_up_screen.dart';
-import 'package:platchatapp/feature/auth/view/terms_and_condition_screen.dart';
+import 'package:platchatapp/feature/terms_condition/terms_and_condition_screen.dart';
 import 'package:platchatapp/feature/auth/view/otp_screen.dart';
 import 'package:platchatapp/feature/chat/view/block_list_screen.dart';
 import 'package:platchatapp/feature/chat/view/chat_list_screen.dart';

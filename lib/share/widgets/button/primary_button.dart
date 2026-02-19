@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 
 class PrimaryButton extends StatelessWidget {
@@ -36,9 +38,11 @@ class PrimaryButton extends StatelessWidget {
         ),
         child: Text(
           title,
-          style: TextStyle(
-            color: textColor,
-            fontSize: ResponsiveHelper.fontSize(16),
+          style:GoogleFonts.poppins(
+              fontSize: ResponsiveHelper.fontSize(16),
+              color: textColor,
+              fontWeight: FontWeight.w400
+
           ),
         ),
       ),
