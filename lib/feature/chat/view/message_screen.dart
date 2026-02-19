@@ -71,7 +71,9 @@ class _MessageScreenState extends State<MessageScreen> {
     chatController.roomID.value = widget.roomId??"";
 
     // Fetch messages
-    chatController.fetchRoomMessage(roomId: widget.roomId, refresh: true);
+    if(widget.roomId!='') {
+      chatController.fetchRoomMessage(roomId: widget.roomId, refresh: true);
+    }
 
     debugPrint("✅ Chat initialized for room: ${widget.roomId}");
   }
@@ -143,6 +145,7 @@ class _MessageScreenState extends State<MessageScreen> {
                         style: GoogleFonts.poppins(
                           fontSize: ResponsiveHelper.fontSize(16),
                           fontWeight: FontWeight.w600,
+                          color: AppColors.black
                         ),
                       ),
                     ],
@@ -281,7 +284,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
 
             Obx(() {
-              if (chatController.isBlockedByMe.value==true && chatController.isBlockedMe.value==false) {
+              if (chatController.isBlockedByMe.value==true ) {
                 return BlockByMeWidget(
                   name: widget.otherUserName,
                   onUnblock: () {

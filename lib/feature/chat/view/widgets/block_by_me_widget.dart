@@ -45,6 +45,7 @@ class BlockByMeWidget extends StatelessWidget {
             style:GoogleFonts.poppins (
               fontSize: ResponsiveHelper.fontSize(16),
               fontWeight: FontWeight.w500,
+                color: AppColors.black
             ),
           ),
           SizedBox(height: ResponsiveHelper.spacing(4),),

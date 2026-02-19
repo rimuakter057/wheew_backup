@@ -154,9 +154,33 @@ class _SearchListScreenState extends State<SearchListScreen> {
                         onTap: () => context.pushNamed(RouteName.message,
 
                           extra: {
+                            'roomId': chat.existingRoom?.id??'',
                             'otherUserName': chat.nickName,
                             'otherUserAvatar': chat.avatar?? AppConst.unknown,
-                            'receiverId': chat.existingRoom?.id??"",
+                            'receiverId': chat.id,
+                          "isBlockedByMe":false,
+                        "isBlockedMe":false,
+
+
+
+
+
+
+
+
+                            // 'roomId': room.id ?? '',
+                            // 'otherUserName':
+                            // room.otherUser?.nickName ?? 'User',
+                            // 'otherUserAvatar':
+                            // room.otherUser?.avatar ?? AppConst.unknown,
+                            // 'receiverId': room.otherUser?.id ?? '',
+                            // "isBlockedByMe":room.isBlockedByMe??false,
+                            // "isBlockedMe":room.isBlockedMe??false,
+
+
+
+
+
                           },
 
                         ),
