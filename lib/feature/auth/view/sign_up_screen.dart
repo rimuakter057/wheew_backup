@@ -39,8 +39,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       TextEditingController();
 
   bool agree = false;
-  bool agreeTerms = false;          // required
-  bool? agreeOtherTerms;            // optional (nullable)
+  bool agreeTerms = false; // required
+  bool? agreeOtherTerms; // optional (nullable)
 
   String? selectedDesignation;
 
@@ -60,15 +60,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
-        leading: IconButton(onPressed: (){
-          context.pop();
-        }, icon: Icon(Icons.arrow_back,size: ResponsiveHelper.iconSize(24),)),
+        leading: IconButton(
+          onPressed: () {
+            context.pop();
+          },
+          icon: Icon(Icons.arrow_back, size: ResponsiveHelper.iconSize(24)),
+        ),
         title: Text(
           'sign_up'.tr,
           style: GoogleFonts.poppins(
             color: Colors.black,
             fontSize: ResponsiveHelper.fontSize(18),
-            fontWeight: FontWeight.w500
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),
@@ -87,7 +90,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 title: 'nick_name'.tr,
                 hintText: 'nick_name_hint'.tr,
                 validator: (value) => (value == null || value.trim().isEmpty)
-                    ?  'nickname_is_required'.tr
+                    ? 'nickname_is_required'.tr
                     : null,
               ),
 
@@ -221,7 +224,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               CustomTextField(
                 controller: emailController,
                 title: 'email'.tr,
-                hintText:'email_only_for_recover_password'.tr,
+                hintText: 'email_only_for_recover_password'.tr,
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -320,6 +323,53 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       MaterialPageRoute(
                         builder: (_) => WebViewScreen(
                           url: ApiUrl.terms,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => context.pushNamed(RouteName.terms),
+                      child: RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                            fontSize: ResponsiveHelper.fontSize(13),
+                            color: Colors.black,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: 'i_agree_to'.tr + ' ',
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                color: AppColors.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: 'terms_and_conditions'.tr,
+                              style: GoogleFonts.poppins(
+                                color: AppColors.blue,
+                                decoration: TextDecoration.underline,
+
+                                fontSize: ResponsiveHelper.fontSize(14),
+                              ),
+                            ),
+
+                            TextSpan(
+                              text: 'and'.tr,
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                color: AppColors.black,
+                              ),
+                            ),
+
+                            TextSpan(
+                              text: 'privacy_policy'.tr,
+                              style: GoogleFonts.poppins(
+                                color: AppColors.blue,
+                                decoration: TextDecoration.underline,
+
+                                fontSize: ResponsiveHelper.fontSize(14),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
@@ -404,7 +454,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               //     ),
               //   ],
               // ),
-
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
               /// Continue Button
@@ -417,7 +466,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   }
 
                   if (!agree) {
-                    showWarningSnackBar( 'please accept terms'.tr);
+                    showWarningSnackBar('please accept terms'.tr);
                     return;
                   }
 
@@ -463,8 +512,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(14),
                       color: AppColors.black,
-                      fontWeight: FontWeight.w400
-                     
+                      fontWeight: FontWeight.w400,
                     ),
                     children: [
                       TextSpan(text: 'already_account1'.tr),
@@ -475,11 +523,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           },
                           child: Text(
                             "sign_in".tr,
-                            style:   GoogleFonts.poppins(
-                                fontSize: ResponsiveHelper.fontSize(14),
-                                color: AppColors.blue,
-                                fontWeight: FontWeight.w600
-
+                            style: GoogleFonts.poppins(
+                              fontSize: ResponsiveHelper.fontSize(14),
+                              color: AppColors.blue,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -488,7 +535,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
               ),
-
             ],
           ),
         ),

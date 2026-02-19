@@ -37,15 +37,15 @@ class AppMenuDrawer extends StatelessWidget {
                     // Avatar
                     profileController.profileImage.value != null
                         ? CircleAvatar(
-                      radius: ResponsiveHelper.width(28),
-                      backgroundImage: FileImage(
-                        profileController.profileImage.value!,
-                      ),
-                    )
+                            radius: ResponsiveHelper.width(28),
+                            backgroundImage: FileImage(
+                              profileController.profileImage.value!,
+                            ),
+                          )
                         : UserAvatar(
-                      imagePath: user?.avatar,
-                      radius: ResponsiveHelper.width(28),
-                    ),
+                            imagePath: user?.avatar,
+                            radius: ResponsiveHelper.width(28),
+                          ),
                     SizedBox(width: ResponsiveHelper.spacing(12)),
                     // Nickname
                     Expanded(
@@ -97,10 +97,7 @@ class AppMenuDrawer extends StatelessWidget {
             ),
             SizedBox(height: ResponsiveHelper.spacing(8)),
             ListTile(
-              leading: Icon(
-                Icons.block,
-                size: ResponsiveHelper.iconSize(24),
-              ),
+              leading: Icon(Icons.block, size: ResponsiveHelper.iconSize(24)),
               title: Text(
                 'block_'.tr,
                 style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
@@ -117,7 +114,7 @@ class AppMenuDrawer extends StatelessWidget {
                 size: ResponsiveHelper.iconSize(24),
               ),
               title: Text(
-                'Language',
+                'language'.tr,
                 style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
               ),
               subtitle: Obx(() {
@@ -131,8 +128,6 @@ class AppMenuDrawer extends StatelessWidget {
                 _showLanguageBottomSheet(context);
               },
             ),
-
-
 
             const Spacer(),
 
@@ -175,8 +170,7 @@ void _showLanguageBottomSheet(BuildContext context) {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: controller.availableLanguageNames.map((language) {
-            final isSelected =
-            controller.isLanguageSelected(language);
+            final isSelected = controller.isLanguageSelected(language);
 
             return ListTile(
               leading: Icon(
