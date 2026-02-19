@@ -102,7 +102,7 @@ final Map<String, String> english = {
   "edit":"Edit",
   "you_can't_send":"You can't send message to this user",
   "you've_blocked":"You've blocked",
-  "this_user_won't_be_able":"This user won't be able to message you until you unblock them."
+  "this_user_won't_be_able":"This user won't be able to message you until you unblock them.",
 
 
 

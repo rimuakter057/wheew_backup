@@ -26,4 +26,15 @@ class ApiUrl {
   static const String blockList='/users/block-list';
   static const String unblock='/users/unblock';
   static const String block='/users/block';
+
+  ///terms and privacy==========================
+
+
+static const String terms="http://10.10.20.16:6010/terms-and-condition-public";
+static const String privacy="http://10.10.20.16:6010/privacy-policy-public";
+
+
+
+
+
 }
