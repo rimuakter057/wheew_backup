@@ -17,7 +17,7 @@ final Map<String, String> english = {
   'already_account1': "Already have account ",
 
   // -------- Sign In --------
-  'nick_name': 'Nick Name',
+  'nick_name': 'Soprannome',
   'license_plate_or_nick_name': "License Plate or Nickname",
   'enter_license_plate_or_nick_name': "Enter License Plate or Nickname",
   'password': 'Password',
