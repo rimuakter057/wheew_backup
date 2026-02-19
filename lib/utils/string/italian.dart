@@ -1,3 +1,5 @@
+import 'app_text_key.dart';
+
 final Map<String, String> italian = {
 
   // -------- Welcome Screen --------
@@ -89,6 +91,13 @@ final Map<String, String> italian = {
   "unblock":"Sbloccare",
   'logout':"Esci",
   'profile':"Profilo",
+  "edit":"Modificare",
+  'and':' E ',
+  "privacy_policy":"politica sulla riservatezza",
+  "you_can't_send":"Non puoi inviare un messaggio a questo utente",
+  "you've_blocked":"Hai bloccato",
+  "this_user_won't_be_able":"Questo utente non potrà inviarti messaggi finché non lo sbloccherai."
+
 
 
 };

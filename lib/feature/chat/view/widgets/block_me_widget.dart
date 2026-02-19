@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 
 
 
@@ -37,12 +39,13 @@ class BlockMeWidget extends StatelessWidget {
 
           Expanded(
             child: Text(
-              "You can't send message to this user",
+              "you_can't_send".tr,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style:GoogleFonts.poppins (
                   fontSize: ResponsiveHelper.fontSize(14),
-                  fontWeight: FontWeight.w500
+                  fontWeight: FontWeight.w400,
+                color: AppColors.black
               ),
             ),
           ),

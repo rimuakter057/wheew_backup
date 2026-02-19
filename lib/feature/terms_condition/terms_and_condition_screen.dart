@@ -17,7 +17,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding:  EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -32,8 +32,6 @@ class TermsAndConditionsScreen extends StatelessWidget {
               'terms_eligibility_title'.tr,
               'terms_eligibility_content'.tr,
             ),
-
-
 
             const SizedBox(height: 20),
           ],

@@ -52,6 +52,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
     chatController.isBlockedByMe.value =
         widget.isBlockedByMe ?? false;
+    chatController.isBlockedMe.value=widget.isBlockedMe??false;
 
     _initChat();
 
@@ -175,7 +176,7 @@ class _MessageScreenState extends State<MessageScreen> {
                             ),
                             SizedBox(width: 8),
                             Text(
-                              chatController.isBlockedByMe.value ? "Unblock" : "Block",
+                              chatController.isBlockedByMe.value ? "unblock".tr : "block_".tr,
                             ),
                           ],
                         )),
@@ -292,9 +293,14 @@ class _MessageScreenState extends State<MessageScreen> {
                     chatController.isBlockedByMe.value = false;
                   },
                 );
-              } else if (chatController.isBlockedMe == true && chatController.isBlockedByMe.value == false) {
+              } else if (chatController.isBlockedMe.value == true ) {
                 return const BlockMeWidget();
-              } else {
+              }else if (chatController.isBlockedByMe.value == false &&  chatController.isBlockedMe.value==false ) {
+                return _messageInput();
+              }
+
+
+              else {
                 return _messageInput();
               }
             })

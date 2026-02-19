@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
@@ -41,16 +42,16 @@ class BlockByMeWidget extends StatelessWidget {
 
 
           Text(
-            "You've blocked $name",
+            "you've_blocked $name".tr,
             style:GoogleFonts.poppins (
               fontSize: ResponsiveHelper.fontSize(16),
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w400,
                 color: AppColors.black
             ),
           ),
           SizedBox(height: ResponsiveHelper.spacing(4),),
           Text(
-            "This user won't be able to message you until you unblock them.",
+            "this_user_won't_be_able".tr,
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               fontSize: ResponsiveHelper.fontSize(14),
@@ -68,7 +69,7 @@ class BlockByMeWidget extends StatelessWidget {
                 backgroundColor: AppColors.blue
             ),
 
-            child:  Text("Unblock",style:GoogleFonts.poppins(
+            child:  Text("unblock".tr,style:GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(16),
                 fontWeight: FontWeight.w500
             ),),
