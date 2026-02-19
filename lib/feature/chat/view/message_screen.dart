@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/feature/chat/view/widgets/block_by_me_widget.dart';
 import 'package:platchatapp/feature/chat/view/widgets/block_me_widget.dart';
@@ -11,23 +10,23 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/custom_container/custom_container.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
-import '../repository/chat_controller.dart';
 
 class MessageScreen extends StatefulWidget {
   final String? roomId;
   final String otherUserName;
   final String? otherUserAvatar;
   final String receiverId;
- final bool? isBlockedByMe;
- final bool? isBlockedMe;
-
+  final bool? isBlockedByMe;
+  final bool? isBlockedMe;
 
   const MessageScreen({
     super.key,
     this.roomId,
     required this.otherUserName,
     this.otherUserAvatar,
-    required this.receiverId, this.isBlockedByMe, this.isBlockedMe,
+    required this.receiverId,
+    this.isBlockedByMe,
+    this.isBlockedMe,
   });
 
   @override
@@ -39,40 +38,38 @@ class _MessageScreenState extends State<MessageScreen> {
   //final TextEditingController messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-
-
   @override
   void initState() {
     super.initState();
 
-    debugPrint("isBlockedByMe==============: ${widget.isBlockedByMe}, isBlockedMe===============: ${widget.isBlockedMe}");
+    debugPrint(
+      "isBlockedByMe==============: ${widget.isBlockedByMe}, isBlockedMe===============: ${widget.isBlockedMe}",
+    );
 
+    debugPrint(
+      "📨 Opening chat - Receiver: ${widget.receiverId}, Room: ${widget.roomId}",
+    );
 
-    debugPrint("📨 Opening chat - Receiver: ${widget.receiverId}, Room: ${widget.roomId}");
-
-    chatController.isBlockedByMe.value =
-        widget.isBlockedByMe ?? false;
-    chatController.isBlockedMe.value=widget.isBlockedMe??false;
+    chatController.isBlockedByMe.value = widget.isBlockedByMe ?? false;
+    chatController.isBlockedMe.value = widget.isBlockedMe ?? false;
 
     _initChat();
 
     // Scroll listener
     _scrollController.addListener(_onScroll);
-
-
-
-
   }
 
   Future<void> _initChat() async {
     // Wait for build to complete
     await Future.delayed(Duration.zero);
 
+    chatController.userMessageList.clear(); // Clear previous messages
+    chatController.roomID.value = '';
     // Set room ID
-    chatController.roomID.value = widget.roomId??"";
+    chatController.roomID.value = widget.roomId ?? "";
 
     // Fetch messages
-    if(widget.roomId!='') {
+    if (widget.roomId != '') {
       chatController.fetchRoomMessage(roomId: widget.roomId, refresh: true);
     }
 
@@ -81,7 +78,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 100 &&
+            _scrollController.position.maxScrollExtent - 100 &&
         chatController.hasMoreMessage &&
         !chatController.isLoadingMoreMessage.value) {
       chatController.fetchRoomMessage(roomId: widget.roomId);
@@ -95,9 +92,6 @@ class _MessageScreenState extends State<MessageScreen> {
     super.dispose();
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,7 +101,8 @@ class _MessageScreenState extends State<MessageScreen> {
         onRefresh: () => chatController.fetchRoomMessage(roomId: widget.roomId),
         child: Column(
           children: [
-            SizedBox(height: ResponsiveHelper.height(20),),
+            SizedBox(height: ResponsiveHelper.height(20)),
+
             /// Fixed heading container
             CustomContainer(
               margin: EdgeInsets.all(ResponsiveHelper.padding(16)),
@@ -119,14 +114,14 @@ class _MessageScreenState extends State<MessageScreen> {
                 children: [
                   Row(
                     children: [
-
-
                       IconButton(
                         onPressed: () async {
-                         // chatController.fetchChatRooms(refresh: true);
+                          //TO DO: Clear messages and room ID when going back
+                          chatController.page.value = 1; // Reset pagination
+                          chatController.fetchChatRooms(refresh: false);
                           Navigator.pop(context);
                         },
-                        icon: Icon(Icons.arrow_back,color: AppColors.black),
+                        icon: Icon(Icons.arrow_back, color: AppColors.black),
                       ),
 
                       CircleAvatar(
@@ -146,12 +141,11 @@ class _MessageScreenState extends State<MessageScreen> {
                         style: GoogleFonts.poppins(
                           fontSize: ResponsiveHelper.fontSize(16),
                           fontWeight: FontWeight.w600,
-                          color: AppColors.black
+                          color: AppColors.black,
                         ),
                       ),
                     ],
                   ),
-
 
                   PopupMenuButton<String>(
                     icon: Icon(Icons.more_vert, color: AppColors.black),
@@ -166,32 +160,29 @@ class _MessageScreenState extends State<MessageScreen> {
                     },
                     itemBuilder: (context) => [
                       PopupMenuItem<String>(
-                        value: chatController.isBlockedByMe.value ? "Unblock" : "Block",
-                        child: Obx(() => Row(
-                          children: [
-                            Icon(
-                              chatController.isBlockedByMe.value
-                                  ? Icons.lock_open
-                                  : Icons.block,
-                            ),
-                            SizedBox(width: 8),
-                            Text(
-                              chatController.isBlockedByMe.value ? "unblock".tr : "block_".tr,
-                            ),
-                          ],
-                        )),
+                        value: chatController.isBlockedByMe.value
+                            ? "Unblock"
+                            : "Block",
+                        child: Obx(
+                          () => Row(
+                            children: [
+                              Icon(
+                                chatController.isBlockedByMe.value
+                                    ? Icons.lock_open
+                                    : Icons.block,
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                chatController.isBlockedByMe.value
+                                    ? "unblock".tr
+                                    : "block_".tr,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
-
-
-
-
-
-
-
-
-
                 ],
               ),
             ),
@@ -243,7 +234,9 @@ class _MessageScreenState extends State<MessageScreen> {
                           ? Alignment.centerRight
                           : Alignment.centerLeft,
                       child: Container(
-                        constraints: BoxConstraints(maxWidth: ResponsiveHelper.width(272)),
+                        constraints: BoxConstraints(
+                          maxWidth: ResponsiveHelper.width(272),
+                        ),
                         margin: EdgeInsets.symmetric(
                           vertical: ResponsiveHelper.height(5),
                         ),
@@ -272,7 +265,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                   ),
                           ),
                         ),
-                        child:       Text(
+                        child: Text(
                           msg.message ?? "",
                           style: GoogleFonts.poppins(color: AppColors.white),
                         ),
@@ -283,9 +276,8 @@ class _MessageScreenState extends State<MessageScreen> {
               }),
             ),
 
-
             Obx(() {
-              if (chatController.isBlockedByMe.value==true ) {
+              if (chatController.isBlockedByMe.value == true) {
                 return BlockByMeWidget(
                   name: widget.otherUserName,
                   onUnblock: () {
@@ -293,21 +285,15 @@ class _MessageScreenState extends State<MessageScreen> {
                     chatController.isBlockedByMe.value = false;
                   },
                 );
-              } else if (chatController.isBlockedMe.value == true ) {
+              } else if (chatController.isBlockedMe.value == true) {
                 return const BlockMeWidget();
-              }else if (chatController.isBlockedByMe.value == false &&  chatController.isBlockedMe.value==false ) {
+              } else if (chatController.isBlockedByMe.value == false &&
+                  chatController.isBlockedMe.value == false) {
+                return _messageInput();
+              } else {
                 return _messageInput();
               }
-
-
-              else {
-                return _messageInput();
-              }
-            })
-
-
-
-
+            }),
           ],
         ),
       ),
@@ -377,13 +363,4 @@ class _MessageScreenState extends State<MessageScreen> {
       ),
     );
   }
-
-
-
-
 }
-
-
-
-
-

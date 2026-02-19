@@ -28,9 +28,7 @@ class AppRouter {
     initialLocation: RoutePath.splash,
     debugLogDiagnostics: true,
     routes: [
-
-     ///----------Auth-------
-
+      ///----------Auth-------
       GoRoute(
         path: RoutePath.splash,
         name: RouteName.splash,
@@ -49,12 +47,12 @@ class AppRouter {
       GoRoute(
         path: RoutePath.signIn,
         name: RouteName.signIn,
-        builder: (_, __) {
+        builder: (_, _) {
           Get.lazyPut<AuthController>(() => AuthController());
           return SignInScreen();
         },
       ),
-     /* GoRoute(
+      /* GoRoute(
         path: RoutePath.signUp,
         name: RouteName.signUp,
         builder: (_, __) => const SignUpScreen(),
@@ -62,7 +60,7 @@ class AppRouter {
       GoRoute(
         path: RoutePath.signUp,
         name: RouteName.signUp,
-        builder: (_, __) {
+        builder: (_, _) {
           // 🔹 Inject controller when route is opened
           Get.lazyPut<AuthController>(() => AuthController());
 
@@ -72,48 +70,47 @@ class AppRouter {
       GoRoute(
         path: RoutePath.terms,
         name: RouteName.terms,
-        builder: (_, __) => const TermsAndConditionsScreen(),
+        builder: (_, _) => const TermsAndConditionsScreen(),
       ),
 
       GoRoute(
         path: RoutePath.block,
         name: RouteName.block,
-        builder: (_, __) => const BlockListScreen(),
+        builder: (_, _) => const BlockListScreen(),
       ),
 
       GoRoute(
         path: RoutePath.forgot_password,
         name: RouteName.forgotPassword,
-        builder: (_, __) => const ForgotPasswordScreen(),
+        builder: (_, _) => const ForgotPasswordScreen(),
       ),
       GoRoute(
         path: RoutePath.otp,
         name: RouteName.otp,
-        builder: (_, __) => const OtpScreen(),
+        builder: (_, _) => const OtpScreen(),
       ),
       GoRoute(
         path: RoutePath.reset_password,
         name: RouteName.resetPassword,
-        builder: (_, __) => ResetPasswordScreen(),
+        builder: (_, _) => ResetPasswordScreen(),
       ),
 
       ///----------All chat list-----------
-
       GoRoute(
         path: RoutePath.chatList,
         name: RouteName.chatList,
-        builder: (_, __) => const ChatListScreen(),
+        builder: (_, _) => const ChatListScreen(),
       ),
       GoRoute(
         path: RoutePath.searchList,
         name: RouteName.searchList,
-        builder: (_, __) => const SearchListScreen(),
+        builder: (_, _) => const SearchListScreen(),
       ),
 
       GoRoute(
         path: RoutePath.inbox,
         name: RouteName.inbox,
-        builder: (_, __) => const InboxScreen(),
+        builder: (_, _) => const InboxScreen(),
       ),
       GoRoute(
         path: RoutePath.message,
@@ -122,28 +119,21 @@ class AppRouter {
           final args = state.extra as Map<String, dynamic>;
 
           return MessageScreen(
-            roomId: args['roomId']??'',
-            otherUserName: args['otherUserName']??"",
-            otherUserAvatar: args['otherUserAvatar']??'',
-            receiverId: args['receiverId']??'',
-            isBlockedByMe:args['isBlockedByMe']??'',
-            isBlockedMe:args['isBlockedMe']??'',
-
-
+            roomId: args['roomId'] ?? '',
+            otherUserName: args['otherUserName'] ?? "",
+            otherUserAvatar: args['otherUserAvatar'] ?? '',
+            receiverId: args['receiverId'] ?? '',
+            isBlockedByMe: args['isBlockedByMe'],
+            isBlockedMe: args['isBlockedMe'],
           );
         },
       ),
 
-
-
       GoRoute(
         path: RoutePath.profile,
         name: RouteName.profile,
-        builder: (_, __) => const ProfileScreen(),
+        builder: (_, _) => const ProfileScreen(),
       ),
-
-
-
     ],
   );
 }

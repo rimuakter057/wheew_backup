@@ -46,10 +46,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
   //   scrollController.addListener(_onScroll);
   // }
 
-
-
-
-
   @override
   void initState() {
     super.initState();
@@ -66,18 +62,11 @@ class _ChatListScreenState extends State<ChatListScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.initSocketListeners();
       controller.fetchChatRooms(refresh: true);
+      controller.newMessage();
     });
 
     scrollController.addListener(_onScroll);
   }
-
-
-
-
-
-
-
-
 
   void _onScroll() {
     if (scrollController.position.pixels >=
@@ -192,55 +181,53 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
                 /// Nested Obx for pagination/loading inside ListView.builder
 
-                  return ListView.builder(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    controller: scrollController,
-                    itemCount: controller.userChatList.length + 1,
-                    itemBuilder: (context, index) {
-                      /// Pagination loader
-                      if (index == controller.userChatList.length) {
-                        if (controller.isLoadingMore.value) {
-                          return const Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Center(child: CircularProgressIndicator()),
-                          );
-                        }
-                        return const SizedBox.shrink();
+                return ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  controller: scrollController,
+                  itemCount: controller.userChatList.length + 1,
+                  itemBuilder: (context, index) {
+                    /// Pagination loader
+                    if (index == controller.userChatList.length) {
+                      if (controller.isLoadingMore.value) {
+                        return const Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
                       }
+                      return const SizedBox.shrink();
+                    }
 
-                      final room = controller.userChatList[index];
+                    final room = controller.userChatList[index];
 
-                      return ChatTile(
-                        isBlock: false,
-                        name: room.otherUser?.nickName ?? "No Name",
-                        message: room.latestMessage?.message ?? "",
-                        fontWeight: room.latestMessage!.isRead==true?FontWeight.w400:FontWeight.w700,
-                        time: formatTime(room.latestMessage?.createdAt ?? ""),
-                        imagePath: ImageHandler.imagesHandle(
-                          room.otherUser?.avatar ?? AppConst.unknown,
-                          isProfile: true,
-                        ),
-                        onTap: () {
-                          context.pushNamed(
-                            RouteName.message,
-                            extra: {
-                              'roomId': room.id ?? '',
-                              'otherUserName':
-                                  room.otherUser?.nickName ?? 'User',
-                              'otherUserAvatar':
-                                  room.otherUser?.avatar ?? AppConst.unknown,
-                              'receiverId': room.otherUser?.id ?? '',
-                          "isBlockedByMe":room.isBlockedByMe??false,
-                          "isBlockedMe":room.isBlockedMe??false,
-
-
-                            },
-                          );
-                        },
-                      );
-                    },
-                  );
-
+                    return ChatTile(
+                      isBlock: false,
+                      name: room.otherUser?.nickName ?? "No Name",
+                      message: room.latestMessage?.message ?? "",
+                      fontWeight: room.latestMessage!.isRead == true
+                          ? FontWeight.w400
+                          : FontWeight.w700,
+                      time: formatTime(room.latestMessage?.createdAt ?? ""),
+                      imagePath: ImageHandler.imagesHandle(
+                        room.otherUser?.avatar ?? AppConst.unknown,
+                        isProfile: true,
+                      ),
+                      onTap: () {
+                        context.pushNamed(
+                          RouteName.message,
+                          extra: {
+                            'roomId': room.id ?? '',
+                            'otherUserName': room.otherUser?.nickName ?? 'User',
+                            'otherUserAvatar':
+                                room.otherUser?.avatar ?? AppConst.unknown,
+                            'receiverId': room.otherUser?.id ?? '',
+                            "isBlockedByMe": room.isBlockedByMe,
+                            "isBlockedMe": room.isBlockedMe,
+                          },
+                        );
+                      },
+                    );
+                  },
+                );
               }),
             ),
           ],
@@ -248,4 +235,22 @@ class _ChatListScreenState extends State<ChatListScreen> {
       ),
     );
   }
+}
+
+class MessageInformation {
+  final String roomID;
+  final String otherUserName;
+  final String otherUserAvatar;
+  final String receiverId;
+  final bool? isBlockedByMe;
+  final bool? isBlockedMe;
+
+  MessageInformation({
+    required this.roomID,
+    required this.otherUserName,
+    required this.otherUserAvatar,
+    required this.receiverId,
+    this.isBlockedByMe,
+    this.isBlockedMe,
+  });
 }

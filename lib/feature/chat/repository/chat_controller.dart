@@ -22,7 +22,6 @@ class ChatController extends GetxController {
     if (_listenersInitialized) return; // ⭐ Prevent multiple calls
     _listenersInitialized = true;
 
-    newMessage();
     sendNewListenMessage();
     errorListenMessage();
 
@@ -34,7 +33,6 @@ class ChatController extends GetxController {
     super.onInit();
     //initSocketListeners();
     getChatSearchList();
-
   }
 
   /// get all message list ================================================
@@ -55,7 +53,7 @@ class ChatController extends GetxController {
 
   Future<void> fetchRoomMessage({String? roomId, bool refresh = false}) async {
     //  if (roomId != null) roomID?.value = roomId;
-
+    userMessageList.clear();
     // Update roomID if provided
     if (roomId != null && roomId.isNotEmpty) {
       roomID.value = roomId;
@@ -75,8 +73,9 @@ class ChatController extends GetxController {
     }
 
     if ((pageCount > 1 && isLoadingMoreMessage.value) ||
-        (pageCount == 1 && isLoadingMessage.value))
+        (pageCount == 1 && isLoadingMessage.value)) {
       return;
+    }
 
     if (pageCount == 1) {
       isLoadingMessage.value = true;
@@ -114,9 +113,10 @@ class ChatController extends GetxController {
 
   final TextEditingController messageController = TextEditingController();
 
-
-
-  sendNewEmitMessage({required String receiverId, required String message}) {
+  void sendNewEmitMessage({
+    required String receiverId,
+    required String message,
+  }) {
     final payload = {'receiver_id': receiverId, 'message': message};
 
     final localTempMessage = Messages(
@@ -150,7 +150,7 @@ class ChatController extends GetxController {
 
   void updateChatRoomInListOptimistic(Messages newMessage) {
     final roomIndex = userChatList.indexWhere(
-          (room) => room.id == newMessage.chatRoomId,
+      (room) => room.id == newMessage.chatRoomId,
     );
 
     if (roomIndex != -1) {
@@ -179,7 +179,6 @@ class ChatController extends GetxController {
     }
   }
 
-
   Future<void> sendNewListenMessage() async {
     AppSocket.onEvent('message-sent', (value) {
       debugPrint('📤 Message sent confirmation: $value');
@@ -187,18 +186,16 @@ class ChatController extends GetxController {
     });
   }
 
-
-
   ///new message==========================
 
   Future<void> newMessage() async {
     debugPrint('========== Call New Message');
     AppSocket.onEvent('new-message', (value) {
-      debugPrint('🔔 NEW MESSAGE RECEIVED: $value');  // ← এটা print হচ্ছে?
+      debugPrint('🔔 NEW MESSAGE RECEIVED: $value'); // ← এটা print হচ্ছে?
 
       Messages model = Messages.fromJson(value);
       debugPrint('📨 Parsed Message: ${model.toJson()}');
-      debugPrint('🆔 Chat Room ID: ${model.chatRoomId}');  // ← এটা কি আসছে?
+      debugPrint('🆔 Chat Room ID: ${model.chatRoomId}'); // ← এটা কি আসছে?
 
       if (model.chatRoomId == roomID.value) {
         userMessageList.insert(0, model);
@@ -212,11 +209,10 @@ class ChatController extends GetxController {
 
   void updateChatRoomInList(Messages newMessage) {
     final roomIndex = userChatList.indexWhere(
-          (room) => room.id == newMessage.chatRoomId,
+      (room) => room.id == newMessage.chatRoomId,
     );
 
     if (roomIndex != -1) {
-
       userChatList[roomIndex].latestMessage = LatestMessage(
         id: newMessage.id,
         chatRoomId: newMessage.chatRoomId,
@@ -236,7 +232,6 @@ class ChatController extends GetxController {
             (userChatList[roomIndex].unreadCount ?? 0) + 1;
       }
 
-
       final updatedRoom = userChatList[roomIndex];
       final newList = [updatedRoom];
 
@@ -249,17 +244,10 @@ class ChatController extends GetxController {
       userChatList.value = newList;
 
       debugPrint('✅ UI should update now');
-    }
-
-
-
-    else {
+    } else {
       fetchChatRooms(refresh: true);
     }
   }
-
-
-
 
   Future<void> errorListenMessage() async {
     AppSocket.onEvent('exception', (value) {
@@ -272,9 +260,6 @@ class ChatController extends GetxController {
   ///=======================================================================
 
   ///get all user chat list========================================================
-
-
-
 
   // RxList<Rooms> userChatList = <Rooms>[].obs;
   // var isLoadingChat = false.obs;
@@ -326,15 +311,10 @@ class ChatController extends GetxController {
   // bool get hasMore => userChatList.length < total;
   //
 
-
-
-
-
-
-  RxList userChatList = [].obs;
+  RxList<Rooms> userChatList = <Rooms>[].obs;
   var isLoadingChat = false.obs;
   var isLoadingMore = false.obs;
-  int page = 1;
+  RxInt page = 1.obs;
   final int limit = 10;
   int total = 0;
 
@@ -342,7 +322,7 @@ class ChatController extends GetxController {
 
   Future fetchChatRooms({bool refresh = false, bool loadMore = false}) async {
     if (refresh) {
-      page = 1;
+      page.value = 1;
       total = 0;
       userChatList.clear();
       _isFetching = false;
@@ -360,7 +340,7 @@ class ChatController extends GetxController {
     }
 
     try {
-      final uri = ApiUrl.getChatRooms(page: page, limit: limit);
+      final uri = ApiUrl.getChatRooms(page: page.value, limit: limit);
       Response response = await ApiClient.getData(uri: uri);
       final body = Map<String, dynamic>.from(jsonDecode(response.body));
 
@@ -369,7 +349,13 @@ class ChatController extends GetxController {
         total = data.total ?? 0;
 
         if (data.rooms != null && data.rooms!.isNotEmpty) {
-          userChatList.addAll(data.rooms!);
+          // userChatList.addAll(data.rooms!);
+
+          userChatList.value = List<Rooms>.from(
+            data.rooms!.map((e) => Rooms.fromJson(e.toJson())),
+          );
+
+          //  userChatList.value = data.rooms!.map((e) => Rooms.fromJson(e)).toList();
           page++;
         }
         userChatList.refresh();
@@ -387,17 +373,11 @@ class ChatController extends GetxController {
 
   bool get hasMore => userChatList.length < total;
 
-
   ///get block list==============================================================
-
-
-
-
 
   RxList<BlockModel> userBlockList = <BlockModel>[].obs;
   var isLoadingBlockList = false.obs;
   Future<void> fetchBlockList({bool refresh = false}) async {
-
     debugPrint("fetchBlockList called");
 
     if (refresh) {
@@ -414,22 +394,17 @@ class ChatController extends GetxController {
     debugPrint("body: ${response.body}");
 
     if (response.statusCode == 200) {
-
       final body = jsonDecode(response.body);
 
-      userBlockList.value =
-          (body['blockList'] as List)
-              .map((e) => BlockModel.fromJson(e))
-              .toList();
+      userBlockList.value = (body['blockList'] as List)
+          .map((e) => BlockModel.fromJson(e))
+          .toList();
 
       debugPrint("list length: ${userBlockList.length}");
-
     }
 
     isLoadingBlockList.value = false;
-
   }
-
 
   ///==============search api section=========================================================
   final ChatRepository _repo = ChatRepository();
@@ -524,11 +499,7 @@ class ChatController extends GetxController {
     update();
   }
 
-///=======================user chat list===================================================================
-
-
-
-
+  ///=======================user chat list===================================================================
 
   ///patch block=====================================================
   RxBool isBlockedByMe = false.obs;
@@ -538,14 +509,9 @@ class ChatController extends GetxController {
   Future<void> block(String id, BuildContext context) async {
     isLoadingBlock.value = true;
 
-    final body = {
-      "userId": id,
-    };
+    final body = {"userId": id};
 
-    final response = await ApiClient.patchData(
-      uri: ApiUrl.block,
-      body: body,
-    );
+    final response = await ApiClient.patchData(uri: ApiUrl.block, body: body);
 
     isLoadingBlock.value = false;
 
@@ -557,26 +523,27 @@ class ChatController extends GetxController {
       showSnackBar(context, "Failed to block user", bgColor: Colors.red);
     }
   }
-  Future<void> unBlock(String id, BuildContext context) async {
-    final body = {
-      "userId": id,
-    };
 
-    final response = await ApiClient.patchData(
-      uri: ApiUrl.unblock,
-      body: body,
-    );
+  Future<void> unBlock(String id, BuildContext context) async {
+    final body = {"userId": id};
+
+    final response = await ApiClient.patchData(uri: ApiUrl.unblock, body: body);
 
     isLoadingBlockList.value = false;
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       debugPrint("User unblocked successfully");
-      showSnackBar(context, "User unblocked successfully", bgColor: Colors.green);
+      showSnackBar(
+        context,
+        "User unblocked successfully",
+        bgColor: Colors.green,
+      );
     } else {
       debugPrint("Unblock failed: ${response.statusCode}");
       showSnackBar(context, "Failed to unblock user", bgColor: Colors.red);
     }
   }
+
   void showSnackBar(BuildContext context, String message, {Color? bgColor}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -586,14 +553,4 @@ class ChatController extends GetxController {
       ),
     );
   }
-
 }
-
-
-
-
-
-
-
-
-
