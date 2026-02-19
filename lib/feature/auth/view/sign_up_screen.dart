@@ -308,6 +308,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   color: Colors.black,
                 ),
               ),
+
+
+
               TextSpan(
                 text: 'terms_and_conditions'.tr,
                 style: GoogleFonts.poppins(
@@ -317,64 +320,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
-                    // Terms & Conditions link open
+                    // Privacy Policy link open
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => WebViewScreen(
-                          url: ApiUrl.terms,
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => context.pushNamed(RouteName.terms),
-                      child: RichText(
-                        text: TextSpan(
-                          style: TextStyle(
-                            fontSize: ResponsiveHelper.fontSize(13),
-                            color: Colors.black,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: 'i_agree_to'.tr + ' ',
-                              style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 14,
-                                color: AppColors.black,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'terms_and_conditions'.tr,
-                              style: GoogleFonts.poppins(
-                                color: AppColors.blue,
-                                decoration: TextDecoration.underline,
-
-                                fontSize: ResponsiveHelper.fontSize(14),
-                              ),
-                            ),
-
-                            TextSpan(
-                              text: 'and'.tr,
-                              style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 14,
-                                color: AppColors.black,
-                              ),
-                            ),
-
-                            TextSpan(
-                              text: 'privacy_policy'.tr,
-                              style: GoogleFonts.poppins(
-                                color: AppColors.blue,
-                                decoration: TextDecoration.underline,
-
-                                fontSize: ResponsiveHelper.fontSize(14),
-                              ),
-                            ),
-                          ],
+                        builder: (_) => PrivacyPolicyScreen(
+                            url: ApiUrl.terms
                         ),
                       ),
                     );
                   },
               ),
+
+
+
+
+
+
+
+
+
               TextSpan(
                 text: ' and ',
                 style: GoogleFonts.poppins(
