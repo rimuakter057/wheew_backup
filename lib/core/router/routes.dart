@@ -79,11 +79,24 @@ class AppRouter {
         builder: (_, _) => const BlockListScreen(),
       ),
 
+      // GoRoute(
+      //   path: RoutePath.forgot_password,
+      //   name: RouteName.forgotPassword,
+      //   builder: (_, _) =>  ForgotPasswordScreen(email: '',),
+      // ),
+
+
+
       GoRoute(
         path: RoutePath.forgot_password,
         name: RouteName.forgotPassword,
-        builder: (_, _) => const ForgotPasswordScreen(),
+        builder: (context, state) {
+
+          return ForgotPasswordScreen();
+        },
       ),
+
+
       GoRoute(
         path: RoutePath.otp,
         name: RouteName.otp,

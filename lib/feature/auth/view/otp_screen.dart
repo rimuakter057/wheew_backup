@@ -4,6 +4,7 @@ import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:platchatapp/share/widgets/button/primary_button.dart';
+import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../utils/color/app_colors.dart';
@@ -43,7 +44,9 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('verification_code'.tr)),
+
+      appBar: CustomAppBar(title:  'verification_code'.tr),
+
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(ResponsiveHelper.padding(24)),

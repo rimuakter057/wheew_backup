@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/share/widgets/button/primary_button.dart';
+import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
 import 'package:platchatapp/share/widgets/text_field/custom_text_field.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 
@@ -19,7 +20,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title:Text('reset_code'.tr), centerTitle: true),
+      appBar: CustomAppBar(title: 'reset_code'.tr),
       body: Padding(
         padding: EdgeInsets.all(ResponsiveHelper.padding(20)),
         child: Column(

@@ -99,4 +99,6 @@ final Map<String, String> italian = {
       "Questo utente non potrà inviarti messaggi finché non lo sbloccherai.",
   'language': 'Lingua',
   'nickname': 'Soprannome',
+  "email_required":"L'e-mail è obbligatoria",
+
 };
