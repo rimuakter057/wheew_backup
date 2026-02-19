@@ -1,25 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
 import 'package:platchatapp/share/widgets/button/primary_button.dart';
+import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
 import 'package:platchatapp/share/widgets/text_field/custom_text_field.dart';
 
 import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 
-class ForgotPasswordScreen extends StatelessWidget {
-  const ForgotPasswordScreen({super.key});
+class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key,});
+
+
+  @override
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+}
+
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+
+
+final TextEditingController emailController=TextEditingController();
+final AuthController controller= Get.put(AuthController());
+
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'forgot_password'.tr,
-          style: TextStyle(fontSize: ResponsiveHelper.fontSize(18)),
-        ),
-        centerTitle: true,
-      ),
+      appBar: CustomAppBar(title:  'forgot_password'.tr,),
+
+
       body: Padding(
         padding: EdgeInsets.all(
           ResponsiveHelper.padding(20),
@@ -52,6 +63,7 @@ class ForgotPasswordScreen extends StatelessWidget {
             CustomTextField(
               title: 'email'.tr,
               hintText: 'enter_your_email_here'.tr,
+              controller: emailController,
             ),
 
             const Spacer(),
@@ -61,7 +73,26 @@ class ForgotPasswordScreen extends StatelessWidget {
               height: ResponsiveHelper.buttonHeight(50),
               child: PrimaryButton(
                 title: 'send_otp'.tr,
-                onTap: () {
+                onTap: () async{
+
+                  if (emailController.text.isEmpty) {
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+
+                      const SnackBar(
+                        content: Text("Email is required"),
+                        duration: Duration(seconds: 2),
+                      ),
+
+                    );
+
+                    return;
+
+                  }
+
+
+                      await controller.sendOtp(email: emailController.text, context: context,);
+
                   context.goNamed(RouteName.otp);
                 },
               ),
@@ -74,3 +105,12 @@ class ForgotPasswordScreen extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+
+
+
+

@@ -34,8 +34,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: showBackButton
           ? IconButton(
 
-        onPressed: onBackPressed ??
-                () {
+        onPressed: () {
               context.pop();
             },
 
