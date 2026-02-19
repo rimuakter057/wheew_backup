@@ -1,14 +1,13 @@
 import 'app_text_key.dart';
 
 final Map<String, String> italian = {
-
   // -------- Welcome Screen --------
   'splash': 'COLLEGAMENTO DEI PILOTI UNA PIASTRA ALLA VOLTA',
 
   'welcome_message': 'La tua Targa,\n la tua chat',
-  'welcome_message1':"Vedi una targa, inizia a chattare:",
-  'welcome_message2':"registrati velocemente e connettiti",
-  'welcome_message3':"con un driver ovunque tu vada",
+  'welcome_message1': "Vedi una targa, inizia a chattare:",
+  'welcome_message2': "registrati velocemente e connettiti",
+  'welcome_message3': "con un driver ovunque tu vada",
 
   'sign_up': 'Registrati',
   'log_in': 'Accedi',
@@ -17,7 +16,7 @@ final Map<String, String> italian = {
   'already_account1': "Hai già un account",
 
   // -------- Sign In --------
-  'nick_name': 'Nickname',
+  'nick_name': 'Soprannome',
   'license_plate_or_nick_name': 'Targa o Nickname',
   'enter_license_plate_or_nick_name': 'Inserisci la targa o il nickname',
   'password': 'Password',
@@ -37,7 +36,8 @@ final Map<String, String> italian = {
   'license_number': 'Numero di targa',
   'type_here': 'Scrivi qui',
   'license_number_is_required': 'Il numero di licenza è obbligatorio',
-  'license_number_must_be': 'Il numero di licenza deve contenere almeno 7 caratteri',
+  'license_number_must_be':
+      'Il numero di licenza deve contenere almeno 7 caratteri',
   'confirm_password': 'Conferma password',
   'confirm_your_password': 'Conferma la tua password',
   'password_do_not_match': 'Le password non corrispondono',
@@ -50,18 +50,20 @@ final Map<String, String> italian = {
   'registration_successful!': 'Registrazione completata con successo!',
 
   'age_confirmation': "Conferma dell'età",
-  '16_or_not':  'Hai più di 16 anni?',
+  '16_or_not': 'Hai più di 16 anni?',
   'yes': "SÌ",
-  'no':"NO",
+  'no': "NO",
   'email_only_for_recover_password': "Email solo per recuperare la password",
 
-  'i_agree_to1': "Acconsento all'utilizzo dei miei dati per ulteriori finalità -",
-  'agree_terms1':"Ulteriori informazioni",
+  'i_agree_to1':
+      "Acconsento all'utilizzo dei miei dati per ulteriori finalità -",
+  'agree_terms1': "Ulteriori informazioni",
 
   //------------------------------------------------------
-  "don't_worry_enter_your_email": "Non preoccuparti, inserisci la tua email registrata",
+  "don't_worry_enter_your_email":
+      "Non preoccuparti, inserisci la tua email registrata",
   "enter_your_email_here": "Inserisci qui la tua email",
-  'send_otp':'Invia OTP',
+  'send_otp': 'Invia OTP',
   'email': "E-mail",
   'enter_verification_code': "Inserisci il codice di verifica",
   'verification_code': 'Codice di verifica',
@@ -72,12 +74,9 @@ final Map<String, String> italian = {
   'new_password': 'Nuova password',
   'save': 'Salva',
 
-
   //-------------------------------------------------------------
-
   'or': 'OPPURE',
   'already_account': 'Hai già un account?',
-
 
   'terms_and_conditions': 'Termini e Condizioni',
   'log_out': 'Disconnetti',
@@ -85,19 +84,19 @@ final Map<String, String> italian = {
   // ------------------All chat-------------------------
   'all_chat': 'Tutte le chat',
   'search_here': 'Cerca qui',
-  'type_here1' : "Scrivi qui...",
-  'block_':"Bloccare",
-  "blocked_user":"Utente bloccato",
-  "unblock":"Sbloccare",
-  'logout':"Esci",
-  'profile':"Profilo",
-  "edit":"Modificare",
-  'and':' E ',
-  "privacy_policy":"politica sulla riservatezza",
-  "you_can't_send":"Non puoi inviare un messaggio a questo utente",
-  "you've_blocked":"Hai bloccato",
-  "this_user_won't_be_able":"Questo utente non potrà inviarti messaggi finché non lo sbloccherai."
-
-
-
+  'type_here1': "Scrivi qui...",
+  'block_': "Bloccare",
+  "blocked_user": "Utente bloccato",
+  "unblock": "Sbloccare",
+  'logout': "Esci",
+  'profile': "Profilo",
+  "edit": "Modificare",
+  'and': ' E ',
+  "privacy_policy": "politica sulla riservatezza",
+  "you_can't_send": "Non puoi inviare un messaggio a questo utente",
+  "you've_blocked": "Hai bloccato",
+  "this_user_won't_be_able":
+      "Questo utente non potrà inviarti messaggi finché non lo sbloccherai.",
+  'language': 'Lingua',
+  'nickname': 'Soprannome',
 };
