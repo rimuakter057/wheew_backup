@@ -4,14 +4,15 @@ class ApiUrl {
   // Local
   //static const String baseUrl = 'http://10.10.20.44:8003';
 
-  // Production
+// Production
   //http://13.50.99.165:8003
- static const String baseUrl = 'http://13.50.99.165:8003';
-  //static const String baseUrl =  "http://13.50.99.165:8003/";
+  static const baseSocketUrl = 'ws://13.50.99.165:8003';
+  static const String baseUrl = 'http://13.50.99.165:8003';
   static const String imageUrl = "$baseUrl/";
 
   static String socketUrl({required String userId}) =>
-      "$baseUrl?userId=$userId";
+      "$baseSocketUrl?userId=$userId";
+
 
   // Fixed endpoints to match your backend
   static const String register = '/auth/register';
