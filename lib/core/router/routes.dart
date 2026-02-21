@@ -82,7 +82,7 @@ class AppRouter {
 
 
       GoRoute(
-        path: RoutePath.forgot_password,
+        path: RoutePath.forgotPassword,
         name: RouteName.forgotPassword,
         builder: (context, state) {
 
@@ -105,7 +105,7 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: RoutePath.reset_password,
+        path: RoutePath.resetPassword,
         name: RouteName.resetPassword,
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>? ?? {};

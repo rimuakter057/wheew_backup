@@ -10,8 +10,8 @@ class RoutePath {
   static const terms = '/terms';
   static const block = '/block';
   static const profile = '/profile';
-  static const forgot_password = '/forgot-password';
+  static const forgotPassword = '/forgot-password';
   static const otp = '/otp';
-  static const reset_password = '/reset-password';
+  static const resetPassword = '/reset-password';
 
 }

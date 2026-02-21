@@ -57,10 +57,10 @@ class _OtpScreenState extends State<OtpScreen> {
             children: [
               Text(
                 'enter_verification_code'.tr,
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: ResponsiveHelper.fontSize(16),),
               ),
-              SizedBox(height: 16),
-              Text('we_sent_6_digit_code'.tr, style: TextStyle(fontSize: 14)),
+              SizedBox(height: ResponsiveHelper.height(16),),
+              Text('we_sent_6_digit_code'.tr, style: TextStyle(fontSize: ResponsiveHelper.fontSize(14),)),
 
               //const Spacer(),
               const SizedBox(height: 32),
@@ -79,8 +79,8 @@ class _OtpScreenState extends State<OtpScreen> {
                 pinTheme: PinTheme(
                   shape: PinCodeFieldShape.box,
                   borderRadius: BorderRadius.circular(12),
-                  fieldHeight: 52,
-                  fieldWidth: 52,
+                  fieldHeight:ResponsiveHelper.iconSize(52),
+                  fieldWidth: ResponsiveHelper.iconSize(52),
 
                   activeColor: AppColors.successColor,
                   selectedColor: AppColors.brandHoverColor,
@@ -94,6 +94,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 textStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: AppColors.primaryText,
+                  fontSize: ResponsiveHelper.fontSize(16)
                 ),
 
                 beforeTextPaste: (text) => true,

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
+import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../repository/auth_controller.dart';
@@ -48,14 +50,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        title: Text(
-          'sign_in'.tr,
-          style: TextStyle(fontSize: ResponsiveHelper.fontSize(18)),
-        ),
-      ),
+      appBar: CustomAppBar(title:    'sign_in'.tr,),
       body: GetBuilder<AuthController>(
         builder: (controller) {
           return SingleChildScrollView(
