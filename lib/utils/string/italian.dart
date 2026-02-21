@@ -100,5 +100,10 @@ final Map<String, String> italian = {
   'language': 'Lingua',
   'nickname': 'Soprannome',
   "email_required":"L'e-mail è obbligatoria",
+  "new_pass_required":"È richiesta una nuova password",
+  "confirmed_pass_required":"È richiesta la conferma della password",
+  "pass_not_match":"La password non corrisponde",
+  "pass_six_char":"La password deve contenere almeno 6 caratteri",
+  "otp_required":"L'OTP è obbligatorio",
 
 };

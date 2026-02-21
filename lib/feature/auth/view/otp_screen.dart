@@ -9,10 +9,10 @@ import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../utils/color/app_colors.dart';
-import '../../../utils/extension/string_extension.dart';
+
 
 class OtpScreen extends StatefulWidget {
-  const OtpScreen({super.key , required this.email});
+  const OtpScreen({super.key, required this.email});
 
   final String email;
 
@@ -22,10 +22,8 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   final TextEditingController _otpController = TextEditingController();
-  final AuthController controller =AuthController();
+  final AuthController controller = AuthController();
   bool hasError = false;
-
-
 
   void _verifyOtp() {
     if (_otpController.text.length != 6) {
@@ -39,7 +37,6 @@ class _OtpScreenState extends State<OtpScreen> {
     context.goNamed(RouteName.otp);
   }
 
-
   @override
   void initState() {
     // TODO: implement initState
@@ -50,8 +47,7 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      appBar: CustomAppBar(title:  'verification_code'.tr),
+      appBar: CustomAppBar(title: 'verification_code'.tr),
 
       body: SafeArea(
         child: Padding(
@@ -59,14 +55,12 @@ class _OtpScreenState extends State<OtpScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('enter_verification_code'.tr,
-                style: TextStyle(fontSize:16),
-
+              Text(
+                'enter_verification_code'.tr,
+                style: TextStyle(fontSize: 16),
               ),
-              SizedBox(height: 16,),
-              Text('we_sent_6_digit_code'.tr,
-              style: TextStyle(fontSize: 14),
-              ),
+              SizedBox(height: 16),
+              Text('we_sent_6_digit_code'.tr, style: TextStyle(fontSize: 14)),
 
               //const Spacer(),
               const SizedBox(height: 32),
@@ -113,46 +107,35 @@ class _OtpScreenState extends State<OtpScreen> {
                 },
               ),
               const Spacer(),
-              PrimaryButton(title: 'send'.tr,
-              //     onTap: () {
-              //   context.pushNamed(RouteName.resetPassword);
-              // },
+              PrimaryButton(
+                title: 'send'.tr,
 
-
-
-
+                //     onTap: () {
+                //   context.pushNamed(RouteName.resetPassword);
+                // },
                 onTap: () async {
-
                   if (_otpController.text.isEmpty) {
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Otp is required"),
-                      ),
-                    );
-
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text("otp_required".tr)));
                     return;
                   }
 
-                  bool success = await controller.verifyOtp(
+                  final otpToken = await controller.verifyOtp(
                     email: widget.email,
-                    context: context,
                     otp: _otpController.text,
+                    context: context,
                   );
 
-                  if (success) {
-
-                    context.pushNamed(RouteName.resetPassword);
-
+                  if (otpToken != null) {
+                    // Navigate with token
+                    context.pushNamed(
+                      RouteName.resetPassword,
+                      extra: {"otpToken": otpToken, "email": widget.email},
+                    );
                     _otpController.clear();
-
                   }
-
                 },
-
-
-
-
               ),
             ],
           ),
