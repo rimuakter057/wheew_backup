@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../utils/color/app_colors.dart';
 import '../align/custom_align_text.dart';
@@ -128,7 +129,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               textInputAction: widget.textInputAction,
               cursorColor: widget.cursorColor,
               style: widget.inputTextStyle ??
-                  TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
+                  GoogleFonts.poppins(fontSize: ResponsiveHelper.fontSize(16)),
               onChanged: widget.onChanged,
               maxLines: widget.maxLines,
               minLines: widget.minLines,
@@ -146,7 +147,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 errorMaxLines: 2,
                 errorStyle: TextStyle(fontSize: ResponsiveHelper.fontSize(12)),
                 hintText: displayHint,
-                hintStyle: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
+                hintStyle: GoogleFonts.poppins(fontSize: ResponsiveHelper.fontSize(16)),
                 filled: widget.fillColor != null,
                 prefixIcon: widget.prefixIcon,
                 prefix: widget.prefix,

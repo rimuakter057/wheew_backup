@@ -38,7 +38,7 @@ class ChatTile extends StatelessWidget {
         style: GoogleFonts.questrial(
           fontSize: ResponsiveHelper.fontSize(16),
           fontWeight: FontWeight.w600,
-          color: AppColors.messageSubtitle,
+          color: AppColors.textBlack,
         ),
       ),
       subtitle: Text(
@@ -48,7 +48,7 @@ class ChatTile extends StatelessWidget {
         style: GoogleFonts.questrial(
           fontSize: ResponsiveHelper.fontSize(14),
           fontWeight: fontWeight,
-          color: AppColors.messageSubtitle,
+          color: AppColors.textBlack,
         ),
       ),
       trailing:
@@ -82,7 +82,7 @@ vertical: ResponsiveHelper.padding(8)
       :Text(
         time,
         style: GoogleFonts.questrial(
-          color: AppColors.messageSubtitle,
+          color: AppColors.textBlack,
           fontSize: ResponsiveHelper.fontSize(12),
 
         ),

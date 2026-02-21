@@ -202,7 +202,7 @@ final ThemeData lightTheme = ThemeData(
     titleLarge: GoogleFonts.poppins(
       fontSize: 32,
       fontWeight: FontWeight.w600,
-      color: AppColors.messageSubtitle,
+      color: AppColors.textBlack,
     ),
     titleMedium: GoogleFonts.poppins(
       fontSize: 24,
