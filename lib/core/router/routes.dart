@@ -79,12 +79,6 @@ class AppRouter {
         builder: (_, _) => const BlockListScreen(),
       ),
 
-      // GoRoute(
-      //   path: RoutePath.forgot_password,
-      //   name: RouteName.forgotPassword,
-      //   builder: (_, _) =>  ForgotPasswordScreen(email: '',),
-      // ),
-
 
 
       GoRoute(
@@ -100,7 +94,15 @@ class AppRouter {
       GoRoute(
         path: RoutePath.otp,
         name: RouteName.otp,
-        builder: (_, _) => const OtpScreen(),
+        builder: (context, state) {
+
+          final email = state.extra as String? ?? '';
+
+          debugPrint("Router email: $email");
+
+          return OtpScreen(email: email);
+
+        },
       ),
       GoRoute(
         path: RoutePath.reset_password,

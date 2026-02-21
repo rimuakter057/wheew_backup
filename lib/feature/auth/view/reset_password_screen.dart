@@ -35,7 +35,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             PrimaryButton(
               title: 'save'.tr,
               onTap: () {
-                context.goNamed(RouteName.signIn);
+                context.pushNamed(RouteName.signIn);
               },
             ),
           ],
