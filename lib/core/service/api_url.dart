@@ -6,7 +6,8 @@ class ApiUrl {
 
   // Production
   //http://13.50.99.165:8003
-  static const String baseUrl = 'http://13.50.99.165:8003';
+ static const String baseUrl = 'http://13.50.99.165:8003';
+  //static const String baseUrl =  "http://13.50.99.165:8003/";
   static const String imageUrl = "$baseUrl/";
 
   static String socketUrl({required String userId}) =>

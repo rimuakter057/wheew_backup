@@ -103,4 +103,13 @@ final Map<String, String> english = {
 
   "email_required":"Email is required",
 
+  ///snackBar text================
+
+  "new_pass_required":"New password is required",
+  "confirmed_pass_required":"Confirm password is required",
+  "pass_not_match":"Password does not match",
+  "pass_six_char":"Password must be at least 6 characters",
+  "otp_required":"OTP is required",
+
+
 };

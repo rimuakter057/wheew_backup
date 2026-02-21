@@ -107,9 +107,17 @@ class AppRouter {
       GoRoute(
         path: RoutePath.reset_password,
         name: RouteName.resetPassword,
-        builder: (_, _) => ResetPasswordScreen(),
-      ),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          final otpToken = extra["otpToken"] as String? ?? '';
+          final email = extra["email"] as String? ?? '';
 
+          return ResetPasswordScreen(
+            otpToken: otpToken,
+            email: email,
+          );
+        },
+      ),
       ///----------All chat list-----------
       GoRoute(
         path: RoutePath.chatList,

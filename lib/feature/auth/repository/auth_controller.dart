@@ -200,41 +200,40 @@ class AuthController extends GetxController {
   /// verify otp===================================================
   var isLoadingVerify = false.obs;
 
-  Future<bool> verifyOtp({
+  Future<String?> verifyOtp({
     required String email,
     required String otp,
     required BuildContext context,
-  }) async
-  {
+  }) async {
     isLoadingVerify.value = true;
 
     final response = await ApiClient.postData(
       uri: ApiUrl.verifyOtp,
-      body: {'email': email,
-        'otp':otp,
-      },
+      body: {'email': email, 'otp': otp},
     );
 
     final data = jsonDecode(response.body);
 
     isLoadingVerify.value = false;
 
-
-
     if (response.statusCode == 200 || response.statusCode == 201) {
+      final otpToken = data["otp_verification_token"]; // token capture
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.green.shade100,
-          content: Text(data['message'] ?? "OTP verify successfully",style: GoogleFonts.poppins(
-            color: AppColors.black,
-            fontWeight: FontWeight.w400,
-            fontSize: ResponsiveHelper.fontSize(14),
-          ),),
+          content: Text(
+            data['message'] ?? "OTP verified successfully",
+            style: GoogleFonts.poppins(
+              color: AppColors.black,
+              fontWeight: FontWeight.w400,
+              fontSize: ResponsiveHelper.fontSize(14),
+            ),
+          ),
         ),
       );
 
-      return true;
+      return otpToken; // token return
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -243,29 +242,27 @@ class AuthController extends GetxController {
       ),
     );
 
-    return false;
+    return null;
   }
 
-
 ///reset===============================
-
 
   var isLoadingReset = false.obs;
 
   Future<bool> resetOtp({
     required String email,
-    required String otp,
+    required String password,
+    required String token,
     required BuildContext context,
-  }) async
-  {
+  }) async {
     isLoadingReset.value = true;
 
     final response = await ApiClient.postData(
       uri: ApiUrl.reset,
       body: {
-        "email":"",
-        "password":"",
-        "token":""
+        "email": email,
+        "password": password,
+        "token": token,
       },
     );
 
@@ -273,34 +270,30 @@ class AuthController extends GetxController {
 
     isLoadingReset.value = false;
 
-
-
     if (response.statusCode == 200 || response.statusCode == 201) {
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.green.shade100,
-          content: Text(data['message'] ?? "OTP verify successfully",style: GoogleFonts.poppins(
-            color: AppColors.black,
-            fontWeight: FontWeight.w400,
-            fontSize: ResponsiveHelper.fontSize(14),
-          ),),
+          content: Text(
+            data['message'] ?? "Password reset successfully",
+            style: GoogleFonts.poppins(
+              color: AppColors.black,
+              fontWeight: FontWeight.w400,
+              fontSize: ResponsiveHelper.fontSize(14),
+            ),
+          ),
         ),
       );
-
       return true;
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(data['message'] ?? "Something went wrong"),
+        ),
+      );
+      return false;
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(data['message'] ?? "Something went wrong"),
-      ),
-    );
-
-    return false;
   }
-
-
 
 
 
