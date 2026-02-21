@@ -10,31 +10,23 @@ import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({super.key,});
-
+  const ForgotPasswordScreen({super.key});
 
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-
-
-final TextEditingController emailController=TextEditingController();
-final AuthController controller= Get.put(AuthController());
-
-
+  final TextEditingController emailController = TextEditingController();
+  final AuthController controller = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title:  'forgot_password'.tr,),
-
+      appBar: CustomAppBar(title: 'forgot_password'.tr),
 
       body: Padding(
-        padding: EdgeInsets.all(
-          ResponsiveHelper.padding(20),
-        ),
+        padding: EdgeInsets.all(ResponsiveHelper.padding(20)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -73,28 +65,41 @@ final AuthController controller= Get.put(AuthController());
               height: ResponsiveHelper.buttonHeight(50),
               child: PrimaryButton(
                 title: 'send_otp'.tr,
-                onTap: () async{
+
+
+                onTap: () async {
 
                   if (emailController.text.isEmpty) {
 
                     ScaffoldMessenger.of(context).showSnackBar(
-
                       const SnackBar(
                         content: Text("Email is required"),
-                        duration: Duration(seconds: 2),
                       ),
-
                     );
 
                     return;
+                  }
+
+                  bool success = await controller.sendOtp(
+                    email: emailController.text,
+                    context: context,
+                  );
+
+                  if (success) {
+
+                    context.pushNamed(RouteName.otp,
+                      extra: emailController.text.trim(),
+
+                    );
+
+                    emailController.clear();
 
                   }
 
-
-                      await controller.sendOtp(email: emailController.text, context: context,);
-
-                  context.goNamed(RouteName.otp);
                 },
+
+
+
               ),
             ),
 
@@ -105,12 +110,3 @@ final AuthController controller= Get.put(AuthController());
     );
   }
 }
-
-
-
-
-
-
-
-
-

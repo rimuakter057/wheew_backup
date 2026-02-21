@@ -3,6 +3,7 @@ import 'package:get/get_utils/src/extensions/internacionalization.dart';
 //import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
 import 'package:platchatapp/share/widgets/button/primary_button.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
 import '../../../core/router/routes_name.dart';
@@ -11,9 +12,9 @@ import '../../../utils/color/app_colors.dart';
 import '../../../utils/extension/string_extension.dart';
 
 class OtpScreen extends StatefulWidget {
-  const OtpScreen({super.key /* required this.phoneNumber*/});
+  const OtpScreen({super.key , required this.email});
 
-  //final String phoneNumber;
+  final String email;
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -21,13 +22,10 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   final TextEditingController _otpController = TextEditingController();
+  final AuthController controller =AuthController();
   bool hasError = false;
 
-  @override
-  void dispose() {
-    _otpController.dispose();
-    super.dispose();
-  }
+
 
   void _verifyOtp() {
     if (_otpController.text.length != 6) {
@@ -39,6 +37,14 @@ class _OtpScreenState extends State<OtpScreen> {
 
     /// Navigate after success
     context.goNamed(RouteName.otp);
+  }
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    debugPrint("==============================${widget.email}");
   }
 
   @override
@@ -107,9 +113,47 @@ class _OtpScreenState extends State<OtpScreen> {
                 },
               ),
               const Spacer(),
-              PrimaryButton(title: 'send'.tr, onTap: () {
-                context.goNamed(RouteName.resetPassword);
-              }),
+              PrimaryButton(title: 'send'.tr,
+              //     onTap: () {
+              //   context.pushNamed(RouteName.resetPassword);
+              // },
+
+
+
+
+                onTap: () async {
+
+                  if (_otpController.text.isEmpty) {
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Otp is required"),
+                      ),
+                    );
+
+                    return;
+                  }
+
+                  bool success = await controller.verifyOtp(
+                    email: widget.email,
+                    context: context,
+                    otp: _otpController.text,
+                  );
+
+                  if (success) {
+
+                    context.pushNamed(RouteName.resetPassword);
+
+                    _otpController.clear();
+
+                  }
+
+                },
+
+
+
+
+              ),
             ],
           ),
         ),
