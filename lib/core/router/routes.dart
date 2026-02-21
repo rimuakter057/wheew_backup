@@ -39,11 +39,6 @@ class AppRouter {
         name: RouteName.welcome,
         builder: (_, __) => const WelcomeScreen(),
       ),
-      /*GoRoute(
-        path: RoutePath.signIn,
-        name: RouteName.signIn,
-        builder: (_, __) => SignInScreen(),
-      ),*/
       GoRoute(
         path: RoutePath.signIn,
         name: RouteName.signIn,
@@ -52,16 +47,12 @@ class AppRouter {
           return SignInScreen();
         },
       ),
-      /* GoRoute(
-        path: RoutePath.signUp,
-        name: RouteName.signUp,
-        builder: (_, __) => const SignUpScreen(),
-      ),*/
+
       GoRoute(
         path: RoutePath.signUp,
         name: RouteName.signUp,
         builder: (_, _) {
-          // 🔹 Inject controller when route is opened
+
           Get.lazyPut<AuthController>(() => AuthController());
 
           return const SignUpScreen();

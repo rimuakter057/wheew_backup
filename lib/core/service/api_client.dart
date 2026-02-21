@@ -380,7 +380,7 @@ class ApiClient {
 
       developer.log('📥 DELETE RESPONSE: ${response.statusCode}', name: 'API');
       return response;
-    } catch (e, stackTrace) {
+    } catch (e) {
       developer.log('❌ DELETE ERROR: $e', name: 'API');
       rethrow;
     }

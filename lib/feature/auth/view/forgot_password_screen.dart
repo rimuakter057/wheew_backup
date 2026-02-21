@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
 import 'package:platchatapp/share/widgets/button/primary_button.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
@@ -34,8 +35,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
             Text(
               'forgot_password'.tr,
-              style: TextStyle(
-                fontSize: ResponsiveHelper.titleFontSize(20),
+              style: GoogleFonts.poppins(
+                fontSize: ResponsiveHelper.titleFontSize(18),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -44,7 +45,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
             Text(
               "don't_worry_enter_your_email".tr,
-              style: TextStyle(
+              style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(14),
                 color: Colors.grey,
               ),
@@ -72,8 +73,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   if (emailController.text.isEmpty) {
 
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Email is required"),
+                       SnackBar(
+                        content: Text("email_required".tr),
                       ),
                     );
 
