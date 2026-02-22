@@ -292,86 +292,72 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                   SizedBox(width: ResponsiveHelper.spacing(8)),
-      Expanded(
-        child: RichText(
-          text: TextSpan(
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.black,
-            ),
-            children: [
-              TextSpan(
-                text: 'i_agree_to'.tr + ' ',
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                  color: Colors.black,
-                ),
-              ),
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                        style: TextStyle(fontSize: 14, color: Colors.black),
+                        children: [
+                          TextSpan(
+                            text: 'i_agree_to'.tr + ' ',
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14,
+                              color: Colors.black,
+                            ),
+                          ),
 
+                          TextSpan(
+                            text: 'terms_and_conditions'.tr,
+                            style: GoogleFonts.poppins(
+                              color: AppColors.blue,
+                              decoration: TextDecoration.underline,
+                              fontSize: ResponsiveHelper.fontSize(14),
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                // Privacy Policy link open
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        WebViewScreen(url: ApiUrl.terms),
+                                  ),
+                                );
+                              },
+                          ),
 
-
-              TextSpan(
-                text: 'terms_and_conditions'.tr,
-                style: GoogleFonts.poppins(
-                  color: AppColors.blue,
-                  decoration: TextDecoration.underline,
-                  fontSize: ResponsiveHelper.fontSize(14),
-                ),
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () {
-                    // Privacy Policy link open
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => WebViewScreen(
-                            url: ApiUrl.terms
-                        ),
+                          TextSpan(
+                            text: ' and ',
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14,
+                              color: Colors.black,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'privacy_policy'.tr,
+                            style: GoogleFonts.poppins(
+                              color: AppColors.blue,
+                              decoration: TextDecoration.underline,
+                              fontSize: ResponsiveHelper.fontSize(14),
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                // Privacy Policy link open
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => PrivacyPolicyScreen(
+                                      url: ApiUrl.privacy,
+                                    ),
+                                  ),
+                                );
+                              },
+                          ),
+                        ],
                       ),
-                    );
-                  },
-              ),
-
-
-
-
-
-
-
-
-
-              TextSpan(
-                text: ' and ',
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                  color: Colors.black,
-                ),
-              ),
-              TextSpan(
-                text: 'privacy_policy'.tr,
-                style: GoogleFonts.poppins(
-                  color: AppColors.blue,
-                  decoration: TextDecoration.underline,
-                  fontSize: ResponsiveHelper.fontSize(14),
-                ),
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () {
-                    // Privacy Policy link open
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => PrivacyPolicyScreen(
-                          url: ApiUrl.privacy
-                        ),
-                      ),
-                    );
-                  },
-              ),
-            ],
-          ),
-        ),
-      ),
+                    ),
+                  ),
                 ],
               ),
               SizedBox(height: ResponsiveHelper.spacing(12)),

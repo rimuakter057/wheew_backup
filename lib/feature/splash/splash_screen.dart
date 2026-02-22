@@ -27,32 +27,6 @@ class _SplashScreenState extends State<SplashScreen> {
     _checkLoginAndNavigate();
   }
 
-  // Future<void> _checkLoginAndNavigate() async {
-  //   await Future.delayed(const Duration(seconds: 2));
-  //
-  //   if (!mounted) return;
-  //
-  //   final bool isLoggedIn =
-  //       await SharePrefsHelper.getBool(AppConst.isLoggedIn) ?? false;
-  //
-  //   if (isLoggedIn) {
-  //
-  //     await AppSocket.init(
-  //       onSocketConnect: () {
-  //         context.goNamed(RouteName.chatList);
-  //       },
-  //     );
-  //
-  //    // context.goNamed(RouteName.chatList);
-  //   } else {
-  //     context.goNamed(RouteName.welcome);
-  //   }
-  // }
-
-
-
-
-
   Future<void> _checkLoginAndNavigate() async {
 
     await Future.delayed(const Duration(seconds: 2));
