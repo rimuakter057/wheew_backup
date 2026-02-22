@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
-import '../../../utils/extension/string_extension.dart';
+
 
 class InboxScreen extends StatefulWidget {
   const InboxScreen({super.key});

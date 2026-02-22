@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:get/get.dart' hide Response;
 import 'package:flutter/material.dart';
-// ignore: depend_on_referenced_packages
 import 'package:http/http.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';

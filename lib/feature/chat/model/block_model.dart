@@ -21,19 +21,19 @@ class BlockModel {
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     blockedUser = json['blocked_user'] != null
-        ? new BlockedUser.fromJson(json['blocked_user'])
+        ? BlockedUser.fromJson(json['blocked_user'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['user_id'] = this.userId;
-    data['blocked_user_id'] = this.blockedUserId;
-    data['createdAt'] = this.createdAt;
-    data['updatedAt'] = this.updatedAt;
-    if (this.blockedUser != null) {
-      data['blocked_user'] = this.blockedUser!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['user_id'] = userId;
+    data['blocked_user_id'] = blockedUserId;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
+    if (blockedUser != null) {
+      data['blocked_user'] = blockedUser!.toJson();
     }
     return data;
   }
@@ -53,10 +53,10 @@ class BlockedUser {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['nick_name'] = this.nickName;
-    data['avatar'] = this.avatar;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['nick_name'] = nickName;
+    data['avatar'] = avatar;
     return data;
   }
 }

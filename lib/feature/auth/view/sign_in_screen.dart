@@ -38,7 +38,7 @@ class _SignInScreenState extends State<SignInScreen> {
         context: context,
         identifier: licenseController.text.trim(),
         password: passwordController.text.trim(),
-        rememberMe: true
+        rememberMe: true,
       );
 
       // if (success && mounted) {
@@ -51,7 +51,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(title:    'sign_in'.tr,),
+      appBar: CustomAppBar(title: 'sign_in'.tr),
       body: GetBuilder<AuthController>(
         builder: (controller) {
           return SingleChildScrollView(
@@ -77,7 +77,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       title: 'license_plate_or_nick_name'.tr,
                       hintText: 'enter_license_plate_or_nick_name'.tr,
                       validator: (value) =>
-                      (value == null || value.trim().isEmpty)
+                          (value == null || value.trim().isEmpty)
                           ? 'Email or License ID is required'
                           : null,
                     ),
@@ -124,21 +124,12 @@ class _SignInScreenState extends State<SignInScreen> {
                     //     ),
                     //   ),
                     // ),
-
-
-
-
-
-
-
                     Row(
                       children: [
-
                         /// Remember me section
                         Flexible(
                           child: Row(
                             children: [
-
                               Checkbox(
                                 value: false,
                                 onChanged: (value) {},
@@ -157,12 +148,11 @@ class _SignInScreenState extends State<SignInScreen> {
                                   ),
                                 ),
                               ),
-
                             ],
                           ),
                         ),
 
-                      //  const Spacer(),
+                        //  const Spacer(),
 
                         /// Forgot password
                         TextButton(
@@ -181,13 +171,8 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                           ),
                         ),
-
                       ],
                     ),
-
-
-
-
 
                     SizedBox(height: ResponsiveHelper.spacing(20)),
 
@@ -195,9 +180,9 @@ class _SignInScreenState extends State<SignInScreen> {
                     controller.isLoading
                         ? const CircularProgressIndicator()
                         : PrimaryButton(
-                      title: 'sign_in'.tr,
-                      onTap: _handleLogin,
-                    ),
+                            title: 'sign_in'.tr,
+                            onTap: _handleLogin,
+                          ),
                     SizedBox(height: ResponsiveHelper.spacing(8)),
 
                     Center(

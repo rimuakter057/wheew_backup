@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/helper/data_converter/data_converter.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
