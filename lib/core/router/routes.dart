@@ -146,7 +146,7 @@ class AppRouter {
       GoRoute(
         path: RoutePath.profile,
         name: RouteName.profile,
-        builder: (_, _) => const ProfileScreen(),
+        builder: (_, _) =>  ProfileScreen(),
       ),
     ],
   );

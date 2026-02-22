@@ -23,7 +23,7 @@ final Map<String, String> english = {
   'enter_your_password': 'Enter your password',
   'password_is_required': 'Password is required',
   'password_must_6_character': 'Password must be at least 6 characters',
-  'forgot_password': 'Forgot Password?',
+  'forgot_password': 'Forgot Password',
 
   // -------- Sign Up --------
   'nickname_is_required': 'Nickname is required',
@@ -110,6 +110,8 @@ final Map<String, String> english = {
   "pass_not_match":"Password does not match",
   "pass_six_char":"Password must be at least 6 characters",
   "otp_required":"OTP is required",
+  'empty_block_list':'Empty Block List',
+  'remember_me':"Remember Me"
 
 
 

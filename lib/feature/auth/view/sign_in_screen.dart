@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../repository/auth_controller.dart';
 import '../../../share/widgets/text_field/custom_text_field.dart';
@@ -37,7 +38,7 @@ class _SignInScreenState extends State<SignInScreen> {
         context: context,
         identifier: licenseController.text.trim(),
         password: passwordController.text.trim(),
-        rememberMe: true, // Always save login for auto-login
+        rememberMe: true
       );
 
       // if (success && mounted) {
@@ -102,24 +103,91 @@ class _SignInScreenState extends State<SignInScreen> {
 
                     SizedBox(height: ResponsiveHelper.spacing(10)),
 
-                    /// Forgot Password
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: controller.isLoading
-                            ? null
-                            : () {
-                          context.pushNamed(RouteName.forgotPassword);
-                        },
-                        child: Text(
-                          'forgot_password'.tr,
-                          style: TextStyle(
-                            color: const Color(0xFFA5D6A7),
-                            fontSize: ResponsiveHelper.fontSize(14),
+                    // /// check box with remember me and forgot button
+                    // Align(
+                    //   alignment: Alignment.centerRight,
+                    //   child: TextButton(
+                    //     onPressed: controller.isLoading
+                    //         ? null
+                    //         : () {
+                    //       context.pushNamed(RouteName.forgotPassword);
+                    //     },
+                    //     child: Text(
+                    //       'forgot_password'.tr,
+                    //       style: GoogleFonts.poppins(
+                    //         color: AppColors.blue,
+                    //         fontSize: ResponsiveHelper.fontSize(14),
+                    //         fontWeight: FontWeight.w400,
+                    //         decoration: TextDecoration.underline,
+                    //         decorationColor: AppColors.blue
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+
+
+
+
+
+
+
+                    Row(
+                      children: [
+
+                        /// Remember me section
+                        Flexible(
+                          child: Row(
+                            children: [
+
+                              Checkbox(
+                                value: false,
+                                onChanged: (value) {},
+                                activeColor: AppColors.blue,
+                              ),
+
+                              Flexible(
+                                child: Text(
+                                  "remember_me".tr,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: ResponsiveHelper.fontSize(14),
+                                    fontWeight: FontWeight.w400,
+                                    color: AppColors.black,
+                                  ),
+                                ),
+                              ),
+
+                            ],
                           ),
                         ),
-                      ),
+
+                      //  const Spacer(),
+
+                        /// Forgot password
+                        TextButton(
+                          onPressed: () {
+                            context.pushNamed(RouteName.forgotPassword);
+                          },
+                          child: Text(
+                            "forgot_password".tr,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.poppins(
+                              color: AppColors.blue,
+                              fontSize: ResponsiveHelper.fontSize(14),
+                              fontWeight: FontWeight.w400,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+
+                      ],
                     ),
+
+
+
+
 
                     SizedBox(height: ResponsiveHelper.spacing(20)),
 
@@ -150,7 +218,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 child: Text(
                                   "sign_up".tr,
                                   style: TextStyle(
-                                    color: Colors.blue,
+                                    color: AppColors.blue,
                                     //decoration: TextDecoration.underline,
                                     fontWeight: FontWeight.w500,
                                     //fontStyle: FontStyle.italic,

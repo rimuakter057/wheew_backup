@@ -20,6 +20,9 @@ class ProfileController extends GetxController {
   bool isEditing = false;
   bool isLoading = false;
 
+  final nickName = ''.obs;
+  final licenceId = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -45,6 +48,47 @@ class ProfileController extends GetxController {
   }
 
   /// 🔹 Load user data from SharedPreferences (from login token)
+  // Future<void> loadUserData() async {
+  //   isLoading = true;
+  //   update();
+  //
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final userDataString = prefs.getString(AppConst.userData);
+  //
+  //   if (userDataString != null) {
+  //     final userData = jsonDecode(userDataString);
+  //
+  //     userProfile.value = UserModel(
+  //       nickName: userData['nick_name'] ?? '',
+  //       licenceId: userData['licence_id'] ?? '',
+  //       avatar: userData['avatar'],
+  //     );
+  //
+  //     final nickName=userProfile.value!.nickName;
+  //     final licenceId=userProfile.value!.licenceId;
+  //
+  //
+  //     // Set text fields (read-only)
+  //     nickNameController.text = userProfile.value!.nickName;
+  //     licenseController.text = userProfile.value!.licenceId;
+  //   }
+  //
+  //   isLoading = false;
+  //   update();
+  // }
+  //
+  //
+
+
+
+
+
+
+
+
+
+
+  /// 🔹 Load user data from SharedPreferences
   Future<void> loadUserData() async {
     isLoading = true;
     update();
@@ -61,7 +105,11 @@ class ProfileController extends GetxController {
         avatar: userData['avatar'],
       );
 
-      // Set text fields (read-only)
+      // ✅ Set variables instead of controllers
+      nickName.value = userProfile.value!.nickName;
+      licenceId.value = userProfile.value!.licenceId;
+
+      // Update text controllers
       nickNameController.text = userProfile.value!.nickName;
       licenseController.text = userProfile.value!.licenceId;
     }
@@ -69,6 +117,16 @@ class ProfileController extends GetxController {
     isLoading = false;
     update();
   }
+
+
+
+
+
+
+
+
+
+
 
   /// 🔹 Update ONLY avatar
   Future<void> updateProfile() async {

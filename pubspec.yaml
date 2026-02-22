@@ -44,6 +44,8 @@ dependencies:
   connectivity_plus: ^7.0.0
   webview_flutter: ^4.13.1
   url_launcher: ^6.3.2
+  emoji_picker_flutter: ^4.4.0
+  shimmer: ^3.0.0
 
 
 

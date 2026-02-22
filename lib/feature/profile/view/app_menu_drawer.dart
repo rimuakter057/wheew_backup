@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/feature/terms_condition/web_view_screen.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../language/language_controller.dart';
@@ -78,8 +80,14 @@ class AppMenuDrawer extends StatelessWidget {
               icon: Icons.description_outlined,
               title: 'terms_and_conditions'.tr,
               onTap: () {
-                Navigator.pop(context);
-                context.pushNamed(RouteName.terms);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => WebViewScreen(
+                        url: ApiUrl.terms
+                    ),
+                  ),
+                );
               },
             ),
 
