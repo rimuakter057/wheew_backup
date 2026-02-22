@@ -103,9 +103,9 @@ class _BlockListScreenState extends State<BlockListScreen> {
 
                 isBlock: true,
                 onUnblock: (){
-
-                  controller.unBlock(blockedUserId!, context);
-                  controller.isBlockedByMe.value = false;
+                  //
+                  // controller.unBlock(blockedUserId!, context);
+                  // controller.isBlockedByMe.value = false;
 
 
                 },
@@ -129,7 +129,7 @@ class _BlockListScreenState extends State<BlockListScreen> {
 
                 onTap: () {
 
-                  debugPrint("Blocked user click: ${user?.nickName}");
+                 // debugPrint("Blocked user click: ${user?.nickName}");
 
                 },
 
