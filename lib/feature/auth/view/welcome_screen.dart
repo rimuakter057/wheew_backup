@@ -295,15 +295,10 @@ class WelcomeScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // TOP IMAGE
-              /* ClipRRect(
-                child: CustomImage(
-                  imageSrc: AssetsPath.person0,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-              ),*/
-              // TOP SECTION (Avatars) - Using percentage-based positioning
+
+
+
+
               Container(
                 height: size.height * 0.40,
                 width: double.infinity,
@@ -321,6 +316,11 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 child: Stack(
                   children: [
+                    /// LANGUAGE TOGGLE
+                    const LanguageToggleWidget(),
+
+
+
                     _avatar(
                       AssetsPath.person1,
                       topPercent: 0.20,
@@ -449,15 +449,15 @@ class WelcomeScreen extends StatelessWidget {
               ),
           
               SizedBox(height: ResponsiveHelper.spacing(24)),
-          
-              /// LANGUAGE TOGGLE
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: ResponsiveHelper.padding(24),
-                ),
-                child: const LanguageToggleWidget(),
-              ),
-          
+              //
+              // /// LANGUAGE TOGGLE
+              // Padding(
+              //   padding: EdgeInsets.symmetric(
+              //     horizontal: ResponsiveHelper.padding(24),
+              //   ),
+              //   child: const LanguageToggleWidget(),
+              // ),
+              //
               SizedBox(height: ResponsiveHelper.spacing(12)),
           
               // SIGN IN BUTTON
