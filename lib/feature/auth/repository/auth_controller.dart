@@ -46,6 +46,10 @@ class AuthController extends GetxController {
       final data = jsonDecode(loginRes.body);
       final String token = data['token'];
       final String userId = data['id'];
+      final String licenceId=data["licence_id"];
+      final String nickName=data["nick_name"];
+
+
 
 
     //
@@ -55,6 +59,8 @@ class AuthController extends GetxController {
       // ✅ Save token
       await SharePrefsHelper.setString(AppConst.token, token);
       await SharePrefsHelper.setString(AppConst.userID, userId);
+      await SharePrefsHelper.setString(AppConst.licenceId, licenceId);
+      await SharePrefsHelper.setString(AppConst.nickName, nickName);
       await SharePrefsHelper.setBool(AppConst.isLoggedIn, true);
       await _saveUserData(data);
 

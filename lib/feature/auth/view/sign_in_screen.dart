@@ -114,9 +114,12 @@ class _SignInScreenState extends State<SignInScreen> {
                         },
                         child: Text(
                           'forgot_password'.tr,
-                          style: TextStyle(
-                            color: const Color(0xFFA5D6A7),
+                          style: GoogleFonts.poppins(
+                            color: AppColors.blue,
                             fontSize: ResponsiveHelper.fontSize(14),
+                            fontWeight: FontWeight.w400,
+                            decoration: TextDecoration.underline,
+                            decorationColor: AppColors.blue
                           ),
                         ),
                       ),

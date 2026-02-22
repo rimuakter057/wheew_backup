@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/feature/chat/view/message_screen.dart';
+import 'package:platchatapp/feature/chat/view/widgets/shimmer_chat%20list.dart';
 import 'package:platchatapp/helper/data_converter/data_converter.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
@@ -92,8 +94,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
         centerTitle: true,
         title: Text(
           'all_chat'.tr,
-          style: TextStyle(
-            color: AppColors.black,
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w500,
             fontSize: ResponsiveHelper.fontSize(18),
           ),
         ),
@@ -170,9 +172,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       Center(
                         child: Text(
                           'no_chats'.tr,
-                          style: TextStyle(
-                            fontSize: ResponsiveHelper.fontSize(16),
-                            color: Colors.grey,
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w500,
+                            fontSize: ResponsiveHelper.fontSize(18),
                           ),
                         ),
                       ),

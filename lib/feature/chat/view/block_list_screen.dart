@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/helper/data_converter/data_converter.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
-import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../repository/chat_controller.dart';
 import 'chat_tile.dart';
@@ -76,7 +74,7 @@ class _BlockListScreenState extends State<BlockListScreen> {
                 SizedBox(height: MediaQuery.of(context).size.height * .3),
                 Center(
                   child: Text(
-                    'no_chats'.tr,
+                    'empty_block_list'.tr,
                     style: TextStyle(
                       fontSize: ResponsiveHelper.fontSize(16),
                       color: Colors.grey,

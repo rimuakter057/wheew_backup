@@ -6,6 +6,7 @@ import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
 import 'package:platchatapp/share/widgets/button/primary_button.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
 import 'package:platchatapp/share/widgets/text_field/custom_text_field.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 
 import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
@@ -31,13 +32,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: ResponsiveHelper.spacing(20)),
+           // SizedBox(height: ResponsiveHelper.spacing(20)),
 
             Text(
               'forgot_password'.tr,
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.titleFontSize(18),
                 fontWeight: FontWeight.w600,
+                color: AppColors.textBlack
               ),
             ),
 

@@ -1,7 +1,8 @@
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:google_fonts/google_fonts.dart' hide Config;
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/feature/chat/view/widgets/block_by_me_widget.dart';
 import 'package:platchatapp/feature/chat/view/widgets/block_me_widget.dart';
@@ -10,7 +11,7 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/custom_container/custom_container.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
-//import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji_picker;
 
 
 class MessageScreen extends StatefulWidget {
@@ -40,6 +41,11 @@ class _MessageScreenState extends State<MessageScreen> {
   //final TextEditingController messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
+  bool _isEmojiVisible = false;
+  FocusNode _focusNode = FocusNode();
+
+
+
   @override
   void initState() {
     super.initState();
@@ -59,6 +65,13 @@ class _MessageScreenState extends State<MessageScreen> {
 
     // Scroll listener
     _scrollController.addListener(_onScroll);
+
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus && _isEmojiVisible) {
+        setState(() => _isEmojiVisible = false);
+      }
+    });
+
   }
 
   Future<void> _initChat() async {
@@ -86,6 +99,9 @@ class _MessageScreenState extends State<MessageScreen> {
       chatController.fetchRoomMessage(roomId: widget.roomId);
     }
   }
+
+
+
 
   @override
   void dispose() {
@@ -303,66 +319,216 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   /// Message Input
+  // Widget _messageInput() {
+  //   return Padding(
+  //     padding: EdgeInsets.fromLTRB(
+  //       ResponsiveHelper.padding(16),
+  //       ResponsiveHelper.padding(8),
+  //       ResponsiveHelper.padding(16),
+  //       ResponsiveHelper.padding(16),
+  //     ),
+  //     child: Container(
+  //       padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(16)),
+  //       height: ResponsiveHelper.buttonHeight(56),
+  //       decoration: BoxDecoration(
+  //         color: AppColors.green,
+  //         borderRadius: BorderRadius.circular(
+  //           ResponsiveHelper.borderRadius(16),
+  //         ),
+  //       ),
+  //       child: Row(
+  //         children: [
+  //           Expanded(
+  //             child: TextField(
+  //               controller: chatController.messageController,
+  //               decoration: InputDecoration(
+  //                 hintText: "type_here1".tr,
+  //                 fillColor: AppColors.green,
+  //                 hintStyle: TextStyle(
+  //                   color: AppColors.white,
+  //                   fontSize: ResponsiveHelper.fontSize(16),
+  //                 ),
+  //                 border: InputBorder.none,
+  //               ),
+  //               style: TextStyle(
+  //                 color: Colors.white,
+  //                 fontSize: ResponsiveHelper.fontSize(16),
+  //               ),
+  //             ),
+  //           ),
+  //
+  //           GestureDetector(
+  //             onTap: () async {
+  //               debugPrint("========================");
+  //               if (chatController.messageController.text.trim().isEmpty)
+  //                 return;
+  //
+  //               debugPrint("///////////////////////////////");
+  //
+  //               chatController.sendNewEmitMessage(
+  //                 receiverId: widget.receiverId,
+  //                 message: chatController.messageController.text.toString(),
+  //               );
+  //
+  //               debugPrint(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
+  //
+  //               // chatController.messageController.clear();
+  //             },
+  //             child: SvgPicture.asset(AssetsPath.send),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   Widget _messageInput() {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        ResponsiveHelper.padding(16),
-        ResponsiveHelper.padding(8),
-        ResponsiveHelper.padding(16),
-        ResponsiveHelper.padding(16),
-      ),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(16)),
-        height: ResponsiveHelper.buttonHeight(56),
-        decoration: BoxDecoration(
-          color: AppColors.green,
-          borderRadius: BorderRadius.circular(
-            ResponsiveHelper.borderRadius(16),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(
+            ResponsiveHelper.padding(16),
+            ResponsiveHelper.padding(8),
+            ResponsiveHelper.padding(16),
+            ResponsiveHelper.padding(8),
+          ),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(16)),
+            height: ResponsiveHelper.buttonHeight(56),
+            decoration: BoxDecoration(
+              color: AppColors.green,
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(16),
+              ),
+            ),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.emoji_emotions, color: Colors.white),
+                  onPressed: () {
+                    _focusNode.unfocus();
+                    setState(() => _isEmojiVisible = !_isEmojiVisible);
+                  },
+                ),
+
+                Expanded(
+                  child: TextField(
+                    focusNode: _focusNode,
+                    controller: chatController.messageController,
+                    onTap: () {
+                      if (_isEmojiVisible) {
+                        setState(() => _isEmojiVisible = false);
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: "type_here1".tr,
+                      fillColor: AppColors.green,
+                      hintStyle: TextStyle(
+                        color: AppColors.white,
+                        fontSize: ResponsiveHelper.fontSize(16),
+                      ),
+                      border: InputBorder.none,
+                    ),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: ResponsiveHelper.fontSize(16),
+                    ),
+                  ),
+                ),
+
+                GestureDetector(
+                  onTap: () {
+                    if (chatController.messageController.text.trim().isEmpty) return;
+                    chatController.sendNewEmitMessage(
+                      receiverId: widget.receiverId,
+                      message: chatController.messageController.text,
+                    );
+                    chatController.messageController.clear();
+                  },
+                  child: SvgPicture.asset(AssetsPath.send),
+                ),
+              ],
+            ),
           ),
         ),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: chatController.messageController,
-                decoration: InputDecoration(
-                  hintText: "type_here1".tr,
-                  fillColor: AppColors.green,
-                  hintStyle: TextStyle(
-                    color: AppColors.white,
-                    fontSize: ResponsiveHelper.fontSize(16),
+
+        /// Emoji Picker
+        Offstage(
+          offstage: !_isEmojiVisible,
+          child: SizedBox(
+            height: ResponsiveHelper.height(250),
+            child: EmojiPicker(
+              textEditingController: chatController.messageController,
+              config:  Config(
+                height: ResponsiveHelper.height(250),
+                emojiViewConfig: EmojiViewConfig(
+                  columns: 7,
+                  emojiSizeMax: 28,
+                  verticalSpacing: 0,
+                  horizontalSpacing: 0,
+                  backgroundColor: Colors.white,
+                  noRecents: Text(
+                    "No Recents",
+                    style: GoogleFonts.poppins(fontSize: 20, color: Colors.black26),
                   ),
-                  border: InputBorder.none,
                 ),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: ResponsiveHelper.fontSize(16),
+                categoryViewConfig: CategoryViewConfig(
+                  initCategory: Category.SMILEYS,
+                  indicatorColor: AppColors.blue,
+                  iconColor: Colors.grey,
+                  iconColorSelected: AppColors.blue,
+                  backspaceColor: Colors.red,
+
+                ),
+                bottomActionBarConfig: BottomActionBarConfig(
+                  showSearchViewButton: false,
                 ),
               ),
             ),
-
-            GestureDetector(
-              onTap: () async {
-                debugPrint("========================");
-                if (chatController.messageController.text.trim().isEmpty)
-                  return;
-
-                debugPrint("///////////////////////////////");
-
-                chatController.sendNewEmitMessage(
-                  receiverId: widget.receiverId,
-                  message: chatController.messageController.text.toString(),
-                );
-
-                debugPrint(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
-
-                // chatController.messageController.clear();
-              },
-              child: SvgPicture.asset(AssetsPath.send),
-            ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

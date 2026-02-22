@@ -13,6 +13,7 @@ class AppColors {
   static const Color backgroundColor = Color(0xFFFFFFFF);
 
   static const Color borderColor = Color(0xFF1070B7);
+  static const Color inputBorderColor = Color(0x78787833);
   static const Color brandHoverColor = Color(0xFF1070B7);
   static const Color softBrandColor = Color(0xFFE6ECF5);
   static const Color successColor = Color(0xFF28A745);

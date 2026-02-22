@@ -314,9 +314,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               TextSpan(
                 text: 'terms_and_conditions'.tr,
                 style: GoogleFonts.poppins(
-                  color: Colors.blue,
+                  color: AppColors.blue,
                   decoration: TextDecoration.underline,
-                  fontSize: 14,
+                  fontSize: ResponsiveHelper.fontSize(14),
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
@@ -324,7 +324,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => PrivacyPolicyScreen(
+                        builder: (_) => WebViewScreen(
                             url: ApiUrl.terms
                         ),
                       ),
@@ -351,9 +351,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               TextSpan(
                 text: 'privacy_policy'.tr,
                 style: GoogleFonts.poppins(
-                  color: Colors.blue,
+                  color: AppColors.blue,
                   decoration: TextDecoration.underline,
-                  fontSize: 14,
+                  fontSize: ResponsiveHelper.fontSize(14),
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {

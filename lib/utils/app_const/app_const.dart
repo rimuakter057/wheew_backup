@@ -7,4 +7,9 @@ class AppConst {
   static String unknown =
       'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/500px-Unknown_person.jpg';
 
+  static const String licenceId = "licence_id";
+  static const String nickName = "nick_name";
+
+  // final String licenceId=data["licence_id"];
+  // final String nickName=data["nick_name"];
 }
