@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../repository/auth_controller.dart';
 import '../../../share/widgets/text_field/custom_text_field.dart';
@@ -150,7 +151,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 child: Text(
                                   "sign_up".tr,
                                   style: TextStyle(
-                                    color: Colors.blue,
+                                    color: AppColors.blue,
                                     //decoration: TextDecoration.underline,
                                     fontWeight: FontWeight.w500,
                                     //fontStyle: FontStyle.italic,

@@ -479,8 +479,8 @@ class WelcomeScreen extends StatelessWidget {
                   onTap: () {
                     context.pushNamed(RouteName.signIn);
                   },
-                  borderColor: Colors.blue,
-                  textColor: Colors.blue,
+                  borderColor: AppColors.blue,
+                  textColor: AppColors.blue,
                 ),
               ),
           
@@ -509,7 +509,7 @@ class WelcomeScreen extends StatelessWidget {
                   onTap: () {
                     _showAgeConfirmationDialog(context);
                   },
-                  backgroundColor: Colors.blue,
+                  backgroundColor: AppColors.blue,
                   textColor: Colors.white,
                 ),
               ),
@@ -600,7 +600,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
                 // YES BUTTON
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor:AppColors.blue,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

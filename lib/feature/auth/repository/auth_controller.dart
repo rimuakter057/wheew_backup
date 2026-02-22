@@ -47,6 +47,11 @@ class AuthController extends GetxController {
       final String token = data['token'];
       final String userId = data['id'];
 
+
+    //
+    //   "licence_id": "license_no",
+    // "nick_name": "Nick_name",
+
       // ✅ Save token
       await SharePrefsHelper.setString(AppConst.token, token);
       await SharePrefsHelper.setString(AppConst.userID, userId);
