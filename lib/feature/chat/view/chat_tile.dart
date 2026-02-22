@@ -70,7 +70,7 @@ vertical: ResponsiveHelper.padding(8)
 
           ),
 
-          child:  Text("unblock".tr,style:GoogleFonts.poppins(
+          child:  Text("block".tr,style:GoogleFonts.poppins(
               fontSize: ResponsiveHelper.fontSize(16),
               fontWeight: FontWeight.w500,
             color: AppColors.blue
