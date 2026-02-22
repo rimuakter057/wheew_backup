@@ -14,26 +14,32 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+
+  // 🔥 Language controller MUST be awaited
+  final languageController = Get.put(LanguageController());
+  await languageController.loadSavedLanguage();
+
+
+  // Controllers
   Get.put(AuthController());
   Get.put(ChatController());
   Get.put(ProfileController());
-  Get.put(LanguageController());
 
-  // ✅ Register translations once
+
+  // Translations
   Get.addTranslations(AppTranslations().keys);
 
-
-
-  // Initialize Socket
+  // Socket init
   await AppSocket.init(
     onSocketConnect: () {
-      debugPrint('===============================main Socket successfully connected=================');
+      debugPrint(
+        '=============================== main Socket successfully connected =================',
+      );
     },
   );
 
   runApp(const App());
 }
-
 class App extends StatelessWidget {
   const App({super.key});
 
@@ -44,30 +50,24 @@ class App extends StatelessWidget {
     return Obx(() => MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'My App',
+
+      // ✅ LIGHT THEME IS STILL HERE
       theme: lightTheme,
 
-      // ✅ GoRouter
       routerConfig: AppRouter.router,
 
-      // ✅ GetX locale (reactive)
       locale: languageController.currentLocale.value,
 
-      supportedLocales: [
-        Locale('en', 'US'),
+      supportedLocales: const [
         Locale('it', 'IT'),
+        Locale('en', 'US'),
       ],
 
-      // ✅ CORRECT localization delegates
-      localizationsDelegates: [
+      localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-
-      builder: (context, widget) {
-        ResponsiveHelper.init(context);
-        return widget!;
-      },
     ));
   }
 }

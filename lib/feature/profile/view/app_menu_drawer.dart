@@ -10,6 +10,216 @@ import '../repository/profile_controller.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../share/widgets/avatar/user_avatar.dart';
 
+
+class AppMenuDrawer extends StatelessWidget {
+  const AppMenuDrawer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final profileController = Get.find<ProfileController>();
+    final authController = Get.find<AuthController>();
+    final languageController = Get.find<LanguageController>();
+
+    return Drawer(
+      backgroundColor: AppColors.white,
+      child: SafeArea(
+        child: Column(
+          children: [
+            /// ===== USER HEADER =====
+            Padding(
+              padding: EdgeInsets.all(ResponsiveHelper.padding(20)),
+              child: Obx(() {
+                final user = profileController.userProfile.value;
+
+                return Row(
+                  children: [
+                    profileController.profileImage.value != null
+                        ? CircleAvatar(
+                      radius: ResponsiveHelper.width(28),
+                      backgroundImage: FileImage(
+                        profileController.profileImage.value!,
+                      ),
+                    )
+                        : UserAvatar(
+                      imagePath: user?.avatar,
+                      radius: ResponsiveHelper.width(28),
+                    ),
+                    SizedBox(width: ResponsiveHelper.spacing(12)),
+                    Expanded(
+                      child: Text(
+                        user?.nickName ?? 'Loading...',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: ResponsiveHelper.fontSize(16),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                );
+              }),
+            ),
+
+            const Divider(),
+
+            /// ===== MENU ITEMS =====
+            _drawerItem(
+              context,
+              icon: Icons.person_outline,
+              title: 'profile'.tr,
+              onTap: () {
+                Navigator.pop(context);
+                context.pushNamed(RouteName.profile);
+              },
+            ),
+
+            _drawerItem(
+              context,
+              icon: Icons.description_outlined,
+              title: 'terms_and_conditions'.tr,
+              onTap: () {
+                Navigator.pop(context);
+                context.pushNamed(RouteName.terms);
+              },
+            ),
+
+            _drawerItem(
+              context,
+              icon: Icons.block,
+              title: 'block_'.tr,
+              onTap: () {
+                Navigator.pop(context);
+                context.pushNamed(RouteName.block);
+              },
+            ),
+
+            /// ===== LANGUAGE =====
+            ListTile(
+              leading: Icon(
+                Icons.translate,
+                size: ResponsiveHelper.iconSize(24),
+              ),
+              title: Text(
+                'language'.tr,
+                style: TextStyle(
+                  fontSize: ResponsiveHelper.fontSize(16),
+                ),
+              ),
+              subtitle: Obx(() => Text(
+                languageController.currentLanguageDisplay,
+                style: TextStyle(
+                  fontSize: ResponsiveHelper.fontSize(12),
+                ),
+              )),
+              onTap: () => _showLanguageBottomSheet(context),
+            ),
+
+            const Spacer(),
+
+            /// ===== LOGOUT =====
+            ListTile(
+              leading: Icon(
+                Icons.logout,
+                color: AppColors.errorColor,
+                size: ResponsiveHelper.iconSize(24),
+              ),
+              title: Text(
+                'logout'.tr,
+                style: TextStyle(
+                  color: AppColors.errorColor,
+                  fontSize: ResponsiveHelper.fontSize(16),
+                ),
+              ),
+              onTap: () async {
+                await authController.logout();
+                if (!context.mounted) return;
+                context.goNamed(RouteName.welcome);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _drawerItem(
+      BuildContext context, {
+        required IconData icon,
+        required String title,
+        required VoidCallback onTap,
+      }) {
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: ResponsiveHelper.spacing(8),
+      ),
+      child: ListTile(
+        leading: Icon(
+          icon,
+          size: ResponsiveHelper.iconSize(24),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontSize: ResponsiveHelper.fontSize(16),
+          ),
+        ),
+        onTap: onTap,
+      ),
+    );
+  }
+}
+
+void _showLanguageBottomSheet(BuildContext context) {
+  final controller = Get.find<LanguageController>();
+
+  showModalBottomSheet(
+    context: context,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (_) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Obx(() {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 8),
+              Text(
+                'language'.tr,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              ...controller.availableLanguageNames.map((language) {
+                final isSelected =
+                controller.isLanguageSelected(language);
+
+                return ListTile(
+                  title: Text(language),
+                  trailing: isSelected
+                      ? const Icon(Icons.check, color: Colors.blue)
+                      : null,
+                  onTap: () async {
+                    await controller.saveLanguage(language);
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  },
+                );
+              }).toList(),
+            ],
+          );
+        }),
+      );
+    },
+  );
+}
+
+/*
 class AppMenuDrawer extends StatelessWidget {
   const AppMenuDrawer({super.key});
 
@@ -189,3 +399,4 @@ void _showLanguageBottomSheet(BuildContext context) {
     },
   );
 }
+*/

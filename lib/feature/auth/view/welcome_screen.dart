@@ -315,9 +315,18 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
                 child: Stack(
+
                   children: [
                     /// LANGUAGE TOGGLE
-                    const LanguageToggleWidget(),
+                   // SizedBox(height: ResponsiveHelper.spacing(8)),
+                    //const LanguageToggleWidget(),
+                    // LANGUAGE TOGGLE
+                    Positioned(
+                      top: 16,
+                      right: 16,  // 👈 push to right side
+                      child: const LanguageToggleWidget(),
+                    ),
+
 
 
 
