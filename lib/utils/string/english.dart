@@ -111,6 +111,7 @@ final Map<String, String> english = {
   "pass_six_char":"Password must be at least 6 characters",
   "otp_required":"OTP is required",
   'empty_block_list':'Empty Block List',
+  'remember_me':"Remember Me"
 
 
 

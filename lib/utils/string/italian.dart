@@ -106,5 +106,6 @@ final Map<String, String> italian = {
   "pass_six_char":"La password deve contenere almeno 6 caratteri",
   "otp_required":"L'OTP è obbligatorio",
   'empty_block_list':'Elenco blocchi vuoto',
+  'remember_me':"Ricordati di me"
 
 };

@@ -11,8 +11,6 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/custom_container/custom_container.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji_picker;
-
 
 class MessageScreen extends StatefulWidget {
   final String? roomId;
@@ -44,8 +42,6 @@ class _MessageScreenState extends State<MessageScreen> {
   bool _isEmojiVisible = false;
   FocusNode _focusNode = FocusNode();
 
-
-
   @override
   void initState() {
     super.initState();
@@ -71,7 +67,6 @@ class _MessageScreenState extends State<MessageScreen> {
         setState(() => _isEmojiVisible = false);
       }
     });
-
   }
 
   Future<void> _initChat() async {
@@ -99,9 +94,6 @@ class _MessageScreenState extends State<MessageScreen> {
       chatController.fetchRoomMessage(roomId: widget.roomId);
     }
   }
-
-
-
 
   @override
   void dispose() {
@@ -382,23 +374,6 @@ class _MessageScreenState extends State<MessageScreen> {
   //   );
   // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   Widget _messageInput() {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -411,7 +386,9 @@ class _MessageScreenState extends State<MessageScreen> {
             ResponsiveHelper.padding(8),
           ),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(16)),
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveHelper.padding(16),
+            ),
             height: ResponsiveHelper.buttonHeight(56),
             decoration: BoxDecoration(
               color: AppColors.green,
@@ -456,7 +433,8 @@ class _MessageScreenState extends State<MessageScreen> {
 
                 GestureDetector(
                   onTap: () {
-                    if (chatController.messageController.text.trim().isEmpty) return;
+                    if (chatController.messageController.text.trim().isEmpty)
+                      return;
                     chatController.sendNewEmitMessage(
                       receiverId: widget.receiverId,
                       message: chatController.messageController.text,
@@ -477,7 +455,7 @@ class _MessageScreenState extends State<MessageScreen> {
             height: ResponsiveHelper.height(250),
             child: EmojiPicker(
               textEditingController: chatController.messageController,
-              config:  Config(
+              config: Config(
                 height: ResponsiveHelper.height(250),
                 emojiViewConfig: EmojiViewConfig(
                   columns: 7,
@@ -487,7 +465,10 @@ class _MessageScreenState extends State<MessageScreen> {
                   backgroundColor: Colors.white,
                   noRecents: Text(
                     "No Recents",
-                    style: GoogleFonts.poppins(fontSize: 20, color: Colors.black26),
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      color: Colors.black26,
+                    ),
                   ),
                 ),
                 categoryViewConfig: CategoryViewConfig(
@@ -496,7 +477,6 @@ class _MessageScreenState extends State<MessageScreen> {
                   iconColor: Colors.grey,
                   iconColorSelected: AppColors.blue,
                   backspaceColor: Colors.red,
-
                 ),
                 bottomActionBarConfig: BottomActionBarConfig(
                   showSearchViewButton: false,
@@ -508,27 +488,4 @@ class _MessageScreenState extends State<MessageScreen> {
       ],
     );
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

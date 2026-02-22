@@ -27,12 +27,75 @@ class AuthController extends GetxController {
   }
 
   /// ======================= LOGIN =======================
+
+
+  // var isRememberMe = false.obs;
+  //
+  //
+  // Future<bool> login({
+  //   required BuildContext context,
+  //   required String identifier,
+  //   required String password,
+  //   bool rememberMe = false, // ✅ শুধু এইটা add
+  // }) async
+  // {
+  //   _setLoading(true);
+  //
+  //   final Response loginRes = await _repo.login(
+  //     identifier: identifier,
+  //     password: password,
+  //   );
+  //
+  //   _setLoading(false);
+  //
+  //   if (loginRes.statusCode == 200) {
+  //     final data = jsonDecode(loginRes.body);
+  //     final String token = data['token'];
+  //     final String userId = data['id'];
+  //     final String licenceId = data["licence_id"];
+  //     final String nickName = data["nick_name"];
+  //
+  //     /// ✅ Remember Me condition add
+  //     if (rememberMe) {
+  //       await SharePrefsHelper.setString(AppConst.token, token);
+  //       await SharePrefsHelper.setString(AppConst.userID, userId);
+  //       await SharePrefsHelper.setString(AppConst.licenceId, licenceId);
+  //       await SharePrefsHelper.setString(AppConst.nickName, nickName);
+  //       await SharePrefsHelper.setBool(AppConst.isLoggedIn, true);
+  //     }
+  //
+  //     await _saveUserData(data);
+  //
+  //     await AppSocket.init(
+  //       onSocketConnect: () {
+  //         context.goNamed(RouteName.chatList);
+  //       },
+  //     );
+  //
+  //     return true;
+  //   } else {
+  //     ApiChecker.checkApi(loginRes, context);
+  //     return false;
+  //   }
+  // }
+  //
+  //
+  //
+
+
+
+
+
+
+
+
   Future<bool> login({
     required BuildContext context,
     required String identifier,
     required String password,
     bool rememberMe = false,
-  }) async {
+  }) async
+  {
     _setLoading(true);
 
     final Response loginRes = await _repo.login(
