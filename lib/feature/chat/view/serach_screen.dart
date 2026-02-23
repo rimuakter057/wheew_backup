@@ -8,7 +8,7 @@ import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../repository/chat_controller.dart';
 import '../../profile/view/app_menu_drawer.dart';
-import 'chat_tile.dart';
+import 'widgets/chat_tile.dart';
 
 class SearchListScreen extends StatefulWidget {
   const SearchListScreen({super.key});
@@ -25,8 +25,6 @@ class _SearchListScreenState extends State<SearchListScreen> {
   void initState() {
     super.initState();
 
-
-
     // Auto focus the search field
     Future.delayed(const Duration(milliseconds: 200), () {
       _focusNode.requestFocus();
@@ -39,7 +37,6 @@ class _SearchListScreenState extends State<SearchListScreen> {
     _focusNode.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -73,15 +70,12 @@ class _SearchListScreenState extends State<SearchListScreen> {
       ),
       endDrawer: const AppMenuDrawer(),
 
-
-
-
-
       body: GetBuilder<ChatController>(
         init: Get.find<ChatController>(), //  ensure controller exists
         builder: (controller) {
           // Determine which list to display
-          final displayList = controller.isSearching || controller.searchResults.isNotEmpty
+          final displayList =
+              controller.isSearching || controller.searchResults.isNotEmpty
               ? controller.searchResults
               : controller.chatList;
 
@@ -97,22 +91,26 @@ class _SearchListScreenState extends State<SearchListScreen> {
                   style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
                   decoration: InputDecoration(
                     hintText: 'search_here'.tr,
-                    hintStyle: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
+                    hintStyle: TextStyle(
+                      fontSize: ResponsiveHelper.fontSize(16),
+                    ),
                     prefixIcon: Icon(
                       Icons.search,
                       size: ResponsiveHelper.iconSize(24),
                     ),
                     suffixIcon: controller.isSearching
                         ? Padding(
-                      padding: EdgeInsets.all(ResponsiveHelper.padding(12)),
-                      child: SizedBox(
-                        width: ResponsiveHelper.width(20),
-                        height: ResponsiveHelper.height(20),
-                        child: CircularProgressIndicator(
-                          strokeWidth: ResponsiveHelper.borderWidth(2),
-                        ),
-                      ),
-                    )
+                            padding: EdgeInsets.all(
+                              ResponsiveHelper.padding(12),
+                            ),
+                            child: SizedBox(
+                              width: ResponsiveHelper.width(20),
+                              height: ResponsiveHelper.height(20),
+                              child: CircularProgressIndicator(
+                                strokeWidth: ResponsiveHelper.borderWidth(2),
+                              ),
+                            ),
+                          )
                         : null,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(
@@ -129,72 +127,59 @@ class _SearchListScreenState extends State<SearchListScreen> {
                     ? const Center(child: CircularProgressIndicator())
                     : displayList.isEmpty
                     ? Center(
-                  child: Text(
-                    ''.tr,
-                    style: TextStyle(
-                      fontSize: ResponsiveHelper.fontSize(16),
-                    ),
-                  ),
-                )
-                    : RefreshIndicator(
-                  onRefresh: () => controller.getChatSearchList(),
-                  child: ListView.builder(
-                    itemCount: displayList.length,
-                    itemBuilder: (context, index) {
-                      final chat = displayList[index];
-                      return ChatTile(
-                        isBlock: false,
-                        name: chat.nickName.toString(),
-                        message: chat.designation.toString(),
-                        fontWeight:FontWeight.w400,
-                        time: formatTime(chat.createdAt.toString()),
-
-                        imagePath: chat.avatar ?? "assets/images/person1.png",
-                        onTap: () => context.pushNamed(RouteName.message,
-
-                          extra: {
-                            'roomId': chat.existingRoom?.id??'',
-                            'otherUserName': chat.nickName,
-                            'otherUserAvatar': chat.avatar?? AppConst.unknown,
-                            'receiverId': chat.id,
-                          "isBlockedByMe":false,
-                        "isBlockedMe":false,
-
-
-
-
-
-
-
-
-                            // 'roomId': room.id ?? '',
-                            // 'otherUserName':
-                            // room.otherUser?.nickName ?? 'User',
-                            // 'otherUserAvatar':
-                            // room.otherUser?.avatar ?? AppConst.unknown,
-                            // 'receiverId': room.otherUser?.id ?? '',
-                            // "isBlockedByMe":room.isBlockedByMe??false,
-                            // "isBlockedMe":room.isBlockedMe??false,
-
-
-
-
-
-                          },
-
+                        child: Text(
+                          ''.tr,
+                          style: TextStyle(
+                            fontSize: ResponsiveHelper.fontSize(16),
+                          ),
                         ),
-                      );
-                    },
-                  ),
-                ),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: () => controller.getChatSearchList(),
+                        child: ListView.builder(
+                          itemCount: displayList.length,
+                          itemBuilder: (context, index) {
+                            final chat = displayList[index];
+                            return ChatTile(
+                              isBlock: false,
+                              name: chat.nickName.toString(),
+                              message: chat.designation.toString(),
+                              fontWeight: FontWeight.w400,
+                              time: formatTime(chat.createdAt.toString()),
+
+                              imagePath:
+                                  chat.avatar ?? "assets/images/person1.png",
+                              onTap: () => context.pushNamed(
+                                RouteName.message,
+
+                                extra: {
+                                  'roomId': chat.existingRoom?.id ?? '',
+                                  'otherUserName': chat.nickName,
+                                  'otherUserAvatar':
+                                      chat.avatar ?? AppConst.unknown,
+                                  'receiverId': chat.id,
+                                  "isBlockedByMe": false,
+                                  "isBlockedMe": false,
+
+                                  // 'roomId': room.id ?? '',
+                                  // 'otherUserName':
+                                  // room.otherUser?.nickName ?? 'User',
+                                  // 'otherUserAvatar':
+                                  // room.otherUser?.avatar ?? AppConst.unknown,
+                                  // 'receiverId': room.otherUser?.id ?? '',
+                                  // "isBlockedByMe":room.isBlockedByMe??false,
+                                  // "isBlockedMe":room.isBlockedMe??false,
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ),
               ),
             ],
           );
         },
       ),
-
-
-
     );
   }
 }

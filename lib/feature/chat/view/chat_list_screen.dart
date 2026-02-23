@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/feature/chat/view/message_screen.dart';
+import 'package:platchatapp/feature/chat/view/widgets/chat_list_screen_shimmer.dart';
 import 'package:platchatapp/helper/data_converter/data_converter.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
@@ -13,7 +14,7 @@ import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../repository/chat_controller.dart';
 import '../../profile/view/app_menu_drawer.dart';
-import 'chat_tile.dart';
+import 'widgets/chat_tile.dart';
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
@@ -118,6 +119,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
       endDrawer: const AppMenuDrawer(),
 
       body: RefreshIndicator(
+        color: AppColors.white,
+        backgroundColor: AppColors.blue,
+
         onRefresh: () => controller.fetchChatRooms(refresh: true),
         child: Column(
           children: [
@@ -159,7 +163,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 /// First load
                 if (controller.isLoadingChat.value &&
                     controller.userChatList.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const ChatListShimmer(); //Center(child: CircularProgressIndicator());
                 }
 
                 /// Empty state

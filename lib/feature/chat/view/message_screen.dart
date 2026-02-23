@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_final_fields
+
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -6,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart' hide Config;
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/feature/chat/view/widgets/block_by_me_widget.dart';
 import 'package:platchatapp/feature/chat/view/widgets/block_me_widget.dart';
+import 'package:platchatapp/feature/chat/view/widgets/message_screen_shimmer.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/custom_container/custom_container.dart';
@@ -204,7 +207,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
                 // 🔹 Only first page loading
                 if (chatController.isLoadingMessage.value && messages.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
+                  return MessageScreenShimmer(); //Center(child: LoadingWidget(color: AppColors.blue));
                 }
 
                 if (messages.isEmpty) {
@@ -433,8 +436,9 @@ class _MessageScreenState extends State<MessageScreen> {
 
                 GestureDetector(
                   onTap: () {
-                    if (chatController.messageController.text.trim().isEmpty)
+                    if (chatController.messageController.text.trim().isEmpty) {
                       return;
+                    }
                     chatController.sendNewEmitMessage(
                       receiverId: widget.receiverId,
                       message: chatController.messageController.text,

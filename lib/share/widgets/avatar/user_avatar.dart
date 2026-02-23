@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:platchatapp/share/widgets/loading/loading_widget.dart';
 import 'package:platchatapp/share/widgets/network_image/custom_network_image.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../core/service/api_url.dart';
 
 class UserAvatar extends StatelessWidget {
@@ -27,7 +29,9 @@ class UserAvatar extends StatelessWidget {
             width: radius * 2,
             height: radius * 2,
             fit: BoxFit.cover,
-            placeholder: (context, url) => const CircularProgressIndicator(),
+            placeholder: (context, url) => const LoadingWidget(
+              color: AppColors.blue,
+            ), // CircularProgressIndicator(),
             errorWidget: (context, url, error) =>
                 CustomNetworkImage(imageUrl: AppConst.unknown),
           ),
