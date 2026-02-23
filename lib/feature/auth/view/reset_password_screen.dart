@@ -9,7 +9,11 @@ import 'package:platchatapp/share/widgets/text_field/custom_text_field.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({super.key, required this.otpToken, required this.email});
+  const ResetPasswordScreen({
+    super.key,
+    required this.otpToken,
+    required this.email,
+  });
   final String otpToken;
   final String email;
   @override
@@ -20,13 +24,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   bool obscurePassword = true;
   final AuthController controller = AuthController();
   final TextEditingController newPasswordController = TextEditingController();
-  final TextEditingController confirmedPasswordController = TextEditingController();
+  final TextEditingController confirmedPasswordController =
+      TextEditingController();
 
   @override
   void initState() {
     super.initState();
     debugPrint(
-        "==============================${widget.email}========================${widget.otpToken}"
+      "==============================${widget.email}========================${widget.otpToken}",
     );
   }
 
@@ -44,7 +49,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             CustomTextField(
               title: 'new_password'.tr,
               controller: newPasswordController,
-
             ),
 
             const SizedBox(height: 16),
@@ -52,7 +56,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             CustomTextField(
               title: 'confirm_password'.tr,
               controller: confirmedPasswordController,
-
             ),
 
             const Spacer(),
@@ -63,29 +66,30 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 // ✅ Validation
                 if (newPasswordController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                     SnackBar(content: Text("new_pass_required".tr)),
+                    SnackBar(content: Text("new_pass_required".tr)),
                   );
                   return;
                 }
 
                 if (confirmedPasswordController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                     SnackBar(content: Text("confirmed_pass_required".tr)),
+                    SnackBar(content: Text("confirmed_pass_required".tr)),
                   );
                   return;
                 }
 
-                if (newPasswordController.text != confirmedPasswordController.text) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                     SnackBar(content: Text("pass_not_match".tr)),
-                  );
+                if (newPasswordController.text !=
+                    confirmedPasswordController.text) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text("pass_not_match".tr)));
                   return;
                 }
 
                 if (newPasswordController.text.length < 6) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                     SnackBar(content: Text("pass_six_char".tr)),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text("pass_six_char".tr)));
                   return;
                 }
 

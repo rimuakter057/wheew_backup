@@ -53,6 +53,8 @@ dependencies:
 
 
 
+  http: any
+  flutter_localizations: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

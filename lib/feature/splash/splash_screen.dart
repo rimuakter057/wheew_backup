@@ -17,9 +17,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   bool _isNavigated = false;
-
 
   @override
   void initState() {
@@ -28,7 +26,6 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkLoginAndNavigate() async {
-
     await Future.delayed(const Duration(seconds: 2));
 
     if (!mounted) return;
@@ -37,57 +34,26 @@ class _SplashScreenState extends State<SplashScreen> {
         await SharePrefsHelper.getBool(AppConst.isLoggedIn) ?? false;
 
     if (isLoggedIn) {
-
       /// timeout fallback (10 sec)
       Future.delayed(const Duration(seconds: 10), () {
-
         if (!_isNavigated && mounted) {
-
           _showTimeoutMessage();
-
         }
-
       });
 
       await AppSocket.init(
-
         onSocketConnect: () {
-
           if (!_isNavigated && mounted) {
-
             _isNavigated = true;
 
             context.goNamed(RouteName.chatList);
-
           }
-
         },
-
       );
-
     } else {
-
       context.goNamed(RouteName.welcome);
-
     }
-
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -103,9 +69,7 @@ class _SplashScreenState extends State<SplashScreen> {
             SizedBox(height: ResponsiveHelper.spacing(12)),
             Text(
               'CONNECTING DRIVERS ONE PLATE AT A TIME',
-              style: TextStyle(
-                fontSize: ResponsiveHelper.fontSize(12),
-              ),
+              style: TextStyle(fontSize: ResponsiveHelper.fontSize(12)),
             ),
             const Spacer(),
             const CircularProgressIndicator(),
@@ -116,20 +80,8 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-
-
-
-
-
-
-
-
-
-
   void _showTimeoutMessage() {
-
     Get.snackbar(
-
       "Connection Timeout",
 
       "Server is not responding. Please try again.",
@@ -141,11 +93,6 @@ class _SplashScreenState extends State<SplashScreen> {
       colorText: Colors.white,
 
       duration: const Duration(seconds: 4),
-
     );
-
   }
-
-
-
 }

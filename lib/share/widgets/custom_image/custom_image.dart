@@ -38,7 +38,6 @@ class CustomImage extends StatefulWidget {
 class _CustomImageState extends State<CustomImage> {
   late Widget imageWidget;
 
-
   @override
   Widget build(BuildContext context) {
     if (widget.imageSrc.endsWith('svg')) {

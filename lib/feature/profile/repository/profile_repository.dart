@@ -7,15 +7,11 @@ import '../../../core/service/api_url.dart';
 class ProfileRepository {
   /// Get user profile
   Future<http.Response> getProfile() async {
-    return await ApiClient.getData(
-      uri: ApiUrl.updateProfile,
-    );
+    return await ApiClient.getData(uri: ApiUrl.updateProfile);
   }
 
   /// Update ONLY avatar
-  Future<http.Response> updateAvatar({
-    required File imageFile,
-  }) async {
+  Future<http.Response> updateAvatar({required File imageFile}) async {
     final multipartFile = await http.MultipartFile.fromPath(
       'avatar',
       imageFile.path,

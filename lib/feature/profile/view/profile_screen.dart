@@ -49,7 +49,9 @@ class ProfileScreen extends StatelessWidget {
           }
 
           return SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(24)),
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveHelper.padding(24),
+            ),
             child: Column(
               children: [
                 SizedBox(height: ResponsiveHelper.spacing(24)),
@@ -61,18 +63,22 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       controller.profileImage.value != null
                           ? CircleAvatar(
-                        radius: ResponsiveHelper.width(45),
-                        backgroundImage: FileImage(controller.profileImage.value!),
-                      )
+                              radius: ResponsiveHelper.width(45),
+                              backgroundImage: FileImage(
+                                controller.profileImage.value!,
+                              ),
+                            )
                           : UserAvatar(
-                        imagePath: controller.userProfile.value?.avatar,
-                        radius: ResponsiveHelper.width(45),
-                      ),
+                              imagePath: controller.userProfile.value?.avatar,
+                              radius: ResponsiveHelper.width(45),
+                            ),
                       if (controller.isEditing)
                         GestureDetector(
                           onTap: controller.pickImageFromGallery,
                           child: Container(
-                            padding: EdgeInsets.all(ResponsiveHelper.padding(6)),
+                            padding: EdgeInsets.all(
+                              ResponsiveHelper.padding(6),
+                            ),
                             decoration: const BoxDecoration(
                               color: Colors.white,
                               shape: BoxShape.circle,
@@ -135,7 +141,6 @@ class ProfileScreen extends StatelessWidget {
         fontSize: ResponsiveHelper.fontSize(16),
         fontWeight: FontWeight.w400,
         color: AppColors.textBlack,
-
       ),
     ),
   );
@@ -155,22 +160,32 @@ class ProfileScreen extends StatelessWidget {
         filled: true,
         fillColor: enabled ? AppColors.errorColor : AppColors.white,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.borderRadius(12),
+          ),
           borderSide: BorderSide(color: AppColors.greyShade), // fallback
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.borderRadius(12),
+          ),
           borderSide: BorderSide(color: AppColors.greyShade), // idle border
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
-          borderSide: BorderSide(color: AppColors.greyShade, width: 1), // focused border
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.borderRadius(12),
+          ),
+          borderSide: BorderSide(
+            color: AppColors.greyShade,
+            width: 1,
+          ), // focused border
         ),
         disabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.borderRadius(12),
+          ),
           borderSide: BorderSide(color: AppColors.greyShade), // disabled border
         ),
-
       ),
     );
   }

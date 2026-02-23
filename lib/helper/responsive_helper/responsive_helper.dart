@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 /// Responsive Helper for perfect scaling on iPhone and iPad
 class ResponsiveHelper {
   static late double _screenWidth;
@@ -34,7 +33,6 @@ class ResponsiveHelper {
     }
     return phoneSize;
   }
-
 
   /// Title FontSize
   static double titleFontSize(double phoneSize) {
@@ -140,8 +138,6 @@ class ResponsiveHelper {
     return phoneHeight;
   }
 
-
-
   /// EdgeInsets.all responsive
   static EdgeInsets all(double value) {
     return EdgeInsets.all(padding(value));
@@ -154,8 +150,4 @@ class ResponsiveHelper {
       vertical: padding(vertical),
     );
   }
-
-
-
-
 }

@@ -39,20 +39,21 @@ class Messages {
   Receiver? receiver;
   bool? isMine;
 
-  Messages(
-      {this.id,
-        this.chatRoomId,
-        this.senderId,
-        this.receiverId,
-        this.message,
-        this.type,
-        this.isRead,
-        this.isDelivered,
-        this.createdAt,
-        this.updatedAt,
-        this.sender,
-        this.receiver,
-        this.isMine});
+  Messages({
+    this.id,
+    this.chatRoomId,
+    this.senderId,
+    this.receiverId,
+    this.message,
+    this.type,
+    this.isRead,
+    this.isDelivered,
+    this.createdAt,
+    this.updatedAt,
+    this.sender,
+    this.receiver,
+    this.isMine,
+  });
 
   Messages.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -65,12 +66,11 @@ class Messages {
     isDelivered = json['is_delivered'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    sender =
-    json['sender'] != null ? Sender.fromJson(json['sender']) : null;
+    sender = json['sender'] != null ? Sender.fromJson(json['sender']) : null;
     receiver = json['receiver'] != null
         ? Receiver.fromJson(json['receiver'])
         : null;
-    isMine = json['is_mine']??false;
+    isMine = json['is_mine'] ?? false;
   }
 
   Map<String, dynamic> toJson() {
@@ -106,7 +106,7 @@ class Sender {
   Sender.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     nickName = json['nick_name'];
-    avatar = json['avatar']??'';
+    avatar = json['avatar'] ?? '';
   }
 
   Map<String, dynamic> toJson() {

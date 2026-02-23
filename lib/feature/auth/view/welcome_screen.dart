@@ -263,9 +263,6 @@
 //   );
 // }
 
-
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -294,10 +291,6 @@ class WelcomeScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-
-
-
-
               Container(
                 height: size.height * 0.40,
                 width: double.infinity,
@@ -314,20 +307,16 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
                 child: Stack(
-
                   children: [
                     /// LANGUAGE TOGGLE
-                   // SizedBox(height: ResponsiveHelper.spacing(8)),
+                    // SizedBox(height: ResponsiveHelper.spacing(8)),
                     //const LanguageToggleWidget(),
                     // LANGUAGE TOGGLE
                     Positioned(
                       top: 16,
-                      right: 16,  // 👈 push to right side
+                      right: 16, // 👈 push to right side
                       child: const LanguageToggleWidget(),
                     ),
-
-
-
 
                     _avatar(
                       AssetsPath.person1,
@@ -381,10 +370,9 @@ class WelcomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-          
-          
+
               SizedBox(height: ResponsiveHelper.spacing(24)),
-          
+
               // TITLE + FLOATING ICON
               Stack(
                 alignment: Alignment.topCenter,
@@ -392,9 +380,7 @@ class WelcomeScreen extends StatelessWidget {
                 children: [
                   // TEXT CONTENT
                   Padding(
-                    padding: EdgeInsets.only(
-                      top: ResponsiveHelper.spacing(24),
-                    ),
+                    padding: EdgeInsets.only(top: ResponsiveHelper.spacing(24)),
                     child: Column(
                       children: [
                         Text(
@@ -405,9 +391,9 @@ class WelcomeScreen extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-          
+
                         SizedBox(height: ResponsiveHelper.spacing(4)),
-          
+
                         Text(
                           'welcome_message1'.tr,
                           textAlign: TextAlign.center,
@@ -435,11 +421,11 @@ class WelcomeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-          
+
                   // FLOATING CHAT ICON
                   Positioned(
                     top: -ResponsiveHelper.spacing(2),
-                    left:0,
+                    left: 0,
                     child: Container(
                       width: ResponsiveHelper.width(40),
                       height: ResponsiveHelper.height(40),
@@ -448,14 +434,12 @@ class WelcomeScreen extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),*/
                       padding: const EdgeInsets.all(0),
-                      child: const CustomImage(
-                        imageSrc: AssetsPath.chat,
-                      ),
+                      child: const CustomImage(imageSrc: AssetsPath.chat),
                     ),
                   ),
                 ],
               ),
-          
+
               SizedBox(height: ResponsiveHelper.spacing(24)),
               //
               // /// LANGUAGE TOGGLE
@@ -467,7 +451,7 @@ class WelcomeScreen extends StatelessWidget {
               // ),
               //
               SizedBox(height: ResponsiveHelper.spacing(12)),
-          
+
               // SIGN IN BUTTON
               Padding(
                 padding: EdgeInsets.symmetric(
@@ -482,9 +466,9 @@ class WelcomeScreen extends StatelessWidget {
                   textColor: AppColors.blue,
                 ),
               ),
-          
+
               SizedBox(height: ResponsiveHelper.spacing(8)),
-          
+
               // SIGN UP BUTTON
               /*Padding(
                 padding: EdgeInsets.symmetric(
@@ -512,7 +496,7 @@ class WelcomeScreen extends StatelessWidget {
                   textColor: Colors.white,
                 ),
               ),
-          
+
               SizedBox(height: ResponsiveHelper.spacing(24)),
             ],
           ),
@@ -523,13 +507,13 @@ class WelcomeScreen extends StatelessWidget {
 
   // Avatar Widget with percentage-based positioning
   Widget _avatar(
-      String image, {
-        double? topPercent,
-        double? leftPercent,
-        double? rightPercent,
-        required double radius,
-        required Size size,
-      }) {
+    String image, {
+    double? topPercent,
+    double? leftPercent,
+    double? rightPercent,
+    required double radius,
+    required Size size,
+  }) {
     return Positioned(
       top: topPercent != null ? size.height * topPercent : null,
       left: leftPercent != null ? size.width * leftPercent : null,
@@ -537,7 +521,6 @@ class WelcomeScreen extends StatelessWidget {
       child: CircleAvatar(radius: radius, backgroundImage: AssetImage(image)),
     );
   }
-
 }
 
 void _showAgeConfirmationDialog(BuildContext context) {
@@ -546,13 +529,8 @@ void _showAgeConfirmationDialog(BuildContext context) {
     barrierDismissible: false,
     builder: (context) {
       return AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: Text(
-          'age_confirmation'.tr,
-          textAlign: TextAlign.center,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text('age_confirmation'.tr, textAlign: TextAlign.center),
         content: Text(
           '16_or_not'.tr,
           style: context.titleSmall,
@@ -599,7 +577,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
                 // YES BUTTON
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:AppColors.blue,
+                    backgroundColor: AppColors.blue,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

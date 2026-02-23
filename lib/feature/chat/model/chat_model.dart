@@ -1,4 +1,3 @@
-
 // class ChatModel {
 //   final String id;
 //   final String name;
@@ -25,28 +24,6 @@
 //   }
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class ChatModel {
   String? id;
   String? avatar;
@@ -55,16 +32,16 @@ class ChatModel {
   String? createdAt;
   ExistingRoom2? existingRoom;
 
-  ChatModel(
-      {this.id,
-        this.avatar,
-        this.nickName,
-        this.designation,
+  ChatModel({
+    this.id,
+    this.avatar,
+    this.nickName,
+    this.designation,
 
-        this.createdAt,
+    this.createdAt,
 
-        this.existingRoom
-      });
+    this.existingRoom,
+  });
 
   ChatModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -97,12 +74,6 @@ class ChatModel {
   }
 }
 
-
-
-
-
-
-
 class ExistingRoom2 {
   String? id;
   String? user1Id;
@@ -110,8 +81,13 @@ class ExistingRoom2 {
   String? createdAt;
   String? updatedAt;
 
-  ExistingRoom2(
-      {this.id, this.user1Id, this.user2Id, this.createdAt, this.updatedAt});
+  ExistingRoom2({
+    this.id,
+    this.user1Id,
+    this.user2Id,
+    this.createdAt,
+    this.updatedAt,
+  });
 
   ExistingRoom2.fromJson(Map<String, dynamic> json) {
     id = json['id'];

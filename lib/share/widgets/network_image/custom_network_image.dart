@@ -80,23 +80,28 @@ class CustomNetworkImage extends StatelessWidget {
           borderRadius: borderRadius,
           shape: boxShape,
           color: backgroundColor,
-          image: DecorationImage(image: imageProvider, fit: BoxFit.cover, colorFilter: colorFilter),
+          image: DecorationImage(
+            image: imageProvider,
+            fit: BoxFit.cover,
+            colorFilter: colorFilter,
+          ),
         ),
         child: child,
       ),
       placeholder: (context, url) => CircularProgressIndicator(),
-      errorWidget: (context, url, error){
-        return errorWidget??Container(
-          height: height,
-          width: width,
-          decoration: BoxDecoration(
-            border: border,
-            color: Colors.grey.withValues(alpha: 0.6),
-            borderRadius: borderRadius,
-            shape: boxShape,
-          ),
-          child: const Icon(Icons.error),
-        );
+      errorWidget: (context, url, error) {
+        return errorWidget ??
+            Container(
+              height: height,
+              width: width,
+              decoration: BoxDecoration(
+                border: border,
+                color: Colors.grey.withValues(alpha: 0.6),
+                borderRadius: borderRadius,
+                shape: boxShape,
+              ),
+              child: const Icon(Icons.error),
+            );
       },
     );
   }

@@ -4,7 +4,6 @@ import 'package:platchatapp/core/service/storage_service.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -42,7 +41,7 @@ class AppSocket {
 
   ///<------------------ Internal Connect ------------------>
   static void _connectToSocket(String userId) {
-    final socketUrl = ApiUrl.socketUrl(userId:userId);
+    final socketUrl = ApiUrl.socketUrl(userId: userId);
     debugPrint('Connecting socket with userId: $userId → $socketUrl');
 
     socket = io.io(

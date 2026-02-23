@@ -15,7 +15,8 @@ class AppToast {
         ? "Something went wrong"
         : message!;
 
-    final Color defaultBgColor = backgroundColor ??
+    final Color defaultBgColor =
+        backgroundColor ??
         switch (type) {
           AppToastType.success => Colors.green.shade600,
           AppToastType.error => Colors.red.shade600,
@@ -37,25 +38,28 @@ class AppToast {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       duration: duration,
       icon: switch (type) {
-        AppToastType.success =>
-        const Icon(Icons.check_circle, color: Colors.white),
-        AppToastType.error =>
-        const Icon(Icons.error, color: Colors.white),
-        AppToastType.warning =>
-        const Icon(Icons.warning, color: Colors.white),
-        AppToastType.info =>
-        const Icon(Icons.info, color: Colors.white),
+        AppToastType.success => const Icon(
+          Icons.check_circle,
+          color: Colors.white,
+        ),
+        AppToastType.error => const Icon(Icons.error, color: Colors.white),
+        AppToastType.warning => const Icon(Icons.warning, color: Colors.white),
+        AppToastType.info => const Icon(Icons.info, color: Colors.white),
       },
       shouldIconPulse: false,
       animationDuration: const Duration(milliseconds: 250),
     );
   }
 
-  static void success({String? message}) => _show(message: message, type: AppToastType.success);
+  static void success({String? message}) =>
+      _show(message: message, type: AppToastType.success);
 
-  static void error({required String message}) => _show(message: message, type: AppToastType.error);
+  static void error({required String message}) =>
+      _show(message: message, type: AppToastType.error);
 
-  static void warning({required String message}) => _show(message: message, type: AppToastType.warning);
+  static void warning({required String message}) =>
+      _show(message: message, type: AppToastType.warning);
 
-  static void info({required String message}) => _show(message: message, type: AppToastType.info);
+  static void info({required String message}) =>
+      _show(message: message, type: AppToastType.info);
 }

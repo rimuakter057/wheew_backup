@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 
-
 class InboxScreen extends StatefulWidget {
   const InboxScreen({super.key});
 
@@ -51,25 +50,17 @@ class _InboxScreenState extends State<InboxScreen>
             child: ListView(
               padding: EdgeInsets.all(ResponsiveHelper.padding(16)),
               children: [
+                _leftBubble(text: 'Heyy!!! Alexx', delay: 0.0),
                 _leftBubble(
-                  text: 'Heyy!!! Alexx',
-                  delay: 0.0,
-                ),
-                _leftBubble(
-                  text: 'when are we meeting its been so longgg since we meeted.',
+                  text:
+                      'when are we meeting its been so longgg since we meeted.',
                   delay: 0.2,
                 ),
-                _rightBubble(
-                  text: 'Hyyy... georg.',
-                  delay: 0.4,
-                ),
-                _rightBubble(
-                  text: 'next week for sure.',
-                  delay: 0.6,
-                ),
+                _rightBubble(text: 'Hyyy... georg.', delay: 0.4),
+                _rightBubble(text: 'next week for sure.', delay: 0.6),
                 _rightBubble(
                   text:
-                  'Lorem ipsum dolor sit amet\nI promise upcoming sun we will meet for sure.',
+                      'Lorem ipsum dolor sit amet\nI promise upcoming sun we will meet for sure.',
                   delay: 0.8,
                 ),
               ],
@@ -160,9 +151,7 @@ class _InboxScreenState extends State<InboxScreen>
           child: Container(
             margin: EdgeInsets.only(bottom: ResponsiveHelper.spacing(12)),
             padding: EdgeInsets.all(ResponsiveHelper.padding(14)),
-            constraints: BoxConstraints(
-              maxWidth: ResponsiveHelper.width(260),
-            ),
+            constraints: BoxConstraints(maxWidth: ResponsiveHelper.width(260)),
             decoration: BoxDecoration(
               color: color,
               borderRadius: BorderRadius.circular(
@@ -193,9 +182,7 @@ class _InboxScreenState extends State<InboxScreen>
         ResponsiveHelper.padding(16),
       ),
       child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: ResponsiveHelper.padding(16),
-        ),
+        padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(16)),
         height: ResponsiveHelper.buttonHeight(56),
         decoration: BoxDecoration(
           color: Colors.black87,

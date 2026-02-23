@@ -52,7 +52,6 @@ class AppRouter {
         path: RoutePath.signUp,
         name: RouteName.signUp,
         builder: (_, _) {
-
           Get.lazyPut<AuthController>(() => AuthController());
 
           return const SignUpScreen();
@@ -70,29 +69,23 @@ class AppRouter {
         builder: (_, _) => const BlockListScreen(),
       ),
 
-
-
       GoRoute(
         path: RoutePath.forgotPassword,
         name: RouteName.forgotPassword,
         builder: (context, state) {
-
           return ForgotPasswordScreen();
         },
       ),
-
 
       GoRoute(
         path: RoutePath.otp,
         name: RouteName.otp,
         builder: (context, state) {
-
           final email = state.extra as String? ?? '';
 
           debugPrint("Router email: $email");
 
           return OtpScreen(email: email);
-
         },
       ),
       GoRoute(
@@ -103,12 +96,10 @@ class AppRouter {
           final otpToken = extra["otpToken"] as String? ?? '';
           final email = extra["email"] as String? ?? '';
 
-          return ResetPasswordScreen(
-            otpToken: otpToken,
-            email: email,
-          );
+          return ResetPasswordScreen(otpToken: otpToken, email: email);
         },
       ),
+
       ///----------All chat list-----------
       GoRoute(
         path: RoutePath.chatList,
@@ -146,7 +137,7 @@ class AppRouter {
       GoRoute(
         path: RoutePath.profile,
         name: RouteName.profile,
-        builder: (_, _) =>  ProfileScreen(),
+        builder: (_, _) => ProfileScreen(),
       ),
     ],
   );

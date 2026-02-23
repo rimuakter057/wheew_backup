@@ -4,7 +4,7 @@ class ApiUrl {
   // Local
   //static const String baseUrl = 'http://10.10.20.44:8003';
 
-// Production
+  // Production
   //http://13.50.99.165:8003
   static const baseSocketUrl = 'ws://13.50.99.165:8003';
   static const String baseUrl = 'http://13.50.99.165:8003';
@@ -12,7 +12,6 @@ class ApiUrl {
 
   static String socketUrl({required String userId}) =>
       "$baseSocketUrl?userId=$userId";
-
 
   // Fixed endpoints to match your backend
   static const String register = '/auth/register';
@@ -31,40 +30,19 @@ class ApiUrl {
   static const String searchUsers = '/users/search';
   static const String updateProfile = '/users/';
 
-
-
-
-  static const String blockList='/users/block-list';
-  static const String unblock='/users/unblock';
-  static const String block='/users/block';
+  static const String blockList = '/users/block-list';
+  static const String unblock = '/users/unblock';
+  static const String block = '/users/block';
 
   ///terms and privacy==========================
 
+  static const String terms =
+      "http://10.10.20.16:6010/terms-and-condition-public";
+  static const String privacy = "http://10.10.20.16:6010/privacy-policy-public";
 
-static const String terms="http://10.10.20.16:6010/terms-and-condition-public";
-static const String privacy="http://10.10.20.16:6010/privacy-policy-public";
+  ///forget section==================================
 
-///forget section==================================
-
-
-static const String forget="/users/forget-password";
-static const String verifyOtp="/users/verify-otp";
-static const String reset="/users/reset-password";
-
-
-
-
-
-
-
-
-
-
-
-
-
+  static const String forget = "/users/forget-password";
+  static const String verifyOtp = "/users/verify-otp";
+  static const String reset = "/users/reset-password";
 }
-
-
-
-

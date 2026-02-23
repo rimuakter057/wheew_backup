@@ -11,7 +11,6 @@ import '../repository/profile_controller.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../share/widgets/avatar/user_avatar.dart';
 
-
 class AppMenuDrawer extends StatelessWidget {
   const AppMenuDrawer({super.key});
 
@@ -36,15 +35,15 @@ class AppMenuDrawer extends StatelessWidget {
                   children: [
                     profileController.profileImage.value != null
                         ? CircleAvatar(
-                      radius: ResponsiveHelper.width(28),
-                      backgroundImage: FileImage(
-                        profileController.profileImage.value!,
-                      ),
-                    )
+                            radius: ResponsiveHelper.width(28),
+                            backgroundImage: FileImage(
+                              profileController.profileImage.value!,
+                            ),
+                          )
                         : UserAvatar(
-                      imagePath: user?.avatar,
-                      radius: ResponsiveHelper.width(28),
-                    ),
+                            imagePath: user?.avatar,
+                            radius: ResponsiveHelper.width(28),
+                          ),
                     SizedBox(width: ResponsiveHelper.spacing(12)),
                     Expanded(
                       child: Text(
@@ -82,9 +81,7 @@ class AppMenuDrawer extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => WebViewScreen(
-                        url: ApiUrl.terms
-                    ),
+                    builder: (_) => WebViewScreen(url: ApiUrl.terms),
                   ),
                 );
               },
@@ -108,16 +105,14 @@ class AppMenuDrawer extends StatelessWidget {
               ),
               title: Text(
                 'language'.tr,
-                style: TextStyle(
-                  fontSize: ResponsiveHelper.fontSize(16),
+                style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
+              ),
+              subtitle: Obx(
+                () => Text(
+                  languageController.currentLanguageDisplay,
+                  style: TextStyle(fontSize: ResponsiveHelper.fontSize(12)),
                 ),
               ),
-              subtitle: Obx(() => Text(
-                languageController.currentLanguageDisplay,
-                style: TextStyle(
-                  fontSize: ResponsiveHelper.fontSize(12),
-                ),
-              )),
               onTap: () => _showLanguageBottomSheet(context),
             ),
 
@@ -150,25 +145,18 @@ class AppMenuDrawer extends StatelessWidget {
   }
 
   Widget _drawerItem(
-      BuildContext context, {
-        required IconData icon,
-        required String title,
-        required VoidCallback onTap,
-      }) {
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
     return Padding(
-      padding: EdgeInsets.only(
-        bottom: ResponsiveHelper.spacing(8),
-      ),
+      padding: EdgeInsets.only(bottom: ResponsiveHelper.spacing(8)),
       child: ListTile(
-        leading: Icon(
-          icon,
-          size: ResponsiveHelper.iconSize(24),
-        ),
+        leading: Icon(icon, size: ResponsiveHelper.iconSize(24)),
         title: Text(
           title,
-          style: TextStyle(
-            fontSize: ResponsiveHelper.fontSize(16),
-          ),
+          style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
         ),
         onTap: onTap,
       ),
@@ -202,8 +190,7 @@ void _showLanguageBottomSheet(BuildContext context) {
               const SizedBox(height: 12),
 
               ...controller.availableLanguageNames.map((language) {
-                final isSelected =
-                controller.isLanguageSelected(language);
+                final isSelected = controller.isLanguageSelected(language);
 
                 return ListTile(
                   title: Text(language),
@@ -217,7 +204,7 @@ void _showLanguageBottomSheet(BuildContext context) {
                     }
                   },
                 );
-              }).toList(),
+              }),
             ],
           );
         }),

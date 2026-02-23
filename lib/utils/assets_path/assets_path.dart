@@ -10,7 +10,6 @@ class AssetsPath {
   //icons====================================
   static const String send = '${_iconsBase}send.svg';
 
-
   // Animations
   static const String chatJson = '${_animationBase}Chat.json';
 
@@ -26,7 +25,4 @@ class AssetsPath {
   static const String chat = '${_imagesBase}chat.png';
   static const String italy = '${_iconsBase}italy.png';
   static const String uk = '${_iconsBase}uk.png';
-
-
-
 }

@@ -4,52 +4,42 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
-
-
-
-
 class BlockByMeWidget extends StatelessWidget {
   final VoidCallback onUnblock;
   final String name;
   const BlockByMeWidget({
     super.key,
-    required this.onUnblock, required this.name,
+    required this.onUnblock,
+    required this.name,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding:  ResponsiveHelper.all(16),
+      padding: ResponsiveHelper.all(16),
 
-      margin:  ResponsiveHelper.all(12),
+      margin: ResponsiveHelper.all(12),
 
       decoration: BoxDecoration(
-
         color: Colors.blue.shade50,
 
         borderRadius: BorderRadius.circular(12),
 
-        border: Border.all(
-          color: AppColors.blue,
-        ),
-
+        border: Border.all(color: AppColors.blue),
       ),
 
       child: Column(
-
         children: [
-
-
           Text(
             "you've_blocked $name".tr,
-            style:GoogleFonts.poppins (
+            style: GoogleFonts.poppins(
               fontSize: ResponsiveHelper.fontSize(16),
               fontWeight: FontWeight.w400,
-                color: AppColors.black
+              color: AppColors.black,
             ),
           ),
-          SizedBox(height: ResponsiveHelper.spacing(4),),
+          SizedBox(height: ResponsiveHelper.spacing(4)),
           Text(
             "this_user_won't_be_able".tr,
             textAlign: TextAlign.center,
@@ -59,27 +49,23 @@ class BlockByMeWidget extends StatelessWidget {
               color: Colors.grey[600],
             ),
           ),
-          SizedBox(height: ResponsiveHelper.spacing(12),),
+          SizedBox(height: ResponsiveHelper.spacing(12)),
 
           ElevatedButton(
-
             onPressed: onUnblock,
 
-            style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.blue
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.blue),
 
-            child:  Text("unblock".tr,style:GoogleFonts.poppins(
+            child: Text(
+              "unblock".tr,
+              style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(16),
-                fontWeight: FontWeight.w500
-            ),),
-
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
-
         ],
-
       ),
-
     );
   }
 }

@@ -79,15 +79,6 @@ class ProfileController extends GetxController {
   //
   //
 
-
-
-
-
-
-
-
-
-
   /// 🔹 Load user data from SharedPreferences
   Future<void> loadUserData() async {
     isLoading = true;
@@ -117,16 +108,6 @@ class ProfileController extends GetxController {
     isLoading = false;
     update();
   }
-
-
-
-
-
-
-
-
-
-
 
   /// 🔹 Update ONLY avatar
   Future<void> updateProfile() async {
@@ -207,8 +188,6 @@ class ProfileController extends GetxController {
     super.onClose();
   }
 }
-
-
 
 /*
 import 'dart:convert';

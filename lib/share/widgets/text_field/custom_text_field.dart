@@ -128,7 +128,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
               keyboardType: widget.keyboardType,
               textInputAction: widget.textInputAction,
               cursorColor: widget.cursorColor,
-              style: widget.inputTextStyle ??
+              style:
+                  widget.inputTextStyle ??
                   GoogleFonts.poppins(fontSize: ResponsiveHelper.fontSize(16)),
               onChanged: widget.onChanged,
               maxLines: widget.maxLines,
@@ -137,7 +138,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
               validator: widget.validator,
               decoration: InputDecoration(
                 fillColor: widget.fillColor,
-                contentPadding: widget.contentPadding ??
+                contentPadding:
+                    widget.contentPadding ??
                     EdgeInsets.symmetric(
                       horizontal: ResponsiveHelper.padding(12),
                       vertical: ResponsiveHelper.padding(16),
@@ -147,32 +149,35 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 errorMaxLines: 2,
                 errorStyle: TextStyle(fontSize: ResponsiveHelper.fontSize(12)),
                 hintText: displayHint,
-                hintStyle: GoogleFonts.poppins(fontSize: ResponsiveHelper.fontSize(16)),
+                hintStyle: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(16),
+                ),
                 filled: widget.fillColor != null,
                 prefixIcon: widget.prefixIcon,
                 prefix: widget.prefix,
                 suffix: widget.suffix,
                 suffixIcon: shouldObscure
                     ? GestureDetector(
-                  onTap: toggle,
-                  child: Padding(
-                    padding: EdgeInsets.all(ResponsiveHelper.padding(10)),
-                    child: obscureText
-                        ? Icon(
-                      Icons.visibility_off_outlined,
-                      color: AppColors.secondaryText,
-                      size: ResponsiveHelper.iconSize(20),
-                    )
-                        : Icon(
-                      Icons.visibility_outlined,
-                      color: AppColors.secondaryText,
-                      size: ResponsiveHelper.iconSize(20),
-                    ),
-                  ),
-                )
+                        onTap: toggle,
+                        child: Padding(
+                          padding: EdgeInsets.all(ResponsiveHelper.padding(10)),
+                          child: obscureText
+                              ? Icon(
+                                  Icons.visibility_off_outlined,
+                                  color: AppColors.secondaryText,
+                                  size: ResponsiveHelper.iconSize(20),
+                                )
+                              : Icon(
+                                  Icons.visibility_outlined,
+                                  color: AppColors.secondaryText,
+                                  size: ResponsiveHelper.iconSize(20),
+                                ),
+                        ),
+                      )
                     : widget.suffixIcon,
                 suffixIconColor: widget.suffixIconColor,
-                border: widget.border ??
+                border:
+                    widget.border ??
                     OutlineInputBorder(
                       borderRadius: BorderRadius.circular(
                         ResponsiveHelper.borderRadius(12),
@@ -182,7 +187,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         width: ResponsiveHelper.borderWidth(1),
                       ),
                     ),
-                focusedBorder: widget.focusedBorder ??
+                focusedBorder:
+                    widget.focusedBorder ??
                     OutlineInputBorder(
                       borderRadius: BorderRadius.circular(
                         ResponsiveHelper.borderRadius(12),
@@ -192,7 +198,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         width: ResponsiveHelper.borderWidth(2),
                       ),
                     ),
-                enabledBorder: widget.enabledBorder ??
+                enabledBorder:
+                    widget.enabledBorder ??
                     OutlineInputBorder(
                       borderRadius: BorderRadius.circular(
                         ResponsiveHelper.borderRadius(12),

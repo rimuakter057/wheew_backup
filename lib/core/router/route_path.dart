@@ -6,12 +6,11 @@ class RoutePath {
   static const chatList = '/chat-list';
   static const searchList = '/search-list';
   static const inbox = '/inbox';
-  static const message='/message';
+  static const message = '/message';
   static const terms = '/terms';
   static const block = '/block';
   static const profile = '/profile';
   static const forgotPassword = '/forgot-password';
   static const otp = '/otp';
   static const resetPassword = '/reset-password';
-
 }

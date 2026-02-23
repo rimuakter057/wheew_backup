@@ -1,8 +1,5 @@
-
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
-
-
 
 class ImageHandler {
   static String imagesHandle(String? url, {bool isProfile = false}) {

@@ -6,13 +6,14 @@ class BlockModel {
   String? updatedAt;
   BlockedUser? blockedUser;
 
-  BlockModel(
-      {this.id,
-        this.userId,
-        this.blockedUserId,
-        this.createdAt,
-        this.updatedAt,
-        this.blockedUser});
+  BlockModel({
+    this.id,
+    this.userId,
+    this.blockedUserId,
+    this.createdAt,
+    this.updatedAt,
+    this.blockedUser,
+  });
 
   BlockModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];

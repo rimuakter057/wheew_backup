@@ -38,11 +38,10 @@ class PrimaryButton extends StatelessWidget {
         ),
         child: Text(
           title,
-          style:GoogleFonts.poppins(
-              fontSize: ResponsiveHelper.fontSize(16),
-              color: textColor,
-              fontWeight: FontWeight.w400
-
+          style: GoogleFonts.poppins(
+            fontSize: ResponsiveHelper.fontSize(16),
+            color: textColor,
+            fontWeight: FontWeight.w400,
           ),
         ),
       ),

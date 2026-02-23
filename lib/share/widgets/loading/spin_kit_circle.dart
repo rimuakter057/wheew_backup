@@ -10,11 +10,11 @@ class SpinKitCircle extends StatefulWidget {
     this.itemBuilder,
     this.duration = const Duration(milliseconds: 1200),
     this.controller,
-  })  : assert(
-
-  !(itemBuilder is IndexedWidgetBuilder && color is Color) && !(itemBuilder == null && color == null),
-  'You should specify either a itemBuilder or a color',
-  );
+  }) : assert(
+         !(itemBuilder is IndexedWidgetBuilder && color is Color) &&
+             !(itemBuilder == null && color == null),
+         'You should specify either a itemBuilder or a color',
+       );
 
   final Color? color;
   final double size;
@@ -26,7 +26,8 @@ class SpinKitCircle extends StatefulWidget {
   State<SpinKitCircle> createState() => _SpinKitCircleState();
 }
 
-class _SpinKitCircleState extends State<SpinKitCircle> with SingleTickerProviderStateMixin {
+class _SpinKitCircleState extends State<SpinKitCircle>
+    with SingleTickerProviderStateMixin {
   static const _itemCount = 12;
 
   late AnimationController _controller;
@@ -35,7 +36,10 @@ class _SpinKitCircleState extends State<SpinKitCircle> with SingleTickerProvider
   void initState() {
     super.initState();
 
-    _controller = (widget.controller ?? AnimationController(vsync: this, duration: widget.duration))..repeat();
+    _controller =
+        (widget.controller ??
+              AnimationController(vsync: this, duration: widget.duration))
+          ..repeat();
   }
 
   @override
@@ -84,9 +88,9 @@ class _SpinKitCircleState extends State<SpinKitCircle> with SingleTickerProvider
   Widget _itemBuilder(int index) => widget.itemBuilder != null
       ? widget.itemBuilder!(context, index)
       : DecoratedBox(
-    decoration: BoxDecoration(
-      color: widget.color,
-      shape: BoxShape.circle,
-    ),
-  );
+          decoration: BoxDecoration(
+            color: widget.color,
+            shape: BoxShape.circle,
+          ),
+        );
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class TextFieldValidator {
-
   static String? Function(String?) required({required String errorText}) {
     return (value) {
       final trimmed = value?.trim() ?? '';
@@ -14,7 +13,9 @@ class TextFieldValidator {
     return (value) {
       final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) return "Email is required";
-      final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+      final emailRegex = RegExp(
+        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+      );
       if (!emailRegex.hasMatch(trimmed)) return "Enter a valid email address";
       return null;
     };
@@ -25,17 +26,22 @@ class TextFieldValidator {
       final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) return "Password is required";
       if (trimmed.length < 6) return "Password must be at least 6 characters";
-      if (!RegExp(r'[A-Z]').hasMatch(trimmed)) return "Password must contain at least one uppercase letter";
-      if (!RegExp(r'[0-9]').hasMatch(trimmed)) return "Password must contain at least one number";
+      if (!RegExp(r'[A-Z]').hasMatch(trimmed))
+        return "Password must contain at least one uppercase letter";
+      if (!RegExp(r'[0-9]').hasMatch(trimmed))
+        return "Password must contain at least one number";
       return null;
     };
   }
 
-  static String? Function(String?) confirmPassword(TextEditingController originalController) {
+  static String? Function(String?) confirmPassword(
+    TextEditingController originalController,
+  ) {
     return (value) {
       final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) return "Confirm password is required";
-      if (trimmed != originalController.text.trim()) return "Passwords do not match";
+      if (trimmed != originalController.text.trim())
+        return "Passwords do not match";
       return null;
     };
   }
@@ -45,12 +51,15 @@ class TextFieldValidator {
       final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) return "OTP is required";
       if (trimmed.length != 6) return "OTP must be 6 digits";
-      if (!RegExp(r'^[0-9]{6}$').hasMatch(trimmed)) return "OTP must contain only numbers";
+      if (!RegExp(r'^[0-9]{6}$').hasMatch(trimmed))
+        return "OTP must contain only numbers";
       return null;
     };
   }
 
-  static String? Function(String?) requiredField({String label = "This field"}) {
+  static String? Function(String?) requiredField({
+    String label = "This field",
+  }) {
     return (value) {
       final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) return "$label is required";
@@ -132,7 +141,8 @@ class TextFieldValidator {
     return (value) {
       final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) return "Description is required";
-      if (trimmed.length < minLength) return "Description must be at least $minLength characters";
+      if (trimmed.length < minLength)
+        return "Description must be at least $minLength characters";
       return null;
     };
   }

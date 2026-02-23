@@ -32,14 +32,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-           // SizedBox(height: ResponsiveHelper.spacing(20)),
-
+            // SizedBox(height: ResponsiveHelper.spacing(20)),
             Text(
               'forgot_password'.tr,
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.titleFontSize(18),
                 fontWeight: FontWeight.w600,
-                color: AppColors.textBlack
+                color: AppColors.textBlack,
               ),
             ),
 
@@ -69,15 +68,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               child: PrimaryButton(
                 title: 'send_otp'.tr,
 
-
                 onTap: () async {
-
                   if (emailController.text.isEmpty) {
-
                     ScaffoldMessenger.of(context).showSnackBar(
-                       SnackBar(
-                        content: Text("email_required".tr),
-                      ),
+                      SnackBar(content: Text("email_required".tr)),
                     );
 
                     return;
@@ -89,20 +83,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   );
 
                   if (success) {
-
-                    context.pushNamed(RouteName.otp,
+                    context.pushNamed(
+                      RouteName.otp,
                       extra: emailController.text.trim(),
-
                     );
 
                     emailController.clear();
-
                   }
-
                 },
-
-
-
               ),
             ),
 

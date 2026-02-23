@@ -4,7 +4,6 @@ import '../../../language/language_controller.dart';
 import '../../../utils/assets_path/assets_path.dart';
 import '../custom_image/custom_image.dart';
 
-
 class LanguageToggleWidget extends StatelessWidget {
   const LanguageToggleWidget({super.key});
 
@@ -54,8 +53,9 @@ class _CircleFlag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ImageType imageType =
-    iconPath.endsWith('svg') ? ImageType.svg : ImageType.png;
+    final ImageType imageType = iconPath.endsWith('svg')
+        ? ImageType.svg
+        : ImageType.png;
 
     // Outer size (border included)
     final double size = isSelected ? 46 : 38;
@@ -71,10 +71,7 @@ class _CircleFlag extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: isSelected
-              ? Border.all(
-            color: const Color(0xFF1976D2),
-            width: borderWidth,
-          )
+              ? Border.all(color: const Color(0xFF1976D2), width: borderWidth)
               : null,
         ),
         // 🔥 Flag fills inside border exactly

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class CustomContainer extends StatelessWidget {
   final Widget child; // Required
   final Color? backgroundColor;
@@ -13,7 +12,7 @@ class CustomContainer extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final double? vertical;
   final double? horizontal;
-final double?boarderWidth;
+  final double? boarderWidth;
   const CustomContainer({
     super.key,
     required this.child,
@@ -24,30 +23,37 @@ final double?boarderWidth;
     this.width,
     this.height,
 
-    this.margin, this.vertical, this.horizontal, this.borderRadius, this.boarderWidth,
+    this.margin,
+    this.vertical,
+    this.horizontal,
+    this.borderRadius,
+    this.boarderWidth,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding:EdgeInsets.symmetric(horizontal: horizontal??16,vertical: vertical??16),
+      padding: EdgeInsets.symmetric(
+        horizontal: horizontal ?? 16,
+        vertical: vertical ?? 16,
+      ),
       width: width,
-      height:height,
+      height: height,
       margin: margin,
       decoration: BoxDecoration(
         color: backgroundColor ?? Colors.white,
-        borderRadius:borderRadius?? BorderRadius.circular(radius ?? 8),
+        borderRadius: borderRadius ?? BorderRadius.circular(radius ?? 8),
         border: allSides
             ? Border.all(
-          color: borderColor ?? Colors.transparent,
-          width:boarderWidth?? 1,
-        )
+                color: borderColor ?? Colors.transparent,
+                width: boarderWidth ?? 1,
+              )
             : Border(
-          bottom: BorderSide(
-            color: borderColor ?? Colors.transparent,
-            width:boarderWidth?? 1,
-          ),
-        ),
+                bottom: BorderSide(
+                  color: borderColor ?? Colors.transparent,
+                  width: boarderWidth ?? 1,
+                ),
+              ),
       ),
       child: child,
     );

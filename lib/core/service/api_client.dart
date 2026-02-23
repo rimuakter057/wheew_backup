@@ -28,8 +28,7 @@ class ApiClient {
     required String uri,
     Map<String, dynamic>? body,
     Map<String, String>? headers,
-  }) async
-  {
+  }) async {
     // Check internet first
     if (!await _checkConnection()) {
       developer.log('❌ No Internet Connection', name: 'API');
@@ -100,8 +99,7 @@ class ApiClient {
     required String uri,
     Map<String, String>? headers,
     Map<String, String>? queryParams,
-  }) async
-  {
+  }) async {
     // Check internet first
     if (!await _checkConnection()) {
       developer.log('❌ No Internet Connection', name: 'API');
@@ -153,7 +151,7 @@ class ApiClient {
         final prettyJson = JsonEncoder.withIndent(
           '  ',
         ).convert(jsonDecode(response.body));
-         developer.log('Response Body:\n$prettyJson', name: 'API');
+        developer.log('Response Body:\n$prettyJson', name: 'API');
       } catch (e) {
         developer.log('Response Body (raw): ${response.body}', name: 'API');
       }
@@ -177,8 +175,7 @@ class ApiClient {
     required String uri,
     Map<String, dynamic>? body,
     Map<String, String>? headers,
-  }) async
-  {
+  }) async {
     if (!await _checkConnection()) {
       throw Exception('No Internet Connection');
     }
@@ -212,14 +209,6 @@ class ApiClient {
       rethrow;
     }
   }
-
-
-
-
-
-
-
-
 
   ///============================= PATCH REQUEST ================================
   // static Future<Response> patchData(
@@ -273,10 +262,6 @@ class ApiClient {
   // }
   //
 
-
-
-
-
   ///============================= PATCH REQUEST ================================
   static Future<http.Response> patchData({
     required String uri,
@@ -296,13 +281,13 @@ class ApiClient {
     // Prepare headers
     final mainHeaders = isJson
         ? {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $bearerToken',
-    }
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $bearerToken',
+          }
         : {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $bearerToken',
-    };
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $bearerToken',
+          };
 
     try {
       // Log request
@@ -316,17 +301,18 @@ class ApiClient {
       // Send PATCH request
       final response = await http
           .patch(
-        Uri.parse(ApiUrl.baseUrl + uri),
-        headers: headers ?? mainHeaders,
-        body: isJson ? jsonEncode(body) : body,
-      )
+            Uri.parse(ApiUrl.baseUrl + uri),
+            headers: headers ?? mainHeaders,
+            body: isJson ? jsonEncode(body) : body,
+          )
           .timeout(const Duration(seconds: 30));
 
       // Log response
       developer.log('📥 PATCH RESPONSE: ${response.statusCode}', name: 'API');
       try {
-        final prettyJson = JsonEncoder.withIndent('  ')
-            .convert(jsonDecode(response.body));
+        final prettyJson = JsonEncoder.withIndent(
+          '  ',
+        ).convert(jsonDecode(response.body));
         developer.log('Response Body:\n$prettyJson', name: 'API');
       } catch (e) {
         developer.log('Response Body (raw): ${response.body}', name: 'API');
@@ -341,19 +327,11 @@ class ApiClient {
     }
   }
 
-
-
-
-
-
-
-
   /// DELETE Request
   static Future<http.Response> deleteData({
     required String uri,
     Map<String, String>? headers,
-  }) async
-  {
+  }) async {
     if (!await _checkConnection()) {
       throw Exception('No Internet Connection');
     }
@@ -392,8 +370,7 @@ class ApiClient {
     required String method,
     Map<String, String>? fields,
     List<http.MultipartFile>? files,
-  }) async
-  {
+  }) async {
     if (!await _checkConnection()) {
       throw Exception('No Internet Connection');
     }
@@ -490,21 +467,4 @@ class ApiClient {
         return statusCode >= 200 && statusCode < 300 ? '✅ Success' : '❌ Error';
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

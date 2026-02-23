@@ -1,12 +1,12 @@
 class UserModel {
   final String nickName;
   final String licenceId;
-  final String? avatar;  // Made optional with ?
+  final String? avatar; // Made optional with ?
 
   UserModel({
     required this.nickName,
     required this.licenceId,
-    this.avatar,  // Removed required
+    this.avatar, // Removed required
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {

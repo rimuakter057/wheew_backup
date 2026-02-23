@@ -26,7 +26,8 @@ class LanguageController extends GetxController {
   Future<void> loadSavedLanguage() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final savedLanguage = prefs.getString(_languageKey) ?? 'Italian'; // 👈 Italian default
+      final savedLanguage =
+          prefs.getString(_languageKey) ?? 'Italian'; // 👈 Italian default
 
       selectedLanguage.value = savedLanguage;
       currentLocale.value = _getLocaleFromLanguage(savedLanguage);
@@ -75,7 +76,8 @@ class LanguageController extends GetxController {
   }
 
   Locale _getLocaleFromLanguage(String language) {
-    return availableLanguages[language] ?? const Locale('it', 'IT'); // 👈 Italian fallback
+    return availableLanguages[language] ??
+        const Locale('it', 'IT'); // 👈 Italian fallback
   }
 
   List<String> get availableLanguageNames {

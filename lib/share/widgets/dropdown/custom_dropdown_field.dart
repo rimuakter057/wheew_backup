@@ -33,8 +33,9 @@ class CustomDropdownField<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final message = "Field Is Required";
 
-    String? Function(T?)? validation =
-    (isRequired ? (val) => (val == null) ? message : null : null);
+    String? Function(T?)? validation = (isRequired
+        ? (val) => (val == null) ? message : null
+        : null);
     final validationFunction = validator ?? validation;
 
     final bool hasError = errorText != null && errorText!.isNotEmpty;
@@ -72,17 +73,19 @@ class CustomDropdownField<T> extends StatelessWidget {
         ),
       ),
       items: items
-          .map((item) => DropdownMenuItem<T>(
-        value: item,
-        child: Text(
-          labelBuilder?.call(item) ?? item.toString(),
-          style: TextStyle(
-            color: AppColors.secondaryText,
-            fontSize: ResponsiveHelper.fontSize(14),
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-      ))
+          .map(
+            (item) => DropdownMenuItem<T>(
+              value: item,
+              child: Text(
+                labelBuilder?.call(item) ?? item.toString(),
+                style: TextStyle(
+                  color: AppColors.secondaryText,
+                  fontSize: ResponsiveHelper.fontSize(14),
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          )
           .toList(),
       onChanged: enabled ? onChanged : null,
       validator: validationFunction,
@@ -95,18 +98,13 @@ class CustomDropdownField<T> extends StatelessWidget {
         padding: EdgeInsets.only(right: ResponsiveHelper.padding(8)),
       ),
       iconStyleData: IconStyleData(
-        icon: const Icon(
-          Icons.keyboard_arrow_down,
-          color: AppColors.black,
-        ),
+        icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.black),
         iconSize: ResponsiveHelper.iconSize(24),
       ),
       dropdownStyleData: DropdownStyleData(
         maxHeight: ResponsiveHelper.height(300),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(
-            ResponsiveHelper.borderRadius(8),
-          ),
+          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(8)),
           color: AppColors.white,
           boxShadow: [
             BoxShadow(

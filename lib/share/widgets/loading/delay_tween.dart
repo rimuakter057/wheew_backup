@@ -3,11 +3,7 @@ import 'dart:math' as math show sin, pi;
 import 'package:flutter/animation.dart';
 
 class DelayTween extends Tween<double> {
-  DelayTween({
-    super.begin,
-    super.end,
-    required this.delay,
-  });
+  DelayTween({super.begin, super.end, required this.delay});
 
   final double delay;
 

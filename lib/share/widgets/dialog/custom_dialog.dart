@@ -127,7 +127,8 @@ class AppDialog {
                   backgroundColor: backgroundColor ?? AppColors.white,
                   elevation: 10,
                   child: Padding(
-                    padding: padding ??
+                    padding:
+                        padding ??
                         EdgeInsets.symmetric(
                           horizontal: ResponsiveHelper.padding(20),
                           vertical: ResponsiveHelper.padding(16),
@@ -147,7 +148,8 @@ class AppDialog {
                             padding: EdgeInsets.all(
                               ResponsiveHelper.padding(12),
                             ),
-                            child: icon ??
+                            child:
+                                icon ??
                                 Icon(
                                   defaultIcon,
                                   color: typeColor,
@@ -158,14 +160,12 @@ class AppDialog {
                           Text(
                             title!,
                             textAlign: TextAlign.center,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge
+                            style: Theme.of(context).textTheme.titleLarge
                                 ?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: titleColor ?? AppColors.black,
-                              fontSize: ResponsiveHelper.fontSize(18),
-                            ),
+                                  fontWeight: FontWeight.w600,
+                                  color: titleColor ?? AppColors.black,
+                                  fontSize: ResponsiveHelper.fontSize(18),
+                                ),
                           ),
                         if (subtitle?.isNotEmpty ?? false)
                           Padding(
@@ -176,16 +176,15 @@ class AppDialog {
                             child: Text(
                               subtitle!,
                               textAlign: TextAlign.center,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
+                              style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
-                                color: subtitleColor ?? AppColors.black,
-                                fontSize: ResponsiveHelper.fontSize(14),
-                              ),
+                                    color: subtitleColor ?? AppColors.black,
+                                    fontSize: ResponsiveHelper.fontSize(14),
+                                  ),
                             ),
                           ),
-                        if ((actions?.isNotEmpty ?? false) || showDefaultButtons)
+                        if ((actions?.isNotEmpty ?? false) ||
+                            showDefaultButtons)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: actions ?? defaultButtons,

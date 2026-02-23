@@ -30,10 +30,7 @@ class AuthRepository {
   }) async {
     return await ApiClient.postData(
       uri: ApiUrl.login,
-      body: {
-        "identifier": identifier,
-        "password": password,
-      },
+      body: {"identifier": identifier, "password": password},
     );
   }
 }

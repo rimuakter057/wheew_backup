@@ -36,7 +36,10 @@ class ApiChecker {
     } else if (response.statusCode == 404) {
       errorMessage = '🔍 Resource not found';
       developer.log('❌ 404 Not Found', name: 'API');
-      developer.log('URL might be incorrect or endpoint doesn\'t exist', name: 'API');
+      developer.log(
+        'URL might be incorrect or endpoint doesn\'t exist',
+        name: 'API',
+      );
       developer.log('Response: ${response.body}', name: 'API');
       _showSnackBar(context, errorMessage);
     } else if (response.statusCode == 422) {
@@ -76,11 +79,17 @@ class ApiChecker {
       try {
         final body = jsonDecode(response.body);
         errorMessage = body['message'] ?? 'Error ${response.statusCode}';
-        developer.log('❌ Error ${response.statusCode}: $errorMessage', name: 'API');
+        developer.log(
+          '❌ Error ${response.statusCode}: $errorMessage',
+          name: 'API',
+        );
         developer.log('Response: ${response.body}', name: 'API');
       } catch (e) {
         errorMessage = 'Error ${response.statusCode}';
-        developer.log('❌ Error ${response.statusCode} (parse error)', name: 'API');
+        developer.log(
+          '❌ Error ${response.statusCode} (parse error)',
+          name: 'API',
+        );
       }
       _showSnackBar(context, errorMessage);
     }

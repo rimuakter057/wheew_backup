@@ -38,12 +38,14 @@ class _WebViewScreenState extends State<WebViewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title:  'terms_and_conditions'.tr,),
+      appBar: CustomAppBar(title: 'terms_and_conditions'.tr),
       body: Stack(
         children: [
           WebViewWidget(controller: _controller), // Display WebView
           if (isLoading)
-            const Center(child: CircularProgressIndicator()), // loading indicator
+            const Center(
+              child: CircularProgressIndicator(),
+            ), // loading indicator
         ],
       ),
     );
