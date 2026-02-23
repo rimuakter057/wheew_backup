@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -22,22 +24,20 @@ class _SignInScreenState extends State<SignInScreen> {
   final AuthController authController = Get.find<AuthController>();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController licenseController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
 
-  @override
-  void dispose() {
-    licenseController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   authController.licenseController.dispose();
+  //   authController.passwordController.dispose();
+  //   super.dispose();
+  // }
 
   Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
       bool success = await authController.login(
         context: context,
-        identifier: licenseController.text.trim(),
-        password: passwordController.text.trim(),
+        identifier: authController.licenseController.text.trim(),
+        password: authController.passwordController.text.trim(),
         rememberMe: true,
       );
 
@@ -45,6 +45,13 @@ class _SignInScreenState extends State<SignInScreen> {
       //  // context.goNamed(RouteName.chatList);
       // }
     }
+  }
+
+  @override
+  void initState() {
+    // TO DO: implement initState
+    authController.isRememberMeLoadData();
+    super.initState();
   }
 
   @override
@@ -73,7 +80,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
                     /// Email or License ID
                     CustomTextField(
-                      controller: licenseController,
+                      controller: authController.licenseController,
                       title: 'license_plate_or_nick_name'.tr,
                       hintText: 'enter_license_plate_or_nick_name'.tr,
                       validator: (value) =>
@@ -86,7 +93,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
                     /// Password
                     CustomTextField(
-                      controller: passwordController,
+                      controller: authController.passwordController,
                       title: 'password'.tr,
                       hintText: 'enter_your_password'.tr,
                       isPassword: true,
@@ -128,28 +135,32 @@ class _SignInScreenState extends State<SignInScreen> {
                       children: [
                         /// Remember me section
                         Flexible(
-                          child: Row(
-                            children: [
-                              Checkbox(
-                                value: false,
-                                onChanged: (value) {},
-                                activeColor: AppColors.blue,
-                              ),
+                          child: Obx(() {
+                            return Row(
+                              children: [
+                                Checkbox(
+                                  value: controller.isRememberMe.value,
+                                  onChanged: (value) {
+                                    controller.isRememberMeToggle();
+                                  },
+                                  activeColor: AppColors.blue,
+                                ),
 
-                              Flexible(
-                                child: Text(
-                                  "remember_me".tr,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: ResponsiveHelper.fontSize(14),
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.black,
+                                Flexible(
+                                  child: Text(
+                                    "remember_me".tr,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: ResponsiveHelper.fontSize(14),
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.black,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            );
+                          }),
                         ),
 
                         //  const Spacer(),

@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Response;
@@ -27,7 +29,6 @@ class AuthController extends GetxController {
   }
 
   /// ======================= LOGIN =======================
-
 
   // var isRememberMe = false.obs;
   //
@@ -82,20 +83,31 @@ class AuthController extends GetxController {
   //
   //
 
+  //========================== Remember Me ==========================
 
+  RxBool isRememberMe = false.obs;
 
+  void isRememberMeToggle() {
+    isRememberMe.toggle();
+  }
 
+  void isRememberMeLoadData() async {
+    String? savedUser = await SharePrefsHelper.getString(AppConst.loginUser);
+    String? savedPass = await SharePrefsHelper.getString(AppConst.loginPass);
 
+    licenseController.text = savedUser;
+    passwordController.text = savedPass;
+    isRememberMe.value = true;
+  }
 
-
-
+  final TextEditingController licenseController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   Future<bool> login({
     required BuildContext context,
     required String identifier,
     required String password,
     bool rememberMe = false,
-  }) async
-  {
+  }) async {
     _setLoading(true);
 
     final Response loginRes = await _repo.login(
@@ -106,15 +118,18 @@ class AuthController extends GetxController {
     _setLoading(false);
 
     if (loginRes.statusCode == 200) {
+      if (isRememberMe.value) {
+        await SharePrefsHelper.setString(AppConst.loginUser, identifier);
+        await SharePrefsHelper.setString(AppConst.loginPass, password);
+      }
       final data = jsonDecode(loginRes.body);
       final String token = data['token'];
       final String userId = data['id'];
-      final String licenceId=data["licence_id"];
-      final String nickName=data["nick_name"];
+      final String licenceId = data["licence_id"];
+      final String nickName = data["nick_name"];
 
-
-    //   "licence_id": "license_no",
-    // "nick_name": "Nick_name",
+      //   "licence_id": "license_no",
+      // "nick_name": "Nick_name",
 
       // ✅ Save token
       await SharePrefsHelper.setString(AppConst.token, token);
@@ -220,8 +235,7 @@ class AuthController extends GetxController {
   Future<bool> sendOtp({
     required String email,
     required BuildContext context,
-  }) async
-  {
+  }) async {
     isLoadingEmail.value = true;
 
     final response = await ApiClient.postData(
@@ -235,23 +249,23 @@ class AuthController extends GetxController {
 
     if (response.statusCode == 404) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(data['message'] ?? "User Not Found"),
-        ),
+        SnackBar(content: Text(data['message'] ?? "User Not Found")),
       );
       return false;
     }
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.green.shade100,
-          content: Text(data['message'] ?? "OTP sent successfully",style: GoogleFonts.poppins(
-            color: AppColors.black,
-            fontWeight: FontWeight.w400,
-            fontSize: ResponsiveHelper.fontSize(14),
-          ),),
+          content: Text(
+            data['message'] ?? "OTP sent successfully",
+            style: GoogleFonts.poppins(
+              color: AppColors.black,
+              fontWeight: FontWeight.w400,
+              fontSize: ResponsiveHelper.fontSize(14),
+            ),
+          ),
         ),
       );
 
@@ -259,14 +273,11 @@ class AuthController extends GetxController {
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(data['message'] ?? "Something went wrong"),
-      ),
+      SnackBar(content: Text(data['message'] ?? "Something went wrong")),
     );
 
     return false;
   }
-
 
   /// verify otp===================================================
   var isLoadingVerify = false.obs;
@@ -308,15 +319,13 @@ class AuthController extends GetxController {
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(data['message'] ?? "Something went wrong"),
-      ),
+      SnackBar(content: Text(data['message'] ?? "Something went wrong")),
     );
 
     return null;
   }
 
-///reset===============================
+  ///reset===============================
 
   var isLoadingReset = false.obs;
 
@@ -330,11 +339,7 @@ class AuthController extends GetxController {
 
     final response = await ApiClient.postData(
       uri: ApiUrl.reset,
-      body: {
-        "email": email,
-        "password": password,
-        "token": token,
-      },
+      body: {"email": email, "password": password, "token": token},
     );
 
     final data = jsonDecode(response.body);
@@ -358,32 +363,9 @@ class AuthController extends GetxController {
       return true;
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(data['message'] ?? "Something went wrong"),
-        ),
+        SnackBar(content: Text(data['message'] ?? "Something went wrong")),
       );
       return false;
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
-
-
-
-
