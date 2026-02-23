@@ -3,8 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../helper/responsive_helper/responsive_helper.dart';
 
-import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
-
 import '../../utils/color/app_colors.dart';
 import '../../utils/config/app_config.dart';
 
@@ -18,35 +16,34 @@ final ThemeData lightTheme = ThemeData(
     centerTitle: true,
     //iconTheme: IconThemeData(color: AppColors.brandHoverColor),
   ),
-    /// Elevated Button ======================================
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.green,
-        minimumSize: Size(double.infinity, ResponsiveHelper.height(48)),
-        shadowColor: Colors.transparent,
-        padding: EdgeInsets.symmetric(
-          horizontal: ResponsiveHelper.width(32),
-          vertical: ResponsiveHelper.height(16),
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(8)),
-        ),
-        foregroundColor: AppColors.white,
-        textStyle: GoogleFonts.inter(
-          fontSize: ResponsiveHelper.fontSize(16),
-          fontWeight: FontWeight.w500,
-        ),
+
+  /// Elevated Button ======================================
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: AppColors.green,
+      minimumSize: Size(double.infinity, ResponsiveHelper.height(48)),
+      shadowColor: Colors.transparent,
+      padding: EdgeInsets.symmetric(
+        horizontal: ResponsiveHelper.width(32),
+        vertical: ResponsiveHelper.height(16),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(8)),
+      ),
+      foregroundColor: AppColors.white,
+      textStyle: GoogleFonts.inter(
+        fontSize: ResponsiveHelper.fontSize(16),
+        fontWeight: FontWeight.w500,
       ),
     ),
+  ),
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       side: const BorderSide(color: AppColors.brandHoverColor, width: 1.5),
       foregroundColor: Colors.black,
       minimumSize: const Size(186, 48),
       padding: const EdgeInsets.all(10),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       textStyle: const TextStyle(
         fontFamily: AppConfig.fontFamily,
         fontSize: 16,
@@ -65,50 +62,33 @@ final ThemeData lightTheme = ThemeData(
       ),
     ),
   ),
-  iconTheme: const IconThemeData(
-    color: AppColors.brandHoverColor,
-  ),
+  iconTheme: const IconThemeData(color: AppColors.brandHoverColor),
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
     fillColor: AppColors.softBrandColor,
     iconColor: AppColors.brandHoverColor,
     prefixIconColor: AppColors.brandHoverColor,
     suffixIconColor: AppColors.brandHoverColor,
-    contentPadding: const EdgeInsets.symmetric(
-      horizontal: 15,
-      vertical: 14,
-    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-          color: Colors.transparent
-      ),
+      borderSide: const BorderSide(color: Colors.transparent),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-        width: 2,
-        color: AppColors.errorColor,
-      ),
+      borderSide: const BorderSide(width: 2, color: AppColors.errorColor),
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-        width: 2,
-        color: AppColors.errorColor,
-      ),
+      borderSide: const BorderSide(width: 2, color: AppColors.errorColor),
     ),
     disabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-          color: Colors.transparent
-      ),
+      borderSide: const BorderSide(color: Colors.transparent),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(
-          color: Colors.transparent
-      ),
+      borderSide: const BorderSide(color: Colors.transparent),
     ),
     hintStyle: const TextStyle(
       fontFamily: AppConfig.fontFamily,
@@ -212,7 +192,8 @@ final ThemeData lightTheme = ThemeData(
     titleSmall: GoogleFonts.poppins(
       fontSize: 14,
       fontWeight: FontWeight.w400,
-      color: AppColors.black),
+      color: AppColors.black,
+    ),
     bodyMedium: GoogleFonts.poppins(
       fontSize: 14,
       fontWeight: FontWeight.w600,
@@ -229,6 +210,4 @@ final ThemeData lightTheme = ThemeData(
       color: AppColors.black,
     ),
   ),
-
-
 );

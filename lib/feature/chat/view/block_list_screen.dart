@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -69,7 +71,6 @@ class _BlockListScreenState extends State<BlockListScreen> {
           /// Empty state
           if (controller.userBlockList.isEmpty) {
             return ListView(
-
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height * .3),
                 Center(
@@ -87,26 +88,23 @@ class _BlockListScreenState extends State<BlockListScreen> {
 
           /// Nested Obx for pagination/loading inside ListView.builder
 
-           return ListView.builder(
+          return ListView.builder(
             physics: const AlwaysScrollableScrollPhysics(),
             itemCount: controller.userBlockList.length,
             itemBuilder: (context, index) {
-
               final block = controller.userBlockList[index];
 
               final user = block.blockedUser;
-              final blockedUserId=block.id;
+              final blockedUserId = block.id;
 
               return ChatTile(
-
                 isBlock: true,
-                onUnblock: (){
+                onUnblock: () {
                   //
                   // controller.unBlock(blockedUserId!, context);
                   // controller.isBlockedByMe.value = false;
-
-
                 },
+
                 /// Name show
                 name: user?.nickName ?? "Unknown",
 
@@ -126,17 +124,11 @@ class _BlockListScreenState extends State<BlockListScreen> {
                 ),
 
                 onTap: () {
-
-                 // debugPrint("Blocked user click: ${user?.nickName}");
-
+                  // debugPrint("Blocked user click: ${user?.nickName}");
                 },
-
               );
-
             },
           );
-
-
         }),
       ),
     );

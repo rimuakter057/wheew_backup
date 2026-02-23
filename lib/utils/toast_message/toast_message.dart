@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-
 
 void showCustomSnackBar(
   String? message, {
@@ -48,9 +46,7 @@ void showCustomSnackBar(
                   size: 20,
                 ),
                 SizedBox(width: 8),
-                Expanded(
-                  child: Text(message, style: TextStyle(fontSize: 14)),
-                ),
+                Expanded(child: Text(message, style: TextStyle(fontSize: 14))),
               ],
             ),
           ),
@@ -274,16 +270,12 @@ void showInfoSnackBar(String message, {bool getXSnackBar = false}) {
           duration: const Duration(seconds: 3),
           backgroundColor: Colors.blue,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           content: Row(
             children: [
               Icon(Icons.info_outline, color: Colors.white, size: 20),
               SizedBox(width: 8),
-              Expanded(
-                child: Text(message, style: TextStyle(fontSize: 14)),
-              ),
+              Expanded(child: Text(message, style: TextStyle(fontSize: 14))),
             ],
           ),
         ),

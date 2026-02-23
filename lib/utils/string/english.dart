@@ -1,4 +1,4 @@
-import 'package:platchatapp/utils/string/app_text_key.dart';
+// import 'package:platchatapp/utils/string/app_text_key.dart';
 
 final Map<String, String> english = {
   // -------- Welcome Screen --------
@@ -84,35 +84,29 @@ final Map<String, String> english = {
   'search_here': 'Search here',
 
   ///messaging===========================
-
-
-   'type_here1' :"Type here...",
-  'block_':"Block",
-  "blocked_user":"Blocked user",
-  "unblock":"Unblock",
-  'logout':"Logout",
-  'profile':"Profile",
-  "edit":"Edit",
-  "you_can't_send":"You can't send message to this user",
-  "you've_blocked":"You've blocked",
-  "this_user_won't_be_able":"This user won't be able to message you until you unblock them.",
-
+  'type_here1': "Type here...",
+  'block_': "Block",
+  "blocked_user": "Blocked user",
+  "unblock": "Unblock",
+  'logout': "Logout",
+  'profile': "Profile",
+  "edit": "Edit",
+  "you_can't_send": "You can't send message to this user",
+  "you've_blocked": "You've blocked",
+  "this_user_won't_be_able":
+      "This user won't be able to message you until you unblock them.",
 
   'language': 'Language',
   'nickname': 'Nickname',
 
-  "email_required":"Email is required",
+  "email_required": "Email is required",
 
   ///snackBar text================
-
-  "new_pass_required":"New password is required",
-  "confirmed_pass_required":"Confirm password is required",
-  "pass_not_match":"Password does not match",
-  "pass_six_char":"Password must be at least 6 characters",
-  "otp_required":"OTP is required",
-  'empty_block_list':'Empty Block List',
-  'remember_me':"Remember Me"
-
-
-
+  "new_pass_required": "New password is required",
+  "confirmed_pass_required": "Confirm password is required",
+  "pass_not_match": "Password does not match",
+  "pass_six_char": "Password must be at least 6 characters",
+  "otp_required": "OTP is required",
+  'empty_block_list': 'Empty Block List',
+  'remember_me': "Remember Me",
 };

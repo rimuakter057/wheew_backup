@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
-import '../../../utils/extension/base_extension.dart';
-
 
 class CustomAlignText extends StatelessWidget {
   const CustomAlignText({
@@ -15,7 +13,7 @@ class CustomAlignText extends StatelessWidget {
     this.color,
     this.style,
     this.maxLine,
-    this.textAlign
+    this.textAlign,
   });
 
   final Alignment alignment;
@@ -35,11 +33,13 @@ class CustomAlignText extends StatelessWidget {
         text,
         textAlign: textAlign ?? TextAlign.start,
         maxLines: maxLine,
-        style: style??GoogleFonts.poppins(
-          fontWeight: fontWeight ?? FontWeight.w400,
-          fontSize: fontSize??ResponsiveHelper.fontSize(14),
-          color: color??AppColors.textBlack,
-        ),
+        style:
+            style ??
+            GoogleFonts.poppins(
+              fontWeight: fontWeight ?? FontWeight.w400,
+              fontSize: fontSize ?? ResponsiveHelper.fontSize(14),
+              color: color ?? AppColors.textBlack,
+            ),
       ),
     );
   }

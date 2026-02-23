@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 
-
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-
   final String title;
   final bool showBackButton;
   final List<Widget>? actions;
@@ -22,17 +19,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return AppBar(
-
       centerTitle: true,
 
       elevation: 0,
 
       backgroundColor: Colors.white,
 
-      leading:  IconButton(
-
+      leading: IconButton(
         onPressed: () {
           Navigator.pop(context);
         },
@@ -42,32 +36,24 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           size: ResponsiveHelper.iconSize(24),
           color: Colors.black,
         ),
-
       ),
 
       title: Text(
-
         title.tr,
 
         style: GoogleFonts.poppins(
-
           color: Colors.black,
 
           fontSize: ResponsiveHelper.fontSize(18),
 
           fontWeight: FontWeight.w500,
-
         ),
-
       ),
 
       actions: actions,
-
     );
-
   }
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-
 }
