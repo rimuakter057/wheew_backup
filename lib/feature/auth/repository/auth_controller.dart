@@ -113,9 +113,6 @@ class AuthController extends GetxController {
       final String nickName=data["nick_name"];
 
 
-
-
-    //
     //   "licence_id": "license_no",
     // "nick_name": "Nick_name",
 
