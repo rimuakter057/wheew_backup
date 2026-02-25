@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../core/router/routes_name.dart';
 import '../../core/service/storage_service.dart';
 import '../../helper/responsive_helper/responsive_helper.dart';
@@ -69,7 +71,11 @@ class _SplashScreenState extends State<SplashScreen> {
             SizedBox(height: ResponsiveHelper.spacing(12)),
             Text(
               'CONNECTING DRIVERS ONE PLATE AT A TIME',
-              style: TextStyle(fontSize: ResponsiveHelper.fontSize(12)),
+              style: GoogleFonts.poppins(fontSize: ResponsiveHelper.fontSize(15),
+
+              fontWeight: FontWeight.w400,
+                color: AppColors.textBlack
+              ),
             ),
             const Spacer(),
             const CircularProgressIndicator(),

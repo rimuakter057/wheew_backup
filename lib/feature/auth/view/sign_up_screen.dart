@@ -223,8 +223,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               )*/
               CustomTextField(
                 controller: emailController,
-                title: 'email'.tr,
-                hintText: 'email_only_for_recover_password'.tr,
+                title: 'email'.tr + " (" + 'only_for_recovery'.tr + ")",
+                hintText: 'type_here1'.tr,
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {

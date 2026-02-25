@@ -536,74 +536,141 @@ void _showAgeConfirmationDialog(BuildContext context) {
           style: context.titleSmall,
           textAlign: TextAlign.center,
         ),
+        // actions: [
+        //   Center(
+        //     child: Column(
+        //       mainAxisSize: MainAxisSize.min,
+        //       children: [
+        //         // NO BUTTON
+        //         ElevatedButton(
+        //           style: ElevatedButton.styleFrom(
+        //             backgroundColor: Colors.grey.shade300,
+        //             foregroundColor: Colors.black,
+        //             shape: RoundedRectangleBorder(
+        //               borderRadius: BorderRadius.circular(12),
+        //             ),
+        //             padding: const EdgeInsets.symmetric(
+        //               horizontal: 24,
+        //               vertical: 12,
+        //             ),
+        //           ),
+        //           onPressed: () {
+        //             Navigator.pop(context);
+        //             Get.snackbar(
+        //               'access_denied'.tr,
+        //               'age_restriction_message'.tr,
+        //               snackPosition: SnackPosition.BOTTOM,
+        //             );
+        //           },
+        //           child: Text(
+        //             'no'.tr,
+        //             style: context.titleMedium.copyWith(
+        //               fontSize: 16,
+        //               fontWeight: FontWeight.w600,
+        //               color: AppColors.errorColor,
+        //             ),
+        //           ),
+        //         ),
+        //
+        //         const SizedBox(height: 4),
+        //
+        //         // YES BUTTON
+        //         ElevatedButton(
+        //           style: ElevatedButton.styleFrom(
+        //             backgroundColor: AppColors.blue,
+        //             foregroundColor: Colors.white,
+        //             shape: RoundedRectangleBorder(
+        //               borderRadius: BorderRadius.circular(12),
+        //             ),
+        //             padding: const EdgeInsets.symmetric(
+        //               horizontal: 24,
+        //               vertical: 12,
+        //             ),
+        //           ),
+        //           onPressed: () {
+        //             Navigator.pop(context);
+        //             context.pushNamed(RouteName.signUp);
+        //           },
+        //           child: Text(
+        //             'yes'.tr,
+        //             style: context.titleMedium.copyWith(
+        //               fontSize: 16,
+        //               fontWeight: FontWeight.w600,
+        //               color: Colors.white,
+        //             ),
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ],
+
+
         actions: [
-          Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // NO BUTTON
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey.shade300,
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Get.snackbar(
-                      'access_denied'.tr,
-                      'age_restriction_message'.tr,
-                      snackPosition: SnackPosition.BOTTOM,
-                    );
-                  },
-                  child: Text(
-                    'no'.tr,
-                    style: context.titleMedium.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.errorColor,
-                    ),
-                  ),
-                ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+            // NO BUTTON
+           GestureDetector(
+               onTap: () {
+                 Navigator.pop(context);
 
-                const SizedBox(height: 4),
+               },
+               child: Container(
+                   padding: ResponsiveHelper.symmetric(
+                       horizontal: 32,vertical: 12
+                   ),
+                   decoration: BoxDecoration(
 
-                // YES BUTTON
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.blue,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
+                     border: Border.all(color: AppColors.blue),
+                     borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24),
+
+
+                     ),
+
+                   ),
+
+                   child: Text('no'.tr,style: context.bodySmall,))),
+
+             SizedBox(width: ResponsiveHelper.width(12)),
+
+
+
+            GestureDetector(
+
+                onTap: () {
+                  Navigator.pop(context);
+                  context.pushNamed(RouteName.signUp);
+                },
+
+                child: Container(
+                  padding: ResponsiveHelper.symmetric(
+                    horizontal: 32,vertical: 12
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    context.pushNamed(RouteName.signUp);
-                  },
-                  child: Text(
-                    'yes'.tr,
-                    style: context.titleMedium.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                    decoration: BoxDecoration(
+                      color: AppColors.blue,
+                      border: Border.all(color: AppColors.blue),
+                      borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24),
+
+
+                      ),
+
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+                    child: Text( 'yes'.tr,style: context.titleSmall.copyWith(color: AppColors.white),))),
+
+          ],)
         ],
+
+
+
+
+
+
+
+
+
+
       );
     },
   );

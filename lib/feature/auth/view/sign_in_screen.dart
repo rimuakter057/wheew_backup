@@ -63,20 +63,20 @@ class _SignInScreenState extends State<SignInScreen> {
         builder: (controller) {
           return SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.all(ResponsiveHelper.padding(20)),
+              padding: EdgeInsets.all(ResponsiveHelper.padding(16)),
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: [
-                    SizedBox(height: ResponsiveHelper.spacing(40)),
+
 
                     /// Logo
                     Image.asset(
                       AssetsPath.signLogo,
-                      width: ResponsiveHelper.width(200),
+                      width: ResponsiveHelper.width(120),
                     ),
 
-                    SizedBox(height: ResponsiveHelper.spacing(40)),
+                    SizedBox(height: ResponsiveHelper.spacing(18)),
 
                     /// Email or License ID
                     CustomTextField(

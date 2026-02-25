@@ -27,7 +27,7 @@ final Map<String, String> english = {
 
   // -------- Sign Up --------
   'nickname_is_required': 'Nickname is required',
-  'select_designation': 'Select Designation',
+  'select_designation': 'Choose Role',
   'select': 'Select',
   'owner': 'Owner',
   'occasional_driver': 'Occasional Driver',
@@ -40,14 +40,15 @@ final Map<String, String> english = {
   'confirm_password': 'Confirm Password',
   'confirm_your_password': 'Confirm your password',
   'password_do_not_match': 'Passwords do not match',
-  'i_agree_to': 'I agree to the',
+  //'i_agree_to': 'I agree to the',
+  'i_agree_to': 'I declare that I am at least 16 years old and that I have read and accept the',
   'agree_terms': 'Terms & Condition and Privacy Policy',
   'continue': 'Continue',
   'please_fill_all_fields': 'Please fill all fields',
   'please accept terms': 'Please accept terms',
   'creating_account': 'Creating account...',
   'registration_successful!': 'Registration successful!',
-  'age_confirmation': 'Age Confirmation',
+  'age_confirmation': 'Confirm your age',
   '16_or_not': 'Are you over 16 ?',
   'yes': "Yes",
   'no': "No",
@@ -110,5 +111,7 @@ final Map<String, String> english = {
   'empty_block_list': 'Empty Block List',
   'remember_me': "Remember Me",
   "bad_word_error":"This message contains inappropriate words.",
+  "only_for_recovery":"Only for recovery account",
+  "please_enter_valid_email":"Please enter a valid email address",
 
 };
