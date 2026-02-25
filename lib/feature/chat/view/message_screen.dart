@@ -260,7 +260,7 @@ class _MessageScreenState extends State<MessageScreen> {
                           horizontal: ResponsiveHelper.width(14),
                         ),
                         decoration: BoxDecoration(
-                          color: isMine ? AppColors.blueBox : AppColors.green,
+                          color: isMine ? AppColors.blue : AppColors.green,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(
                               ResponsiveHelper.borderRadius(15),
@@ -574,10 +574,10 @@ void showTopSnackBar(BuildContext context, String message) {
       child: Material(
         color: Colors.transparent,
         child: Container(
-          padding: EdgeInsets.all(16),
+          padding: ResponsiveHelper.all(16),
           decoration: BoxDecoration(
             color: Colors.red.shade700,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
             boxShadow: [
               BoxShadow(
                 color: Colors.black26,
@@ -589,14 +589,14 @@ void showTopSnackBar(BuildContext context, String message) {
           child: Row(
             children: [
               Icon(Icons.error_outline, color: Colors.white),
-              SizedBox(width: 12),
+              SizedBox(width: ResponsiveHelper.padding(12)),
               Expanded(
                 child: Text(
                   message,
                   style: GoogleFonts.poppins(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: ResponsiveHelper.fontSize(16),
                   ),
                 ),
               ),

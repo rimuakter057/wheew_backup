@@ -56,7 +56,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
             CustomTextField(
               title: 'email'.tr,
-              hintText: 'enter_your_email_here'.tr,
+              hintText: 'please_enter_valid_email'.tr,
               controller: emailController,
             ),
 

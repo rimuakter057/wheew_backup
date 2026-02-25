@@ -25,7 +25,7 @@ final Map<String, String> italian = {
 
   // -------- Sign Up --------
   'nickname_is_required': 'Il nickname è obbligatorio',
-  'select_designation': 'Seleziona ruolo',
+  'select_designation': 'scegli Ruolo',
   'select': 'Seleziona',
   'owner': 'Proprietario',
   'occasional_driver': 'Guidatore occasionale',
@@ -39,7 +39,7 @@ final Map<String, String> italian = {
   'confirm_password': 'Conferma password',
   'confirm_your_password': 'Conferma la tua password',
   'password_do_not_match': 'Le password non corrispondono',
-  'i_agree_to': 'Accetto i',
+  'i_agree_to': 'Dichiaro di avere almeno 16 anni, ho letto e accetto i',
   'agree_terms': 'Termini e Condizioni e Informativa sulla Privacy',
   'continue': 'Continua',
   'please_fill_all_fields': 'Compila tutti i campi',
@@ -47,8 +47,8 @@ final Map<String, String> italian = {
   'creating_account': 'Creazione account...',
   'registration_successful!': 'Registrazione completata con successo!',
 
-  'age_confirmation': "Conferma dell'età",
-  '16_or_not': 'Hai più di 16 anni?',
+  'age_confirmation': "Conferma la tua età",
+  '16_or_not': 'Hai 16 anni?',
   'yes': "SÌ",
   'no': "NO",
   'email_only_for_recover_password': "Email solo per recuperare la password",
@@ -106,5 +106,7 @@ final Map<String, String> italian = {
   'empty_block_list': 'Elenco blocchi vuoto',
   'remember_me': "Ricordati di me",
   "bad_word_error":"Questo messaggio contiene parole inappropriate.",
+  "only_for_recovery":"Solo per recupero account",
+  "please_enter_valid_email":"Si prega di inserire un indirizzo email valido",
 
 };

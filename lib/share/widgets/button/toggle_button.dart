@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import '../../../language/language_controller.dart';
 import '../../../utils/assets_path/assets_path.dart';
 import '../custom_image/custom_image.dart';
@@ -58,7 +59,7 @@ class _CircleFlag extends StatelessWidget {
         : ImageType.png;
 
     // Outer size (border included)
-    final double size = isSelected ? 46 : 38;
+    final double size = isSelected ? ResponsiveHelper.iconSize(32.2) : ResponsiveHelper.iconSize(26.6);
     final double borderWidth = isSelected ? 2 : 0;
 
     return GestureDetector(
