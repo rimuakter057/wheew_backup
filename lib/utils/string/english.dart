@@ -109,4 +109,6 @@ final Map<String, String> english = {
   "otp_required": "OTP is required",
   'empty_block_list': 'Empty Block List',
   'remember_me': "Remember Me",
+  "bad_word_error":"This message contains inappropriate words.",
+
 };

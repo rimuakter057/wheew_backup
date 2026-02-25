@@ -105,4 +105,6 @@ final Map<String, String> italian = {
   "otp_required": "L'OTP è obbligatorio",
   'empty_block_list': 'Elenco blocchi vuoto',
   'remember_me': "Ricordati di me",
+  "bad_word_error":"Questo messaggio contiene parole inappropriate.",
+
 };
