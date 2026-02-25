@@ -15,6 +15,8 @@ import 'package:platchatapp/share/widgets/custom_container/custom_container.dart
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
+import '../../../utils/string/bad_words.dart';
+
 class MessageScreen extends StatefulWidget {
   final String? roomId;
   final String otherUserName;
@@ -436,9 +438,77 @@ class _MessageScreenState extends State<MessageScreen> {
 
                 GestureDetector(
                   onTap: () {
-                    if (chatController.messageController.text.trim().isEmpty) {
-                      return;
+                    // 🔹 1️⃣ Declare the message variable here
+                    String message = chatController.messageController.text
+                        .trim();
+
+                    // 🔹 2️⃣ Check if empty
+                    if (message.isEmpty) return;
+
+                    // 3️⃣ Bad word check
+                    bool containsBadWord =
+                        BadWords.english.any(
+                          (word) => message.toLowerCase().contains(
+                            word.toLowerCase(),
+                          ),
+                        ) ||
+                        BadWords.italian.any(
+                          (word) => message.toLowerCase().contains(
+                            word.toLowerCase(),
+                          ),
+                        );
+
+                 //    if (containsBadWord) {
+                 //      // 4️⃣ Show error if bad word exists
+                 //      ScaffoldMessenger.of(context).showSnackBar(
+                 //        SnackBar(
+                 //          behavior: SnackBarBehavior.floating, // Floating style
+                 // // Edge spacing
+                 //          margin: EdgeInsets.only(
+                 //            top: 16, // Top position
+                 //            left: 16,
+                 //            right: 16,
+                 //          ),
+                 //          padding: EdgeInsets.all(16), // Content padding
+                 //          backgroundColor: Colors.red.shade700, // Darker red
+                 //          shape: RoundedRectangleBorder(
+                 //            borderRadius: BorderRadius.circular(
+                 //              ResponsiveHelper.borderRadius(12),
+                 //            ), // Rounded corners
+                 //          ),
+                 //          elevation: 6, // Shadow
+                 //          duration: Duration(seconds: 3), // How long it shows
+                 //          content: Row(
+                 //            children: [
+                 //              Icon(
+                 //                Icons.error_outline,
+                 //                color: Colors.white,
+                 //              ), // Icon
+                 //              SizedBox(width: 12),
+                 //              Expanded(
+                 //                child: Text(
+                 //                  "bad_word_error".tr, // Your translation key
+                 //                  style: GoogleFonts.poppins(
+                 //                    color: Colors.white,
+                 //                    fontWeight: FontWeight.bold,
+                 //                    fontSize: ResponsiveHelper.fontSize(16),
+                 //                  ),
+                 //                ),
+                 //              ),
+                 //            ],
+                 //          ),
+                 //        ),
+                 //      );
+                 //      return; // Stop sending
+                 //    }
+
+
+                    if (containsBadWord) {
+                      showTopSnackBar(context, "bad_word_error".tr); // <-- call custom top snack
+                      return; // Stop sending
                     }
+
+
                     chatController.sendNewEmitMessage(
                       receiverId: widget.receiverId,
                       message: chatController.messageController.text,
@@ -492,4 +562,53 @@ class _MessageScreenState extends State<MessageScreen> {
       ],
     );
   }
+}
+
+
+void showTopSnackBar(BuildContext context, String message) {
+  OverlayEntry overlayEntry = OverlayEntry(
+    builder: (context) => Positioned(
+      top: 50, // Top position
+      left: 16,
+      right: 16,
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.red.shade700,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 6,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.error_outline, color: Colors.white),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  message,
+                  style: GoogleFonts.poppins(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+
+  Overlay.of(context)?.insert(overlayEntry);
+
+  // Remove after 3 seconds
+  Future.delayed(Duration(seconds: 3)).then((_) => overlayEntry.remove());
 }
