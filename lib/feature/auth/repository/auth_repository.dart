@@ -10,7 +10,8 @@ class AuthRepository {
     required String confirmPassword,
     required String designation,
     required String email,
-  }) async {
+  }) async
+  {
     return await ApiClient.postData(
       uri: ApiUrl.register,
       body: {
