@@ -36,7 +36,7 @@ final Map<String, String> english = {
   'license_number': 'Plate Number',
   'type_here': 'Type here',
   'license_number_is_required': 'License number is required',
-  'license_number_must_be': 'License number must be at least 7 characters',
+  'license_number_must_be': 'License number must be at least 6 characters',
   'confirm_password': 'Confirm Password',
   'confirm_your_password': 'Confirm your password',
   'password_do_not_match': 'Passwords do not match',

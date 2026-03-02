@@ -206,14 +206,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: licenseController,
                 title: 'license_number'.tr,
                 hintText: 'type_here'.tr,
+                // validator: (value) {
+                //   if (value == null || value.trim().isEmpty) {
+                //     return 'License number is required';
+                //   } else if (value.trim().length < 7) {
+                //     return 'license_number_must_be'.tr;
+                //   }
+                //   return null;
+                // },
+
+
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'License number is required';
-                  } else if (value.trim().length < 7) {
-                    return 'license_number_must_be'.tr;
+                  } else if (value.trim().length != 6) {
+                    return 'license_number_must_be'.tr; // exactly 6 characters
                   }
                   return null;
                 },
+
               ),
 
               SizedBox(height: ResponsiveHelper.spacing(16)),
