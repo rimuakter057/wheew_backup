@@ -235,7 +235,8 @@ class AuthController extends GetxController {
   Future<bool> sendOtp({
     required String email,
     required BuildContext context,
-  }) async {
+  }) async
+  {
     isLoadingEmail.value = true;
 
     final response = await ApiClient.postData(
@@ -334,7 +335,8 @@ class AuthController extends GetxController {
     required String password,
     required String token,
     required BuildContext context,
-  }) async {
+  }) async
+  {
     isLoadingReset.value = true;
 
     final response = await ApiClient.postData(
