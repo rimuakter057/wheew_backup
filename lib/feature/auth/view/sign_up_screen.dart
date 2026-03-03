@@ -218,9 +218,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'License number is required';
-                  } else if (value.trim().length != 6) {
-                    return 'license_number_must_be'.tr; // exactly 6 characters
+                    return 'license_number_required'.tr;
+                  }       else if (value.length < 6 || value.length > 7) {
+                    return 'license_number_must_be'.tr;
                   }
                   return null;
                 },
@@ -259,9 +259,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   if (value == null || value.trim().isEmpty) {
                     return 'password_is_required'.tr;
                   }
-                  else if (value.length < 6 || value.length > 7) {
-                    return 'password_must_be_6_to_7_characters'.tr;
-                  }
+
                   return null;
                 },
               ),

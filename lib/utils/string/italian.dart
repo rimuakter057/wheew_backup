@@ -35,7 +35,9 @@ final Map<String, String> italian = {
   'type_here': 'Scrivi qui',
   'license_number_is_required': 'Il numero di licenza è obbligatorio',
   'license_number_must_be':
-      'Il numero di licenza deve contenere almeno 6 caratteri',
+      'Il numero di licenza deve contenere almeno 6 O 7 caratteri',
+  'license_number_required': 'È richiesto il numero di licenza',
+
   'confirm_password': 'Conferma password',
   'confirm_your_password': 'Conferma la tua password',
   'password_do_not_match': 'Le password non corrispondono',
