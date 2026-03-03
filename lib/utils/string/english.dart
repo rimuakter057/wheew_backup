@@ -13,7 +13,7 @@ final Map<String, String> english = {
   'sign_up': 'Sign Up',
   'log_in': 'Log In',
   'do_not_account': "Don't have an account? ",
-  'already_account1': "Already have account ",
+  'already_account1': "Already have account? ",
 
   // -------- Sign In --------
   'nick_name': 'Nickname',
@@ -36,7 +36,8 @@ final Map<String, String> english = {
   'license_number': 'Plate Number',
   'type_here': 'Type here',
   'license_number_is_required': 'License number is required',
-  'license_number_must_be': 'License number must be at least 6 characters',
+  'license_number_must_be': 'License number must be at least 6 or 7 characters',
+  'license_number_required': 'License number is required',
   'confirm_password': 'Confirm Password',
   'confirm_your_password': 'Confirm your password',
   'password_do_not_match': 'Passwords do not match',
