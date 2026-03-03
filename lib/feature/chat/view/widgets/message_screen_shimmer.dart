@@ -59,22 +59,24 @@ class _MessageScreenShimmerState extends State<MessageScreenShimmer>
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, _) {
-        return Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: ResponsiveHelper.width(16),
-            vertical: ResponsiveHelper.height(8),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: bubbles.reversed.map((config) {
-              return _BubbleShimmer(
-                isMine: config.isMine,
-                widthFactor: config.widthFactor,
-                progress: _animation.value,
-              );
-            }).toList(),
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveHelper.width(16),
+              vertical: ResponsiveHelper.height(8),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: bubbles.reversed.map((config) {
+                return _BubbleShimmer(
+                  isMine: config.isMine,
+                  widthFactor: config.widthFactor,
+                  progress: _animation.value,
+                );
+              }).toList(),
+            ),
           ),
         );
       },

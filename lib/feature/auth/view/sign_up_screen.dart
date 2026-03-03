@@ -466,6 +466,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   }
                 },
               ),
+
+
+
+
               SizedBox(height: ResponsiveHelper.spacing(8)),
 
               Center(
