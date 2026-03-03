@@ -88,7 +88,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               CustomTextField(
                 controller: nicknameController,
                 title: 'nick_name'.tr,
-                hintText: 'nick_name_hint'.tr,
+                hintText: 'type_here1'.tr,
                 validator: (value) => (value == null || value.trim().isEmpty)
                     ? 'nickname_is_required'.tr
                     : null,
@@ -259,8 +259,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   if (value == null || value.trim().isEmpty) {
                     return 'password_is_required'.tr;
                   }
-                  if (value.length < 6) {
-                    return 'password_must_6_character'.tr;
+                  else if (value.length < 6 || value.length > 7) {
+                    return 'password_must_be_6_to_7_characters'.tr;
                   }
                   return null;
                 },

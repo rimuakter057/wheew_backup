@@ -13,7 +13,7 @@ final Map<String, String> english = {
   'sign_up': 'Sign Up',
   'log_in': 'Log In',
   'do_not_account': "Don't have an account? ",
-  'already_account1': "Already have account ",
+  'already_account1': "Already have account? ",
 
   // -------- Sign In --------
   'nick_name': 'Nickname',
