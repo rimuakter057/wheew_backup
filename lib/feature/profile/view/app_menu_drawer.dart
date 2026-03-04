@@ -182,9 +182,10 @@ void _showLanguageBottomSheet(BuildContext context) {
               const SizedBox(height: 8),
               Text(
                 'language'.tr,
-                style: const TextStyle(
-                  fontSize: 18,
+                style: TextStyle(
+                  fontSize: ResponsiveHelper.fontSize(18),
                   fontWeight: FontWeight.w600,
+                  color: Colors.black,
                 ),
               ),
               const SizedBox(height: 12),
