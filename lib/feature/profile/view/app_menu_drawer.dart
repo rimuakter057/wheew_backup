@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/feature/privacy_policy/privacy_policy_screen.dart';
 import 'package:platchatapp/feature/terms_condition/web_view_screen.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
@@ -86,6 +87,21 @@ class AppMenuDrawer extends StatelessWidget {
                 );
               },
             ),
+
+            _drawerItem(
+              context,
+              icon: Icons.privacy_tip_outlined,
+              title: 'privacy_policy'.tr,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PrivacyPolicyScreen(url: ApiUrl.privacy),
+                  ),
+                );
+              },
+            ),
+
 
             _drawerItem(
               context,

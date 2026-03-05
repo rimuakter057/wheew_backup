@@ -336,7 +336,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
 
                           TextSpan(
-                            text: ' and ',
+                            text: 'and'.tr,
                             style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w400,
                               fontSize: 14,

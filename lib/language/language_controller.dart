@@ -10,7 +10,7 @@ class LanguageController extends GetxController {
     'Italian': const Locale('it', 'IT'),
   };
 
-  var selectedLanguage = 'Italian'.obs;
+  var selectedLanguage = 'Italiano'.obs;
   var currentLocale = const Locale('it', 'IT').obs;
 
   @override
