@@ -119,5 +119,15 @@ final Map<String, String> english = {
   "user_not_found":"User Not Found",
   "otp_send_success":"OTP sent successfully",
   "password_reset_successfully":"Password reset successfully",
+  "user_unblocked_successfully":"User unblocked successfully",
+  "failed_to_unblock_user":"Failed to unblock user",
+  "info":'Info',
+  'please_select_an_image_first':'Please select an image first',
+  "success":'Success',
+  "profile_image_updated_successfully":'Profile image updated successfully',
+  'error':"Error",
+  "failed_to_update_profile_image":'Failed to update profile image',
+  "error_updating_profile:":"Error updating profile:"
+
 
 };

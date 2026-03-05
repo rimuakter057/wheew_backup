@@ -115,5 +115,17 @@ final Map<String, String> italian = {
   "user_not_found":"Utente non trovato",
   "otp_send_success":"OTP inviata con successo",
   "password_reset_successfully":"Reimpostazione della password riuscita",
+  "user_unblocked_successfully":"Utente sbloccato con successo",
+  "failed_to_unblock_user":"Impossibile sbloccare l'utente",
+  "info":'Informazioni',
+  'please_select_an_image_first':"Seleziona prima un'immagine",
+  "success":"Successo",
+  "profile_image_updated_successfully":'Immagine del profilo aggiornata con successo',
+  'error':"Errore",
+  "failed_to_update_profile_image":"Impossibile aggiornare l'immagine del profilo",
+  "error_updating_profile:":"Errore durante l'aggiornamento del profilo:"
+
+
+
 
 };
