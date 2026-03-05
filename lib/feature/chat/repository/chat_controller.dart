@@ -532,12 +532,12 @@ class ChatController extends GetxController {
       debugPrint("User unblocked successfully");
       showSnackBar(
         context,
-        "User unblocked successfully",
+        "user_unblocked_successfully".tr,
         bgColor: Colors.green,
       );
     } else {
       debugPrint("Unblock failed: ${response.statusCode}");
-      showSnackBar(context, "Failed to unblock user", bgColor: Colors.red);
+      showSnackBar(context, "failed_to_unblock_user".tr, bgColor: Colors.red);
     }
   }
 

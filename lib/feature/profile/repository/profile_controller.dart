@@ -113,8 +113,8 @@ class ProfileController extends GetxController {
   Future<void> updateProfile() async {
     if (profileImage.value == null) {
       Get.snackbar(
-        'Info',
-        'Please select an image first',
+        'info'.tr,
+        'please_select_an_image_first'.tr,
         backgroundColor: Colors.orange,
         colorText: Colors.white,
       );
@@ -155,23 +155,23 @@ class ProfileController extends GetxController {
         isEditing = false;
 
         Get.snackbar(
-          'Success',
-          'Profile image updated successfully',
+          'success'.tr,
+          'profile_image_updated_successfully'.tr,
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
       } else {
         Get.snackbar(
-          'Error',
-          'Failed to update profile image',
+          'error'.tr,
+          'failed_to_update_profile_image'.tr,
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
       }
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Error updating profile: $e',
+        'error'.tr,
+        'error_updating_profile: $e'.tr,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
