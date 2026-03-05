@@ -250,7 +250,7 @@ class AuthController extends GetxController {
 
     if (response.statusCode == 404) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(data['message'] ?? "User Not Found")),
+        SnackBar(content: Text(data['message'] ?? "user_not_found".tr)),
       );
       return false;
     }
@@ -260,7 +260,7 @@ class AuthController extends GetxController {
         SnackBar(
           backgroundColor: Colors.green.shade100,
           content: Text(
-            data['message'] ?? "OTP sent successfully",
+            data['message'] ?? "otp_send_success".tr,
             style: GoogleFonts.poppins(
               color: AppColors.black,
               fontWeight: FontWeight.w400,
@@ -274,7 +274,7 @@ class AuthController extends GetxController {
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(data['message'] ?? "Something went wrong")),
+      SnackBar(content: Text(data['message'] ?? "something_went_wrong".tr)),
     );
 
     return false;
@@ -306,7 +306,7 @@ class AuthController extends GetxController {
         SnackBar(
           backgroundColor: Colors.green.shade100,
           content: Text(
-            data['message'] ?? "OTP verified successfully",
+            data['message'] ?? "otp_verify_success".tr,
             style: GoogleFonts.poppins(
               color: AppColors.black,
               fontWeight: FontWeight.w400,
@@ -320,7 +320,7 @@ class AuthController extends GetxController {
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(data['message'] ?? "Something went wrong")),
+      SnackBar(content: Text(data['message'] ?? "something_went_wrong".tr)),
     );
 
     return null;
@@ -353,7 +353,7 @@ class AuthController extends GetxController {
         SnackBar(
           backgroundColor: Colors.green.shade100,
           content: Text(
-            data['message'] ?? "Password reset successfully",
+            data['message'] ?? "password_reset_successfully".tr,
             style: GoogleFonts.poppins(
               color: AppColors.black,
               fontWeight: FontWeight.w400,
@@ -365,7 +365,7 @@ class AuthController extends GetxController {
       return true;
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(data['message'] ?? "Something went wrong")),
+        SnackBar(content: Text(data['message'] ?? "something_went_wrong".tr)),
       );
       return false;
     }

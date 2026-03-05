@@ -37,7 +37,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               'forgot_password'.tr,
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.titleFontSize(18),
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
                 color: AppColors.textBlack,
               ),
             ),

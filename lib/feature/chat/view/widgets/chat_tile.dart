@@ -65,7 +65,7 @@ class ChatTile extends StatelessWidget {
                 ),
 
                 child: Text(
-                  "block".tr,
+                  "block_".tr,
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(16),
                     fontWeight: FontWeight.w500,
