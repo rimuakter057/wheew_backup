@@ -377,7 +377,8 @@ class WelcomeScreen extends StatelessWidget {
 
 
               Lottie.asset(
-                'assets/animations/Chat.json',
+               // 'assets/animations/Chat.json',
+                'assets/animations/Chatok.json',
                 width: ResponsiveHelper.iconSize(100),
                 height: ResponsiveHelper.iconSize(100),
                 fit: BoxFit.cover,

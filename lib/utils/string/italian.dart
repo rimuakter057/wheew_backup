@@ -84,7 +84,7 @@ final Map<String, String> italian = {
   // ------------------All chat-------------------------
   'all_chat': 'Tutte le chat',
   'search_here': 'Cerca qui',
-  'type_here1': "Scrivi qui...",
+  'type_here1': "Scrivi qui",
   'block_': "Bloccare",
   "blocked_user": "Utente bloccato",
   "unblock": "Sbloccare",
@@ -106,7 +106,7 @@ final Map<String, String> italian = {
   "pass_six_char": "La password deve contenere almeno 6 caratteri",
   "otp_required": "L'OTP è obbligatorio",
   'empty_block_list': 'Elenco blocchi vuoto',
-  'remember_me': "Ricordati di me",
+  'remember_me': "Ricordami",
   "bad_word_error":"Questo messaggio contiene parole inappropriate.",
   "only_for_recovery":"Solo per recupero account",
   "please_enter_valid_email":"Si prega di inserire un indirizzo email valido",
