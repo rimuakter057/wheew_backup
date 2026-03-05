@@ -42,7 +42,7 @@ final Map<String, String> english = {
   'confirm_your_password': 'Confirm your password',
   'password_do_not_match': 'Passwords do not match',
   //'i_agree_to': 'I agree to the',
-  'i_agree_to': 'I declare that I am at least 16 years old and that I have read and accept the',
+  'i_agree_to': 'I declare that I am at least 16 years old and I accept the',
   'agree_terms': 'Terms & Condition and Privacy Policy',
   'continue': 'Continue',
   'please_fill_all_fields': 'Please fill all fields',
