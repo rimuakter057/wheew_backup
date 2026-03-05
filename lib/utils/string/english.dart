@@ -127,7 +127,9 @@ final Map<String, String> english = {
   "profile_image_updated_successfully":'Profile image updated successfully',
   'error':"Error",
   "failed_to_update_profile_image":'Failed to update profile image',
-  "error_updating_profile:":"Error updating profile:"
+  "error_updating_profile:":"Error updating profile:",
+  "user_blocked_successfully":"User blocked successfully",
+  "failed_to_block_user":"Failed to block user"
 
 
 };

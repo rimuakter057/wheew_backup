@@ -514,10 +514,10 @@ class ChatController extends GetxController {
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       print("User blocked successfully");
-      showSnackBar(context, "User blocked successfully", bgColor: Colors.green);
+      showSnackBar(context, "user_blocked_successfully".tr, bgColor: Colors.green);
     } else {
       print("Block failed: ${response.statusCode}");
-      showSnackBar(context, "Failed to block user", bgColor: Colors.red);
+      showSnackBar(context, "failed_to_block_user".tr, bgColor: Colors.red);
     }
   }
 
