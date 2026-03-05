@@ -114,5 +114,10 @@ final Map<String, String> english = {
   "bad_word_error":"This message contains inappropriate words.",
   "only_for_recovery":"Only for recovery account",
   "please_enter_valid_email":"Please enter a valid email address",
+  "otp_verify_success":"OTP verified successfully",
+  "something_went_wrong":"Something went wrong",
+  "user_not_found":"User Not Found",
+  "otp_send_success":"OTP sent successfully",
+  "password_reset_successfully":"Password reset successfully",
 
 };

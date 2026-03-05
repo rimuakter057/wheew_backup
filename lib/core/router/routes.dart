@@ -112,11 +112,11 @@ class AppRouter {
         builder: (_, _) => const SearchListScreen(),
       ),
 
-      GoRoute(
-        path: RoutePath.inbox,
-        name: RouteName.inbox,
-        builder: (_, _) => const InboxScreen(),
-      ),
+      // GoRoute(
+      //   path: RoutePath.inbox,
+      //   name: RouteName.inbox,
+      //   builder: (_, _) => const InboxScreen(),
+      // ),
       GoRoute(
         path: RoutePath.message,
         name: RouteName.message,

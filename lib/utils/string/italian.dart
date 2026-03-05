@@ -21,7 +21,7 @@ final Map<String, String> italian = {
   'enter_your_password': 'Inserisci la tua password',
   'password_is_required': 'La password è obbligatoria',
   'password_must_6_character': 'La password deve contenere almeno 6 caratteri',
-  'forgot_password': 'Password dimenticata?',
+  'forgot_password': 'Password dimenticata',
 
   // -------- Sign Up --------
   'nickname_is_required': 'Il nickname è obbligatorio',
@@ -110,5 +110,10 @@ final Map<String, String> italian = {
   "bad_word_error":"Questo messaggio contiene parole inappropriate.",
   "only_for_recovery":"Solo per recupero account",
   "please_enter_valid_email":"Si prega di inserire un indirizzo email valido",
+  "otp_verify_success":"OTP verificata con successo",
+  "something_went_wrong":"Qualcosa è andato storto",
+  "user_not_found":"Utente non trovato",
+  "otp_send_success":"OTP inviata con successo",
+  "password_reset_successfully":"Reimpostazione della password riuscita",
 
 };
