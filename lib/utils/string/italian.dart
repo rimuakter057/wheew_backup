@@ -123,7 +123,9 @@ final Map<String, String> italian = {
   "profile_image_updated_successfully":'Immagine del profilo aggiornata con successo',
   'error':"Errore",
   "failed_to_update_profile_image":"Impossibile aggiornare l'immagine del profilo",
-  "error_updating_profile:":"Errore durante l'aggiornamento del profilo:"
+  "error_updating_profile:":"Errore durante l'aggiornamento del profilo:",
+  "user_blocked_successfully":"Utente bloccato con successo",
+  "failed_to_block_user":"Impossibile bloccare l'utente"
 
 
 
