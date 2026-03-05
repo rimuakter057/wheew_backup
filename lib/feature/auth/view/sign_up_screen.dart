@@ -76,13 +76,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(ResponsiveHelper.padding(20)),
+        padding: EdgeInsets.all(ResponsiveHelper.padding(16)),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: ResponsiveHelper.spacing(30)),
+             // SizedBox(height: ResponsiveHelper.spacing(30)),
 
               /// Nickname
               CustomTextField(
