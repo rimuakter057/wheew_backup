@@ -14,7 +14,7 @@ final Map<String, String> italian = {
   'already_account1': "Hai già un account? ",
 
   // -------- Sign In --------
-  'nick_name': 'Soprannome',
+  'nick_name': 'Nickname',
   'license_plate_or_nick_name': 'Targa o Nickname',
   'enter_license_plate_or_nick_name': 'Inserisci la targa o il nickname',
   'password': 'Password',
@@ -25,7 +25,7 @@ final Map<String, String> italian = {
 
   // -------- Sign Up --------
   'nickname_is_required': 'Il nickname è obbligatorio',
-  'select_designation': 'scegli Ruolo',
+  'select_designation': 'Scegli Ruolo',
   'select': 'Seleziona',
   'owner': 'Proprietario',
   'occasional_driver': 'Guidatore occasionale',
@@ -34,8 +34,7 @@ final Map<String, String> italian = {
   'license_number': 'Numero di targa',
   'type_here': 'Scrivi qui',
   'license_number_is_required': 'Il numero di licenza è obbligatorio',
-  'license_number_must_be':
-      'La targa non è corretta',
+  'license_number_must_be': 'La targa non è corretta',
   'license_number_required': 'È richiesto il numero di licenza',
 
   'confirm_password': 'Conferma password',
@@ -85,7 +84,7 @@ final Map<String, String> italian = {
   'all_chat': 'Tutte le chat',
   'search_here': 'Cerca qui',
   'type_here1': "Scrivi qui",
-  'block_': "Bloccare",
+  'block_': "Utenti bloccati",
   "blocked_user": "Utente bloccato",
   "unblock": "Sbloccare",
   'logout': "Esci",
@@ -107,27 +106,27 @@ final Map<String, String> italian = {
   "otp_required": "L'OTP è obbligatorio",
   'empty_block_list': 'Elenco blocchi vuoto',
   'remember_me': "Ricordami",
-  "bad_word_error":"Questo messaggio contiene parole inappropriate.",
-  "only_for_recovery":"Solo per recupero account",
-  "please_enter_valid_email":"Si prega di inserire un indirizzo email valido",
-  "otp_verify_success":"OTP verificata con successo",
-  "something_went_wrong":"Qualcosa è andato storto",
-  "user_not_found":"Utente non trovato",
-  "otp_send_success":"OTP inviata con successo",
-  "password_reset_successfully":"Reimpostazione della password riuscita",
-  "user_unblocked_successfully":"Utente sbloccato con successo",
-  "failed_to_unblock_user":"Impossibile sbloccare l'utente",
-  "info":'Informazioni',
-  'please_select_an_image_first':"Seleziona prima un'immagine",
-  "success":"Successo",
-  "profile_image_updated_successfully":'Immagine del profilo aggiornata con successo',
-  'error':"Errore",
-  "failed_to_update_profile_image":"Impossibile aggiornare l'immagine del profilo",
-  "error_updating_profile:":"Errore durante l'aggiornamento del profilo:",
-  "user_blocked_successfully":"Utente bloccato con successo",
-  "failed_to_block_user":"Impossibile bloccare l'utente"
-
-
-
-
+  "bad_word_error": "Questo messaggio contiene parole inappropriate.",
+  "only_for_recovery": "recupero account",
+  "please_enter_valid_email": "Si prega di inserire un indirizzo email valido",
+  "otp_verify_success": "OTP verificata con successo",
+  "something_went_wrong": "Qualcosa è andato storto",
+  "user_not_found": "Utente non trovato",
+  "otp_send_success": "OTP inviata con successo",
+  "password_reset_successfully": "Reimpostazione della password riuscita",
+  "user_unblocked_successfully": "Utente sbloccato con successo",
+  "failed_to_unblock_user": "Impossibile sbloccare l'utente",
+  "info": 'Informazioni',
+  'please_select_an_image_first': "Seleziona prima un'immagine",
+  "success": "Successo",
+  "profile_image_updated_successfully":
+      'Immagine del profilo aggiornata con successo',
+  'error': "Errore",
+  "failed_to_update_profile_image":
+      "Impossibile aggiornare l'immagine del profilo",
+  "error_updating_profile:": "Errore durante l'aggiornamento del profilo:",
+  "user_blocked_successfully": "Utente bloccato con successo",
+  "failed_to_block_user": "Impossibile bloccare l'utente",
+  "password_must_be_6_characters":
+      "La password deve contenere almeno 6 caratteri",
 };

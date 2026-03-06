@@ -102,7 +102,6 @@ class AppMenuDrawer extends StatelessWidget {
               },
             ),
 
-
             _drawerItem(
               context,
               icon: Icons.block,

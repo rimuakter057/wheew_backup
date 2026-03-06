@@ -7,7 +7,7 @@ class LanguageController extends GetxController {
 
   static final Map<String, Locale> availableLanguages = {
     'English': const Locale('en', 'US'),
-    'Italian': const Locale('it', 'IT'),
+    'Italiano': const Locale('it', 'IT'),
   };
 
   var selectedLanguage = 'Italiano'.obs;
@@ -27,7 +27,7 @@ class LanguageController extends GetxController {
     try {
       final prefs = await SharedPreferences.getInstance();
       final savedLanguage =
-          prefs.getString(_languageKey) ?? 'Italian'; // 👈 Italian default
+          prefs.getString(_languageKey) ?? 'Italiano'; // 👈 Italian default
 
       selectedLanguage.value = savedLanguage;
       currentLocale.value = _getLocaleFromLanguage(savedLanguage);
@@ -40,7 +40,7 @@ class LanguageController extends GetxController {
       debugPrint('Locale set to: ${currentLocale.value}');
     } catch (e) {
       debugPrint('Error loading saved language: $e');
-      selectedLanguage.value = 'Italian'; // 👈 Italian default
+      selectedLanguage.value = 'Italiano'; // 👈 Italian default
       currentLocale.value = const Locale('it', 'IT'); // 👈 Italian default
     }
   }

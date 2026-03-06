@@ -82,7 +82,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-             // SizedBox(height: ResponsiveHelper.spacing(30)),
+              // SizedBox(height: ResponsiveHelper.spacing(30)),
 
               /// Nickname
               CustomTextField(
@@ -206,6 +206,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: licenseController,
                 title: 'license_number'.tr,
                 hintText: 'type_here'.tr,
+
                 // validator: (value) {
                 //   if (value == null || value.trim().isEmpty) {
                 //     return 'License number is required';
@@ -214,17 +215,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 //   }
                 //   return null;
                 // },
-
-
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'license_number_required'.tr;
-                  }       else if (value.length < 6 || value.length > 7) {
+                  } else if (value.length < 6 || value.length > 7) {
                     return 'license_number_must_be'.tr;
                   }
                   return null;
                 },
-
               ),
 
               SizedBox(height: ResponsiveHelper.spacing(16)),
@@ -258,6 +256,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'password_is_required'.tr;
+                  } else if (value.trim().length < 6) {
+                    return 'password_must_be_6_characters'.tr;
                   }
 
                   return null;
@@ -275,6 +275,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'confirm_your_password'.tr;
+                  } else if (value.trim().length < 6) {
+                    return 'password_must_be_6_characters'.tr;
                   }
                   if (value != passwordController.text) {
                     return 'password_do_not_match'.tr;
@@ -464,9 +466,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   }
                 },
               ),
-
-
-
 
               SizedBox(height: ResponsiveHelper.spacing(8)),
 

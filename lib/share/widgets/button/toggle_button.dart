@@ -26,7 +26,7 @@ class LanguageToggleWidget extends StatelessWidget {
             _CircleFlag(
               iconPath: AssetsPath.italy,
               isSelected: isItalian,
-              onTap: () => controller.saveLanguage('Italian'),
+              onTap: () => controller.saveLanguage('Italiano'),
             ),
             const SizedBox(width: 8),
             _CircleFlag(
@@ -59,7 +59,9 @@ class _CircleFlag extends StatelessWidget {
         : ImageType.png;
 
     // Outer size (border included)
-    final double size = isSelected ? ResponsiveHelper.iconSize(32.2) : ResponsiveHelper.iconSize(26.6);
+    final double size = isSelected
+        ? ResponsiveHelper.iconSize(32.2)
+        : ResponsiveHelper.iconSize(26.6);
     final double borderWidth = isSelected ? 2 : 0;
 
     return GestureDetector(
