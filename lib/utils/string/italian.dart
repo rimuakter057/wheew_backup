@@ -2,10 +2,14 @@ final Map<String, String> italian = {
   // -------- Welcome Screen --------
   'splash': 'COLLEGAMENTO DEI PILOTI UNA PIASTRA ALLA VOLTA',
 
-  'welcome_message': 'La tua Targa,\n la tua chat',
-  'welcome_message1': "Vedi una targa, inizia a chattare:",
-  'welcome_message2': "registrati velocemente e connettiti",
-  'welcome_message3': "con un driver ovunque tu vada",
+  //'welcome_message': 'La tua Targa,\n la tua chat',
+  'welcome_message': 'La tua Targa, la tua chat',
+  //'welcome_message1': "Vedi una targa, inizia a chattare:",
+  'welcome_message1': "Vedi una targa, inizi a chattare:",
+  //'welcome_message2': "registrati velocemente e connettiti",
+  'welcome_message2': " registrati velocemente e connettiti con un",
+  //'welcome_message3': "con un driver ovunque tu vada",
+  'welcome_message3': "driver ovunque tu vada",
 
   'sign_up': 'Registrati',
   'log_in': 'Accedi',
@@ -15,6 +19,8 @@ final Map<String, String> italian = {
 
   // -------- Sign In --------
   'nick_name': 'Nickname',
+  'license_number_title':"Numero di Targa",
+  'license_number1':"Targa",
   'license_plate_or_nick_name': 'Targa o Nickname',
   'enter_license_plate_or_nick_name': 'Inserisci la targa o il nickname',
   'password': 'Password',
@@ -85,7 +91,9 @@ final Map<String, String> italian = {
   'search_here': 'Cerca qui',
   'type_here1': "Scrivi qui",
   'block_': "Utenti bloccati",
-  "blocked_user": "Utente bloccato",
+  //'block_': "Sblocca",
+  //"blocked_user": "Utente bloccato",
+  "blocked_user1": "Sblocca",
   "unblock": "Sbloccare",
   'logout': "Esci",
   'profile': "Profilo",
@@ -106,7 +114,7 @@ final Map<String, String> italian = {
   "otp_required": "L'OTP è obbligatorio",
   'empty_block_list': 'Elenco blocchi vuoto',
   'remember_me': "Ricordami",
-  "bad_word_error": "Questo messaggio contiene parole inappropriate.",
+  "bad_word_error": "Questi messaggio contiene parole inappropriate.",
   "only_for_recovery": "recupero account",
   "please_enter_valid_email": "Si prega di inserire un indirizzo email valido",
   "otp_verify_success": "OTP verificata con successo",

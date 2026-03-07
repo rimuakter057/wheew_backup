@@ -4,10 +4,14 @@ final Map<String, String> english = {
   // -------- Welcome Screen --------
   'splash': 'CONNECTING DRIVERS ONE PLATE AT A TIME',
 
-  'welcome_message': "Easy Chat With\nyour friends",
-  'welcome_message1': "Keep up with your friend and makes",
-  'welcome_message2': "your chat more enjoyable by signing",
-  'welcome_message3': "quickly and easily",
+  //'welcome_message': "Easy Chat With\nyour friends",
+  'welcome_message': "Your plate, your chat",
+  //'welcome_message1': "Keep up with your friend and makes",
+  'welcome_message1': "See a plate, start talking:",
+  //'welcome_message2': "your chat more enjoyable by signing",
+  'welcome_message2': "quick signup to connect with",
+  //'welcome_message3': "quickly and easily",
+  'welcome_message3': "PLATEChatters wherever you are",
 
   'sign_in': 'Sign In',
   'sign_up': 'Sign Up',
@@ -17,6 +21,8 @@ final Map<String, String> english = {
 
   // -------- Sign In --------
   'nick_name': 'Nickname',
+  'license_number_title':"License Number",
+  'license_number1':"License Number",
   'license_plate_or_nick_name': "License Plate or Nickname",
   'enter_license_plate_or_nick_name': "Enter License Plate or Nickname",
   'password': 'Password',
@@ -87,8 +93,8 @@ final Map<String, String> english = {
 
   ///messaging===========================
   'type_here1': "Type here",
-  'block_': "Block",
-  "blocked_user": "Blocked user",
+  'block_': "Blocked users",
+  "blocked_user1": "Unblock",
   "unblock": "Unblock",
   'logout': "Logout",
   'profile': "Profile",

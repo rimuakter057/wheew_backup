@@ -5,13 +5,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/feature/chat/view/message_screen.dart';
 import 'package:platchatapp/feature/chat/view/widgets/chat_list_screen_shimmer.dart';
+import 'package:platchatapp/feature/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/helper/data_converter/data_converter.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
-
 import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
+import '../../../utils/assets_path/assets_path.dart';
 import '../repository/chat_controller.dart';
 import '../../profile/view/app_menu_drawer.dart';
 import 'widgets/chat_tile.dart';
@@ -89,15 +90,40 @@ class _ChatListScreenState extends State<ChatListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: AppBar(
+      //   backgroundColor: AppColors.white,
+      //   centerTitle: true,
+      //   title: Text(
+      //     'all_chat'.tr,
+      //     style: GoogleFonts.poppins(
+      //       fontWeight: FontWeight.w500,
+      //       fontSize: ResponsiveHelper.fontSize(18),
+      //     ),
+      //   ),
+      //   actions: [
+      //     Builder(
+      //       builder: (context) {
+      //         return IconButton(
+      //           icon: Icon(
+      //             Icons.menu_outlined,
+      //             color: AppColors.black,
+      //             size: ResponsiveHelper.iconSize(24),
+      //           ),
+      //           onPressed: () {
+      //             Scaffold.of(context).openEndDrawer();
+      //           },
+      //         );
+      //       },
+      //     ),
+      //   ],
+      // ),
       appBar: AppBar(
         backgroundColor: AppColors.white,
         centerTitle: true,
-        title: Text(
-          'all_chat'.tr,
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w500,
-            fontSize: ResponsiveHelper.fontSize(18),
-          ),
+        title: CustomImage(
+          imageSrc: AssetsPath.chatList,
+          height: ResponsiveHelper.height(28),
+          fit: BoxFit.contain,
         ),
         actions: [
           Builder(

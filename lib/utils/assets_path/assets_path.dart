@@ -23,6 +23,8 @@ class AssetsPath {
   static const String person6 = '${_imagesBase}person6.png';
   static const String signLogo = '${_imagesBase}sign_logo.png';
   static const String chat = '${_imagesBase}chat.png';
+  static const String chatList = '${_iconsBase}chatlist.png';
+  static const String plateChat = '${_iconsBase}plateChat.png';
   static const String italy = '${_iconsBase}italy.png';
   static const String uk = '${_iconsBase}uk.png';
 }
