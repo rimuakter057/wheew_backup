@@ -109,7 +109,7 @@ class _BlockListScreenState extends State<BlockListScreen> {
                 name: user?.nickName ?? "Unknown",
 
                 /// message এর জায়গায় status
-                message: "blocked_user".tr,
+                message: "blocked_user1".tr,
 
                 /// font weight normal
                 fontWeight: FontWeight.w400,

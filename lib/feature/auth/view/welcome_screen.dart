@@ -274,6 +274,7 @@ import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../share/widgets/button/outline_button.dart';
 import '../../../share/widgets/button/primary_button.dart';
 import '../../../share/widgets/button/toggle_button.dart';
+import '../../../share/widgets/custom_image/custom_image.dart';
 import '../../../utils/assets_path/assets_path.dart';
 import '../../../utils/color/app_colors.dart';
 
@@ -289,6 +290,7 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       body: SingleChildScrollView(
         physics: NeverScrollableScrollPhysics(),
+
         child: Column(
           children: [
             Container(
@@ -371,77 +373,150 @@ class WelcomeScreen extends StatelessWidget {
               ),
             ),
 
-            //   SizedBox(height: ResponsiveHelper.spacing(24)),
-            Lottie.asset(
-              // 'assets/animations/Chat.json',
-              'assets/animations/Chatok.json',
-              width: ResponsiveHelper.iconSize(100),
-              height: ResponsiveHelper.iconSize(100),
-              fit: BoxFit.cover,
-              repeat: true, // animation loop করবে
-            ),
-
-            Stack(
-              alignment: Alignment.topCenter,
-              clipBehavior: Clip.none,
+            SizedBox(height: ResponsiveHelper.spacing(24)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // TEXT CONTENT
-                Column(
-                  children: [
-                    Text(
-                      'welcome_message'.tr,
-                      textAlign: TextAlign.center,
-                      style: context.titleLarge.copyWith(
-                        fontSize: 40,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-
-                    SizedBox(height: ResponsiveHelper.spacing(4)),
-
-                    Text(
-                      'welcome_message1'.tr,
-                      textAlign: TextAlign.center,
-                      style: context.titleLarge.copyWith(
-                        fontSize: ResponsiveHelper.fontSize(16),
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    Text(
-                      'welcome_message2'.tr,
-                      textAlign: TextAlign.center,
-                      style: context.titleLarge.copyWith(
-                        fontSize: ResponsiveHelper.fontSize(16),
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    Text(
-                      'welcome_message3'.tr,
-                      textAlign: TextAlign.center,
-                      style: context.titleLarge.copyWith(
-                        fontSize: ResponsiveHelper.fontSize(16),
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
+                Lottie.asset(
+                  'assets/animations/Chatok.json',
+                  width: ResponsiveHelper.iconSize(90),
+                  height: ResponsiveHelper.iconSize(90),
+                  fit: BoxFit.cover,
+                  repeat: true,
                 ),
-
-                // // FLOATING CHAT ICON
-                // Positioned(
-                //   top: -ResponsiveHelper.spacing(2),
-                //   left: 0,
-                //   child: Container(
-                //     width: ResponsiveHelper.width(40),
-                //     height: ResponsiveHelper.height(40),
-                //     /*decoration: const BoxDecoration(
-                //       color: Colors.green,
-                //       shape: BoxShape.circle,
-                //     ),*/
-                //     padding: const EdgeInsets.all(0),
-                //     child: const CustomImage(imageSrc: AssetsPath.chat),
-                //   ),
-                // ),
+                //SizedBox(width: ResponsiveHelper.spacing(8)),
+                CustomImage(
+                  imageSrc: AssetsPath.plateChat,
+                  height: ResponsiveHelper.height(40),
+                  fit: BoxFit.contain,
+                ),
               ],
+            ),
+            // Lottie.asset(
+            //   // 'assets/animations/Chat.json',
+            //   'assets/animations/Chatok.json',
+            //   width: ResponsiveHelper.iconSize(100),
+            //   height: ResponsiveHelper.iconSize(100),
+            //   fit: BoxFit.cover,
+            //   repeat: true, // animation loop করবে
+            // ),
+            // CustomImage(
+            //   imageSrc: AssetsPath.plateChat,
+            //   height: ResponsiveHelper.height(28),
+            //   fit: BoxFit.contain,
+            // ),
+
+            // Stack(
+            //   //alignment: Alignment.topCenter,
+            //   alignment: Alignment.topCenter,
+            //   clipBehavior: Clip.none,
+            //   children: [
+            //     // TEXT CONTENT
+            //     Column(
+            //       children: [
+            //         Text(
+            //           'welcome_message'.tr,
+            //           textAlign: TextAlign.start,
+            //           style: context.titleLarge.copyWith(
+            //             fontSize: 40,
+            //             fontWeight: FontWeight.w400,
+            //           ),
+            //         ),
+            //
+            //         SizedBox(height: ResponsiveHelper.spacing(4)),
+            //
+            //         Text(
+            //           'welcome_message1'.tr,
+            //           //textAlign: TextAlign.center,
+            //           style: context.titleLarge.copyWith(
+            //             fontSize: ResponsiveHelper.fontSize(16),
+            //             fontWeight: FontWeight.w400,
+            //           ),
+            //         ),
+            //         Text(
+            //           'welcome_message2'.tr,
+            //           //textAlign: TextAlign.center,
+            //           style: context.titleLarge.copyWith(
+            //             fontSize: ResponsiveHelper.fontSize(16),
+            //             fontWeight: FontWeight.w400,
+            //           ),
+            //         ),
+            //         Text(
+            //           'welcome_message3'.tr,
+            //           textAlign: TextAlign.center,
+            //           style: context.titleLarge.copyWith(
+            //             fontSize: ResponsiveHelper.fontSize(16),
+            //             fontWeight: FontWeight.w400,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //
+            //     // // FLOATING CHAT ICON
+            //     // Positioned(
+            //     //   top: -ResponsiveHelper.spacing(2),
+            //     //   left: 0,
+            //     //   child: Container(
+            //     //     width: ResponsiveHelper.width(40),
+            //     //     height: ResponsiveHelper.height(40),
+            //     //     /*decoration: const BoxDecoration(
+            //     //       color: Colors.green,
+            //     //       shape: BoxShape.circle,
+            //     //     ),*/
+            //     //     padding: const EdgeInsets.all(0),
+            //     //     child: const CustomImage(imageSrc: AssetsPath.chat),
+            //     //   ),
+            //     // ),
+            //   ],
+            // ),
+
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveHelper.padding(24),
+              ),
+              child: Stack(
+                alignment: Alignment.topCenter,
+                clipBehavior: Clip.none,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start, // ✅ align all text to left
+                    children: [
+                      Text(
+                        'welcome_message'.tr,
+                        style: context.titleLarge.copyWith(
+                          fontSize: ResponsiveHelper.fontSize(32),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+
+                      SizedBox(height: ResponsiveHelper.spacing(4)),
+
+                      Text(
+                        'welcome_message1'.tr,
+                        style: context.titleLarge.copyWith(
+                          fontSize: ResponsiveHelper.fontSize(16),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      Text(
+                        'welcome_message2'.tr,
+                        style: context.titleLarge.copyWith(
+                          fontSize: ResponsiveHelper.fontSize(16),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      Text(
+                        'welcome_message3'.tr,
+                        style: context.titleLarge.copyWith(
+                          fontSize: ResponsiveHelper.fontSize(16),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
 
             SizedBox(height: ResponsiveHelper.spacing(24)),
@@ -454,7 +529,7 @@ class WelcomeScreen extends StatelessWidget {
             //   child: const LanguageToggleWidget(),
             // ),
             //
-            SizedBox(height: ResponsiveHelper.spacing(12)),
+            //SizedBox(height: ResponsiveHelper.spacing(12)),
 
             // SIGN IN BUTTON
             Padding(
@@ -471,7 +546,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: ResponsiveHelper.spacing(8)),
+            SizedBox(height: ResponsiveHelper.height(8)),
 
             // SIGN UP BUTTON
             /*Padding(
@@ -497,7 +572,7 @@ class WelcomeScreen extends StatelessWidget {
                   _showAgeConfirmationDialog(context);
                 },
                 backgroundColor: AppColors.blue,
-                textColor: Colors.white,
+                textColor: Colors.white, // ✅ correct parameter name
               ),
             ),
 

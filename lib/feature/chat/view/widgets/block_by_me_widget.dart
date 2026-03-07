@@ -31,8 +31,16 @@ class BlockByMeWidget extends StatelessWidget {
 
       child: Column(
         children: [
-          Text(
+          /*Text(
             "you've_blocked $name".tr,
+            style: GoogleFonts.poppins(
+              fontSize: ResponsiveHelper.fontSize(16),
+              fontWeight: FontWeight.w400,
+              color: AppColors.black,
+            ),
+          ),*/
+          Text(
+            "${"you've_blocked".tr} $name",
             style: GoogleFonts.poppins(
               fontSize: ResponsiveHelper.fontSize(16),
               fontWeight: FontWeight.w400,

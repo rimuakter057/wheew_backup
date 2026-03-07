@@ -102,21 +102,21 @@ class ProfileScreen extends StatelessWidget {
 
                 SizedBox(height: ResponsiveHelper.spacing(32)),
 
-                _label('Nick Name'),
+                _label('nick_name'.tr),
                 SizedBox(height: ResponsiveHelper.spacing(4)),
                 _textField(
                   controller: controller.nickNameController,
-                  hintText: 'Nick name',
+                  hintText:'nick_name'.tr,
                   enabled: false,
                 ),
 
                 SizedBox(height: ResponsiveHelper.spacing(20)),
 
-                _label('License Number'),
+                _label('license_number_title'.tr),
                 SizedBox(height: ResponsiveHelper.spacing(4)),
                 _textField(
                   controller: controller.licenseController,
-                  hintText: 'License number',
+                  hintText: 'license_number1'.tr,
                   enabled: false,
                 ),
 
