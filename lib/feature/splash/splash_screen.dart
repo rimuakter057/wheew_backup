@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (isLoggedIn) {
       /// timeout fallback (10 sec)
-      Future.delayed(const Duration(seconds: 10), () {
+      Future.delayed(const Duration(seconds: 30), () {
         if (!_isNavigated && mounted) {
           _showTimeoutMessage();
         }
