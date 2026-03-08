@@ -93,7 +93,7 @@ final Map<String, String> english = {
 
   ///messaging===========================
   'type_here1': "Type here",
-  'block_': "Blocked users",
+  'block_': "Blocked",
   "blocked_user1": "Unblock",
   "unblock": "Unblock",
   'logout': "Logout",
