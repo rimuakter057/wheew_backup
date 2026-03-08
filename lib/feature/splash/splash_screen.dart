@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
+import 'package:platchatapp/feature/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../core/router/routes_name.dart';
 import '../../core/service/storage_service.dart';
@@ -61,6 +62,15 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
+        child: CustomImage(
+          imageSrc: AssetsPath.logoPng,
+          width: ResponsiveHelper.width(280),
+        ),
+      ),
+    );
+
+    /*Scaffold(
+      body: Center(
         child: Column(
           children: [
             const Spacer(),
@@ -83,7 +93,8 @@ class _SplashScreenState extends State<SplashScreen> {
           ],
         ),
       ),
-    );
+    )*/
+    ;
   }
 
   void _showTimeoutMessage() {
