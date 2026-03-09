@@ -2,12 +2,12 @@ class ApiUrl {
   // Base URL - Replace with your actual API base URL
 
   // Local
-  //static const String baseUrl = 'http://10.10.20.44:8003';
+  static const String baseUrl = 'http://10.10.20.44:8003';
 
   // Production
   //http://13.50.99.165:8003
   static const baseSocketUrl = 'ws://13.50.99.165:8003';
-  static const String baseUrl = 'http://13.50.99.165:8003';
+  //static const String baseUrl = 'http://13.50.99.165:8003';
   static const String imageUrl = "$baseUrl/";
 
   static String socketUrl({required String userId}) =>
@@ -45,4 +45,5 @@ class ApiUrl {
   static const String forget = "/users/forget-password";
   static const String verifyOtp = "/users/verify-otp";
   static const String reset = "/users/reset-password";
+  static const String deleteAccount = "/users";
 }

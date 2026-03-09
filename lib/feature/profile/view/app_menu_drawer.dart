@@ -111,6 +111,16 @@ class AppMenuDrawer extends StatelessWidget {
                 context.pushNamed(RouteName.block);
               },
             ),
+            _drawerItem(
+              context,
+              icon: Icons.delete_outline,
+              title: 'delete'.tr,
+              onTap: () {
+                context.pushNamed(RouteName.delete);
+
+              },
+            ),
+
 
             /// ===== LANGUAGE =====
             ListTile(

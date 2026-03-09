@@ -331,7 +331,8 @@ class ApiClient {
   static Future<http.Response> deleteData({
     required String uri,
     Map<String, String>? headers,
-  }) async {
+  }) async
+  {
     if (!await _checkConnection()) {
       throw Exception('No Internet Connection');
     }

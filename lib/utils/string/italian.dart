@@ -137,4 +137,13 @@ final Map<String, String> italian = {
   "failed_to_block_user": "Impossibile bloccare l'utente",
   "password_must_be_6_characters":
       "La password deve contenere almeno 6 caratteri",
+  "delete": "eliminare",
+
+
+  "delete_account":"Elimina account",
+  "warning":"Avvertimento",
+  "delete_account_warning":"Avviso di eliminazione dell'account",
+  "delete_account_successfully":"Account eliminato con successo",
+  "failed_delete_account":"Impossibile eliminare l'account",
+
 };

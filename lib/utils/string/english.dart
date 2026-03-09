@@ -137,4 +137,14 @@ final Map<String, String> english = {
   "user_blocked_successfully": "User blocked successfully",
   "failed_to_block_user": "Failed to block user",
   "password_must_be_6_characters": "Password must be at least 6 characters",
+  "delete": "Delete",
+
+
+  "delete_account":"Delete Account",
+  "warning":"Warning",
+  "delete_account_warning":"Delete Account Warning",
+  "delete_account_successfully":"Account deleted successfully",
+  "failed_delete_account":"Failed to delete account",
+
+
 };

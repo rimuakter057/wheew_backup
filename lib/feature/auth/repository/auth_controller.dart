@@ -370,4 +370,44 @@ class AuthController extends GetxController {
       return false;
     }
   }
+
+
+
+  /// delete account==========================================================================================
+
+  var isLoadingDeleteAccount = false.obs;
+
+  Future<void> deleteAccount({required BuildContext context}) async {
+    isLoadingDeleteAccount.value = true;
+
+    final response = await ApiClient.deleteData(uri: ApiUrl.deleteAccount);
+
+    isLoadingDeleteAccount.value = false;
+
+    if (response.statusCode == 200) {
+      await clearUserData();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("delete_account_successfully".tr)),
+      );
+      Get.offAllNamed(RouteName.signIn);
+    } else {
+      final data = jsonDecode(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(data['message'] ?? "failed_delete_account".tr)),
+      );
+    }
+  }
+
+  Future<void> clearUserData() async {
+    await SharePrefsHelper.remove(AppConst.token);
+    await SharePrefsHelper.remove(AppConst.userID);
+    await SharePrefsHelper.remove(AppConst.userData);
+    await SharePrefsHelper.remove(AppConst.licenceId);
+    await SharePrefsHelper.remove(AppConst.nickName);
+    await SharePrefsHelper.remove(AppConst.loginUser);
+    await SharePrefsHelper.remove(AppConst.loginPass);
+    await SharePrefsHelper.setBool(AppConst.isLoggedIn, false);
+  }
+
+
 }
