@@ -6,6 +6,8 @@ class AssetsPath {
 
   // Logos
   static const String logoSvg = '${_logoBase}logo.svg';
+  static const String plateIcon = '${_logoBase}platechat_icon.svg';
+  static const String plateLogo = '${_logoBase}platechat_logo.svg';
   static const String logoPng = '${_logoBase}logo.png';
 
   //icons====================================
