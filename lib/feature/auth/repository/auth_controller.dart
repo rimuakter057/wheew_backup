@@ -377,24 +377,38 @@ class AuthController extends GetxController {
 
   var isLoadingDeleteAccount = false.obs;
 
-  Future<void> deleteAccount({required BuildContext context}) async {
+  Future<void> deleteAccount({
+    required BuildContext context,
+    required String password,
+  }) async {
+
     isLoadingDeleteAccount.value = true;
 
-    final response = await ApiClient.deleteData(uri: ApiUrl.deleteAccount);
+    final response = await ApiClient.deleteData(
+      uri: ApiUrl.deleteAccount,
+      body: {"password": password},
+    );
 
     isLoadingDeleteAccount.value = false;
 
-    if (response.statusCode == 200) {
+    final data = response["data"];
+
+    if (response["statusCode"] == 200) {
+
       await clearUserData();
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("delete_account_successfully".tr)),
+        SnackBar(content: Text(data['message'] ?? "Account deleted")),
       );
-      Get.offAllNamed(RouteName.signIn);
+
+      context.goNamed(RouteName.signIn);
+
     } else {
-      final data = jsonDecode(response.body);
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(data['message'] ?? "failed_delete_account".tr)),
+        SnackBar(content: Text(data['message'] ?? "Failed to delete account")),
       );
+
     }
   }
 

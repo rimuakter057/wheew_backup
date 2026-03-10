@@ -28,7 +28,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
 
   Future<void> _handleDelete() async {
     if (_formKey.currentState!.validate()) {
-      await authController.deleteAccount(context: context);
+      await authController.deleteAccount(context: context, password: _passwordController.text);
     }
   }
 
