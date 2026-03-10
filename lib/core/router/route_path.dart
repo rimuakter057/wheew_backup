@@ -13,4 +13,6 @@ class RoutePath {
   static const forgotPassword = '/forgot-password';
   static const otp = '/otp';
   static const resetPassword = '/reset-password';
+  static const delete = '/delete';
+  static const help = '/help';
 }

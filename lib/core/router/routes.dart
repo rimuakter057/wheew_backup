@@ -4,6 +4,7 @@ import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/router/route_path.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
+import 'package:platchatapp/feature/auth/view/delete_account_screen.dart';
 import 'package:platchatapp/feature/auth/view/reset_password_screen.dart';
 import 'package:platchatapp/feature/auth/view/forgot_password_screen.dart';
 import 'package:platchatapp/feature/auth/view/sign_in_screen.dart';
@@ -112,11 +113,11 @@ class AppRouter {
         builder: (_, _) => const SearchListScreen(),
       ),
 
-      // GoRoute(
-      //   path: RoutePath.inbox,
-      //   name: RouteName.inbox,
-      //   builder: (_, _) => const InboxScreen(),
-      // ),
+      GoRoute(
+        path: RoutePath.delete,
+        name: RouteName.delete,
+        builder: (_, _) => const DeleteAccountScreen(),
+      ),
       GoRoute(
         path: RoutePath.message,
         name: RouteName.message,
@@ -139,6 +140,12 @@ class AppRouter {
         name: RouteName.profile,
         builder: (_, _) => ProfileScreen(),
       ),
+      GoRoute(
+        path: RoutePath.help,
+        name: RouteName.help,
+        builder: (_, _) => ProfileScreen(),
+      ),
+
     ],
   );
 }

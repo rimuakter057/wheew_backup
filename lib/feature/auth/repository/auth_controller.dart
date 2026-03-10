@@ -370,4 +370,86 @@ class AuthController extends GetxController {
       return false;
     }
   }
+///help and support==============================================
+
+  final isLoadingHelp = false.obs;
+  final message = ''.obs;
+  final errorMessage = ''.obs;
+
+
+
+
+
+  Future<void> fetchHelpSupport() async {
+    try {
+      isLoadingHelp.value = true;
+      errorMessage.value = '';
+
+      final response = await ApiClient.getData(uri:ApiUrl .help);
+
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        message.value = body['message'] ?? '';
+      } else {
+        errorMessage.value = body['message'] ?? 'Something went wrong';
+      }
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoadingHelp.value = false;
+    }
+  }
+
+  /// delete account==========================================================================================
+
+  var isLoadingDeleteAccount = false.obs;
+
+  Future<void> deleteAccount({
+    required BuildContext context,
+    required String password,
+  }) async {
+
+    isLoadingDeleteAccount.value = true;
+
+    final response = await ApiClient.deleteData(
+      uri: ApiUrl.deleteAccount,
+      body: {"password": password},
+    );
+
+    isLoadingDeleteAccount.value = false;
+
+    final data = response["data"];
+
+    if (response["statusCode"] == 200) {
+
+      await clearUserData();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(data['message'] ?? "Account deleted")),
+      );
+
+      context.goNamed(RouteName.signIn);
+
+    } else {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(data['message'] ?? "Failed to delete account")),
+      );
+
+    }
+  }
+
+  Future<void> clearUserData() async {
+    await SharePrefsHelper.remove(AppConst.token);
+    await SharePrefsHelper.remove(AppConst.userID);
+    await SharePrefsHelper.remove(AppConst.userData);
+    await SharePrefsHelper.remove(AppConst.licenceId);
+    await SharePrefsHelper.remove(AppConst.nickName);
+    await SharePrefsHelper.remove(AppConst.loginUser);
+    await SharePrefsHelper.remove(AppConst.loginPass);
+    await SharePrefsHelper.setBool(AppConst.isLoggedIn, false);
+  }
+
+
 }

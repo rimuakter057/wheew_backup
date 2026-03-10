@@ -1,3 +1,4 @@
+import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharePrefsHelper {
@@ -59,4 +60,12 @@ class SharePrefsHelper {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.remove(key);
   }
+
+  Future<void> clearUserData() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.remove(AppConst.token);
+    await sharedPreferences.remove(AppConst.userData);
+
+  }
+
 }

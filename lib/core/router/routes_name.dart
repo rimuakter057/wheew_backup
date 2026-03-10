@@ -13,4 +13,6 @@ class RouteName {
   static const forgotPassword = 'forgot_password';
   static const otp = 'otp';
   static const resetPassword = 'reset_password';
+  static const delete = 'delete_screen';
+  static const help = 'help_screen';
 }
