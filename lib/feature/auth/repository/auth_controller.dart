@@ -392,7 +392,7 @@ class AuthController extends GetxController {
       if (response.statusCode == 200) {
         message.value = body['message'] ?? '';
       } else {
-        errorMessage.value = body['message'] ?? 'Something went wrong';
+        errorMessage.value = body['message'] ?? "something_went_wrong".tr;
       }
     } catch (e) {
       errorMessage.value = e.toString();
@@ -426,7 +426,7 @@ class AuthController extends GetxController {
       await clearUserData();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(data['message'] ?? "Account deleted")),
+        SnackBar(content: Text(data['message'] ?? "delete_account".tr)),
       );
 
       context.goNamed(RouteName.signIn);
@@ -434,7 +434,7 @@ class AuthController extends GetxController {
     } else {
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(data['message'] ?? "Failed to delete account")),
+        SnackBar(content: Text(data['message'] ?? "failed_delete_account".tr)),
       );
 
     }
