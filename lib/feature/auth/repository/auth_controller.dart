@@ -370,8 +370,36 @@ class AuthController extends GetxController {
       return false;
     }
   }
+///help and support==============================================
+
+  final isLoadingHelp = false.obs;
+  final message = ''.obs;
+  final errorMessage = ''.obs;
 
 
+
+
+
+  Future<void> fetchHelpSupport() async {
+    try {
+      isLoadingHelp.value = true;
+      errorMessage.value = '';
+
+      final response = await ApiClient.getData(uri:ApiUrl .help);
+
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        message.value = body['message'] ?? '';
+      } else {
+        errorMessage.value = body['message'] ?? 'Something went wrong';
+      }
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoadingHelp.value = false;
+    }
+  }
 
   /// delete account==========================================================================================
 

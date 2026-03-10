@@ -211,57 +211,7 @@ class ApiClient {
     }
   }
 
-  ///============================= PATCH REQUEST ================================
-  // static Future<Response> patchData(
-  //     String uri,
-  //     dynamic body, {
-  //       Map<String, String>? headers,
-  //       bool isJson = true,
-  //     }) async
-  // {
-  //   if (!await _checkConnection()) {
-  //     return const Response(
-  //       statusCode: 0,
-  //       statusText: 'No Internet Connection',
-  //     );
-  //   }
-  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  //
-  //   bearerToken = (sharedPreferences.getString(AppConstants.bearerToken))!;
-  //
-  //   var mainHeaders =
-  //   isJson
-  //       ? {
-  //     'Content-Type': 'application/json',
-  //     'Authorization': "Bearer $bearerToken",
-  //   }
-  //       : {
-  //     'Accept': 'application/json',
-  //     'Authorization': "Bearer $bearerToken",
-  //   };
-  //
-  //   try {
-  //     logger.i(
-  //       "➡️ PATCH REQUEST===============================================\nURL:=============================================== $uri\nHeaders:========================================== ${headers ?? mainHeaders}\nBody:================================== $body",
-  //     );
-  //
-  //     http.Response response = await client
-  //         .patch(
-  //       Uri.parse(ApiUrl.baseUrl + uri),
-  //       body: isJson ? jsonEncode(body) : body,
-  //       headers: headers ?? mainHeaders,
-  //     )
-  //         .timeout(const Duration(seconds: timeoutInSeconds));
-  //
-  //     return handleResponse(response, uri);
-  //   } catch (e) {
-  //     logger.e(
-  //       "❌ PATCH Error:============================================================== $e",
-  //     );
-  //     return const Response(statusCode: 1, statusText: somethingWentWrong);
-  //   }
-  // }
-  //
+
 
   ///============================= PATCH REQUEST ================================
   static Future<http.Response> patchData({

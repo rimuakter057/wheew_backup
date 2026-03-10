@@ -145,6 +145,7 @@ final Map<String, String> english = {
   "delete_account_warning":"Delete Account Warning",
   "delete_account_successfully":"Account deleted successfully",
   "failed_delete_account":"Failed to delete account",
+  "help_support":"Help and Support",
 
 
 };

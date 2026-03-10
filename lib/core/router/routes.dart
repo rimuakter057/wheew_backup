@@ -140,6 +140,12 @@ class AppRouter {
         name: RouteName.profile,
         builder: (_, _) => ProfileScreen(),
       ),
+      GoRoute(
+        path: RoutePath.help,
+        name: RouteName.help,
+        builder: (_, _) => ProfileScreen(),
+      ),
+
     ],
   );
 }
