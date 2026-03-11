@@ -95,14 +95,13 @@ class _BlockListScreenState extends State<BlockListScreen> {
               final block = controller.userBlockList[index];
 
               final user = block.blockedUser;
-              final blockedUserId = block.id;
+              final blockedUserId = block.blockedUserId;
 
               return ChatTile(
                 isBlock: true,
                 onUnblock: () {
-
-                  // controller.unBlock(blockedUserId!, context);
-                  // controller.isBlockedByMe.value = false;
+                  controller.unBlock(blockedUserId!, context);
+                  controller.isBlockedByMe.value = false;
                 },
 
                 /// Name show
