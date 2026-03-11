@@ -139,6 +139,8 @@ final Map<String, String> english = {
   "failed_to_block_user": "Failed to block user",
   "password_must_be_6_characters": "Password must be at least 6 characters",
   "delete": "Delete",
+  "support_request": "Support Request",
+
 
 
   "delete_account":"Delete Account",
@@ -147,6 +149,12 @@ final Map<String, String> english = {
   "delete_account_successfully":"Account deleted successfully",
   "failed_delete_account":"Failed to delete account",
   "help_support":"Help and Support",
+  "support_text1":"For any help and support, please contact us at ",
+
+      "support_text2":" Our support team is available to assist you with any issues or inquiries you may have. 155 Per qualsiasi aiuto e supporto, contattaci all'indirizzo support@platechat.app Il nostro team di supporto è disponibile per assisterti in caso di problemi o richieste.",
+          "Support Request": "Richiesta di supporto",
+          "email_copied": "Email Copied",
+
 
 
 };

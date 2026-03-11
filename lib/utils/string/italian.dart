@@ -149,6 +149,10 @@ final Map<String, String> italian = {
   "delete_account_warning":"Avviso di eliminazione dell'account",
   "delete_account_successfully":"Account eliminato con successo",
   "failed_delete_account":"Impossibile eliminare l'account",
-  "help_support":"Aiuto e supporto",
-
+  "help_support":"Aiuto e Supporto",
+  "support_text1": "Per qualsiasi aiuto e supporto, contattaci a ",
+  "client_email": "support@platechat.app",
+  "support_text2": "Il nostro team di supporto è disponibile per assisterti con qualsiasi problema o richiesta.",
+      "support_request": "Richiesta di supporto",
+  "email_copied": "E-mail copiata",
 };
