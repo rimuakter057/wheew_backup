@@ -124,7 +124,7 @@ class AppMenuDrawer extends StatelessWidget {
             _drawerItem(
               context,
               icon: Icons.block,
-              title: 'block_'.tr,
+              title: 'blocked_user5'.tr,
               onTap: () {
                 Navigator.pop(context);
                 context.pushNamed(RouteName.block);

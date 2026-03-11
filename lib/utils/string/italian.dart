@@ -7,7 +7,7 @@ final Map<String, String> italian = {
   //'welcome_message1': "Vedi una targa, inizia a chattare:",
   'welcome_message1': "Vedi una targa, inizi a chattare:",
   //'welcome_message2': "registrati velocemente e connettiti",
-  'welcome_message2': " registrati velocemente e connettiti con un",
+  'welcome_message2': "registrati velocemente e connettiti con un",
   //'welcome_message3': "con un driver ovunque tu vada",
   'welcome_message3': "driver ovunque tu vada",
 
@@ -94,6 +94,10 @@ final Map<String, String> italian = {
   //'block_': "Sblocca",
   //"blocked_user": "Utente bloccato",
   "blocked_user1": "Sblocca",
+
+  "blocked_user5": "Utenti bloccati",
+
+
   "unblock": "Sblocca",
   'logout': "Esci",
   'profile': "Profilo",
