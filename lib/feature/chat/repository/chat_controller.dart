@@ -521,6 +521,34 @@ class ChatController extends GetxController {
     }
   }
 
+  // Future<void> unBlock(String id, BuildContext context) async {
+  //   final body = {"userId": id};
+  //
+  //   final response = await ApiClient.patchData(uri: ApiUrl.unblock, body: body);
+  //
+  //   isLoadingBlockList.value = false;
+  //
+  //   if (response.statusCode == 200 || response.statusCode == 201) {
+  //     debugPrint("User unblocked successfully");
+  //
+  //
+  //     showSnackBar(
+  //       context,
+  //       "user_unblocked_successfully".tr,
+  //       bgColor: Colors.green,
+  //     );
+  //   } else {
+  //     debugPrint("Unblock failed: ${response.statusCode}");
+  //     showSnackBar(context, "failed_to_unblock_user".tr, bgColor: Colors.red);
+  //   }
+  // }
+
+
+
+
+
+
+
   Future<void> unBlock(String id, BuildContext context) async {
     final body = {"userId": id};
 
@@ -530,6 +558,26 @@ class ChatController extends GetxController {
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       debugPrint("User unblocked successfully");
+
+      // ✅ block list থেকে remove
+      userBlockList.removeWhere((block) => block.blockedUserId == id);
+
+      // ✅ chat list এর isBlockedByMe status update
+      final roomIndex = userChatList.indexWhere(
+            (room) => room.otherUser?.id == id,
+      );
+
+      if (roomIndex != -1) {
+        final updatedRoom = userChatList[roomIndex];
+        updatedRoom.isBlockedByMe = false; // ✅ status false
+
+        userChatList[roomIndex] = updatedRoom; // ✅ GetX detect করবে
+        userChatList.refresh(); // ✅ force UI update
+      }
+
+      // ✅ isBlockedByMe global state ও update
+      isBlockedByMe.value = false;
+
       showSnackBar(
         context,
         "user_unblocked_successfully".tr,
@@ -540,6 +588,18 @@ class ChatController extends GetxController {
       showSnackBar(context, "failed_to_unblock_user".tr, bgColor: Colors.red);
     }
   }
+
+
+
+
+
+
+
+
+
+
+
+
 
   void showSnackBar(BuildContext context, String message, {Color? bgColor}) {
     ScaffoldMessenger.of(context).showSnackBar(
