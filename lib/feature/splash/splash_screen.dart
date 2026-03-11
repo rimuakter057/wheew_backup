@@ -63,7 +63,8 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Center(
         child: CustomImage(
-          imageSrc: AssetsPath.logoPng,
+          //imageSrc: AssetsPath.logoPng,
+          imageSrc: AssetsPath.plateLogo,
           width: ResponsiveHelper.width(280),
         ),
       ),

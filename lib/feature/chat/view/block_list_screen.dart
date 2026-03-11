@@ -48,7 +48,7 @@ class _BlockListScreenState extends State<BlockListScreen> {
         backgroundColor: AppColors.white,
         centerTitle: true,
         title: Text(
-          "block_".tr,
+          "blocked_user5".tr,
           style: GoogleFonts.poppins(
             color: AppColors.black,
             fontSize: ResponsiveHelper.fontSize(18),

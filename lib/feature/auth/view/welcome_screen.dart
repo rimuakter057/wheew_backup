@@ -263,6 +263,7 @@
 //   );
 // }
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -393,6 +394,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ],
             ),
+
             // Lottie.asset(
             //   // 'assets/animations/Chat.json',
             //   'assets/animations/Chatok.json',
@@ -470,8 +472,7 @@ class WelcomeScreen extends StatelessWidget {
             //     // ),
             //   ],
             // ),
-
-            Padding(
+            /*Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: ResponsiveHelper.padding(24),
               ),
@@ -480,7 +481,8 @@ class WelcomeScreen extends StatelessWidget {
                 clipBehavior: Clip.none,
                 children: [
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start, // ✅ align all text to left
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    // ✅ align all text to left
                     children: [
                       Text(
                         'welcome_message'.tr,
@@ -508,6 +510,66 @@ class WelcomeScreen extends StatelessWidget {
                       ),
                       Text(
                         'welcome_message3'.tr,
+                        style: context.titleLarge.copyWith(
+                          fontSize: ResponsiveHelper.fontSize(16),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),*/
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveHelper.padding(24),
+              ),
+              child: Stack(
+                alignment: Alignment.topCenter,
+                clipBehavior: Clip.none,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AutoSizeText(
+                        'welcome_message'.tr,
+                        maxLines: 1,
+                        minFontSize: 18,
+                        style: context.titleLarge.copyWith(
+                          fontSize: ResponsiveHelper.fontSize(32),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+
+                      SizedBox(height: ResponsiveHelper.spacing(4)),
+
+                      AutoSizeText(
+                        'welcome_message1'.tr,
+                        maxLines: 1,
+                        minFontSize: 10,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.titleLarge.copyWith(
+                          fontSize: ResponsiveHelper.fontSize(16),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+
+                      AutoSizeText(
+                        'welcome_message2'.tr,
+                        maxLines: 1,
+                        minFontSize: 10,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.titleLarge.copyWith(
+                          fontSize: ResponsiveHelper.fontSize(16),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+
+                      AutoSizeText(
+                        'welcome_message3'.tr,
+                        maxLines: 1,
+                        minFontSize: 10,
+                        overflow: TextOverflow.ellipsis,
                         style: context.titleLarge.copyWith(
                           fontSize: ResponsiveHelper.fontSize(16),
                           fontWeight: FontWeight.w400,
@@ -608,7 +670,14 @@ void _showAgeConfirmationDialog(BuildContext context) {
     builder: (context) {
       return AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('age_confirmation'.tr, textAlign: TextAlign.center),
+        title: Text(
+          'age_confirmation'.tr,
+          style: context.titleSmall.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+          textAlign: TextAlign.center,
+        ),
         content: Text(
           '16_or_not'.tr,
           style: context.titleSmall,

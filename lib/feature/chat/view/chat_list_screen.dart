@@ -117,13 +117,24 @@ class _ChatListScreenState extends State<ChatListScreen> {
       //     ),
       //   ],
       // ),
-      appBar: AppBar(
+/*      appBar: AppBar(
         backgroundColor: AppColors.white,
         centerTitle: true,
-        title: CustomImage(
-          imageSrc: AssetsPath.chatList,
-          height: ResponsiveHelper.height(28),
-          fit: BoxFit.contain,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          //crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CustomImage(
+              imageSrc: AssetsPath.plateIcon,
+              height: ResponsiveHelper.height(28),
+              fit: BoxFit.contain,
+            ),
+            CustomImage(
+              imageSrc: AssetsPath.chatList,
+              height: ResponsiveHelper.height(28),
+              fit: BoxFit.contain,
+            ),
+          ],
         ),
         actions: [
           Builder(
@@ -141,7 +152,48 @@ class _ChatListScreenState extends State<ChatListScreen> {
             },
           ),
         ],
-      ),
+      ),*/
+        appBar: AppBar(
+          backgroundColor: AppColors.white,
+          centerTitle: true,
+          title: Stack(
+            alignment: Alignment.center,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CustomImage(
+                    imageSrc: AssetsPath.plateIcon,
+                    height: ResponsiveHelper.height(28),
+                    fit: BoxFit.contain,
+                  ),
+                  SizedBox(width: ResponsiveHelper.spacing(6)),
+                  CustomImage(
+                    imageSrc: AssetsPath.chatList,
+                    height: ResponsiveHelper.height(28),
+                    fit: BoxFit.contain,
+                  ),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            Builder(
+              builder: (context) {
+                return IconButton(
+                  icon: Icon(
+                    Icons.menu_outlined,
+                    color: AppColors.black,
+                    size: ResponsiveHelper.iconSize(24),
+                  ),
+                  onPressed: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                );
+              },
+            ),
+          ],
+        ),
       endDrawer: const AppMenuDrawer(),
 
       body: RefreshIndicator(

@@ -95,6 +95,7 @@ final Map<String, String> english = {
   'type_here1': "Type here",
   'block_': "Blocked",
   "blocked_user1": "Unblock",
+  "blocked_user5": "Blocked users",
   "unblock": "Unblock",
   'logout': "Logout",
   'profile': "Profile",
