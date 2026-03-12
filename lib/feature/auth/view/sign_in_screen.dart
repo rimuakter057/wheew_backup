@@ -85,7 +85,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       hintText: 'enter_license_plate_or_nick_name'.tr,
                       validator: (value) =>
                           (value == null || value.trim().isEmpty)
-                          ? 'Email or License ID is required'
+                          ? 'license_plate_or_nickname_required'.tr
                           : null,
                     ),
 

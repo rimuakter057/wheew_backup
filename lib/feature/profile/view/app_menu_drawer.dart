@@ -8,6 +8,7 @@ import 'package:platchatapp/feature/terms_condition/web_view_screen.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../language/language_controller.dart';
+import '../../../utils/extension/base_extension.dart';
 import '../../auth/repository/auth_controller.dart';
 import '../repository/profile_controller.dart';
 import '../../../core/router/routes_name.dart';
@@ -103,9 +104,6 @@ class AppMenuDrawer extends StatelessWidget {
               },
             ),
 
-
-
-
             _drawerItem(
               context,
               icon: Icons.help_outline,
@@ -113,13 +111,10 @@ class AppMenuDrawer extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => HelpSupportScreen(),
-                  ),
+                  MaterialPageRoute(builder: (_) => HelpSupportScreen()),
                 );
               },
             ),
-
 
             _drawerItem(
               context,
@@ -133,13 +128,12 @@ class AppMenuDrawer extends StatelessWidget {
             _drawerItem(
               context,
               icon: Icons.delete_outline,
+              iconColor: AppColors.blue,
               title: 'delete'.tr,
               onTap: () {
                 context.pushNamed(RouteName.delete);
-
               },
             ),
-
 
             /// ===== LANGUAGE =====
             ListTile(
@@ -149,7 +143,10 @@ class AppMenuDrawer extends StatelessWidget {
               ),
               title: Text(
                 'language'.tr,
-                style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
+                style: context.titleSmall.copyWith(
+                  fontSize: ResponsiveHelper.fontSize(16),
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               subtitle: Obx(
                 () => Text(
@@ -171,9 +168,11 @@ class AppMenuDrawer extends StatelessWidget {
               ),
               title: Text(
                 'logout'.tr,
-                style: TextStyle(
-                  color: AppColors.errorColor,
+                style: context.titleSmall.copyWith(
                   fontSize: ResponsiveHelper.fontSize(16),
+                  fontWeight: FontWeight.w600,
+
+                  color: AppColors.errorColor,
                 ),
               ),
               onTap: () async {
@@ -193,6 +192,33 @@ class AppMenuDrawer extends StatelessWidget {
     required IconData icon,
     required String title,
     required VoidCallback onTap,
+    Color? iconColor, // ← add this
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: ResponsiveHelper.spacing(8)),
+      child: ListTile(
+        leading: Icon(
+          icon,
+          size: ResponsiveHelper.iconSize(24),
+          color: iconColor ?? AppColors.black, // ← add this
+        ),
+        title: Text(
+          title,
+          style: context.titleSmall.copyWith(
+            fontSize: ResponsiveHelper.fontSize(16),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        onTap: onTap,
+      ),
+    );
+  }
+}
+/* Widget _drawerItem(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
   }) {
     return Padding(
       padding: EdgeInsets.only(bottom: ResponsiveHelper.spacing(8)),
@@ -206,7 +232,7 @@ class AppMenuDrawer extends StatelessWidget {
       ),
     );
   }
-}
+}*/
 
 void _showLanguageBottomSheet(BuildContext context) {
   final controller = Get.find<LanguageController>();
@@ -226,10 +252,9 @@ void _showLanguageBottomSheet(BuildContext context) {
               const SizedBox(height: 8),
               Text(
                 'language'.tr,
-                style: TextStyle(
-                  fontSize: ResponsiveHelper.fontSize(18),
+                style: context.titleSmall.copyWith(
+                  fontSize: ResponsiveHelper.fontSize(16),
                   fontWeight: FontWeight.w600,
-                  color: Colors.black,
                 ),
               ),
               const SizedBox(height: 12),

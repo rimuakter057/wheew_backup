@@ -28,6 +28,7 @@ final Map<String, String> italian = {
   'password_is_required': 'La password è obbligatoria',
   'password_must_6_character': 'La password deve contenere almeno 6 caratteri',
   'forgot_password': 'Password dimenticata',
+  "license_plate_or_nickname_required":"Targa o Nickname obbligatori",
 
   // -------- Sign Up --------
   'nickname_is_required': 'Il nickname è obbligatorio',
@@ -63,6 +64,9 @@ final Map<String, String> italian = {
   'i_agree_to1':
       "Acconsento all'utilizzo dei miei dati per ulteriori finalità -",
   'agree_terms1': "Ulteriori informazioni",
+  "email_is_required":"Email obbligatoria",
+  "enter_valid_email":"Inserisci un indirizzo email valido",
+
 
   //------------------------------------------------------
   "don't_worry_enter_your_email":
@@ -141,7 +145,7 @@ final Map<String, String> italian = {
   "failed_to_block_user": "Impossibile bloccare l'utente",
   "password_must_be_6_characters":
       "La password deve contenere almeno 6 caratteri",
-  "delete": "eliminare",
+  "delete": "Elimina account",
 
 
   "delete_account":"Elimina account",
@@ -155,4 +159,26 @@ final Map<String, String> italian = {
   "support_text2": "Il nostro team di supporto è disponibile per assisterti con qualsiasi problema o richiesta.",
       "support_request": "Richiesta di supporto",
   "email_copied": "E-mail copiata",
+
+  // Toast message
+
+  'invalid_credentials': 'Credenziali non valide!',
+  'something_wrong': 'Qualcosa è andato storto!',
+  'success1': 'Operazione riuscita!',
+  'error2': 'Si è verificato un errore!',
+  'unauthorized': 'Non autorizzato!',
+  'session_expired': 'Sessione scaduta!',
+  'network_error': 'Errore di rete!',
+  'not_found': 'Non trovato!',
+  'saved': 'Salvato!',
+  'deleted': 'Eliminato!',
+  'updated': 'Aggiornato!',
+  'created': 'Creato!',
+  'load_failed': 'Caricamento fallito!',
+  'upload_success': 'Caricato!',
+  'upload_failed': 'Caricamento fallito!',
+  'server_error': 'Errore del server!',
+  'login_success': 'Bentornato!',
+  'logout_success': 'Disconnesso!',
+  'no_data': 'Nessun dato!',
 };
