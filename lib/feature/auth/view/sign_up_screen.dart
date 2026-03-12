@@ -457,7 +457,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       }
                     } else {
                       if (context.mounted) {
-                        ApiChecker.checkApi(response, context);
+                        ApiChecker.checkApi(response);
                       }
                     }
                   } catch (e) {

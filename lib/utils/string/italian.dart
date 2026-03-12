@@ -181,4 +181,5 @@ final Map<String, String> italian = {
   'login_success': 'Bentornato!',
   'logout_success': 'Disconnesso!',
   'no_data': 'Nessun dato!',
+  'dismiss': 'Annulla',
 };

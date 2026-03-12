@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart';
+//import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
@@ -85,6 +86,120 @@ class AuthController extends GetxController {
 
   //========================== Remember Me ==========================
 
+  RxBool isRememberMe = false.obs;
+
+  void isRememberMeToggle() {
+    isRememberMe.toggle();
+  }
+
+  void isRememberMeLoadData() async {
+    String? savedUser = await SharePrefsHelper.getString(AppConst.loginUser);
+    String? savedPass = await SharePrefsHelper.getString(AppConst.loginPass);
+
+    licenseController.text = savedUser ?? '';
+    passwordController.text = savedPass ?? '';
+    isRememberMe.value = savedUser != null && savedUser.isNotEmpty;
+  }
+
+  final TextEditingController licenseController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  Future<bool> login({
+    required BuildContext context,
+    required String identifier,
+    required String password,
+    bool rememberMe = false,
+  }) async {
+    _setLoading(true);
+
+    final http.Response loginRes = await _repo.login(
+      identifier: identifier,
+      password: password,
+    );
+
+    _setLoading(false);
+
+    if (loginRes.statusCode == 200) {
+      if (isRememberMe.value) {
+        await SharePrefsHelper.setString(AppConst.loginUser, identifier);
+        await SharePrefsHelper.setString(AppConst.loginPass, password);
+      }
+
+      final data = jsonDecode(loginRes.body);
+      final String token = data['token'];
+      final String userId = data['id'];
+      final String licenceId = data["licence_id"];
+      final String nickName = data["nick_name"];
+
+      await SharePrefsHelper.setString(AppConst.token, token);
+      await SharePrefsHelper.setString(AppConst.userID, userId);
+      await SharePrefsHelper.setString(AppConst.licenceId, licenceId);
+      await SharePrefsHelper.setString(AppConst.nickName, nickName);
+      await SharePrefsHelper.setBool(AppConst.isLoggedIn, true);
+      await _saveUserData(data);
+
+      await AppSocket.init(
+        onSocketConnect: () {
+          context.goNamed(RouteName.chatList);
+        },
+      );
+
+      return true;
+    } else {
+      ApiChecker.checkApi(loginRes); // ✅ context removed
+      return false;
+    }
+  }
+
+  /// ================= REGISTER & LOGIN ==================
+  Future<bool> registerAndLogin({
+    required BuildContext context,
+    required String licenceId,
+    required String nickName,
+    required String email,
+    required String password,
+    required String confirmPassword,
+    required String designation,
+  }) async {
+    _setLoading(true);
+
+    final http.Response registerRes = await _repo.register(
+      licenceId: licenceId,
+      nickName: nickName,
+      email: email,
+      password: password,
+      confirmPassword: confirmPassword,
+      designation: designation,
+    );
+
+    if (registerRes.statusCode == 200 || registerRes.statusCode == 201) {
+      final http.Response loginRes = await _repo.login(
+        identifier: licenceId,
+        password: password,
+      );
+
+      _setLoading(false);
+
+      if (loginRes.statusCode == 200) {
+        final data = jsonDecode(loginRes.body);
+        final String token = data['token'];
+
+        await SharePrefsHelper.setString(AppConst.token, token);
+        await SharePrefsHelper.setBool(AppConst.isLoggedIn, true);
+        await _saveUserData(data);
+
+        return true;
+      } else {
+        ApiChecker.checkApi(loginRes); // ✅ context removed
+        return false;
+      }
+    } else {
+      _setLoading(false);
+      ApiChecker.checkApi(registerRes); // ✅ context removed
+      return false;
+    }
+  }
+/*
   RxBool isRememberMe = false.obs;
 
   void isRememberMeToggle() {
@@ -199,7 +314,7 @@ class AuthController extends GetxController {
       ApiChecker.checkApi(registerRes, context);
       return false;
     }
-  }
+  }*/
 
   /// ================= SAVE USER DATA ====================
   Future<void> _saveUserData(Map<String, dynamic> data) async {

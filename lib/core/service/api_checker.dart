@@ -93,11 +93,94 @@ class ApiChecker {
 */
 
 
-import 'dart:convert';
+/*import 'dart:convert';
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' hide Response;
 
+import 'dart:convert';
+import 'dart:developer' as developer;
+import 'package:get/get.dart';
+import 'package:http/http.dart' hide Response;
+import '../../utils/toast_message/toast_message.dart';*/ // update path as needed
+
+import 'dart:convert';
+import 'dart:developer' as developer;
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http; // ✅ use alias
+
+import '../../utils/toast_message/toast_message.dart';
+
+class ApiChecker {
+  static void checkApi(http.Response response) {
+    developer.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    developer.log('🔍 API CHECKER', name: 'API');
+    developer.log('Status Code: ${response.statusCode}', name: 'API');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      developer.log('✅ Success', name: 'API');
+      developer.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      return;
+    }
+
+    // ✅ 400, 401, 403, 404 → all show invalid_credentials
+    if (response.statusCode == 400 ||
+        response.statusCode == 401 ||
+        response.statusCode == 403 ||
+        response.statusCode == 404) {
+      developer.log('❌ Invalid credentials (${response.statusCode})', name: 'API');
+      showErrorToast('invalid_credentials'.tr);
+
+    } else if (response.statusCode == 422) {
+      try {
+        final body = jsonDecode(response.body);
+        String msg = 'something_wrong'.tr;
+
+        if (body['errors'] != null && body['errors'] is Map) {
+          final errors = body['errors'] as Map<String, dynamic>;
+          final firstError = errors.values.first;
+          if (firstError is List && firstError.isNotEmpty) {
+            msg = firstError.first.toString();
+          } else if (firstError is String) {
+            msg = firstError;
+          }
+        } else if (body['message'] != null) {
+          msg = body['message'];
+        }
+
+        developer.log('❌ Validation: $msg', name: 'API');
+        showErrorToast(msg);
+      } catch (_) {
+        showErrorToast('something_wrong'.tr);
+      }
+
+    } else if (response.statusCode == 500) {
+      developer.log('❌ 500 Server Error', name: 'API');
+      showErrorToast('server_error'.tr);
+
+    } else {
+      developer.log('❌ Error ${response.statusCode}', name: 'API');
+      showErrorToast('something_wrong'.tr);
+    }
+
+    developer.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  }
+
+  static String getErrorMessage(dynamic error) {
+    developer.log('⚠️ EXCEPTION: $error', name: 'API');
+
+    if (error.toString().contains('SocketException')) {
+      return 'network_error'.tr;
+    } else if (error.toString().contains('TimeoutException')) {
+      return 'timeout'.tr;
+    } else {
+      return 'something_wrong'.tr;
+    }
+  }
+}
+
+/*
 class ApiChecker {
   static void checkApi(Response response, BuildContext context) {
     // Log the check
@@ -129,7 +212,7 @@ class ApiChecker {
       }
       _showSnackBar(context, errorMessage);
     } else if (response.statusCode == 404) {
-      errorMessage = '🔍 Resource not found';
+      errorMessage = 'invalid_credentials'.tr;
       developer.log('❌ 404 Not Found', name: 'API');
       developer.log(
         'URL might be incorrect or endpoint doesn\'t exist',
@@ -199,7 +282,7 @@ class ApiChecker {
         backgroundColor: Colors.red,
         duration: const Duration(seconds: 4),
         action: SnackBarAction(
-          label: 'Dismiss',
+          label: 'dismiss'.tr,
           textColor: Colors.white,
           onPressed: () {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -232,3 +315,4 @@ class ApiChecker {
     }
   }
 }
+*/

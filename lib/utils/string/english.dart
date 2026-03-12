@@ -187,6 +187,7 @@ final Map<String, String> english = {
   'login_success': 'Welcome back!',
   'logout_success': 'Logged out!',
   'no_data': 'No data!',
+  'dismiss': 'Dismiss',
 
 
 
