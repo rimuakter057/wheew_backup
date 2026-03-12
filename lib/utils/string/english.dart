@@ -123,7 +123,7 @@ final Map<String, String> english = {
   "pass_not_match": "Password does not match",
   "pass_six_char": "Password must be at least 6 characters",
   "otp_required": "OTP is required",
-  'empty_block_list': 'Empty Block List',
+  'empty_block_list': 'Empty blocked user list',
   'remember_me': "Remember Me",
   "bad_word_error": "This message contains inappropriate words.",
   "only_for_recovery": "recovery account",
