@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/feature/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
@@ -29,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkLoginAndNavigate() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 5));
 
     if (!mounted) return;
 
@@ -62,10 +63,18 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: CustomImage(
+        child:
+       /* CustomImage(
           //imageSrc: AssetsPath.logoPng,
           imageSrc: AssetsPath.plateLogo,
           width: ResponsiveHelper.width(280),
+        ),*/
+        Lottie.asset(
+          'assets/animations/logo_animated.json',
+          width: ResponsiveHelper.iconSize(290),
+          height: ResponsiveHelper.iconSize(320),
+          fit: BoxFit.cover,
+          repeat: true,
         ),
       ),
     );

@@ -6,9 +6,475 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'user_model.dart';
 import '../../../utils/app_const/app_const.dart';
+import '../../../utils/toast_message/toast_message.dart';
+import '../../../core/service/api_url.dart';
 import 'profile_repository.dart';
 
 class ProfileController extends GetxController {
+  final ProfileRepository profileRepository = ProfileRepository();
+
+  final Rx<File?> profileImage = Rx<File?>(null);
+  final Rx<UserModel?> userProfile = Rx<UserModel?>(null);
+
+  final nickNameController = TextEditingController();
+  final licenseController = TextEditingController();
+
+  bool isEditing = false;
+  bool isLoading = false;
+
+  @override
+  void onInit() {
+    super.onInit();
+    loadUserData();        // ✅ instant UI from local
+    fetchProfileFromApi(); // ✅ fresh data from server
+  }
+
+  /// ✅ Load local data first for instant display
+  Future<void> loadUserData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userDataString = prefs.getString(AppConst.userData);
+      final avatar = prefs.getString(AppConst.avatar); // ✅ add this
+
+      if (userDataString != null && userDataString.isNotEmpty) {
+        _applyUserData(jsonDecode(userDataString));
+      } else {
+        final nickName = prefs.getString(AppConst.nickName) ?? '';
+        final licenceId = prefs.getString(AppConst.licenceId) ?? '';
+        if (nickName.isNotEmpty || licenceId.isNotEmpty) {
+          _applyUserData({
+            'nick_name': nickName,
+            'licence_id': licenceId,
+            //'avatar': null,
+            'avatar': avatar,
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ loadUserData error: $e');
+    }
+    update();
+  }
+
+  /// ✅ Fetch fresh profile from /auth/me
+  Future<void> fetchProfileFromApi() async {
+    isLoading = true;
+    update();
+
+    try {
+      final res = await profileRepository.getProfile();
+
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        final data = jsonDecode(res.body);
+
+        // ✅ Save fresh data locally
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(AppConst.userData, jsonEncode(data));
+        await prefs.setString(AppConst.nickName, data['nick_name'] ?? '');
+        await prefs.setString(AppConst.licenceId, data['licence_id'] ?? '');
+
+        _applyUserData(data);
+      }
+    } catch (e) {
+      debugPrint('❌ fetchProfileFromApi error: $e');
+    }
+
+    isLoading = false;
+    update();
+  }
+
+  /// ✅ Apply data to UI
+  void _applyUserData(Map<String, dynamic> data) {
+    // ✅ Build full avatar URL from server path
+    final rawAvatar = data['avatar'];
+    final avatarUrl = _buildAvatarUrl(rawAvatar);
+
+    userProfile.value = UserModel(
+      nickName: data['nick_name'] ?? '',
+      licenceId: data['licence_id'] ?? '',
+      avatar: avatarUrl,
+    );
+
+    nickNameController.text = userProfile.value!.nickName;
+    licenseController.text = userProfile.value!.licenceId;
+  }
+
+  /// ✅ Build full avatar URL
+  /// handles: null, already full URL, or server relative path
+  String? _buildAvatarUrl(dynamic rawAvatar) {
+    if (rawAvatar == null || rawAvatar.toString().isEmpty) return null;
+
+    final avatar = rawAvatar.toString();
+
+    // Already a full URL
+    if (avatar.startsWith('http')) return avatar;
+
+    // Server returns path like: \uploads\users\avatar_xxx.jpg
+    // Convert backslashes to forward slashes
+    final cleanPath = avatar.replaceAll('\\', '/');
+
+    return '${ApiUrl.baseUrl}/$cleanPath';
+  }
+
+  /// 📷 Pick image from gallery
+  Future<void> pickImageFromGallery() async {
+    try {
+      final picked = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+      );
+      if (picked != null) {
+        profileImage.value = File(picked.path);
+        update();
+      }
+    } catch (e) {
+      debugPrint('❌ Image pick error: $e');
+      showErrorToast('something_wrong'.tr);
+    }
+  }
+
+  /// ✅ Upload avatar to server
+  Future<void> updateProfile() async {
+    if (profileImage.value == null) {
+      showErrorToast('please_select_an_image_first'.tr);
+      return;
+    }
+
+    isLoading = true;
+    update();
+
+    try {
+      final res = await profileRepository.updateAvatar(
+        imageFile: profileImage.value!,
+      );
+
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        final data = jsonDecode(res.body);
+        final newAvatar = _buildAvatarUrl(data['avatar']); // ✅ full URL
+
+        // ✅ Update local storage
+        final prefs = await SharedPreferences.getInstance();
+        final userDataString = prefs.getString(AppConst.userData);
+        if (userDataString != null) {
+          final userData = jsonDecode(userDataString);
+          userData['avatar'] = data['avatar']; // save raw path
+          await prefs.setString(AppConst.userData, jsonEncode(userData));
+        }
+
+        // ✅ Update UI
+        userProfile.value = userProfile.value!.copyWith(avatar: newAvatar);
+        profileImage.value = null;
+        isEditing = false;
+
+        showSuccessToast('profile_image_updated_successfully'.tr);
+
+        // ✅ Refresh from server to confirm
+        await fetchProfileFromApi();
+
+      } else {
+        showErrorToast('failed_to_update_profile_image'.tr);
+      }
+    } catch (e) {
+      debugPrint('❌ updateProfile error: $e');
+      showErrorToast('something_wrong'.tr);
+    }
+
+    isLoading = false;
+    update();
+  }
+
+  void toggleEdit() {
+    isEditing = !isEditing;
+    update();
+  }
+
+  @override
+  void onClose() {
+    nickNameController.dispose();
+    licenseController.dispose();
+    super.onClose();
+  }
+}
+
+
+
+/*
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'user_model.dart';
+import '../../../utils/app_const/app_const.dart';
+import 'profile_repository.dart';
+
+
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'user_model.dart';
+import '../../../utils/app_const/app_const.dart';
+import '../../../utils/toast_message/toast_message.dart';
+import 'profile_repository.dart';
+
+class ProfileController extends GetxController {
+  final ProfileRepository profileRepository = ProfileRepository();
+
+  final Rx<File?> profileImage = Rx<File?>(null);
+  final Rx<UserModel?> userProfile = Rx<UserModel?>(null);
+
+  final nickNameController = TextEditingController();
+  final licenseController = TextEditingController();
+
+  bool isEditing = false;
+  bool isLoading = false;
+
+  @override
+  void onInit() {
+    super.onInit();
+    loadUserData();       // ✅ Load local first (instant UI)
+    fetchProfileFromApi(); // ✅ Then fetch fresh from server
+  }
+
+  /// ✅ Load local data first for instant display
+  Future<void> loadUserData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userDataString = prefs.getString(AppConst.userData);
+
+      if (userDataString != null && userDataString.isNotEmpty) {
+        final userData = jsonDecode(userDataString);
+        _applyUserData(userData);
+      } else {
+        // Fallback to individual keys
+        final nickName = prefs.getString(AppConst.nickName) ?? '';
+        final licenceId = prefs.getString(AppConst.licenceId) ?? '';
+        if (nickName.isNotEmpty || licenceId.isNotEmpty) {
+          _applyUserData({
+            'nick_name': nickName,
+            'licence_id': licenceId,
+            'avatar': null,
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ loadUserData error: $e');
+    }
+    update();
+  }
+
+  /// ✅ Always fetch fresh from server
+  Future<void> fetchProfileFromApi() async {
+    isLoading = true;
+    update();
+
+    try {
+      final res = await profileRepository.getProfile();
+
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        final data = jsonDecode(res.body);
+
+        // ✅ Save fresh data to local storage
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(AppConst.userData, jsonEncode(data));
+
+        // ✅ Update nickName & licenceId keys too
+        await prefs.setString(AppConst.nickName, data['nick_name'] ?? '');
+        await prefs.setString(AppConst.licenceId, data['licence_id'] ?? '');
+
+        // ✅ Apply fresh data to UI
+        _applyUserData(data);
+      }
+    } catch (e) {
+      debugPrint('❌ fetchProfileFromApi error: $e');
+      // ✅ Silent fail — local data already showing
+    }
+
+    isLoading = false;
+    update();
+  }
+
+  /// ✅ Update avatar
+  Future<void> updateProfile() async {
+    if (profileImage.value == null) {
+      showErrorToast('please_select_an_image_first'.tr);
+      return;
+    }
+
+    isLoading = true;
+    update();
+
+    try {
+      final res = await profileRepository.updateAvatar(
+        imageFile: profileImage.value!,
+      );
+
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        final data = jsonDecode(res.body);
+        final newAvatar = data['avatar']; // ✅ URL from server
+
+        // ✅ Save new avatar URL to local storage
+        final prefs = await SharedPreferences.getInstance();
+        final userDataString = prefs.getString(AppConst.userData);
+        if (userDataString != null) {
+          final userData = jsonDecode(userDataString);
+          userData['avatar'] = newAvatar;
+          await prefs.setString(AppConst.userData, jsonEncode(userData));
+        }
+
+        // ✅ Update UI model
+        userProfile.value = userProfile.value!.copyWith(avatar: newAvatar);
+        profileImage.value = null;
+        isEditing = false;
+
+        showSuccessToast('profile_image_updated_successfully'.tr);
+      } else {
+        showErrorToast('failed_to_update_profile_image'.tr);
+      }
+    } catch (e) {
+      debugPrint('❌ updateProfile error: $e');
+      showErrorToast('something_wrong'.tr);
+    }
+
+    isLoading = false;
+    update();
+  }
+
+  @override
+  void onClose() {
+    nickNameController.dispose();
+    licenseController.dispose();
+    super.onClose();
+  }
+}
+
+*/
+
+/*
+  @override
+  void onInit() {
+    super.onInit();
+    loadUserData();
+  }
+
+  void toggleEdit() {
+    isEditing = !isEditing;
+    update();
+  }
+
+  /// ✅ Load from SharedPrefs — with fallback to individual keys
+  Future<void> loadUserData() async {
+    isLoading = true;
+    update();
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      // ✅ Try full userData JSON first
+      final userDataString = prefs.getString(AppConst.userData);
+
+      if (userDataString != null && userDataString.isNotEmpty) {
+        final userData = jsonDecode(userDataString);
+        _applyUserData(userData);
+      } else {
+        // ✅ Fallback to individual saved keys (from login)
+        final nickName = prefs.getString(AppConst.nickName) ?? '';
+        final licenceId = prefs.getString(AppConst.licenceId) ?? '';
+
+        if (nickName.isNotEmpty || licenceId.isNotEmpty) {
+          _applyUserData({
+            'nick_name': nickName,
+            'licence_id': licenceId,
+            'avatar': null,
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ loadUserData error: $e');
+    }
+
+    isLoading = false;
+    update();
+  }
+
+  /// ✅ Single place to apply user data
+  void _applyUserData(Map<String, dynamic> userData) {
+    userProfile.value = UserModel.fromJson(userData);
+    nickNameController.text = userProfile.value!.nickName;
+    licenseController.text = userProfile.value!.licenceId;
+  }
+
+  /// 📷 Pick image
+  Future<void> pickImageFromGallery() async {
+    try {
+      final picked = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+      );
+      if (picked != null) {
+        profileImage.value = File(picked.path);
+        update();
+      }
+    } catch (e) {
+      debugPrint('❌ Image pick error: $e');
+      showErrorToast('something_wrong'.tr);
+    }
+  }
+
+  /// ✅ Update avatar
+  Future<void> updateProfile() async {
+    if (profileImage.value == null) {
+      showErrorToast('please_select_an_image_first'.tr);
+      return;
+    }
+
+    isLoading = true;
+    update();
+
+    try {
+      final res = await profileRepository.updateAvatar(
+        imageFile: profileImage.value!,
+      );
+
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        final data = jsonDecode(res.body);
+        final newAvatar = data['avatar'];
+
+        // ✅ Update SharedPrefs
+        final prefs = await SharedPreferences.getInstance();
+        final userDataString = prefs.getString(AppConst.userData);
+        if (userDataString != null) {
+          final userData = jsonDecode(userDataString);
+          userData['avatar'] = newAvatar;
+          await prefs.setString(AppConst.userData, jsonEncode(userData));
+        }
+
+        // ✅ Update model with copyWith
+        userProfile.value = userProfile.value!.copyWith(avatar: newAvatar);
+        profileImage.value = null;
+        isEditing = false;
+
+        showSuccessToast('profile_image_updated_successfully'.tr);
+      } else {
+        showErrorToast('failed_to_update_profile_image'.tr);
+      }
+    } catch (e) {
+      debugPrint('❌ updateProfile error: $e');
+      showErrorToast('something_wrong'.tr);
+    }
+
+    isLoading = false;
+    update();
+  }
+*/
+
+
+
+/*class ProfileController extends GetxController {
   final ProfileRepository profileRepository = ProfileRepository();
 
   final Rx<File?> profileImage = Rx<File?>(null);
@@ -187,7 +653,7 @@ class ProfileController extends GetxController {
     licenseController.dispose();
     super.onClose();
   }
-}
+}*/
 
 /*
 import 'dart:convert';

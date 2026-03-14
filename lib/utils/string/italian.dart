@@ -9,7 +9,8 @@ final Map<String, String> italian = {
   //'welcome_message2': "registrati velocemente e connettiti",
   'welcome_message2': "registrati velocemente e connettiti con un",
   //'welcome_message3': "con un driver ovunque tu vada",
-  'welcome_message3': "driver ovunque tu vada",
+  //'welcome_message3': "driver ovunque tu vada",
+  'welcome_message3': "PlateChatter ovunque tu vada",
 
   'sign_up': 'Registrati',
   'log_in': 'Accedi',
@@ -51,12 +52,15 @@ final Map<String, String> italian = {
   'agree_terms': 'Termini e Condizioni e Informativa sulla Privacy',
   'continue': 'Continua',
   'please_fill_all_fields': 'Compila tutti i campi',
-  'please accept terms': 'Accetta i termini',
+  //'please accept terms': 'Accetta i termini',
+  'please accept terms': 'Per continuare devi accettare i termini',
   'creating_account': 'Creazione account...',
   'registration_successful!': 'Registrazione completata con successo!',
 
   'age_confirmation': "Conferma la tua età",
-  '16_or_not': 'Hai 16 anni?',
+  //'16_or_not': 'Hai 16 anni?',
+  '16_or_not': 'Hai almeno 16 anni?',
+
   'yes': "SÌ",
   'no': "NO",
   'email_only_for_recover_password': "Email solo per recuperare la password",

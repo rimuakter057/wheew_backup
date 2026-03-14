@@ -57,7 +57,7 @@ class ProfileScreen extends StatelessWidget {
                 SizedBox(height: ResponsiveHelper.spacing(24)),
 
                 /// Profile Image
-                Obx(() {
+                /*Obx(() {
                   return Stack(
                     alignment: Alignment.bottomRight,
                     children: [
@@ -94,6 +94,54 @@ class ProfileScreen extends StatelessWidget {
                               Icons.camera_alt_outlined,
                               size: ResponsiveHelper.iconSize(18),
                             ),
+                          ),
+                        ),
+                    ],
+                  );
+                }),*/
+
+                // ✅ Replace UserAvatar widget with network image fallback
+                Obx(() {
+                  final avatar = controller.userProfile.value?.avatar;
+                  return Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      // ✅ Priority: picked file > network avatar > placeholder
+                      controller.profileImage.value != null
+                          ? CircleAvatar(
+                        radius: ResponsiveHelper.width(45),
+                        backgroundImage: FileImage(controller.profileImage.value!),
+                      )
+                          : avatar != null && avatar.isNotEmpty
+                          ? CircleAvatar(
+                        radius: ResponsiveHelper.width(45),
+                        backgroundImage: NetworkImage(avatar),
+                        onBackgroundImageError: (_, __) {}, // ✅ silent fail
+                        child: null,
+                      )
+                          : CircleAvatar(
+                        radius: ResponsiveHelper.width(45),
+                        backgroundColor: AppColors.greyShade,
+                        child: Icon(
+                          Icons.person,
+                          size: ResponsiveHelper.width(45),
+                          color: AppColors.blue,
+                        ),
+                      ),
+
+                      if (controller.isEditing)
+                        GestureDetector(
+                          onTap: controller.pickImageFromGallery,
+                          child: Container(
+                            padding: EdgeInsets.all(ResponsiveHelper.padding(6)),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2)),
+                              ],
+                            ),
+                            child: Icon(Icons.camera_alt_outlined, size: ResponsiveHelper.iconSize(18)),
                           ),
                         ),
                     ],

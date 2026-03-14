@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/feature/chat/view/message_screen.dart';
 import 'package:platchatapp/feature/chat/view/widgets/chat_list_screen_shimmer.dart';
@@ -162,11 +163,18 @@ class _ChatListScreenState extends State<ChatListScreen> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CustomImage(
+                  Lottie.asset(
+                    'assets/animations/icon_animated.json',
+                    width: ResponsiveHelper.iconSize(28),
+                    height: ResponsiveHelper.iconSize(28),
+                    fit: BoxFit.cover,
+                    repeat: true,
+                  ),
+                  /*CustomImage(
                     imageSrc: AssetsPath.plateIcon,
                     height: ResponsiveHelper.height(28),
                     fit: BoxFit.contain,
-                  ),
+                  ),*/
                   SizedBox(width: ResponsiveHelper.spacing(6)),
                   CustomImage(
                     imageSrc: AssetsPath.chatList,

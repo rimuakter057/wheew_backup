@@ -49,4 +49,7 @@ class ApiUrl {
   static const String reset = "/users/reset-password";
   static const String deleteAccount = "/users";
   static const String help = "/users/help-support";
+
+  static const String profile = '/auth/me'; // ✅ same as chatList
+
 }

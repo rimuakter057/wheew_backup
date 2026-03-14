@@ -11,7 +11,7 @@ final Map<String, String> english = {
   //'welcome_message2': "your chat more enjoyable by signing",
   'welcome_message2': "quick signup to connect with",
   //'welcome_message3': "quickly and easily",
-  'welcome_message3': "PLATEChatters wherever you are",
+  'welcome_message3': "PLATEChatter wherever you are",
 
   'sign_in': 'Sign In',
   'sign_up': 'Sign Up',
@@ -59,7 +59,8 @@ final Map<String, String> english = {
   'agree_terms': 'Terms & Condition and Privacy Policy',
   'continue': 'Continue',
   'please_fill_all_fields': 'Please fill all fields',
-  'please accept terms': 'Please accept terms',
+  //'please accept terms': 'Please accept terms',
+  'please accept terms': 'To continue you must accept the terms',
   'creating_account': 'Creating account...',
   'registration_successful!': 'Registration successful!',
   'age_confirmation': 'Confirm your age',
