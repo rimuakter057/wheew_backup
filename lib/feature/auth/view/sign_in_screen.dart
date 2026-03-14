@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
@@ -49,7 +50,6 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   void initState() {
-    // TO DO: implement initState
     authController.isRememberMeLoadData();
     super.initState();
   }
@@ -71,9 +71,15 @@ class _SignInScreenState extends State<SignInScreen> {
 
 
                     /// Logo
-                    Image.asset(
+                   /* Image.asset(
                       AssetsPath.signLogo,
                       width: ResponsiveHelper.width(120),
+                    ),*/
+                    Lottie.asset(
+                      'assets/animations/icon_animated.json',
+                      width: ResponsiveHelper.iconSize(120),
+                      fit: BoxFit.cover,
+                      repeat: true,
                     ),
 
                     SizedBox(height: ResponsiveHelper.spacing(18)),

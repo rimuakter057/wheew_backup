@@ -141,6 +141,31 @@ class AuthController extends GetxController {
   // ================= SAVE USER DATA ====================
 
   Future<void> _saveUserData(Map<String, dynamic> data) async {
+    // ✅ Login response is flat — no nested 'user' key
+    final user = data['user'] ?? data;
+
+    await SharePrefsHelper.setString(AppConst.userID, user['id']?.toString() ?? '');
+    await SharePrefsHelper.setString(AppConst.nickName, user['nick_name'] ?? '');
+    await SharePrefsHelper.setString(AppConst.licenceId, user['licence_id'] ?? '');
+
+    // ✅ Save avatar raw path
+    final avatar = user['avatar'];
+    if (avatar != null && avatar.toString().isNotEmpty) {
+      await SharePrefsHelper.setString(AppConst.avatar, avatar.toString());
+    }
+
+    // ✅ Save full user JSON — this is what profile screen reads first
+    await SharePrefsHelper.setString(AppConst.userData, jsonEncode(user));
+
+    // ✅ Debug log to verify data is saved
+    debugPrint('✅ userData saved: ${jsonEncode(user)}');
+    debugPrint('✅ avatar saved: $avatar');
+    debugPrint('✅ nickName saved: ${user['nick_name']}');
+    debugPrint('✅ licenceId saved: ${user['licence_id']}');
+  }
+
+/*
+  Future<void> _saveUserData(Map<String, dynamic> data) async {
     final user = data['user'] ?? data;
 
     await SharePrefsHelper.setString(AppConst.userID, user['id']?.toString() ?? '');
@@ -155,6 +180,7 @@ class AuthController extends GetxController {
     // ✅ Save full user JSON
     await SharePrefsHelper.setString(AppConst.userData, jsonEncode(user));
   }
+*/
 
   // ======================= LOGOUT ======================
 
