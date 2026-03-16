@@ -13,7 +13,7 @@ void showCustomSnackBar(
         GetSnackBar(
           backgroundColor: isError ? Colors.red : Colors.green,
           message: message,
-          duration: const Duration(seconds: 3),
+          duration: const Duration(seconds: 1),
           snackStyle: SnackStyle.FLOATING,
           margin: EdgeInsets.all(10),
           borderRadius: 8,
@@ -32,7 +32,7 @@ void showCustomSnackBar(
           SnackBar(
             dismissDirection: DismissDirection.horizontal,
             margin: EdgeInsets.all(10),
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 1),
             backgroundColor: isError ? Colors.red : Colors.green,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(

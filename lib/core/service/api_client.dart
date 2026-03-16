@@ -212,7 +212,6 @@ class ApiClient {
   }
 
 
-
   ///============================= PATCH REQUEST ================================
   static Future<http.Response> patchData({
     required String uri,
@@ -277,10 +276,6 @@ class ApiClient {
       rethrow;
     }
   }
-
-
-
-
 
   /// DELETE Request
   static Future<Map<String, dynamic>> deleteData({
@@ -358,50 +353,6 @@ class ApiClient {
     }
   }
 
-
-
-
-
-
-
-  //
-  // /// DELETE Request
-  // static Future<http.Response> deleteData({
-  //   required String uri,
-  //   Map<String, String>? headers,
-  // }) async
-  // {
-  //   if (!await _checkConnection()) {
-  //     throw Exception('No Internet Connection');
-  //   }
-  //
-  //   final url = Uri.parse(ApiUrl.baseUrl + uri);
-  //   final token = await _getToken();
-  //
-  //   final finalHeaders = {
-  //     'Content-Type': 'application/json',
-  //     'Accept': 'application/json',
-  //     if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
-  //     ...?headers,
-  //   };
-  //
-  //   developer.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  //   developer.log('🗑️ DELETE REQUEST', name: 'API');
-  //   developer.log('URL: $url', name: 'API');
-  //   developer.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  //
-  //   try {
-  //     final response = await http
-  //         .delete(url, headers: finalHeaders)
-  //         .timeout(const Duration(seconds: 30));
-  //
-  //     developer.log('📥 DELETE RESPONSE: ${response.statusCode}', name: 'API');
-  //     return response;
-  //   } catch (e) {
-  //     developer.log('❌ DELETE ERROR: $e', name: 'API');
-  //     rethrow;
-  //   }
-  // }
 
   /// Multipart Request (for file uploads)
   static Future<http.Response> multipartRequest({

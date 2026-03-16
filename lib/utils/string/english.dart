@@ -11,7 +11,7 @@ final Map<String, String> english = {
   //'welcome_message2': "your chat more enjoyable by signing",
   'welcome_message2': "quick signup to connect with",
   //'welcome_message3': "quickly and easily",
-  'welcome_message3': "PLATEChatters wherever you are",
+  'welcome_message3': "PLATEChatter wherever you are",
 
   'sign_in': 'Sign In',
   'sign_up': 'Sign Up',
@@ -30,6 +30,7 @@ final Map<String, String> english = {
   'password_is_required': 'Password is required',
   'password_must_6_character': 'Password must be at least 6 characters',
   'forgot_password': 'Forgot Password',
+  "license_plate_or_nickname_required":"License plate or Nickname required",
 
   // -------- Sign Up --------
   'nickname_is_required': 'Nickname is required',
@@ -47,12 +48,19 @@ final Map<String, String> english = {
   'confirm_password': 'Confirm Password',
   'confirm_your_password': 'Confirm your password',
   'password_do_not_match': 'Passwords do not match',
+  "email_is_required":"Email is required",
+  "enter_valid_email":"Enter valid email",
+
+
+
+
   //'i_agree_to': 'I agree to the',
   'i_agree_to': 'I declare that I am at least 16 years old and I accept the',
   'agree_terms': 'Terms & Condition and Privacy Policy',
   'continue': 'Continue',
   'please_fill_all_fields': 'Please fill all fields',
-  'please accept terms': 'Please accept terms',
+  //'please accept terms': 'Please accept terms',
+  'please accept terms': 'To continue you must accept the terms',
   'creating_account': 'Creating account...',
   'registration_successful!': 'Registration successful!',
   'age_confirmation': 'Confirm your age',
@@ -116,7 +124,7 @@ final Map<String, String> english = {
   "pass_not_match": "Password does not match",
   "pass_six_char": "Password must be at least 6 characters",
   "otp_required": "OTP is required",
-  'empty_block_list': 'Empty Block List',
+  'empty_block_list': 'Empty blocked user list',
   'remember_me': "Remember Me",
   "bad_word_error": "This message contains inappropriate words.",
   "only_for_recovery": "recovery account",
@@ -138,7 +146,7 @@ final Map<String, String> english = {
   "user_blocked_successfully": "User blocked successfully",
   "failed_to_block_user": "Failed to block user",
   "password_must_be_6_characters": "Password must be at least 6 characters",
-  "delete": "Delete",
+  "delete": "Remove account",
   "support_request": "Support Request",
 
 
@@ -154,6 +162,33 @@ final Map<String, String> english = {
       "support_text2":" Our support team is available to assist you with any issues or inquiries you may have. 155 Per qualsiasi aiuto e supporto, contattaci all'indirizzo support@platechat.app Il nostro team di supporto è disponibile per assisterti in caso di problemi o richieste.",
           "Support Request": "Richiesta di supporto",
           "email_copied": "Email Copied",
+
+
+
+  "some_thing_wrong":"Some thigs wrong",
+
+  // Toast message
+
+  'invalid_credentials': 'Invalid credentials!',
+  'something_wrong': 'Something went wrong!',
+  'success1': 'Successful!',
+  'error2': 'Error occurred!',
+  'unauthorized': 'Unauthorized!',
+  'session_expired': 'Session expired!',
+  'network_error': 'Network error!',
+  'not_found': 'Not found!',
+  'saved': 'Saved!',
+  'deleted': 'Deleted!',
+  'updated': 'Updated!',
+  'created': 'Created!',
+  'load_failed': 'Load failed!',
+  'upload_success': 'Uploaded!',
+  'upload_failed': 'Upload failed!',
+  'server_error': 'Server error!',
+  'login_success': 'Welcome back!',
+  'logout_success': 'Logged out!',
+  'no_data': 'No data!',
+  'dismiss': 'Dismiss',
 
 
 

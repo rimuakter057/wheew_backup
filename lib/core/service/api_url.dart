@@ -1,10 +1,13 @@
 class ApiUrl {
   // Base URL - Replace with your actual API base URL
 
-  // Local
-  static const String baseUrl = 'http://10.10.20.44:8003';
+  // Local url
+  //static const String baseUrl = 'http://10.10.20.44:8003';
 
-  // Production
+  // live url
+  static const String baseUrl = 'http://13.50.99.165:8003';
+
+
   //http://13.50.99.165:8003
   static const baseSocketUrl = 'ws://13.50.99.165:8003';
   static const String imageUrl = "$baseUrl/";
@@ -46,4 +49,7 @@ class ApiUrl {
   static const String reset = "/users/reset-password";
   static const String deleteAccount = "/users";
   static const String help = "/users/help-support";
+
+  static const String profile = '/auth/me'; // ✅ same as chatList
+
 }

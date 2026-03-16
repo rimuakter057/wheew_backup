@@ -9,7 +9,8 @@ final Map<String, String> italian = {
   //'welcome_message2': "registrati velocemente e connettiti",
   'welcome_message2': "registrati velocemente e connettiti con un",
   //'welcome_message3': "con un driver ovunque tu vada",
-  'welcome_message3': "driver ovunque tu vada",
+  //'welcome_message3': "driver ovunque tu vada",
+  'welcome_message3': "PLATEChatter ovunque tu vada",
 
   'sign_up': 'Registrati',
   'log_in': 'Accedi',
@@ -28,6 +29,7 @@ final Map<String, String> italian = {
   'password_is_required': 'La password è obbligatoria',
   'password_must_6_character': 'La password deve contenere almeno 6 caratteri',
   'forgot_password': 'Password dimenticata',
+  "license_plate_or_nickname_required":"Targa o Nickname obbligatori",
 
   // -------- Sign Up --------
   'nickname_is_required': 'Il nickname è obbligatorio',
@@ -41,7 +43,7 @@ final Map<String, String> italian = {
   'type_here': 'Scrivi qui',
   'license_number_is_required': 'Il numero di licenza è obbligatorio',
   'license_number_must_be': 'La targa non è corretta',
-  'license_number_required': 'È richiesto il numero di licenza',
+  'license_number_required': 'È richiesta la Targa',
 
   'confirm_password': 'Conferma password',
   'confirm_your_password': 'Conferma la tua password',
@@ -50,12 +52,15 @@ final Map<String, String> italian = {
   'agree_terms': 'Termini e Condizioni e Informativa sulla Privacy',
   'continue': 'Continua',
   'please_fill_all_fields': 'Compila tutti i campi',
-  'please accept terms': 'Accetta i termini',
+  //'please accept terms': 'Accetta i termini',
+  'please accept terms': 'Per continuare devi accettare i termini',
   'creating_account': 'Creazione account...',
   'registration_successful!': 'Registrazione completata con successo!',
 
   'age_confirmation': "Conferma la tua età",
-  '16_or_not': 'Hai 16 anni?',
+  //'16_or_not': 'Hai 16 anni?',
+  '16_or_not': 'Hai almeno 16 anni?',
+
   'yes': "SÌ",
   'no': "NO",
   'email_only_for_recover_password': "Email solo per recuperare la password",
@@ -63,6 +68,9 @@ final Map<String, String> italian = {
   'i_agree_to1':
       "Acconsento all'utilizzo dei miei dati per ulteriori finalità -",
   'agree_terms1': "Ulteriori informazioni",
+  "email_is_required":"Email obbligatoria",
+  "enter_valid_email":"Inserisci un indirizzo email valido",
+
 
   //------------------------------------------------------
   "don't_worry_enter_your_email":
@@ -74,7 +82,7 @@ final Map<String, String> italian = {
   'verification_code': 'Codice di verifica',
   'we_sent_6_digit_code': 'Abbiamo inviato un codice a 6 cifre',
 
-  'send': "Inviare",
+  'send': "Invia",
   'reset_code': "Codice di reset",
   'new_password': 'Nuova password',
   'save': 'Salva',
@@ -116,11 +124,11 @@ final Map<String, String> italian = {
   "pass_not_match": "La password non corrisponde",
   "pass_six_char": "La password deve contenere almeno 6 caratteri",
   "otp_required": "L'OTP è obbligatorio",
-  'empty_block_list': 'Elenco blocchi vuoto',
+  'empty_block_list': 'Elenco utenti bloccati vuoto',
   'remember_me': "Ricordami",
   "bad_word_error": "Questi messaggio contiene parole inappropriate.",
   "only_for_recovery": "recupero account",
-  "please_enter_valid_email": "Si prega di inserire un indirizzo email valido",
+  "please_enter_valid_email": "Inserisci una mail valida",
   "otp_verify_success": "OTP verificata con successo",
   "something_went_wrong": "Qualcosa è andato storto",
   "user_not_found": "Utente non trovato",
@@ -141,7 +149,7 @@ final Map<String, String> italian = {
   "failed_to_block_user": "Impossibile bloccare l'utente",
   "password_must_be_6_characters":
       "La password deve contenere almeno 6 caratteri",
-  "delete": "eliminare",
+  "delete": "Elimina account",
 
 
   "delete_account":"Elimina account",
@@ -155,4 +163,27 @@ final Map<String, String> italian = {
   "support_text2": "Il nostro team di supporto è disponibile per assisterti con qualsiasi problema o richiesta.",
       "support_request": "Richiesta di supporto",
   "email_copied": "E-mail copiata",
+
+  // Toast message
+
+  'invalid_credentials': 'Credenziali non valide!',
+  'something_wrong': 'Qualcosa è andato storto!',
+  'success1': 'Operazione riuscita!',
+  'error2': 'Si è verificato un errore!',
+  'unauthorized': 'Non autorizzato!',
+  'session_expired': 'Sessione scaduta!',
+  'network_error': 'Errore di rete!',
+  'not_found': 'Non trovato!',
+  'saved': 'Salvato!',
+  'deleted': 'Eliminato!',
+  'updated': 'Aggiornato!',
+  'created': 'Creato!',
+  'load_failed': 'Caricamento fallito!',
+  'upload_success': 'Caricato!',
+  'upload_failed': 'Caricamento fallito!',
+  'server_error': 'Errore del server!',
+  'login_success': 'Bentornato!',
+  'logout_success': 'Disconnesso!',
+  'no_data': 'Nessun dato!',
+  'dismiss': 'Annulla',
 };
