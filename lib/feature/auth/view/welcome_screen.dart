@@ -830,9 +830,452 @@ import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../share/widgets/button/outline_button.dart';
 import '../../../share/widgets/button/primary_button.dart';
 import '../../../share/widgets/button/toggle_button.dart';
+import '../../../utils/color/app_colors.dart';
+
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    ResponsiveHelper.init(context);
+
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+
+            /// Language Toggle
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  top: ResponsiveHelper.spacing(20),
+                  right: 16,
+                ),
+                child: const LanguageToggleWidget(),
+              ),
+            ),
+
+            SizedBox(height: ResponsiveHelper.spacing(20)),
+
+            /// Logo Animation
+            Container(
+              width: double.infinity,
+              alignment: Alignment.center,
+              child: Lottie.asset(
+                'assets/animations/logo2_animated.json',
+                width: ResponsiveHelper.iconSize(320),
+                height: ResponsiveHelper.iconSize(340),
+                fit: BoxFit.contain,
+                repeat: true,
+              ),
+            ),
+
+            SizedBox(height: ResponsiveHelper.spacing(24)),
+
+            /// Welcome Text
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveHelper.padding(24),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  AutoSizeText(
+                    'welcome_message'.tr,
+                    maxLines: 1,
+                    minFontSize: 18,
+                    style: context.titleLarge.copyWith(
+                      fontSize: ResponsiveHelper.fontSize(32),
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+
+                  SizedBox(height: ResponsiveHelper.spacing(4)),
+
+                  AutoSizeText(
+                    'welcome_message1'.tr,
+                    maxLines: 1,
+                    minFontSize: 10,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.titleLarge.copyWith(
+                      fontSize: ResponsiveHelper.fontSize(16),
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+
+                  AutoSizeText(
+                    'welcome_message2'.tr,
+                    maxLines: 1,
+                    minFontSize: 10,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.titleLarge.copyWith(
+                      fontSize: ResponsiveHelper.fontSize(16),
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+
+                  AutoSizeText(
+                    'welcome_message3'.tr,
+                    maxLines: 1,
+                    minFontSize: 10,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.titleLarge.copyWith(
+                      fontSize: ResponsiveHelper.fontSize(16),
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+          SizedBox(height: ResponsiveHelper.spacing(32)),
+
+            /// Sign In Button
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveHelper.padding(24),
+              ),
+              child: OutlineButton(
+                title: 'sign_in'.tr,
+                onTap: () => context.pushNamed(RouteName.signIn),
+                borderColor: AppColors.blue,
+                textColor: AppColors.blue,
+              ),
+            ),
+
+            SizedBox(height: ResponsiveHelper.height(8)),
+
+            /// Sign Up Button
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveHelper.padding(24),
+              ),
+              child: PrimaryButton(
+                title: 'sign_up'.tr,
+                onTap: () => _showAgeConfirmationDialog(context),
+                backgroundColor: AppColors.blue,
+                textColor: Colors.white,
+              ),
+            ),
+
+            SizedBox(height: ResponsiveHelper.spacing(24)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+void _showAgeConfirmationDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Text(
+          'age_confirmation'.tr,
+          style: context.titleSmall.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        content: Text(
+          '16_or_not'.tr,
+          style: context.titleSmall,
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+
+              /// No Button
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  padding: ResponsiveHelper.symmetric(
+                    horizontal: 32,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.blue),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.borderRadius(24),
+                    ),
+                  ),
+                  child: Text('no'.tr, style: context.bodySmall),
+                ),
+              ),
+
+              SizedBox(width: ResponsiveHelper.width(12)),
+
+              /// Yes Button
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                  context.pushNamed(RouteName.signUp);
+                },
+                child: Container(
+                  padding: ResponsiveHelper.symmetric(
+                    horizontal: 32,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.blue,
+                    border: Border.all(color: AppColors.blue),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.borderRadius(24),
+                    ),
+                  ),
+                  child: Text(
+                    'yes'.tr,
+                    style: context.titleSmall.copyWith(
+                      color: AppColors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    },
+  );
+}
+
+/*
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
+import 'package:platchatapp/utils/extension/base_extension.dart';
+import '../../../core/router/routes_name.dart';
+import '../../../helper/responsive_helper/responsive_helper.dart';
+import '../../../share/widgets/button/outline_button.dart';
+import '../../../share/widgets/button/primary_button.dart';
+import '../../../share/widgets/button/toggle_button.dart';
 import '../../../utils/assets_path/assets_path.dart';
 import '../../../utils/color/app_colors.dart';
 
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    ResponsiveHelper.init(context);
+
+    return Scaffold(
+      body: Column(
+        children: [
+          /// Language Toggle
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: ResponsiveHelper.spacing(36),
+                right: 16,
+              ),
+              child: const LanguageToggleWidget(),
+            ),
+          ),
+
+          SizedBox(height: ResponsiveHelper.spacing(30)),
+
+          /// Logo Animation
+          Lottie.asset(
+            'assets/animations/logo2_animated.json',
+            width: ResponsiveHelper.iconSize(290),
+            height: ResponsiveHelper.iconSize(320),
+            fit: BoxFit.cover,
+            repeat: true,
+          ),
+
+          SizedBox(height: ResponsiveHelper.spacing(40)),
+
+          /// Welcome Text
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveHelper.padding(24),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AutoSizeText(
+                  'welcome_message'.tr,
+                  maxLines: 1,
+                  minFontSize: 18,
+                  style: context.titleLarge.copyWith(
+                    fontSize: ResponsiveHelper.fontSize(32),
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+
+                SizedBox(height: ResponsiveHelper.spacing(4)),
+
+                AutoSizeText(
+                  'welcome_message1'.tr,
+                  maxLines: 1,
+                  minFontSize: 10,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.titleLarge.copyWith(
+                    fontSize: ResponsiveHelper.fontSize(16),
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+
+                AutoSizeText(
+                  'welcome_message2'.tr,
+                  maxLines: 1,
+                  minFontSize: 10,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.titleLarge.copyWith(
+                    fontSize: ResponsiveHelper.fontSize(16),
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+
+                AutoSizeText(
+                  'welcome_message3'.tr,
+                  maxLines: 1,
+                  minFontSize: 10,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.titleLarge.copyWith(
+                    fontSize: ResponsiveHelper.fontSize(16),
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const Spacer(), // ✅ pushes buttons to bottom
+
+          /// Sign In Button
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveHelper.padding(24),
+            ),
+            child: OutlineButton(
+              title: 'sign_in'.tr,
+              onTap: () => context.pushNamed(RouteName.signIn),
+              borderColor: AppColors.blue,
+              textColor: AppColors.blue,
+            ),
+          ),
+
+          SizedBox(height: ResponsiveHelper.height(8)),
+
+          /// Sign Up Button
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveHelper.padding(24),
+            ),
+            child: PrimaryButton(
+              title: 'sign_up'.tr,
+              onTap: () => _showAgeConfirmationDialog(context),
+              backgroundColor: AppColors.blue,
+              textColor: Colors.white,
+            ),
+          ),
+
+          SizedBox(height: ResponsiveHelper.spacing(24)),
+        ],
+      ),
+    );
+  }
+}
+
+void _showAgeConfirmationDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Text(
+          'age_confirmation'.tr,
+          style: context.titleSmall.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        content: Text(
+          '16_or_not'.tr,
+          style: context.titleSmall,
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              /// No Button
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  padding: ResponsiveHelper.symmetric(
+                    horizontal: 32,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.blue),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.borderRadius(24),
+                    ),
+                  ),
+                  child: Text('no'.tr, style: context.bodySmall),
+                ),
+              ),
+
+              SizedBox(width: ResponsiveHelper.width(12)),
+
+              /// Yes Button
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                  context.pushNamed(RouteName.signUp);
+                },
+                child: Container(
+                  padding: ResponsiveHelper.symmetric(
+                    horizontal: 32,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.blue,
+                    border: Border.all(color: AppColors.blue),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.borderRadius(24),
+                    ),
+                  ),
+                  child: Text(
+                    'yes'.tr,
+                    style: context.titleSmall.copyWith(
+                      color: AppColors.white,
+                    ),
+                  ),
+                ),
+              ),
+
+            ],
+          ),
+        ],
+      );
+    },
+  );
+}
+*/
+
+/*
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
@@ -860,12 +1303,15 @@ class WelcomeScreen extends StatelessWidget {
             SizedBox(height: ResponsiveHelper.spacing(30)),
 
             /// Logo Animation
-            Lottie.asset(
-              'assets/animations/logo2_animated.json',
-              width: ResponsiveHelper.iconSize(290),
-              height: ResponsiveHelper.iconSize(320),
-              fit: BoxFit.cover,
-              repeat: true,
+            Align(
+              alignment: Alignment.center,
+              child: Lottie.asset(
+                'assets/animations/logo2_animated.json',
+                width: ResponsiveHelper.iconSize(290),
+                height: ResponsiveHelper.iconSize(320),
+                fit: BoxFit.cover,
+                repeat: true,
+              ),
             ),
 
             SizedBox(height: ResponsiveHelper.spacing(40)),
@@ -1044,3 +1490,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
     },
   );
 }
+*/
+
+
+

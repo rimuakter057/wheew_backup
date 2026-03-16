@@ -10,7 +10,7 @@ final Map<String, String> italian = {
   'welcome_message2': "registrati velocemente e connettiti con un",
   //'welcome_message3': "con un driver ovunque tu vada",
   //'welcome_message3': "driver ovunque tu vada",
-  'welcome_message3': "PlateChatter ovunque tu vada",
+  'welcome_message3': "PLATEChatter ovunque tu vada",
 
   'sign_up': 'Registrati',
   'log_in': 'Accedi',

@@ -69,12 +69,23 @@ class _SplashScreenState extends State<SplashScreen> {
           imageSrc: AssetsPath.plateLogo,
           width: ResponsiveHelper.width(280),
         ),*/
-        Lottie.asset(
+        /*Lottie.asset(
           'assets/animations/logo_animated.json',
           width: ResponsiveHelper.iconSize(290),
           height: ResponsiveHelper.iconSize(320),
           fit: BoxFit.cover,
           repeat: true,
+        ),*/
+        Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          child: Lottie.asset(
+            'assets/animations/logo2_animated.json',
+            width: ResponsiveHelper.iconSize(320),
+            height: ResponsiveHelper.iconSize(340),
+            fit: BoxFit.contain,
+            repeat: true,
+          ),
         ),
       ),
     );
