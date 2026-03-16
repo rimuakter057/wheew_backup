@@ -64,18 +64,6 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Center(
         child:
-       /* CustomImage(
-          //imageSrc: AssetsPath.logoPng,
-          imageSrc: AssetsPath.plateLogo,
-          width: ResponsiveHelper.width(280),
-        ),*/
-        /*Lottie.asset(
-          'assets/animations/logo_animated.json',
-          width: ResponsiveHelper.iconSize(290),
-          height: ResponsiveHelper.iconSize(320),
-          fit: BoxFit.cover,
-          repeat: true,
-        ),*/
         Container(
           width: double.infinity,
           alignment: Alignment.center,
@@ -89,33 +77,6 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       ),
     );
-
-    /*Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            const Spacer(),
-            SvgPicture.asset(
-              AssetsPath.logoSvg,
-              width: ResponsiveHelper.width(240),
-            ),
-            SizedBox(height: ResponsiveHelper.spacing(12)),
-            Text(
-              'CONNECTING DRIVERS ONE PLATE AT A TIME',
-              style: GoogleFonts.poppins(fontSize: ResponsiveHelper.fontSize(15),
-
-              fontWeight: FontWeight.w400,
-                color: AppColors.textBlack
-              ),
-            ),
-            const Spacer(),
-            const CircularProgressIndicator(),
-            SizedBox(height: ResponsiveHelper.spacing(40)),
-          ],
-        ),
-      ),
-    )*/
-    ;
   }
 
   void _showTimeoutMessage() {
