@@ -20,8 +20,8 @@ final Map<String, String> italian = {
 
   // -------- Sign In --------
   'nick_name': 'Nickname',
-  'license_number_title':"Numero di Targa",
-  'license_number1':"Targa",
+  'license_number_title': "Numero di Targa",
+  'license_number1': "Targa",
   'license_plate_or_nick_name': 'Targa o Nickname',
   'enter_license_plate_or_nick_name': 'Inserisci la targa o il nickname',
   'password': 'Password',
@@ -29,7 +29,7 @@ final Map<String, String> italian = {
   'password_is_required': 'La password è obbligatoria',
   'password_must_6_character': 'La password deve contenere almeno 6 caratteri',
   'forgot_password': 'Password dimenticata',
-  "license_plate_or_nickname_required":"Targa o Nickname obbligatori",
+  "license_plate_or_nickname_required": "Targa o Nickname obbligatori",
 
   // -------- Sign Up --------
   'nickname_is_required': 'Il nickname è obbligatorio',
@@ -68,9 +68,8 @@ final Map<String, String> italian = {
   'i_agree_to1':
       "Acconsento all'utilizzo dei miei dati per ulteriori finalità -",
   'agree_terms1': "Ulteriori informazioni",
-  "email_is_required":"Email obbligatoria",
-  "enter_valid_email":"Inserisci un indirizzo email valido",
-
+  "email_is_required": "Email obbligatoria",
+  "enter_valid_email": "Inserisci un indirizzo email valido",
 
   //------------------------------------------------------
   "don't_worry_enter_your_email":
@@ -104,7 +103,6 @@ final Map<String, String> italian = {
   "blocked_user1": "Sblocca",
 
   "blocked_user5": "Utenti bloccati",
-
 
   "unblock": "Sblocca",
   'logout': "Esci",
@@ -151,21 +149,20 @@ final Map<String, String> italian = {
       "La password deve contenere almeno 6 caratteri",
   "delete": "Elimina account",
 
-
-  "delete_account":"Elimina account",
-  "warning":"Avvertimento",
-  "delete_account_warning":"Avviso di eliminazione dell'account",
-  "delete_account_successfully":"Account eliminato con successo",
-  "failed_delete_account":"Impossibile eliminare l'account",
-  "help_support":"Aiuto e Supporto",
+  "delete_account": "Elimina account",
+  "warning": "Avvertimento",
+  "delete_account_warning": "Avviso di eliminazione dell'account",
+  "delete_account_successfully": "Account eliminato con successo",
+  "failed_delete_account": "Impossibile eliminare l'account",
+  "help_support": "Aiuto e Supporto",
   "support_text1": "Per qualsiasi aiuto e supporto, contattaci a ",
   "client_email": "support@platechat.app",
-  "support_text2": "Il nostro team di supporto è disponibile per assisterti con qualsiasi problema o richiesta.",
-      "support_request": "Richiesta di supporto",
+  "support_text2":
+      "Il nostro team di supporto è disponibile per assisterti con qualsiasi problema o richiesta.",
+  "support_request": "Richiesta di supporto",
   "email_copied": "E-mail copiata",
 
   // Toast message
-
   'invalid_credentials': 'Credenziali non valide!',
   'something_wrong': 'Qualcosa è andato storto!',
   'success1': 'Operazione riuscita!',

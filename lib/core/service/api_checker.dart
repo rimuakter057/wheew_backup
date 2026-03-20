@@ -92,7 +92,6 @@ class ApiChecker {
 
 */
 
-
 /*import 'dart:convert';
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
@@ -129,9 +128,11 @@ class ApiChecker {
         response.statusCode == 401 ||
         response.statusCode == 403 ||
         response.statusCode == 404) {
-      developer.log('❌ Invalid credentials (${response.statusCode})', name: 'API');
+      developer.log(
+        '❌ Invalid credentials (${response.statusCode})',
+        name: 'API',
+      );
       showErrorToast('invalid_credentials'.tr);
-
     } else if (response.statusCode == 422) {
       try {
         final body = jsonDecode(response.body);
@@ -154,11 +155,9 @@ class ApiChecker {
       } catch (_) {
         showErrorToast('something_wrong'.tr);
       }
-
     } else if (response.statusCode == 500) {
       developer.log('❌ 500 Server Error', name: 'API');
       showErrorToast('server_error'.tr);
-
     } else {
       developer.log('❌ Error ${response.statusCode}', name: 'API');
       showErrorToast('something_wrong'.tr);

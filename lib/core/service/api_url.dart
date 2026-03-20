@@ -7,7 +7,6 @@ class ApiUrl {
   // live url
   static const String baseUrl = 'http://13.50.99.165:8003';
 
-
   //http://13.50.99.165:8003
   static const baseSocketUrl = 'ws://13.50.99.165:8003';
   static const String imageUrl = "$baseUrl/";
@@ -51,5 +50,4 @@ class ApiUrl {
   static const String help = "/users/help-support";
 
   static const String profile = '/auth/me'; // ✅ same as chatList
-
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: dead_code, unnecessary_null_comparison
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -36,8 +38,8 @@ class AuthController extends GetxController {
     String? savedUser = await SharePrefsHelper.getString(AppConst.loginUser);
     String? savedPass = await SharePrefsHelper.getString(AppConst.loginPass);
 
-    licenseController.text = savedUser ?? '';
-    passwordController.text = savedPass ?? '';
+    licenseController.text = savedUser;
+    passwordController.text = savedPass;
     isRememberMe.value = savedUser != null && savedUser.isNotEmpty;
   }
 
@@ -70,9 +72,18 @@ class AuthController extends GetxController {
       final data = jsonDecode(loginRes.body);
 
       await SharePrefsHelper.setString(AppConst.token, data['token'] ?? '');
-      await SharePrefsHelper.setString(AppConst.userID, data['id']?.toString() ?? '');
-      await SharePrefsHelper.setString(AppConst.licenceId, data['licence_id'] ?? '');
-      await SharePrefsHelper.setString(AppConst.nickName, data['nick_name'] ?? '');
+      await SharePrefsHelper.setString(
+        AppConst.userID,
+        data['id']?.toString() ?? '',
+      );
+      await SharePrefsHelper.setString(
+        AppConst.licenceId,
+        data['licence_id'] ?? '',
+      );
+      await SharePrefsHelper.setString(
+        AppConst.nickName,
+        data['nick_name'] ?? '',
+      );
       await SharePrefsHelper.setBool(AppConst.isLoggedIn, true);
       await _saveUserData(data);
 
@@ -144,9 +155,18 @@ class AuthController extends GetxController {
     // ✅ Login response is flat — no nested 'user' key
     final user = data['user'] ?? data;
 
-    await SharePrefsHelper.setString(AppConst.userID, user['id']?.toString() ?? '');
-    await SharePrefsHelper.setString(AppConst.nickName, user['nick_name'] ?? '');
-    await SharePrefsHelper.setString(AppConst.licenceId, user['licence_id'] ?? '');
+    await SharePrefsHelper.setString(
+      AppConst.userID,
+      user['id']?.toString() ?? '',
+    );
+    await SharePrefsHelper.setString(
+      AppConst.nickName,
+      user['nick_name'] ?? '',
+    );
+    await SharePrefsHelper.setString(
+      AppConst.licenceId,
+      user['licence_id'] ?? '',
+    );
 
     // ✅ Save avatar raw path
     final avatar = user['avatar'];
@@ -164,7 +184,7 @@ class AuthController extends GetxController {
     debugPrint('✅ licenceId saved: ${user['licence_id']}');
   }
 
-/*
+  /*
   Future<void> _saveUserData(Map<String, dynamic> data) async {
     final user = data['user'] ?? data;
 
@@ -343,14 +363,12 @@ class AuthController extends GetxController {
     await SharePrefsHelper.remove(AppConst.userData);
     await SharePrefsHelper.remove(AppConst.licenceId);
     await SharePrefsHelper.remove(AppConst.nickName);
-    await SharePrefsHelper.remove(AppConst.avatar);   // ✅ clear avatar too
+    await SharePrefsHelper.remove(AppConst.avatar); // ✅ clear avatar too
     await SharePrefsHelper.remove(AppConst.loginUser);
     await SharePrefsHelper.remove(AppConst.loginPass);
     await SharePrefsHelper.setBool(AppConst.isLoggedIn, false);
   }
 }
-
-
 
 /*
 // ignore_for_file: unnecessary_null_comparison
@@ -670,7 +688,7 @@ class AuthController extends GetxController {
       ApiChecker.checkApi(registerRes, context);
       return false;
     }
-  }*//*
+  }*/ /*
 
 
   /// ================= SAVE USER DATA ====================

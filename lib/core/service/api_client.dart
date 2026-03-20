@@ -211,7 +211,6 @@ class ApiClient {
     }
   }
 
-
   ///============================= PATCH REQUEST ================================
   static Future<http.Response> patchData({
     required String uri,
@@ -283,11 +282,10 @@ class ApiClient {
     Map<String, dynamic>? body,
     Map<String, String>? headers,
   }) async {
-
     if (!await _checkConnection()) {
       return {
         "statusCode": 0,
-        "data": {"message": "No Internet Connection"}
+        "data": {"message": "No Internet Connection"},
       };
     }
 
@@ -308,13 +306,12 @@ class ApiClient {
     developer.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
     try {
-
       final response = await http
           .delete(
-        url,
-        headers: finalHeaders,
-        body: body != null ? jsonEncode(body) : null,
-      )
+            url,
+            headers: finalHeaders,
+            body: body != null ? jsonEncode(body) : null,
+          )
           .timeout(const Duration(seconds: 30));
 
       developer.log('📥 DELETE RESPONSE: ${response.statusCode}', name: 'API');
@@ -322,37 +319,26 @@ class ApiClient {
 
       final data = jsonDecode(response.body);
 
-      return {
-        "statusCode": response.statusCode,
-        "data": data,
-      };
-
+      return {"statusCode": response.statusCode, "data": data};
     } on TimeoutException {
-
       return {
         "statusCode": 408,
-        "data": {"message": "Request Timeout"}
+        "data": {"message": "Request Timeout"},
       };
-
     } on FormatException {
-
       return {
         "statusCode": 500,
-        "data": {"message": "Invalid server response"}
+        "data": {"message": "Invalid server response"},
       };
-
     } catch (e) {
-
       developer.log('❌ DELETE ERROR: $e', name: 'API');
 
       return {
         "statusCode": 500,
-        "data": {"message": "Something went wrong"}
+        "data": {"message": "Something went wrong"},
       };
-
     }
   }
-
 
   /// Multipart Request (for file uploads)
   static Future<http.Response> multipartRequest({

@@ -514,7 +514,11 @@ class ChatController extends GetxController {
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       print("User blocked successfully");
-      showSnackBar(context, "user_blocked_successfully".tr, bgColor: Colors.green);
+      showSnackBar(
+        context,
+        "user_blocked_successfully".tr,
+        bgColor: Colors.green,
+      );
     } else {
       print("Block failed: ${response.statusCode}");
       showSnackBar(context, "failed_to_block_user".tr, bgColor: Colors.red);
@@ -543,12 +547,6 @@ class ChatController extends GetxController {
   //   }
   // }
 
-
-
-
-
-
-
   Future<void> unBlock(String id, BuildContext context) async {
     final body = {"userId": id};
 
@@ -564,7 +562,7 @@ class ChatController extends GetxController {
 
       // ✅ chat list এর isBlockedByMe status update
       final roomIndex = userChatList.indexWhere(
-            (room) => room.otherUser?.id == id,
+        (room) => room.otherUser?.id == id,
       );
 
       if (roomIndex != -1) {
@@ -588,18 +586,6 @@ class ChatController extends GetxController {
       showSnackBar(context, "failed_to_unblock_user".tr, bgColor: Colors.red);
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
 
   void showSnackBar(BuildContext context, String message, {Color? bgColor}) {
     ScaffoldMessenger.of(context).showSnackBar(

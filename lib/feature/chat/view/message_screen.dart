@@ -458,56 +458,57 @@ class _MessageScreenState extends State<MessageScreen> {
                           ),
                         );
 
-                 //    if (containsBadWord) {
-                 //      // 4️⃣ Show error if bad word exists
-                 //      ScaffoldMessenger.of(context).showSnackBar(
-                 //        SnackBar(
-                 //          behavior: SnackBarBehavior.floating, // Floating style
-                 // // Edge spacing
-                 //          margin: EdgeInsets.only(
-                 //            top: 16, // Top position
-                 //            left: 16,
-                 //            right: 16,
-                 //          ),
-                 //          padding: EdgeInsets.all(16), // Content padding
-                 //          backgroundColor: Colors.red.shade700, // Darker red
-                 //          shape: RoundedRectangleBorder(
-                 //            borderRadius: BorderRadius.circular(
-                 //              ResponsiveHelper.borderRadius(12),
-                 //            ), // Rounded corners
-                 //          ),
-                 //          elevation: 6, // Shadow
-                 //          duration: Duration(seconds: 3), // How long it shows
-                 //          content: Row(
-                 //            children: [
-                 //              Icon(
-                 //                Icons.error_outline,
-                 //                color: Colors.white,
-                 //              ), // Icon
-                 //              SizedBox(width: 12),
-                 //              Expanded(
-                 //                child: Text(
-                 //                  "bad_word_error".tr, // Your translation key
-                 //                  style: GoogleFonts.poppins(
-                 //                    color: Colors.white,
-                 //                    fontWeight: FontWeight.bold,
-                 //                    fontSize: ResponsiveHelper.fontSize(16),
-                 //                  ),
-                 //                ),
-                 //              ),
-                 //            ],
-                 //          ),
-                 //        ),
-                 //      );
-                 //      return; // Stop sending
-                 //    }
-
+                    //    if (containsBadWord) {
+                    //      // 4️⃣ Show error if bad word exists
+                    //      ScaffoldMessenger.of(context).showSnackBar(
+                    //        SnackBar(
+                    //          behavior: SnackBarBehavior.floating, // Floating style
+                    // // Edge spacing
+                    //          margin: EdgeInsets.only(
+                    //            top: 16, // Top position
+                    //            left: 16,
+                    //            right: 16,
+                    //          ),
+                    //          padding: EdgeInsets.all(16), // Content padding
+                    //          backgroundColor: Colors.red.shade700, // Darker red
+                    //          shape: RoundedRectangleBorder(
+                    //            borderRadius: BorderRadius.circular(
+                    //              ResponsiveHelper.borderRadius(12),
+                    //            ), // Rounded corners
+                    //          ),
+                    //          elevation: 6, // Shadow
+                    //          duration: Duration(seconds: 3), // How long it shows
+                    //          content: Row(
+                    //            children: [
+                    //              Icon(
+                    //                Icons.error_outline,
+                    //                color: Colors.white,
+                    //              ), // Icon
+                    //              SizedBox(width: 12),
+                    //              Expanded(
+                    //                child: Text(
+                    //                  "bad_word_error".tr, // Your translation key
+                    //                  style: GoogleFonts.poppins(
+                    //                    color: Colors.white,
+                    //                    fontWeight: FontWeight.bold,
+                    //                    fontSize: ResponsiveHelper.fontSize(16),
+                    //                  ),
+                    //                ),
+                    //              ),
+                    //            ],
+                    //          ),
+                    //        ),
+                    //      );
+                    //      return; // Stop sending
+                    //    }
 
                     if (containsBadWord) {
-                      showTopSnackBar(context, "bad_word_error".tr); // <-- call custom top snack
+                      showTopSnackBar(
+                        context,
+                        "bad_word_error".tr,
+                      ); // <-- call custom top snack
                       return; // Stop sending
                     }
-
 
                     chatController.sendNewEmitMessage(
                       receiverId: widget.receiverId,
@@ -564,7 +565,6 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 }
 
-
 void showTopSnackBar(BuildContext context, String message) {
   OverlayEntry overlayEntry = OverlayEntry(
     builder: (context) => Positioned(
@@ -577,7 +577,9 @@ void showTopSnackBar(BuildContext context, String message) {
           padding: ResponsiveHelper.all(16),
           decoration: BoxDecoration(
             color: Colors.red.shade700,
-            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+            borderRadius: BorderRadius.circular(
+              ResponsiveHelper.borderRadius(12),
+            ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black26,
@@ -607,7 +609,7 @@ void showTopSnackBar(BuildContext context, String message) {
     ),
   );
 
-  Overlay.of(context)?.insert(overlayEntry);
+  Overlay.of(context).insert(overlayEntry);
 
   // Remove after 3 seconds
   Future.delayed(Duration(seconds: 3)).then((_) => overlayEntry.remove());

@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
-import 'package:platchatapp/feature/helper/custom_image/custom_image.dart';
-import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../core/router/routes_name.dart';
 import '../../core/service/storage_service.dart';
 import '../../helper/responsive_helper/responsive_helper.dart';
 import '../../utils/app_const/app_const.dart';
-import '../../utils/assets_path/assets_path.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -63,8 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child:
-        Container(
+        child: Container(
           width: double.infinity,
           alignment: Alignment.center,
           child: Lottie.asset(

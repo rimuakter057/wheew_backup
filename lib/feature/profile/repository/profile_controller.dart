@@ -116,7 +116,7 @@ class ProfileController extends GetxController {
     update();
   }
 
-/*  Future<void> fetchProfileFromApi() async {
+  /*  Future<void> fetchProfileFromApi() async {
     isLoading = true;
     update();
 
@@ -253,7 +253,6 @@ class ProfileController extends GetxController {
   }
 }
 
-
 /*
 import 'dart:convert';
 import 'dart:io';
@@ -285,7 +284,7 @@ class ProfileController extends GetxController {
     super.onInit();
     loadUserData();        // ✅ instant UI from local
     fetchProfileFromApi(); // ✅ fresh data from server
-  }*//*
+  }*/ /*
 
   @override
   void onInit() {
@@ -363,7 +362,7 @@ class ProfileController extends GetxController {
       debugPrint('❌ loadUserData error: $e');
     }
     update();
-  }*//*
+  }*/ /*
 
 
   /// ✅ Fetch fresh profile from /auth/me
@@ -426,7 +425,7 @@ class ProfileController extends GetxController {
 
     isLoading = false;
     update();
-  }*//*
+  }*/ /*
 
 
   /// ✅ Apply data to UI
@@ -543,7 +542,6 @@ class ProfileController extends GetxController {
 }
 
 */
-
 
 /*
 import 'dart:convert';
@@ -818,8 +816,6 @@ class ProfileController extends GetxController {
     update();
   }
 */
-
-
 
 /*class ProfileController extends GetxController {
   final ProfileRepository profileRepository = ProfileRepository();

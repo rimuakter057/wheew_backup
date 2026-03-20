@@ -844,7 +844,6 @@ class WelcomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-
             /// Language Toggle
             Align(
               alignment: Alignment.topRight,
@@ -882,7 +881,6 @@ class WelcomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   AutoSizeText(
                     'welcome_message'.tr,
                     maxLines: 1,
@@ -931,7 +929,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
             ),
 
-          SizedBox(height: ResponsiveHelper.spacing(32)),
+            SizedBox(height: ResponsiveHelper.spacing(32)),
 
             /// Sign In Button
             Padding(
@@ -975,9 +973,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
     barrierDismissible: false,
     builder: (context) {
       return AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'age_confirmation'.tr,
           style: context.titleSmall.copyWith(
@@ -995,7 +991,6 @@ void _showAgeConfirmationDialog(BuildContext context) {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-
               /// No Button
               GestureDetector(
                 onTap: () => Navigator.pop(context),
@@ -1036,9 +1031,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
                   ),
                   child: Text(
                     'yes'.tr,
-                    style: context.titleSmall.copyWith(
-                      color: AppColors.white,
-                    ),
+                    style: context.titleSmall.copyWith(color: AppColors.white),
                   ),
                 ),
               ),
@@ -1491,6 +1484,3 @@ void _showAgeConfirmationDialog(BuildContext context) {
   );
 }
 */
-
-
-

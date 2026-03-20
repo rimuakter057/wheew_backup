@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
-import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../repository/auth_controller.dart';
@@ -68,10 +67,8 @@ class _SignInScreenState extends State<SignInScreen> {
                 key: _formKey,
                 child: Column(
                   children: [
-
-
                     /// Logo
-                   /* Image.asset(
+                    /* Image.asset(
                       AssetsPath.signLogo,
                       width: ResponsiveHelper.width(120),
                     ),*/

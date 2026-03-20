@@ -21,8 +21,8 @@ final Map<String, String> english = {
 
   // -------- Sign In --------
   'nick_name': 'Nickname',
-  'license_number_title':"License Number",
-  'license_number1':"License Number",
+  'license_number_title': "License Number",
+  'license_number1': "License Number",
   'license_plate_or_nick_name': "License Plate or Nickname",
   'enter_license_plate_or_nick_name': "Enter License Plate or Nickname",
   'password': 'Password',
@@ -30,7 +30,7 @@ final Map<String, String> english = {
   'password_is_required': 'Password is required',
   'password_must_6_character': 'Password must be at least 6 characters',
   'forgot_password': 'Forgot Password',
-  "license_plate_or_nickname_required":"License plate or Nickname required",
+  "license_plate_or_nickname_required": "License plate or Nickname required",
 
   // -------- Sign Up --------
   'nickname_is_required': 'Nickname is required',
@@ -48,11 +48,8 @@ final Map<String, String> english = {
   'confirm_password': 'Confirm Password',
   'confirm_your_password': 'Confirm your password',
   'password_do_not_match': 'Passwords do not match',
-  "email_is_required":"Email is required",
-  "enter_valid_email":"Enter valid email",
-
-
-
+  "email_is_required": "Email is required",
+  "enter_valid_email": "Enter valid email",
 
   //'i_agree_to': 'I agree to the',
   'i_agree_to': 'I declare that I am at least 16 years old and I accept the',
@@ -149,26 +146,22 @@ final Map<String, String> english = {
   "delete": "Remove account",
   "support_request": "Support Request",
 
+  "delete_account": "Delete Account",
+  "warning": "Warning",
+  "delete_account_warning": "Delete Account Warning",
+  "delete_account_successfully": "Account deleted successfully",
+  "failed_delete_account": "Failed to delete account",
+  "help_support": "Help and Support",
+  "support_text1": "For any help and support, please contact us at ",
 
+  "support_text2":
+      " Our support team is available to assist you with any issues or inquiries you may have. 155 Per qualsiasi aiuto e supporto, contattaci all'indirizzo support@platechat.app Il nostro team di supporto è disponibile per assisterti in caso di problemi o richieste.",
+  "Support Request": "Richiesta di supporto",
+  "email_copied": "Email Copied",
 
-  "delete_account":"Delete Account",
-  "warning":"Warning",
-  "delete_account_warning":"Delete Account Warning",
-  "delete_account_successfully":"Account deleted successfully",
-  "failed_delete_account":"Failed to delete account",
-  "help_support":"Help and Support",
-  "support_text1":"For any help and support, please contact us at ",
-
-      "support_text2":" Our support team is available to assist you with any issues or inquiries you may have. 155 Per qualsiasi aiuto e supporto, contattaci all'indirizzo support@platechat.app Il nostro team di supporto è disponibile per assisterti in caso di problemi o richieste.",
-          "Support Request": "Richiesta di supporto",
-          "email_copied": "Email Copied",
-
-
-
-  "some_thing_wrong":"Some thigs wrong",
+  "some_thing_wrong": "Some thigs wrong",
 
   // Toast message
-
   'invalid_credentials': 'Invalid credentials!',
   'something_wrong': 'Something went wrong!',
   'success1': 'Successful!',
@@ -189,7 +182,4 @@ final Map<String, String> english = {
   'logout_success': 'Logged out!',
   'no_data': 'No data!',
   'dismiss': 'Dismiss',
-
-
-
 };

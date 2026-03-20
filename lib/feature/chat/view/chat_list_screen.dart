@@ -56,7 +56,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
   void _onScroll() {
     if (scrollController.position.pixels >=
-        scrollController.position.maxScrollExtent - 100 &&
+            scrollController.position.maxScrollExtent - 100 &&
         controller.hasMore &&
         !controller.isLoadingMore.value) {
       controller.fetchChatRooms(loadMore: true);
@@ -177,9 +177,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   return ListView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     children: [
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * .3,
-                      ),
+                      SizedBox(height: MediaQuery.of(context).size.height * .3),
                       Center(
                         child: Text(
                           'no_chats'.tr,
@@ -225,15 +223,15 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       ),
                       onTap: () {
                         MessageInformation messageInformation =
-                        MessageInformation(
-                          roomID: room.id ?? '',
-                          otherUserName: room.otherUser?.nickName ?? 'User',
-                          otherUserAvatar:
-                          room.otherUser?.avatar ?? AppConst.unknown,
-                          receiverId: room.otherUser?.id ?? '',
-                          isBlockedByMe: room.isBlockedByMe,
-                          isBlockedMe: room.isBlockedMe,
-                        );
+                            MessageInformation(
+                              roomID: room.id ?? '',
+                              otherUserName: room.otherUser?.nickName ?? 'User',
+                              otherUserAvatar:
+                                  room.otherUser?.avatar ?? AppConst.unknown,
+                              receiverId: room.otherUser?.id ?? '',
+                              isBlockedByMe: room.isBlockedByMe,
+                              isBlockedMe: room.isBlockedMe,
+                            );
 
                         Navigator.push(
                           context,
@@ -242,7 +240,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                               roomId: messageInformation.roomID,
                               otherUserName: messageInformation.otherUserName,
                               otherUserAvatar:
-                              messageInformation.otherUserAvatar,
+                                  messageInformation.otherUserAvatar,
                               receiverId: messageInformation.receiverId,
                               isBlockedByMe: messageInformation.isBlockedByMe,
                               isBlockedMe: messageInformation.isBlockedMe,
@@ -279,7 +277,6 @@ class MessageInformation {
     this.isBlockedMe,
   });
 }
-
 
 /*
 import 'package:flutter/material.dart';
@@ -397,7 +394,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                     imageSrc: AssetsPath.plateIcon,
                     height: ResponsiveHelper.height(28),
                     fit: BoxFit.contain,
-                  ),*//*
+                  ),*/ /*
 
                   SizedBox(width: ResponsiveHelper.spacing(6)),
                   CustomImage(

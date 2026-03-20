@@ -13,7 +13,6 @@ import 'package:platchatapp/feature/terms_condition/terms_and_condition_screen.d
 import 'package:platchatapp/feature/auth/view/otp_screen.dart';
 import 'package:platchatapp/feature/chat/view/block_list_screen.dart';
 import 'package:platchatapp/feature/chat/view/chat_list_screen.dart';
-import 'package:platchatapp/feature/chat/view/inbox_screen.dart';
 import 'package:platchatapp/feature/chat/view/message_screen.dart';
 import 'package:platchatapp/feature/chat/view/serach_screen.dart';
 import 'package:platchatapp/feature/profile/view/profile_screen.dart';
@@ -145,7 +144,6 @@ class AppRouter {
         name: RouteName.help,
         builder: (_, _) => ProfileScreen(),
       ),
-
     ],
   );
 }

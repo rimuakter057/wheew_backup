@@ -35,7 +35,6 @@ import '../../../core/service/api_client.dart';
 import '../../../core/service/api_url.dart';
 
 class ProfileRepository {
-
   /// ✅ Get user profile
   Future<http.Response> getProfile() async {
     return await ApiClient.getData(uri: ApiUrl.profile);

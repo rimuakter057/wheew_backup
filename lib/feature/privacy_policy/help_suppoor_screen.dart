@@ -102,7 +102,8 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                         size: ResponsiveHelper.width(24),
                       ),
                       SizedBox(width: ResponsiveHelper.width(8)),
-                      Flexible( // ✅ added
+                      Flexible(
+                        // ✅ added
                         child: Text(
                           controller.message.value,
                           style: context.bodyLarge.copyWith(
@@ -110,7 +111,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.center,
-                          maxLines: 3,        // ✅ added
+                          maxLines: 3, // ✅ added
                           overflow: TextOverflow.ellipsis, // ✅ added
                         ),
                       ),
@@ -175,9 +176,7 @@ Future<void> _launchEmail(String email) async {
   final Uri emailUri = Uri(
     scheme: 'mailto',
     path: email,
-    queryParameters: {
-      'subject': 'support_request'.tr,
-    },
+    queryParameters: {'subject': 'support_request'.tr},
   );
 
   try {

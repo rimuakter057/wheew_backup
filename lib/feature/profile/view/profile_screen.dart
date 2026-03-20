@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
-import '../../../share/widgets/avatar/user_avatar.dart';
 import '../../../utils/color/app_colors.dart';
 import '../repository/profile_controller.dart';
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -77,26 +77,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       controller.profileImage.value != null
                           ? CircleAvatar(
-                        radius: ResponsiveHelper.width(45),
-                        backgroundImage: FileImage(
-                          controller.profileImage.value!,
-                        ),
-                      )
+                              radius: ResponsiveHelper.width(45),
+                              backgroundImage: FileImage(
+                                controller.profileImage.value!,
+                              ),
+                            )
                           : avatar != null && avatar.isNotEmpty
                           ? CircleAvatar(
-                        radius: ResponsiveHelper.width(45),
-                        backgroundImage: NetworkImage(avatar),
-                        onBackgroundImageError: (_, __) {},
-                      )
+                              radius: ResponsiveHelper.width(45),
+                              backgroundImage: NetworkImage(avatar),
+                              onBackgroundImageError: (_, __) {},
+                            )
                           : CircleAvatar(
-                        radius: ResponsiveHelper.width(45),
-                        backgroundColor: AppColors.greyShade,
-                        child: Icon(
-                          Icons.person,
-                          size: ResponsiveHelper.width(45),
-                          color: AppColors.blue,
-                        ),
-                      ),
+                              radius: ResponsiveHelper.width(45),
+                              backgroundColor: AppColors.greyShade,
+                              child: Icon(
+                                Icons.person,
+                                size: ResponsiveHelper.width(45),
+                                color: AppColors.blue,
+                              ),
+                            ),
                       if (controller.isEditing)
                         GestureDetector(
                           onTap: controller.pickImageFromGallery,
@@ -147,9 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 if (controller.isLoading)
                   Padding(
-                    padding: EdgeInsets.only(
-                      top: ResponsiveHelper.spacing(20),
-                    ),
+                    padding: EdgeInsets.only(top: ResponsiveHelper.spacing(20)),
                     child: const CircularProgressIndicator(),
                   ),
               ],

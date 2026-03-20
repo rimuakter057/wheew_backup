@@ -24,11 +24,7 @@ class UserModel {
   final String licenceId;
   final String? avatar;
 
-  UserModel({
-    required this.nickName,
-    required this.licenceId,
-    this.avatar,
-  });
+  UserModel({required this.nickName, required this.licenceId, this.avatar});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(

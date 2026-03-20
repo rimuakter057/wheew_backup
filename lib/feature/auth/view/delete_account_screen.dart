@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../share/widgets/button/primary_button.dart';
 import '../../../share/widgets/custom_appbar/custom_appbar.dart';
@@ -28,7 +27,10 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
 
   Future<void> _handleDelete() async {
     if (_formKey.currentState!.validate()) {
-      await authController.deleteAccount(context: context, password: _passwordController.text);
+      await authController.deleteAccount(
+        context: context,
+        password: _passwordController.text,
+      );
     }
   }
 
@@ -115,12 +117,12 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
 
                     /// Delete Button
                     Obx(
-                          () => controller.isLoadingDeleteAccount.value
+                      () => controller.isLoadingDeleteAccount.value
                           ? const Center(child: CircularProgressIndicator())
                           : PrimaryButton(
-                        title: 'delete'.tr,
-                        onTap: _handleDelete,
-                      ),
+                              title: 'delete'.tr,
+                              onTap: _handleDelete,
+                            ),
                     ),
                   ],
                 ),
