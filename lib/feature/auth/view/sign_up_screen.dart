@@ -237,10 +237,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Email is required";
+                    return "email_is_required".tr;
                   }
                   if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
-                    return "Enter valid email";
+                    return "enter_valid_email".tr;
                   }
                   return null;
                 },
@@ -457,7 +457,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       }
                     } else {
                       if (context.mounted) {
-                        ApiChecker.checkApi(response, context);
+                        ApiChecker.checkApi(response);
                       }
                     }
                   } catch (e) {

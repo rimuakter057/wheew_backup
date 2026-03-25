@@ -26,10 +26,12 @@ class TextFieldValidator {
       final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) return "Password is required";
       if (trimmed.length < 6) return "Password must be at least 6 characters";
-      if (!RegExp(r'[A-Z]').hasMatch(trimmed))
+      if (!RegExp(r'[A-Z]').hasMatch(trimmed)) {
         return "Password must contain at least one uppercase letter";
-      if (!RegExp(r'[0-9]').hasMatch(trimmed))
+      }
+      if (!RegExp(r'[0-9]').hasMatch(trimmed)) {
         return "Password must contain at least one number";
+      }
       return null;
     };
   }
@@ -40,8 +42,9 @@ class TextFieldValidator {
     return (value) {
       final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) return "Confirm password is required";
-      if (trimmed != originalController.text.trim())
+      if (trimmed != originalController.text.trim()) {
         return "Passwords do not match";
+      }
       return null;
     };
   }
@@ -51,8 +54,9 @@ class TextFieldValidator {
       final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) return "OTP is required";
       if (trimmed.length != 6) return "OTP must be 6 digits";
-      if (!RegExp(r'^[0-9]{6}$').hasMatch(trimmed))
+      if (!RegExp(r'^[0-9]{6}$').hasMatch(trimmed)) {
         return "OTP must contain only numbers";
+      }
       return null;
     };
   }
@@ -141,8 +145,9 @@ class TextFieldValidator {
     return (value) {
       final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) return "Description is required";
-      if (trimmed.length < minLength)
+      if (trimmed.length < minLength) {
         return "Description must be at least $minLength characters";
+      }
       return null;
     };
   }

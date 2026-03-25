@@ -6,6 +6,8 @@ class AssetsPath {
 
   // Logos
   static const String logoSvg = '${_logoBase}logo.svg';
+  static const String plateIcon = '${_logoBase}platechat_icon.svg';
+  static const String plateLogo = '${_logoBase}platechat_logo.svg';
   static const String logoPng = '${_logoBase}logo.png';
 
   //icons====================================
@@ -13,6 +15,9 @@ class AssetsPath {
 
   // Animations
   static const String chatJson = '${_animationBase}Chat.json';
+  static const String iconJson = '${_animationBase}icon_animated.json';
+  static const String logoJson = '${_animationBase}logo_animated.json';
+  static const String logo2Json = '${_animationBase}logo2_animated.json';
 
   // Images
   static const String person0 = '${_imagesBase}person0.png';

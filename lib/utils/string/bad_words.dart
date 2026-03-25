@@ -11,7 +11,7 @@ class BadWords {
   // ];
   //
 
-  static  List<String> english = [
+  static List<String> english = [
     "FUCK",
     "FUCKER",
     "FUCKERS",
@@ -101,8 +101,6 @@ class BadWords {
     "SEXSLAVE",
   ];
 
-
-
   static const List<String> italian = [
     "CAZZO",
     "CAZZI",
@@ -171,22 +169,6 @@ class BadWords {
     "GENOCIDIO",
   ];
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   // static List<String> italian = [
   //   "Cazzo", "Vaffanculo", "Merda", "Vattene al diavolo", "Testa di cazzo",
   //   "Stronzo", "Figlio di puttana", "Bastardo", "Puttana", "Dannazione",
@@ -198,5 +180,4 @@ class BadWords {
   //   "Fatti da parte", "Fregato", "Sdolcinato", "Pazzo", "Inquietante",
   //   "Pagliaccio", "Strano"
   // ];
-
 }

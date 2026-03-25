@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
-import 'package:platchatapp/feature/helper/custom_image/custom_image.dart';
-import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../core/router/routes_name.dart';
 import '../../core/service/storage_service.dart';
 import '../../helper/responsive_helper/responsive_helper.dart';
 import '../../utils/app_const/app_const.dart';
-import '../../utils/assets_path/assets_path.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -29,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkLoginAndNavigate() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 5));
 
     if (!mounted) return;
 
@@ -62,39 +58,19 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: CustomImage(
-          imageSrc: AssetsPath.logoPng,
-          width: ResponsiveHelper.width(280),
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          child: Lottie.asset(
+            'assets/animations/logo2_animated.json',
+            width: ResponsiveHelper.iconSize(320),
+            height: ResponsiveHelper.iconSize(340),
+            fit: BoxFit.contain,
+            repeat: true,
+          ),
         ),
       ),
     );
-
-    /*Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            const Spacer(),
-            SvgPicture.asset(
-              AssetsPath.logoSvg,
-              width: ResponsiveHelper.width(240),
-            ),
-            SizedBox(height: ResponsiveHelper.spacing(12)),
-            Text(
-              'CONNECTING DRIVERS ONE PLATE AT A TIME',
-              style: GoogleFonts.poppins(fontSize: ResponsiveHelper.fontSize(15),
-
-              fontWeight: FontWeight.w400,
-                color: AppColors.textBlack
-              ),
-            ),
-            const Spacer(),
-            const CircularProgressIndicator(),
-            SizedBox(height: ResponsiveHelper.spacing(40)),
-          ],
-        ),
-      ),
-    )*/
-    ;
   }
 
   void _showTimeoutMessage() {

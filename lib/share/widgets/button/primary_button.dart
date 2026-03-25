@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
+
 class PrimaryButton extends StatelessWidget {
   final String title;
   final VoidCallback onTap;
@@ -33,20 +34,22 @@ class PrimaryButton extends StatelessWidget {
           foregroundColor: textColor,
           minimumSize: Size(
             double.infinity,
-            ResponsiveHelper.buttonHeight(height!),  // ✅ match SizedBox height
+            ResponsiveHelper.buttonHeight(height!), // ✅ match SizedBox height
           ),
           padding: EdgeInsets.symmetric(
             horizontal: ResponsiveHelper.padding(16),
-            vertical: 0,                             // ✅ no vertical padding conflict
+            vertical: 0, // ✅ no vertical padding conflict
           ),
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap, // ✅ removes extra tap area
+          tapTargetSize:
+              MaterialTapTargetSize.shrinkWrap, // ✅ removes extra tap area
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(
               ResponsiveHelper.borderRadius(borderRadius!),
             ),
           ),
         ),
-        child: FittedBox(                            // ✅ prevents text clipping
+        child: FittedBox(
+          // ✅ prevents text clipping
           fit: BoxFit.scaleDown,
           child: Text(
             title,
@@ -62,7 +65,6 @@ class PrimaryButton extends StatelessWidget {
     );
   }
 }
-
 
 /*
 class PrimaryButton extends StatelessWidget {
@@ -107,7 +109,7 @@ class PrimaryButton extends StatelessWidget {
               ResponsiveHelper.borderRadius(borderRadius!),
             ),
           ),
-        ),*//*
+        ),*/ /*
 
         child: Text(
           title,
@@ -122,4 +124,3 @@ class PrimaryButton extends StatelessWidget {
   }
 }
 */
-

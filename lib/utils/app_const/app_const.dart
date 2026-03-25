@@ -4,6 +4,7 @@ class AppConst {
   static const String userData = 'user_data';
   static const String isLoggedIn = 'is_logged_in';
   static const String rememberMe = "remember_me";
+  static const String avatar = 'avatar'; // ✅ add this
   static String unknown =
       'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/500px-Unknown_person.jpg';
 

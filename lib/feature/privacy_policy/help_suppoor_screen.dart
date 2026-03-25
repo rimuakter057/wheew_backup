@@ -99,6 +99,44 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                       Icon(
                         Icons.mail_outline_rounded,
                         color: AppColors.blue,
+                        size: ResponsiveHelper.width(24),
+                      ),
+                      SizedBox(width: ResponsiveHelper.width(8)),
+                      Flexible(
+                        // ✅ added
+                        child: Text(
+                          controller.message.value,
+                          style: context.bodyLarge.copyWith(
+                            color: AppColors.blue,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 3, // ✅ added
+                          overflow: TextOverflow.ellipsis, // ✅ added
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                /*Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveHelper.width(20),
+                    vertical: ResponsiveHelper.height(12),
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.blue.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppColors.blue.withOpacity(0.25),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.mail_outline_rounded,
+                        color: AppColors.blue,
                         size: ResponsiveHelper.width(18),
                       ),
                       SizedBox(width: ResponsiveHelper.width(8)),
@@ -112,7 +150,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                       ),
                     ],
                   ),
-                ),
+                ),*/
               ),
 
               SizedBox(height: ResponsiveHelper.height(16)),
@@ -138,9 +176,7 @@ Future<void> _launchEmail(String email) async {
   final Uri emailUri = Uri(
     scheme: 'mailto',
     path: email,
-    queryParameters: {
-      'subject': 'support_request'.tr,
-    },
+    queryParameters: {'subject': 'support_request'.tr},
   );
 
   try {

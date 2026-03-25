@@ -65,7 +65,5 @@ class SharePrefsHelper {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.remove(AppConst.token);
     await sharedPreferences.remove(AppConst.userData);
-
   }
-
 }

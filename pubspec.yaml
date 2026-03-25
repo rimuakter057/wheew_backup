@@ -39,13 +39,14 @@ dependencies:
   image_picker: ^1.2.1
   shared_preferences: ^2.5.4
   google_fonts: ^8.0.1
-  flutter_localization: ^0.3.3
+  
   socket_io_client: ^3.1.4
   connectivity_plus: ^7.0.0
   webview_flutter: ^4.13.1
   url_launcher: ^6.3.2
   emoji_picker_flutter: ^4.4.0
   shimmer: ^3.0.0
+  auto_size_text: ^3.0.0
 
 
 
@@ -53,16 +54,25 @@ dependencies:
 
 
 
-  http: any
+  http: ^1.2.0
+  flutter_localization: ^0.3.3
   
+  #flutter_localizations: 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
 
 
-  flutter_lints: ^6.0.0
+  flutter_lints: ^6.0.0 
+  flutter_launcher_icons: ^0.14.4
 
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/appIcon.png"
+  adaptive_icon_background: "#ffffff"
+  
 
 flutter:
 
