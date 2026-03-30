@@ -1,4 +1,4 @@
-package com.example.platchatapp
+package me.platechat.app
 
 import io.flutter.embedding.android.FlutterActivity
 
