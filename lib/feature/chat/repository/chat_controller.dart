@@ -304,7 +304,6 @@ class ChatController extends GetxController {
 
   Future<void> fetchChatList({bool refresh = false, bool loadMore = false}) async {
 
-    // ✅ Refresh এ reset
     if (refresh) {
       page.value = 1;
       total = 0;
@@ -399,97 +398,7 @@ class ChatController extends GetxController {
   }
 
   ///==============search api section=========================================================
-  // final ChatRepository _repo = ChatRepository();
-  //
-  // bool _isLoading = false;
-  // bool get isLoading => _isLoading;
-  //
-  // bool _isSearching = false;
-  // bool get isSearching => _isSearching;
-  //
-  // List<SearchModel> _chatList = [];
-  // List<SearchModel> get chatList => _chatList;
-  //
-  // List<SearchModel> _searchResults = [];
-  // List<SearchModel> get searchResults => _searchResults;
-  //
-  // Timer? _debounce;
-  //
-  // @override
-  // void onClose() {
-  //   _debounce?.cancel();
-  //   super.onClose();
-  // }
-  //
-  // Future<void> getChatSearchList() async {
-  //   _isLoading = true;
-  //   update();
-  //
-  //   final Response response = await _repo.getChatList();
-  //
-  //   if (response.statusCode == 200) {
-  //     final data = jsonDecode(response.body);
-  //
-  //     // Fix: Check if data has 'chats' array or if it's user profile
-  //     if (data['chats'] != null && data['chats'] is List) {
-  //       _chatList = (data['chats'] as List)
-  //           .map((chat) => SearchModel.fromJson(chat))
-  //           .toList();
-  //     } else {
-  //       // This seems to be user profile, not chat list
-  //       _chatList = [];
-  //     }
-  //   } else {
-  //     _chatList = [];
-  //   }
-  //
-  //   _isLoading = false;
-  //   update();
-  // }
-  //
-  // void searchUsers(String query) {
-  //   if (_debounce?.isActive ?? false) _debounce!.cancel();
-  //
-  //   if (query.isEmpty) {
-  //     _isSearching = false;
-  //     _searchResults = [];
-  //     update();
-  //     return;
-  //   }
-  //
-  //   _debounce = Timer(const Duration(milliseconds: 500), () {
-  //     _performSearch(query);
-  //   });
-  // }
-  //
-  // Future<void> _performSearch(String query) async {
-  //   _isSearching = true;
-  //   update();
-  //
-  //   final Response response = await _repo.searchUsers(
-  //     query: query,
-  //     page: 1,
-  //     limit: 10,
-  //   );
-  //
-  //   if (response.statusCode == 200) {
-  //     final data = jsonDecode(response.body);
-  //
-  //     // Fix: Navigate nested structure - users.users array
-  //     if (data['users'] != null && data['users'] != null) {
-  //       _searchResults = (data['users'] as List)
-  //           .map((user) => SearchModel.fromJson(user))
-  //           .toList();
-  //     } else {
-  //       _searchResults = [];
-  //     }
-  //   } else {
-  //     _searchResults = [];
-  //   }
-  //
-  //   _isSearching = false;
-  //   update();
-  // }
+
 
   bool _hasSearched = false;
   bool get hasSearched => _hasSearched;
@@ -569,7 +478,7 @@ class ChatController extends GetxController {
 
   ///=======================user chat list===================================================================
 
-  ///patch block=====================================================
+  ///block block=====================================================
   RxBool isBlockedByMe = false.obs;
   RxBool isBlockedMe = false.obs;
   var isLoadingBlock = false.obs;
@@ -596,27 +505,7 @@ class ChatController extends GetxController {
     }
   }
 
-  // Future<void> unBlock(String id, BuildContext context) async {
-  //   final body = {"userId": id};
-  //
-  //   final response = await ApiClient.patchData(uri: ApiUrl.unblock, body: body);
-  //
-  //   isLoadingBlockList.value = false;
-  //
-  //   if (response.statusCode == 200 || response.statusCode == 201) {
-  //     debugPrint("User unblocked successfully");
-  //
-  //
-  //     showSnackBar(
-  //       context,
-  //       "user_unblocked_successfully".tr,
-  //       bgColor: Colors.green,
-  //     );
-  //   } else {
-  //     debugPrint("Unblock failed: ${response.statusCode}");
-  //     showSnackBar(context, "failed_to_unblock_user".tr, bgColor: Colors.red);
-  //   }
-  // }
+///unblock user================
 
   Future<void> unBlock(String id, BuildContext context) async {
     final body = {"userId": id};
