@@ -44,7 +44,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.initSocketListeners();
-      controller.fetchChatRooms(refresh: true);
+      controller.fetchChatList(refresh: true);
       controller.newMessage();
 
       // ✅ Load profile data when chat list opens
@@ -55,11 +55,14 @@ class _ChatListScreenState extends State<ChatListScreen> {
   }
 
   void _onScroll() {
+    if (!scrollController.hasClients) return; // ✅ safety check
+
     if (scrollController.position.pixels >=
-            scrollController.position.maxScrollExtent - 100 &&
+        scrollController.position.maxScrollExtent - 200 && // ✅ 200px threshold
         controller.hasMore &&
-        !controller.isLoadingMore.value) {
-      controller.fetchChatRooms(loadMore: true);
+        !controller.isLoadingMore.value &&
+        !controller.isLoadingChat.value) { // ✅ first load চলাকালীন trigger হবে না
+      controller.fetchChatList(loadMore: true);
     }
   }
 
@@ -130,7 +133,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
       body: RefreshIndicator(
         color: AppColors.white,
         backgroundColor: AppColors.blue,
-        onRefresh: () => controller.fetchChatRooms(refresh: true),
+        onRefresh: () => controller.fetchChatList(refresh: true),
         child: Column(
           children: [
             /// Search bar

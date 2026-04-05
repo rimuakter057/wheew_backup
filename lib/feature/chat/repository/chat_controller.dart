@@ -27,12 +27,6 @@ class ChatController extends GetxController {
     debugPrint('✅ Socket listeners initialized');
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-    //initSocketListeners();
-    //getChatSearchList();
-  }
 
   /// get all message list ================================================
   RxList<Messages> userMessageList = <Messages>[].obs;
@@ -41,7 +35,7 @@ class ChatController extends GetxController {
   var isLoadingMoreMessage = false.obs; // pagination
 
   int pageCount = 1;
-  final int limitCount = 10;
+  final int limitCount = 20;
   int totalCount = 0;
 
   bool get hasMoreMessage => userMessageList.length < totalCount;
@@ -50,63 +44,77 @@ class ChatController extends GetxController {
   /// Room ID
   RxString roomID = "".obs;
 
-  Future<void> fetchRoomMessage({String? roomId, bool refresh = false}) async {
-    //  if (roomId != null) roomID?.value = roomId;
-    userMessageList.clear();
-    // Update roomID if provided
+  Future<void> fetchInboxMessage({String? roomId, bool refresh = false}) async {
+
+    // ✅ roomId update
     if (roomId != null && roomId.isNotEmpty) {
       roomID.value = roomId;
     }
 
     if (roomID.value.isEmpty) {
       debugPrint("❌ Room ID is empty, skipping fetch");
-      return; // Skip API call if no room ID
-    }
-
-    debugPrint("================ RoomID=========== ${roomID.value}");
-
-    if (refresh) {
-      pageCount = 1;
-      totalCount = 0;
-      userMessageList.clear();
-    }
-
-    if ((pageCount > 1 && isLoadingMoreMessage.value) ||
-        (pageCount == 1 && isLoadingMessage.value)) {
       return;
     }
 
+    // ✅ Refresh হলে ONLY তখন clear করো
+    if (refresh) {
+      pageCount = 1;
+      totalCount = 0;
+      userMessageList.clear(); // ✅ শুধু refresh এ clear
+    }
+
+    // ✅ Already loading থাকলে skip
+    if (pageCount == 1 && isLoadingMessage.value) return;
+    if (pageCount > 1 && isLoadingMoreMessage.value) return;
+
+    // ✅ আর data নেই তাহলে skip
+    if (pageCount > 1 && !hasMoreMessage) return;
+
+    // Loading state set
     if (pageCount == 1) {
       isLoadingMessage.value = true;
     } else {
       isLoadingMoreMessage.value = true;
     }
 
-    final uri = ApiUrl.getRoomMessage(
-      roomId: roomId ?? '',
-      page: pageCount,
-      limit: limitCount,
-    );
+    try {
+      final uri = ApiUrl.getInboxMessage(
+        roomId: roomID.value, // ✅ roomID.value ব্যবহার করো, parameter নয়
+        page: pageCount,
+        limit: limitCount,
+      );
 
-    Response response = await ApiClient.getData(uri: uri);
-    final body = jsonDecode(response.body);
+      Response response = await ApiClient.getData(uri: uri);
+      final body = jsonDecode(response.body);
 
-    if (response.statusCode == 200 && body['messages'] != null) {
-      final data = MessageResponseModel.fromJson(body);
-      totalCount = data.total ?? 0;
+      if (response.statusCode == 200 && body['messages'] != null) {
+        final data = MessageResponseModel.fromJson(body);
+        totalCount = data.total ?? 0;
 
-      if (data.messages != null && data.messages!.isNotEmpty) {
-        for (final msg in data.messages!) {
-          msg.isMine = msg.isMine == true;
-          userMessageList.add(msg);
+        if (data.messages != null && data.messages!.isNotEmpty) {
+          // ✅ addAll করো, clear করো না!
+          for (final msg in data.messages!) {
+            msg.isMine = msg.isMine == true;
+            userMessageList.add(msg); // ✅ শুধু add, clear নয়
+          }
+          pageCount++;
         }
-        pageCount++;
       }
+    } catch (e) {
+      debugPrint("❌ Fetch error: $e");
+    } finally {
+      isLoadingMessage.value = false;
+      isLoadingMoreMessage.value = false;
     }
-
-    isLoadingMessage.value = false;
-    isLoadingMoreMessage.value = false;
   }
+
+
+
+
+
+
+
+
 
   ///socket========================
 
@@ -148,10 +156,9 @@ class ChatController extends GetxController {
         if (value != null && value['chatRoom_id'] != null) {
           final newRoomId = value['chatRoom_id'].toString();
 
-          // ✅ এটাই key — roomID update হলে search screen ফিরে এসে নেবে
           roomID.value = newRoomId;
 
-          fetchChatRooms(refresh: true);
+          fetchChatList(refresh: true);
         }
       },
     );
@@ -255,7 +262,7 @@ class ChatController extends GetxController {
 
       debugPrint('✅ UI should update now');
     } else {
-      fetchChatRooms(refresh: true);
+      fetchChatList(refresh: true);
     }
   }
 
@@ -269,6 +276,18 @@ class ChatController extends GetxController {
 
   ///=======================================================================
 
+
+
+
+
+
+
+
+
+
+
+
+
   ///get all user chat list========================================================
 
 
@@ -276,12 +295,16 @@ class ChatController extends GetxController {
   var isLoadingChat = false.obs;
   var isLoadingMore = false.obs;
   RxInt page = 1.obs;
-  final int limit = 10;
+  final int limit = 15;
   int total = 0;
 
   bool _isFetching = false; // ✅ simple bool, reactive না
 
-  Future fetchChatRooms({bool refresh = false, bool loadMore = false}) async {
+
+
+  Future<void> fetchChatList({bool refresh = false, bool loadMore = false}) async {
+
+    // ✅ Refresh এ reset
     if (refresh) {
       page.value = 1;
       total = 0;
@@ -289,9 +312,11 @@ class ChatController extends GetxController {
       _isFetching = false;
     }
 
+    // ✅ আর data নেই তাহলে skip
     if (loadMore && !hasMore) return;
 
-    if (_isFetching) return; // ✅ এই guard দিয়ে multiple call বন্ধ
+    // ✅ Already fetching হলে skip
+    if (_isFetching) return;
     _isFetching = true;
 
     if (page.value == 1) {
@@ -301,7 +326,7 @@ class ChatController extends GetxController {
     }
 
     try {
-      final uri = ApiUrl.getChatRooms(page: page.value, limit: limit);
+      final uri = ApiUrl.getChatList(page: page.value, limit: limit);
       Response response = await ApiClient.getData(uri: uri);
       final body = Map<String, dynamic>.from(jsonDecode(response.body));
 
@@ -310,25 +335,33 @@ class ChatController extends GetxController {
         total = data.total ?? 0;
 
         if (data.rooms != null && data.rooms!.isNotEmpty) {
-          // userChatList.addAll(data.rooms!);
 
-          userChatList.value = List<Rooms>.from(data.rooms!.map((e) => e));
+          if (page.value == 1) {
+            // ✅ প্রথম page এ replace করো (refresh এর জন্য)
+            userChatList.value = List<Rooms>.from(data.rooms!);
+          } else {
+            // ✅ পরের page এ শুধু add করো — replace করো না!
+            userChatList.addAll(data.rooms!);
+          }
 
-          //  userChatList.value = data.rooms!.map((e) => Rooms.fromJson(e)).toList();
-          page++;
+          page.value++; // ✅ page.value++ করো, page++ নয়
         }
-        userChatList.refresh();
+
       } else {
         if (refresh) userChatList.clear();
       }
     } catch (e) {
-      debugPrint('fetchChatRooms error: $e');
+      debugPrint('fetchChatList error: $e');
     } finally {
       isLoadingChat.value = false;
       isLoadingMore.value = false;
-      _isFetching = false; // ✅ শেষে release করুন
+      _isFetching = false;
     }
   }
+
+
+
+
 
   bool get hasMore => userChatList.length < total;
 

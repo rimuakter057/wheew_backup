@@ -58,7 +58,7 @@ class _BlockListScreenState extends State<BlockListScreen> {
       ),
 
       body: RefreshIndicator(
-        onRefresh: () => controller.fetchChatRooms(refresh: true),
+        onRefresh: () => controller.fetchChatList(refresh: true),
         child: Obx(() {
           // final chatList = controller.userChatList;
 

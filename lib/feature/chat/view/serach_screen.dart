@@ -84,20 +84,7 @@ class _SearchListScreenState extends State<SearchListScreen> {
                       Icons.search,
                       size: ResponsiveHelper.iconSize(24),
                     ),
-                    suffixIcon: controller.isSearching
-                        ? Padding(
-                      padding: EdgeInsets.all(
-                        ResponsiveHelper.padding(12),
-                      ),
-                      child: SizedBox(
-                        width: ResponsiveHelper.width(20),
-                        height: ResponsiveHelper.height(20),
-                        child: CircularProgressIndicator(
-                          strokeWidth: ResponsiveHelper.borderWidth(2),
-                        ),
-                      ),
-                    )
-                        : null,
+
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(
                         ResponsiveHelper.borderRadius(30),
@@ -135,10 +122,9 @@ class _SearchListScreenState extends State<SearchListScreen> {
                       imagePath: user.avatar ?? AppConst.unknown,
 
                       onTap: () async {
-                        // ✅ navigate করার আগে roomId নাও
-                        final roomId = user.existingRoom?.id ?? '';
 
-                        // ✅ roomID clear করো যাতে নতুন value track করা যায়
+                        final roomId = user.existingRoom?.id ?? '';
+                  debugPrint("before search navigate room id================================== $roomId");
                         controller.roomID.value = roomId;
 
                         await context.pushNamed(
@@ -152,7 +138,7 @@ class _SearchListScreenState extends State<SearchListScreen> {
                             "isBlockedMe": false,
                           },
                         );
-
+                        debugPrint("after search navigate room id================================== $roomId");
                         // ✅ Message screen থেকে ফিরে আসার পর
                         // controller.roomID.value এ নতুন roomId থাকবে
                         final newRoomId = controller.roomID.value;

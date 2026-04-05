@@ -19,10 +19,10 @@ class ApiUrl {
   static const String login = '/auth/signin';
   static const String chatList = '/auth/me';
   // Chat rooms pagination
-  static String getChatRooms({required int page, required int limit}) =>
+  static String getChatList({required int page, required int limit}) =>
       "/chat/rooms?page=$page&limit=$limit";
 
-  static String getRoomMessage({
+  static String getInboxMessage({
     required String roomId,
     required int page,
     required int limit,

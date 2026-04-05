@@ -44,30 +44,22 @@ class _MessageScreenState extends State<MessageScreen> {
   //final TextEditingController messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
+// ✅ State variables
   bool _isEmojiVisible = false;
   FocusNode _focusNode = FocusNode();
-
-  // ✅ এটা যোগ করো
   late String _currentRoomId;
 
   @override
   void initState() {
     super.initState();
     _currentRoomId = widget.roomId ?? '';
-    debugPrint(
-      "isBlockedByMe==============: ${widget.isBlockedByMe}, isBlockedMe===============: ${widget.isBlockedMe}",
-    );
-
-    debugPrint(
-      "📨 Opening chat - Receiver: ${widget.receiverId}, Room: ${widget.roomId}",
-    );
 
     chatController.isBlockedByMe.value = widget.isBlockedByMe ?? false;
     chatController.isBlockedMe.value = widget.isBlockedMe ?? false;
 
     _initChat();
 
-    // Scroll listener
+    // ✅ Scroll listener যোগ করুন
     _scrollController.addListener(_onScroll);
 
     _focusNode.addListener(() {
@@ -77,60 +69,53 @@ class _MessageScreenState extends State<MessageScreen> {
     });
   }
 
-  // Future<void> _initChat() async {
-  //   // Wait for build to complete
-  //   await Future.delayed(Duration.zero);
-  //
-  //   chatController.userMessageList.clear(); // Clear previous messages
-  //   chatController.roomID.value = _currentRoomId;
-  //   // Set room ID
-  //   chatController.roomID.value = widget.roomId ?? "";
-  //
-  //   // Fetch messages
-  //   if (widget.roomId != '') {
-  //     chatController.fetchRoomMessage(roomId: widget.roomId, refresh: true);
-  //   }
-  //
-  //   debugPrint("✅ Chat initialized for room: ${widget.roomId}");
-  // }
-
-
-
-
   Future<void> _initChat() async {
     await Future.delayed(Duration.zero);
     chatController.userMessageList.clear();
+    chatController.page.value = 1; // ✅ Page reset
     chatController.roomID.value = widget.roomId ?? '';
 
-    // ✅ roomId থাকলেই fetch, না থাকলে দরকার নেই
-    if (widget.roomId != null && widget.roomId!.isNotEmpty) {
-      chatController.fetchRoomMessage(roomId: widget.roomId, refresh: true);
+    if (_currentRoomId.isNotEmpty) {
+      chatController.fetchInboxMessage(roomId: _currentRoomId, refresh: true);
     }
   }
 
+// ✅ সম্পূর্ণ ঠিক করা _onScroll
   void _onScroll() {
-    if (_scrollController.position.pixels >=
-            _scrollController.position.maxScrollExtent - 100 &&
+    if (!_scrollController.hasClients) return;
+
+    final pos = _scrollController.position;
+
+    // reverse:true ListView-এ উপরে scroll = maxScrollExtent এর কাছে যাওয়া
+    if (pos.pixels >= pos.maxScrollExtent - 200 &&
         chatController.hasMoreMessage &&
         !chatController.isLoadingMoreMessage.value) {
-      chatController.fetchRoomMessage(roomId: widget.roomId);
+
+      final roomId = _currentRoomId.isNotEmpty
+          ? _currentRoomId
+          : chatController.roomID.value;
+
+      if (roomId.isNotEmpty) {
+        chatController.fetchInboxMessage(roomId: roomId); // ✅ refresh নেই, পুরনো data load
+      }
     }
   }
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll); // ✅ listener remove করুন
     _scrollController.dispose();
-    chatController.roomID.value = ""; // Clear room ID
+    _focusNode.dispose();
+    chatController.roomID.value = '';
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
 
       body: RefreshIndicator(
-        onRefresh: () => chatController.fetchRoomMessage(roomId: widget.roomId),
+        onRefresh: () => chatController.fetchInboxMessage(roomId: widget.roomId),
         child: Column(
           children: [
             SizedBox(height: ResponsiveHelper.height(20)),
@@ -150,7 +135,7 @@ class _MessageScreenState extends State<MessageScreen> {
                         onPressed: () async {
                           //TO DO: Clear messages and room ID when going back
                           chatController.page.value = 1; // Reset pagination
-                          chatController.fetchChatRooms(refresh: false);
+                          chatController.fetchChatList(refresh: false);
                           Navigator.pop(context);
                         },
                         icon: Icon(Icons.arrow_back, color: AppColors.black),
@@ -241,21 +226,20 @@ class _MessageScreenState extends State<MessageScreen> {
                 return ListView.builder(
                   controller: _scrollController,
                   reverse: true,
-                  padding: EdgeInsets.symmetric(
+                  padding: ResponsiveHelper.symmetric(
                     horizontal: ResponsiveHelper.width(16),
                     vertical: ResponsiveHelper.height(8),
                   ),
-                  itemCount:
-                      messages.length + (chatController.hasMoreMessage ? 1 : 0),
+                  itemCount: messages.length + (chatController.hasMoreMessage ? 1 : 0),
                   itemBuilder: (context, index) {
+                    // ✅ এটা উপরে দেখাবে (reverse:true তে শেষ index = screen এর উপরে)
                     if (index == messages.length) {
-                      // 🔹 Only show bottom loading for pagination
-                      return chatController.isLoadingMoreMessage.value
+                      return Obx(() => chatController.isLoadingMoreMessage.value
                           ? const Padding(
-                              padding: EdgeInsets.all(8),
-                              child: Center(child: CircularProgressIndicator()),
-                            )
-                          : const SizedBox.shrink();
+                        padding: EdgeInsets.all(12),
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                          : const SizedBox.shrink());
                     }
 
                     final msg = messages[index];
