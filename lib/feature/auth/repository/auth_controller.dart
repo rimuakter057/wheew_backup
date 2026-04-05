@@ -72,6 +72,7 @@ class AuthController extends GetxController {
       final data = jsonDecode(loginRes.body);
 
       await SharePrefsHelper.setString(AppConst.token, data['token'] ?? '');
+
       await SharePrefsHelper.setString(
         AppConst.userID,
         data['id']?.toString() ?? '',

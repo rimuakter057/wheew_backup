@@ -31,7 +31,7 @@ class ChatController extends GetxController {
   void onInit() {
     super.onInit();
     //initSocketListeners();
-    getChatSearchList();
+    //getChatSearchList();
   }
 
   /// get all message list ================================================
@@ -115,27 +115,28 @@ class ChatController extends GetxController {
   void sendNewEmitMessage({
     required String receiverId,
     required String message,
+    String? roomId, // ✅ নতুন parameter
   }) {
-    final payload = {'receiver_id': receiverId, 'message': message};
+    final payload = {
+      'receiver_id': receiverId,
+      'message': message,
+      if (roomId != null && roomId.isNotEmpty) 'room_id': roomId,
+    };
 
     final localTempMessage = Messages(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       receiverId: receiverId,
-      senderId: '', // আপনার user ID এখানে দিতে পারেন
+      senderId: '',
       message: message,
       createdAt: DateTime.now().toIso8601String(),
       isMine: true,
       isDelivered: false,
       type: 'TEXT',
-      chatRoomId: roomID.value, // ⭐ Important
+      chatRoomId: roomID.value,
     );
 
-    // Message list এ add
     userMessageList.insert(0, localTempMessage);
-
-    // Chat list এ instant update (optimistic)
     updateChatRoomInListOptimistic(localTempMessage);
-
     messageController.clear();
 
     AppSocket.emitWithAck(
@@ -143,8 +144,18 @@ class ChatController extends GetxController {
       payload,
       ack: (value) {
         debugPrint("✅ Message sent successfully: $value");
+
+        if (value != null && value['chatRoom_id'] != null) {
+          final newRoomId = value['chatRoom_id'].toString();
+
+          // ✅ এটাই key — roomID update হলে search screen ফিরে এসে নেবে
+          roomID.value = newRoomId;
+
+          fetchChatRooms(refresh: true);
+        }
       },
     );
+
   }
 
   void updateChatRoomInListOptimistic(Messages newMessage) {
@@ -260,55 +271,6 @@ class ChatController extends GetxController {
 
   ///get all user chat list========================================================
 
-  // RxList<Rooms> userChatList = <Rooms>[].obs;
-  // var isLoadingChat = false.obs;
-  // var isLoadingMore = false.obs;
-  //
-  //
-  //
-  // int page = 1;
-  // final int limit = 10;
-  // int total = 0;
-  // // fetch chat rooms
-  // Future<void> fetchChatRooms({bool refresh = false}) async {
-  //   if (refresh) {
-  //     page = 1;
-  //     userChatList.clear();
-  //   }
-  //   if (isLoadingChat.value || isLoadingMore.value) return;
-  //
-  //   final isFirstPage = page == 1;
-  //   if (isFirstPage) {
-  //     isLoadingChat.value = true;
-  //   } else {
-  //     isLoadingMore.value = true;
-  //   }
-  //   // GET request
-  //   final uri = ApiUrl.getChatRooms(page: page, limit: limit);
-  //   Response response = await ApiClient.getData(uri: uri);
-  //
-  //   // decode JSON string to Map
-  //   final Map<String, dynamic> body = jsonDecode(response.body);
-  //
-  //   if (response.statusCode == 200 && body['rooms'] != null) {
-  //     final data = UserChatModel.fromJson(body);
-  //     total = data.total ?? 0;
-  //
-  //     if (data.rooms != null) {
-  //       userChatList.addAll(data.rooms!);
-  //       page++;
-  //     }
-  //
-  //     userChatList.refresh();
-  //   } else {
-  //     if (refresh) userChatList.clear();
-  //   }
-  //   isLoadingChat.value = false;
-  //   isLoadingMore.value = false;
-  // }
-  //
-  // bool get hasMore => userChatList.length < total;
-  //
 
   RxList<Rooms> userChatList = <Rooms>[].obs;
   var isLoadingChat = false.obs;
@@ -404,19 +366,109 @@ class ChatController extends GetxController {
   }
 
   ///==============search api section=========================================================
-  final ChatRepository _repo = ChatRepository();
+  // final ChatRepository _repo = ChatRepository();
+  //
+  // bool _isLoading = false;
+  // bool get isLoading => _isLoading;
+  //
+  // bool _isSearching = false;
+  // bool get isSearching => _isSearching;
+  //
+  // List<SearchModel> _chatList = [];
+  // List<SearchModel> get chatList => _chatList;
+  //
+  // List<SearchModel> _searchResults = [];
+  // List<SearchModel> get searchResults => _searchResults;
+  //
+  // Timer? _debounce;
+  //
+  // @override
+  // void onClose() {
+  //   _debounce?.cancel();
+  //   super.onClose();
+  // }
+  //
+  // Future<void> getChatSearchList() async {
+  //   _isLoading = true;
+  //   update();
+  //
+  //   final Response response = await _repo.getChatList();
+  //
+  //   if (response.statusCode == 200) {
+  //     final data = jsonDecode(response.body);
+  //
+  //     // Fix: Check if data has 'chats' array or if it's user profile
+  //     if (data['chats'] != null && data['chats'] is List) {
+  //       _chatList = (data['chats'] as List)
+  //           .map((chat) => SearchModel.fromJson(chat))
+  //           .toList();
+  //     } else {
+  //       // This seems to be user profile, not chat list
+  //       _chatList = [];
+  //     }
+  //   } else {
+  //     _chatList = [];
+  //   }
+  //
+  //   _isLoading = false;
+  //   update();
+  // }
+  //
+  // void searchUsers(String query) {
+  //   if (_debounce?.isActive ?? false) _debounce!.cancel();
+  //
+  //   if (query.isEmpty) {
+  //     _isSearching = false;
+  //     _searchResults = [];
+  //     update();
+  //     return;
+  //   }
+  //
+  //   _debounce = Timer(const Duration(milliseconds: 500), () {
+  //     _performSearch(query);
+  //   });
+  // }
+  //
+  // Future<void> _performSearch(String query) async {
+  //   _isSearching = true;
+  //   update();
+  //
+  //   final Response response = await _repo.searchUsers(
+  //     query: query,
+  //     page: 1,
+  //     limit: 10,
+  //   );
+  //
+  //   if (response.statusCode == 200) {
+  //     final data = jsonDecode(response.body);
+  //
+  //     // Fix: Navigate nested structure - users.users array
+  //     if (data['users'] != null && data['users'] != null) {
+  //       _searchResults = (data['users'] as List)
+  //           .map((user) => SearchModel.fromJson(user))
+  //           .toList();
+  //     } else {
+  //       _searchResults = [];
+  //     }
+  //   } else {
+  //     _searchResults = [];
+  //   }
+  //
+  //   _isSearching = false;
+  //   update();
+  // }
 
-  bool _isLoading = false;
-  bool get isLoading => _isLoading;
+  bool _hasSearched = false;
+  bool get hasSearched => _hasSearched;
+
+
+  final ChatRepository _repo = ChatRepository();
 
   bool _isSearching = false;
   bool get isSearching => _isSearching;
 
-  List<ChatModel> _chatList = [];
-  List<ChatModel> get chatList => _chatList;
-
-  List<ChatModel> _searchResults = [];
-  List<ChatModel> get searchResults => _searchResults;
+  List<SearchModel> _searchResults = [];
+  List<SearchModel> get searchResults => _searchResults;
 
   Timer? _debounce;
 
@@ -426,42 +478,19 @@ class ChatController extends GetxController {
     super.onClose();
   }
 
-  Future<void> getChatSearchList() async {
-    _isLoading = true;
-    update();
 
-    final Response response = await _repo.getChatList();
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-
-      // Fix: Check if data has 'chats' array or if it's user profile
-      if (data['chats'] != null && data['chats'] is List) {
-        _chatList = (data['chats'] as List)
-            .map((chat) => ChatModel.fromJson(chat))
-            .toList();
-      } else {
-        // This seems to be user profile, not chat list
-        _chatList = [];
-      }
-    } else {
-      _chatList = [];
-    }
-
-    _isLoading = false;
-    update();
-  }
 
   void searchUsers(String query) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     if (query.isEmpty) {
-      _isSearching = false;
       _searchResults = [];
+      _hasSearched = false; // ← reset
       update();
       return;
     }
 
+    _hasSearched = true; // ← search শুরু হলে true
     _debounce = Timer(const Duration(milliseconds: 500), () {
       _performSearch(query);
     });
@@ -471,24 +500,33 @@ class ChatController extends GetxController {
     _isSearching = true;
     update();
 
-    final Response response = await _repo.searchUsers(
-      query: query,
-      page: 1,
-      limit: 10,
-    );
+    try {
+      final Response response = await _repo.searchUsers(
+        query: query,
+        page: 1,
+        limit: 10,
+      );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
 
-      // Fix: Navigate nested structure - users.users array
-      if (data['users'] != null && data['users'] != null) {
-        _searchResults = (data['users'] as List)
-            .map((user) => ChatModel.fromJson(user))
-            .toList();
+        if (data['users'] != null && data['users'] is List) {
+          _searchResults = (data['users'] as List)
+              .map((user) => SearchModel.fromJson(user))
+              .where((user) {
+            final q = query.trim().toLowerCase();
+            final nameMatch = (user.nickName ?? '').toLowerCase().contains(q);
+            final licenceMatch = (user.licenceId ?? '').toLowerCase().contains(q);
+            return nameMatch || licenceMatch; // ← যেকোনো একটায় match হলেই show
+          })
+              .toList();
+        } else {
+          _searchResults = [];
+        }
       } else {
         _searchResults = [];
       }
-    } else {
+    } catch (e) {
       _searchResults = [];
     }
 

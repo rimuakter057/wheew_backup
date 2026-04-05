@@ -1,53 +1,31 @@
-// class ChatModel {
-//   final String id;
-//   final String name;
-//   final String designation;
-//   final String time;
-//   final String? avatar;
-//
-//   ChatModel({
-//     required this.id,
-//     required this.name,
-//     required this.designation,
-//     required this.time,
-//     this.avatar,
-//   });
-//
-//   factory ChatModel.fromJson(Map<String, dynamic> json) {
-//     return ChatModel(
-//       id: json['id'] ?? '',
-//       name: json['nick_name'] ?? json['name'] ?? '',  // Use nick_name from API
-//       designation: json['designation'] ?? 'No message',   // Temporary, adjust based on your needs
-//       time: json['createdAt'] ?? '',
-//       avatar: json['avatar'],
-//     );
-//   }
-// }
 
-class ChatModel {
+
+class SearchModel {
   String? id;
   String? avatar;
   String? nickName;
+  String?licenceId;
   String? designation;
   String? createdAt;
   ExistingRoom2? existingRoom;
 
-  ChatModel({
+  SearchModel({
     this.id,
     this.avatar,
     this.nickName,
     this.designation,
-
+    this.licenceId,
     this.createdAt,
 
     this.existingRoom,
   });
 
-  ChatModel.fromJson(Map<String, dynamic> json) {
+  SearchModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     avatar = json['avatar'];
 
     nickName = json['nick_name'];
+    licenceId=json["licence_id"];
     designation = json['designation'];
 
     createdAt = json['createdAt'];
@@ -63,6 +41,7 @@ class ChatModel {
     data['avatar'] = avatar;
 
     data['nick_name'] = nickName;
+    data["licence_id"]=licenceId;
     data['designation'] = designation;
 
     data['createdAt'] = createdAt;

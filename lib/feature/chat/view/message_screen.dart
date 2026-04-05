@@ -47,10 +47,13 @@ class _MessageScreenState extends State<MessageScreen> {
   bool _isEmojiVisible = false;
   FocusNode _focusNode = FocusNode();
 
+  // ✅ এটা যোগ করো
+  late String _currentRoomId;
+
   @override
   void initState() {
     super.initState();
-
+    _currentRoomId = widget.roomId ?? '';
     debugPrint(
       "isBlockedByMe==============: ${widget.isBlockedByMe}, isBlockedMe===============: ${widget.isBlockedMe}",
     );
@@ -74,21 +77,35 @@ class _MessageScreenState extends State<MessageScreen> {
     });
   }
 
+  // Future<void> _initChat() async {
+  //   // Wait for build to complete
+  //   await Future.delayed(Duration.zero);
+  //
+  //   chatController.userMessageList.clear(); // Clear previous messages
+  //   chatController.roomID.value = _currentRoomId;
+  //   // Set room ID
+  //   chatController.roomID.value = widget.roomId ?? "";
+  //
+  //   // Fetch messages
+  //   if (widget.roomId != '') {
+  //     chatController.fetchRoomMessage(roomId: widget.roomId, refresh: true);
+  //   }
+  //
+  //   debugPrint("✅ Chat initialized for room: ${widget.roomId}");
+  // }
+
+
+
+
   Future<void> _initChat() async {
-    // Wait for build to complete
     await Future.delayed(Duration.zero);
+    chatController.userMessageList.clear();
+    chatController.roomID.value = widget.roomId ?? '';
 
-    chatController.userMessageList.clear(); // Clear previous messages
-    chatController.roomID.value = '';
-    // Set room ID
-    chatController.roomID.value = widget.roomId ?? "";
-
-    // Fetch messages
-    if (widget.roomId != '') {
+    // ✅ roomId থাকলেই fetch, না থাকলে দরকার নেই
+    if (widget.roomId != null && widget.roomId!.isNotEmpty) {
       chatController.fetchRoomMessage(roomId: widget.roomId, refresh: true);
     }
-
-    debugPrint("✅ Chat initialized for room: ${widget.roomId}");
   }
 
   void _onScroll() {
@@ -316,68 +333,7 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   /// Message Input
-  // Widget _messageInput() {
-  //   return Padding(
-  //     padding: EdgeInsets.fromLTRB(
-  //       ResponsiveHelper.padding(16),
-  //       ResponsiveHelper.padding(8),
-  //       ResponsiveHelper.padding(16),
-  //       ResponsiveHelper.padding(16),
-  //     ),
-  //     child: Container(
-  //       padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(16)),
-  //       height: ResponsiveHelper.buttonHeight(56),
-  //       decoration: BoxDecoration(
-  //         color: AppColors.green,
-  //         borderRadius: BorderRadius.circular(
-  //           ResponsiveHelper.borderRadius(16),
-  //         ),
-  //       ),
-  //       child: Row(
-  //         children: [
-  //           Expanded(
-  //             child: TextField(
-  //               controller: chatController.messageController,
-  //               decoration: InputDecoration(
-  //                 hintText: "type_here1".tr,
-  //                 fillColor: AppColors.green,
-  //                 hintStyle: TextStyle(
-  //                   color: AppColors.white,
-  //                   fontSize: ResponsiveHelper.fontSize(16),
-  //                 ),
-  //                 border: InputBorder.none,
-  //               ),
-  //               style: TextStyle(
-  //                 color: Colors.white,
-  //                 fontSize: ResponsiveHelper.fontSize(16),
-  //               ),
-  //             ),
-  //           ),
-  //
-  //           GestureDetector(
-  //             onTap: () async {
-  //               debugPrint("========================");
-  //               if (chatController.messageController.text.trim().isEmpty)
-  //                 return;
-  //
-  //               debugPrint("///////////////////////////////");
-  //
-  //               chatController.sendNewEmitMessage(
-  //                 receiverId: widget.receiverId,
-  //                 message: chatController.messageController.text.toString(),
-  //               );
-  //
-  //               debugPrint(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
-  //
-  //               // chatController.messageController.clear();
-  //             },
-  //             child: SvgPicture.asset(AssetsPath.send),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+
 
   Widget _messageInput() {
     return Column(
@@ -458,49 +414,7 @@ class _MessageScreenState extends State<MessageScreen> {
                           ),
                         );
 
-                    //    if (containsBadWord) {
-                    //      // 4️⃣ Show error if bad word exists
-                    //      ScaffoldMessenger.of(context).showSnackBar(
-                    //        SnackBar(
-                    //          behavior: SnackBarBehavior.floating, // Floating style
-                    // // Edge spacing
-                    //          margin: EdgeInsets.only(
-                    //            top: 16, // Top position
-                    //            left: 16,
-                    //            right: 16,
-                    //          ),
-                    //          padding: EdgeInsets.all(16), // Content padding
-                    //          backgroundColor: Colors.red.shade700, // Darker red
-                    //          shape: RoundedRectangleBorder(
-                    //            borderRadius: BorderRadius.circular(
-                    //              ResponsiveHelper.borderRadius(12),
-                    //            ), // Rounded corners
-                    //          ),
-                    //          elevation: 6, // Shadow
-                    //          duration: Duration(seconds: 3), // How long it shows
-                    //          content: Row(
-                    //            children: [
-                    //              Icon(
-                    //                Icons.error_outline,
-                    //                color: Colors.white,
-                    //              ), // Icon
-                    //              SizedBox(width: 12),
-                    //              Expanded(
-                    //                child: Text(
-                    //                  "bad_word_error".tr, // Your translation key
-                    //                  style: GoogleFonts.poppins(
-                    //                    color: Colors.white,
-                    //                    fontWeight: FontWeight.bold,
-                    //                    fontSize: ResponsiveHelper.fontSize(16),
-                    //                  ),
-                    //                ),
-                    //              ),
-                    //            ],
-                    //          ),
-                    //        ),
-                    //      );
-                    //      return; // Stop sending
-                    //    }
+
 
                     if (containsBadWord) {
                       showTopSnackBar(
@@ -512,9 +426,17 @@ class _MessageScreenState extends State<MessageScreen> {
 
                     chatController.sendNewEmitMessage(
                       receiverId: widget.receiverId,
-                      message: chatController.messageController.text,
+                      message: message,
+                      roomId: _currentRoomId,
                     );
-                    chatController.messageController.clear();
+
+                    Future.delayed(const Duration(milliseconds: 500), () {
+                      if (_currentRoomId.isEmpty && chatController.roomID.value.isNotEmpty) {
+                        setState(() {
+                          _currentRoomId = chatController.roomID.value;
+                        });
+                      }
+                    });
                   },
                   child: SvgPicture.asset(AssetsPath.send),
                 ),

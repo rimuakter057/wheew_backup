@@ -16,6 +16,46 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  // bool _isNavigated = false;
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _checkLoginAndNavigate();
+  // }
+  //
+  // Future<void> _checkLoginAndNavigate() async {
+  //   await Future.delayed(const Duration(seconds: 5));
+  //
+  //   if (!mounted) return;
+  //
+  //   final bool isLoggedIn =
+  //       await SharePrefsHelper.getBool(AppConst.isLoggedIn) ?? false;
+  //
+  //   if (isLoggedIn) {
+  //     // /// timeout fallback (10 sec)
+  //     // Future.delayed(const Duration(seconds: 30), () {
+  //     //   if (!_isNavigated && mounted) {
+  //     //     _showTimeoutMessage();
+  //     //   }
+  //     // });
+  //
+  //     await AppSocket.init(
+  //       onSocketConnect: () {
+  //         if (!_isNavigated && mounted) {
+  //           _isNavigated = true;
+  //
+  //           context.goNamed(RouteName.chatList);
+  //         }
+  //       },
+  //     );
+  //   } else {
+  //     context.goNamed(RouteName.welcome);
+  //   }
+  // }
+
+
+
   bool _isNavigated = false;
 
   @override
@@ -33,10 +73,11 @@ class _SplashScreenState extends State<SplashScreen> {
         await SharePrefsHelper.getBool(AppConst.isLoggedIn) ?? false;
 
     if (isLoggedIn) {
-      /// timeout fallback (10 sec)
-      Future.delayed(const Duration(seconds: 30), () {
+      // Timeout fallback — socket 10s এর মধ্যে connect না হলে signin এ যাবে
+      Future.delayed(const Duration(seconds: 10), () {
         if (!_isNavigated && mounted) {
-          _showTimeoutMessage();
+          _isNavigated = true;
+          context.goNamed(RouteName.welcome); // বা error screen
         }
       });
 
@@ -44,12 +85,12 @@ class _SplashScreenState extends State<SplashScreen> {
         onSocketConnect: () {
           if (!_isNavigated && mounted) {
             _isNavigated = true;
-
             context.goNamed(RouteName.chatList);
           }
         },
       );
     } else {
+      if (!mounted) return;
       context.goNamed(RouteName.welcome);
     }
   }
@@ -73,19 +114,19 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  void _showTimeoutMessage() {
-    Get.snackbar(
-      "Connection Timeout",
-
-      "Server is not responding. Please try again.",
-
-      snackPosition: SnackPosition.BOTTOM,
-
-      backgroundColor: Colors.red,
-
-      colorText: Colors.white,
-
-      duration: const Duration(seconds: 4),
-    );
-  }
+  // void _showTimeoutMessage() {
+  //   Get.snackbar(
+  //     "Connection Timeout",
+  //
+  //     "Server is not responding. Please try again.",
+  //
+  //     snackPosition: SnackPosition.BOTTOM,
+  //
+  //     backgroundColor: Colors.red,
+  //
+  //     colorText: Colors.white,
+  //
+  //     duration: const Duration(seconds: 4),
+  //   );
+  // }
 }
