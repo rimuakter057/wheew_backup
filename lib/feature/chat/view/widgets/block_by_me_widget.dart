@@ -26,7 +26,7 @@ class BlockByMeWidget extends StatelessWidget {
 
         borderRadius: BorderRadius.circular(12),
 
-        border: Border.all(color: AppColors.blue),
+        border: Border.all(color: AppColors.blueClient),
       ),
 
       child: Column(
@@ -62,7 +62,7 @@ class BlockByMeWidget extends StatelessWidget {
           ElevatedButton(
             onPressed: onUnblock,
 
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.blue),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.blueClient),
 
             child: Text(
               "unblock".tr,

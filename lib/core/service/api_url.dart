@@ -38,8 +38,13 @@ class ApiUrl {
   ///terms and privacy==========================
 
   static const String terms =
-      "http://10.10.20.16:6010/terms-and-condition-public";
-  static const String privacy = "http://10.10.20.16:6010/privacy-policy-public";
+      "http://13.50.99.165/terms-and-condition-public";
+  static const String privacy = "http://13.50.99.165/privacy-policy-public";
+
+  // http://13.50.99.165/privacy-policy-public
+  // http://13.50.99.165/terms-and-condition-public
+
+
 
   ///forget section==================================
 

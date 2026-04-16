@@ -80,7 +80,6 @@ class _MessageScreenState extends State<MessageScreen> {
     }
   }
 
-// ✅ সম্পূর্ণ ঠিক করা _onScroll
   void _onScroll() {
     if (!_scrollController.hasClients) return;
 
@@ -261,7 +260,7 @@ class _MessageScreenState extends State<MessageScreen> {
                           horizontal: ResponsiveHelper.width(14),
                         ),
                         decoration: BoxDecoration(
-                          color: isMine ? AppColors.blue : AppColors.green,
+                          color: isMine ? AppColors.blueClient : AppColors.greenClient,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(
                               ResponsiveHelper.borderRadius(15),
@@ -336,7 +335,7 @@ class _MessageScreenState extends State<MessageScreen> {
             ),
             height: ResponsiveHelper.buttonHeight(56),
             decoration: BoxDecoration(
-              color: AppColors.green,
+              color: AppColors.greyShade,
               borderRadius: BorderRadius.circular(
                 ResponsiveHelper.borderRadius(16),
               ),
@@ -344,7 +343,7 @@ class _MessageScreenState extends State<MessageScreen> {
             child: Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.emoji_emotions, color: Colors.white),
+                  icon: const Icon(Icons.emoji_emotions, color: AppColors.black),
                   onPressed: () {
                     _focusNode.unfocus();
                     setState(() => _isEmojiVisible = !_isEmojiVisible);
@@ -362,15 +361,15 @@ class _MessageScreenState extends State<MessageScreen> {
                     },
                     decoration: InputDecoration(
                       hintText: "type_here1".tr,
-                      fillColor: AppColors.green,
+                      fillColor:AppColors.greyShade,
                       hintStyle: TextStyle(
-                        color: AppColors.white,
+                        color: AppColors.black,
                         fontSize: ResponsiveHelper.fontSize(16),
                       ),
                       border: InputBorder.none,
                     ),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.black,
                       fontSize: ResponsiveHelper.fontSize(16),
                     ),
                   ),
@@ -422,8 +421,10 @@ class _MessageScreenState extends State<MessageScreen> {
                       }
                     });
                   },
-                  child: SvgPicture.asset(AssetsPath.send),
+                //  child: SvgPicture.asset(AssetsPath.send,),
+                  child: Icon(Icons.send_outlined,size: 16,color: AppColors.black,)
                 ),
+
               ],
             ),
           ),
@@ -454,9 +455,9 @@ class _MessageScreenState extends State<MessageScreen> {
                 ),
                 categoryViewConfig: CategoryViewConfig(
                   initCategory: Category.SMILEYS,
-                  indicatorColor: AppColors.blue,
+                  indicatorColor: AppColors.blueClient,
                   iconColor: Colors.grey,
-                  iconColorSelected: AppColors.blue,
+                  iconColorSelected: AppColors.blueClient,
                   backspaceColor: Colors.red,
                 ),
                 bottomActionBarConfig: BottomActionBarConfig(
@@ -466,6 +467,7 @@ class _MessageScreenState extends State<MessageScreen> {
             ),
           ),
         ),
+SizedBox(height: ResponsiveHelper.height(16),),
       ],
     );
   }

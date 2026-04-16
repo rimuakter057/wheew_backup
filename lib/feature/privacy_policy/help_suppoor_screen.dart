@@ -53,12 +53,12 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                 width: ResponsiveHelper.width(72),
                 height: ResponsiveHelper.height(72),
                 decoration: BoxDecoration(
-                  color: AppColors.blue.withOpacity(0.08),
+                  color: AppColors.blueClient.withOpacity(0.08),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.headset_mic_outlined,
-                  color: AppColors.blue,
+                  color: AppColors.blueClient,
                   size: ResponsiveHelper.width(34),
                 ),
               ),
@@ -86,10 +86,10 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                     vertical: ResponsiveHelper.height(12),
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.blue.withOpacity(0.08),
+                    color: AppColors.blueClient.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: AppColors.blue.withOpacity(0.25),
+                      color: AppColors.blueClient.withOpacity(0.25),
                       width: 1,
                     ),
                   ),
@@ -98,7 +98,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                     children: [
                       Icon(
                         Icons.mail_outline_rounded,
-                        color: AppColors.blue,
+                        color: AppColors.blueClient,
                         size: ResponsiveHelper.width(24),
                       ),
                       SizedBox(width: ResponsiveHelper.width(8)),
@@ -107,7 +107,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                         child: Text(
                           controller.message.value,
                           style: context.bodyLarge.copyWith(
-                            color: AppColors.blue,
+                            color: AppColors.blueClient,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.center,
@@ -188,7 +188,7 @@ Future<void> _launchEmail(String email) async {
       'email_copied'.tr,
       '${'email_copied'.tr} $email',
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: AppColors.blue.withOpacity(0.9),
+      backgroundColor: AppColors.blueClient.withOpacity(0.9),
       colorText: Colors.white,
       duration: const Duration(seconds: 3),
     );

@@ -18,7 +18,7 @@ final ThemeData lightTheme = ThemeData(
   /// Elevated Button ======================================
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: AppColors.green,
+      backgroundColor: AppColors.greenClient,
       minimumSize: Size(double.infinity, ResponsiveHelper.height(48)),
       shadowColor: Colors.transparent,
       padding: EdgeInsets.symmetric(

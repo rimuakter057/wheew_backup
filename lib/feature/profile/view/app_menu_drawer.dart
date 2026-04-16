@@ -128,7 +128,7 @@ class AppMenuDrawer extends StatelessWidget {
             _drawerItem(
               context,
               icon: Icons.delete_outline,
-              iconColor: AppColors.blue,
+              iconColor: AppColors.deleteButton,
               title: 'delete'.tr,
               onTap: () {
                 context.pushNamed(RouteName.delete);

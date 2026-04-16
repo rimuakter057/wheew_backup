@@ -146,7 +146,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   onChanged: (value) {
                                     controller.isRememberMeToggle();
                                   },
-                                  activeColor: AppColors.blue,
+                                  activeColor: AppColors.blueClient,
                                 ),
 
                                 Flexible(
@@ -178,7 +178,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.poppins(
-                              color: AppColors.blue,
+                              color: AppColors.blueClient,
                               fontSize: ResponsiveHelper.fontSize(14),
                               fontWeight: FontWeight.w400,
                               decoration: TextDecoration.underline,
@@ -217,7 +217,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 child: Text(
                                   "sign_up".tr,
                                   style: TextStyle(
-                                    color: AppColors.blue,
+                                    color: AppColors.blueClient,
                                     //decoration: TextDecoration.underline,
                                     fontWeight: FontWeight.w500,
                                     //fontStyle: FontStyle.italic,

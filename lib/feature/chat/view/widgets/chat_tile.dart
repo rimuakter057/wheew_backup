@@ -69,7 +69,7 @@ class ChatTile extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(16),
                     fontWeight: FontWeight.w500,
-                    color: AppColors.blue,
+                    color: AppColors.blueClient,
                   ),
                 ),
               ),

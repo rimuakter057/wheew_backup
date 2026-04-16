@@ -320,7 +320,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           TextSpan(
                             text: 'terms_and_conditions'.tr,
                             style: GoogleFonts.poppins(
-                              color: AppColors.blue,
+                              color: AppColors.blueClient,
                               decoration: TextDecoration.underline,
                               fontSize: ResponsiveHelper.fontSize(14),
                             ),
@@ -348,7 +348,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           TextSpan(
                             text: 'privacy_policy'.tr,
                             style: GoogleFonts.poppins(
-                              color: AppColors.blue,
+                              color: AppColors.blueClient,
                               decoration: TextDecoration.underline,
                               fontSize: ResponsiveHelper.fontSize(14),
                             ),
@@ -488,7 +488,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             "sign_in".tr,
                             style: GoogleFonts.poppins(
                               fontSize: ResponsiveHelper.fontSize(14),
-                              color: AppColors.blue,
+                              color: AppColors.blueClient,
                               fontWeight: FontWeight.w600,
                             ),
                           ),

@@ -94,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Icon(
                                 Icons.person,
                                 size: ResponsiveHelper.width(45),
-                                color: AppColors.blue,
+                                color: AppColors.blueClient,
                               ),
                             ),
                       if (controller.isEditing)

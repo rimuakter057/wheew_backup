@@ -50,7 +50,7 @@ class AppDialog {
         break;
       case AppDialogType.custom:
         defaultIcon = Icons.circle;
-        typeColor = AppColors.blue;
+        typeColor = AppColors.blueClient;
         break;
     }
 

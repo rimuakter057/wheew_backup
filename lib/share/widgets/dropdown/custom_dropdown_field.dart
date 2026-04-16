@@ -53,7 +53,7 @@ class CustomDropdownField<T> extends StatelessWidget {
             ResponsiveHelper.borderRadius(15),
           ),
           borderSide: BorderSide(
-            color: hasError ? AppColors.errorColor : AppColors.blue,
+            color: hasError ? AppColors.errorColor : AppColors.blueClient,
             width: ResponsiveHelper.borderWidth(1.2),
           ),
         ),
