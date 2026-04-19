@@ -9,6 +9,7 @@ import 'package:platchatapp/feature/auth/view/reset_password_screen.dart';
 import 'package:platchatapp/feature/auth/view/forgot_password_screen.dart';
 import 'package:platchatapp/feature/auth/view/sign_in_screen.dart';
 import 'package:platchatapp/feature/auth/view/sign_up_screen.dart';
+import 'package:platchatapp/feature/profile/view/show_profile_screen.dart';
 import 'package:platchatapp/feature/terms_condition/terms_and_condition_screen.dart';
 import 'package:platchatapp/feature/auth/view/otp_screen.dart';
 import 'package:platchatapp/feature/chat/view/block_list_screen.dart';
@@ -143,6 +144,14 @@ class AppRouter {
         path: RoutePath.help,
         name: RouteName.help,
         builder: (_, _) => ProfileScreen(),
+      ),
+      GoRoute(
+        path: RoutePath.showProfile,
+        name: RouteName.showProfile,
+        builder: (context, state) {
+          final image = state.extra as String;
+          return ShowProfileImageScreen(image: image);
+        },
       ),
     ],
   );

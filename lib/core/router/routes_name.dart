@@ -15,4 +15,5 @@ class RouteName {
   static const resetPassword = 'reset_password';
   static const delete = 'delete_screen';
   static const help = 'help_screen';
+  static const showProfile = 'showProfile';
 }

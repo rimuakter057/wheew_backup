@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:platchatapp/core/router/routes_name.dart';
+import 'package:platchatapp/feature/profile/view/show_profile_screen.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../utils/color/app_colors.dart';
 import '../repository/profile_controller.dart';
@@ -72,56 +75,70 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 /// Profile Image
                 Obx(() {
                   final avatar = controller.userProfile.value?.avatar;
-                  return Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      controller.profileImage.value != null
-                          ? CircleAvatar(
-                              radius: ResponsiveHelper.width(45),
-                              backgroundImage: FileImage(
-                                controller.profileImage.value!,
-                              ),
-                            )
-                          : avatar != null && avatar.isNotEmpty
-                          ? CircleAvatar(
-                              radius: ResponsiveHelper.width(45),
-                              backgroundImage: NetworkImage(avatar),
-                              onBackgroundImageError: (_, __) {},
-                            )
-                          : CircleAvatar(
-                              radius: ResponsiveHelper.width(45),
-                              backgroundColor: AppColors.greyShade,
-                              child: Icon(
-                                Icons.person,
-                                size: ResponsiveHelper.width(45),
-                                color: AppColors.blueClient,
-                              ),
-                            ),
-                      if (controller.isEditing)
-                        GestureDetector(
-                          onTap: controller.pickImageFromGallery,
-                          child: Container(
-                            padding: EdgeInsets.all(
-                              ResponsiveHelper.padding(6),
-                            ),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  blurRadius: 4,
-                                  offset: Offset(0, 2),
+                  return GestureDetector(
+                    onTap: () {
+                      final image = controller.profileImage.value?.path ??
+                          controller.userProfile.value?.avatar;
+
+                      if (image != null && image.isNotEmpty) {
+                        context.pushNamed(
+                          RouteName.showProfile,
+                          extra: image,
+                        );
+                      }
+                    },
+
+                    child: Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        controller.profileImage.value != null
+                            ? CircleAvatar(
+                                radius: ResponsiveHelper.width(45),
+                                backgroundImage: FileImage(
+                                  controller.profileImage.value!,
                                 ),
-                              ],
-                            ),
-                            child: Icon(
-                              Icons.camera_alt_outlined,
-                              size: ResponsiveHelper.iconSize(18),
+                              )
+                            : avatar != null && avatar.isNotEmpty
+                            ? CircleAvatar(
+                                radius: ResponsiveHelper.width(45),
+                                backgroundImage: NetworkImage(avatar),
+                                onBackgroundImageError: (_, __) {},
+                              )
+                            : CircleAvatar(
+                                radius: ResponsiveHelper.width(45),
+                                backgroundColor: AppColors.greyShade,
+                                child: Icon(
+                                  Icons.person,
+                                  size: ResponsiveHelper.width(45),
+                                  color: AppColors.blueClient,
+                                ),
+                              ),
+                        if (controller.isEditing)
+                          GestureDetector(
+                            onTap: controller.pickImageFromGallery,
+                            child: Container(
+                              padding: EdgeInsets.all(
+                                ResponsiveHelper.padding(6),
+                              ),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 4,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                Icons.camera_alt_outlined,
+                                size: ResponsiveHelper.iconSize(18),
+                              ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   );
                 }),
 

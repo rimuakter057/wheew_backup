@@ -15,4 +15,5 @@ class RoutePath {
   static const resetPassword = '/reset-password';
   static const delete = '/delete';
   static const help = '/help';
+  static const showProfile = '/showProfile';
 }
