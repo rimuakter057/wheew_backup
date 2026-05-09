@@ -2,7 +2,9 @@ import "package:flutter/material.dart";
 
 class AppColors {
   //static const Color blue = Color(0xFF1270B7);
-  static const Color blueClient = Color(0xFF9bb7d9);
+  //client
+ // static const Color blueClient = Color(0xFF9bb7d9);
+  static const Color blueClient = Color(0xFF1070B7);
   static const Color black = Color(0xFF333333);
 
   static const Color white = Color(0xFFFFFFFF);
@@ -24,4 +26,6 @@ class AppColors {
   //static const Color green = Color(0xFF3AAA35);
   static const Color greenClient = Color(0xFFadd4a4);
   static const Color deleteButton = Color(0xFFe41713);
+  static const Color greyBg = Color(0xFFFAFAFA);
+  static const Color greyBorder = Color(0xFFE0E0E0);
 }

@@ -16,4 +16,9 @@ class RoutePath {
   static const delete = '/delete';
   static const help = '/help';
   static const showProfile = '/showProfile';
+  static const mapScreen = '/mapScreen';
+  static const mainNavScreen = '/mainNavScreen';
+  static const scanScreen = '/scanScreen';
+  static const profileNavScreen = '/profileNavScreen';
+  static const usefulMemberScreen = '/usefulMemberScreen';
 }

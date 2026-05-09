@@ -85,7 +85,8 @@ class _SplashScreenState extends State<SplashScreen> {
         onSocketConnect: () {
           if (!_isNavigated && mounted) {
             _isNavigated = true;
-            context.goNamed(RouteName.chatList);
+           // context.goNamed(RouteName.chatList);
+            context.goNamed(RouteName.mainNavScreen);
           }
         },
       );

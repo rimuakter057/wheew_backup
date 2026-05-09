@@ -17,6 +17,9 @@ class AssetsPath {
   static const String profileNav = '${_iconsBase}profile_nav.svg';
   static const String scanNav = '${_iconsBase}scan_nav.svg';
   static const String searchNav = '${_iconsBase}search_nav.svg';
+  static const String insurance = '${_iconsBase}insurance.png';
+  static const String license = '${_iconsBase}license.png';
+
 
   // Animations
   static const String chatJson = '${_animationBase}Chat.json';
@@ -38,4 +41,5 @@ class AssetsPath {
   static const String plateChat = '${_iconsBase}plateChat.png';
   static const String italy = '${_iconsBase}italy.png';
   static const String uk = '${_iconsBase}uk.png';
+  static const String homeJson="assets/animations/icon_animated.json";
 }

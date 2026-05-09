@@ -16,4 +16,9 @@ class RouteName {
   static const delete = 'delete_screen';
   static const help = 'help_screen';
   static const showProfile = 'showProfile';
+  static const mapScreen = 'mapScreen';
+  static const mainNavScreen = 'mainNavScreen';
+  static const scanScreen = 'scanScreen';
+  static const profileNavScreen = 'profileNavScreen';
+  static const usefulMemberScreen = 'usefulMemberScreen';
 }

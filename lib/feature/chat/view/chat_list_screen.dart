@@ -6,18 +6,18 @@ import 'package:lottie/lottie.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/feature/chat/view/message_screen.dart';
 import 'package:platchatapp/feature/chat/view/widgets/chat_list_screen_shimmer.dart';
-import 'package:platchatapp/feature/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/helper/data_converter/data_converter.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
+import '../../../share/widgets/custom_image/custom_image.dart';
 import '../../../utils/assets_path/assets_path.dart';
 import '../repository/chat_controller.dart';
 import '../../profile/repository/profile_controller.dart';
-import '../../profile/view/app_menu_drawer.dart';
 import 'widgets/chat_tile.dart';
+
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
@@ -85,7 +85,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Lottie.asset(
-                  'assets/animations/icon_animated.json',
+                  AssetsPath.homeJson,
                   width: ResponsiveHelper.iconSize(28),
                   height: ResponsiveHelper.iconSize(28),
                   fit: BoxFit.cover,
@@ -101,34 +101,34 @@ class _ChatListScreenState extends State<ChatListScreen> {
             ),
           ],
         ),
-        actions: [
-          Builder(
-            builder: (context) {
-              return IconButton(
-                icon: Icon(
-                  Icons.menu_outlined,
-                  color: AppColors.black,
-                  size: ResponsiveHelper.iconSize(24),
-                ),
-                onPressed: () {
-                  // ✅ Reload profile every time drawer opens
-                  Get.find<ProfileController>().reloadProfile();
-                  Scaffold.of(context).openEndDrawer();
-                },
-              );
-            },
-          ),
-        ],
+        // actions: [
+        //   Builder(
+        //     builder: (context) {
+        //       return IconButton(
+        //         icon: Icon(
+        //           Icons.menu_outlined,
+        //           color: AppColors.black,
+        //           size: ResponsiveHelper.iconSize(24),
+        //         ),
+        //         onPressed: () {
+        //           // ✅ Reload profile every time drawer opens
+        //           Get.find<ProfileController>().reloadProfile();
+        //           Scaffold.of(context).openEndDrawer();
+        //         },
+        //       );
+        //     },
+        //   ),
+        // ],
       ),
 
-      // ✅ Also reload on drawer open/close
-      onEndDrawerChanged: (isOpen) {
-        if (isOpen) {
-          Get.find<ProfileController>().reloadProfile();
-        }
-      },
+      // // ✅ Also reload on drawer open/close
+      // onEndDrawerChanged: (isOpen) {
+      //   if (isOpen) {
+      //     Get.find<ProfileController>().reloadProfile();
+      //   }
+      // },
 
-      endDrawer: const AppMenuDrawer(),
+    //  endDrawer: const AppMenuDrawer(),
 
       body: RefreshIndicator(
         color: AppColors.white,

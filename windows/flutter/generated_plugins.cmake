@@ -7,6 +7,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   emoji_picker_flutter
   file_selector_windows
   flutter_localization
+  geolocator_windows
   url_launcher_windows
 )
 

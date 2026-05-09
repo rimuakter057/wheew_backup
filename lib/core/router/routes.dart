@@ -9,17 +9,23 @@ import 'package:platchatapp/feature/auth/view/reset_password_screen.dart';
 import 'package:platchatapp/feature/auth/view/forgot_password_screen.dart';
 import 'package:platchatapp/feature/auth/view/sign_in_screen.dart';
 import 'package:platchatapp/feature/auth/view/sign_up_screen.dart';
-import 'package:platchatapp/feature/profile/view/show_profile_screen.dart';
+import 'package:platchatapp/feature/main/presentation/main_nav-screen.dart';
+import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
+import 'package:platchatapp/feature/profile/view/screens/profile_nav_screen.dart';
+import 'package:platchatapp/feature/profile/view/screens/show_profile_screen.dart';
+import 'package:platchatapp/feature/profile/view/screens/useful_member_screen.dart';
+import 'package:platchatapp/feature/scan/presentation/screens/scan_screen.dart';
 import 'package:platchatapp/feature/terms_condition/terms_and_condition_screen.dart';
 import 'package:platchatapp/feature/auth/view/otp_screen.dart';
 import 'package:platchatapp/feature/chat/view/block_list_screen.dart';
 import 'package:platchatapp/feature/chat/view/chat_list_screen.dart';
 import 'package:platchatapp/feature/chat/view/message_screen.dart';
 import 'package:platchatapp/feature/chat/view/serach_screen.dart';
-import 'package:platchatapp/feature/profile/view/profile_screen.dart';
+import 'package:platchatapp/feature/profile/view/screens/profile_screen.dart';
 import '../../feature/splash/splash_screen.dart';
 import '../../feature/auth/view/welcome_screen.dart';
 import '../../feature/auth/repository/auth_controller.dart';
+
 
 class AppRouter {
   static final navigatorKey = GlobalKey<NavigatorState>();
@@ -143,7 +149,7 @@ class AppRouter {
       GoRoute(
         path: RoutePath.help,
         name: RouteName.help,
-        builder: (_, _) => ProfileScreen(),
+        builder: (context, state) => ProfileScreen(),
       ),
       GoRoute(
         path: RoutePath.showProfile,
@@ -153,6 +159,46 @@ class AppRouter {
           return ShowProfileImageScreen(image: image);
         },
       ),
+      GoRoute(
+        path: RoutePath.mapScreen,
+        name: RouteName.mapScreen,
+        builder: (context, state) {
+          return MapScreen();
+        },
+      ),
+      GoRoute(
+        path: RoutePath.mainNavScreen,
+        name: RouteName.mainNavScreen,
+        builder: (context, state) {
+          return MainNavScreen();
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.scanScreen,
+        name: RouteName.scanScreen,
+        builder: (context, state) {
+          return ScanScreen();
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.profileNavScreen,
+        name: RouteName.profileNavScreen,
+        builder: (context, state) {
+          return ProfileNavScreen();
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.usefulMemberScreen,
+        name: RouteName.usefulMemberScreen,
+        builder: (context, state) {
+          return UsefulMemberScreen();
+        },
+      ),
+
+
     ],
   );
 }

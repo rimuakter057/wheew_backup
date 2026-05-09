@@ -6,13 +6,13 @@ import 'package:platchatapp/feature/privacy_policy/help_suppoor_screen.dart';
 import 'package:platchatapp/feature/privacy_policy/privacy_policy_screen.dart';
 import 'package:platchatapp/feature/terms_condition/web_view_screen.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
-import '../../../helper/responsive_helper/responsive_helper.dart';
-import '../../../language/language_controller.dart';
-import '../../../utils/extension/base_extension.dart';
-import '../../auth/repository/auth_controller.dart';
-import '../repository/profile_controller.dart';
-import '../../../core/router/routes_name.dart';
-import '../../../share/widgets/avatar/user_avatar.dart';
+import '../../../../helper/responsive_helper/responsive_helper.dart';
+import '../../../../language/language_controller.dart';
+import '../../../../utils/extension/base_extension.dart';
+import '../../../auth/repository/auth_controller.dart';
+import '../../repository/profile_controller.dart';
+import '../../../../core/router/routes_name.dart';
+import '../../../../share/widgets/avatar/user_avatar.dart';
 
 class AppMenuDrawer extends StatelessWidget {
   const AppMenuDrawer({super.key});
