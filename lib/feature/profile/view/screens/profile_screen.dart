@@ -75,74 +75,76 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: ResponsiveHelper.spacing(24)),
 
                 /// Profile Image
-                Obx(() {
-                  final avatar = controller.userProfile.value?.avatar;
-                  return GestureDetector(
-                    onTap: () {
-                      final image = controller.profileImage.value?.path ??
-                          controller.userProfile.value?.avatar;
+                Center(
+                  child: Obx(() {
+                    final avatar = controller.userProfile.value?.avatar;
+                    return GestureDetector(
+                      onTap: () {
+                        final image = controller.profileImage.value?.path ??
+                            controller.userProfile.value?.avatar;
 
-                      if (image != null && image.isNotEmpty) {
-                        context.pushNamed(
-                          RouteName.showProfile,
-                          extra: image,
-                        );
-                      }
-                    },
+                        if (image != null && image.isNotEmpty) {
+                          context.pushNamed(
+                            RouteName.showProfile,
+                            extra: image,
+                          );
+                        }
+                      },
 
-                    child: Stack(
-                      alignment: Alignment.bottomRight,
-                      children: [
-                        controller.profileImage.value != null
-                            ? CircleAvatar(
-                                radius: ResponsiveHelper.width(45),
-                                backgroundImage: FileImage(
-                                  controller.profileImage.value!,
-                                ),
-                              )
-                            : avatar != null && avatar.isNotEmpty
-                            ? CircleAvatar(
-                                radius: ResponsiveHelper.width(45),
-                                backgroundImage: NetworkImage(avatar),
-                                onBackgroundImageError: (_, __) {},
-                              )
-                            : CircleAvatar(
-                                radius: ResponsiveHelper.width(45),
-                                backgroundColor: AppColors.greyShade,
-                                child: Icon(
-                                  Icons.person,
-                                  size: ResponsiveHelper.width(45),
-                                  color: AppColors.blueClient,
-                                ),
-                              ),
-                        if (controller.isEditing)
-                          GestureDetector(
-                            onTap: controller.pickImageFromGallery,
-                            child: Container(
-                              padding: EdgeInsets.all(
-                                ResponsiveHelper.padding(6),
-                              ),
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black26,
-                                    blurRadius: 4,
-                                    offset: Offset(0, 2),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          controller.profileImage.value != null
+                              ? CircleAvatar(
+                                  radius: ResponsiveHelper.width(45),
+                                  backgroundImage: FileImage(
+                                    controller.profileImage.value!,
                                   ),
-                                ],
-                              ),
-                              child: Icon(
-                                Icons.camera_alt_outlined,
-                                size: ResponsiveHelper.iconSize(18),
+                                )
+                              : avatar != null && avatar.isNotEmpty
+                              ? CircleAvatar(
+                                  radius: ResponsiveHelper.width(45),
+                                  backgroundImage: NetworkImage(avatar),
+                                  onBackgroundImageError: (_, __) {},
+                                )
+                              : CircleAvatar(
+                                  radius: ResponsiveHelper.width(45),
+                                  backgroundColor: AppColors.greyShade,
+                                  child: Icon(
+                                    Icons.person,
+                                    size: ResponsiveHelper.width(45),
+                                    color: AppColors.blueClient,
+                                  ),
+                                ),
+                          if (controller.isEditing)
+                            GestureDetector(
+                              onTap: controller.pickImageFromGallery,
+                              child: Container(
+                                padding: EdgeInsets.all(
+                                  ResponsiveHelper.padding(6),
+                                ),
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Icon(
+                                  Icons.camera_alt_outlined,
+                                  size: ResponsiveHelper.iconSize(18),
+                                ),
                               ),
                             ),
-                          ),
-                      ],
-                    ),
-                  );
-                }),
+                        ],
+                      ),
+                    );
+                  }),
+                ),
 
                 SizedBox(height: ResponsiveHelper.spacing(32)),
 

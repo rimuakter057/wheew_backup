@@ -112,6 +112,7 @@ class _ScanScreenState extends State<ScanScreen>
           name: dummyUser['name'] ?? '',
           rating: (dummyUser['rating'] ?? 0.0).toDouble(),
           address: dummyUser['address'] ?? '',
+          showRating: false,
         ),
       ),
     );
@@ -157,12 +158,12 @@ class _ScanScreenState extends State<ScanScreen>
       ),
       child: Row(
         children: [
-          _TabButton(
+          TabButton(
             label: 'scan_qr'.tr.isNotEmpty ? 'scan_qr'.tr : 'Scan QR',
             isActive: _tabIndex == 0,
             onTap: () => _switchTab(0),
           ),
-          _TabButton(
+          TabButton(
             label: 'my_qr'.tr.isNotEmpty ? 'my_qr'.tr : 'My QR',
             isActive: _tabIndex == 1,
             onTap: () => _switchTab(1),
@@ -348,53 +349,13 @@ class _ScanScreenState extends State<ScanScreen>
         ),
         SizedBox(height: ResponsiveHelper.spacing(28)),
         Text(
-          'share_qr_hint'.tr.isNotEmpty
-              ? 'share_qr_hint'.tr
-              : 'Show this QR to connect instantly.',
+          "Let other drivers scan this to chat with you.",
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(13),
             color: Colors.white.withOpacity(0.45),
           ),
         ),
-        SizedBox(height: ResponsiveHelper.spacing(28)),
-        GestureDetector(
-          onTap: () {
-            // TODO: implement share QR
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: ResponsiveHelper.padding(32),
-              vertical: ResponsiveHelper.padding(14),
-            ),
-            decoration: BoxDecoration(
-              color: const Color(0xFF3D72E8),
-              borderRadius:
-              BorderRadius.circular(ResponsiveHelper.borderRadius(14)),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF3D72E8).withOpacity(0.30),
-                  blurRadius: 14,
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.share_outlined, color: Colors.white, size: 18),
-                SizedBox(width: ResponsiveHelper.spacing(8)),
-                Text(
-                  'share'.tr.isNotEmpty ? 'share'.tr : 'Share QR',
-                  style: GoogleFonts.poppins(
-                    fontSize: ResponsiveHelper.fontSize(14),
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+
       ],
     );
   }
@@ -451,12 +412,12 @@ class _CameraError extends StatelessWidget {
 
 // ─── Tab Button ───────────────────────────────────────────────────────────────
 
-class _TabButton extends StatelessWidget {
+class TabButton extends StatelessWidget {
   final String label;
   final bool isActive;
   final VoidCallback onTap;
 
-  const _TabButton({
+  const TabButton({super.key,
     required this.label,
     required this.isActive,
     required this.onTap,

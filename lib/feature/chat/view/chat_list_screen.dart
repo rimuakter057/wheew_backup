@@ -10,6 +10,7 @@ import 'package:platchatapp/helper/data_converter/data_converter.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/extension/base_extension.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../share/widgets/custom_image/custom_image.dart';
@@ -101,34 +102,26 @@ class _ChatListScreenState extends State<ChatListScreen> {
             ),
           ],
         ),
-        // actions: [
-        //   Builder(
-        //     builder: (context) {
-        //       return IconButton(
-        //         icon: Icon(
-        //           Icons.menu_outlined,
-        //           color: AppColors.black,
-        //           size: ResponsiveHelper.iconSize(24),
-        //         ),
-        //         onPressed: () {
-        //           // ✅ Reload profile every time drawer opens
-        //           Get.find<ProfileController>().reloadProfile();
-        //           Scaffold.of(context).openEndDrawer();
-        //         },
-        //       );
-        //     },
-        //   ),
-        // ],
+        actions: [
+          GestureDetector(
+            onTap: () {
+              _showCreateGroup(context: context, name: 'Rimu');
+            },
+            child: Padding(
+              padding: EdgeInsets.only(right: ResponsiveHelper.width(16)),
+              child: CircleAvatar(
+                radius: ResponsiveHelper.iconSize(25),
+                backgroundColor: AppColors.greyShade,
+                child: CustomImage(
+                  imageSrc: AssetsPath.group,
+                  height: ResponsiveHelper.iconSize(25),
+                  width: ResponsiveHelper.iconSize(25),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
-
-      // // ✅ Also reload on drawer open/close
-      // onEndDrawerChanged: (isOpen) {
-      //   if (isOpen) {
-      //     Get.find<ProfileController>().reloadProfile();
-      //   }
-      // },
-
-    //  endDrawer: const AppMenuDrawer(),
 
       body: RefreshIndicator(
         color: AppColors.white,
@@ -261,7 +254,182 @@ class _ChatListScreenState extends State<ChatListScreen> {
       ),
     );
   }
+
+
+
+
+
+
+
+
+
+  void _showCreateGroup({
+    required BuildContext context,
+    required String name,
+  })
+  {
+    final TextEditingController _groupNameController = TextEditingController();
+    final TextEditingController _descriptionController = TextEditingController();
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (_) => StatefulBuilder(
+        builder: (context, setState) => Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: EdgeInsets.symmetric(
+            horizontal: ResponsiveHelper.spacing(24),
+          ),
+          child: Container(
+            padding: EdgeInsets.only(
+              top: ResponsiveHelper.spacing(20),
+              left: ResponsiveHelper.spacing(20),
+              right: ResponsiveHelper.spacing(20),
+              bottom: ResponsiveHelper.spacing(24),
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(24),
+              ),
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // ── Close Button ──────────────────────────
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        padding: EdgeInsets.all(ResponsiveHelper.spacing(4)),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          size: ResponsiveHelper.iconSize(16),
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: ResponsiveHelper.spacing(4)),
+
+                  // ── Title ─────────────────────────────────
+                  Text(
+                    "Create Group Chat",
+                    style: context.bodyMedium.copyWith(color: AppColors.black),
+                  ),
+                  SizedBox(height: ResponsiveHelper.height(8)),
+
+                  Text(
+                    "Connect with multiple people at once",
+                    style: context.bodySmall,
+                    textAlign: TextAlign.center,
+                  ),
+
+                  SizedBox(height: ResponsiveHelper.spacing(20)),
+
+                  // ── Group Name Label ──────────────────────
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Group Name *",
+                      style: context.bodySmall.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: ResponsiveHelper.spacing(8)),
+
+                  // ── Group Name TextField ──────────────────
+
+
+                  TextFormField(
+                    controller: _groupNameController,
+                    style: TextStyle(fontSize: ResponsiveHelper.fontSize(13)),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter a group name';
+                      }
+                      if (value.trim().length < 3) {
+                        return 'Group name must be at least 3 characters';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Enter group name...',
+                    ),
+                  ),
+
+                  SizedBox(height: ResponsiveHelper.spacing(16)),
+
+
+                  // ── Submit Button ─────────────────────────
+                  SizedBox(
+                    width: double.infinity,
+                    height: ResponsiveHelper.buttonHeight(48),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          final groupName = _groupNameController.text.trim();
+                          final description = _descriptionController.text.trim();
+
+                          Navigator.pop(context);
+
+                          // ✅ এখানে আপনার ChatController এর group create method call করুন
+                          // Get.find<ChatController>().createGroup(
+                          //   groupName: groupName,
+                          //   description: description,
+                          // );
+
+                          debugPrint('Group Name: $groupName');
+                          debugPrint('Description: $description');
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.blueClient,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveHelper.borderRadius(12),
+                          ),
+                        ),
+                      ),
+                      child: Text(
+                        'Create Group',
+                        style: context.bodySmall.copyWith(color: AppColors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+
+
 }
+
+
+
+
+
+
+
+
+
 
 class MessageInformation {
   final String roomID;

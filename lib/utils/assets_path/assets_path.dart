@@ -42,4 +42,5 @@ class AssetsPath {
   static const String italy = '${_iconsBase}italy.png';
   static const String uk = '${_iconsBase}uk.png';
   static const String homeJson="assets/animations/icon_animated.json";
+  static const String group="assets/icons/group.svg";
 }

@@ -3,12 +3,15 @@ import 'package:go_router/go_router.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/extension/base_extension.dart';
 
 class ProfileCard extends StatelessWidget {
-  const ProfileCard({super.key, required this.name, required this.rating, required this.address});
+  const ProfileCard({super.key, required this.name, required this.rating, required this.address, required this.showRating, this.onRatingTap});
   final String name;
   final double rating;
   final String address;
+  final bool showRating;
+  final VoidCallback? onRatingTap;
 
   @override
   Widget build(BuildContext context) {
@@ -67,11 +70,7 @@ class ProfileCard extends StatelessWidget {
             // Name
             Text(
               name,
-              style: TextStyle(
-                fontSize: ResponsiveHelper.titleFontSize(22),
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+                style: context.bodyMedium.copyWith(color: AppColors.black)
             ),
 
             SizedBox(height: ResponsiveHelper.spacing(8)),
@@ -84,20 +83,14 @@ class ProfileCard extends StatelessWidget {
                 SizedBox(width: 4),
                 Text(
                 rating.toString(),
-                  style: TextStyle(
-                    fontSize: ResponsiveHelper.fontSize(14),
-                    fontWeight: FontWeight.bold,
-                  ),
+                    style: context.bodySmall,
                 ),
                 SizedBox(width: ResponsiveHelper.spacing(10)),
                 Icon(Icons.location_on, color: Colors.grey, size: ResponsiveHelper.iconSize(18)),
                 SizedBox(width: 4),
                 Text(
                   address,
-                  style: TextStyle(
-                    fontSize: ResponsiveHelper.fontSize(14),
-                    color: Colors.grey,
-                  ),
+                    style: context.bodySmall
                 ),
               ],
             ),
@@ -109,17 +102,24 @@ class ProfileCard extends StatelessWidget {
               width: double.infinity,
               height: ResponsiveHelper.buttonHeight(55),
               child: ElevatedButton.icon(
-                onPressed: () {},
-                icon: Icon(Icons.chat_bubble_outline, size: ResponsiveHelper.iconSize(20)),
+                onPressed: () {
+                  if (showRating) {
+                    onRatingTap?.call(); // rating screen এ যাবে
+                  }
+                },
+                icon: Icon(
+                  showRating ? Icons.star_outline : Icons.chat_bubble_outline,
+                  size: ResponsiveHelper.iconSize(20),
+                ),
                 label: Text(
-                  'Start Chat',
+                  showRating ? 'Give Rating' : 'Start Chat',
                   style: TextStyle(
                     fontSize: ResponsiveHelper.fontSize(18),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.blueClient,
+                  backgroundColor: showRating ? Colors.orange : AppColors.blueClient,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(15)),
