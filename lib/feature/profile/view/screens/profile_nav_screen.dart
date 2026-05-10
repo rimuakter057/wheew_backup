@@ -131,7 +131,7 @@ class ProfileNavScreen extends StatelessWidget {
       },
       {
         'icon': Icons.numbers,
-        'title':"Useful Number",
+        'title': 'useful_number'.tr,
         'onTap': () {
           context.pushNamed(RouteName.usefulMemberScreen);
         }
@@ -278,7 +278,7 @@ class ProfileNavScreen extends StatelessWidget {
             Icon(Icons.logout, color: Colors.redAccent, size: ResponsiveHelper.iconSize(20)),
             SizedBox(width: ResponsiveHelper.spacing(10)),
             Text(
-              'Log Out',
+              'log_out'.tr,
               style: TextStyle(
                 color: Colors.redAccent,
                 fontSize: ResponsiveHelper.fontSize(16),
@@ -299,25 +299,27 @@ class ProfileNavScreen extends StatelessWidget {
 
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(ResponsiveHelper.borderRadius(20)),
+        ),
       ),
       builder: (_) {
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.spacing(16)),
           child: Obx(() {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const SizedBox(height: 8),
-                Text(
+              SizedBox(height: ResponsiveHelper.spacing(8)),
+              Text(
                   'language'.tr,
                   style: context.titleSmall.copyWith(
                     fontSize: ResponsiveHelper.fontSize(16),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 12),
+              SizedBox(height: ResponsiveHelper.spacing(12)),
 
                 ...controller.availableLanguageNames.map((language) {
                   final isSelected = controller.isLanguageSelected(language);

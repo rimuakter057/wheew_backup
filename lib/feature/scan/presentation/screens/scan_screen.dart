@@ -159,12 +159,12 @@ class _ScanScreenState extends State<ScanScreen>
       child: Row(
         children: [
           TabButton(
-            label: 'scan_qr'.tr.isNotEmpty ? 'scan_qr'.tr : 'Scan QR',
+            label: 'scan_qr'.tr,
             isActive: _tabIndex == 0,
             onTap: () => _switchTab(0),
           ),
           TabButton(
-            label: 'my_qr'.tr.isNotEmpty ? 'my_qr'.tr : 'My QR',
+            label: 'my_qr'.tr,
             isActive: _tabIndex == 1,
             onTap: () => _switchTab(1),
           ),
@@ -302,9 +302,7 @@ class _ScanScreenState extends State<ScanScreen>
         Padding(
           padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(40)),
           child: Text(
-            'point_camera_hint'.tr.isNotEmpty
-                ? 'point_camera_hint'.tr
-                : "Point camera at another user's QR code to connect instantly.",
+            'point_camera_hint'.tr,
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               fontSize: ResponsiveHelper.fontSize(13),
@@ -349,7 +347,7 @@ class _ScanScreenState extends State<ScanScreen>
         ),
         SizedBox(height: ResponsiveHelper.spacing(28)),
         Text(
-          "Let other drivers scan this to chat with you.",
+          'let_others_scan'.tr,
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(13),
             color: Colors.white.withOpacity(0.45),
@@ -372,11 +370,11 @@ class _CameraError extends StatelessWidget {
   String get _message {
     switch (error.errorCode) {
       case MobileScannerErrorCode.permissionDenied:
-        return 'Camera permission denied.\nPlease enable it in Settings.';
+        return 'camera_permission_denied'.tr;
       case MobileScannerErrorCode.unsupported:
-        return 'Camera not supported\non this device.';
+        return 'camera_unsupported'.tr;
       default:
-        return 'Camera error.\nPlease restart the app.';
+        return 'camera_error'.tr;
     }
   }
 

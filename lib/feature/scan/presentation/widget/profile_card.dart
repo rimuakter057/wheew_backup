@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
@@ -112,7 +113,7 @@ class ProfileCard extends StatelessWidget {
                   size: ResponsiveHelper.iconSize(20),
                 ),
                 label: Text(
-                  showRating ? 'Give Rating' : 'Start Chat',
+                  showRating ? 'give_rating'.tr : 'start_chat'.tr,
                   style: TextStyle(
                     fontSize: ResponsiveHelper.fontSize(18),
                     fontWeight: FontWeight.w600,

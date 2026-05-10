@@ -207,7 +207,7 @@ class _MessageScreenState extends State<MessageScreen> {
                           children: [
                             Icon(Icons.person_outline_rounded, color: AppColors.black),
                             SizedBox(width: 8),
-                            Text("View Profile".tr),
+                            Text('view_profile'.tr),
                           ],
                         ),
                       ),
@@ -219,7 +219,7 @@ class _MessageScreenState extends State<MessageScreen> {
                           children: [
                             Icon(Icons.star_rate_outlined, color: Colors.black),
                             SizedBox(width: 8),
-                            Text("Rate User".tr),
+                            Text('rate_user'.tr),
                           ],
                         ),
                       ),
@@ -267,7 +267,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 if (messages.isEmpty) {
                   return Center(
                     child: Text(
-                      "No messages yet",
+                      'no_messages_yet'.tr,
                       style: TextStyle(color: Colors.grey),
                     ),
                   );
@@ -582,7 +582,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   horizontalSpacing: 0,
                   backgroundColor: Colors.white,
                   noRecents: Text(
-                    "No Recents yet",
+                    'no_recents_yet'.tr,
                     style: GoogleFonts.poppins(
                       fontSize: 20,
                       color: Colors.black26,
@@ -804,14 +804,14 @@ void _showRatingDialog({
                 _rating == 0
                     ? ''
                     : _rating == 1
-                    ? 'Poor'
+                    ? 'rating_poor'.tr
                     : _rating == 2
-                    ? 'Fair'
+                    ? 'rating_fair'.tr
                     : _rating == 3
-                    ? 'Good'
+                    ? 'rating_good'.tr
                     : _rating == 4
-                    ? 'Great'
-                    : 'Excellent',
+                    ? 'rating_great'.tr
+                    : 'rating_excellent'.tr,
                 style: TextStyle(
                   fontSize: ResponsiveHelper.fontSize(13),
                   color: Colors.grey.shade500,
@@ -827,7 +827,7 @@ void _showRatingDialog({
                 maxLines: 3,
                 style: TextStyle(fontSize: ResponsiveHelper.fontSize(13)),
                 decoration: InputDecoration(
-                  hintText: 'Add a comment (optional)...',
+                  hintText: 'add_comment'.tr,
                   hintStyle: TextStyle(
                     fontSize: ResponsiveHelper.fontSize(13),
                     color: Colors.grey.shade400,
@@ -885,7 +885,7 @@ void _showRatingDialog({
                     ),
                   ),
                   child: Text(
-                    'Submit Rating',
+                    'submit_rating'.tr,
                     style: context.bodySmall.copyWith(color: AppColors.white)
                   ),
                 ),

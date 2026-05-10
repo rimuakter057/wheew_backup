@@ -96,6 +96,29 @@ final Map<String, String> italian = {
   // ------------------All chat-------------------------
   'all_chat': 'Tutte le chat',
   'search_here': 'Cerca qui',
+  'no_chats': 'Nessuna chat ancora',
+
+  // ------------------Message Screen-------------------------
+  'view_profile': 'Visualizza profilo',
+  'rate_user': 'Valuta utente',
+  'no_messages_yet': 'Nessun messaggio ancora',
+  'no_recents_yet': 'Nessuna recente ancora',
+  'rating_poor': 'Scarso',
+  'rating_fair': 'Sufficiente',
+  'rating_good': 'Buono',
+  'rating_great': 'Ottimo',
+  'rating_excellent': 'Eccellente',
+  'add_comment': 'Aggiungi un commento (opzionale)...',
+  'submit_rating': 'Invia valutazione',
+
+  // ------------------Group Chat Dialog-------------------------
+  'create_group_chat': 'Crea chat di gruppo',
+  'group_chat_subtitle': 'Connettiti con più persone contemporaneamente',
+  'group_name': 'Nome del gruppo *',
+  'please_enter_group_name': 'Inserisci un nome per il gruppo',
+  'group_name_min_chars': 'Il nome del gruppo deve contenere almeno 3 caratteri',
+  'enter_group_name': 'Inserisci il nome del gruppo...',
+  'create_group': 'Crea gruppo',
   'type_here1': "Scrivi qui",
   'block_': "Blocca",
   //'block_': "Sblocca",
@@ -183,4 +206,29 @@ final Map<String, String> italian = {
   'logout_success': 'Disconnesso!',
   'no_data': 'Nessun dato!',
   'dismiss': 'Annulla',
+
+  // ------------------Profile Screen-------------------------
+  'upload_documents': 'Carica documenti',
+  'drivers_license': 'Patente di guida',
+  'car_insurance': 'Assicurazione auto',
+  'car_tax': 'Bollo auto',
+  'tap_to_upload': 'Tocca per caricare',
+
+  // ------------------Scan Screen-------------------------
+  'scan_qr': 'Scansiona QR',
+  'my_qr': 'Il mio QR',
+  'point_camera_hint': "Punta la fotocamera sul codice QR di un altro utente per connetterti immediatamente.",
+  'let_others_scan': 'Lascia che altri conducenti scansionino questo per chattare con te.',
+  'show_qr_to_connect': 'Mostra questo QR per connetterti',
+  'camera_permission_denied': 'Permesso fotocamera negato.\nAbilitalo nelle Impostazioni.',
+  'camera_unsupported': 'Fotocamera non supportata\nsu questo dispositivo.',
+  'camera_error': 'Errore fotocamera.\nRiavvia l\'app.',
+
+  // ------------------Profile Card-------------------------
+  'give_rating': 'Dai una valutazione',
+  'start_chat': 'Inizia chat',
+
+  // ------------------Profile Nav Screen-------------------------
+  'upload': 'Carica',
+  'useful_number': 'Numero utile',
 };

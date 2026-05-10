@@ -95,6 +95,29 @@ final Map<String, String> english = {
   // ------------------All chat-------------------------
   'all_chat': 'All Chat',
   'search_here': 'Search here',
+  'no_chats': 'No chats yet',
+
+  // ------------------Message Screen-------------------------
+  'view_profile': 'View Profile',
+  'rate_user': 'Rate User',
+  'no_messages_yet': 'No messages yet',
+  'no_recents_yet': 'No Recents yet',
+  'rating_poor': 'Poor',
+  'rating_fair': 'Fair',
+  'rating_good': 'Good',
+  'rating_great': 'Great',
+  'rating_excellent': 'Excellent',
+  'add_comment': 'Add a comment (optional)...',
+  'submit_rating': 'Submit Rating',
+
+  // ------------------Group Chat Dialog-------------------------
+  'create_group_chat': 'Create Group Chat',
+  'group_chat_subtitle': 'Connect with multiple people at once',
+  'group_name': 'Group Name *',
+  'please_enter_group_name': 'Please enter a group name',
+  'group_name_min_chars': 'Group name must be at least 3 characters',
+  'enter_group_name': 'Enter group name...',
+  'create_group': 'Create Group',
 
   ///messaging===========================
   'type_here1': "Type here",
@@ -182,4 +205,29 @@ final Map<String, String> english = {
   'logout_success': 'Logged out!',
   'no_data': 'No data!',
   'dismiss': 'Dismiss',
+
+  // ------------------Profile Screen-------------------------
+  'upload_documents': 'Upload Documents',
+  'drivers_license': "Driver's license",
+  'car_insurance': 'Car insurance',
+  'car_tax': 'Car tax',
+  'tap_to_upload': 'Tap to upload',
+
+  // ------------------Scan Screen-------------------------
+  'scan_qr': 'Scan QR',
+  'my_qr': 'My QR',
+  'point_camera_hint': "Point camera at another user's QR code to connect instantly.",
+  'let_others_scan': 'Let other drivers scan this to chat with you.',
+  'show_qr_to_connect': 'Show this QR to connect',
+  'camera_permission_denied': 'Camera permission denied.\nPlease enable it in Settings.',
+  'camera_unsupported': 'Camera not supported\non this device.',
+  'camera_error': 'Camera error.\nPlease restart the app.',
+
+  // ------------------Profile Card-------------------------
+  'give_rating': 'Give Rating',
+  'start_chat': 'Start Chat',
+
+  // ------------------Profile Nav Screen-------------------------
+  'upload': 'Upload',
+  'useful_number': 'Useful Number',
 };

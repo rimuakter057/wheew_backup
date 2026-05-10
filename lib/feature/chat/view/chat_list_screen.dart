@@ -324,13 +324,13 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
                   // ── Title ─────────────────────────────────
                   Text(
-                    "Create Group Chat",
+                    'create_group_chat'.tr,
                     style: context.bodyMedium.copyWith(color: AppColors.black),
                   ),
                   SizedBox(height: ResponsiveHelper.height(8)),
 
                   Text(
-                    "Connect with multiple people at once",
+                    'group_chat_subtitle'.tr,
                     style: context.bodySmall,
                     textAlign: TextAlign.center,
                   ),
@@ -341,7 +341,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Group Name *",
+                      'group_name'.tr,
                       style: context.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -357,15 +357,15 @@ class _ChatListScreenState extends State<ChatListScreen> {
                     style: TextStyle(fontSize: ResponsiveHelper.fontSize(13)),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Please enter a group name';
+                        return 'please_enter_group_name'.tr;
                       }
                       if (value.trim().length < 3) {
-                        return 'Group name must be at least 3 characters';
+                        return 'group_name_min_chars'.tr;
                       }
                       return null;
                     },
                     decoration: InputDecoration(
-                      hintText: 'Enter group name...',
+                      hintText: 'enter_group_name'.tr,
                     ),
                   ),
 
@@ -404,7 +404,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         ),
                       ),
                       child: Text(
-                        'Create Group',
+                        'create_group'.tr,
                         style: context.bodySmall.copyWith(color: AppColors.white),
                       ),
                     ),

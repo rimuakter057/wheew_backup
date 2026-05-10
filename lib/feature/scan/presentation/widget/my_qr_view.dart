@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-
+import 'package:get/get.dart';
 
 class MyQrView extends StatelessWidget {
   const MyQrView({super.key});
@@ -20,7 +19,7 @@ class MyQrView extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          const Text("Show this QR to connect"),
+          Text('show_qr_to_connect'.tr),
         ],
       ),
     );

@@ -169,7 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: ResponsiveHelper.spacing(8)),
 
                 Text(
-                  "Upload Documents",
+                  'upload_documents'.tr,
                   textAlign: TextAlign.start,
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(16),
@@ -181,15 +181,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 SizedBox(height: ResponsiveHelper.spacing(18)),
 
-                CustomUploadCard(title: "Driver's license", subtitle: 'Tap to upload', onUpload: () {
+                CustomUploadCard(title: 'drivers_license'.tr, subtitle: 'tap_to_upload'.tr, onUpload: () {
 
                   showUploadDocumentSheet(context);
 
                 },),
                 SizedBox(height: ResponsiveHelper.spacing(12)),
-                CustomUploadCard(title: "Car insurance", subtitle: 'Tap to upload', onUpload: () {  },),
+                CustomUploadCard(title: 'car_insurance'.tr, subtitle: 'tap_to_upload'.tr, onUpload: () {  },),
                 SizedBox(height: ResponsiveHelper.spacing(12)),
-                CustomUploadCard(title: "Car tax", subtitle: 'Tap to upload', onUpload: () {  },),
+                CustomUploadCard(title: 'car_tax'.tr, subtitle: 'tap_to_upload'.tr, onUpload: () {  },),
 
 
               ],
