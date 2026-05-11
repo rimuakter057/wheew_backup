@@ -53,7 +53,8 @@ class AuthController extends GetxController {
     required String identifier,
     required String password,
     bool rememberMe = false,
-  }) async {
+  }) async
+  {
     _setLoading(true);
 
     final http.Response loginRes = await _repo.login(
@@ -87,10 +88,10 @@ class AuthController extends GetxController {
       );
       await SharePrefsHelper.setBool(AppConst.isLoggedIn, true);
       await _saveUserData(data);
-
+///navigate screen
       await AppSocket.init(
         onSocketConnect: () {
-          context.goNamed(RouteName.chatList);
+          context.goNamed(RouteName.mainNavScreen);
         },
       );
 
