@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:platchatapp/feature/chat/view/message_screen.dart';
+import 'package:platchatapp/feature/scan/controller/scan_controller.dart';
 import 'package:platchatapp/feature/scan/presentation/widget/profile_card.dart';
+import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 
 class ScanScreen extends StatefulWidget {
@@ -14,6 +19,7 @@ class ScanScreen extends StatefulWidget {
 
 class _ScanScreenState extends State<ScanScreen>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+  final ScanController scanController =Get.find <ScanController>();
   int _tabIndex = 0;
   bool _scanned = false;
   bool _isLoading = false;
@@ -70,15 +76,17 @@ class _ScanScreenState extends State<ScanScreen>
       _scannerController.start();
     } else {
       _scannerController.stop();
+      scanController.getQrCode();
     }
   }
 
   // ── QR detected → loading → ProfileCard bottomSheet ────────────────────────
 
   void _onDetect(BarcodeCapture capture) async {
-    if (_scanned || _tabIndex != 0 || _isLoading) return;
+    if (_scanned || _tabIndex != 0) return;
     final String? code = capture.barcodes.firstOrNull?.rawValue;
     if (code == null || code.isEmpty) return;
+    if (scanController.isScanning.value) return;
 
     setState(() {
       _scanned = true;
@@ -86,41 +94,13 @@ class _ScanScreenState extends State<ScanScreen>
     });
     _scannerController.stop();
 
-    // ── TODO: Replace dummy data with your real API call ──────────────────
-    // final response = await http.get(Uri.parse('https://yourapi.com/user?qr=$code'));
-    // final data = jsonDecode(response.body);
-    await Future.delayed(const Duration(milliseconds: 800));
-    final Map<String, dynamic> dummyUser = {
-      'name': 'Rahul Ahmed',
-      'rating': 4.8,
-      'address': 'Dhaka, BD',
-    };
-    // ── End dummy data ─────────────────────────────────────────────────────
-
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-
-    /// ── Show ProfileCard ───────────────────────────────────────────────────
-    await showModalBottomSheet(
+    await scanController.scanQrCode(
+      qrData: code,
       context: context,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withOpacity(0.6),
-      isScrollControlled: true,
-      builder: (_) => Padding(
-        padding: const EdgeInsets.only(bottom: 24),
-        child: ProfileCard(
-          name: dummyUser['name'] ?? '',
-          rating: (dummyUser['rating'] ?? 0.0).toDouble(),
-          address: dummyUser['address'] ?? '',
-          showRating: false,
-        ),
-      ),
+      onResult: (data) => _showScannedUserSheet(data),
     );
 
-    // Reset after bottom sheet closes so user can scan again
-    if (!mounted) return;
-    setState(() => _scanned = false);
-    _scannerController.start();
+    setState(() => _isLoading = false);
   }
 
   // ── Build ───────────────────────────────────────────────────────────────────
@@ -193,9 +173,10 @@ class _ScanScreenState extends State<ScanScreen>
               child: SizedBox(
                 width: boxSize,
                 height: boxSize,
-                child: MobileScanner(
+                child:
+                MobileScanner(
                   controller: _scannerController,
-                  onDetect: _onDetect,
+                  onDetect: _onDetect, // ✅ এটা use করো
                   errorBuilder: (context, error) =>
                       _CameraError(boxSize: boxSize, error: error),
                 ),
@@ -315,39 +296,100 @@ class _ScanScreenState extends State<ScanScreen>
     );
   }
 
-  // ── My QR View ───────────────────────────────────────────────────────────────
+  /// ── My QR View ───────────────────────────────────────────────────────────────
 
   Widget _buildMyQrView(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          width: ResponsiveHelper.width(240),
-          height: ResponsiveHelper.width(240),
-          padding: EdgeInsets.all(ResponsiveHelper.padding(20)),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius:
-            BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF3D72E8).withOpacity(0.22),
-                blurRadius: 32,
-                offset: const Offset(0, 10),
+        Obx(() {
+          // ── Loading ──────────────────────────────────
+          if (scanController.isLoadingQr.value) {
+            return Container(
+              width: ResponsiveHelper.width(240),
+              height: ResponsiveHelper.width(240),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(
+                  ResponsiveHelper.borderRadius(24),
+                ),
               ),
-            ],
-          ),
-          child: Center(
-            child: Icon(
-              Icons.qr_code_2_rounded,
-              size: ResponsiveHelper.iconSize(170),
-              color: const Color(0xFF1A1A2E),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  color: Color(0xFF3D72E8),
+                  strokeWidth: 2.5,
+                ),
+              ),
+            );
+          }
+
+          // ── QR Image ─────────────────────────────────
+          if (scanController.qrBase64.value.isNotEmpty) {
+            final base64Str = scanController.qrBase64.value
+                .replaceFirst('data:image/png;base64,', '');
+
+            return Container(
+              width: ResponsiveHelper.width(240),
+              height: ResponsiveHelper.width(240),
+              padding: EdgeInsets.all(ResponsiveHelper.padding(16)),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(
+                  ResponsiveHelper.borderRadius(24),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF3D72E8).withOpacity(0.22),
+                    blurRadius: 32,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Image.memory(
+                base64Decode(base64Str),
+                fit: BoxFit.contain,
+              ),
+            );
+          }
+
+          // ── Error / Empty ─────────────────────────────
+          return GestureDetector(
+            onTap: () => scanController.getQrCode(),
+            child: Container(
+              width: ResponsiveHelper.width(240),
+              height: ResponsiveHelper.width(240),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E1E1E),
+                borderRadius: BorderRadius.circular(
+                  ResponsiveHelper.borderRadius(24),
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.refresh_rounded,
+                    color: Colors.white.withOpacity(0.4),
+                    size: 40,
+                  ),
+                  SizedBox(height: ResponsiveHelper.spacing(8)),
+                  Text(
+                    'Tap to retry',
+                    style: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(13),
+                      color: Colors.white.withOpacity(0.4),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
+          );
+        }),
+
         SizedBox(height: ResponsiveHelper.spacing(28)),
+
         Padding(
-          padding:  ResponsiveHelper.all(8.0),
+          padding: ResponsiveHelper.all(8.0),
           child: Text(
             'let_others_scan'.tr,
             style: GoogleFonts.poppins(
@@ -356,10 +398,222 @@ class _ScanScreenState extends State<ScanScreen>
             ),
           ),
         ),
-
       ],
     );
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  void _showScannedUserSheet(Map<String, dynamic> data) async {
+    final user = data['user'] as Map<String, dynamic>;
+    final bool isExistingChat = data['isExistingChat'] ?? false;
+    final String roomId = data['roomId'] ?? '';
+
+    final String userId = user['id'] ?? '';
+    final String nickName = user['nick_name'] ?? '';
+    final String avatar = user['avatar'] ?? '';
+
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.6),
+      isScrollControlled: true,
+      builder: (_) => Container(
+        padding: EdgeInsets.fromLTRB(
+          ResponsiveHelper.padding(24),
+          ResponsiveHelper.padding(24),
+          ResponsiveHelper.padding(24),
+          ResponsiveHelper.padding(40),
+        ),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1E1E1E),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(ResponsiveHelper.borderRadius(28)),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ── Handle bar ───────────────────────────
+            Container(
+              width: 40,
+              height: 4,
+              margin: EdgeInsets.only(bottom: ResponsiveHelper.spacing(20)),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+
+            // ── Avatar ───────────────────────────────
+            CircleAvatar(
+              radius: ResponsiveHelper.borderRadius(36),
+              backgroundImage: NetworkImage(
+                ImageHandler.imagesHandle(avatar, isProfile: true),
+              ),
+              backgroundColor: const Color(0xFF3D72E8).withOpacity(0.2),
+            ),
+
+            SizedBox(height: ResponsiveHelper.spacing(12)),
+
+            // ── Name ─────────────────────────────────
+            Text(
+              nickName,
+              style: GoogleFonts.poppins(
+                fontSize: ResponsiveHelper.fontSize(18),
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+
+            SizedBox(height: ResponsiveHelper.spacing(4)),
+
+            // ── Badge: existing or new ────────────────
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveHelper.padding(12),
+                vertical: ResponsiveHelper.padding(4),
+              ),
+              decoration: BoxDecoration(
+                color: isExistingChat
+                    ? Colors.green.withOpacity(0.15)
+                    : const Color(0xFF3D72E8).withOpacity(0.15),
+                borderRadius: BorderRadius.circular(
+                  ResponsiveHelper.borderRadius(20),
+                ),
+              ),
+              child: Text(
+                isExistingChat ? 'existing_chat'.tr : 'new_user'.tr,
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(11),
+                  color: isExistingChat
+                      ? Colors.greenAccent
+                      : const Color(0xFF3D72E8),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+
+            SizedBox(height: ResponsiveHelper.spacing(28)),
+
+            // ── Buttons ───────────────────────────────
+            if (isExistingChat) ...[
+              // Open Chat — roomId আছে
+              _sheetButton(
+                label: 'open_chat'.tr,
+                icon: Icons.chat_bubble_outline_rounded,
+                color: const Color(0xFF3D72E8),
+                onTap: () {
+                  Navigator.pop(context);
+                  Get.to(() => MessageScreen(
+                    roomId: roomId,
+                    otherUserName: nickName,
+                    otherUserAvatar: avatar,
+                    receiverId: userId,
+                  ));
+                },
+              ),
+            ] else ...[
+              // Create Chat — roomId নেই
+              _sheetButton(
+                label: 'start_chat'.tr,
+                icon: Icons.add_comment_outlined,
+                color: const Color(0xFF3D72E8),
+                onTap: () {
+                  Navigator.pop(context);
+                  Get.to(() => MessageScreen(
+                    roomId: '',
+                    otherUserName: nickName,
+                    otherUserAvatar: avatar,
+                    receiverId: userId,
+                  ));
+                },
+              ),
+            ],
+
+            SizedBox(height: ResponsiveHelper.spacing(12)),
+
+            // Cancel
+            _sheetButton(
+              label: 'cancel'.tr,
+              icon: Icons.close_rounded,
+              color: Colors.white.withOpacity(0.08),
+              textColor: Colors.white.withOpacity(0.6),
+              onTap: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    // bottom sheet বন্ধ হলে reset
+    if (!mounted) return;
+    setState(() => _scanned = false);
+    _scannerController.start();
+  }
+
+  Widget _sheetButton({
+    required String label,
+    required IconData icon,
+    required Color color,
+    Color? textColor,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(
+          vertical: ResponsiveHelper.padding(14),
+          horizontal: ResponsiveHelper.padding(20),
+        ),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.borderRadius(14),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: textColor ?? Colors.white, size: 20),
+            SizedBox(width: ResponsiveHelper.spacing(8)),
+            Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: ResponsiveHelper.fontSize(14),
+                fontWeight: FontWeight.w600,
+                color: textColor ?? Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+
+
+
 }
 
 /// ─── Camera Error Widget ──────────────────────────────────────────────────────
@@ -536,5 +790,9 @@ class _CornerPainter extends CustomPainter {
           old.cornerSize != cornerSize ||
           old.strokeWidth != strokeWidth;
 }
+
+
+
+
 
 

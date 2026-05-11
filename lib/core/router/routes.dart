@@ -146,7 +146,6 @@ class AppRouter {
 
 
 
-
       GoRoute(
         path: RoutePath.groupMessageScreen,
         name: RouteName.groupMessageScreen,
@@ -154,16 +153,13 @@ class AppRouter {
           final args = state.extra as Map<String, dynamic>;
 
           return GroupMessageScreen(
-            // roomId: args['roomId'] ?? '',
-            // otherUserName: args['otherUserName'] ?? "",
-            // otherUserAvatar: args['otherUserAvatar'] ?? '',
-            // receiverId: args['receiverId'] ?? '',
-            // isBlockedByMe: args['isBlockedByMe'],
-            // isBlockedMe: args['isBlockedMe'],
+            roomId: args['roomId'] ?? '',
+            groupName: args['groupName'] ?? '',
+            groupImage: args['groupImage'] ?? '',
+            groupMembers: args['groupMembers'] ?? [],
           );
         },
       ),
-
 
 
       GoRoute(

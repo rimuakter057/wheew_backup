@@ -29,7 +29,8 @@ class ApiClient {
     required String uri,
     Map<String, dynamic>? body,
     Map<String, String>? headers,
-  }) async {
+  }) async
+  {
     // Check internet first
     if (!await _checkConnection()) {
       developer.log('❌ No Internet Connection', name: 'API');
@@ -100,7 +101,8 @@ class ApiClient {
     required String uri,
     Map<String, String>? headers,
     Map<String, String>? queryParams,
-  }) async {
+  }) async
+  {
     // Check internet first
     if (!await _checkConnection()) {
       developer.log('❌ No Internet Connection', name: 'API');

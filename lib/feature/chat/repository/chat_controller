@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:platchatapp/feature/chat/model/message_response_model.dart' hide Sender;
+
 import 'package:get/get.dart' hide Response;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -8,136 +8,12 @@ import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/feature/chat/model/block_model.dart';
 import 'package:platchatapp/feature/chat/model/chat_model.dart';
-import 'package:platchatapp/feature/chat/model/group_message_response_model.dart';
+import 'package:platchatapp/feature/chat/model/message_response_model.dart';
 import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
 import '../../../core/service/socket_service.dart';
 import 'chat_repository.dart';
 
 class ChatController extends GetxController {
-  ///user rating===============
-
-  RxBool isSubmittingRating = false.obs;
-
-  Future<void> submitRating({
-    required String rateeId,
-    required double rating,
-    required BuildContext context,
-  }) async {
-    try {
-      isSubmittingRating.value = true;
-
-      final body = {
-        "ratee_id": rateeId,
-        "rating": rating.toInt(), // 1-5
-      };
-
-      print('⭐ [RATING] Submitting: $body');
-
-      final response = await ApiClient.postData(
-        uri:ApiUrl.sendRate,
-        body: body,
-      );
-
-      print('⭐ [RATING] Status: ${response.statusCode}');
-      print('⭐ [RATING] Body: ${response.body}');
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        Navigator.pop(context); // dialog বন্ধ
-        // Get.snackbar(
-        //   'Success',
-        //   'Rating submitted!',
-        //   backgroundColor: Colors.green,
-        //   colorText: Colors.white,
-        //   snackPosition: SnackPosition.TOP,
-        // );
-        debugPrint('Rating submitted!',);
-
-      } else {
-        debugPrint('Rating failed!',);
-        // Get.snackbar(
-        //   'Error',
-        //   'Failed to submit rating',
-        //   backgroundColor: Colors.red,
-        //   colorText: Colors.white,
-        //   snackPosition: SnackPosition.TOP,
-        // );
-      }
-    } catch (e) {
-      print('💥 [RATING] Error: $e');
-      Get.snackbar(
-        'Error',
-        e.toString(),
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
-    } finally {
-      isSubmittingRating.value = false;
-    }
-  }
-
-
-  ///preset message=========================================
-
-  RxList<String> presetMessages = <String>[].obs;
-  RxBool isPresetLoading = false.obs;
-
-  Future<void> fetchPresetMessages() async {
-    try {
-      isPresetLoading.value = true;
-
-      print('🔄 [PRESET] Fetching preset messages...');
-
-      final response = await ApiClient.getData(
-        uri:ApiUrl.presetMessage
-      );
-
-      print('📡 [PRESET] Status Code: ${response.statusCode}');
-      print('📡 [PRESET] Raw Body: ${response.body}');
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-
-        print('📦 [PRESET] Decoded data type: ${data.runtimeType}');
-        print('📦 [PRESET] Decoded data: $data');
-
-        // ── এখানে তোমার JSON structure অনুযায়ী parse করো ──
-        // Case 1: { "messages": [ { "message": "..." } ] }
-        if (data is Map && data['messages'] != null) {
-          final list = List<Map<String, dynamic>>.from(data['messages']);
-          presetMessages.value = list.map((e) => e['message'].toString()).toList();
-          print('✅ [PRESET] Parsed from data["messages"]: ${presetMessages.value}');
-        }
-        // Case 2: [ { "message": "..." } ]  (direct array)
-        else if (data is List) {
-          presetMessages.value = data.map((e) => e['message'].toString()).toList();
-          print('✅ [PRESET] Parsed from direct List: ${presetMessages.value}');
-        }
-        // Case 3: { "data": [ { "message": "..." } ] }
-        else if (data is Map && data['data'] != null) {
-          final list = List<Map<String, dynamic>>.from(data['data']);
-          presetMessages.value = list.map((e) => e['message'].toString()).toList();
-          print('✅ [PRESET] Parsed from data["data"]: ${presetMessages.value}');
-        } else {
-          print('❌ [PRESET] Unknown structure! Cannot parse.');
-        }
-
-        print('📊 [PRESET] Total preset count: ${presetMessages.length}');
-
-      } else {
-        print('❌ [PRESET] Failed! Status: ${response.statusCode}');
-      }
-    } catch (e, stack) {
-      print('💥 [PRESET] Exception: $e');
-      print('💥 [PRESET] StackTrace: $stack');
-    } finally {
-      isPresetLoading.value = false;
-      print('🏁 [PRESET] Loading done. isPresetLoading = ${isPresetLoading.value}');
-      print('🏁 [PRESET] presetMessages = ${presetMessages.value}');
-    }
-  }
-
-
   ///==============================================================
   bool _listenersInitialized = false; // ⭐ Add this
 
@@ -151,23 +27,6 @@ class ChatController extends GetxController {
     debugPrint('✅ Socket listeners initialized');
   }
 
-//
-//   bool _listenersInitialized = false;
-//
-//   void initSocketListeners() {
-//     if (_listenersInitialized) return;
-//     _listenersInitialized = true;
-//
-//     sendNewListenMessage();
-//     errorListenMessage();
-//
-//     debugPrint('✅ Socket listeners initialized');
-//   }
-//
-// // ✅ এটা add করো
-//   void resetListeners() {
-//     _listenersInitialized = false;
-//   }
 
   /// get all message list ================================================
   RxList<Messages> userMessageList = <Messages>[].obs;
@@ -250,6 +109,13 @@ class ChatController extends GetxController {
   }
 
 
+
+
+
+
+
+
+
   ///socket========================
 
   final TextEditingController messageController = TextEditingController();
@@ -296,12 +162,12 @@ class ChatController extends GetxController {
         }
       },
     );
-  }
 
+  }
 
   void updateChatRoomInListOptimistic(Messages newMessage) {
     final roomIndex = userChatList.indexWhere(
-          (room) => room.id == newMessage.chatRoomId,
+      (room) => room.id == newMessage.chatRoomId,
     );
 
     if (roomIndex != -1) {
@@ -360,7 +226,7 @@ class ChatController extends GetxController {
 
   void updateChatRoomInList(Messages newMessage) {
     final roomIndex = userChatList.indexWhere(
-          (room) => room.id == newMessage.chatRoomId,
+      (room) => room.id == newMessage.chatRoomId,
     );
 
     if (roomIndex != -1) {
@@ -411,7 +277,19 @@ class ChatController extends GetxController {
   ///=======================================================================
 
 
+
+
+
+
+
+
+
+
+
+
+
   ///get all user chat list========================================================
+
 
   RxList<Rooms> userChatList = <Rooms>[].obs;
   var isLoadingChat = false.obs;
@@ -421,6 +299,8 @@ class ChatController extends GetxController {
   int total = 0;
 
   bool _isFetching = false; // ✅ simple bool, reactive না
+
+
 
   Future<void> fetchChatList({bool refresh = false, bool loadMore = false}) async {
 
@@ -454,6 +334,7 @@ class ChatController extends GetxController {
         total = data.total ?? 0;
 
         if (data.rooms != null && data.rooms!.isNotEmpty) {
+
           if (page.value == 1) {
             // ✅ প্রথম page এ replace করো (refresh এর জন্য)
             userChatList.value = List<Rooms>.from(data.rooms!);
@@ -461,6 +342,7 @@ class ChatController extends GetxController {
             // ✅ পরের page এ শুধু add করো — replace করো না!
             userChatList.addAll(data.rooms!);
           }
+
           page.value++; // ✅ page.value++ করো, page++ নয়
         }
 
@@ -476,44 +358,16 @@ class ChatController extends GetxController {
     }
   }
 
+
+
+
+
   bool get hasMore => userChatList.length < total;
-///create group==========================================================
-  var isCreatingGroup = false.obs;
-
-  Future<void> createGroup({
-    required String groupName,
-    List<String> memberIds = const [],
-  }) async {
-    isCreatingGroup.value = true;
-    try {
-      final uri = ApiUrl.createGroup;
-      Response response = await ApiClient.postData(
-        uri: uri,
-        body: {
-          "name": groupName,
-          "memberIds": memberIds,
-        },
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        debugPrint('✅ Group created: $groupName');
-        await fetchChatList(refresh: true);
-      } else {
-        debugPrint('❌ Group create failed: ${response.body}');
-      }
-    } catch (e) {
-      debugPrint('createGroup error: $e');
-    } finally {
-      isCreatingGroup.value = false;
-    }
-  }
-
 
   ///get block list==============================================================
 
   RxList<BlockModel> userBlockList = <BlockModel>[].obs;
   var isLoadingBlockList = false.obs;
-
   Future<void> fetchBlockList({bool refresh = false}) async {
     debugPrint("fetchBlockList called");
 
@@ -545,8 +399,10 @@ class ChatController extends GetxController {
 
   ///==============search api section=========================================================
 
+
   bool _hasSearched = false;
   bool get hasSearched => _hasSearched;
+
 
   final ChatRepository _repo = ChatRepository();
 
@@ -563,6 +419,8 @@ class ChatController extends GetxController {
     _debounce?.cancel();
     super.onClose();
   }
+
+
 
   void searchUsers(String query) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
@@ -599,10 +457,8 @@ class ChatController extends GetxController {
               .map((user) => SearchModel.fromJson(user))
               .where((user) {
             final q = query.trim().toLowerCase();
-            final nameMatch =
-            (user.nickName ?? '').toLowerCase().contains(q);
-            final licenceMatch =
-            (user.licenceId ?? '').toLowerCase().contains(q);
+            final nameMatch = (user.nickName ?? '').toLowerCase().contains(q);
+            final licenceMatch = (user.licenceId ?? '').toLowerCase().contains(q);
             return nameMatch || licenceMatch; // ← যেকোনো একটায় match হলেই show
           })
               .toList();
@@ -649,7 +505,7 @@ class ChatController extends GetxController {
     }
   }
 
-  ///unblock user================
+///unblock user================
 
   Future<void> unBlock(String id, BuildContext context) async {
     final body = {"userId": id};
@@ -666,7 +522,7 @@ class ChatController extends GetxController {
 
       // ✅ chat list এর isBlockedByMe status update
       final roomIndex = userChatList.indexWhere(
-            (room) => room.otherUser?.id == id,
+        (room) => room.otherUser?.id == id,
       );
 
       if (roomIndex != -1) {
@@ -700,277 +556,4 @@ class ChatController extends GetxController {
       ),
     );
   }
-
-  ///group========================================================================
-
-
-
-// ── Group Message State ─────────────────────────────────────────
-  RxList<GroupMessageResponseModel> groupMessageList =
-      <GroupMessageResponseModel>[].obs;
-
-  var isLoadingGroupMessage = false.obs;
-  var isLoadingMoreGroupMessage = false.obs;
-
-  int groupPageCount = 1;
-  final int groupLimitCount = 20;
-  int groupTotalCount = 0;
-
-  RxString groupRoomID = "".obs;
-
-  bool get hasMoreGroupMessage =>
-      groupMessageList.length < groupTotalCount;
-
-// ── Fetch Group Messages ────────────────────────────────────────
-  Future<void> fetchGroupMessages({
-   required String roomId,
-    bool refresh = false,
-  }) async
-  {
-
-    // ✅ roomId update
-    if (roomId != null && roomId.isNotEmpty) {
-      groupRoomID.value = roomId;
-    }
-
-    if (groupRoomID.value.isEmpty) {
-      debugPrint("❌ Group Room ID is empty, skipping fetch");
-      return;
-    }
-
-    // ✅ Refresh হলে reset করো
-    if (refresh) {
-      groupPageCount = 1;
-      groupTotalCount = 0;
-      groupMessageList.clear();
-    }
-
-    // ✅ Already loading থাকলে skip
-    if (groupPageCount == 1 && isLoadingGroupMessage.value) return;
-    if (groupPageCount > 1 && isLoadingMoreGroupMessage.value) return;
-
-    // ✅ আর data নেই তাহলে skip
-    if (groupPageCount > 1 && !hasMoreGroupMessage) return;
-
-    // Loading state set
-    if (groupPageCount == 1) {
-      isLoadingGroupMessage.value = true;
-    } else {
-      isLoadingMoreGroupMessage.value = true;
-    }
-
-    try {
-      // ✅ roomId int হিসেবে পাঠাও — API url অনুযায়ী
-      final uri = ApiUrl.getGroupMessage(
-        roomId: groupRoomID.value,  // ← সরাসরি String
-        page: groupPageCount,
-        limit: groupLimitCount,
-      );
-      Response response = await ApiClient.getData(uri: uri);
-      final body = jsonDecode(response.body);
-
-      if (response.statusCode == 200 && body['messages'] != null) {
-        final data = GroupMessageListResponse.fromJson(body);
-        groupTotalCount = data.total ?? 0;
-
-        if (data.messages != null && data.messages!.isNotEmpty) {
-          for (final msg in data.messages!) {
-            groupMessageList.add(msg);
-          }
-          groupPageCount++;
-        }
-      }
-    } catch (e) {
-      debugPrint("❌ fetchGroupMessages error: $e");
-    } finally {
-      isLoadingGroupMessage.value = false;
-      isLoadingMoreGroupMessage.value = false;
-    }
-  }
-
-/// ── Send Group Message (Socket) ─────────────────────────────────
-  void sendGroupMessage({
-    required String roomId,
-    required String message,
-  })
-  {
-    if (message.trim().isEmpty) return;
-
-    final payload = {
-      'groupChatRoomId': roomId,
-      'message': message,
-    };
-
-    // ✅ Optimistic local message
-    final localMsg = GroupMessageResponseModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      groupChatRoomId: roomId,
-      senderId: '',
-      message: message,
-      type: 'TEXT',
-      createdAt: DateTime.now().toIso8601String(),
-      updatedAt: DateTime.now().toIso8601String(),
-      isMine: true,
-      sender: null,
-    );
-
-    groupMessageList.insert(0, localMsg);
-    messageController.clear();
-
-    // ✅ Simple emit
-    AppSocket.socket?.emit('send-group-message', payload);
-
-    debugPrint('✅ Group message emitted: $message');
-  }
-// ── New Group Message Socket Listen ────────────────────────────
-  void listenGroupMessages() {
-    AppSocket.socket?.off('group-message-sent');
-    AppSocket.socket?.on('group-message-sent', (value) {
-      try {
-        debugPrint('🔔 NEW GROUP MESSAGE: $value');
-
-        final GroupMessageResponseModel model =
-        GroupMessageResponseModel.fromJson(value);
-
-        if (model.groupChatRoomId == groupRoomID.value) {
-          // ✅ নিজের message হলে list এ add করবো না
-          // কিন্তু updateGroupChatRoomInList() অবশ্যই call হবে
-          if (model.isMine != true) {
-            groupMessageList.insert(0, model);
-          }
-        }
-
-        // ✅ সবসময় chat list update হবে
-        updateGroupChatRoomInList(model);
-      } catch (e) {
-        debugPrint('listenGroupMessages error: $e');
-      }
-    });
-  }
-
-// ── Update Chat List after Group Message ───────────────────────
-  void updateGroupChatRoomInList(GroupMessageResponseModel newMessage) {
-    final int roomIndex = userChatList.indexWhere(
-          (room) => room.id == newMessage.groupChatRoomId,
-    );
-
-    if (roomIndex != -1) {
-      final Rooms room = userChatList[roomIndex];
-
-      // ✅ latest message update
-      room.latestMessage = LatestMessage(
-        id: newMessage.id,
-        groupChatRoomId: newMessage.groupChatRoomId,
-        senderId: newMessage.senderId,
-        message: newMessage.message,
-        type: newMessage.type,
-        createdAt: newMessage.createdAt,
-        updatedAt: newMessage.updatedAt,
-        isMine: newMessage.isMine,
-        sender: newMessage.sender != null
-            ? Sender(
-          id: newMessage.sender!.id,
-          nickName: newMessage.sender!.nickName,
-          avatar: newMessage.sender!.avatar,
-        )
-            : null,
-      );
-
-      // ✅ নিজের message না হলে unread বাড়াও
-      if (newMessage.isMine == false &&
-          newMessage.groupChatRoomId != groupRoomID.value) {
-        room.unreadCount = (room.unreadCount ?? 0) + 1;
-      }
-
-      // ✅ room কে list এর উপরে নিয়ে আসো
-      final List<Rooms> newList = [room];
-      for (int i = 0; i < userChatList.length; i++) {
-        if (i != roomIndex) newList.add(userChatList[i]);
-      }
-      userChatList.value = newList;
-
-      debugPrint('✅ Group chat list updated');
-    } else {
-      // ✅ room list এ নেই — refresh করো
-      fetchChatList(refresh: true);
-    }
-  }
-
-// ============================================================
-// ChatController এর group section এ এই দুটো method add করো
-// sendGroupMessage() এর আগে paste করো
-// ============================================================
-
-// ── Join Group ──────────────────────────────────────────────
-// Screen open হলে call হয় — socket emit করে
-  void joinGroup({required String roomId}) {
-    final payload = {'groupChatRoomId': roomId};
-    AppSocket.socket?.emit('join-group-chat', payload);
-    debugPrint('✅ Joined group room: $roomId');
-  }
-
-// ── Leave Group ─────────────────────────────────────────────
-// Leave button press করলে call হয়
-  var isLeavingGroup = false.obs;
-
-  void leaveGroup({
-    required String roomId,
-    required BuildContext context,
-    bool navigateBack = true,
-  }) async {
-    isLeavingGroup.value = true;
-
-    // ✅ Simple emit — ack নেই
-    AppSocket.socket?.emit('leave-group-chat', {'groupChatRoomId': roomId});
-
-    // ✅ 500ms wait করো
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    isLeavingGroup.value = false;
-
-    // ✅ Chat list থেকে remove
-    userChatList.removeWhere((room) => room.id == roomId);
-
-    // ✅ Group state clear
-    groupMessageList.clear();
-    groupRoomID.value = '';
-
-    // ✅ Screen pop
-    if (navigateBack && context.mounted) {
-      Navigator.pop(context);
-    }
-  }
-// ============================================================
-// IMPORTANT: AppSocket.socket?.emitWithAck কাজ না করলে
-// নিচের alternative version ব্যবহার করো
-// ============================================================
-
-// void leaveGroup({
-//   required String roomId,
-//   required BuildContext context,
-//   bool navigateBack = true,
-// }) async {
-//   isLeavingGroup.value = true;
-//
-//   final payload = {'groupChatRoomId': roomId};
-//   AppSocket.socket?.emit('leave-group-chat', payload);
-//
-//   // ✅ 500ms wait করো server process করতে
-//   await Future.delayed(const Duration(milliseconds: 500));
-//
-//   isLeavingGroup.value = false;
-//
-//   // ✅ Chat list থেকে room remove করো
-//   userChatList.removeWhere((room) => room.id == roomId);
-//
-//   // ✅ Group message list clear করো
-//   groupMessageList.clear();
-//   groupRoomID.value = '';
-//
-//   // ✅ Screen থেকে বের হয়ে যাও
-//   if (navigateBack && context.mounted) {
-//     Navigator.pop(context);
-//   }
-// }
-
 }

@@ -14,6 +14,8 @@ class ChatTile extends StatelessWidget {
   final VoidCallback onTap;
   final FontWeight fontWeight;
   final bool? isBlock;
+  final bool isGroup;        // ✅ নতুন
+  final double? rating;      // ✅ নতুন — OtherUser থেকে আসবে
   final void Function()? onUnblock;
 
   const ChatTile({
@@ -25,6 +27,8 @@ class ChatTile extends StatelessWidget {
     required this.onTap,
     required this.fontWeight,
     this.isBlock,
+    this.isGroup = false,    // ✅ default false
+    this.rating,
     this.onUnblock,
   });
 
@@ -49,7 +53,7 @@ class ChatTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// Name + Time Row
+                  /// Name + Time / Block Row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -102,57 +106,43 @@ class ChatTile extends StatelessWidget {
 
                   SizedBox(height: ResponsiveHelper.height(4)),
 
-
-
-
-                if (isBlock != true)
-      //   Text(
-      //   "star",
-      //   maxLines: 1,
-      //   overflow: TextOverflow.ellipsis,
-      //   style: GoogleFonts.questrial(
-      //     fontSize: ResponsiveHelper.fontSize(14),
-      //     fontWeight: fontWeight,
-      //     color: AppColors.textBlack,
-      //   ),
-      // ),
-                  Row(
-                    children: [
-                      Icon(Icons.star,color:Colors.orange,size: ResponsiveHelper.iconSize(14),),
-                      SizedBox(height: ResponsiveHelper.width(4)),
-
-                      Text(
-                        "4.8",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.questrial(
-                          fontSize: ResponsiveHelper.fontSize(14),
-                          fontWeight: fontWeight,
-                          color: AppColors.textBlack,
+                  // ✅ Rating — শুধু ONE_TO_ONE এ দেখাবে (block বা group না হলে)
+                  if (isBlock != true && !isGroup && rating != null)
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.star,
+                          color: Colors.orange,
+                          size: ResponsiveHelper.iconSize(14),
                         ),
-                      ),
-
-                    ],
-
-                  ),
-
+                        SizedBox(width: ResponsiveHelper.width(4)),
+                        Text(
+                          rating!.toStringAsFixed(1),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.questrial(
+                            fontSize: ResponsiveHelper.fontSize(14),
+                            fontWeight: fontWeight,
+                            color: AppColors.textBlack,
+                          ),
+                        ),
+                      ],
+                    ),
 
                   SizedBox(height: ResponsiveHelper.height(4)),
+
                   /// Message
-                  Text(
-                    message,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.questrial(
-                      fontSize: ResponsiveHelper.fontSize(14),
-                      fontWeight: fontWeight,
-                      color: AppColors.textBlack,
+                  if (isBlock != true)
+                    Text(
+                      message,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.questrial(
+                        fontSize: ResponsiveHelper.fontSize(14),
+                        fontWeight: fontWeight,
+                        color: AppColors.textBlack,
+                      ),
                     ),
-                  ),
-
-
-
-
                 ],
               ),
             ),

@@ -65,7 +65,20 @@ class ApiUrl {
   static const String sendPreset = '/preset-message';
   static const String sendRate = '/ratings';
   static const String getQRCode = '/users/generate-code';
+  static const String scanQr = '/users/scan-qr-code';
+
+  static const String presetMessage = '/preset-message';
+  static const String createGroup = '/group/room';
   static  String deleteRating({required int id}) => '/ratings/$id';
+//  static  String getGroupMessage({required int roomId}) => '/group/room/$roomId/messages';
+
+  // ✅ page, limit support সহ
+  static String getGroupMessage({
+    required String roomId,
+    int page = 1,
+    int limit = 20,
+  }) => '/group/room/$roomId/messages?page=$page&limit=$limit';
+
   static  String usefulNumber({required int latitude,required int longitude }) => '/useful-number/nearby?latitude=$latitude&longitude=$longitude';
 
 

@@ -59,6 +59,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
     chatController.isBlockedByMe.value = widget.isBlockedByMe ?? false;
     chatController.isBlockedMe.value = widget.isBlockedMe ?? false;
+    chatController.fetchPresetMessages();
 
     _initChat();
 
@@ -182,7 +183,7 @@ class _MessageScreenState extends State<MessageScreen> {
                         _showRatingDialog(
                           context: context,
                           image: widget.otherUserAvatar ?? AppConst.unknown,
-                          name: widget.otherUserName,
+                          name: widget.otherUserName, receiverId: widget.receiverId,
                         );
                       } else if (value == "ViewProfile") {
                         showDialog(
@@ -376,78 +377,88 @@ class _MessageScreenState extends State<MessageScreen> {
   /// Message Input
 
   Widget _messageInput() {
-    final List<String> presetMessages = [
-      "👋 Hello!",
-      "How are you?",
-      "Thank you 😊",
-      "I'll be right back",
-      "Okay, got it!",
-      "Please wait...",
-      "See you later!",
-    ];
-
-
-
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-
-        SizedBox(
-          height: ResponsiveHelper.height(40),
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(
-              horizontal: ResponsiveHelper.padding(16),
-            ),
-            itemCount: presetMessages.length,
-            separatorBuilder: (_, __) =>
-                SizedBox(width: ResponsiveHelper.spacing(8)),
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: () {
-                  chatController.messageController.text =
-                  presetMessages[index];
-                  chatController.messageController.selection =
-                      TextSelection.fromPosition(
-                        TextPosition(
-                          offset: chatController
-                              .messageController.text.length,
-                        ),
-                      );
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: ResponsiveHelper.padding(14),
-                    vertical: ResponsiveHelper.padding(8),
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.blueClient.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(
-                      ResponsiveHelper.borderRadius(20),
-                    ),
-                    border: Border.all(
-                      color: AppColors.blueClient,
-                      width: 1,
-                    ),
-                  ),
-                  child: Text(
-                    presetMessages[index],
-                    style: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.fontSize(12),
-                      color: AppColors.blueClient,
-                    ),
-                  ),
+        // ── Preset Messages ──────────────────────────
+        Obx(() {
+          if (chatController.isPresetLoading.value) {
+            return SizedBox(
+              height: ResponsiveHelper.height(40),
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveHelper.padding(16),
                 ),
-              );
-            },
-          ),
-        ),
+                itemCount: 5, // skeleton count
+                separatorBuilder: (_, __) =>
+                    SizedBox(width: ResponsiveHelper.spacing(8)),
+                itemBuilder: (context, index) {
+                  return _presetShimmerChip();
+                },
+              ),
+            );
+          }
+
+          if (chatController.presetMessages.isEmpty) {
+            return const SizedBox.shrink();
+          }
+
+          return SizedBox(
+            height: ResponsiveHelper.height(40),
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveHelper.padding(16),
+              ),
+              itemCount: chatController.presetMessages.length,
+              separatorBuilder: (_, __) =>
+                  SizedBox(width: ResponsiveHelper.spacing(8)),
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    chatController.messageController.text =
+                    chatController.presetMessages[index];
+                    chatController.messageController.selection =
+                        TextSelection.fromPosition(
+                          TextPosition(
+                            offset:
+                            chatController.messageController.text.length,
+                          ),
+                        );
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: ResponsiveHelper.padding(14),
+                      vertical: ResponsiveHelper.padding(8),
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.blueClient.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(20),
+                      ),
+                      border: Border.all(
+                        color: AppColors.blueClient,
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      chatController.presetMessages[index],
+                      style: GoogleFonts.poppins(
+                        fontSize: ResponsiveHelper.fontSize(12),
+                        color: AppColors.blueClient,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        }),
 
         SizedBox(height: ResponsiveHelper.height(6)),
 
-
-
+        // ── Text Input Row ───────────────────────────
         Padding(
           padding: EdgeInsets.fromLTRB(
             ResponsiveHelper.padding(16),
@@ -457,10 +468,9 @@ class _MessageScreenState extends State<MessageScreen> {
           ),
           child: Container(
             padding: EdgeInsets.symmetric(
-              horizontal: ResponsiveHelper.padding(16),
-              vertical: ResponsiveHelper.padding(8),
+              horizontal: ResponsiveHelper.padding(8),
+              vertical: ResponsiveHelper.padding(4),
             ),
-
             decoration: BoxDecoration(
               color: AppColors.greyShade,
               borderRadius: BorderRadius.circular(
@@ -468,8 +478,9 @@ class _MessageScreenState extends State<MessageScreen> {
               ),
             ),
             child: Row(
-              //crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
+                // Emoji Button
                 IconButton(
                   icon: const Icon(
                     Icons.emoji_emotions,
@@ -481,13 +492,13 @@ class _MessageScreenState extends State<MessageScreen> {
                   },
                 ),
 
+                // Text Field
                 Expanded(
                   child: TextField(
                     focusNode: _focusNode,
                     controller: chatController.messageController,
                     minLines: 1,
                     maxLines: 3,
-
                     onTap: () {
                       if (_isEmojiVisible) {
                         setState(() => _isEmojiVisible = false);
@@ -501,6 +512,10 @@ class _MessageScreenState extends State<MessageScreen> {
                         fontSize: ResponsiveHelper.fontSize(16),
                       ),
                       border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: ResponsiveHelper.padding(8),
+                      ),
                     ),
                     style: TextStyle(
                       color: AppColors.black,
@@ -509,34 +524,28 @@ class _MessageScreenState extends State<MessageScreen> {
                   ),
                 ),
 
+                // Send Button
                 GestureDetector(
                   onTap: () {
-                    // 🔹 1️⃣ Declare the message variable here
-                    String message = chatController.messageController.text
-                        .trim();
-
-                    // 🔹 2️⃣ Check if empty
+                    String message =
+                    chatController.messageController.text.trim();
                     if (message.isEmpty) return;
 
-                    // 3️⃣ Bad word check
                     bool containsBadWord =
                         BadWords.english.any(
-                          (word) => message.toLowerCase().contains(
+                              (word) => message.toLowerCase().contains(
                             word.toLowerCase(),
                           ),
                         ) ||
-                        BadWords.italian.any(
-                          (word) => message.toLowerCase().contains(
-                            word.toLowerCase(),
-                          ),
-                        );
+                            BadWords.italian.any(
+                                  (word) => message.toLowerCase().contains(
+                                word.toLowerCase(),
+                              ),
+                            );
 
                     if (containsBadWord) {
-                      showTopSnackBar(
-                        context,
-                        "bad_word_error".tr,
-                      ); // <-- call custom top snack
-                      return; // Stop sending
+                      showTopSnackBar(context, "bad_word_error".tr);
+                      return;
                     }
 
                     chatController.sendNewEmitMessage(
@@ -554,11 +563,13 @@ class _MessageScreenState extends State<MessageScreen> {
                       }
                     });
                   },
-                  //  child: SvgPicture.asset(AssetsPath.send,),
-                  child: Icon(
-                    Icons.send_outlined,
-                    size: 16,
-                    color: AppColors.black,
+                  child: Padding(
+                    padding: EdgeInsets.all(ResponsiveHelper.padding(8)),
+                    child: Icon(
+                      Icons.send_rounded,
+                      size: ResponsiveHelper.iconSize(24),
+                      color: AppColors.blueClient,
+                    ),
                   ),
                 ),
               ],
@@ -566,7 +577,7 @@ class _MessageScreenState extends State<MessageScreen> {
           ),
         ),
 
-        /// Emoji Picker
+        // ── Emoji Picker ─────────────────────────────
         Offstage(
           offstage: !_isEmojiVisible,
           child: SizedBox(
@@ -603,8 +614,32 @@ class _MessageScreenState extends State<MessageScreen> {
             ),
           ),
         ),
+
         SizedBox(height: ResponsiveHelper.height(16)),
       ],
+    );
+  }
+
+// ── Shimmer Chip for preset loading ─────────────
+  Widget _presetShimmerChip() {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.3, end: 1.0),
+      duration: const Duration(milliseconds: 900),
+      builder: (context, value, child) {
+        return Opacity(
+          opacity: value,
+          child: Container(
+            width: ResponsiveHelper.width(90),
+            height: ResponsiveHelper.height(36),
+            decoration: BoxDecoration(
+              color: AppColors.blueClient.withOpacity(0.15),
+              borderRadius:
+              BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+            ),
+          ),
+        );
+      },
+      onEnd: () => setState(() {}), // pulse effect
     );
   }
 }
@@ -661,21 +696,38 @@ void showTopSnackBar(BuildContext context, String message) {
 
 ///show rating-=========================
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void _showRatingDialog({
   required BuildContext context,
   required String image,
   required String name,
-})
-{
+  required String receiverId, // 👈 add this param
+}) {
+
+  final ChatController chatController = Get.find<ChatController>();
   double _rating = 0;
-  final TextEditingController _commentController = TextEditingController();
 
   showDialog(
     context: context,
     barrierDismissible: true,
     barrierColor: Colors.black.withOpacity(0.5),
     builder: (_) => StatefulBuilder(
-      builder: (context, setState) => Dialog(
+      builder: (dialogContext, setState) => Dialog(
         backgroundColor: Colors.transparent,
         insetPadding: EdgeInsets.symmetric(
           horizontal: ResponsiveHelper.spacing(24),
@@ -700,7 +752,7 @@ void _showRatingDialog({
               Align(
                 alignment: Alignment.topRight,
                 child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () => Navigator.pop(dialogContext),
                   child: Container(
                     padding: EdgeInsets.all(ResponsiveHelper.spacing(4)),
                     decoration: BoxDecoration(
@@ -718,162 +770,104 @@ void _showRatingDialog({
 
               SizedBox(height: ResponsiveHelper.spacing(4)),
 
-              // // ── Avatar ────────────────────────────────
+              // ── Avatar ───────────────────────────────
               CircleAvatar(
-                radius: ResponsiveHelper.borderRadius(22),
+                radius: ResponsiveHelper.borderRadius(30),
                 backgroundImage: NetworkImage(
-                  ImageHandler.imagesHandle(
-                    image,
-                    isProfile: true,
-                  ),
+                  ImageHandler.imagesHandle(image, isProfile: true),
                 ),
               ),
 
-
               SizedBox(height: ResponsiveHelper.spacing(10)),
 
-              // ── Name ──────────────────────────────────
-              // Text(
-              //   name, // ✅ parameter থেকে
-              //   style: TextStyle(
-              //     fontSize: ResponsiveHelper.fontSize(16),
-              //     fontWeight: FontWeight.bold,
-              //     color: Colors.black,
-              //   ),
-              // ),
-
-              // Name
+              // ── Name ─────────────────────────────────
               Text(
                 name,
-                style: context.bodyMedium.copyWith(color: AppColors.black)
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(16),
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.black,
+                ),
+              ),
+
+              SizedBox(height: ResponsiveHelper.spacing(4)),
+
+              Text(
+                'tap_to_rate'.tr, // "Tap a star to rate"
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(12),
+                  color: Colors.grey.shade400,
+                ),
+              ),
+
+              SizedBox(height: ResponsiveHelper.spacing(24)),
+
+              // ── Half Star Rating Row ──────────────────
+              SizedBox(
+                height: ResponsiveHelper.iconSize(50),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(5, (starIndex) {
+                    // each star = full (starIndex+1) or half (starIndex+0.5)
+                    return GestureDetector(
+                      onTapDown: (details) {
+                        // left half → 0.5, right half → full
+                        final box = context.findRenderObject() as RenderBox?;
+                        final starWidth = ResponsiveHelper.iconSize(44);
+                        final localX = details.localPosition.dx;
+                        final isHalf = localX < starWidth / 2;
+                        setState(() {
+                          _rating = isHalf
+                              ? starIndex + 0.5
+                              : starIndex + 1.0;
+                        });
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: ResponsiveHelper.spacing(2),
+                        ),
+                        child: _buildStarIcon(starIndex, _rating),
+                      ),
+                    );
+                  }),
+                ),
               ),
 
               SizedBox(height: ResponsiveHelper.spacing(8)),
 
-              // Rating and Location
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.star, color: Colors.orange, size: ResponsiveHelper.iconSize(18)),
-                 // SizedBox(width: 4),
-                  Text(
-                    "4.6",
-                    style: context.bodySmall
-                  ),
-                  SizedBox(width: ResponsiveHelper.spacing(10)),
-                  Icon(Icons.location_on, color: Colors.grey, size: ResponsiveHelper.iconSize(18)),
-                  SizedBox(width: 4),
-                  Text(
-                    "address",
-                    style: context.bodySmall
-                  ),
-                ],
-              ),
-
-
-
-
-              SizedBox(height: ResponsiveHelper.spacing(20)),
-
-              // ── Star Rating ───────────────────────────
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(5, (index) {
-                  return GestureDetector(
-                    onTap: () => setState(() => _rating = index + 1),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: ResponsiveHelper.spacing(4),
-                      ),
-                      child: Icon(
-                        index < _rating
-                            ? Icons.star_rounded
-                            : Icons.star_outline_rounded,
-                        color: Colors.amber,
-                        size: ResponsiveHelper.iconSize(40),
-                      ),
-                    ),
-                  );
-                }),
-              ),
-
-              SizedBox(height: ResponsiveHelper.spacing(6)),
-
               // ── Rating Label ──────────────────────────
-              Text(
-                _rating == 0
-                    ? ''
-                    : _rating == 1
-                    ? 'rating_poor'.tr
-                    : _rating == 2
-                    ? 'rating_fair'.tr
-                    : _rating == 3
-                    ? 'rating_good'.tr
-                    : _rating == 4
-                    ? 'rating_great'.tr
-                    : 'rating_excellent'.tr,
-                style: TextStyle(
-                  fontSize: ResponsiveHelper.fontSize(13),
-                  color: Colors.grey.shade500,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-
-              SizedBox(height: ResponsiveHelper.spacing(16)),
-
-              // ── Comment ───────────────────────────────
-              TextField(
-                controller: _commentController,
-                maxLines: 3,
-                style: TextStyle(fontSize: ResponsiveHelper.fontSize(13)),
-                decoration: InputDecoration(
-                  hintText: 'add_comment'.tr,
-                  hintStyle: TextStyle(
-                    fontSize: ResponsiveHelper.fontSize(13),
-                    color: Colors.grey.shade400,
-                  ),
-                  contentPadding: EdgeInsets.all(ResponsiveHelper.spacing(12)),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                      ResponsiveHelper.borderRadius(12),
-                    ),
-                    borderSide: BorderSide(color: Colors.grey.shade200),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                      ResponsiveHelper.borderRadius(12),
-                    ),
-                    borderSide: BorderSide(color: Colors.grey.shade200),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                      ResponsiveHelper.borderRadius(12),
-                    ),
-                    borderSide: BorderSide(color: AppColors.black),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                child: Text(
+                  key: ValueKey(_rating),
+                  _ratingLabel(_rating),
+                  style: GoogleFonts.poppins(
+                    fontSize: ResponsiveHelper.fontSize(14),
+                    color: _rating == 0
+                        ? Colors.transparent
+                        : Colors.amber.shade700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
 
-              SizedBox(height: ResponsiveHelper.spacing(20)),
+              SizedBox(height: ResponsiveHelper.spacing(28)),
 
               // ── Submit Button ─────────────────────────
-              SizedBox(
+              Obx(() => SizedBox(
                 width: double.infinity,
                 height: ResponsiveHelper.buttonHeight(48),
                 child: ElevatedButton(
-                  onPressed: () {},
-
-                  // onPressed: _rating == 0
-                  //     ? null
-                  //     : () {
-                  //   Navigator.pop(context);
-                  //   chatController.submitRating(
-                  //     receiverId: widget.receiverId,
-                  //     rating: _rating,
-                  //     comment: _commentController.text.trim(),
-                  //     context: context,
-                  //   );
-                  // },
+                  onPressed: (_rating == 0 ||
+                      chatController.isSubmittingRating.value)
+                      ? null
+                      : () {
+                    chatController.submitRating(
+                      rateeId: receiverId,
+                      rating: _rating,
+                      context: dialogContext,
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.blueClient,
                     disabledBackgroundColor: Colors.grey.shade200,
@@ -884,12 +878,25 @@ void _showRatingDialog({
                       ),
                     ),
                   ),
-                  child: Text(
+                  child: chatController.isSubmittingRating.value
+                      ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                      : Text(
                     'submit_rating'.tr,
-                    style: context.bodySmall.copyWith(color: AppColors.white)
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: ResponsiveHelper.fontSize(14),
+                    ),
                   ),
                 ),
-              ),
+              )),
             ],
           ),
         ),
@@ -897,3 +904,276 @@ void _showRatingDialog({
     ),
   );
 }
+
+// ── Star icon builder (full / half / empty) ──────────────────
+Widget _buildStarIcon(int starIndex, double rating) {
+  final double value = rating - starIndex;
+
+  IconData icon;
+  Color color = Colors.amber;
+
+  if (value >= 1.0) {
+    icon = Icons.star_rounded; // full
+  } else if (value >= 0.5) {
+    icon = Icons.star_half_rounded; // half
+  } else {
+    icon = Icons.star_outline_rounded; // empty
+    color = Colors.grey.shade300;
+  }
+
+  return Icon(
+    icon,
+    color: color,
+    size: ResponsiveHelper.iconSize(44),
+  );
+}
+
+// ── Rating label helper ──────────────────────────────────────
+String _ratingLabel(double rating) {
+  if (rating == 0) return '';
+  if (rating <= 1.0) return 'rating_poor'.tr;
+  if (rating <= 2.0) return 'rating_fair'.tr;
+  if (rating <= 3.0) return 'rating_good'.tr;
+  if (rating <= 4.0) return 'rating_great'.tr;
+  return 'rating_excellent'.tr;
+}
+
+
+
+
+// void _showRatingDialog({
+//   required BuildContext context,
+//   required String image,
+//   required String name,
+// })
+// {
+//   double _rating = 0;
+//   final TextEditingController _commentController = TextEditingController();
+//
+//   showDialog(
+//     context: context,
+//     barrierDismissible: true,
+//     barrierColor: Colors.black.withOpacity(0.5),
+//     builder: (_) => StatefulBuilder(
+//       builder: (context, setState) => Dialog(
+//         backgroundColor: Colors.transparent,
+//         insetPadding: EdgeInsets.symmetric(
+//           horizontal: ResponsiveHelper.spacing(24),
+//         ),
+//         child: Container(
+//           padding: EdgeInsets.only(
+//             top: ResponsiveHelper.spacing(20),
+//             left: ResponsiveHelper.spacing(20),
+//             right: ResponsiveHelper.spacing(20),
+//             bottom: ResponsiveHelper.spacing(24),
+//           ),
+//           decoration: BoxDecoration(
+//             color: Colors.white,
+//             borderRadius: BorderRadius.circular(
+//               ResponsiveHelper.borderRadius(24),
+//             ),
+//           ),
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               // ── Close Button ──────────────────────────
+//               Align(
+//                 alignment: Alignment.topRight,
+//                 child: GestureDetector(
+//                   onTap: () => Navigator.pop(context),
+//                   child: Container(
+//                     padding: EdgeInsets.all(ResponsiveHelper.spacing(4)),
+//                     decoration: BoxDecoration(
+//                       color: Colors.grey.shade100,
+//                       shape: BoxShape.circle,
+//                     ),
+//                     child: Icon(
+//                       Icons.close,
+//                       size: ResponsiveHelper.iconSize(16),
+//                       color: Colors.grey.shade600,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//
+//               SizedBox(height: ResponsiveHelper.spacing(4)),
+//
+//               // // ── Avatar ────────────────────────────────
+//               CircleAvatar(
+//                 radius: ResponsiveHelper.borderRadius(22),
+//                 backgroundImage: NetworkImage(
+//                   ImageHandler.imagesHandle(
+//                     image,
+//                     isProfile: true,
+//                   ),
+//                 ),
+//               ),
+//
+//
+//               SizedBox(height: ResponsiveHelper.spacing(10)),
+//
+//               // ── Name ──────────────────────────────────
+//               // Text(
+//               //   name, // ✅ parameter থেকে
+//               //   style: TextStyle(
+//               //     fontSize: ResponsiveHelper.fontSize(16),
+//               //     fontWeight: FontWeight.bold,
+//               //     color: Colors.black,
+//               //   ),
+//               // ),
+//
+//               // Name
+//               Text(
+//                 name,
+//                 style: context.bodyMedium.copyWith(color: AppColors.black)
+//               ),
+//
+//               SizedBox(height: ResponsiveHelper.spacing(8)),
+//
+//               // Rating and Location
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   Icon(Icons.star, color: Colors.orange, size: ResponsiveHelper.iconSize(18)),
+//                  // SizedBox(width: 4),
+//                   Text(
+//                     "4.6",
+//                     style: context.bodySmall
+//                   ),
+//                   SizedBox(width: ResponsiveHelper.spacing(10)),
+//                   Icon(Icons.location_on, color: Colors.grey, size: ResponsiveHelper.iconSize(18)),
+//                   SizedBox(width: 4),
+//                   Text(
+//                     "address",
+//                     style: context.bodySmall
+//                   ),
+//                 ],
+//               ),
+//
+//
+//
+//
+//               SizedBox(height: ResponsiveHelper.spacing(20)),
+//
+//               // ── Star Rating ───────────────────────────
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: List.generate(5, (index) {
+//                   return GestureDetector(
+//                     onTap: () => setState(() => _rating = index + 1),
+//                     child: Padding(
+//                       padding: EdgeInsets.symmetric(
+//                         horizontal: ResponsiveHelper.spacing(4),
+//                       ),
+//                       child: Icon(
+//                         index < _rating
+//                             ? Icons.star_rounded
+//                             : Icons.star_outline_rounded,
+//                         color: Colors.amber,
+//                         size: ResponsiveHelper.iconSize(40),
+//                       ),
+//                     ),
+//                   );
+//                 }),
+//               ),
+//
+//               SizedBox(height: ResponsiveHelper.spacing(6)),
+//
+//               // ── Rating Label ──────────────────────────
+//               Text(
+//                 _rating == 0
+//                     ? ''
+//                     : _rating == 1
+//                     ? 'rating_poor'.tr
+//                     : _rating == 2
+//                     ? 'rating_fair'.tr
+//                     : _rating == 3
+//                     ? 'rating_good'.tr
+//                     : _rating == 4
+//                     ? 'rating_great'.tr
+//                     : 'rating_excellent'.tr,
+//                 style: TextStyle(
+//                   fontSize: ResponsiveHelper.fontSize(13),
+//                   color: Colors.grey.shade500,
+//                   fontWeight: FontWeight.w500,
+//                 ),
+//               ),
+//
+//               SizedBox(height: ResponsiveHelper.spacing(16)),
+//
+//               // ── Comment ───────────────────────────────
+//               TextField(
+//                 controller: _commentController,
+//                 maxLines: 3,
+//                 style: TextStyle(fontSize: ResponsiveHelper.fontSize(13)),
+//                 decoration: InputDecoration(
+//                   hintText: 'add_comment'.tr,
+//                   hintStyle: TextStyle(
+//                     fontSize: ResponsiveHelper.fontSize(13),
+//                     color: Colors.grey.shade400,
+//                   ),
+//                   contentPadding: EdgeInsets.all(ResponsiveHelper.spacing(12)),
+//                   border: OutlineInputBorder(
+//                     borderRadius: BorderRadius.circular(
+//                       ResponsiveHelper.borderRadius(12),
+//                     ),
+//                     borderSide: BorderSide(color: Colors.grey.shade200),
+//                   ),
+//                   enabledBorder: OutlineInputBorder(
+//                     borderRadius: BorderRadius.circular(
+//                       ResponsiveHelper.borderRadius(12),
+//                     ),
+//                     borderSide: BorderSide(color: Colors.grey.shade200),
+//                   ),
+//                   focusedBorder: OutlineInputBorder(
+//                     borderRadius: BorderRadius.circular(
+//                       ResponsiveHelper.borderRadius(12),
+//                     ),
+//                     borderSide: BorderSide(color: AppColors.black),
+//                   ),
+//                 ),
+//               ),
+//
+//               SizedBox(height: ResponsiveHelper.spacing(20)),
+//
+//               // ── Submit Button ─────────────────────────
+//               SizedBox(
+//                 width: double.infinity,
+//                 height: ResponsiveHelper.buttonHeight(48),
+//                 child: ElevatedButton(
+//                   onPressed: () {},
+//
+//                   // onPressed: _rating == 0
+//                   //     ? null
+//                   //     : () {
+//                   //   Navigator.pop(context);
+//                   //   chatController.submitRating(
+//                   //     receiverId: widget.receiverId,
+//                   //     rating: _rating,
+//                   //     comment: _commentController.text.trim(),
+//                   //     context: context,
+//                   //   );
+//                   // },
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: AppColors.blueClient,
+//                     disabledBackgroundColor: Colors.grey.shade200,
+//                     elevation: 0,
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(
+//                         ResponsiveHelper.borderRadius(12),
+//                       ),
+//                     ),
+//                   ),
+//                   child: Text(
+//                     'submit_rating'.tr,
+//                     style: context.bodySmall.copyWith(color: AppColors.white)
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     ),
+//   );
+// }

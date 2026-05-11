@@ -9,6 +9,7 @@ import 'package:platchatapp/utils/string/AppTranslations.dart';
 import 'core/router/routes.dart';
 import 'core/theme/light_theme.dart';
 import 'feature/chat/repository/chat_controller.dart';
+import 'feature/scan/controller/scan_controller.dart';
 import 'helper/responsive_helper/responsive_helper.dart';
 import 'language/language_controller.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -29,6 +30,7 @@ void main() async {
   Get.put(AuthController());
   Get.put(ChatController());
   Get.put(ProfileController());
+  Get.put(ScanController());
 
   // Translations
   Get.addTranslations(AppTranslations().keys);
