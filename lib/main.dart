@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
@@ -18,6 +20,11 @@ void main() async {
   final languageController = Get.put(LanguageController());
   await languageController.loadSavedLanguage();
 
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    // Android fix
+    final GoogleMapsFlutterAndroid mapsAndroid = GoogleMapsFlutterAndroid();
+    mapsAndroid.useAndroidViewSurface = true;
+  }
   // Controllers
   Get.put(AuthController());
   Get.put(ChatController());

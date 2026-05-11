@@ -2,13 +2,15 @@ class ApiUrl {
   // Base URL - Replace with your actual API base URL
 
   // Local url
-  //static const String baseUrl = 'http://10.10.20.44:8003';
+  static const String baseUrl = 'http://10.10.20.44:8003';
+  static const baseSocketUrl = 'ws://10.10.20.44:8003';
 
   // live url
-  static const String baseUrl = 'http://13.50.99.165:8003';
+  // static const String baseUrl = 'http://13.50.99.165:8003';
+  // static const baseSocketUrl = 'ws://13.50.99.165:8003';
 
   //http://13.50.99.165:8003
-  static const baseSocketUrl = 'ws://13.50.99.165:8003';
+
   static const String imageUrl = "$baseUrl/";
 
   static String socketUrl({required String userId}) =>
@@ -55,4 +57,16 @@ class ApiUrl {
   static const String help = "/users/help-support";
 
   static const String profile = '/auth/me'; // ✅ same as chatList
+
+
+///new feature
+
+
+  static const String sendPreset = '/preset-message';
+  static const String sendRate = '/ratings';
+  static const String getQRCode = '/users/generate-code';
+  static  String deleteRating({required int id}) => '/ratings/$id';
+  static  String usefulNumber({required int latitude,required int longitude }) => '/useful-number/nearby?latitude=$latitude&longitude=$longitude';
+
+
 }

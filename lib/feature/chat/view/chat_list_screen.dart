@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
+import 'package:platchatapp/feature/chat/view/group_message_screen.dart';
 import 'package:platchatapp/feature/chat/view/message_screen.dart';
 import 'package:platchatapp/feature/chat/view/widgets/chat_list_screen_shimmer.dart';
 import 'package:platchatapp/helper/data_converter/data_converter.dart';
@@ -159,6 +160,40 @@ class _ChatListScreenState extends State<ChatListScreen> {
               ),
             ),
 
+            ///chat tile
+
+    //         ChatTile(
+    //         isBlock: false,
+    //         name: "Our Group",
+    //         message: "Hello EveryOne",
+    //         fontWeight: FontWeight.w400,
+    //
+    //         time: "12:00Pm",//formatTime(room.latestMessage?.createdAt ?? ''),
+    //         imagePath: ImageHandler.imagesHandle(
+    //     AppConst.unknown,
+    //         isProfile: true,
+    //         ),
+    //         onTap: () {
+    //
+    //
+    //
+    //         Navigator.push(
+    //         context,
+    //         MaterialPageRoute(
+    //         builder: (context) => MessageScreen(
+    //           otherUserName: '',
+    //           receiverId: '',
+    //
+    //         ),
+    //         ),
+    //         );
+    //         },
+    // ),
+
+
+
+
+
             /// Chat list
             Expanded(
               child: Obx(() {
@@ -229,20 +264,25 @@ class _ChatListScreenState extends State<ChatListScreen> {
                               isBlockedMe: room.isBlockedMe,
                             );
 
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => MessageScreen(
+                            builder: (context) => room.type == 'GROUP'
+                                ? GroupMessageScreen()
+                                : MessageScreen(
                               roomId: messageInformation.roomID,
                               otherUserName: messageInformation.otherUserName,
-                              otherUserAvatar:
-                                  messageInformation.otherUserAvatar,
+                              otherUserAvatar: messageInformation.otherUserAvatar,
                               receiverId: messageInformation.receiverId,
                               isBlockedByMe: messageInformation.isBlockedByMe,
                               isBlockedMe: messageInformation.isBlockedMe,
                             ),
                           ),
                         );
+
+
+
                       },
                     );
                   },

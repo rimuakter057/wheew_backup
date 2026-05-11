@@ -306,6 +306,8 @@ class _DropPinButton extends StatelessWidget {
                   : ('drop_parking_pin'.tr.isNotEmpty
                   ? 'drop_parking_pin'.tr
                   : 'Drop Parking Pin'),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(15),
                 fontWeight: FontWeight.w600,

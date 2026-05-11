@@ -346,11 +346,14 @@ class _ScanScreenState extends State<ScanScreen>
           ),
         ),
         SizedBox(height: ResponsiveHelper.spacing(28)),
-        Text(
-          'let_others_scan'.tr,
-          style: GoogleFonts.poppins(
-            fontSize: ResponsiveHelper.fontSize(13),
-            color: Colors.white.withOpacity(0.45),
+        Padding(
+          padding:  ResponsiveHelper.all(8.0),
+          child: Text(
+            'let_others_scan'.tr,
+            style: GoogleFonts.poppins(
+              fontSize: ResponsiveHelper.fontSize(13),
+              color: Colors.white.withOpacity(0.45),
+            ),
           ),
         ),
 
@@ -359,7 +362,7 @@ class _ScanScreenState extends State<ScanScreen>
   }
 }
 
-// ─── Camera Error Widget ──────────────────────────────────────────────────────
+/// ─── Camera Error Widget ──────────────────────────────────────────────────────
 
 class _CameraError extends StatelessWidget {
   final double boxSize;
@@ -408,7 +411,7 @@ class _CameraError extends StatelessWidget {
   }
 }
 
-// ─── Tab Button ───────────────────────────────────────────────────────────────
+/// ─── Tab Button ───────────────────────────────────────────────────────────────
 
 class TabButton extends StatelessWidget {
   final String label;
@@ -461,7 +464,7 @@ class TabButton extends StatelessWidget {
   }
 }
 
-// ─── Corner Painter ───────────────────────────────────────────────────────────
+/// ─── Corner Painter ───────────────────────────────────────────────────────────
 
 class _CornerPainter extends CustomPainter {
   final Color color;

@@ -230,4 +230,8 @@ final Map<String, String> english = {
   // ------------------Profile Nav Screen-------------------------
   'upload': 'Upload',
   'useful_number': 'Useful Number',
+
+  "drop_parking_pin":"Drop Parking Pin",
+  "remove_pin":"Remove Parking Pin"
+
 };

@@ -21,4 +21,6 @@ class RoutePath {
   static const scanScreen = '/scanScreen';
   static const profileNavScreen = '/profileNavScreen';
   static const usefulMemberScreen = '/usefulMemberScreen';
+  static const groupMessageScreen = '/GroupMessageScreen';
+  static const addMemberScreen = '/AddMemberScreen';
 }

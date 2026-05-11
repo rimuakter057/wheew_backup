@@ -9,6 +9,8 @@ import 'package:platchatapp/feature/auth/view/reset_password_screen.dart';
 import 'package:platchatapp/feature/auth/view/forgot_password_screen.dart';
 import 'package:platchatapp/feature/auth/view/sign_in_screen.dart';
 import 'package:platchatapp/feature/auth/view/sign_up_screen.dart';
+import 'package:platchatapp/feature/chat/view/add_member_screen.dart';
+import 'package:platchatapp/feature/chat/view/group_message_screen.dart';
 import 'package:platchatapp/feature/main/presentation/main_nav-screen.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_nav_screen.dart';
@@ -141,6 +143,29 @@ class AppRouter {
         },
       ),
 
+
+
+
+
+      GoRoute(
+        path: RoutePath.groupMessageScreen,
+        name: RouteName.groupMessageScreen,
+        builder: (context, state) {
+          final args = state.extra as Map<String, dynamic>;
+
+          return GroupMessageScreen(
+            // roomId: args['roomId'] ?? '',
+            // otherUserName: args['otherUserName'] ?? "",
+            // otherUserAvatar: args['otherUserAvatar'] ?? '',
+            // receiverId: args['receiverId'] ?? '',
+            // isBlockedByMe: args['isBlockedByMe'],
+            // isBlockedMe: args['isBlockedMe'],
+          );
+        },
+      ),
+
+
+
       GoRoute(
         path: RoutePath.profile,
         name: RouteName.profile,
@@ -166,6 +191,14 @@ class AppRouter {
           return MapScreen();
         },
       ),
+      GoRoute(
+        path: RoutePath.addMemberScreen,
+        name: RouteName.addMemberScreen,
+        builder: (context, state) {
+          return AddMemberScreen();
+        },
+      ),
+
       GoRoute(
         path: RoutePath.mainNavScreen,
         name: RouteName.mainNavScreen,

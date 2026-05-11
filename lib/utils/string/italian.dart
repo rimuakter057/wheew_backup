@@ -231,4 +231,6 @@ final Map<String, String> italian = {
   // ------------------Profile Nav Screen-------------------------
   'upload': 'Carica',
   'useful_number': 'Numero utile',
+  "drop_parking_pin":"Rilascia il contrassegno di parcheggio",
+  "remove_pin":"Rimuovere il perno di parcheggio"
 };

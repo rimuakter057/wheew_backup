@@ -28,7 +28,7 @@ class Rooms {
   String? id;
   bool? isBlockedByMe;
   bool? isBlockedMe;
-
+  String?type;
   OtherUser? otherUser;
   LatestMessage? latestMessage;
   int? unreadCount;
@@ -36,6 +36,7 @@ class Rooms {
   Rooms({
     this.id,
     this.otherUser,
+    this.type,
     this.latestMessage,
     this.unreadCount,
     this.isBlockedByMe,
@@ -46,6 +47,7 @@ class Rooms {
     id = json['id'];
     isBlockedByMe = json['isBlockedByMe'];
     isBlockedMe = json["isBlockedMe"];
+    type=json['type'];
 
     otherUser = json['otherUser'] != null
         ? OtherUser.fromJson(json['otherUser'])
@@ -61,7 +63,7 @@ class Rooms {
     data['id'] = id;
     data["isBlockedByMe"] = isBlockedByMe;
     data["isBlockedByMe"] = isBlockedMe;
-
+     data['type']=type;
     if (otherUser != null) {
       data['otherUser'] = otherUser!.toJson();
     }
