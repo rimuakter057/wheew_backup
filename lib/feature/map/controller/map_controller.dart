@@ -65,7 +65,7 @@ class ParkingReportController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         submitSuccess.value = true;
-        submitMessage.value = 'Parking report submitted!';
+        submitMessage.value = 'map_parking_report_submitted'.tr;
         mapDebug('parking POST: success');
         return true;
       } else {
@@ -73,7 +73,7 @@ class ParkingReportController extends GetxController {
         final msg =
             (decoded is Map<String, dynamic> && decoded['message'] != null)
             ? decoded['message'].toString()
-            : 'Something went wrong';
+            : 'something_went_wrong'.tr;
         submitMessage.value = msg;
         mapDebug('parking POST: failed ${response.statusCode} message=$msg');
         return false;
@@ -157,11 +157,11 @@ class ParkingReportController extends GetxController {
         await _buildMarkers();
       } else {
         errorMessage.value =
-            'Failed to load parking data (${response.statusCode})';
+            '${'map_failed_to_load_parking_data'.tr} (${response.statusCode})';
         mapDebug('parking API: HTTP ${response.statusCode}');
       }
     } catch (e) {
-      errorMessage.value = 'Error: $e';
+      errorMessage.value = '${'error'.tr}: $e';
       mapDebug('parking API: exception $e');
     } finally {
       isLoadingShowDetails.value = false;
@@ -197,10 +197,10 @@ class ParkingReportController extends GetxController {
             isDisabled: isDisabled,
           ),
           infoWindow: InfoWindow(
-            title: isPaid ? '💰 Paid Parking' : '🆓 Free Parking',
+            title: isPaid ? '💰 ${'map_paid_parking'.tr}' : '🆓 ${'map_free_parking'.tr}',
             snippet: [
-              if (hasCharging) '⚡ EV Charging',
-              if (isDisabled) '♿ Disabled Facility',
+              if (hasCharging) '⚡ ${'map_electric_charging'.tr}',
+              if (isDisabled) '♿ ${'map_disabled_facility'.tr}',
             ].join('  |  '),
           ),
           onTap: () => _onMarkerTap(parking),
@@ -222,15 +222,15 @@ class ParkingReportController extends GetxController {
   }
 
   String parkingInfoText(Map<String, dynamic> parking) {
-    return 'Cost: ${parking['parking_cost']}  |  '
-        'EV: ${parking['electric_charging']}  |  '
-        'Disabled: ${parking['disabled_facility']}';
+    return '${'map_cost'.tr}: ${parking['parking_cost']}  |  '
+        '${'map_ev'.tr}: ${parking['electric_charging']}  |  '
+        '${'map_disabled'.tr}: ${parking['disabled_facility']}';
   }
 
   String parkingCostText(Map<String, dynamic> parking) =>
       (parking['parking_cost'] ?? '-').toString();
 
-  String boolFlag(dynamic value) => value == true ? 'Yes' : 'No';
+  String boolFlag(dynamic value) => value == true ? 'yes'.tr : 'no'.tr;
 
   void clearSelectedReport() {
     selectedReport.value = null;

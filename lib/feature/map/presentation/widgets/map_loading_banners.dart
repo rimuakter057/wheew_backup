@@ -36,7 +36,7 @@ class LocatingBanner extends StatelessWidget {
               ),
               SizedBox(width: ResponsiveHelper.spacing(8)),
               Text(
-                'locating'.tr.isNotEmpty ? 'locating'.tr : 'Getting location…',
+                'map_getting_location'.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(12),
                   color: const Color(0xFF1A1A2E),
@@ -83,7 +83,7 @@ class FetchingParkingBanner extends StatelessWidget {
               ),
               SizedBox(width: ResponsiveHelper.spacing(8)),
               Text(
-                'Loading parking spots...',
+                'map_loading_parking_spots'.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(12),
                   color: const Color(0xFF1A1A2E),

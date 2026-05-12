@@ -61,7 +61,7 @@ class ParkingInfoDialog extends StatelessWidget {
                   ),
                   SizedBox(width: ResponsiveHelper.spacing(10)),
                   Text(
-                    'Parking Details',
+                    'map_parking_details'.tr,
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.titleFontSize(16),
                       fontWeight: FontWeight.w700,
@@ -75,7 +75,7 @@ class ParkingInfoDialog extends StatelessWidget {
               SizedBox(height: ResponsiveHelper.spacing(16)),
               SectionLabel(
                 icon: Icons.local_parking_rounded,
-                label: 'Parking Cost',
+                label: 'map_parking_cost'.tr,
               ),
               SizedBox(height: ResponsiveHelper.spacing(8)),
               Row(
@@ -119,7 +119,10 @@ class ParkingInfoDialog extends StatelessWidget {
                             ),
                             SizedBox(width: ResponsiveHelper.spacing(6)),
                             Text(
-                              val,
+                              (val == 'FREE'
+                                      ? 'map_free'
+                                      : 'map_paid')
+                                  .tr,
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(13),
                                 fontWeight: FontWeight.w600,
@@ -139,7 +142,7 @@ class ParkingInfoDialog extends StatelessWidget {
               ToggleRow(
                 icon: Icons.electric_bolt_rounded,
                 iconColor: const Color(0xFFF59E0B),
-                label: 'Electric Charging',
+                label: 'map_electric_charging'.tr,
                 value: controller.electricCharging.value,
                 onTap: () => controller.electricCharging.toggle(),
               ),
@@ -147,15 +150,15 @@ class ParkingInfoDialog extends StatelessWidget {
               ToggleRow(
                 icon: Icons.accessible_rounded,
                 iconColor: const Color(0xFF10B981),
-                label: 'Disabled Facility',
+                label: 'map_disabled_facility'.tr,
                 value: controller.disabledFacility.value,
                 onTap: () => controller.disabledFacility.toggle(),
               ),
               if (controller.disabledFacility.value) ...[
                 SizedBox(height: ResponsiveHelper.spacing(16)),
-                const SectionLabel(
+                SectionLabel(
                   icon: Icons.location_on_rounded,
-                  label: 'Disabled Parking Location',
+                  label: 'map_disabled_parking_location'.tr,
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(10)),
                 DisabledLocationPicker(controller: controller),
@@ -183,7 +186,7 @@ class ParkingInfoDialog extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(
-                              'Cancel',
+                              'map_cancel'.tr,
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(14),
                                 fontWeight: FontWeight.w600,
@@ -231,7 +234,7 @@ class ParkingInfoDialog extends StatelessWidget {
                               ),
                               SizedBox(width: ResponsiveHelper.spacing(6)),
                               Text(
-                                'Drop Pin',
+                                'map_drop_pin'.tr,
                                 style: GoogleFonts.poppins(
                                   fontSize: ResponsiveHelper.fontSize(14),
                                   fontWeight: FontWeight.w600,
@@ -262,11 +265,11 @@ class DisabledLocationPicker extends StatelessWidget {
   const DisabledLocationPicker({super.key, required this.controller});
 
   static final _options = [
-    _DLocOption(DisabledLocation.all, 'ALL', AssetsPath.all),
-    _DLocOption(DisabledLocation.back, 'BACK', AssetsPath.back),
-    _DLocOption(DisabledLocation.right, 'RIGHT', AssetsPath.left),
-    _DLocOption(DisabledLocation.left, 'LEFT', AssetsPath.right),
-    _DLocOption(DisabledLocation.none, 'NONE', AssetsPath.all),
+    _DLocOption(DisabledLocation.all, 'map_all', AssetsPath.all),
+    _DLocOption(DisabledLocation.back, 'map_back', AssetsPath.back),
+    _DLocOption(DisabledLocation.right, 'map_right', AssetsPath.left),
+    _DLocOption(DisabledLocation.left, 'map_left', AssetsPath.right),
+    _DLocOption(DisabledLocation.none, 'map_none', AssetsPath.all),
   ];
 
   @override
@@ -305,7 +308,7 @@ class DisabledLocationPicker extends StatelessWidget {
                   ),
                   SizedBox(width: ResponsiveHelper.spacing(4)),
                   Text(
-                    opt.label,
+                    opt.label.tr,
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(12),
                       fontWeight: FontWeight.w600,

@@ -137,15 +137,18 @@ class _MapScreenState extends State<MapScreen> {
             showCustomSnackBar(
               _parkingCtrl.submitMessage.value.isNotEmpty
                   ? _parkingCtrl.submitMessage.value
-                  : 'Parking report submitted!',
+                  : 'map_parking_report_submitted'.tr,
               isError: false,
             );
-            await _parkingCtrl.fetchParkingReport();
+            await _parkingCtrl.fetchParkingReport(
+              latitude: _gpsPosition?.latitude,
+              longitude: _gpsPosition?.longitude,
+            );
           } else {
             showCustomSnackBar(
               _parkingCtrl.submitMessage.value.isNotEmpty
                   ? _parkingCtrl.submitMessage.value
-                  : 'Failed to submit parking report',
+                  : 'map_failed_to_submit_parking_report'.tr,
               isError: true,
             );
           }
@@ -163,7 +166,7 @@ class _MapScreenState extends State<MapScreen> {
           position: _mapCenter,
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
           infoWindow: InfoWindow(
-            title: 'parking_pin'.tr.isNotEmpty ? 'parking_pin'.tr : 'Parking Pin',
+            title: 'map_parking_pin'.tr,
           ),
         ),
       );

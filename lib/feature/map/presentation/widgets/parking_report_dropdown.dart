@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:platchatapp/feature/map/controller/map_controller.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 
@@ -32,10 +33,10 @@ class ParkingReportDropdown extends StatelessWidget {
             children: [
               const Icon(Icons.info_outline, color: Colors.white, size: 18),
               const SizedBox(width: 6),
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Selected Report',
-                  style: TextStyle(
+                  'map_selected_report'.tr,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
                   ),
@@ -48,9 +49,9 @@ class ParkingReportDropdown extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          _row('parking_cost', controller.parkingCostText(report)),
-          _row('electric_charging', controller.boolFlag(report['electric_charging'])),
-          _row('disabled_facility', controller.boolFlag(report['disabled_facility'])),
+          _row('map_parking_cost', controller.parkingCostText(report)),
+          _row('map_electric_charging', controller.boolFlag(report['electric_charging'])),
+          _row('map_disabled_facility', controller.boolFlag(report['disabled_facility'])),
         ],
       ),
     );
@@ -63,7 +64,7 @@ class ParkingReportDropdown extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              key,
+              key.tr,
               style: const TextStyle(color: Colors.white70, fontSize: 12),
             ),
           ),

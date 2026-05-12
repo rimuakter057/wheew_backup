@@ -232,6 +232,30 @@ final Map<String, String> english = {
   'useful_number': 'Useful Number',
 
   "drop_parking_pin":"Drop Parking Pin",
-  "remove_pin":"Remove Parking Pin"
+  "remove_pin":"Remove Parking Pin",
+  "map_getting_location": "Getting location...",
+  "map_loading_parking_spots": "Loading parking spots...",
+  "map_selected_report": "Selected Report",
+  "map_parking_details": "Parking Details",
+  "map_parking_cost": "Parking Cost",
+  "map_electric_charging": "Electric Charging",
+  "map_disabled_facility": "Disabled Facility",
+  "map_disabled_parking_location": "Disabled Parking Location",
+  "map_drop_pin": "Drop Pin",
+  "map_cancel": "Cancel",
+  "map_all": "ALL",
+  "map_back": "BACK",
+  "map_right": "RIGHT",
+  "map_left": "LEFT",
+  "map_none": "NONE",
+  "map_parking_report_submitted": "Parking report submitted!",
+  "map_failed_to_submit_parking_report": "Failed to submit parking report",
+  "map_parking_pin": "Parking Pin",
+  "map_paid_parking": "Paid Parking",
+  "map_free_parking": "Free Parking",
+  "map_failed_to_load_parking_data": "Failed to load parking data",
+  "map_cost": "Cost",
+  "map_ev": "EV",
+  "map_disabled": "Disabled"
 
 };
