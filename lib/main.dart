@@ -23,9 +23,9 @@ void main() async {
   await languageController.loadSavedLanguage();
 
   if (defaultTargetPlatform == TargetPlatform.android) {
-    // Android fix
     final GoogleMapsFlutterAndroid mapsAndroid = GoogleMapsFlutterAndroid();
-    mapsAndroid.useAndroidViewSurface = true;
+    // false → fewer SurfaceView/BLAST buffer-queue lines in logcat; true can be smoother on some GPUs.
+    mapsAndroid.useAndroidViewSurface = false;
   }
   // Controllers
   Get.put(AuthController());

@@ -25,13 +25,22 @@ class _MainNavScreenState extends State<MainNavScreen>
     with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
-    const ChatListScreen(),
-   // SearchListScreen(),
-    const ScanScreen(),
-    const MapScreen(),
-    ProfileNavScreen(),
-  ];
+  /// Only the visible tab is built. [IndexedStack] kept Scanner + Map (camera + SurfaceView)
+  /// mounted together and flooded logcat with `BufferQueueProducer` / `ImageReader` frames.
+  Widget _bodyForIndex(int index) {
+    switch (index) {
+      case 0:
+        return const ChatListScreen();
+      case 1:
+        return const ScanScreen();
+      case 2:
+        return const MapScreen();
+      case 3:
+        return ProfileNavScreen();
+      default:
+        return const SizedBox.shrink();
+    }
+  }
 
   void _onTap(int index) {
     HapticFeedback.lightImpact();
@@ -44,10 +53,8 @@ class _MainNavScreenState extends State<MainNavScreen>
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
+      body: _bodyForIndex(_currentIndex),
+
       bottomNavigationBar: _AppBottomNav(
         currentIndex: _currentIndex,
         onTap: _onTap,

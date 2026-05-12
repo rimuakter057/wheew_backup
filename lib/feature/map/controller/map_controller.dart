@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:platchatapp/core/service/api_client.dart';
-import 'package:platchatapp/core/service/api_url.dart';   // your ApiUrl path
+import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/feature/map/utils/map_debug.dart';
 
 /// Disabled facility location options
 enum DisabledLocation { all, top, back, right, left, none }
@@ -101,35 +102,38 @@ class ParkingReportController extends GetxController {
     try {
       isLoadingShowDetails.value = true;
       errorMessage.value = '';
+      mapDebug('parking API: GET ${ApiUrl.showDetails}');
 
       final response = await ApiClient.getData(
-        uri: ApiUrl.showDetails, // তোমার endpoint
+        uri: ApiUrl.showDetails,
       );
 
       if (response.statusCode == 200) {
         final dynamic decoded = jsonDecode(response.body);
 
-        // Response list অথবা single object — দুটোই handle করে
         List<dynamic> rawList = [];
         if (decoded is List) {
           rawList = decoded;
         } else if (decoded is Map<String, dynamic>) {
-          // যদি { data: [...] } wrapped হয়
-          rawList = decoded['data'] ?? [decoded];
+          rawList = decoded['reports'] ?? [decoded];
         }
 
         parkingList.value =
             rawList.map((e) => Map<String, dynamic>.from(e)).toList();
 
+        mapDebug('parking API: loaded ${parkingList.length} row(s)');
         _buildMarkers();
       } else {
         errorMessage.value =
-        'Failed to load parking data (${response.statusCode})';
+            'Failed to load parking data (${response.statusCode})';
+        mapDebug('parking API: HTTP ${response.statusCode}');
       }
     } catch (e) {
       errorMessage.value = 'Error: $e';
+      mapDebug('parking API: exception $e');
     } finally {
       isLoadingShowDetails.value = false;
+      mapDebug('parking API: fetch finished');
     }
   }
 
@@ -176,14 +180,7 @@ class ParkingReportController extends GetxController {
     }
 
     markers.value = newMarkers;
-
-    // প্রথম marker-এ camera move করো
-    if (newMarkers.isNotEmpty) {
-      final first = newMarkers.first.position;
-      mapController.value?.animateCamera(
-        CameraUpdate.newLatLngZoom(first, 13),
-      );
-    }
+    mapDebug('markers: built ${newMarkers.length} from parking list');
   }
 
   // ─── Marker Tap ──────────────────────────────────────────
@@ -202,11 +199,6 @@ class ParkingReportController extends GetxController {
   // ─── Map Ready Callback ──────────────────────────────────
   void onMapCreated(GoogleMapController controller) {
     mapController.value = controller;
-    // Markers আগে load হয়ে থাকলে camera move করো
-    if (markers.isNotEmpty) {
-      final first = markers.first.position;
-      controller.animateCamera(CameraUpdate.newLatLngZoom(first, 13));
-    }
   }
 
   // ─── Helper ──────────────────────────────────────────────
