@@ -15,7 +15,7 @@ import 'package:platchatapp/feature/main/presentation/main_nav-screen.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_nav_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/show_profile_screen.dart';
-import 'package:platchatapp/feature/profile/view/screens/useful_member_screen.dart';
+import 'package:platchatapp/feature/useful_number/presentation/screens/useful_member_screen.dart';
 import 'package:platchatapp/feature/scan/presentation/screens/scan_screen.dart';
 import 'package:platchatapp/feature/terms_condition/terms_and_condition_screen.dart';
 import 'package:platchatapp/feature/auth/view/otp_screen.dart';

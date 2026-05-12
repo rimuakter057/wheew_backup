@@ -55,6 +55,8 @@ class ApiUrl {
   static const String reset = "/users/reset-password";
   static const String deleteAccount = "/users";
   static const String help = "/users/help-support";
+  static const String createPin = "/parking-report";
+  static const String parkingReport = '/parking-report';
 
   static const String profile = '/auth/me'; // ✅ same as chatList
 
@@ -66,6 +68,8 @@ class ApiUrl {
   static const String sendRate = '/ratings';
   static const String getQRCode = '/users/generate-code';
   static const String scanQr = '/users/scan-qr-code';
+  static const String showDetails = "/parking-report";
+  static  String usefulNumber({required double latitude,required double longitude,required int page,required int limit}) => '/useful-number/nearby?latitude=$latitude&longitude=$longitude&page=$page&limit=$limit';
 
   static const String presetMessage = '/preset-message';
   static const String createGroup = '/group/room';
@@ -79,7 +83,6 @@ class ApiUrl {
     int limit = 20,
   }) => '/group/room/$roomId/messages?page=$page&limit=$limit';
 
-  static  String usefulNumber({required int latitude,required int longitude }) => '/useful-number/nearby?latitude=$latitude&longitude=$longitude';
 
 
 }
