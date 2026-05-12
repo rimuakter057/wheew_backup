@@ -11,6 +11,13 @@ import 'package:platchatapp/utils/string/AppTranslations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'core/binding/app_binding.dart';
+import 'firebase_options.dart';
+
+///android key one signal
+
+
+
+//2b118f3e-5d8f-436d-b63d-92273ec51793
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
