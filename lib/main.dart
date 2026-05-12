@@ -2,42 +2,32 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
+import 'package:platchatapp/core/router/routes.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
-import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
-import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
+import 'package:platchatapp/core/theme/light_theme.dart';
+import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/language/language_controller.dart';
 import 'package:platchatapp/utils/string/AppTranslations.dart';
-import 'core/router/routes.dart';
-import 'core/theme/light_theme.dart';
-import 'feature/chat/repository/chat_controller.dart';
-import 'feature/scan/controller/scan_controller.dart';
-import 'feature/useful_number/controller/useful_number_controller.dart';
-import 'helper/responsive_helper/responsive_helper.dart';
-import 'language/language_controller.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'core/binding/app_binding.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 🔥 Language controller MUST be awaited
   final languageController = Get.put(LanguageController());
   await languageController.loadSavedLanguage();
 
   if (defaultTargetPlatform == TargetPlatform.android) {
     final GoogleMapsFlutterAndroid mapsAndroid = GoogleMapsFlutterAndroid();
-    // false → fewer SurfaceView/BLAST buffer-queue lines in logcat; true can be smoother on some GPUs.
     mapsAndroid.useAndroidViewSurface = false;
   }
-  // Controllers
-  Get.put(AuthController());
-  Get.put(ChatController());
-  Get.put(ProfileController());
-  Get.put(ScanController());
-  Get.put(UsefulNumberController());
 
-  // Translations
+  // ✅ Controllers এখন AppBindings এ — এখানে আর লাগবে না
+  AppBindings().dependencies();
+
   Get.addTranslations(AppTranslations().keys);
 
-  // Socket init
   await AppSocket.init(
     onSocketConnect: () {
       debugPrint(
@@ -57,19 +47,13 @@ class App extends StatelessWidget {
     final languageController = Get.find<LanguageController>();
     ResponsiveHelper.init(context);
     return Obx(
-      () => MaterialApp.router(
+          () => MaterialApp.router(
         debugShowCheckedModeBanner: false,
         title: 'My App',
-
-        // ✅ LIGHT THEME IS STILL HERE
         theme: lightTheme,
-
         routerConfig: AppRouter.router,
-
         locale: languageController.currentLocale.value,
-
         supportedLocales: const [Locale('it', 'IT'), Locale('en', 'US')],
-
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
