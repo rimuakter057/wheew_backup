@@ -2,13 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:platchatapp/feature/chat/view/message_screen.dart';
+import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/scan/controller/scan_controller.dart';
 import 'package:platchatapp/feature/scan/presentation/widget/profile_card.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/app_const/app_const.dart';
+import 'package:platchatapp/utils/toast_message/toast_message.dart';
 
 class ScanScreen extends StatefulWidget {
   const ScanScreen({super.key});
@@ -19,7 +22,7 @@ class ScanScreen extends StatefulWidget {
 
 class _ScanScreenState extends State<ScanScreen>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  final ScanController scanController =Get.find <ScanController>();
+  final ScanController scanController = Get.find<ScanController>();
   int _tabIndex = 0;
   bool _scanned = false;
   bool _isLoading = false;
@@ -94,11 +97,19 @@ class _ScanScreenState extends State<ScanScreen>
     });
     _scannerController.stop();
 
-    await scanController.scanQrCode(
+    final result = await scanController.scanQrCode(
       qrData: code,
-      context: context,
-      onResult: (data) => _showScannedUserSheet(data),
     );
+    if (!mounted) return;
+
+    if (result.isSuccess && result.data != null) {
+      await _showScannedUserSheet(result.data!);
+    } else {
+      showCustomSnackBar(
+        result.errorMessage ?? 'Failed to scan QR',
+        isError: true,
+      );
+    }
 
     setState(() => _isLoading = false);
   }
@@ -422,10 +433,17 @@ class _ScanScreenState extends State<ScanScreen>
 
 
 
-  void _showScannedUserSheet(Map<String, dynamic> data) async {
+  Future<void> _showScannedUserSheet(Map<String, dynamic> data) async {
     final user = data['user'] as Map<String, dynamic>;
-    final bool isExistingChat = data['isExistingChat'] ?? false;
-    final String roomId = data['roomId'] ?? '';
+    final bool isExistingChat =
+        data['isExistingChat'] == true ||
+        data['hasChat'] == true ||
+        (data['roomId']?.toString().isNotEmpty ?? false) ||
+        (data['existingRoomId']?.toString().isNotEmpty ?? false);
+    final String roomId =
+        data['roomId']?.toString() ??
+        data['existingRoomId']?.toString() ??
+        '';
 
     final String userId = user['id'] ?? '';
     final String nickName = user['nick_name'] ?? '';
@@ -523,12 +541,19 @@ class _ScanScreenState extends State<ScanScreen>
                 color: const Color(0xFF3D72E8),
                 onTap: () {
                   Navigator.pop(context);
-                  Get.to(() => MessageScreen(
-                    roomId: roomId,
-                    otherUserName: nickName,
-                    otherUserAvatar: avatar,
-                    receiverId: userId,
-                  ));
+                  context.pushNamed(
+                    RouteName.message,
+                    extra: {
+                      'roomId': roomId,
+                      'otherUserName': nickName,
+                      'otherUserAvatar': avatar.isNotEmpty
+                          ? avatar
+                          : AppConst.unknown,
+                      'receiverId': userId,
+                      'isBlockedByMe': false,
+                      'isBlockedMe': false,
+                    },
+                  );
                 },
               ),
             ] else ...[
@@ -539,12 +564,19 @@ class _ScanScreenState extends State<ScanScreen>
                 color: const Color(0xFF3D72E8),
                 onTap: () {
                   Navigator.pop(context);
-                  Get.to(() => MessageScreen(
-                    roomId: '',
-                    otherUserName: nickName,
-                    otherUserAvatar: avatar,
-                    receiverId: userId,
-                  ));
+                  context.pushNamed(
+                    RouteName.message,
+                    extra: {
+                      'roomId': '',
+                      'otherUserName': nickName,
+                      'otherUserAvatar': avatar.isNotEmpty
+                          ? avatar
+                          : AppConst.unknown,
+                      'receiverId': userId,
+                      'isBlockedByMe': false,
+                      'isBlockedMe': false,
+                    },
+                  );
                 },
               ),
             ],

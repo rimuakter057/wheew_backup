@@ -4,15 +4,26 @@ import 'package:get/get.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 
+class ScanQrResult {
+  final bool isSuccess;
+  final Map<String, dynamic>? data;
+  final String? errorMessage;
+
+  const ScanQrResult({
+    required this.isSuccess,
+    this.data,
+    this.errorMessage,
+  });
+}
 
 class ScanController extends GetxController {
 
   RxBool isScanning = false.obs;
 
-  Future<void> scanQrCode({
+  Future<ScanQrResult> scanQrCode({
     required String qrData,
-    required BuildContext context,
-    required Function(Map<String, dynamic>) onResult,
+    BuildContext? context,
+    Function(Map<String, dynamic>)? onResult,
   }) async {
     try {
       isScanning.value = true;
@@ -29,23 +40,31 @@ class ScanController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        onResult(data); // ✅ screen এ pass করো
+        final mapped = Map<String, dynamic>.from(data);
+        onResult?.call(mapped);
+        return ScanQrResult(
+          isSuccess: true,
+          data: mapped,
+        );
       } else {
-        // Get.snackbar(
-        //   'Error', 'Invalid QR Code',
-        //   backgroundColor: Colors.red,
-        //   colorText: Colors.white,
-        //   snackPosition: SnackPosition.TOP,
-        // );
+        String message = 'Invalid QR Code';
+        try {
+          final decoded = jsonDecode(response.body);
+          if (decoded is Map && decoded['message'] != null) {
+            message = decoded['message'].toString();
+          }
+        } catch (_) {}
+        return ScanQrResult(
+          isSuccess: false,
+          errorMessage: message,
+        );
       }
     } catch (e) {
       print('💥 [SCAN] Error: $e');
-      // Get.snackbar(
-      //   'Error', e.toString(),
-      //   backgroundColor: Colors.red,
-      //   colorText: Colors.white,
-      //   snackPosition: SnackPosition.TOP,
-      // );
+      return ScanQrResult(
+        isSuccess: false,
+        errorMessage: e.toString(),
+      );
     } finally {
       isScanning.value = false;
     }

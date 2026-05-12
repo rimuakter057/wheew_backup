@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:platchatapp/feature/chat/view/serach_screen.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_nav_screen.dart';
-import 'package:platchatapp/feature/profile/view/screens/profile_screen.dart';
 import 'package:platchatapp/feature/scan/presentation/screens/scan_screen.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
@@ -21,8 +19,7 @@ class MainNavScreen extends StatefulWidget {
   State<MainNavScreen> createState() => _MainNavScreenState();
 }
 
-class _MainNavScreenState extends State<MainNavScreen>
-    with SingleTickerProviderStateMixin {
+class _MainNavScreenState extends State<MainNavScreen> {
   int _currentIndex = 0;
 
   /// Only the visible tab is built. [IndexedStack] kept Scanner + Map (camera + SurfaceView)

@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/map/controller/map_controller.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/drop_pin_button.dart';
-import 'package:platchatapp/feature/map/presentation/widgets/map_fab.dart';
+import 'package:platchatapp/feature/map/presentation/widgets/map_initial_shimmer.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_loading_banners.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/parking_info_dialog.dart';
+import 'package:platchatapp/feature/map/presentation/widgets/parking_report_dropdown.dart';
 import 'package:platchatapp/feature/map/utils/map_debug.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
-import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/toast_message/toast_message.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -26,12 +25,8 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   GoogleMapController? _mapController;
 
-  /// Last camera target (map center). Updated from GPS once, then from `onCameraIdle` only (no per-frame rebuild).
   LatLng _mapCenter = MapScreen.kInitialMapTarget;
-
-  /// Device GPS from Geolocator — used for blue dot alignment & “my location” FAB.
   LatLng? _gpsPosition;
-
   bool _isLocating = true;
 
   final Set<Marker> _markers = {};
@@ -41,16 +36,26 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-    _parkingCtrl = Get.put(ParkingReportController());
-    mapDebug('screen init → fetch parking + resolve GPS');
-    _getUserLocation();
-    _parkingCtrl.fetchParkingReport();
+    _parkingCtrl = Get.isRegistered<ParkingReportController>()
+        ? Get.find<ParkingReportController>()
+        : Get.put(ParkingReportController());
+    mapDebug('screen init → resolve GPS and fetch parking');
+    _initializeMap();
   }
 
   @override
   void dispose() {
     _mapController?.dispose();
     super.dispose();
+  }
+
+  Future<void> _initializeMap() async {
+    await _getUserLocation();
+    final location = _gpsPosition;
+    await _parkingCtrl.fetchParkingReport(
+      latitude: location?.latitude,
+      longitude: location?.longitude,
+    );
   }
 
   Future<void> _getUserLocation() async {
@@ -81,8 +86,8 @@ class _MapScreenState extends State<MapScreen> {
       final latLng = LatLng(position.latitude, position.longitude);
       mapDebug(
         'location: GPS ok lat=${position.latitude.toStringAsFixed(6)} '
-        'lng=${position.longitude.toStringAsFixed(6)} '
-        'accuracy=${position.accuracy.toStringAsFixed(1)}m',
+            'lng=${position.longitude.toStringAsFixed(6)} '
+            'accuracy=${position.accuracy.toStringAsFixed(1)}m',
       );
 
       setState(() {
@@ -106,7 +111,8 @@ class _MapScreenState extends State<MapScreen> {
     HapticFeedback.mediumImpact();
     mapDebug(
       'parking dialog open (submit will use map center '
-      'lat=${_mapCenter.latitude.toStringAsFixed(6)} lng=${_mapCenter.longitude.toStringAsFixed(6)})',
+          'lat=${_mapCenter.latitude.toStringAsFixed(6)} '
+          'lng=${_mapCenter.longitude.toStringAsFixed(6)})',
     );
     _showParkingDialog();
   }
@@ -125,7 +131,24 @@ class _MapScreenState extends State<MapScreen> {
             latitude: _mapCenter.latitude,
             longitude: _mapCenter.longitude,
           );
-          if (success) _dropPinOnMap();
+          if (!mounted) return;
+          if (success) {
+            _dropPinOnMap();
+            showCustomSnackBar(
+              _parkingCtrl.submitMessage.value.isNotEmpty
+                  ? _parkingCtrl.submitMessage.value
+                  : 'Parking report submitted!',
+              isError: false,
+            );
+            await _parkingCtrl.fetchParkingReport();
+          } else {
+            showCustomSnackBar(
+              _parkingCtrl.submitMessage.value.isNotEmpty
+                  ? _parkingCtrl.submitMessage.value
+                  : 'Failed to submit parking report',
+              isError: true,
+            );
+          }
         },
         onCancel: () => Navigator.of(context).pop(),
       ),
@@ -153,90 +176,91 @@ class _MapScreenState extends State<MapScreen> {
     _parkingCtrl.mapController.value = controller;
     mapDebug('GoogleMap created');
 
-    if (!_isLocating && _gpsPosition != null) {
+    if (_gpsPosition != null) {
       controller.animateCamera(
         CameraUpdate.newLatLngZoom(_gpsPosition!, 15),
       );
-      mapDebug('onMapCreated: camera synced to existing GPS');
-    } else if (!_isLocating) {
-      controller.animateCamera(
-        CameraUpdate.newLatLngZoom(_mapCenter, 15),
-      );
+      mapDebug('onMapCreated: camera synced to GPS');
     }
-  }
-
-  void _recenterOnUser() {
-    final target = _gpsPosition ?? _mapCenter;
-    mapDebug(
-      'FAB my location → ${ _gpsPosition != null ? "GPS" : "last map center" } '
-      'lat=${target.latitude.toStringAsFixed(6)} lng=${target.longitude.toStringAsFixed(6)}',
-    );
-    _mapController?.animateCamera(
-      CameraUpdate.newLatLngZoom(target, 15),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          Obx(
-            () => GoogleMap(
-              key: const ValueKey<Object>('platechat_google_map'),
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: CameraPosition(
-                target: MapScreen.kInitialMapTarget,
-                zoom: 14,
-              ),
-              markers: {
-                ..._markers,
-                ..._parkingCtrl.markers.toSet(),
-              },
-              myLocationEnabled: true,
-              myLocationButtonEnabled: false,
-              zoomControlsEnabled: false,
-              mapToolbarEnabled: false,
-              compassEnabled: false,
-              onCameraMove: (pos) {
-                _mapCenter = pos.target;
-              },
+    return WillPopScope(
+      onWillPop: () async {
+        _parkingCtrl.clearSelectedReport();
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Stack(
+          children: [
+
+            // ── Map সবসময় visible — parking থাক বা না থাক ──────────────
+            // ── Map / Shimmer ──────────────────────────────────────────────
+            if (_isLocating && _gpsPosition == null)
+              const MapInitialShimmer()
+            else
+              Obx(() {
+                final markers = {
+                  ..._markers,
+                  ..._parkingCtrl.markers,  // observable always read, no early return
+                };
+                return GoogleMap(
+                  key: const ValueKey<Object>('platechat_google_map'),
+                  onMapCreated: _onMapCreated,
+                  initialCameraPosition: CameraPosition(
+                    target: MapScreen.kInitialMapTarget,
+                    zoom: 14,
+                  ),
+                  markers: markers,
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: false,
+                  zoomControlsEnabled: false,
+                  mapToolbarEnabled: false,
+                  compassEnabled: false,
+                  rotateGesturesEnabled: false,
+                  tiltGesturesEnabled: false,
+                  onTap: (_) => _parkingCtrl.clearSelectedReport(),
+                );
+              }),
+
+            // ── GPS locating banner (plain bool, Obx নেই) ────────────────
+            if (_isLocating) const LocatingBanner(),
+
+            // ── Parking API fetching indicator ────────────────────────────
+            Obx(
+                  () => _parkingCtrl.isLoadingShowDetails.value
+                  ? const FetchingParkingBanner()
+                  : const SizedBox.shrink(),
             ),
-          ),
-          if (_isLocating) const LocatingBanner(),
-          Obx(
-            () => _parkingCtrl.isLoadingShowDetails.value
-                ? const FetchingParkingBanner()
-                : const SizedBox.shrink(),
-          ),
-          Positioned(
-            right: ResponsiveHelper.padding(16),
-            bottom: ResponsiveHelper.padding(168),
-            child: MapFab(
-              icon: Icons.warning_amber_rounded,
-              color: AppColors.red,
-              iconColor: AppColors.white,
-              onTap: () => context.pushNamed(RouteName.usefulMemberScreen),
+
+            // ── Selected parking marker info card ─────────────────────────
+            Obx(() {
+              final selected = _parkingCtrl.selectedReport.value;
+              if (selected == null) return const SizedBox.shrink();
+              return Positioned(
+                left: 0,
+                right: 0,
+                top: MediaQuery.of(context).padding.top +
+                    ResponsiveHelper.padding(92),
+                child: ParkingReportDropdown(
+                  controller: _parkingCtrl,
+                  report: selected,
+                  onClose: _parkingCtrl.clearSelectedReport,
+                ),
+              );
+            }),
+
+            // ── Drop pin FAB ──────────────────────────────────────────────
+            Positioned(
+              left: ResponsiveHelper.padding(24),
+              right: ResponsiveHelper.padding(24),
+              bottom: ResponsiveHelper.padding(32),
+              child: DropPinButton(onTap: _toggleParkingPin),
             ),
-          ),
-          Positioned(
-            right: ResponsiveHelper.padding(16),
-            bottom: ResponsiveHelper.padding(104),
-            child: MapFab(
-              icon: Icons.my_location_rounded,
-              color: Colors.white,
-              iconColor: const Color(0xFF3D72E8),
-              onTap: _recenterOnUser,
-            ),
-          ),
-          Positioned(
-            left: ResponsiveHelper.padding(24),
-            right: ResponsiveHelper.padding(24),
-            bottom: ResponsiveHelper.padding(32),
-            child: DropPinButton(onTap: _toggleParkingPin),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
