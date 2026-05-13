@@ -1,5 +1,5 @@
 // ignore_for_file: dead_code, unnecessary_null_comparison
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -53,14 +53,26 @@ class AuthController extends GetxController {
     required String identifier,
     required String password,
     bool rememberMe = false,
-  }) async
-  {
+  }) async {
     _setLoading(true);
+
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+    debugPrint('🔥 FCM Token: $fcmToken'); // ✅ এখানে দেখবেন token আসছে কিনা
+
+    if (fcmToken == null) {
+
+      _setLoading(false);
+      return false;
+    }
+
+
 
     final http.Response loginRes = await _repo.login(
       identifier: identifier,
       password: password,
+      fcmToken: fcmToken,
     );
+
 
     _setLoading(false);
 
@@ -73,30 +85,26 @@ class AuthController extends GetxController {
       final data = jsonDecode(loginRes.body);
 
       await SharePrefsHelper.setString(AppConst.token, data['token'] ?? '');
-
-      await SharePrefsHelper.setString(
-        AppConst.userID,
-        data['id']?.toString() ?? '',
-      );
-      await SharePrefsHelper.setString(
-        AppConst.licenceId,
-        data['licence_id'] ?? '',
-      );
-      await SharePrefsHelper.setString(
-        AppConst.nickName,
-        data['nick_name'] ?? '',
-      );
+      await SharePrefsHelper.setString(AppConst.userID, data['id']?.toString() ?? '');
+      await SharePrefsHelper.setString(AppConst.licenceId, data['licence_id'] ?? '');
+      await SharePrefsHelper.setString(AppConst.nickName, data['nick_name'] ?? '');
       await SharePrefsHelper.setBool(AppConst.isLoggedIn, true);
       await _saveUserData(data);
-///navigate screen
+
+      debugPrint('✅ Login successful - navigating to mainNavScreen');
+
       await AppSocket.init(
         onSocketConnect: () {
-          context.goNamed(RouteName.mainNavScreen);
+          debugPrint('🔌 Socket connected - going to mainNavScreen');
+          if (context.mounted) {
+            context.goNamed(RouteName.mainNavScreen);
+          }
         },
       );
 
       return true;
     } else {
+      debugPrint('❌ Login failed: ${loginRes.statusCode} - ${loginRes.body}');
       ApiChecker.checkApi(loginRes);
       return false;
     }
@@ -115,6 +123,12 @@ class AuthController extends GetxController {
   }) async {
     _setLoading(true);
 
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+    if (fcmToken == null) {
+      _setLoading(false);
+      return false;
+    }
+
     final http.Response registerRes = await _repo.register(
       licenceId: licenceId,
       nickName: nickName,
@@ -128,6 +142,7 @@ class AuthController extends GetxController {
       final http.Response loginRes = await _repo.login(
         identifier: licenceId,
         password: password,
+        fcmToken: fcmToken,
       );
 
       _setLoading(false);

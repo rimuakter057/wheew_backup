@@ -9,67 +9,130 @@ import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/feature/chat/model/block_model.dart';
 import 'package:platchatapp/feature/chat/model/chat_model.dart';
 import 'package:platchatapp/feature/chat/model/group_message_response_model.dart';
+import 'package:platchatapp/feature/chat/model/rating_response_model.dart';
 import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
 import '../../../core/service/socket_service.dart';
 import 'chat_repository.dart';
 
 class ChatController extends GetxController {
-  ///user rating===============
+  /// User rating (GET /ratings/my-rating/:rateeId, POST /ratings, PATCH same path)
 
   RxBool isSubmittingRating = false.obs;
+  RxBool isLoadingMyRating = false.obs;
+  final Rxn<ChatRatingResponse> myRatingForRatee = Rxn<ChatRatingResponse>();
+  String? _lastRatingFetchRateeId;
 
+  /// Load my rating for this chat partner (if any).
+  Future<void> fetchMyRating(String rateeId) async {
+    if (rateeId.isEmpty) return;
+    _lastRatingFetchRateeId = rateeId;
+    isLoadingMyRating.value = true;
+    myRatingForRatee.value = null;
+    try {
+      final uri = ApiUrl.myRatingForRatee(rateeId: rateeId);
+      final response = await ApiClient.getData(uri: uri);
+
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        final decoded = jsonDecode(response.body);
+        final map = _unwrapRatingMap(decoded);
+        if (map != null) {
+          myRatingForRatee.value = ChatRatingResponse.fromJson(map);
+        }
+      }
+    } catch (e) {
+      debugPrint('⭐ [RATING] fetchMyRating error: $e');
+    } finally {
+      isLoadingMyRating.value = false;
+    }
+  }
+
+  Map<String, dynamic>? _unwrapRatingMap(dynamic decoded) {
+    if (decoded is Map) {
+      final m = Map<String, dynamic>.from(decoded);
+      if (m['rating'] != null || m['ratee_id'] != null || m['id'] != null) {
+        return m;
+      }
+      final data = m['data'];
+      if (data is Map) return Map<String, dynamic>.from(data);
+    }
+    return null;
+  }
+
+  bool _hasExistingRatingFor(String rateeId) {
+    final r = myRatingForRatee.value;
+    if (r == null || r.id.isEmpty) return false;
+    return r.rateeId == rateeId;
+  }
+
+  /// Create (POST) or update (PATCH) rating. PATCH body is only `{ "rating": n }`.
   Future<void> submitRating({
     required String rateeId,
     required double rating,
     required BuildContext context,
   }) async {
+    final stars = rating.round().clamp(1, 5);
     try {
       isSubmittingRating.value = true;
 
-      final body = {
-        "ratee_id": rateeId,
-        "rating": rating.toInt(), // 1-5
-      };
+      final bool update = _lastRatingFetchRateeId == rateeId &&
+          _hasExistingRatingFor(rateeId);
 
-      print('⭐ [RATING] Submitting: $body');
-
-      final response = await ApiClient.postData(
-        uri:ApiUrl.sendRate,
-        body: body,
-      );
-
-      print('⭐ [RATING] Status: ${response.statusCode}');
-      print('⭐ [RATING] Body: ${response.body}');
+      late final Response response;
+      if (update) {
+        response = await ApiClient.patchData(
+          uri: ApiUrl.myRatingForRatee(rateeId: rateeId),
+          body: {'rating': stars},
+        );
+      } else {
+        response = await ApiClient.postData(
+          uri: ApiUrl.sendRate,
+          body: {
+            'ratee_id': rateeId,
+            'rating': stars,
+          },
+        );
+      }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Navigator.pop(context); // dialog বন্ধ
-        // Get.snackbar(
-        //   'Success',
-        //   'Rating submitted!',
-        //   backgroundColor: Colors.green,
-        //   colorText: Colors.white,
-        //   snackPosition: SnackPosition.TOP,
-        // );
-        debugPrint('Rating submitted!',);
-
+        if (response.body.isNotEmpty) {
+          try {
+            final map = _unwrapRatingMap(jsonDecode(response.body));
+            if (map != null) {
+              myRatingForRatee.value = ChatRatingResponse.fromJson(map);
+            }
+          } catch (_) {}
+        }
+        if (context.mounted) Navigator.pop(context);
+        Get.snackbar(
+          'Success',
+          update ? 'rating_updated'.tr : 'rating_submitted'.tr,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade700,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 2),
+        );
       } else {
-        debugPrint('Rating failed!',);
-        // Get.snackbar(
-        //   'Error',
-        //   'Failed to submit rating',
-        //   backgroundColor: Colors.red,
-        //   colorText: Colors.white,
-        //   snackPosition: SnackPosition.TOP,
-        // );
+        String msg = 'rating_failed'.tr;
+        try {
+          final m = jsonDecode(response.body);
+          if (m is Map && m['message'] != null) msg = '${m['message']}';
+        } catch (_) {}
+        Get.snackbar(
+          'Error',
+          msg,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red.shade700,
+          colorText: Colors.white,
+        );
       }
     } catch (e) {
-      print('💥 [RATING] Error: $e');
+      debugPrint('💥 [RATING] Error: $e');
       Get.snackbar(
         'Error',
         e.toString(),
-        backgroundColor: Colors.red,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade700,
         colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
       );
     } finally {
       isSubmittingRating.value = false;

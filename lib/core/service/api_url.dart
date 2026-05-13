@@ -36,6 +36,9 @@ class ApiUrl {
   static const String blockList = '/users/block-list';
   static const String unblock = '/users/unblock';
   static const String block = '/users/block';
+  static const String uploadDocument = '/user-documents';
+  static const String getDocument = '/user-documents';
+  static  String updateDocument({required String documentId}) => '/user-documents/$documentId';
 
   ///terms and privacy==========================
 
@@ -65,7 +68,18 @@ class ApiUrl {
 
 
   static const String sendPreset = '/preset-message';
+  /// POST create rating (body: ratee_id + rating).
   static const String sendRate = '/ratings';
+  /// GET existing / PATCH update — path param is the other user's id (ratee).
+  static String myRatingForRatee({required String rateeId}) =>
+      '/ratings/my-rating/$rateeId';
+
+  @Deprecated('Use myRatingForRatee')
+  static String getRating({required String id}) => myRatingForRatee(rateeId: id);
+
+  @Deprecated('Use myRatingForRatee')
+  static String updatedRating({required String id}) =>
+      myRatingForRatee(rateeId: id);
   static const String getQRCode = '/users/generate-code';
   static const String scanQr = '/users/scan-qr-code';
   static const String showDetails = "/parking-report";
@@ -73,8 +87,6 @@ class ApiUrl {
 
   static const String presetMessage = '/preset-message';
   static const String createGroup = '/group/room';
-  static  String deleteRating({required int id}) => '/ratings/$id';
-//  static  String getGroupMessage({required int roomId}) => '/group/room/$roomId/messages';
 
   // ✅ page, limit support সহ
   static String getGroupMessage({
@@ -82,7 +94,5 @@ class ApiUrl {
     int page = 1,
     int limit = 20,
   }) => '/group/room/$roomId/messages?page=$page&limit=$limit';
-
-
 
 }

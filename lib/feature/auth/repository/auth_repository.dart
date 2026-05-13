@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import '../../../core/service/api_client.dart';
 import '../../../core/service/api_url.dart';
@@ -27,10 +28,19 @@ class AuthRepository {
   Future<http.Response> login({
     required String identifier,
     required String password,
+    required String fcmToken,
   }) async {
+    final body = {
+      "identifier": identifier,
+      "password": password,
+      "fcm_token": fcmToken,
+    };
+
+    debugPrint('📤 Login request body: $body'); // ✅ এখন body defined
+
     return await ApiClient.postData(
       uri: ApiUrl.login,
-      body: {"identifier": identifier, "password": password},
+      body: body,
     );
   }
 }

@@ -173,20 +173,27 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
 }
 
 Future<void> _launchEmail(String email) async {
-  final Uri emailUri = Uri(
-    scheme: 'mailto',
-    path: email,
-    queryParameters: {'subject': 'support_request'.tr},
-  );
+  final trimmed = email.trim();
+  if (trimmed.isEmpty) return;
+
+  final subject = Uri.encodeComponent('support_request'.tr);
+  final mailto = 'mailto:${Uri.encodeComponent(trimmed)}?subject=$subject';
+  final emailUri = Uri.parse(mailto);
 
   try {
-    await launchUrl(emailUri, mode: LaunchMode.externalApplication);
-  } catch (e) {
-    // Fallback: copy to clipboard
-    await Clipboard.setData(ClipboardData(text: email));
+    if (await canLaunchUrl(emailUri)) {
+      final ok = await launchUrl(
+        emailUri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (ok) return;
+    }
+    throw StateError('launch_failed');
+  } catch (_) {
+    await Clipboard.setData(ClipboardData(text: trimmed));
     Get.snackbar(
       'email_copied'.tr,
-      '${'email_copied'.tr} $email',
+      '${'email_copied'.tr}: $trimmed',
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: AppColors.blueClient.withOpacity(0.9),
       colorText: Colors.white,

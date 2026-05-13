@@ -109,6 +109,12 @@ final Map<String, String> english = {
   'rating_excellent': 'Excellent',
   'add_comment': 'Add a comment (optional)...',
   'submit_rating': 'Submit Rating',
+  'update_rating': 'Update rating',
+  'tap_to_rate': 'Tap a star to rate',
+  'update_your_rating': 'Update your rating',
+  'rating_submitted': 'Rating submitted',
+  'rating_updated': 'Rating updated',
+  'rating_failed': 'Could not save rating',
 
   // ------------------Group Chat Dialog-------------------------
   'create_group_chat': 'Create Group Chat',
@@ -212,6 +218,13 @@ final Map<String, String> english = {
   'car_insurance': 'Car insurance',
   'car_tax': 'Car tax',
   'tap_to_upload': 'Tap to upload',
+  'view_document': 'View current file',
+  'update': 'Update',
+  'renew': 'Renew',
+  'expires': 'Expires',
+  'expired': 'Expired',
+  'days_left': 'days left',
+  'id': 'ID',
 
   // ------------------Scan Screen-------------------------
   'scan_qr': 'Scan QR',

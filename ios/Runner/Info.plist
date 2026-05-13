@@ -49,5 +49,12 @@
     <string>We need your location to show the map.</string>
     <key>NSLocationAlwaysUsageDescription</key>
     <string>We need your location to show the map.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>mailto</string>
+		<string>tel</string>
+		<string>sms</string>
+		<string>https</string>
+	</array>
 </dict>
 </plist>

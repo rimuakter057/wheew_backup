@@ -66,11 +66,11 @@ class AppRouter {
           return const SignUpScreen();
         },
       ),
-      GoRoute(
-        path: RoutePath.terms,
-        name: RouteName.terms,
-        builder: (_, _) => const TermsAndConditionsScreen(),
-      ),
+      // GoRoute(
+      //   path: RoutePath.terms,
+      //   name: RouteName.terms,
+      //   builder: (_, _) => const TermsAndConditionsScreen(),
+      // ),
 
       GoRoute(
         path: RoutePath.block,

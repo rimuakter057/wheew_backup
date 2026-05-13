@@ -172,7 +172,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
                   PopupMenuButton<String>(
                     icon: Icon(Icons.more_vert, color: AppColors.black),
-                    onSelected: (value) {
+                    onSelected: (value) async {
                       if (value == "Block") {
                         chatController.block(widget.receiverId, context);
                         chatController.isBlockedByMe.value = true;
@@ -180,10 +180,13 @@ class _MessageScreenState extends State<MessageScreen> {
                         chatController.unBlock(widget.receiverId, context);
                         chatController.isBlockedByMe.value = false;
                       } else if (value == "Rate") {
+                        await chatController.fetchMyRating(widget.receiverId);
+                        if (!context.mounted) return;
                         _showRatingDialog(
                           context: context,
                           image: widget.otherUserAvatar ?? AppConst.unknown,
-                          name: widget.otherUserName, receiverId: widget.receiverId,
+                          name: widget.otherUserName,
+                          receiverId: widget.receiverId,
                         );
                       } else if (value == "ViewProfile") {
                         showDialog(
@@ -716,11 +719,17 @@ void _showRatingDialog({
   required BuildContext context,
   required String image,
   required String name,
-  required String receiverId, // 👈 add this param
+  required String receiverId,
 }) {
-
   final ChatController chatController = Get.find<ChatController>();
-  double _rating = 0;
+  final int existing =
+      chatController.myRatingForRatee.value?.rating ?? 0;
+  double ratingValue = existing >= 1 && existing <= 5
+      ? existing.toDouble()
+      : 0;
+
+  final bool isUpdate =
+      (chatController.myRatingForRatee.value?.id.isNotEmpty == true);
 
   showDialog(
     context: context,
@@ -793,7 +802,7 @@ void _showRatingDialog({
               SizedBox(height: ResponsiveHelper.spacing(4)),
 
               Text(
-                'tap_to_rate'.tr, // "Tap a star to rate"
+                isUpdate ? 'update_your_rating'.tr : 'tap_to_rate'.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(12),
                   color: Colors.grey.shade400,
@@ -802,31 +811,20 @@ void _showRatingDialog({
 
               SizedBox(height: ResponsiveHelper.spacing(24)),
 
-              // ── Half Star Rating Row ──────────────────
+              // ── Star rating (1–5, integer) ─────────────
               SizedBox(
                 height: ResponsiveHelper.iconSize(50),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(5, (starIndex) {
-                    // each star = full (starIndex+1) or half (starIndex+0.5)
+                    final starValue = starIndex + 1;
                     return GestureDetector(
-                      onTapDown: (details) {
-                        // left half → 0.5, right half → full
-                        final box = context.findRenderObject() as RenderBox?;
-                        final starWidth = ResponsiveHelper.iconSize(44);
-                        final localX = details.localPosition.dx;
-                        final isHalf = localX < starWidth / 2;
-                        setState(() {
-                          _rating = isHalf
-                              ? starIndex + 0.5
-                              : starIndex + 1.0;
-                        });
-                      },
+                      onTap: () => setState(() => ratingValue = starValue.toDouble()),
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: ResponsiveHelper.spacing(2),
                         ),
-                        child: _buildStarIcon(starIndex, _rating),
+                        child: _buildStarIcon(starIndex, ratingValue),
                       ),
                     );
                   }),
@@ -839,11 +837,11 @@ void _showRatingDialog({
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 200),
                 child: Text(
-                  key: ValueKey(_rating),
-                  _ratingLabel(_rating),
+                  key: ValueKey(ratingValue),
+                  _ratingLabel(ratingValue),
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(14),
-                    color: _rating == 0
+                    color: ratingValue < 1
                         ? Colors.transparent
                         : Colors.amber.shade700,
                     fontWeight: FontWeight.w600,
@@ -853,18 +851,18 @@ void _showRatingDialog({
 
               SizedBox(height: ResponsiveHelper.spacing(28)),
 
-              // ── Submit Button ─────────────────────────
+              // ── Submit / Update Button ────────────────
               Obx(() => SizedBox(
                 width: double.infinity,
                 height: ResponsiveHelper.buttonHeight(48),
                 child: ElevatedButton(
-                  onPressed: (_rating == 0 ||
+                  onPressed: (ratingValue < 1 ||
                       chatController.isSubmittingRating.value)
                       ? null
                       : () {
                     chatController.submitRating(
                       rateeId: receiverId,
-                      rating: _rating,
+                      rating: ratingValue,
                       context: dialogContext,
                     );
                   },
@@ -888,7 +886,7 @@ void _showRatingDialog({
                     ),
                   )
                       : Text(
-                    'submit_rating'.tr,
+                    isUpdate ? 'update_rating'.tr : 'submit_rating'.tr,
                     style: GoogleFonts.poppins(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,

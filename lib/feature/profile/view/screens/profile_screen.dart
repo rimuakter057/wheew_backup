@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
+import 'package:platchatapp/feature/profile/repository/upload_controller.dart';
 import 'package:platchatapp/feature/profile/view/widgets/custom_upload_card.dart';
-import 'package:platchatapp/feature/profile/view/widgets/upload_widget.dart';
 import '../../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../../utils/color/app_colors.dart';
 import '../../repository/profile_controller.dart';
@@ -23,9 +23,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     controller = Get.put(ProfileController());
-    // ✅ Reload every time screen opens
+    if (!Get.isRegistered<UploadDocumentController>()) {
+      Get.put(UploadDocumentController());
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.reloadProfile();
+      Get.find<UploadDocumentController>().fetchDocuments();
     });
   }
 
@@ -80,7 +83,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     final avatar = controller.userProfile.value?.avatar;
                     return GestureDetector(
                       onTap: () {
-                        final image = controller.profileImage.value?.path ??
+                        final image =
+                            controller.profileImage.value?.path ??
                             controller.userProfile.value?.avatar;
 
                         if (image != null && image.isNotEmpty) {
@@ -167,30 +171,86 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
 
                 SizedBox(height: ResponsiveHelper.spacing(8)),
+                //
+                // Text(
+                //   'upload_documents'.tr,
+                //   textAlign: TextAlign.start,
+                //   style: GoogleFonts.poppins(
+                //     fontSize: ResponsiveHelper.fontSize(16),
+                //     fontWeight: FontWeight.w500,
+                //     color: AppColors.textBlack,
+                //   ),
+                // ),
+                //
+                // SizedBox(height: ResponsiveHelper.spacing(18)),
+                //
+                // CustomUploadCard(
+                //   title: 'drivers_license'.tr,
+                //   subtitle: 'tap_to_upload'.tr,
+                //   onUpload: () {
+                //     showUploadDocumentSheet(context,
+                //         documentType: "License"
+                //     );
+                //   },
+                // ),
+                // SizedBox(height: ResponsiveHelper.spacing(12)),
+                // CustomUploadCard(
+                //   title: 'car_insurance'.tr,
+                //   subtitle: 'tap_to_upload'.tr,
+                //   onUpload: () {},
+                // ),
+                // SizedBox(height: ResponsiveHelper.spacing(12)),
+                // CustomUploadCard(
+                //   title: 'car_tax'.tr,
+                //   subtitle: 'tap_to_upload'.tr,
+                //   onUpload: () {},
+                // ),
+
 
                 Text(
                   'upload_documents'.tr,
                   textAlign: TextAlign.start,
                   style: GoogleFonts.poppins(
-                    fontSize: ResponsiveHelper.fontSize(16),
+                    fontSize:   ResponsiveHelper.fontSize(16),
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textBlack,
+                    color:      AppColors.textBlack,
                   ),
                 ),
 
+                Obx(() {
+                  final uploadCtrl = Get.find<UploadDocumentController>();
+                  if (!uploadCtrl.isFetching.value) {
+                    return const SizedBox.shrink();
+                  }
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      top:    ResponsiveHelper.spacing(12),
+                      bottom: ResponsiveHelper.spacing(8),
+                    ),
+                    child: const LinearProgressIndicator(minHeight: 3),
+                  );
+                }),
 
                 SizedBox(height: ResponsiveHelper.spacing(18)),
 
-                CustomUploadCard(title: 'drivers_license'.tr, subtitle: 'tap_to_upload'.tr, onUpload: () {
+                CustomUploadCard(
+                  title:        'drivers_license'.tr,
+                  documentType: 'LICENSE',
+                ),
 
-                  showUploadDocumentSheet(context);
-
-                },),
                 SizedBox(height: ResponsiveHelper.spacing(12)),
-                CustomUploadCard(title: 'car_insurance'.tr, subtitle: 'tap_to_upload'.tr, onUpload: () {  },),
-                SizedBox(height: ResponsiveHelper.spacing(12)),
-                CustomUploadCard(title: 'car_tax'.tr, subtitle: 'tap_to_upload'.tr, onUpload: () {  },),
 
+                CustomUploadCard(
+                  title:        'car_insurance'.tr,
+                  documentType: 'INSURANCE',
+                ),
+
+                SizedBox(height: ResponsiveHelper.spacing(12)),
+
+                CustomUploadCard(
+                  title:        'car_tax'.tr,
+                  documentType: 'TAX',
+                ),
 
               ],
             ),
@@ -254,4 +314,3 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
-

@@ -110,6 +110,12 @@ final Map<String, String> italian = {
   'rating_excellent': 'Eccellente',
   'add_comment': 'Aggiungi un commento (opzionale)...',
   'submit_rating': 'Invia valutazione',
+  'update_rating': 'Aggiorna valutazione',
+  'tap_to_rate': 'Tocca una stella per valutare',
+  'update_your_rating': 'Aggiorna la tua valutazione',
+  'rating_submitted': 'Valutazione inviata',
+  'rating_updated': 'Valutazione aggiornata',
+  'rating_failed': 'Impossibile salvare la valutazione',
 
   // ------------------Group Chat Dialog-------------------------
   'create_group_chat': 'Crea chat di gruppo',
@@ -213,6 +219,13 @@ final Map<String, String> italian = {
   'car_insurance': 'Assicurazione auto',
   'car_tax': 'Bollo auto',
   'tap_to_upload': 'Tocca per caricare',
+  'view_document': 'Vedi file attuale',
+  'update': 'Aggiorna',
+  'renew': 'Rinnova',
+  'expires': 'Scadenza',
+  'expired': 'Scaduto',
+  'days_left': 'giorni rimanenti',
+  'id': 'ID',
 
   // ------------------Scan Screen-------------------------
   'scan_qr': 'Scansiona QR',
