@@ -5,6 +5,7 @@ import 'package:platchatapp/core/router/routes_name.dart'; // RouteName ইম�
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/feature/privacy_policy/help_suppoor_screen.dart';
 import 'package:platchatapp/feature/privacy_policy/privacy_policy_screen.dart';
+import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
 import 'package:platchatapp/feature/terms_condition/web_view_screen.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -13,11 +14,21 @@ import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
 
 class ProfileNavScreen extends StatelessWidget {
-   ProfileNavScreen({super.key});
+  ProfileNavScreen({super.key});
+
   final LanguageController languageController = Get.find<LanguageController>();
+  final ProfileController profileController = Get.put(
+    ProfileController(),
+    permanent: false,
+  );
 
   @override
   Widget build(BuildContext context) {
+    // ✅ Screen খুলতেই fresh data load
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      profileController.reloadProfile();
+    });
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -32,33 +43,44 @@ class ProfileNavScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Container(
-            constraints: BoxConstraints(maxWidth: ResponsiveHelper.maxContentWidth),
-            padding: ResponsiveHelper.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                _buildProfileCard(context), // context পাস করা হয়েছে
-                SizedBox(height: ResponsiveHelper.spacing(20)),
-                _buildMenuItems(context), // context পাস করা হয়েছে
-                SizedBox(height: ResponsiveHelper.spacing(30)),
-                _buildLogoutButton(context),
-                SizedBox(height: ResponsiveHelper.spacing(30)),
-              ],
+      body: GetBuilder<ProfileController>(
+        builder: (controller) {
+          return SingleChildScrollView(
+            child: Center(
+              child: Container(
+                constraints: BoxConstraints(
+                  maxWidth: ResponsiveHelper.maxContentWidth,
+                ),
+                padding: ResponsiveHelper.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    _buildProfileCard(context, controller),
+                    SizedBox(height: ResponsiveHelper.spacing(20)),
+                    _buildMenuItems(context),
+                    SizedBox(height: ResponsiveHelper.spacing(30)),
+                    _buildLogoutButton(context),
+                    SizedBox(height: ResponsiveHelper.spacing(30)),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildProfileCard(BuildContext context) {
+  Widget _buildProfileCard(BuildContext context, ProfileController controller) {
+    final user = controller.userProfile.value;
+    final avatarUrl = user?.avatar;
+
     return Container(
       width: double.infinity,
       padding: ResponsiveHelper.all(20),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+        borderRadius: BorderRadius.circular(
+          ResponsiveHelper.borderRadius(20),
+        ),
         gradient: const LinearGradient(
           colors: [Color(0xFF1E88E5), Color(0xFF1565C0)],
           begin: Alignment.topLeft,
@@ -71,53 +93,122 @@ class ProfileNavScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // ✅ Avatar from controller
               GestureDetector(
                 onTap: () {
-                  // প্রোফাইল ইমেজ দেখানোর জন্য নেভিগেশন
-                  context.pushNamed(RouteName.showProfile, extra: ImageHandler.imagesHandle(AppConst.unknown));
+                  if (avatarUrl != null) {
+                    context.pushNamed(
+                      RouteName.showProfile,
+                      extra: avatarUrl,
+                    );
+                  }
                 },
-                child: CircleAvatar(
-                  radius: ResponsiveHelper.width(40),
-                  backgroundImage: NetworkImage(ImageHandler.imagesHandle(AppConst.unknown)),
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: ResponsiveHelper.width(40),
+                      backgroundColor: Colors.white24,
+                      backgroundImage: (avatarUrl != null && avatarUrl.isNotEmpty)
+                          ? NetworkImage(avatarUrl)
+                          : null,
+                      child: (avatarUrl == null || avatarUrl.isEmpty)
+                          ? Icon(
+                        Icons.person,
+                        size: ResponsiveHelper.iconSize(36),
+                        color: Colors.white,
+                      )
+                          : null,
+                    ),
+                    // ✅ Loading overlay
+                    if (controller.isLoading)
+                      Positioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black26,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Center(
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
+              // QR scan button
               InkWell(
                 onTap: () => context.pushNamed(RouteName.scanScreen),
                 child: Container(
                   padding: ResponsiveHelper.all(8),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.borderRadius(10),
+                    ),
                   ),
-                  child: Icon(Icons.qr_code_scanner, color: Colors.white, size: ResponsiveHelper.iconSize(24)),
+                  child: Icon(
+                    Icons.qr_code_scanner,
+                    color: Colors.white,
+                    size: ResponsiveHelper.iconSize(24),
+                  ),
                 ),
-              )
+              ),
             ],
           ),
           SizedBox(height: ResponsiveHelper.spacing(15)),
+
+          // ✅ Nick name from controller
           Text(
-            'John Doe',
+            user?.nickName.isNotEmpty == true
+                ? user!.nickName
+                : '---',
             style: TextStyle(
               color: Colors.white,
               fontSize: ResponsiveHelper.titleFontSize(24),
               fontWeight: FontWeight.bold,
             ),
           ),
+          SizedBox(height: ResponsiveHelper.spacing(4)),
+
+          // ✅ Licence ID from controller
+          if (user?.licenceId.isNotEmpty == true)
+            Text(
+              user!.licenceId,
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: ResponsiveHelper.fontSize(13),
+                fontFamily: 'monospace',
+              ),
+            ),
           SizedBox(height: ResponsiveHelper.spacing(5)),
+
           Row(
             children: [
-              Icon(Icons.star, color: Colors.orangeAccent, size: ResponsiveHelper.iconSize(18)),
-              Text(' 4.9 (127)  ', style: TextStyle(color: Colors.white, fontSize: ResponsiveHelper.fontSize(14))),
-              Icon(Icons.location_on, color: Colors.white70, size: ResponsiveHelper.iconSize(18)),
-              Text(' California, USA', style: TextStyle(color: Colors.white, fontSize: ResponsiveHelper.fontSize(14))),
+              Icon(
+                Icons.star,
+                color: Colors.orangeAccent,
+                size: ResponsiveHelper.iconSize(18),
+              ),
+              Text(
+                ' 4.9 (127)  ',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: ResponsiveHelper.fontSize(14),
+                ),
+              ),
             ],
           ),
         ],
       ),
     );
   }
-
-
 
 
   Widget _buildMenuItems(BuildContext context) {

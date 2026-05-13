@@ -73,7 +73,8 @@ class ApiUrl {
   /// GET existing / PATCH update — path param is the other user's id (ratee).
   static String myRatingForRatee({required String rateeId}) =>
       '/ratings/my-rating/$rateeId';
-
+  static String viewOtherProfile({required String id}) =>
+      '/users/$id/profile';
   @Deprecated('Use myRatingForRatee')
   static String getRating({required String id}) => myRatingForRatee(rateeId: id);
 
