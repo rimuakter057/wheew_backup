@@ -1,15 +1,82 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/feature/chat/repository/add_member_repo.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/feature/chat/view/group_message/model/group_member.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 
 class GroupController extends GetxController {
 
+
+  ///search member============================
+
+
+  final AddMemberRepository _repository = AddMemberRepository();
+
+  // ─── Observable State ───────────────────────────────────────────────────────
+  final RxList<SearchMemberModel> searchResults = <SearchMemberModel>[].obs;
+  final RxBool isSearching = false.obs;
+  final RxString searchQuery = ''.obs;
+
+  // ─── Selected Members ────────────────────────────────────────────────────────
+  final RxSet<String> selectedIds = <String>{}.obs; // otherUser id
+
+  // ─── Internal ────────────────────────────────────────────────────────────────
+  Timer? _debounce;
+  late String _roomId;
+
+  // ─── Init ─────────────────────────────────────────────────────────────────────
+  void init(String roomId) {
+    _roomId = roomId;
+    // Screen খুললেই default list load করো
+    _search('');
+  }
+
+  // ─── Search (debounced 400ms) ─────────────────────────────────────────────────
+  void onSearchChanged(String query) {
+    searchQuery.value = query.trim();
+
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 400), () {
+      _search(query.trim());
+    });
+  }
+
+  Future<void> _search(String query) async {
+    isSearching.value = true;
+    try {
+      final results = await _repository.searchGroupMember(
+        roomId: _roomId,
+        query: query,
+      );
+      searchResults.assignAll(results);
+    } finally {
+      isSearching.value = false;
+    }
+  }
+
+  // ─── Selection ───────────────────────────────────────────────────────────────
+  void toggleSelect(String userId) {
+    if (selectedIds.contains(userId)) {
+      selectedIds.remove(userId);
+    } else {
+      selectedIds.add(userId);
+    }
+  }
+
+  bool isSelected(String userId) => selectedIds.contains(userId);
+
+
+
+
+
+
+///=========================
  final ChatController  chatController=Get.find<ChatController>();
 
   // ── Group Members ─────────────────────────────────────

@@ -27,33 +27,21 @@ class ChatController extends GetxController {
     isAddingMember.value = true;
 
     try {
-      final List<Future<dynamic>> calls = memberIds.map((memberId) {
-        return ApiClient.postData(
-          uri: ApiUrl.addGroupMember(roomId: groupRoomId, memberId: memberId),
-          body: {},
-        );
-      }).toList();
+      // ✅ একটাই call, সব memberIds array হিসেবে পাঠাও
+      final response = await ApiClient.postData(
+        uri: ApiUrl.addGroupMember(roomId: groupRoomId),
+        body: {'memberIds': memberIds},
+      );
 
-      final List<dynamic> responses = await Future.wait(calls);
-      final bool allSuccess = responses.every((r) {
-        final statusCode = r?.statusCode;
-        return statusCode == 200 || statusCode == 201;
-      });
-
-      if (allSuccess) {
+      final statusCode = response.statusCode;
+      if (statusCode == 200 || statusCode == 201) {
         CustomSnackbar.success(context: context, message: 'Member added successfully');
         fetchChatList(refresh: true);
-
         return true;
       } else {
-        // ❌ শুধু এই অংশ পরিবর্তন
-        final failedResponse = responses.firstWhere(
-              (r) => r?.statusCode != 200 && r?.statusCode != 201,
-          orElse: () => null,
-        );
         String errorMessage = 'Member could not be added';
         try {
-          final decoded = jsonDecode(failedResponse?.body ?? '{}');
+          final decoded = jsonDecode(response?.body ?? '{}');
           errorMessage = decoded['message'] ?? decoded['error'] ?? errorMessage;
         } catch (_) {}
 

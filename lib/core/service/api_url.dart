@@ -101,9 +101,7 @@ class ApiUrl {
 
   static String addGroupMember({
     required String roomId,
-    required String memberId,
-
-  }) => '/group/room/$roomId/member/$memberId';
+  }) => '/group/room/$roomId/members';
 
 
   static String removeGroupMember({
@@ -113,5 +111,8 @@ class ApiUrl {
   }) => '/group/room/$roomId/member/$memberId';
 
 
+  static String searchGroupMember({
+    required String roomId,
+  }) => '/users/search?query=r&for=group&roomId=$roomId';
 
 }

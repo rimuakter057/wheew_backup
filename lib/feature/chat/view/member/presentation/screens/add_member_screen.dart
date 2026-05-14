@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
+import 'package:platchatapp/feature/chat/repository/add_member_repo.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/feature/chat/view/member/presentation/widgets/add_member_search_bar.dart';
 import 'package:platchatapp/feature/chat/view/member/presentation/widgets/add_member_tile.dart';
@@ -10,6 +9,8 @@ import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import '../../../group_message/controller/group_controller.dart';
+
 
 class AddMemberScreen extends StatefulWidget {
   final String groupRoomId;
@@ -22,65 +23,38 @@ class AddMemberScreen extends StatefulWidget {
 
 class _AddMemberScreenState extends State<AddMemberScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  final ChatController controller = Get.find<ChatController>();
+  final ChatController chatController = Get.find<ChatController>();
 
-  final Set<String> _selectedIds = {}; // otherUser id
-  String _searchQuery = '';
+  // ── নতুন AddMemberController ──
+  late final GroupController _controller;
 
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(_onSearch);
-    _scrollController.addListener(_onScroll);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.fetchChatList(refresh: true);
-    });
-  }
 
-  void _onSearch() => setState(
-          () => _searchQuery = _searchController.text.toLowerCase().trim());
+    // Controller register + init
+    _controller = Get.put(GroupController());
+    _controller.init(widget.groupRoomId);
 
-  void _onScroll() {
-    if (!_scrollController.hasClients) return;
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200 &&
-        controller.hasMore &&
-        !controller.isLoadingMore.value &&
-        !controller.isLoadingChat.value) {
-      controller.fetchChatList(loadMore: true);
-    }
-  }
-
-  void _toggleSelect(String userId) => setState(() =>
-  _selectedIds.contains(userId)
-      ? _selectedIds.remove(userId)
-      : _selectedIds.add(userId));
-
-  List<Rooms> get _filteredList {
-    final list = controller.userChatList
-        .where((r) => r.type == 'ONE_TO_ONE')
-        .toList();
-    if (_searchQuery.isEmpty) return list;
-    return list
-        .where((r) => r.displayName.toLowerCase().contains(_searchQuery))
-        .toList();
+    // Search bar listener → controller এ pass করো
+    _searchController.addListener(
+          () => _controller.onSearchChanged(_searchController.text),
+    );
   }
 
   Future<void> _onAddMember() async {
-    await controller.addGroupMember(
+    await chatController.addGroupMember(
       groupRoomId: widget.groupRoomId,
-      memberIds: _selectedIds.toList(),
+      memberIds: _controller.selectedIds.toList(),
       context: context,
     );
-
-    context.pop();
+    if (mounted) Navigator.pop(context);
   }
 
   @override
   void dispose() {
     _searchController.dispose();
-    _scrollController.dispose();
+    Get.delete<ChatController>();
     super.dispose();
   }
 
@@ -134,12 +108,14 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
 
   Widget _buildList() {
     return Obx(() {
-      if (controller.isLoadingChat.value && controller.userChatList.isEmpty) {
+      // Loading indicator
+      if (_controller.isSearching.value) {
         return const Center(child: CircularProgressIndicator());
       }
 
-      final List<Rooms> list = _filteredList;
+      final List<SearchMemberModel> list = _controller.searchResults;
 
+      // Empty state
       if (list.isEmpty) {
         return ListView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -147,8 +123,8 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
             SizedBox(height: MediaQuery.of(context).size.height * .3),
             Center(
               child: Text(
-                _searchQuery.isNotEmpty
-                    ? 'No results for "$_searchQuery"'
+                _controller.searchQuery.value.isNotEmpty
+                    ? 'No results for "${_controller.searchQuery.value}"'
                     : 'No contacts found',
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(14),
@@ -161,38 +137,26 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
       }
 
       return ListView.separated(
-        controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(20)),
-        itemCount: list.length + 1,
+        itemCount: list.length,
         separatorBuilder: (_, __) =>
             SizedBox(height: ResponsiveHelper.height(12)),
         itemBuilder: (context, index) {
-          if (index == list.length) {
-            return controller.isLoadingMore.value
-                ? const Padding(
-              padding: EdgeInsets.all(8),
-              child: Center(child: CircularProgressIndicator()),
-            )
-                : const SizedBox.shrink();
-          }
-
-          final Rooms room = list[index];
-          // otherUser id দিয়ে select track করো
-          final String userId = room.otherUser?.id ?? '';
+          final SearchMemberModel member = list[index];
 
           return AddMemberTile(
-            name: room.displayName,
+            name: member.nickName,
             avatarUrl: ImageHandler.imagesHandle(
-              room.displayAvatar.isNotEmpty
-                  ? room.displayAvatar
+              member.avatar?.isNotEmpty == true
+                  ? member.avatar!
                   : AppConst.unknown,
               isProfile: true,
             ),
-            rating: room.otherUser?.rating,
-            isSelected: _selectedIds.contains(userId),
-            onTap: () => _toggleSelect(userId),
-            onCheckChanged: (_) => _toggleSelect(userId),
+            rating: null, // API response এ rating নেই
+            isSelected: _controller.isSelected(member.id),
+            onTap: () => _controller.toggleSelect(member.id),
+            onCheckChanged: (_) => _controller.toggleSelect(member.id),
           );
         },
       );
@@ -211,16 +175,19 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
         width: double.infinity,
         height: ResponsiveHelper.buttonHeight(52),
         child: Obx(() {
-          final bool isBusy = controller.isAddingMember.value;
+          final bool isBusy = chatController.isAddingMember.value;
+          final int selectedCount = _controller.selectedIds.length;
+
           return ElevatedButton(
-            onPressed: (_selectedIds.isEmpty || isBusy) ? null : _onAddMember,
+            onPressed: (selectedCount == 0 || isBusy) ? null : _onAddMember,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.blueClient,
               disabledBackgroundColor: AppColors.blueClient.withOpacity(0.4),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(
-                    ResponsiveHelper.borderRadius(30)),
+                  ResponsiveHelper.borderRadius(30),
+                ),
               ),
             ),
             child: isBusy
@@ -228,12 +195,14 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
               width: 22,
               height: 22,
               child: CircularProgressIndicator(
-                  color: Colors.white, strokeWidth: 2.5),
+                color: Colors.white,
+                strokeWidth: 2.5,
+              ),
             )
                 : Text(
-              _selectedIds.isEmpty
+              selectedCount == 0
                   ? 'Add Member'
-                  : 'Add Member (${_selectedIds.length})',
+                  : 'Add Member ($selectedCount)',
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(16),
                 fontWeight: FontWeight.w600,
