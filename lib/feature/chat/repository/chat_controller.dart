@@ -11,10 +11,65 @@ import 'package:platchatapp/feature/chat/model/chat_model.dart';
 import 'package:platchatapp/feature/chat/model/group_message_response_model.dart';
 import 'package:platchatapp/feature/chat/model/rating_response_model.dart';
 import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
+import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import '../../../core/service/socket_service.dart';
 import 'chat_repository.dart';
 
 class ChatController extends GetxController {
+  var isAddingMember = false.obs;
+
+  Future<bool> addGroupMember({
+    required String groupRoomId,
+    required List<String> memberIds,
+    required BuildContext context,
+  }) async {
+    if (memberIds.isEmpty) return false;
+    isAddingMember.value = true;
+
+    try {
+      final List<Future<dynamic>> calls = memberIds.map((memberId) {
+        return ApiClient.postData(
+          uri: ApiUrl.addGroupMember(roomId: groupRoomId, memberId: memberId),
+          body: {},
+        );
+      }).toList();
+
+      final List<dynamic> responses = await Future.wait(calls);
+      final bool allSuccess = responses.every((r) {
+        final statusCode = r?.statusCode;
+        return statusCode == 200 || statusCode == 201;
+      });
+
+      if (allSuccess) {
+        CustomSnackbar.success(context: context, message: 'Member added successfully');
+        fetchChatList(refresh: true);
+
+        return true;
+      } else {
+        // ❌ শুধু এই অংশ পরিবর্তন
+        final failedResponse = responses.firstWhere(
+              (r) => r?.statusCode != 200 && r?.statusCode != 201,
+          orElse: () => null,
+        );
+        String errorMessage = 'Member could not be added';
+        try {
+          final decoded = jsonDecode(failedResponse?.body ?? '{}');
+          errorMessage = decoded['message'] ?? decoded['error'] ?? errorMessage;
+        } catch (_) {}
+
+        CustomSnackbar.error(context: context, message: errorMessage);
+        return false;
+      }
+    } catch (e) {
+      debugPrint('addGroupMember error: $e');
+      CustomSnackbar.error(context: context, message: 'Failed to add member. Try again.');
+      return false;
+    } finally {
+      isAddingMember.value = false;
+    }
+  }
+
+
   /// User rating (GET /ratings/my-rating/:rateeId, POST /ratings, PATCH same path)
 
   RxBool isSubmittingRating = false.obs;
@@ -69,7 +124,8 @@ class ChatController extends GetxController {
     required String rateeId,
     required double rating,
     required BuildContext context,
-  }) async {
+  }) async
+  {
     final stars = rating.round().clamp(1, 5);
     try {
       isSubmittingRating.value = true;
@@ -480,7 +536,7 @@ class ChatController extends GetxController {
   var isLoadingChat = false.obs;
   var isLoadingMore = false.obs;
   RxInt page = 1.obs;
-  final int limit = 15;
+  final int limit = 25;
   int total = 0;
 
   bool _isFetching = false; // ✅ simple bool, reactive না
@@ -546,7 +602,8 @@ class ChatController extends GetxController {
   Future<void> createGroup({
     required String groupName,
     List<String> memberIds = const [],
-  }) async {
+  }) async
+  {
     isCreatingGroup.value = true;
     try {
       final uri = ApiUrl.createGroup;
@@ -972,7 +1029,7 @@ class ChatController extends GetxController {
     debugPrint('✅ Joined group room: $roomId');
   }
 
-// ── Leave Group ─────────────────────────────────────────────
+/// ── Leave Group ─────────────────────────────────────────────
 // Leave button press করলে call হয়
   var isLeavingGroup = false.obs;
 
@@ -980,60 +1037,42 @@ class ChatController extends GetxController {
     required String roomId,
     required BuildContext context,
     bool navigateBack = true,
-  }) async {
+  }) async
+  {
     isLeavingGroup.value = true;
 
-    // ✅ Simple emit — ack নেই
-    AppSocket.socket?.emit('leave-group-chat', {'groupChatRoomId': roomId});
-
-    // ✅ 500ms wait করো
-    await Future.delayed(const Duration(milliseconds: 500));
+    final response = await ApiClient.deleteData(
+      uri: ApiUrl.leaveGroup(roomId: roomId),
+    );
 
     isLeavingGroup.value = false;
 
-    // ✅ Chat list থেকে remove
-    userChatList.removeWhere((room) => room.id == roomId);
+    if (response['statusCode'] == 200) {
+      // ✅ Chat list থেকে remove
+      userChatList.removeWhere((room) => room.id == roomId);
 
-    // ✅ Group state clear
-    groupMessageList.clear();
-    groupRoomID.value = '';
+      // ✅ Group state clear
+      groupMessageList.clear();
+      groupRoomID.value = '';
 
-    // ✅ Screen pop
-    if (navigateBack && context.mounted) {
-      Navigator.pop(context);
+      // ✅ Screen pop
+      if (navigateBack && context.mounted) {
+        Navigator.pop(context);
+      }
+
+CustomSnackbar.success(context: context, message: "Successfully  Leave This Group");
+
+    } else {
+      final message = response['message']
+          ?? response['message']
+          ?? 'Something went wrong';
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      }
     }
   }
-// ============================================================
-// IMPORTANT: AppSocket.socket?.emitWithAck কাজ না করলে
-// নিচের alternative version ব্যবহার করো
-// ============================================================
 
-// void leaveGroup({
-//   required String roomId,
-//   required BuildContext context,
-//   bool navigateBack = true,
-// }) async {
-//   isLeavingGroup.value = true;
-//
-//   final payload = {'groupChatRoomId': roomId};
-//   AppSocket.socket?.emit('leave-group-chat', payload);
-//
-//   // ✅ 500ms wait করো server process করতে
-//   await Future.delayed(const Duration(milliseconds: 500));
-//
-//   isLeavingGroup.value = false;
-//
-//   // ✅ Chat list থেকে room remove করো
-//   userChatList.removeWhere((room) => room.id == roomId);
-//
-//   // ✅ Group message list clear করো
-//   groupMessageList.clear();
-//   groupRoomID.value = '';
-//
-//   // ✅ Screen থেকে বের হয়ে যাও
-//   if (navigateBack && context.mounted) {
-//     Navigator.pop(context);
-//   }
-// }
 
 }

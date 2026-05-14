@@ -8,9 +8,9 @@ import 'package:platchatapp/helper/data_converter/data_converter.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
-import '../../../helper/responsive_helper/responsive_helper.dart';
-import '../repository/chat_controller.dart';
-import 'widgets/chat_tile.dart';
+import '../../../../helper/responsive_helper/responsive_helper.dart';
+import '../../repository/chat_controller.dart';
+import '../widgets/chat_tile.dart';
 
 class BlockListScreen extends StatefulWidget {
   const BlockListScreen({super.key});

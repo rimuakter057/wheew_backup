@@ -9,7 +9,7 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../chat/view/chat_list_screen.dart';
+import '../../chat/view/chat_list/presentation/screens/chat_list_screen.dart';
 
 
 class MainNavScreen extends StatefulWidget {

@@ -5,12 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:platchatapp/feature/chat/model/chat_model.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/helper/data_converter/data_converter.dart';
-import '../../../core/router/routes_name.dart';
-import '../../../helper/responsive_helper/responsive_helper.dart';
-import '../../../utils/app_const/app_const.dart';
-import '../../../utils/color/app_colors.dart';
+import '../../../../core/router/routes_name.dart';
+import '../../../../helper/responsive_helper/responsive_helper.dart';
+import '../../../../utils/app_const/app_const.dart';
+import '../../../../utils/color/app_colors.dart';
 
-import 'widgets/chat_tile.dart';
+import '../widgets/chat_tile.dart';
 
 class SearchListScreen extends StatefulWidget {
   const SearchListScreen({super.key});

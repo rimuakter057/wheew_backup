@@ -142,24 +142,7 @@ class ProfileNavScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              // QR scan button
-              InkWell(
-                onTap: () => context.pushNamed(RouteName.scanScreen),
-                child: Container(
-                  padding: ResponsiveHelper.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(
-                      ResponsiveHelper.borderRadius(10),
-                    ),
-                  ),
-                  child: Icon(
-                    Icons.qr_code_scanner,
-                    color: Colors.white,
-                    size: ResponsiveHelper.iconSize(24),
-                  ),
-                ),
-              ),
+
             ],
           ),
           SizedBox(height: ResponsiveHelper.spacing(15)),

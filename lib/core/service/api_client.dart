@@ -178,7 +178,8 @@ class ApiClient {
     required String uri,
     Map<String, dynamic>? body,
     Map<String, String>? headers,
-  }) async {
+  }) async
+  {
     if (!await _checkConnection()) {
       throw Exception('No Internet Connection');
     }
@@ -219,7 +220,8 @@ class ApiClient {
     Map<String, dynamic>? body,
     Map<String, String>? headers,
     bool isJson = true,
-  }) async {
+  }) async
+  {
     // Check internet
     if (!await _checkConnection()) {
       throw Exception('No Internet Connection');
@@ -283,7 +285,8 @@ class ApiClient {
     required String uri,
     Map<String, dynamic>? body,
     Map<String, String>? headers,
-  }) async {
+  }) async
+  {
     if (!await _checkConnection()) {
       return {
         "statusCode": 0,

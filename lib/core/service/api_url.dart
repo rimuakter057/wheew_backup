@@ -88,6 +88,7 @@ class ApiUrl {
 
   static const String presetMessage = '/preset-message';
   static const String createGroup = '/group/room';
+  static  String leaveGroup({required String roomId}) => '/group/room/$roomId/leave';
 
   // ✅ page, limit support সহ
   static String getGroupMessage({
@@ -95,5 +96,22 @@ class ApiUrl {
     int page = 1,
     int limit = 20,
   }) => '/group/room/$roomId/messages?page=$page&limit=$limit';
+
+
+
+  static String addGroupMember({
+    required String roomId,
+    required String memberId,
+
+  }) => '/group/room/$roomId/member/$memberId';
+
+
+  static String removeGroupMember({
+    required String roomId,
+    required String memberId,
+
+  }) => '/group/room/$roomId/member/$memberId';
+
+
 
 }
