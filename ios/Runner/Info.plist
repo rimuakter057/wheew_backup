@@ -26,6 +26,14 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSSiriUsageDescription</key>
+	<string>PlateChat uses Siri to send messages with your voice</string>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>com.platechat.sendMessage</string>
+		<string>com.platechat.openChat</string>
+		<string>com.platechat.findUser</string>
+	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

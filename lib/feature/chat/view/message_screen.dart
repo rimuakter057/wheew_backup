@@ -24,6 +24,8 @@ class MessageScreen extends StatefulWidget {
   final String receiverId;
   final bool? isBlockedByMe;
   final bool? isBlockedMe;
+  final bool voiceAutoSend;
+  final String? voiceMessage;
 
   const MessageScreen({
     super.key,
@@ -33,6 +35,8 @@ class MessageScreen extends StatefulWidget {
     required this.receiverId,
     this.isBlockedByMe,
     this.isBlockedMe,
+    this.voiceAutoSend = false, // নতুন
+    this.voiceMessage,
   });
 
   @override
@@ -51,12 +55,12 @@ class _MessageScreenState extends State<MessageScreen> {
   void initState() {
     super.initState();
 
+    // তোমার existing initState code হুবহু same থাকবে
     debugPrint(
-      "isBlockedByMe==============: ${widget.isBlockedByMe}, isBlockedMe===============: ${widget.isBlockedMe}",
+      "isBlockedByMe: ${widget.isBlockedByMe}, isBlockedMe: ${widget.isBlockedMe}",
     );
-
     debugPrint(
-      "📨 Opening chat - Receiver: ${widget.receiverId}, Room: ${widget.roomId}",
+      "Opening chat - Receiver: ${widget.receiverId}, Room: ${widget.roomId}",
     );
 
     chatController.isBlockedByMe.value = widget.isBlockedByMe ?? false;
@@ -64,7 +68,6 @@ class _MessageScreenState extends State<MessageScreen> {
 
     _initChat();
 
-    // Scroll listener
     _scrollController.addListener(_onScroll);
 
     _focusNode.addListener(() {
@@ -72,7 +75,66 @@ class _MessageScreenState extends State<MessageScreen> {
         setState(() => _isEmojiVisible = false);
       }
     });
+
+    // ── নতুন: voice auto-send ──
+    if (widget.voiceAutoSend && widget.voiceMessage != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Chat load হওয়ার জন্য একটু wait করো
+        Future.delayed(const Duration(milliseconds: 800), () {
+          if (mounted) {
+            _sendVoiceMessage(widget.voiceMessage!);
+          }
+        });
+      });
+    }
   }
+
+  // ── নতুন method ── বাকি সব existing method এর মতোই রাখো
+  void _sendVoiceMessage(String message) {
+    // Blocked হলে পাঠাব না
+    if (chatController.isBlockedByMe.value ||
+        chatController.isBlockedMe.value) {
+      debugPrint('[Voice] Cannot send — user is blocked');
+      return;
+    }
+
+    if (message.trim().isEmpty) return;
+
+    // তোমার existing sendNewEmitMessage use করছি
+    chatController.sendNewEmitMessage(
+      receiverId: widget.receiverId,
+      message: message,
+    );
+
+    debugPrint(
+      '[Voice] Auto-sent message: "$message" to ${widget.otherUserName}',
+    );
+  }
+  // void initState() {
+  //   super.initState();
+
+  //   debugPrint(
+  //     "isBlockedByMe==============: ${widget.isBlockedByMe}, isBlockedMe===============: ${widget.isBlockedMe}",
+  //   );
+
+  //   debugPrint(
+  //     "📨 Opening chat - Receiver: ${widget.receiverId}, Room: ${widget.roomId}",
+  //   );
+
+  //   chatController.isBlockedByMe.value = widget.isBlockedByMe ?? false;
+  //   chatController.isBlockedMe.value = widget.isBlockedMe ?? false;
+
+  //   _initChat();
+
+  //   // Scroll listener
+  //   _scrollController.addListener(_onScroll);
+
+  //   _focusNode.addListener(() {
+  //     if (_focusNode.hasFocus && _isEmojiVisible) {
+  //       setState(() => _isEmojiVisible = false);
+  //     }
+  //   });
+  // }
 
   Future<void> _initChat() async {
     // Wait for build to complete
