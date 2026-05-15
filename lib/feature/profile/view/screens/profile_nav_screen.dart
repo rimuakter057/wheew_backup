@@ -7,10 +7,8 @@ import 'package:platchatapp/feature/privacy_policy/help_suppoor_screen.dart';
 import 'package:platchatapp/feature/privacy_policy/privacy_policy_screen.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
 import 'package:platchatapp/feature/terms_condition/web_view_screen.dart';
-import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/language/language_controller.dart';
-import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
 
 class ProfileNavScreen extends StatelessWidget {
@@ -78,9 +76,7 @@ class ProfileNavScreen extends StatelessWidget {
       width: double.infinity,
       padding: ResponsiveHelper.all(20),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(
-          ResponsiveHelper.borderRadius(20),
-        ),
+        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
         gradient: const LinearGradient(
           colors: [Color(0xFF1E88E5), Color(0xFF1565C0)],
           begin: Alignment.topLeft,
@@ -97,10 +93,7 @@ class ProfileNavScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   if (avatarUrl != null) {
-                    context.pushNamed(
-                      RouteName.showProfile,
-                      extra: avatarUrl,
-                    );
+                    context.pushNamed(RouteName.showProfile, extra: avatarUrl);
                   }
                 },
                 child: Stack(
@@ -108,15 +101,16 @@ class ProfileNavScreen extends StatelessWidget {
                     CircleAvatar(
                       radius: ResponsiveHelper.width(40),
                       backgroundColor: Colors.white24,
-                      backgroundImage: (avatarUrl != null && avatarUrl.isNotEmpty)
+                      backgroundImage:
+                          (avatarUrl != null && avatarUrl.isNotEmpty)
                           ? NetworkImage(avatarUrl)
                           : null,
                       child: (avatarUrl == null || avatarUrl.isEmpty)
                           ? Icon(
-                        Icons.person,
-                        size: ResponsiveHelper.iconSize(36),
-                        color: Colors.white,
-                      )
+                              Icons.person,
+                              size: ResponsiveHelper.iconSize(36),
+                              color: Colors.white,
+                            )
                           : null,
                     ),
                     // ✅ Loading overlay
@@ -142,16 +136,13 @@ class ProfileNavScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
             ],
           ),
           SizedBox(height: ResponsiveHelper.spacing(15)),
 
           // ✅ Nick name from controller
           Text(
-            user?.nickName.isNotEmpty == true
-                ? user!.nickName
-                : '---',
+            user?.nickName.isNotEmpty == true ? user!.nickName : '---',
             style: TextStyle(
               color: Colors.white,
               fontSize: ResponsiveHelper.titleFontSize(24),
@@ -193,7 +184,6 @@ class ProfileNavScreen extends StatelessWidget {
     );
   }
 
-
   Widget _buildMenuItems(BuildContext context) {
     final List<Map<String, dynamic>> items = [
       {
@@ -201,14 +191,14 @@ class ProfileNavScreen extends StatelessWidget {
         'title': 'profile'.tr,
         'onTap': () {
           context.pushNamed(RouteName.profile);
-        }
+        },
       },
       {
         'icon': Icons.numbers,
         'title': 'useful_number'.tr,
         'onTap': () {
           context.pushNamed(RouteName.usefulMemberScreen);
-        }
+        },
       },
       {
         'icon': Icons.description_outlined,
@@ -216,11 +206,9 @@ class ProfileNavScreen extends StatelessWidget {
         'onTap': () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => WebViewScreen(url: ApiUrl.terms),
-            ),
+            MaterialPageRoute(builder: (_) => WebViewScreen(url: ApiUrl.terms)),
           );
-        }
+        },
       },
       {
         'icon': Icons.verified_user_outlined,
@@ -232,7 +220,7 @@ class ProfileNavScreen extends StatelessWidget {
               builder: (_) => PrivacyPolicyScreen(url: ApiUrl.privacy),
             ),
           );
-        }
+        },
       },
       {
         'icon': Icons.help_outline,
@@ -240,95 +228,90 @@ class ProfileNavScreen extends StatelessWidget {
         'onTap': () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => HelpSupportScreen(),
-            ),
+            MaterialPageRoute(builder: (_) => HelpSupportScreen()),
           );
-        }
+        },
       },
       {
         'icon': Icons.remove_circle_outline,
         'title': 'blocked_user5'.tr,
         'onTap': () {
           context.pushNamed(RouteName.block);
-        }
+        },
       },
       {
         'icon': Icons.delete_outline,
         'title': 'delete'.tr,
         'onTap': () {
           context.pushNamed(RouteName.delete);
-        }
+        },
       },
     ];
 
     return Column(
       children: [
-        ...items.map((item) => Column(
-          children: [
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: Icon(
-                item['icon'],
-                size: ResponsiveHelper.iconSize(24),
-                color: Colors.black54,
-              ),
-              title: Text(
-                item['title'],
-                style: TextStyle(
-                  fontSize: ResponsiveHelper.fontSize(16),
-                  color: Colors.black87,
+        ...items.map(
+          (item) => Column(
+            children: [
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(
+                  item['icon'],
+                  size: ResponsiveHelper.iconSize(24),
+                  color: Colors.black54,
                 ),
+                title: Text(
+                  item['title'],
+                  style: TextStyle(
+                    fontSize: ResponsiveHelper.fontSize(16),
+                    color: Colors.black87,
+                  ),
+                ),
+                trailing: Icon(Icons.chevron_right),
+                onTap: item['onTap'],
               ),
-              trailing: Icon(Icons.chevron_right),
-              onTap: item['onTap'],
-            ),
-            const Divider(height: 1),
-          ],
-        )),
+              const Divider(height: 1),
+            ],
+          ),
+        ),
         _buildLanguageDropdown(context),
       ],
     );
   }
 
-
-
-
-
-
-   Widget _buildLanguageDropdown(BuildContext context) {
-     return Column(
-       children: [
-         ListTile(
-           contentPadding: EdgeInsets.zero,
-           leading: Icon(
-             Icons.translate,
-             size: ResponsiveHelper.iconSize(24),
-             color: Colors.black54,
-           ),
-           title: Text(
-             'language'.tr,
-             style: context.titleSmall.copyWith(
-               fontSize: ResponsiveHelper.fontSize(16),
-               fontWeight: FontWeight.w600,
-             ),
-           ),
-           subtitle: Obx(
-                 () => Text(
-               languageController.currentLanguageDisplay,
-               style: TextStyle(fontSize: ResponsiveHelper.fontSize(12)),
-             ),
-           ),
-           trailing: Icon(
-             Icons.chevron_right,
-             size: ResponsiveHelper.iconSize(20),
-           ),
-           onTap: () => _showLanguageBottomSheet(context),
-         ),
-         const Divider(height: 1),
-       ],
-     );
-   }
+  Widget _buildLanguageDropdown(BuildContext context) {
+    return Column(
+      children: [
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: Icon(
+            Icons.translate,
+            size: ResponsiveHelper.iconSize(24),
+            color: Colors.black54,
+          ),
+          title: Text(
+            'language'.tr,
+            style: context.titleSmall.copyWith(
+              fontSize: ResponsiveHelper.fontSize(16),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          subtitle: Obx(
+            () => Text(
+              languageController.currentLanguageDisplay,
+              style: TextStyle(fontSize: ResponsiveHelper.fontSize(12)),
+            ),
+          ),
+          trailing: Icon(
+            Icons.chevron_right,
+            size: ResponsiveHelper.iconSize(20),
+          ),
+          onTap: () => _showLanguageBottomSheet(context),
+        ),
+        const Divider(height: 1),
+      ],
+    );
+  }
 
   Widget _buildLogoutButton(BuildContext context) {
     return SizedBox(
@@ -339,7 +322,9 @@ class ProfileNavScreen extends StatelessWidget {
           backgroundColor: const Color(0xFFFFEBEE),
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(30)),
+            borderRadius: BorderRadius.circular(
+              ResponsiveHelper.borderRadius(30),
+            ),
           ),
         ),
         onPressed: () {
@@ -349,7 +334,11 @@ class ProfileNavScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.logout, color: Colors.redAccent, size: ResponsiveHelper.iconSize(20)),
+            Icon(
+              Icons.logout,
+              color: Colors.redAccent,
+              size: ResponsiveHelper.iconSize(20),
+            ),
             SizedBox(width: ResponsiveHelper.spacing(10)),
             Text(
               'log_out'.tr,
@@ -364,9 +353,6 @@ class ProfileNavScreen extends StatelessWidget {
       ),
     );
   }
-
-
-
 
   void _showLanguageBottomSheet(BuildContext context) {
     final controller = Get.find<LanguageController>();
@@ -385,15 +371,15 @@ class ProfileNavScreen extends StatelessWidget {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-              SizedBox(height: ResponsiveHelper.spacing(8)),
-              Text(
+                SizedBox(height: ResponsiveHelper.spacing(8)),
+                Text(
                   'language'.tr,
                   style: context.titleSmall.copyWith(
                     fontSize: ResponsiveHelper.fontSize(16),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-              SizedBox(height: ResponsiveHelper.spacing(12)),
+                SizedBox(height: ResponsiveHelper.spacing(12)),
 
                 ...controller.availableLanguageNames.map((language) {
                   final isSelected = controller.isLanguageSelected(language);

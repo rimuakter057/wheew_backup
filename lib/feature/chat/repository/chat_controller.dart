@@ -1,6 +1,10 @@
+// ignore_for_file: unnecessary_null_comparison, invalid_use_of_protected_member
+
 import 'dart:async';
 import 'dart:convert';
-import 'package:platchatapp/feature/chat/model/message_response_model.dart' hide Sender;
+import 'package:flutter/foundation.dart';
+import 'package:platchatapp/feature/chat/model/message_response_model.dart'
+    hide Sender;
 import 'package:get/get.dart' hide Response;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -35,13 +39,16 @@ class ChatController extends GetxController {
 
       final statusCode = response.statusCode;
       if (statusCode == 200 || statusCode == 201) {
-        CustomSnackbar.success(context: context, message: 'Member added successfully');
+        CustomSnackbar.success(
+          context: context,
+          message: 'Member added successfully',
+        );
         fetchChatList(refresh: true);
         return true;
       } else {
         String errorMessage = 'Member could not be added';
         try {
-          final decoded = jsonDecode(response?.body ?? '{}');
+          final decoded = jsonDecode(response.body);
           errorMessage = decoded['message'] ?? decoded['error'] ?? errorMessage;
         } catch (_) {}
 
@@ -50,13 +57,15 @@ class ChatController extends GetxController {
       }
     } catch (e) {
       debugPrint('addGroupMember error: $e');
-      CustomSnackbar.error(context: context, message: 'Failed to add member. Try again.');
+      CustomSnackbar.error(
+        context: context,
+        message: 'Failed to add member. Try again.',
+      );
       return false;
     } finally {
       isAddingMember.value = false;
     }
   }
-
 
   /// User rating (GET /ratings/my-rating/:rateeId, POST /ratings, PATCH same path)
 
@@ -112,14 +121,13 @@ class ChatController extends GetxController {
     required String rateeId,
     required double rating,
     required BuildContext context,
-  }) async
-  {
+  }) async {
     final stars = rating.round().clamp(1, 5);
     try {
       isSubmittingRating.value = true;
 
-      final bool update = _lastRatingFetchRateeId == rateeId &&
-          _hasExistingRatingFor(rateeId);
+      final bool update =
+          _lastRatingFetchRateeId == rateeId && _hasExistingRatingFor(rateeId);
 
       late final Response response;
       if (update) {
@@ -130,10 +138,7 @@ class ChatController extends GetxController {
       } else {
         response = await ApiClient.postData(
           uri: ApiUrl.sendRate,
-          body: {
-            'ratee_id': rateeId,
-            'rating': stars,
-          },
+          body: {'ratee_id': rateeId, 'rating': stars},
         );
       }
 
@@ -183,7 +188,6 @@ class ChatController extends GetxController {
     }
   }
 
-
   ///preset message=========================================
 
   RxList<String> presetMessages = <String>[].obs;
@@ -195,9 +199,7 @@ class ChatController extends GetxController {
 
       print('🔄 [PRESET] Fetching preset messages...');
 
-      final response = await ApiClient.getData(
-        uri:ApiUrl.presetMessage
-      );
+      final response = await ApiClient.getData(uri: ApiUrl.presetMessage);
 
       print('📡 [PRESET] Status Code: ${response.statusCode}');
       print('📡 [PRESET] Raw Body: ${response.body}');
@@ -212,25 +214,32 @@ class ChatController extends GetxController {
         // Case 1: { "messages": [ { "message": "..." } ] }
         if (data is Map && data['messages'] != null) {
           final list = List<Map<String, dynamic>>.from(data['messages']);
-          presetMessages.value = list.map((e) => e['message'].toString()).toList();
-          print('✅ [PRESET] Parsed from data["messages"]: ${presetMessages.value}');
+          presetMessages.value = list
+              .map((e) => e['message'].toString())
+              .toList();
+          print(
+            '✅ [PRESET] Parsed from data["messages"]: ${presetMessages.value}',
+          );
         }
         // Case 2: [ { "message": "..." } ]  (direct array)
         else if (data is List) {
-          presetMessages.value = data.map((e) => e['message'].toString()).toList();
+          presetMessages.value = data
+              .map((e) => e['message'].toString())
+              .toList();
           print('✅ [PRESET] Parsed from direct List: ${presetMessages.value}');
         }
         // Case 3: { "data": [ { "message": "..." } ] }
         else if (data is Map && data['data'] != null) {
           final list = List<Map<String, dynamic>>.from(data['data']);
-          presetMessages.value = list.map((e) => e['message'].toString()).toList();
+          presetMessages.value = list
+              .map((e) => e['message'].toString())
+              .toList();
           print('✅ [PRESET] Parsed from data["data"]: ${presetMessages.value}');
         } else {
           print('❌ [PRESET] Unknown structure! Cannot parse.');
         }
 
         print('📊 [PRESET] Total preset count: ${presetMessages.length}');
-
       } else {
         print('❌ [PRESET] Failed! Status: ${response.statusCode}');
       }
@@ -239,11 +248,14 @@ class ChatController extends GetxController {
       print('💥 [PRESET] StackTrace: $stack');
     } finally {
       isPresetLoading.value = false;
-      print('🏁 [PRESET] Loading done. isPresetLoading = ${isPresetLoading.value}');
-      print('🏁 [PRESET] presetMessages = ${presetMessages.value}');
+      print(
+        '🏁 [PRESET] Loading done. isPresetLoading = ${isPresetLoading.value}',
+      );
+      if (kDebugMode) {
+        print('🏁 [PRESET] presetMessages = ${presetMessages.value}');
+      }
     }
   }
-
 
   ///==============================================================
   bool _listenersInitialized = false; // ⭐ Add this
@@ -258,23 +270,23 @@ class ChatController extends GetxController {
     debugPrint('✅ Socket listeners initialized');
   }
 
-//
-//   bool _listenersInitialized = false;
-//
-//   void initSocketListeners() {
-//     if (_listenersInitialized) return;
-//     _listenersInitialized = true;
-//
-//     sendNewListenMessage();
-//     errorListenMessage();
-//
-//     debugPrint('✅ Socket listeners initialized');
-//   }
-//
-// // ✅ এটা add করো
-//   void resetListeners() {
-//     _listenersInitialized = false;
-//   }
+  //
+  //   bool _listenersInitialized = false;
+  //
+  //   void initSocketListeners() {
+  //     if (_listenersInitialized) return;
+  //     _listenersInitialized = true;
+  //
+  //     sendNewListenMessage();
+  //     errorListenMessage();
+  //
+  //     debugPrint('✅ Socket listeners initialized');
+  //   }
+  //
+  // // ✅ এটা add করো
+  //   void resetListeners() {
+  //     _listenersInitialized = false;
+  //   }
 
   /// get all message list ================================================
   RxList<Messages> userMessageList = <Messages>[].obs;
@@ -293,7 +305,6 @@ class ChatController extends GetxController {
   RxString roomID = "".obs;
 
   Future<void> fetchInboxMessage({String? roomId, bool refresh = false}) async {
-
     // ✅ roomId update
     if (roomId != null && roomId.isNotEmpty) {
       roomID.value = roomId;
@@ -356,7 +367,6 @@ class ChatController extends GetxController {
     }
   }
 
-
   ///socket========================
 
   final TextEditingController messageController = TextEditingController();
@@ -405,10 +415,9 @@ class ChatController extends GetxController {
     );
   }
 
-
   void updateChatRoomInListOptimistic(Messages newMessage) {
     final roomIndex = userChatList.indexWhere(
-          (room) => room.id == newMessage.chatRoomId,
+      (room) => room.id == newMessage.chatRoomId,
     );
 
     if (roomIndex != -1) {
@@ -467,7 +476,7 @@ class ChatController extends GetxController {
 
   void updateChatRoomInList(Messages newMessage) {
     final roomIndex = userChatList.indexWhere(
-          (room) => room.id == newMessage.chatRoomId,
+      (room) => room.id == newMessage.chatRoomId,
     );
 
     if (roomIndex != -1) {
@@ -517,7 +526,6 @@ class ChatController extends GetxController {
 
   ///=======================================================================
 
-
   ///get all user chat list========================================================
 
   RxList<Rooms> userChatList = <Rooms>[].obs;
@@ -529,8 +537,10 @@ class ChatController extends GetxController {
 
   bool _isFetching = false; // ✅ simple bool, reactive না
 
-  Future<void> fetchChatList({bool refresh = false, bool loadMore = false}) async {
-
+  Future<void> fetchChatList({
+    bool refresh = false,
+    bool loadMore = false,
+  }) async {
     if (refresh) {
       page.value = 1;
       total = 0;
@@ -570,7 +580,6 @@ class ChatController extends GetxController {
           }
           page.value++; // ✅ page.value++ করো, page++ নয়
         }
-
       } else {
         if (refresh) userChatList.clear();
       }
@@ -584,23 +593,20 @@ class ChatController extends GetxController {
   }
 
   bool get hasMore => userChatList.length < total;
-///create group==========================================================
+
+  ///create group==========================================================
   var isCreatingGroup = false.obs;
 
   Future<void> createGroup({
     required String groupName,
     List<String> memberIds = const [],
-  }) async
-  {
+  }) async {
     isCreatingGroup.value = true;
     try {
       final uri = ApiUrl.createGroup;
       Response response = await ApiClient.postData(
         uri: uri,
-        body: {
-          "name": groupName,
-          "memberIds": memberIds,
-        },
+        body: {"name": groupName, "memberIds": memberIds},
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -615,7 +621,6 @@ class ChatController extends GetxController {
       isCreatingGroup.value = false;
     }
   }
-
 
   ///get block list==============================================================
 
@@ -706,13 +711,16 @@ class ChatController extends GetxController {
           _searchResults = (data['users'] as List)
               .map((user) => SearchModel.fromJson(user))
               .where((user) {
-            final q = query.trim().toLowerCase();
-            final nameMatch =
-            (user.nickName ?? '').toLowerCase().contains(q);
-            final licenceMatch =
-            (user.licenceId ?? '').toLowerCase().contains(q);
-            return nameMatch || licenceMatch; // ← যেকোনো একটায় match হলেই show
-          })
+                final q = query.trim().toLowerCase();
+                final nameMatch = (user.nickName ?? '').toLowerCase().contains(
+                  q,
+                );
+                final licenceMatch = (user.licenceId ?? '')
+                    .toLowerCase()
+                    .contains(q);
+                return nameMatch ||
+                    licenceMatch; // ← যেকোনো একটায় match হলেই show
+              })
               .toList();
         } else {
           _searchResults = [];
@@ -774,7 +782,7 @@ class ChatController extends GetxController {
 
       // ✅ chat list এর isBlockedByMe status update
       final roomIndex = userChatList.indexWhere(
-            (room) => room.otherUser?.id == id,
+        (room) => room.otherUser?.id == id,
       );
 
       if (roomIndex != -1) {
@@ -811,9 +819,7 @@ class ChatController extends GetxController {
 
   ///group========================================================================
 
-
-
-// ── Group Message State ─────────────────────────────────────────
+  // ── Group Message State ─────────────────────────────────────────
   RxList<GroupMessageResponseModel> groupMessageList =
       <GroupMessageResponseModel>[].obs;
 
@@ -826,16 +832,13 @@ class ChatController extends GetxController {
 
   RxString groupRoomID = "".obs;
 
-  bool get hasMoreGroupMessage =>
-      groupMessageList.length < groupTotalCount;
+  bool get hasMoreGroupMessage => groupMessageList.length < groupTotalCount;
 
-// ── Fetch Group Messages ────────────────────────────────────────
+  // ── Fetch Group Messages ────────────────────────────────────────
   Future<void> fetchGroupMessages({
-   required String roomId,
+    required String roomId,
     bool refresh = false,
-  }) async
-  {
-
+  }) async {
     // ✅ roomId update
     if (roomId != null && roomId.isNotEmpty) {
       groupRoomID.value = roomId;
@@ -870,7 +873,7 @@ class ChatController extends GetxController {
     try {
       // ✅ roomId int হিসেবে পাঠাও — API url অনুযায়ী
       final uri = ApiUrl.getGroupMessage(
-        roomId: groupRoomID.value,  // ← সরাসরি String
+        roomId: groupRoomID.value, // ← সরাসরি String
         page: groupPageCount,
         limit: groupLimitCount,
       );
@@ -896,18 +899,11 @@ class ChatController extends GetxController {
     }
   }
 
-/// ── Send Group Message (Socket) ─────────────────────────────────
-  void sendGroupMessage({
-    required String roomId,
-    required String message,
-  })
-  {
+  /// ── Send Group Message (Socket) ─────────────────────────────────
+  void sendGroupMessage({required String roomId, required String message}) {
     if (message.trim().isEmpty) return;
 
-    final payload = {
-      'groupChatRoomId': roomId,
-      'message': message,
-    };
+    final payload = {'groupChatRoomId': roomId, 'message': message};
 
     // ✅ Optimistic local message
     final localMsg = GroupMessageResponseModel(
@@ -930,7 +926,8 @@ class ChatController extends GetxController {
 
     debugPrint('✅ Group message emitted: $message');
   }
-// ── New Group Message Socket Listen ────────────────────────────
+
+  // ── New Group Message Socket Listen ────────────────────────────
   void listenGroupMessages() {
     AppSocket.socket?.off('group-message-sent');
     AppSocket.socket?.on('group-message-sent', (value) {
@@ -938,7 +935,7 @@ class ChatController extends GetxController {
         debugPrint('🔔 NEW GROUP MESSAGE: $value');
 
         final GroupMessageResponseModel model =
-        GroupMessageResponseModel.fromJson(value);
+            GroupMessageResponseModel.fromJson(value);
 
         if (model.groupChatRoomId == groupRoomID.value) {
           // ✅ নিজের message হলে list এ add করবো না
@@ -956,10 +953,10 @@ class ChatController extends GetxController {
     });
   }
 
-// ── Update Chat List after Group Message ───────────────────────
+  // ── Update Chat List after Group Message ───────────────────────
   void updateGroupChatRoomInList(GroupMessageResponseModel newMessage) {
     final int roomIndex = userChatList.indexWhere(
-          (room) => room.id == newMessage.groupChatRoomId,
+      (room) => room.id == newMessage.groupChatRoomId,
     );
 
     if (roomIndex != -1) {
@@ -977,10 +974,10 @@ class ChatController extends GetxController {
         isMine: newMessage.isMine,
         sender: newMessage.sender != null
             ? Sender(
-          id: newMessage.sender!.id,
-          nickName: newMessage.sender!.nickName,
-          avatar: newMessage.sender!.avatar,
-        )
+                id: newMessage.sender!.id,
+                nickName: newMessage.sender!.nickName,
+                avatar: newMessage.sender!.avatar,
+              )
             : null,
       );
 
@@ -1004,29 +1001,28 @@ class ChatController extends GetxController {
     }
   }
 
-// ============================================================
-// ChatController এর group section এ এই দুটো method add করো
-// sendGroupMessage() এর আগে paste করো
-// ============================================================
+  // ============================================================
+  // ChatController এর group section এ এই দুটো method add করো
+  // sendGroupMessage() এর আগে paste করো
+  // ============================================================
 
-// ── Join Group ──────────────────────────────────────────────
-// Screen open হলে call হয় — socket emit করে
+  // ── Join Group ──────────────────────────────────────────────
+  // Screen open হলে call হয় — socket emit করে
   void joinGroup({required String roomId}) {
     final payload = {'groupChatRoomId': roomId};
     AppSocket.socket?.emit('join-group-chat', payload);
     debugPrint('✅ Joined group room: $roomId');
   }
 
-/// ── Leave Group ─────────────────────────────────────────────
-// Leave button press করলে call হয়
+  /// ── Leave Group ─────────────────────────────────────────────
+  // Leave button press করলে call হয়
   var isLeavingGroup = false.obs;
 
   void leaveGroup({
     required String roomId,
     required BuildContext context,
     bool navigateBack = true,
-  }) async
-  {
+  }) async {
     isLeavingGroup.value = true;
 
     final response = await ApiClient.deleteData(
@@ -1048,25 +1044,23 @@ class ChatController extends GetxController {
         Navigator.pop(context);
       }
 
-CustomSnackbar.success(context: context, message: "Successfully  Leave This Group");
-
+      CustomSnackbar.success(
+        context: context,
+        message: "Successfully  Leave This Group",
+      );
     } else {
-      final message = response['message']
-          ?? response['message']
-          ?? 'Something went wrong';
+      final message =
+          response['message'] ?? response['message'] ?? 'Something went wrong';
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
       }
     }
   }
 
-
-}
-
   // Voice intent এর জন্য — direct search, debounce ছাড়া
-  Future<List<ChatModel>> searchUsersForVoice(String query) async {
+  Future<List<SearchModel>> searchUsersForVoice(String query) async {
     if (query.isEmpty) return [];
 
     final Response response = await _repo.searchUsers(
@@ -1079,7 +1073,7 @@ CustomSnackbar.success(context: context, message: "Successfully  Leave This Grou
       final data = jsonDecode(response.body);
       if (data['users'] != null) {
         return (data['users'] as List)
-            .map((user) => ChatModel.fromJson(user))
+            .map((user) => SearchModel.fromJson(user))
             .toList();
       }
     }

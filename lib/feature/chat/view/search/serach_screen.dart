@@ -1,3 +1,4 @@
+// ignore_for_file: unused_local_variable
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,20 +24,16 @@ class _SearchListScreenState extends State<SearchListScreen> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
-  final ChatController controller =Get.find<ChatController>();
+  final ChatController controller = Get.find<ChatController>();
 
   @override
   void initState() {
     super.initState();
 
-
     // Auto focus the search field
     Future.delayed(const Duration(milliseconds: 200), () {
       _focusNode.requestFocus();
     });
-
-
-
   }
 
   @override
@@ -102,62 +99,65 @@ class _SearchListScreenState extends State<SearchListScreen> {
                     ? const Center(child: CircularProgressIndicator())
                     : controller.searchResults.isEmpty
                     ? const Center(
-                  child: Text(
-                    "No users found",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                )
+                        child: Text(
+                          "No users found",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      )
                     : ListView.builder(
-                  itemCount: controller.searchResults.length,
-                  itemBuilder: (context, index) {
-                    final user = controller.searchResults[index];
-                    return ChatTile(
-                      isBlock: false,
-                      name: user.nickName ?? '',
-                      message: user.designation ?? '',
-                      fontWeight: FontWeight.w400,
-                      time: user.createdAt != null
-                          ? formatTime(user.createdAt.toString())
-                          : '',
-                      imagePath: user.avatar ?? AppConst.unknown,
+                        itemCount: controller.searchResults.length,
+                        itemBuilder: (context, index) {
+                          final user = controller.searchResults[index];
+                          return ChatTile(
+                            isBlock: false,
+                            name: user.nickName ?? '',
+                            message: user.designation ?? '',
+                            fontWeight: FontWeight.w400,
+                            time: user.createdAt != null
+                                ? formatTime(user.createdAt.toString())
+                                : '',
+                            imagePath: user.avatar ?? AppConst.unknown,
 
-                      onTap: () async {
+                            onTap: () async {
+                              final roomId = user.existingRoom?.id ?? '';
+                              debugPrint(
+                                "before search navigate room id================================== $roomId",
+                              );
+                              controller.roomID.value = roomId;
 
-                        final roomId = user.existingRoom?.id ?? '';
-                  debugPrint("before search navigate room id================================== $roomId");
-                        controller.roomID.value = roomId;
-
-                        await context.pushNamed(
-                          RouteName.message,
-                          extra: {
-                            'roomId': roomId,
-                            'otherUserName': user.nickName,
-                            'otherUserAvatar': user.avatar ?? AppConst.unknown,
-                            'receiverId': user.id,
-                            "isBlockedByMe": false,
-                            "isBlockedMe": false,
-                          },
-                        );
-                        debugPrint("after search navigate room id================================== $roomId");
-                        // ✅ Message screen থেকে ফিরে আসার পর
-                        // controller.roomID.value এ নতুন roomId থাকবে
-                        final newRoomId = controller.roomID.value;
-                        if (newRoomId.isNotEmpty && (user.existingRoom?.id ?? '') != newRoomId) {
-                          setState(() {
-                            user.existingRoom = ExistingRoom2(id: newRoomId);
-                          });
-                        }
-                      },
-
-
-
-
-                    );
-                  },
-                ),
+                              await context.pushNamed(
+                                RouteName.message,
+                                extra: {
+                                  'roomId': roomId,
+                                  'otherUserName': user.nickName,
+                                  'otherUserAvatar':
+                                      user.avatar ?? AppConst.unknown,
+                                  'receiverId': user.id,
+                                  "isBlockedByMe": false,
+                                  "isBlockedMe": false,
+                                  'voiceAutoSend': false,
+                                  'voiceMessage': null,
+                                },
+                              );
+                              debugPrint(
+                                "after search navigate room id================================== $roomId",
+                              );
+                              // ✅ Message screen থেকে ফিরে আসার পর
+                              // controller.roomID.value এ নতুন roomId থাকবে
+                              final newRoomId = controller.roomID.value;
+                              if (newRoomId.isNotEmpty &&
+                                  (user.existingRoom?.id ?? '') != newRoomId) {
+                                setState(() {
+                                  user.existingRoom = ExistingRoom2(
+                                    id: newRoomId,
+                                  );
+                                });
+                              }
+                            },
+                          );
+                        },
+                      ),
               ),
-
-
             ],
           );
         },

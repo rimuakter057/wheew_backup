@@ -2,14 +2,12 @@
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart' hide Config;
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/feature/chat/view/group_message/presentation/widgets/group_preset.dart';
 
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
-
 
 class GroupMessageInput extends StatefulWidget {
   final String roomId;
@@ -60,16 +58,19 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
             ),
             decoration: BoxDecoration(
               color: AppColors.greyShade,
-              borderRadius:
-              BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(16),
+              ),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 // Emoji toggle button
                 IconButton(
-                  icon: const Icon(Icons.emoji_emotions,
-                      color: AppColors.black),
+                  icon: const Icon(
+                    Icons.emoji_emotions,
+                    color: AppColors.black,
+                  ),
                   onPressed: () {
                     _focusNode.unfocus();
                     setState(() => _isEmojiVisible = !_isEmojiVisible);
@@ -111,8 +112,8 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
                 // Send button
                 GestureDetector(
                   onTap: () {
-                    final text =
-                    widget.controller.messageController.text.trim();
+                    final text = widget.controller.messageController.text
+                        .trim();
                     if (text.isEmpty) return;
                     widget.controller.sendGroupMessage(
                       roomId: widget.roomId,

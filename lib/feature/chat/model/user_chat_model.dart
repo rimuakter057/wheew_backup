@@ -27,21 +27,22 @@ class UserChatModel {
 // ─────────────────────────────────────────────────────────────
 class Rooms {
   String? id;
-  String? name;             // GROUP only
-  String? image;            // GROUP only
+  String? name; // GROUP only
+  String? image; // GROUP only
   bool? isDeleted;
-  bool? isBlockedByMe;      // ONE_TO_ONE only
-  bool? isBlockedMe;        // ONE_TO_ONE only
-  String? type;             // 'GROUP' | 'ONE_TO_ONE'
-  String? user1Id;          // ONE_TO_ONE only
-  String? user2Id;          // ONE_TO_ONE only
-  int? groupMembersCount;   // GROUP only
-  int? totalMessages;       // GROUP only
+  bool? isBlockedByMe; // ONE_TO_ONE only
+  bool? isBlockedMe; // ONE_TO_ONE only
+  String? type; // 'GROUP' | 'ONE_TO_ONE'
+  String? user1Id; // ONE_TO_ONE only
+  String? user2Id; // ONE_TO_ONE only
+  int? groupMembersCount; // GROUP only
+  int? totalMessages; // GROUP only
   int? unreadCount;
   String? createdAt;
   String? updatedAt;
-
-  OtherUser? otherUser;           // ONE_TO_ONE only
+  bool? voiceAutoSend;
+  String? voiceMessage;
+  OtherUser? otherUser; // ONE_TO_ONE only
   LatestMessage? latestMessage;
   List<GroupMessage>? groupMembers; // GROUP only
 
@@ -152,9 +153,7 @@ class OtherUser {
     licenceId = json['licence_id'];
     avatar = json['avatar'];
     // ✅ int বা double যাই আসুক — safe convert
-    rating = json['rating'] != null
-        ? (json['rating'] as num).toDouble()
-        : null;
+    rating = json['rating'] != null ? (json['rating'] as num).toDouble() : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -175,7 +174,7 @@ class LatestMessage {
   // ONE_TO_ONE only
   String? chatRoomId;
   String? receiverId;
-  String? type;       // 'TEXT' | 'IMAGE' etc
+  String? type; // 'TEXT' | 'IMAGE' etc
   bool? isRead;
   bool? isDelivered;
   String? updatedAt;
@@ -226,9 +225,7 @@ class LatestMessage {
     createdAt = json['createdAt'];
     isMine = json['is_mine'];
 
-    sender = json['sender'] != null
-        ? Sender.fromJson(json['sender'])
-        : null;
+    sender = json['sender'] != null ? Sender.fromJson(json['sender']) : null;
   }
 
   /// ✅ যেকোনো type এর room id

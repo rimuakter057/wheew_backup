@@ -26,14 +26,43 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+
+	<!-- ══ Permissions ══ -->
+	<key>NSCameraUsageDescription</key>
+	<string>PlateChat uses the camera to scan QR codes</string>
+
+	<key>NSMicrophoneUsageDescription</key>
+	<string>PlateChat uses the microphone to send voice messages</string>
+
 	<key>NSSiriUsageDescription</key>
 	<string>PlateChat uses Siri to send messages with your voice</string>
+
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to show the map.</string>
+
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need your location to show the map.</string>
+
+	<!-- ══ Siri / App Intents ══ -->
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>com.platechat.sendMessage</string>
 		<string>com.platechat.openChat</string>
 		<string>com.platechat.findUser</string>
 	</array>
+
+	<!-- ══ URL Schemes ══ -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>mailto</string>
+		<string>tel</string>
+		<string>sms</string>
+		<string>https</string>
+	</array>
+
+	<!-- ══ UI ══ -->
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -52,17 +81,6 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>NSLocationWhenInUseUsageDescription</key>
-    <string>We need your location to show the map.</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>We need your location to show the map.</string>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>mailto</string>
-		<string>tel</string>
-		<string>sms</string>
-		<string>https</string>
 	</array>
 </dict>
 </plist>

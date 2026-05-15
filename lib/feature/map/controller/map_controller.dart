@@ -1,6 +1,7 @@
+// ignore_for_file: invalid_use_of_protected_member
+
 import 'dart:convert';
 import 'dart:ui' as ui;
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart' as vg;
 import 'package:get/get.dart';
@@ -19,9 +20,9 @@ extension DisabledLocationX on DisabledLocation {
 
 class ParkingReportController extends GetxController {
   // ── Form State ───────────────────────────────────────────────────────────────
-  final RxString parkingCost          = 'FREE'.obs;   // FREE | PAID
-  final RxBool   electricCharging     = false.obs;
-  final RxBool   disabledFacility     = false.obs;
+  final RxString parkingCost = 'FREE'.obs; // FREE | PAID
+  final RxBool electricCharging = false.obs;
+  final RxBool disabledFacility = false.obs;
   final Rx<DisabledLocation> disabledLocation = DisabledLocation.none.obs;
 
   // ── UI State ─────────────────────────────────────────────────────────────────
@@ -31,7 +32,7 @@ class ParkingReportController extends GetxController {
 
   // ── Reset ────────────────────────────────────────────────────────────────────
   void reset() {
-    parkingCost.value      = 'FREE';
+    parkingCost.value = 'FREE';
     electricCharging.value = false;
     disabledFacility.value = false;
     disabledLocation.value = DisabledLocation.none;
@@ -41,16 +42,15 @@ class ParkingReportController extends GetxController {
   Future<bool> submitParkingReport({
     required double latitude,
     required double longitude,
-  }) async
-  {
+  }) async {
     isLoading.value = true;
     submitMessage.value = '';
     submitSuccess.value = false;
 
     final Map<String, dynamic> body = {
-      'latitude'         : latitude,
-      'longitude'        : longitude,
-      'parking_cost'     : parkingCost.value,
+      'latitude': latitude,
+      'longitude': longitude,
+      'parking_cost': parkingCost.value,
       'electric_charging': electricCharging.value,
       'disabled_facility': disabledFacility.value,
       if (disabledFacility.value)
@@ -59,7 +59,7 @@ class ParkingReportController extends GetxController {
 
     try {
       final response = await ApiClient.postData(
-        uri : ApiUrl.parkingReport, // '/parking-report'
+        uri: ApiUrl.parkingReport, // '/parking-report'
         body: body,
       );
 
@@ -86,13 +86,8 @@ class ParkingReportController extends GetxController {
       isLoading.value = false;
     }
   }
+
   ///===============================get parking
-
-
-
-
-
-
 
   // ─── State ───────────────────────────────────────────────
   final RxBool isLoadingShowDetails = false.obs;
@@ -114,12 +109,8 @@ class ParkingReportController extends GetxController {
     zoom: 12,
   ).obs;
 
-
   // ─── Fetch Data ──────────────────────────────────────────
-  Future<void> fetchParkingReport({
-    double? latitude,
-    double? longitude,
-  }) async {
+  Future<void> fetchParkingReport({double? latitude, double? longitude}) async {
     try {
       isLoadingShowDetails.value = true;
       errorMessage.value = '';
@@ -150,8 +141,9 @@ class ParkingReportController extends GetxController {
           }
         }
 
-        parkingList.value =
-            rawList.map((e) => Map<String, dynamic>.from(e)).toList();
+        parkingList.value = rawList
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList();
 
         mapDebug('parking API: loaded ${parkingList.length} row(s)');
         await _buildMarkers();
@@ -197,7 +189,9 @@ class ParkingReportController extends GetxController {
             isDisabled: isDisabled,
           ),
           infoWindow: InfoWindow(
-            title: isPaid ? '💰 ${'map_paid_parking'.tr}' : '🆓 ${'map_free_parking'.tr}',
+            title: isPaid
+                ? '💰 ${'map_paid_parking'.tr}'
+                : '🆓 ${'map_free_parking'.tr}',
             snippet: [
               if (hasCharging) '⚡ ${'map_electric_charging'.tr}',
               if (isDisabled) '♿ ${'map_disabled_facility'.tr}',
@@ -286,6 +280,7 @@ class ParkingReportController extends GetxController {
     final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
     return BitmapDescriptor.bytes(bytes!.buffer.asUint8List());
   }
+
   // ─── Map Ready Callback ──────────────────────────────────
   void onMapCreated(GoogleMapController controller) {
     mapController.value = controller;
@@ -299,9 +294,4 @@ class ParkingReportController extends GetxController {
     if (value is String) return double.tryParse(value);
     return null;
   }
-
-
-
-
-
 }

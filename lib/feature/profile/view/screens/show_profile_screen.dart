@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class ShowProfileImageScreen extends StatelessWidget {
   final String image;
@@ -19,9 +18,7 @@ class ShowProfileImageScreen extends StatelessWidget {
       ),
       body: Center(
         child: InteractiveViewer(
-          child: isNetwork
-              ? Image.network(image)
-              : Image.file(File(image)),
+          child: isNetwork ? Image.network(image) : Image.file(File(image)),
         ),
       ),
     );

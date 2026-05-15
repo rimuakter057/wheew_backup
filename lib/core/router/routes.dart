@@ -17,7 +17,6 @@ import 'package:platchatapp/feature/profile/view/screens/profile_nav_screen.dart
 import 'package:platchatapp/feature/profile/view/screens/show_profile_screen.dart';
 import 'package:platchatapp/feature/useful_number/presentation/screens/useful_member_screen.dart';
 import 'package:platchatapp/feature/scan/presentation/screens/scan_screen.dart';
-import 'package:platchatapp/feature/terms_condition/terms_and_condition_screen.dart';
 import 'package:platchatapp/feature/auth/view/otp_screen.dart';
 import 'package:platchatapp/feature/chat/view/block/block_list_screen.dart';
 import 'package:platchatapp/feature/chat/view/chat_list/presentation/screens/chat_list_screen.dart';
@@ -28,7 +27,6 @@ import '../../feature/chat/view/group_message/presentation/screens/group_message
 import '../../feature/splash/splash_screen.dart';
 import '../../feature/auth/view/welcome_screen.dart';
 import '../../feature/auth/repository/auth_controller.dart';
-
 
 class AppRouter {
   static final navigatorKey = GlobalKey<NavigatorState>();
@@ -42,12 +40,12 @@ class AppRouter {
       GoRoute(
         path: RoutePath.splash,
         name: RouteName.splash,
-        builder: (_, __) => const SplashScreen(),
+        builder: (_, _) => const SplashScreen(),
       ),
       GoRoute(
         path: RoutePath.welcome,
         name: RouteName.welcome,
-        builder: (_, __) => const WelcomeScreen(),
+        builder: (_, _) => const WelcomeScreen(),
       ),
       GoRoute(
         path: RoutePath.signIn,
@@ -67,12 +65,12 @@ class AppRouter {
           return const SignUpScreen();
         },
       ),
+
       // GoRoute(
       //   path: RoutePath.terms,
       //   name: RouteName.terms,
       //   builder: (_, _) => const TermsAndConditionsScreen(),
       // ),
-
       GoRoute(
         path: RoutePath.block,
         name: RouteName.block,
@@ -146,10 +144,6 @@ class AppRouter {
         },
       ),
 
-<<<<<<< HEAD
-
-
-
       GoRoute(
         path: RoutePath.groupMessageScreen,
         name: RouteName.groupMessageScreen,
@@ -165,8 +159,6 @@ class AppRouter {
         },
       ),
 
-
-=======
       // GoRoute(
       //   path: RoutePath.message,
       //   name: RouteName.message,
@@ -182,8 +174,6 @@ class AppRouter {
       //       isBlockedMe: args['isBlockedMe'],
       //     );
       //   },
-      // ),
->>>>>>> 9585ab6 (work with voice actions)
       GoRoute(
         path: RoutePath.profile,
         name: RouteName.profile,
@@ -260,8 +250,6 @@ class AppRouter {
           return UsefulMemberScreen();
         },
       ),
-
-
     ],
   );
 }

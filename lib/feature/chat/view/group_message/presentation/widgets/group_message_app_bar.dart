@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart' hide Config;
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
-import 'package:platchatapp/feature/chat/model/group_message_response_model.dart';
 import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -65,34 +64,34 @@ class GroupMessageAppBar extends StatelessWidget {
             ),
           ),
           Obx(
-                () => TextButton(
+            () => TextButton(
               onPressed: controller.isLeavingGroup.value
                   ? null
                   : () {
-                Navigator.pop(ctx);
-                controller.leaveGroup(
-                  roomId: roomId,
-                  context: context,
-                  navigateBack: true,
-                );
-              },
+                      Navigator.pop(ctx);
+                      controller.leaveGroup(
+                        roomId: roomId,
+                        context: context,
+                        navigateBack: true,
+                      );
+                    },
               child: controller.isLeavingGroup.value
                   ? const SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.red,
-                ),
-              )
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.red,
+                      ),
+                    )
                   : Text(
-                'Leave',
-                style: GoogleFonts.poppins(
-                  fontSize: ResponsiveHelper.fontSize(14),
-                  color: Colors.red,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+                      'Leave',
+                      style: GoogleFonts.poppins(
+                        fontSize: ResponsiveHelper.fontSize(14),
+                        color: Colors.red,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
             ),
           ),
         ],
@@ -156,24 +155,17 @@ class GroupMessageAppBar extends StatelessWidget {
             icon: Icon(Icons.more_vert, color: AppColors.black),
             onSelected: (value) {
               if (value == "AddMembers") {
-                context.pushNamed(
-                  RouteName.addMemberScreen,
-                  extra: roomId,
-                );
+                context.pushNamed(RouteName.addMemberScreen, extra: roomId);
               } else if (value == "SeeMembers") {
                 context.pushNamed(
                   RouteName.groupMemberScreen,
-                  extra: {
-                    'roomId': roomId,
-                    'groupName': groupName,
-                  },
+                  extra: {'roomId': roomId, 'groupName': groupName},
                 );
               } else if (value == "LeaveGroup") {
                 _showLeaveGroupDialog(context);
               }
             },
             itemBuilder: (context) => [
-
               // ── See Members ──────────────────────────────
               PopupMenuItem<String>(
                 value: "SeeMembers",

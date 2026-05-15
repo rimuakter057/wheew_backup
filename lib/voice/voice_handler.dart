@@ -1,5 +1,7 @@
 // lib/voice/voice_handler.dart
 
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'intent_parser.dart';

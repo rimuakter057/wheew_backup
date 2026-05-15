@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/scan/controller/scan_controller.dart';
-import 'package:platchatapp/feature/scan/presentation/widget/profile_card.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
@@ -22,7 +21,7 @@ class ScanScreen extends StatefulWidget {
 
 class _ScanScreenState extends State<ScanScreen>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  final ScanController scanController = Get.find<ScanController>();
+  final ScanController scanController = Get.put(ScanController());
   int _tabIndex = 0;
   bool _scanned = false;
   bool _isLoading = false;
@@ -97,9 +96,7 @@ class _ScanScreenState extends State<ScanScreen>
     });
     _scannerController.stop();
 
-    final result = await scanController.scanQrCode(
-      qrData: code,
-    );
+    final result = await scanController.scanQrCode(qrData: code);
     if (!mounted) return;
 
     if (result.isSuccess && result.data != null) {
@@ -179,13 +176,13 @@ class _ScanScreenState extends State<ScanScreen>
           children: [
             // ── Camera ───────────────────────────────────────────────────
             ClipRRect(
-              borderRadius:
-              BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(20),
+              ),
               child: SizedBox(
                 width: boxSize,
                 height: boxSize,
-                child:
-                MobileScanner(
+                child: MobileScanner(
                   controller: _scannerController,
                   onDetect: _onDetect, // ✅ এটা use করো
                   errorBuilder: (context, error) =>
@@ -222,7 +219,9 @@ class _ScanScreenState extends State<ScanScreen>
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF3D72E8).withOpacity(0.5),
+                                  color: const Color(
+                                    0xFF3D72E8,
+                                  ).withOpacity(0.5),
                                   blurRadius: 6,
                                   spreadRadius: 2,
                                 ),
@@ -243,8 +242,9 @@ class _ScanScreenState extends State<ScanScreen>
                 height: boxSize,
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.6),
-                  borderRadius:
-                  BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveHelper.borderRadius(20),
+                  ),
                 ),
                 child: const Center(
                   child: CircularProgressIndicator(
@@ -261,8 +261,9 @@ class _ScanScreenState extends State<ScanScreen>
                 height: boxSize,
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.55),
-                  borderRadius:
-                  BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveHelper.borderRadius(20),
+                  ),
                 ),
                 child: const Center(
                   child: Icon(
@@ -292,7 +293,9 @@ class _ScanScreenState extends State<ScanScreen>
         SizedBox(height: ResponsiveHelper.spacing(28)),
 
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(40)),
+          padding: EdgeInsets.symmetric(
+            horizontal: ResponsiveHelper.padding(40),
+          ),
           child: Text(
             'point_camera_hint'.tr,
             textAlign: TextAlign.center,
@@ -336,8 +339,10 @@ class _ScanScreenState extends State<ScanScreen>
 
           // ── QR Image ─────────────────────────────────
           if (scanController.qrBase64.value.isNotEmpty) {
-            final base64Str = scanController.qrBase64.value
-                .replaceFirst('data:image/png;base64,', '');
+            final base64Str = scanController.qrBase64.value.replaceFirst(
+              'data:image/png;base64,',
+              '',
+            );
 
             return Container(
               width: ResponsiveHelper.width(240),
@@ -356,10 +361,7 @@ class _ScanScreenState extends State<ScanScreen>
                   ),
                 ],
               ),
-              child: Image.memory(
-                base64Decode(base64Str),
-                fit: BoxFit.contain,
-              ),
+              child: Image.memory(base64Decode(base64Str), fit: BoxFit.contain),
             );
           }
 
@@ -413,26 +415,6 @@ class _ScanScreenState extends State<ScanScreen>
     );
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   Future<void> _showScannedUserSheet(Map<String, dynamic> data) async {
     final user = data['user'] as Map<String, dynamic>;
     final bool isExistingChat =
@@ -441,9 +423,7 @@ class _ScanScreenState extends State<ScanScreen>
         (data['roomId']?.toString().isNotEmpty ?? false) ||
         (data['existingRoomId']?.toString().isNotEmpty ?? false);
     final String roomId =
-        data['roomId']?.toString() ??
-        data['existingRoomId']?.toString() ??
-        '';
+        data['roomId']?.toString() ?? data['existingRoomId']?.toString() ?? '';
 
     final String userId = user['id'] ?? '';
     final String nickName = user['nick_name'] ?? '';
@@ -641,11 +621,6 @@ class _ScanScreenState extends State<ScanScreen>
       ),
     );
   }
-
-
-
-
-
 }
 
 /// ─── Camera Error Widget ──────────────────────────────────────────────────────
@@ -679,8 +654,11 @@ class _CameraError extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.camera_alt_outlined,
-              color: Colors.white.withOpacity(0.2), size: 48),
+          Icon(
+            Icons.camera_alt_outlined,
+            color: Colors.white.withOpacity(0.2),
+            size: 48,
+          ),
           const SizedBox(height: 12),
           Text(
             _message,
@@ -704,7 +682,8 @@ class TabButton extends StatelessWidget {
   final bool isActive;
   final VoidCallback onTap;
 
-  const TabButton({super.key,
+  const TabButton({
+    super.key,
     required this.label,
     required this.isActive,
     required this.onTap,
@@ -720,16 +699,17 @@ class TabButton extends StatelessWidget {
           margin: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             color: isActive ? Colors.white : Colors.transparent,
-            borderRadius:
-            BorderRadius.circular(ResponsiveHelper.borderRadius(26)),
+            borderRadius: BorderRadius.circular(
+              ResponsiveHelper.borderRadius(26),
+            ),
             boxShadow: isActive
                 ? [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              )
-            ]
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
                 : [],
           ),
           child: Center(
@@ -799,8 +779,11 @@ class _CornerPainter extends CustomPainter {
       Path()
         ..moveTo(0, size.height - c)
         ..lineTo(0, size.height - r)
-        ..arcToPoint(Offset(r, size.height),
-            radius: Radius.circular(r), clockwise: false)
+        ..arcToPoint(
+          Offset(r, size.height),
+          radius: Radius.circular(r),
+          clockwise: false,
+        )
         ..lineTo(c, size.height),
       paint,
     );
@@ -809,8 +792,11 @@ class _CornerPainter extends CustomPainter {
       Path()
         ..moveTo(size.width - c, size.height)
         ..lineTo(size.width - r, size.height)
-        ..arcToPoint(Offset(size.width, size.height - r),
-            radius: Radius.circular(r), clockwise: false)
+        ..arcToPoint(
+          Offset(size.width, size.height - r),
+          radius: Radius.circular(r),
+          clockwise: false,
+        )
         ..lineTo(size.width, size.height - c),
       paint,
     );
@@ -819,12 +805,6 @@ class _CornerPainter extends CustomPainter {
   @override
   bool shouldRepaint(_CornerPainter old) =>
       old.color != color ||
-          old.cornerSize != cornerSize ||
-          old.strokeWidth != strokeWidth;
+      old.cornerSize != cornerSize ||
+      old.strokeWidth != strokeWidth;
 }
-
-
-
-
-
-

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
@@ -16,10 +15,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
-
-
-
   bool _isNavigated = false;
 
   @override
@@ -49,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
         onSocketConnect: () {
           if (!_isNavigated && mounted) {
             _isNavigated = true;
-           // context.goNamed(RouteName.chatList);
+            // context.goNamed(RouteName.chatList);
             context.goNamed(RouteName.mainNavScreen);
           }
         },

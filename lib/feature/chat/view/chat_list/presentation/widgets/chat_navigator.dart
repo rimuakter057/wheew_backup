@@ -9,10 +9,7 @@ import 'package:platchatapp/feature/chat/view/message/presentation/screens/messa
 import 'package:platchatapp/utils/app_const/app_const.dart';
 
 /// Room এর type দেখে সঠিক chat screen এ navigate করে
-void navigateToChat({
-  required BuildContext context,
-  required Rooms room,
-}) {
+void navigateToChat({required BuildContext context, required Rooms room}) {
   debugPrint('Navigating to room id: ${room.id}');
 
   if (room.isGroup) {
@@ -43,6 +40,8 @@ void navigateToChat({
           receiverId: room.otherUser?.id ?? '',
           isBlockedByMe: room.isBlockedByMe,
           isBlockedMe: room.isBlockedMe,
+          voiceAutoSend: room.voiceAutoSend ?? false,
+          voiceMessage: room.voiceMessage,
         ),
       ),
     );
