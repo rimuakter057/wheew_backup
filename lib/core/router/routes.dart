@@ -122,7 +122,6 @@ class AppRouter {
         name: RouteName.message,
         builder: (context, state) {
           final args = state.extra as Map<String, dynamic>;
-
           return MessageScreen(
             roomId: args['roomId'] ?? '',
             otherUserName: args['otherUserName'] ?? "",
@@ -130,10 +129,29 @@ class AppRouter {
             receiverId: args['receiverId'] ?? '',
             isBlockedByMe: args['isBlockedByMe'],
             isBlockedMe: args['isBlockedMe'],
+            // ── নতুন দুটো ──
+            voiceAutoSend: args['voiceAutoSend'] ?? false,
+            voiceMessage: args['voiceMessage'],
           );
         },
       ),
 
+      // GoRoute(
+      //   path: RoutePath.message,
+      //   name: RouteName.message,
+      //   builder: (context, state) {
+      //     final args = state.extra as Map<String, dynamic>;
+
+      //     return MessageScreen(
+      //       roomId: args['roomId'] ?? '',
+      //       otherUserName: args['otherUserName'] ?? "",
+      //       otherUserAvatar: args['otherUserAvatar'] ?? '',
+      //       receiverId: args['receiverId'] ?? '',
+      //       isBlockedByMe: args['isBlockedByMe'],
+      //       isBlockedMe: args['isBlockedMe'],
+      //     );
+      //   },
+      // ),
       GoRoute(
         path: RoutePath.profile,
         name: RouteName.profile,
