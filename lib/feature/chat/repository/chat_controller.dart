@@ -1064,3 +1064,25 @@ CustomSnackbar.success(context: context, message: "Successfully  Leave This Grou
 
 
 }
+
+  // Voice intent এর জন্য — direct search, debounce ছাড়া
+  Future<List<ChatModel>> searchUsersForVoice(String query) async {
+    if (query.isEmpty) return [];
+
+    final Response response = await _repo.searchUsers(
+      query: query,
+      page: 1,
+      limit: 10,
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data['users'] != null) {
+        return (data['users'] as List)
+            .map((user) => ChatModel.fromJson(user))
+            .toList();
+      }
+    }
+    return [];
+  }
+}

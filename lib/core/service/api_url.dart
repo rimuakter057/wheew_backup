@@ -10,7 +10,7 @@ class ApiUrl {
   // static const baseSocketUrl = 'ws://13.50.99.165:8003';
 
   //http://13.50.99.165:8003
- // static const baseSocketUrl = 'ws://13.50.99.165:8003';
+  //static const baseSocketUrl = 'ws://13.50.99.165:8003';
 
   //live url
   //static const String baseUrl = 'http://13.50.99.165:8003';
@@ -42,18 +42,16 @@ class ApiUrl {
   static const String block = '/users/block';
   static const String uploadDocument = '/user-documents';
   static const String getDocument = '/user-documents';
-  static  String updateDocument({required String documentId}) => '/user-documents/$documentId';
+  static String updateDocument({required String documentId}) =>
+      '/user-documents/$documentId';
 
   ///terms and privacy==========================
 
-  static const String terms =
-      "http://13.50.99.165/terms-and-condition-public";
+  static const String terms = "http://13.50.99.165/terms-and-condition-public";
   static const String privacy = "http://13.50.99.165/privacy-policy-public";
 
   // http://13.50.99.165/privacy-policy-public
   // http://13.50.99.165/terms-and-condition-public
-
-
 
   ///forget section==================================
 
@@ -67,20 +65,20 @@ class ApiUrl {
 
   static const String profile = '/auth/me'; // ✅ same as chatList
 
-
-///new feature
-
+  ///new feature
 
   static const String sendPreset = '/preset-message';
+
   /// POST create rating (body: ratee_id + rating).
   static const String sendRate = '/ratings';
+
   /// GET existing / PATCH update — path param is the other user's id (ratee).
   static String myRatingForRatee({required String rateeId}) =>
       '/ratings/my-rating/$rateeId';
-  static String viewOtherProfile({required String id}) =>
-      '/users/$id/profile';
+  static String viewOtherProfile({required String id}) => '/users/$id/profile';
   @Deprecated('Use myRatingForRatee')
-  static String getRating({required String id}) => myRatingForRatee(rateeId: id);
+  static String getRating({required String id}) =>
+      myRatingForRatee(rateeId: id);
 
   @Deprecated('Use myRatingForRatee')
   static String updatedRating({required String id}) =>
@@ -88,11 +86,18 @@ class ApiUrl {
   static const String getQRCode = '/users/generate-code';
   static const String scanQr = '/users/scan-qr-code';
   static const String showDetails = "/parking-report";
-  static  String usefulNumber({required double latitude,required double longitude,required int page,required int limit}) => '/useful-number/nearby?latitude=$latitude&longitude=$longitude&page=$page&limit=$limit';
+  static String usefulNumber({
+    required double latitude,
+    required double longitude,
+    required int page,
+    required int limit,
+  }) =>
+      '/useful-number/nearby?latitude=$latitude&longitude=$longitude&page=$page&limit=$limit';
 
   static const String presetMessage = '/preset-message';
   static const String createGroup = '/group/room';
-  static  String leaveGroup({required String roomId}) => '/group/room/$roomId/leave';
+  static String leaveGroup({required String roomId}) =>
+      '/group/room/$roomId/leave';
 
   // ✅ page, limit support সহ
   static String getGroupMessage({
@@ -101,22 +106,14 @@ class ApiUrl {
     int limit = 20,
   }) => '/group/room/$roomId/messages?page=$page&limit=$limit';
 
-
-
-  static String addGroupMember({
-    required String roomId,
-  }) => '/group/room/$roomId/members';
-
+  static String addGroupMember({required String roomId}) =>
+      '/group/room/$roomId/members';
 
   static String removeGroupMember({
     required String roomId,
     required String memberId,
-
   }) => '/group/room/$roomId/member/$memberId';
 
-
-  static String searchGroupMember({
-    required String roomId,
-  }) => '/users/search?query=r&for=group&roomId=$roomId';
-
+  static String searchGroupMember({required String roomId}) =>
+      '/users/search?query=r&for=group&roomId=$roomId';
 }

@@ -65,6 +65,8 @@ dependencies:
 
   http: ^1.2.0
   flutter_localization: ^0.3.3
+  flutter_local_notifications: ^21.0.0
+  receive_intent: ^0.2.7
   google_maps_flutter: ^2.14.2
   geolocator: ^14.0.2
   mobile_scanner: ^7.2.0

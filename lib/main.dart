@@ -1,49 +1,53 @@
-import 'package:flutter/foundation.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
+
 import 'package:platchatapp/core/router/routes.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/core/theme/light_theme.dart';
+import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
+import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
+import 'package:platchatapp/firebase_options.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/language/language_controller.dart';
 import 'package:platchatapp/utils/string/AppTranslations.dart';
+
+import 'feature/chat/repository/chat_controller.dart';
+
+// ignore: depend_on_referenced_packages
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'core/binding/app_binding.dart';
-import 'firebase_options.dart';
 
-///android key one signal
+// ── Voice (নতুন 3 লাইন) ──
+import 'voice/voice_handler.dart';
+import 'voice/voice_action_router.dart';
+import 'voice/intent_parser.dart';
 
-
-
-//2b118f3e-5d8f-436d-b63d-92273ec51793
+late VoiceActionRouter _voiceRouter; // নতুন
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final languageController = Get.put(LanguageController());
   await languageController.loadSavedLanguage();
 
-  if (defaultTargetPlatform == TargetPlatform.android) {
-    final GoogleMapsFlutterAndroid mapsAndroid = GoogleMapsFlutterAndroid();
-    mapsAndroid.useAndroidViewSurface = false;
-  }
-
-  // ✅ Controllers এখন AppBindings এ — এখানে আর লাগবে না
-  AppBindings().dependencies();
+  Get.put(AuthController());
+  Get.put(ChatController());
+  Get.put(ProfileController());
 
   Get.addTranslations(AppTranslations().keys);
 
   await AppSocket.init(
     onSocketConnect: () {
-      debugPrint(
-        '=============================== main Socket successfully connected =================',
-      );
+      debugPrint('======= main Socket connected =======');
     },
+  );
+
+  // ── Voice setup (নতুন 5 লাইন) ──
+  _voiceRouter = VoiceActionRouter(navigatorKey: AppRouter.navigatorKey);
+  VoiceHandler.initialize(
+    onIntent: (ParsedIntent intent) => _voiceRouter.route(intent),
   );
 
   runApp(const App());
@@ -57,7 +61,7 @@ class App extends StatelessWidget {
     final languageController = Get.find<LanguageController>();
     ResponsiveHelper.init(context);
     return Obx(
-          () => MaterialApp.router(
+      () => MaterialApp.router(
         debugShowCheckedModeBanner: false,
         title: 'My App',
         theme: lightTheme,
@@ -73,3 +77,75 @@ class App extends StatelessWidget {
     );
   }
 }
+
+// import 'package:flutter/material.dart';
+// import 'package:get/get.dart';
+// import 'package:platchatapp/core/service/socket_service.dart';
+// import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
+// import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
+// import 'package:platchatapp/utils/string/AppTranslations.dart';
+// import 'core/router/routes.dart';
+// import 'core/theme/light_theme.dart';
+// import 'feature/chat/repository/chat_controller.dart';
+// import 'helper/responsive_helper/responsive_helper.dart';
+// import 'language/language_controller.dart';
+// // ignore: depend_on_referenced_packages
+// import 'package:flutter_localizations/flutter_localizations.dart';
+
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+
+//   // 🔥 Language controller MUST be awaited
+//   final languageController = Get.put(LanguageController());
+//   await languageController.loadSavedLanguage();
+
+//   // Controllers
+//   Get.put(AuthController());
+//   Get.put(ChatController());
+//   Get.put(ProfileController());
+
+//   // Translations
+//   Get.addTranslations(AppTranslations().keys);
+
+//   // Socket init
+//   await AppSocket.init(
+//     onSocketConnect: () {
+//       debugPrint(
+//         '=============================== main Socket successfully connected =================',
+//       );
+//     },
+//   );
+
+//   runApp(const App());
+// }
+
+// class App extends StatelessWidget {
+//   const App({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final languageController = Get.find<LanguageController>();
+//     ResponsiveHelper.init(context);
+//     return Obx(
+//       () => MaterialApp.router(
+//         debugShowCheckedModeBanner: false,
+//         title: 'My App',
+
+//         // ✅ LIGHT THEME IS STILL HERE
+//         theme: lightTheme,
+
+//         routerConfig: AppRouter.router,
+
+//         locale: languageController.currentLocale.value,
+
+//         supportedLocales: const [Locale('it', 'IT'), Locale('en', 'US')],
+
+//         localizationsDelegates: const [
+//           GlobalMaterialLocalizations.delegate,
+//           GlobalWidgetsLocalizations.delegate,
+//           GlobalCupertinoLocalizations.delegate,
+//         ],
+//       ),
+//     );
+//   }
+// }
