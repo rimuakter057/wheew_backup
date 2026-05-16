@@ -2,12 +2,12 @@ class ApiUrl {
   // Base URL - Replace with your actual API base URL
 
   // Local url
-  static const String baseUrl = 'http://10.10.20.44:8003';
-  static const baseSocketUrl = 'ws://10.10.20.44:8003';
+  // static const String baseUrl = 'http://10.10.20.44:8003';
+  // static const baseSocketUrl = 'ws://10.10.20.44:8003';
 
   // live url
-  // static const String baseUrl = 'http://13.50.99.165:8003';
-  // static const baseSocketUrl = 'ws://13.50.99.165:8003';
+  static const String baseUrl = 'http://13.50.99.165:8003';
+  static const baseSocketUrl = 'ws://13.50.99.165:8003';
 
   //http://13.50.99.165:8003
   //static const baseSocketUrl = 'ws://13.50.99.165:8003';
