@@ -47,6 +47,7 @@ class AssetsPath {
   static const String left="assets/icons/left.svg";
   static const String right="assets/icons/right.svg";
   static const String back="assets/icons/back.svg";
+  static const String none="assets/icons/none.svg";
   static const String all="assets/icons/all.svg";
 
 

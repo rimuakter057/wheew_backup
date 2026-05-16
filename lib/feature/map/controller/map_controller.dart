@@ -59,7 +59,7 @@ class ParkingReportController extends GetxController {
 
     try {
       final response = await ApiClient.postData(
-        uri: ApiUrl.parkingReport, // '/parking-report'
+        uri: ApiUrl.parkingReport,
         body: body,
       );
 
@@ -71,7 +71,7 @@ class ParkingReportController extends GetxController {
       } else {
         final decoded = jsonDecode(response.body);
         final msg =
-            (decoded is Map<String, dynamic> && decoded['message'] != null)
+        (decoded is Map<String, dynamic> && decoded['message'] != null)
             ? decoded['message'].toString()
             : 'something_went_wrong'.tr;
         submitMessage.value = msg;
@@ -87,17 +87,20 @@ class ParkingReportController extends GetxController {
     }
   }
 
-  ///===============================get parking
+  // ═══════════════════════════════════════════════════════════════════════════
+  //  GET PARKING
+  // ═══════════════════════════════════════════════════════════════════════════
 
-  // ─── State ───────────────────────────────────────────────
+  // ─── State ───────────────────────────────────────────────────────────────
   final RxBool isLoadingShowDetails = false.obs;
   final RxString errorMessage = ''.obs;
-  final RxList<Map<String, dynamic>> parkingList = <Map<String, dynamic>>[].obs;
-  final Rxn<Map<String, dynamic>> selectedReport = Rxn<Map<String, dynamic>>();
-  BitmapDescriptor? _iconPaidBlue;
-  BitmapDescriptor? _iconFreeWhite;
-  BitmapDescriptor? _iconElectricGreen;
-  BitmapDescriptor? _iconDisabledOrange;
+  final RxList<Map<String, dynamic>> parkingList =
+      <Map<String, dynamic>>[].obs;
+  final Rxn<Map<String, dynamic>> selectedReport =
+  Rxn<Map<String, dynamic>>();
+
+  // Per-location icon cache — key: "ALL" | "BACK" | "RIGHT" | "LEFT" | "NONE"
+  final Map<String, BitmapDescriptor> _locationIconCache = {};
 
   // Map controller & markers
   final Rx<GoogleMapController?> mapController = Rx<GoogleMapController?>(null);
@@ -109,8 +112,11 @@ class ParkingReportController extends GetxController {
     zoom: 12,
   ).obs;
 
-  // ─── Fetch Data ──────────────────────────────────────────
-  Future<void> fetchParkingReport({double? latitude, double? longitude}) async {
+  // ─── Fetch Data ──────────────────────────────────────────────────────────
+  Future<void> fetchParkingReport({
+    double? latitude,
+    double? longitude,
+  }) async {
     try {
       isLoadingShowDetails.value = true;
       errorMessage.value = '';
@@ -141,15 +147,14 @@ class ParkingReportController extends GetxController {
           }
         }
 
-        parkingList.value = rawList
-            .map((e) => Map<String, dynamic>.from(e))
-            .toList();
+        parkingList.value =
+            rawList.map((e) => Map<String, dynamic>.from(e)).toList();
 
         mapDebug('parking API: loaded ${parkingList.length} row(s)');
         await _buildMarkers();
       } else {
         errorMessage.value =
-            '${'map_failed_to_load_parking_data'.tr} (${response.statusCode})';
+        '${'map_failed_to_load_parking_data'.tr} (${response.statusCode})';
         mapDebug('parking API: HTTP ${response.statusCode}');
       }
     } catch (e) {
@@ -161,33 +166,37 @@ class ParkingReportController extends GetxController {
     }
   }
 
-  // ─── Build Map Markers ───────────────────────────────────
+  // ─── Build Map Markers ────────────────────────────────────────────────────
   Future<void> _buildMarkers() async {
     final Set<Marker> newMarkers = {};
-    await _ensureMarkerIcons();
 
     for (int i = 0; i < parkingList.length; i++) {
       final parking = parkingList[i];
 
       final double? lat = _toDouble(parking['latitude']);
       final double? lng = _toDouble(parking['longitude']);
-
-      // lat/lng না থাকলে skip
       if (lat == null || lng == null) continue;
 
       final bool isPaid = parking['parking_cost'] == 'PAID';
       final bool hasCharging = parking['electric_charging'] == true;
       final bool isDisabled = parking['disabled_facility'] == true;
 
+      // ── Icon: disabled_facility_location → SVG ──────────────────────────
+      // disabled হলে → location অনুযায়ী icon (ALL/BACK/RIGHT/LEFT/NONE)
+      // disabled না হলে → NONE icon (default parking)
+      final String locationKey = isDisabled
+          ? ((parking['disabled_facility_location'] as String?) ?? 'NONE')
+          .toUpperCase()
+          : 'NONE';
+
+      final BitmapDescriptor icon = await _getLocationIcon(locationKey);
+      // ────────────────────────────────────────────────────────────────────
+
       newMarkers.add(
         Marker(
           markerId: MarkerId(parking['id'] ?? 'parking_$i'),
           position: LatLng(lat, lng),
-          icon: _iconForReport(
-            isPaid: isPaid,
-            hasCharging: hasCharging,
-            isDisabled: isDisabled,
-          ),
+          icon: icon,
           infoWindow: InfoWindow(
             title: isPaid
                 ? '💰 ${'map_paid_parking'.tr}'
@@ -206,56 +215,43 @@ class ParkingReportController extends GetxController {
     mapDebug('markers: built ${newMarkers.length} from parking list');
   }
 
-  // ─── Marker Tap ──────────────────────────────────────────
-  void _onMarkerTap(Map<String, dynamic> parking) {
-    selectedReport.value = parking;
-    mapDebug(
-      'marker tap: id=${parking['id']} cost=${parking['parking_cost']} '
-      'ev=${parking['electric_charging']} disabled=${parking['disabled_facility']}',
-    );
+  // ─── Location → Icon (cached) ─────────────────────────────────────────────
+  Future<BitmapDescriptor> _getLocationIcon(String location) async {
+    final String key = location.toUpperCase();
+
+    if (_locationIconCache.containsKey(key)) {
+      return _locationIconCache[key]!;
+    }
+
+    final icon = await _svgMarker(_assetForLocation(key));
+    _locationIconCache[key] = icon;
+    mapDebug('icon cache: loaded "$key"');
+    return icon;
   }
 
-  String parkingInfoText(Map<String, dynamic> parking) {
-    return '${'map_cost'.tr}: ${parking['parking_cost']}  |  '
-        '${'map_ev'.tr}: ${parking['electric_charging']}  |  '
-        '${'map_disabled'.tr}: ${parking['disabled_facility']}';
+  /// API value → SVG asset path
+  String _assetForLocation(String location) {
+    switch (location) {
+      case 'ALL':
+        return AssetsPath.all;
+      case 'BACK':
+        return AssetsPath.back;
+      case 'RIGHT':
+        return AssetsPath.right;
+      case 'LEFT':
+        return AssetsPath.left;
+      case 'NONE':
+      default:
+        return AssetsPath.none;
+    }
   }
 
-  String parkingCostText(Map<String, dynamic> parking) =>
-      (parking['parking_cost'] ?? '-').toString();
-
-  String boolFlag(dynamic value) => value == true ? 'yes'.tr : 'no'.tr;
-
-  void clearSelectedReport() {
-    selectedReport.value = null;
-  }
-
-  BitmapDescriptor _iconForReport({
-    required bool isPaid,
-    required bool hasCharging,
-    required bool isDisabled,
-  }) {
-    if (isDisabled) return _iconDisabledOrange!;
-    if (hasCharging) return _iconElectricGreen!;
-    if (isPaid) return _iconPaidBlue!;
-    return _iconFreeWhite!;
-  }
-
-  Future<void> _ensureMarkerIcons() async {
-    // User-requested assets only: left/right/back/top/all SVG.
-    _iconElectricGreen ??= await _svgMarker(AssetsPath.left);
-    _iconPaidBlue ??= await _svgMarker(AssetsPath.right);
-    _iconDisabledOrange ??= await _svgMarker(AssetsPath.back);
-    _iconFreeWhite ??= await _svgMarker(AssetsPath.all);
-  }
-
+  // ─── SVG → BitmapDescriptor ───────────────────────────────────────────────
   Future<BitmapDescriptor> _svgMarker(String assetPath) async {
     const double size = 88;
 
-    // Load raw SVG string
     final rawSvg = await rootBundle.loadString(assetPath);
 
-    // Use flutter_svg's vg package to parse and draw
     final pictureInfo = await vg.vg.loadPicture(
       vg.SvgStringLoader(rawSvg),
       null,
@@ -264,12 +260,8 @@ class ParkingReportController extends GetxController {
     final recorder = ui.PictureRecorder();
     final canvas = ui.Canvas(recorder);
 
-    // Scale SVG to desired size
     final srcSize = pictureInfo.size;
-    final scaleX = size / srcSize.width;
-    final scaleY = size / srcSize.height;
-    canvas.scale(scaleX, scaleY);
-
+    canvas.scale(size / srcSize.width, size / srcSize.height);
     canvas.drawPicture(pictureInfo.picture);
     pictureInfo.picture.dispose();
 
@@ -281,12 +273,38 @@ class ParkingReportController extends GetxController {
     return BitmapDescriptor.bytes(bytes!.buffer.asUint8List());
   }
 
-  // ─── Map Ready Callback ──────────────────────────────────
+  // ─── Marker Tap ───────────────────────────────────────────────────────────
+  void _onMarkerTap(Map<String, dynamic> parking) {
+    selectedReport.value = parking;
+    mapDebug(
+      'marker tap: id=${parking['id']} '
+          'cost=${parking['parking_cost']} '
+          'ev=${parking['electric_charging']} '
+          'disabled=${parking['disabled_facility']} '
+          'location=${parking['disabled_facility_location']}',
+    );
+  }
+
+  // ─── Helpers (UI) ─────────────────────────────────────────────────────────
+  String parkingInfoText(Map<String, dynamic> parking) {
+    return '${'map_cost'.tr}: ${parking['parking_cost']}  |  '
+        '${'map_ev'.tr}: ${parking['electric_charging']}  |  '
+        '${'map_disabled'.tr}: ${parking['disabled_facility']}';
+  }
+
+  String parkingCostText(Map<String, dynamic> parking) =>
+      (parking['parking_cost'] ?? '-').toString();
+
+  String boolFlag(dynamic value) => value == true ? 'yes'.tr : 'no'.tr;
+
+  void clearSelectedReport() => selectedReport.value = null;
+
+  // ─── Map Ready Callback ───────────────────────────────────────────────────
   void onMapCreated(GoogleMapController controller) {
     mapController.value = controller;
   }
 
-  // ─── Helper ──────────────────────────────────────────────
+  // ─── Type Helper ─────────────────────────────────────────────────────────
   double? _toDouble(dynamic value) {
     if (value == null) return null;
     if (value is double) return value;

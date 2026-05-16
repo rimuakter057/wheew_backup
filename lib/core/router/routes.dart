@@ -9,7 +9,6 @@ import 'package:platchatapp/feature/auth/view/reset_password_screen.dart';
 import 'package:platchatapp/feature/auth/view/forgot_password_screen.dart';
 import 'package:platchatapp/feature/auth/view/sign_in_screen.dart';
 import 'package:platchatapp/feature/auth/view/sign_up_screen.dart';
-import 'package:platchatapp/feature/chat/view/group_message/presentation/screens/group_member_screen.dart';
 import 'package:platchatapp/feature/chat/view/member/presentation/screens/add_member_screen.dart';
 import 'package:platchatapp/feature/main/presentation/main_nav-screen.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
@@ -23,7 +22,8 @@ import 'package:platchatapp/feature/chat/view/chat_list/presentation/screens/cha
 import 'package:platchatapp/feature/chat/view/message/presentation/screens/message_screen.dart';
 import 'package:platchatapp/feature/chat/view/search/serach_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_screen.dart';
-import '../../feature/chat/view/group_message/presentation/screens/group_message_screen.dart';
+import '../../feature/chat/view/group/presentation/screens/group_member_screen.dart';
+import '../../feature/chat/view/group/presentation/screens/group_message_screen.dart';
 import '../../feature/splash/splash_screen.dart';
 import '../../feature/auth/view/welcome_screen.dart';
 import '../../feature/auth/repository/auth_controller.dart';

@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
-import 'package:platchatapp/feature/chat/view/group_message/controller/group_controller.dart';
+import 'package:platchatapp/feature/chat/view/group/controller/group_controller.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 

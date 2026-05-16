@@ -686,11 +686,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:platchatapp/feature/chat/view/group_message/presentation/widgets/group_message_app_bar.dart';
-import 'package:platchatapp/feature/chat/view/group_message/presentation/widgets/group_message_double.dart';
 import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
-import 'package:platchatapp/feature/chat/view/group_message/presentation/widgets/group_message_input.dart';
+import 'package:platchatapp/feature/chat/view/group/presentation/widgets/group_message_app_bar.dart';
+import 'package:platchatapp/feature/chat/view/group/presentation/widgets/group_message_double.dart';
+import 'package:platchatapp/feature/chat/view/group/presentation/widgets/group_message_input.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 

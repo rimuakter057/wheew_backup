@@ -13,6 +13,7 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/language/language_controller.dart';
 import 'package:platchatapp/utils/string/AppTranslations.dart';
 
+import 'core/binding/app_binding.dart';
 import 'feature/chat/repository/chat_controller.dart';
 
 // ignore: depend_on_referenced_packages
@@ -32,12 +33,12 @@ void main() async {
   final languageController = Get.put(LanguageController());
   await languageController.loadSavedLanguage();
 
-  Get.put(AuthController());
-  Get.put(ChatController());
-  Get.put(ProfileController());
-
-  Get.addTranslations(AppTranslations().keys);
-
+  // Get.put(AuthController());
+  // Get.put(ChatController());
+  // Get.put(ProfileController());
+  //
+  // Get.addTranslations(AppTranslations().keys);
+  AppBindings().dependencies();
   await AppSocket.init(
     onSocketConnect: () {
       debugPrint('======= main Socket connected =======');

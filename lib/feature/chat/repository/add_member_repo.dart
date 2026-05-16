@@ -27,7 +27,10 @@ class AddMemberRepository {
         final jsonData = jsonDecode(response.body);
 
         // Response: { "users": [...], "totalUsers": 1 }
-        final List data = jsonData['users'] ?? [];
+
+        // ✅ এখন — response directly একটা List
+        final List data = jsonData is List ? jsonData : (jsonData['users'] ?? []);
+
         return data
             .map((e) => SearchMemberModel.fromJson(e as Map<String, dynamic>))
             .toList();

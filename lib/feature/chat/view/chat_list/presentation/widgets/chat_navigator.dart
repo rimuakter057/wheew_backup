@@ -4,9 +4,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
-import 'package:platchatapp/feature/chat/view/group_message/presentation/screens/group_message_screen.dart';
 import 'package:platchatapp/feature/chat/view/message/presentation/screens/message_screen.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
+
+import '../../../group/presentation/screens/group_message_screen.dart';
 
 /// Room এর type দেখে সঠিক chat screen এ navigate করে
 void navigateToChat({required BuildContext context, required Rooms room}) {

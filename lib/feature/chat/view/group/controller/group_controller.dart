@@ -5,12 +5,36 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/feature/chat/model/user_profile_model.dart';
 import 'package:platchatapp/feature/chat/repository/add_member_repo.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
-import 'package:platchatapp/feature/chat/view/group_message/model/group_member.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
+// ✅ এটা দাও
+import 'package:platchatapp/feature/chat/view/group/model/group_member.dart';
 
 class GroupController extends GetxController {
+///view user ================
+  final Rx<UserProfileModel?> viewedProfile = Rx(null);
+  final RxBool isLoadingProfile = false.obs;
+
+  Future<void> fetchUserProfile(String userId) async {
+    isLoadingProfile.value = true;
+    viewedProfile.value = null;
+    try {
+      final response = await ApiClient.getData(
+        uri: ApiUrl.userProfile(userId),
+      );
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        viewedProfile.value = UserProfileModel.fromJson(json);
+      }
+    } catch (e) {
+      debugPrint('fetchUserProfile error: $e');
+    } finally {
+      isLoadingProfile.value = false;
+    }
+  }
+
 
 
   ///search member============================
@@ -33,10 +57,10 @@ class GroupController extends GetxController {
   // ─── Init ─────────────────────────────────────────────────────────────────────
   void init(String roomId) {
     _roomId = roomId;
-    // Screen খুললেই default list load করো
+    selectedIds.clear();   // ✅ add করো
+    searchResults.clear(); // ✅ add করো
     _search('');
   }
-
   // ─── Search (debounced 400ms) ─────────────────────────────────────────────────
   void onSearchChanged(String query) {
     searchQuery.value = query.trim();
@@ -115,7 +139,7 @@ class GroupController extends GetxController {
     }
   }
 
-
+///remove===================================
   Future<bool> removeGroupMember({
     required String roomId,
     required String memberId,

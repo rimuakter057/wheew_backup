@@ -26,7 +26,8 @@ class ChatController extends GetxController {
     required String groupRoomId,
     required List<String> memberIds,
     required BuildContext context,
-  }) async {
+  }) async
+  {
     if (memberIds.isEmpty) return false;
     isAddingMember.value = true;
 

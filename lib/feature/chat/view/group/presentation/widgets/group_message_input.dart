@@ -4,7 +4,7 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' hide Config;
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
-import 'package:platchatapp/feature/chat/view/group_message/presentation/widgets/group_preset.dart';
+import 'package:platchatapp/feature/chat/view/group/presentation/widgets/group_preset.dart';
 
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';

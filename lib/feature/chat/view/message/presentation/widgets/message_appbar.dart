@@ -10,12 +10,15 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/custom_container/custom_container.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
+
+
 class MessageAppBar extends StatelessWidget {
   final String otherUserName;
   final String? otherUserAvatar;
   final String receiverId;
   final ChatController chatController;
   final VoidCallback onRateTap;
+  final VoidCallback onProfileTap; // ✅ add করো
 
   const MessageAppBar({
     super.key,
@@ -23,7 +26,7 @@ class MessageAppBar extends StatelessWidget {
     required this.otherUserAvatar,
     required this.receiverId,
     required this.chatController,
-    required this.onRateTap,
+    required this.onRateTap, required this.onProfileTap,
   });
 
   @override
@@ -80,19 +83,8 @@ class MessageAppBar extends StatelessWidget {
                 chatController.isBlockedByMe.value = false;
               } else if (value == "Rate") {
                 onRateTap();
-              } else if (value == "ViewProfile") {
-                showDialog(
-                  context: context,
-                  builder: (context) => Dialog(
-                    backgroundColor: Colors.transparent,
-                    child: ProfileCard(
-                      name: 'Rimu',
-                      rating: 4.8,
-                      address: 'address',
-                      showRating: true,
-                    ),
-                  ),
-                );
+              }  else if (value == "ViewProfile") {
+                onProfileTap();
               }
             },
             itemBuilder: (context) => [

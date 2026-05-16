@@ -9,7 +9,8 @@ import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
-import '../../../group_message/controller/group_controller.dart';
+
+import '../../../group/controller/group_controller.dart';
 
 
 class AddMemberScreen extends StatefulWidget {
@@ -51,12 +52,8 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
     if (mounted) Navigator.pop(context);
   }
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    Get.delete<ChatController>();
-    super.dispose();
-  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +142,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
         itemBuilder: (context, index) {
           final SearchMemberModel member = list[index];
 
-          return AddMemberTile(
+          return Obx(() => AddMemberTile(       // ✅ এই Obx টা নতুন
             name: member.nickName,
             avatarUrl: ImageHandler.imagesHandle(
               member.avatar?.isNotEmpty == true
@@ -153,11 +150,11 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
                   : AppConst.unknown,
               isProfile: true,
             ),
-            rating: null, // API response এ rating নেই
-            isSelected: _controller.isSelected(member.id),
+            rating: null,
+            isSelected: _controller.isSelected(member.id),  // এখন reactive
             onTap: () => _controller.toggleSelect(member.id),
             onCheckChanged: (_) => _controller.toggleSelect(member.id),
-          );
+          ));
         },
       );
     });
