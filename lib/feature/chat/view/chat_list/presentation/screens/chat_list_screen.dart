@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,7 +25,7 @@ class ChatListScreen extends StatefulWidget {
 }
 
 class _ChatListScreenState extends State<ChatListScreen> {
-  final ChatController controller = Get.find<ChatController>();
+  final ChatController controller = Get.put(ChatController());
   final ScrollController scrollController = ScrollController();
 
   @override
@@ -43,9 +42,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.initSocketListeners();           // socket events listen শুরু
-      controller.fetchChatList(refresh: true);    // প্রথমবার chat list load
-      controller.newMessage();                    // নতুন message socket listen
+      controller.initSocketListeners(); // socket events listen শুরু
+      controller.fetchChatList(refresh: true); // প্রথমবার chat list load
+      controller.newMessage(); // নতুন message socket listen
       Get.find<ProfileController>().reloadProfile(); // profile reload
     });
 
@@ -56,7 +55,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
   void _onScroll() {
     if (!scrollController.hasClients) return;
     if (scrollController.position.pixels >=
-        scrollController.position.maxScrollExtent - 200 &&
+            scrollController.position.maxScrollExtent - 200 &&
         controller.hasMore &&
         !controller.isLoadingMore.value &&
         !controller.isLoadingChat.value) {
@@ -75,10 +74,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
     return Scaffold(
       // ── App Bar: logo + create group button ─────────────────
       appBar: ChatListAppBar(
-        onCreateGroupTap: () => showCreateGroupDialog(
-          context: context,
-          controller: controller,
-        ),
+        onCreateGroupTap: () =>
+            showCreateGroupDialog(context: context, controller: controller),
       ),
 
       body: RefreshIndicator(
@@ -104,9 +101,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   return ListView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     children: [
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * .3,
-                      ),
+                      SizedBox(height: MediaQuery.of(context).size.height * .3),
                       Center(
                         child: Text(
                           'no_chats'.tr,
@@ -130,11 +125,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
                     if (index == controller.userChatList.length) {
                       return controller.isLoadingMore.value
                           ? const Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      )
+                              padding: EdgeInsets.all(8),
+                              child: Center(child: CircularProgressIndicator()),
+                            )
                           : const SizedBox.shrink();
                     }
 
@@ -142,8 +135,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                     final bool isGroup = room.isGroup;
 
                     // Latest message text তৈরি করো
-                    final String lastMessage =
-                    _buildLastMessage(room, isGroup);
+                    final String lastMessage = _buildLastMessage(room, isGroup);
 
                     return ChatTile(
                       name: room.displayName,
@@ -162,14 +154,14 @@ class _ChatListScreenState extends State<ChatListScreen> {
                           ? formatTime(room.latestMessage!.createdAt!)
                           : '',
                       // group chat এ block নেই
-                      isBlock: !isGroup &&
+                      isBlock:
+                          !isGroup &&
                           (room.isBlockedByMe == true ||
                               room.isBlockedMe == true),
                       isGroup: isGroup,
                       // group এ rating নেই
                       rating: isGroup ? null : room.otherUser?.rating,
-                      onTap: () =>
-                          navigateToChat(context: context, room: room),
+                      onTap: () => navigateToChat(context: context, room: room),
                     );
                   },
                 );
@@ -192,8 +184,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
       if (room.latestMessage?.isMine == true) {
         return 'You: ${room.latestMessage!.message!}';
       }
-      final String senderName =
-          room.latestMessage?.sender?.nickName ?? '';
+      final String senderName = room.latestMessage?.sender?.nickName ?? '';
       return senderName.isNotEmpty
           ? '$senderName: ${room.latestMessage!.message!}'
           : room.latestMessage!.message!;
