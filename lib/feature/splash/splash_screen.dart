@@ -74,19 +74,4 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  // void _showTimeoutMessage() {
-  //   Get.snackbar(
-  //     "Connection Timeout",
-  //
-  //     "Server is not responding. Please try again.",
-  //
-  //     snackPosition: SnackPosition.BOTTOM,
-  //
-  //     backgroundColor: Colors.red,
-  //
-  //     colorText: Colors.white,
-  //
-  //     duration: const Duration(seconds: 4),
-  //   );
-  // }
 }

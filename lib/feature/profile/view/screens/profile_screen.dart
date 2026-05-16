@@ -170,41 +170,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   enabled: false,
                 ),
 
-                SizedBox(height: ResponsiveHelper.spacing(8)),
-                //
-                // Text(
-                //   'upload_documents'.tr,
-                //   textAlign: TextAlign.start,
-                //   style: GoogleFonts.poppins(
-                //     fontSize: ResponsiveHelper.fontSize(16),
-                //     fontWeight: FontWeight.w500,
-                //     color: AppColors.textBlack,
-                //   ),
-                // ),
-                //
-                // SizedBox(height: ResponsiveHelper.spacing(18)),
-                //
-                // CustomUploadCard(
-                //   title: 'drivers_license'.tr,
-                //   subtitle: 'tap_to_upload'.tr,
-                //   onUpload: () {
-                //     showUploadDocumentSheet(context,
-                //         documentType: "License"
-                //     );
-                //   },
-                // ),
-                // SizedBox(height: ResponsiveHelper.spacing(12)),
-                // CustomUploadCard(
-                //   title: 'car_insurance'.tr,
-                //   subtitle: 'tap_to_upload'.tr,
-                //   onUpload: () {},
-                // ),
-                // SizedBox(height: ResponsiveHelper.spacing(12)),
-                // CustomUploadCard(
-                //   title: 'car_tax'.tr,
-                //   subtitle: 'tap_to_upload'.tr,
-                //   onUpload: () {},
-                // ),
 
 
                 Text(

@@ -163,22 +163,6 @@ class ProfileNavScreen extends StatelessWidget {
             ),
           SizedBox(height: ResponsiveHelper.spacing(5)),
 
-          Row(
-            children: [
-              Icon(
-                Icons.star,
-                color: Colors.orangeAccent,
-                size: ResponsiveHelper.iconSize(18),
-              ),
-              Text(
-                ' 4.9 (127)  ',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: ResponsiveHelper.fontSize(14),
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );
