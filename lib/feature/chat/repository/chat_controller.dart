@@ -17,6 +17,7 @@ import 'package:platchatapp/feature/chat/model/rating_response_model.dart';
 import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import '../../../core/service/socket_service.dart';
+import '../../profile/repository/user_model.dart';
 import 'chat_repository.dart';
 
 class ChatController extends GetxController {
@@ -659,82 +660,62 @@ class ChatController extends GetxController {
 
   ///==============search api section=========================================================
 
-  bool _hasSearched = false;
-  bool get hasSearched => _hasSearched;
-
-  final ChatRepository _repo = ChatRepository();
-
-  bool _isSearching = false;
-  bool get isSearching => _isSearching;
-
-  List<SearchModel> _searchResults = [];
-  List<SearchModel> get searchResults => _searchResults;
-
+  // Variables add karein controller mein
+  final RxBool isSearching = false.obs;
+  final RxBool hasSearched = false.obs;
+  final RxList searchResults = [].obs;
   Timer? _debounce;
 
-  @override
-  void onClose() {
-    _debounce?.cancel();
-    super.onClose();
-  }
-
+// Search method
   void searchUsers(String query) {
+    // Debounce - 500ms wait karo type karne ke baad
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-    if (query.isEmpty) {
-      _searchResults = [];
-      _hasSearched = false; // ← reset
+    if (query.trim().isEmpty) {
+      hasSearched.value = false;
+      searchResults.clear();
+      isSearching.value = false;
       update();
       return;
     }
 
-    _hasSearched = true; // ← search শুরু হলে true
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      _performSearch(query);
+    isSearching.value = true;
+    hasSearched.value = true;
+    update();
+
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      await _fetchSearchResults(query.trim());
     });
   }
 
-  Future<void> _performSearch(String query) async {
-    _isSearching = true;
-    update();
-
+  Future<void> _fetchSearchResults(String query) async {
     try {
-      final Response response = await _repo.searchUsers(
-        query: query,
-        page: 1,
-        limit: 10,
+      final response = await ApiClient.getData(
+        uri: ApiUrl.searchUsers(search: query),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
-        if (data['users'] != null && data['users'] is List) {
-          _searchResults = (data['users'] as List)
-              .map((user) => SearchModel.fromJson(user))
-              .where((user) {
-                final q = query.trim().toLowerCase();
-                final nameMatch = (user.nickName ?? '').toLowerCase().contains(
-                  q,
-                );
-                final licenceMatch = (user.licenceId ?? '')
-                    .toLowerCase()
-                    .contains(q);
-                return nameMatch ||
-                    licenceMatch; // ← যেকোনো একটায় match হলেই show
-              })
-              .toList();
-        } else {
-          _searchResults = [];
-        }
+        final List users = data['users'] ?? []; // ✅ 'users' key
+        searchResults.value =
+            users.map((e) => UserModel.fromJson(e)).toList();
       } else {
-        _searchResults = [];
+        searchResults.clear();
       }
     } catch (e) {
-      _searchResults = [];
-    }
 
-    _isSearching = false;
-    update();
+      searchResults.clear();
+    } finally {
+      isSearching.value = false;
+      update();
+    }
+  }
+
+// Dispose mein cancel karein
+  @override
+  void onClose() {
+    _debounce?.cancel();
+    super.onClose();
   }
 
   ///=======================user chat list===================================================================
@@ -1061,6 +1042,9 @@ class ChatController extends GetxController {
   }
 
   // Voice intent এর জন্য — direct search, debounce ছাড়া
+
+
+  final ChatRepository _repo = ChatRepository();
   Future<List<SearchModel>> searchUsersForVoice(String query) async {
     if (query.isEmpty) return [];
 

@@ -265,11 +265,11 @@ class DisabledLocationPicker extends StatelessWidget {
   const DisabledLocationPicker({super.key, required this.controller});
 
   static final _options = [
-    _DLocOption(DisabledLocation.all, 'map_all', AssetsPath.all),
-    _DLocOption(DisabledLocation.back, 'map_back', AssetsPath.back),
-    _DLocOption(DisabledLocation.right, 'map_right', AssetsPath.right),
-    _DLocOption(DisabledLocation.left, 'map_left', AssetsPath.left),
-    _DLocOption(DisabledLocation.none, 'map_none', AssetsPath.none),
+    _DLocOption(DisabledLocation.all, 'map_all'.tr, AssetsPath.all),
+    _DLocOption(DisabledLocation.back, 'map_back'.tr, AssetsPath.back),
+    _DLocOption(DisabledLocation.right, 'map_right'.tr, AssetsPath.right),
+    _DLocOption(DisabledLocation.left, 'map_left'.tr, AssetsPath.left),
+    _DLocOption(DisabledLocation.none, 'map_none'.tr, AssetsPath.none),
   ];
 
   @override

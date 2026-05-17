@@ -111,6 +111,7 @@ final Map<String, String> english = {
   'submit_rating': 'Submit Rating',
   'update_rating': 'Update rating',
   'tap_to_rate': 'Tap a star to rate',
+  "add_rating":"Add Rating",
   'update_your_rating': 'Update your rating',
   'rating_submitted': 'Rating submitted',
   'rating_updated': 'Rating updated',
@@ -269,6 +270,61 @@ final Map<String, String> english = {
   "map_failed_to_load_parking_data": "Failed to load parking data",
   "map_cost": "Cost",
   "map_ev": "EV",
-  "map_disabled": "Disabled"
+  "map_disabled": "Disabled",
+  "scan": "scan",
+  "chat":"chat",
+  "map":"map",
+  "you":"You",
+  // -------- Group Message App Bar --------
+  'members': 'members',
+  'leave_group': 'Leave Group',
+  'leave_group_confirmation': 'Are you sure you want to leave',
+  'cancel': 'Cancel',
+  'leave': 'Leave',
+  'see_members': 'See Members',
+  'add_members': 'Add Members',
+
+  //see group member
+
+
+
+  'remove_member': 'Remove Member',
+  'remove_member_confirmation': 'Remove from the group',
+
+  'remove': 'Remove',
+
+  'no_members_found': 'No members found',
+  'admin': 'Admin',
+
+  //add member
+
+  'add_member': 'Add Member',
+  'no_results_for': 'No results for',
+  'no_contacts_found': 'No contacts found',
+
+
+  //use full number
+
+
+  'retry': 'Retry',
+  'no_useful_numbers_found': 'No useful numbers found nearby.',
+  'loading': 'Loading...',
+///map
+
+  'map_free': 'Free',
+  'map_paid': 'Paid',
+
+  //scan
+
+
+  'existing_chat': 'Existing Chat',
+  'new_user': 'New User',
+  'open_chat': 'Open Chat',
+
+ "no_messages":"No message yet",
+
+  'tap_to_retry': 'Tap to retry',
+  'profile_not_found': 'Profile not found',
+
 
 };

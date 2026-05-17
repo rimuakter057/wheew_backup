@@ -49,7 +49,7 @@ class _UsefulMemberScreenState extends State<UsefulMemberScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ResponsiveHelper.init(context);
+
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
@@ -65,7 +65,7 @@ class _UsefulMemberScreenState extends State<UsefulMemberScreen> {
           onPressed: () => context.pop(),
         ),
         title: Text(
-          'Useful Number',
+          'useful_number'.tr,
           style: TextStyle(
             color: Colors.black,
             fontSize: ResponsiveHelper.titleFontSize(18),
@@ -99,7 +99,7 @@ class _UsefulMemberScreenState extends State<UsefulMemberScreen> {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: controller.refresh,
-                  child: const Text('Retry'),
+                  child:   Text('retry'.tr),
                 ),
               ],
             ),
@@ -108,9 +108,9 @@ class _UsefulMemberScreenState extends State<UsefulMemberScreen> {
 
         // ─── Empty State ───────────────────────────────
         if (controller.numbers.isEmpty) {
-          return const Center(
+          return  Center(
             child: Text(
-              'No useful numbers found nearby.',
+              'no_useful_numbers_found'.tr,
               style: TextStyle(color: Colors.grey),
             ),
           );

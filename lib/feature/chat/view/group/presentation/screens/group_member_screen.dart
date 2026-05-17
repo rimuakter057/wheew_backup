@@ -44,7 +44,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
           ),
         ),
         title: Text(
-          'Remove Member',
+          'remove_member'.tr,
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(16),
             fontWeight: FontWeight.w600,
@@ -52,7 +52,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
           ),
         ),
         content: Text(
-          'Remove "$memberName" from the group?',
+          '"$memberName" ${'remove_member_confirmation'.tr}?',
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(14),
             color: Colors.grey.shade600,
@@ -88,7 +88,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
                       ),
                     )
                   : Text(
-                      'Remove',
+                'remove_member'.tr,
                       style: GoogleFonts.poppins(
                         color: Colors.red,
                         fontWeight: FontWeight.w600,
@@ -144,7 +144,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
                     Icon(Icons.person_add_outlined, color: AppColors.black),
                     const SizedBox(width: 8),
                     Text(
-                      'Add Members',
+                      'add_members'.tr,
                       style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(14),
                       ),
@@ -164,7 +164,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
                     const Icon(Icons.exit_to_app_outlined, color: Colors.red),
                     const SizedBox(width: 8),
                     Text(
-                      'Leave Group',
+                      'leave_group'.tr,
                       style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(14),
                         color: Colors.red,
@@ -188,7 +188,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
         if (groupController.groupMemberList.isEmpty) {
           return Center(
             child: Text(
-              'No members found',
+              'no_members_found'.tr,
               style: GoogleFonts.poppins(color: Colors.grey),
             ),
           );
@@ -243,7 +243,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
                         ),
                       ),
                       child: Text(
-                        'Admin',
+                        'admin'.tr,
                         style: GoogleFonts.poppins(
                           fontSize: ResponsiveHelper.fontSize(11),
                           color: AppColors.blueClient,
@@ -269,7 +269,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Remove',
+                                'remove'.tr,
                                 style: GoogleFonts.poppins(color: Colors.red),
                               ),
                             ],
@@ -294,7 +294,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
           ),
         ),
         title: Text(
-          'Leave Group',
+          'leave_group'.tr,
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(16),
             fontWeight: FontWeight.w600,
@@ -302,7 +302,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
           ),
         ),
         content: Text(
-          'Are you sure you want to leave "${widget.groupName}"?',
+          '${'leave_group_confirmation'.tr} "${widget.groupName}"?',
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(14),
             color: Colors.grey.shade600,
@@ -312,7 +312,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
-              'Cancel',
+              'cancel'.tr,
               style: GoogleFonts.poppins(color: Colors.grey),
             ),
           ),
@@ -338,7 +338,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
                       ),
                     )
                   : Text(
-                      'Leave',
+                'leave'.tr,
                       style: GoogleFonts.poppins(
                         color: Colors.red,
                         fontWeight: FontWeight.w600,

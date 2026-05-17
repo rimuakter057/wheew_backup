@@ -34,7 +34,9 @@ class ApiUrl {
     required int limit,
   }) => "/chat/rooms/messages?roomId=$roomId&page=$page&limit=$limit";
 
-  static const String searchUsers = '/users/search';
+  //static const String searchUsers = '/users/search';
+  static  String searchUsers({required String search}) => '/users/search?query=$search';
+
   static const String updateProfile = '/users/';
 
   static const String blockList = '/users/block-list';

@@ -137,6 +137,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 if (!context.mounted) return;
                 showRatingDialog(
                   context: context,
+                  status: chatController.myRatingForRatee.value?.status ?? '',
                   image: widget.otherUserAvatar ?? '',
                   name: widget.otherUserName,
                   receiverId: widget.receiverId,
@@ -148,7 +149,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 if (!context.mounted) return;
                 showDialog(
                   context: context,
-                  builder: (_) => Obx(() {
+                  builder: (dialogContext) => Obx(() {  // ← context আলাদা করো
                     final profile = _groupController.viewedProfile.value;
                     final isLoading = _groupController.isLoadingProfile.value;
                     return Dialog(
@@ -156,12 +157,23 @@ class _MessageScreenState extends State<MessageScreen> {
                       child: isLoading
                           ? const Center(child: CircularProgressIndicator())
                           : profile == null
-                          ? const Center(child: Text('Profile not found'))
+                          ? Center(child: Text('profile_not_found'.tr))
                           : ProfileCard(
                         name: profile.nickName,
                         rating: profile.rating,
-                        address: profile.designation,
                         showRating: true,
+                        onRatingTap: () async {
+                          Navigator.pop(dialogContext);  // ← dialogContext দিয়ে বন্ধ করো
+                          await chatController.fetchMyRating(widget.receiverId);
+                          if (!context.mounted) return;
+                          showRatingDialog(
+                            context: context,
+                            status: chatController.myRatingForRatee.value?.status ?? '',
+                            image: widget.otherUserAvatar ?? '',
+                            name: widget.otherUserName,
+                            receiverId: widget.receiverId,
+                          );
+                        },
                       ),
                     );
                   }),

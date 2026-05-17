@@ -9,6 +9,7 @@ import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/custom_container/custom_container.dart';
+import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
 class GroupMessageAppBar extends StatelessWidget {
@@ -38,7 +39,7 @@ class GroupMessageAppBar extends StatelessWidget {
           ),
         ),
         title: Text(
-          'Leave Group',
+          'leave_group'.tr,
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(16),
             fontWeight: FontWeight.w600,
@@ -46,7 +47,7 @@ class GroupMessageAppBar extends StatelessWidget {
           ),
         ),
         content: Text(
-          'Are you sure you want to leave "$groupName"?',
+          '${'leave_group_confirmation'.tr} "$groupName"?',
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(14),
             color: Colors.grey.shade600,
@@ -56,7 +57,7 @@ class GroupMessageAppBar extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
-              'Cancel',
+              'cancel'.tr,
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(14),
                 color: Colors.grey,
@@ -85,7 +86,7 @@ class GroupMessageAppBar extends StatelessWidget {
                       ),
                     )
                   : Text(
-                      'Leave',
+                'leave'.tr,
                       style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(14),
                         color: Colors.red,
@@ -123,7 +124,12 @@ class GroupMessageAppBar extends StatelessWidget {
                     ? NetworkImage(groupImage)
                     : null,
                 child: groupImage.isEmpty
-                    ? Icon(Icons.group, color: AppColors.blueClient)
+                    ? CircleAvatar(            radius: ResponsiveHelper.borderRadius(22),
+                    backgroundImage:NetworkImage(AppConst.unknown)
+
+                )
+
+
                     : null,
               ),
               SizedBox(width: ResponsiveHelper.spacing(12)),
@@ -174,7 +180,7 @@ class GroupMessageAppBar extends StatelessWidget {
                     Icon(Icons.group_outlined, color: AppColors.black),
                     const SizedBox(width: 8),
                     Text(
-                      'See Members',
+                      'see_members'.tr,
                       style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(14),
                         color: AppColors.black,
@@ -197,7 +203,7 @@ class GroupMessageAppBar extends StatelessWidget {
                     Icon(Icons.person_add_outlined, color: AppColors.black),
                     const SizedBox(width: 8),
                     Text(
-                      'Add Members',
+                      'add_members'.tr,
                       style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(14),
                         color: AppColors.black,
@@ -220,7 +226,7 @@ class GroupMessageAppBar extends StatelessWidget {
                     const Icon(Icons.exit_to_app_outlined, color: Colors.red),
                     const SizedBox(width: 8),
                     Text(
-                      'Leave Group',
+                      'leave_group'.tr,
                       style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(14),
                         color: Colors.red,

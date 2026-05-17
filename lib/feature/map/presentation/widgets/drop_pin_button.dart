@@ -31,37 +31,43 @@ class DropPinButton extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
+        child:Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: ResponsiveHelper.width(28),
-              height: ResponsiveHelper.height(28),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.25),
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Text(
-                  'P',
-                  style: GoogleFonts.poppins(
-                    fontSize: ResponsiveHelper.fontSize(15),
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
+            Padding(
+              padding:  EdgeInsets.only(left:ResponsiveHelper.width(8)),
+              child: Container(
+                width: ResponsiveHelper.width(28),
+                height: ResponsiveHelper.height(28),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.25),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    'P',
+                    style: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(15),
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
             ),
             SizedBox(width: ResponsiveHelper.spacing(10)),
-            Text(
-              'drop_parking_pin'.tr.isNotEmpty ? 'drop_parking_pin'.tr : 'Drop Parking Pin',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.poppins(
-                fontSize: ResponsiveHelper.fontSize(15),
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-                letterSpacing: 0.2,
+            Expanded(                          // ← এটা add করো
+              child: Text(
+                'drop_parking_pin'.tr.isNotEmpty ? 'drop_parking_pin'.tr : 'Drop Parking Pin',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,   // ← center রাখতে চাইলে
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(15),
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                  letterSpacing: 0.2,
+                ),
               ),
             ),
           ],

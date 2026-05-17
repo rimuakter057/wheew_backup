@@ -7,24 +7,31 @@ import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
 
 class ProfileCard extends StatelessWidget {
-  const ProfileCard({super.key, required this.name, required this.rating, required this.address, required this.showRating, this.onRatingTap});
+  const ProfileCard({
+    super.key,
+    required this.name,
+    required this.rating,
+
+    required this.showRating,
+    this.onRatingTap,
+  });
   final String name;
   final double rating;
-  final String address;
+
   final bool showRating;
   final VoidCallback? onRatingTap;
 
   @override
   Widget build(BuildContext context) {
-
-
     return Center(
       child: Container(
         width: ResponsiveHelper.width(300),
         padding: ResponsiveHelper.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(30)),
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.borderRadius(30),
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -40,17 +47,17 @@ class ProfileCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-
                 GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     context.pop();
                   },
                   child: CircleAvatar(
                     radius: ResponsiveHelper.iconSize(16),
                     backgroundColor: Colors.grey[100],
-                    child: Icon(Icons.close,
-                        size: ResponsiveHelper.iconSize(16),
-                        color: Colors.black
+                    child: Icon(
+                      Icons.close,
+                      size: ResponsiveHelper.iconSize(16),
+                      color: Colors.black,
                     ),
                   ),
                 ),
@@ -63,7 +70,9 @@ class ProfileCard extends StatelessWidget {
             CircleAvatar(
               radius: ResponsiveHelper.width(50),
               backgroundColor: Colors.blue[50],
-              backgroundImage:  NetworkImage(AppConst.unknown), // আপনার ইমেজ লিঙ্ক দিন
+              backgroundImage: NetworkImage(
+                AppConst.unknown,
+              ), // আপনার ইমেজ লিঙ্ক দিন
             ),
 
             SizedBox(height: ResponsiveHelper.spacing(15)),
@@ -71,7 +80,7 @@ class ProfileCard extends StatelessWidget {
             // Name
             Text(
               name,
-                style: context.bodyMedium.copyWith(color: AppColors.black)
+              style: context.bodyMedium.copyWith(color: AppColors.black),
             ),
 
             SizedBox(height: ResponsiveHelper.spacing(8)),
@@ -80,19 +89,13 @@ class ProfileCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.star, color: Colors.orange, size: ResponsiveHelper.iconSize(18)),
-                SizedBox(width: 4),
-                Text(
-                rating.toString(),
-                    style: context.bodySmall,
+                Icon(
+                  Icons.star,
+                  color: Colors.orange,
+                  size: ResponsiveHelper.iconSize(18),
                 ),
-                SizedBox(width: ResponsiveHelper.spacing(10)),
-                Icon(Icons.location_on, color: Colors.grey, size: ResponsiveHelper.iconSize(18)),
                 SizedBox(width: 4),
-                Text(
-                  address,
-                    style: context.bodySmall
-                ),
+                Text(rating.toString(), style: context.bodySmall),
               ],
             ),
 
@@ -120,10 +123,14 @@ class ProfileCard extends StatelessWidget {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: showRating ? Colors.orange : AppColors.blueClient,
+                  backgroundColor: showRating
+                      ? Colors.orange
+                      : AppColors.blueClient,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(15)),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.borderRadius(15),
+                    ),
                   ),
                   elevation: 0,
                 ),

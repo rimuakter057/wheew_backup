@@ -12,6 +12,7 @@ void showRatingDialog({
   required BuildContext context,
   required String image,
   required String name,
+  required String status,
   required String receiverId,
 }) {
   final ChatController chatController = Get.find<ChatController>();
@@ -49,25 +50,59 @@ void showRatingDialog({
             mainAxisSize: MainAxisSize.min,
             children: [
               // ── Close Button ────────────────────────────
-              Align(
-                alignment: Alignment.topRight,
-                child: GestureDetector(
-                  onTap: () => Navigator.pop(dialogContext),
-                  child: Container(
-                    padding:
-                    EdgeInsets.all(ResponsiveHelper.spacing(4)),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      shape: BoxShape.circle,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ///status show here
+
+          Container(
+          padding: EdgeInsets.symmetric(
+          horizontal: ResponsiveHelper.spacing(10),
+          vertical: ResponsiveHelper.spacing(4),
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.paidBlue,
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.borderRadius(4),
+          ),
+        ),
+        child:   Text(
+          status,
+          style: GoogleFonts.poppins(
+              fontSize: ResponsiveHelper.fontSize(11),
+              fontWeight: FontWeight.w500,
+              color:AppColors.white
+          ),
+        ),
+      )
+        ,
+
+
+
+
+
+
+
+
+            GestureDetector(
+                      onTap: () => Navigator.pop(dialogContext),
+                      child: Container(
+                        padding:
+                        EdgeInsets.all(ResponsiveHelper.spacing(4)),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          size: ResponsiveHelper.iconSize(16),
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
                     ),
-                    child: Icon(
-                      Icons.close,
-                      size: ResponsiveHelper.iconSize(16),
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ),
-              ),
+          ],
+        ),
+
 
               SizedBox(height: ResponsiveHelper.spacing(4)),
 
@@ -95,11 +130,12 @@ void showRatingDialog({
 
               Text(
                 isUpdate
-                    ? 'update_your_rating'.tr
-                    : 'tap_to_rate'.tr,
+                    ? 'update_rating'.tr
+                    : 'add_rating'.tr,
                 style: GoogleFonts.poppins(
-                  fontSize: ResponsiveHelper.fontSize(12),
+                  fontSize: ResponsiveHelper.fontSize(10),
                   color: Colors.grey.shade400,
+                  fontWeight: FontWeight.w400
                 ),
               ),
 

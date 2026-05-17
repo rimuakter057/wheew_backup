@@ -97,13 +97,7 @@ class _AppBottomNav extends StatelessWidget {
                 currentIndex: currentIndex,
                 onTap: onTap,
               ),
-              // _NavItem(
-              //   icon: AssetsPath.searchNav,
-              //   label: 'search'.tr,
-              //   index: 1,
-              //   currentIndex: currentIndex,
-              //   onTap: onTap,
-              // ),
+
               ScanNavItem(
                 index: 1,
                 currentIndex: currentIndex,

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:platchatapp/feature/chat/model/chat_model.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/helper/data_converter/data_converter.dart';
+import 'package:platchatapp/utils/extension/base_extension.dart';
 import '../../../../core/router/routes_name.dart';
 import '../../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../../utils/app_const/app_const.dart';
@@ -92,72 +93,81 @@ class _SearchListScreenState extends State<SearchListScreen> {
               ),
 
               // Search results
-              Expanded(
-                child: !controller.hasSearched
-                    ? const SizedBox() // ← screen open হলে সম্পূর্ণ empty
-                    : controller.isSearching
-                    ? const Center(child: CircularProgressIndicator())
-                    : controller.searchResults.isEmpty
-                    ? const Center(
-                        child: Text(
-                          "No users found",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: controller.searchResults.length,
-                        itemBuilder: (context, index) {
-                          final user = controller.searchResults[index];
-                          return ChatTile(
-                            isBlock: false,
-                            name: user.nickName ?? '',
-                            message: user.designation ?? '',
-                            fontWeight: FontWeight.w400,
-                            time: user.createdAt != null
-                                ? formatTime(user.createdAt.toString())
-                                : '',
-                            imagePath: user.avatar ?? AppConst.unknown,
+              // Search results
+          Expanded(
+          child: Obx(() => !controller.hasSearched.value
+          ? const SizedBox()
+              : controller.isSearching.value
+          ? const Center(child: CircularProgressIndicator())
+              : controller.searchResults.isEmpty
+          ?  Center(
+          child: Text("No users found", style:context.bodySmall),
+          )
+              :  ListView.builder(
+          itemCount: controller.searchResults.length,
+          itemBuilder: (context, index) {
+          final user = controller.searchResults[index];
 
-                            onTap: () async {
-                              final roomId = user.existingRoom?.id ?? '';
-                              debugPrint(
-                                "before search navigate room id================================== $roomId",
-                              );
-                              controller.roomID.value = roomId;
+                    return ChatTile(
+                      isBlock: false,
+                      name: user.nickName ?? '',
+                      message: user.designation ?? '',
+                      fontWeight: FontWeight.w400,
+                      time: user.createdAt != null
+                          ? formatTime(user.createdAt.toString())
+                          : '',
+                      imagePath:
+                      user.avatar ?? AppConst.unknown,
 
-                              await context.pushNamed(
-                                RouteName.message,
-                                extra: {
-                                  'roomId': roomId,
-                                  'otherUserName': user.nickName,
-                                  'otherUserAvatar':
-                                      user.avatar ?? AppConst.unknown,
-                                  'receiverId': user.id,
-                                  "isBlockedByMe": false,
-                                  "isBlockedMe": false,
-                                  'voiceAutoSend': false,
-                                  'voiceMessage': null,
-                                },
-                              );
-                              debugPrint(
-                                "after search navigate room id================================== $roomId",
-                              );
-                              // ✅ Message screen থেকে ফিরে আসার পর
-                              // controller.roomID.value এ নতুন roomId থাকবে
-                              final newRoomId = controller.roomID.value;
-                              if (newRoomId.isNotEmpty &&
-                                  (user.existingRoom?.id ?? '') != newRoomId) {
-                                setState(() {
-                                  user.existingRoom = ExistingRoom2(
-                                    id: newRoomId,
-                                  );
-                                });
-                              }
-                            },
-                          );
-                        },
-                      ),
+                      onTap: () async {
+                        final roomId =
+                            user.existingRoom?.id ?? '';
+
+                        debugPrint(
+                          "before search navigate room id================================== $roomId",
+                        );
+
+                        controller.roomID.value = roomId;
+
+                        await context.pushNamed(
+                          RouteName.message,
+                          extra: {
+                            'roomId': roomId,
+                            'otherUserName': user.nickName,
+                            'otherUserAvatar':
+                            user.avatar ??
+                                AppConst.unknown,
+                            'receiverId': user.id,
+                            "isBlockedByMe": false,
+                            "isBlockedMe": false,
+                            'voiceAutoSend': false,
+                            'voiceMessage': null,
+                          },
+                        );
+
+                        debugPrint(
+                          "after search navigate room id================================== $roomId",
+                        );
+
+                        final newRoomId =
+                            controller.roomID.value;
+
+                        if (newRoomId.isNotEmpty &&
+                            (user.existingRoom?.id ?? '') !=
+                                newRoomId) {
+                          setState(() {
+                            user.existingRoom =
+                                ExistingRoom2(
+                                  id: newRoomId,
+                                );
+                          });
+                        }
+                      },
+                    );
+                  },
+                ),
               ),
+          ),
             ],
           );
         },

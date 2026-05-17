@@ -33,11 +33,7 @@ void main() async {
   final languageController = Get.put(LanguageController());
   await languageController.loadSavedLanguage();
 
-  // Get.put(AuthController());
-  // Get.put(ChatController());
-  // Get.put(ProfileController());
-  //
-  // Get.addTranslations(AppTranslations().keys);
+   Get.addTranslations(AppTranslations().keys);
   AppBindings().dependencies();
   await AppSocket.init(
     onSocketConnect: () {

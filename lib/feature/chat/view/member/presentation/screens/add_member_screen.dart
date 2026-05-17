@@ -88,7 +88,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
           Expanded(
             child: Center(
               child: Text(
-                'Add Member',
+                'add_member'.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(18),
                   fontWeight: FontWeight.w600,
@@ -121,8 +121,8 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
             Center(
               child: Text(
                 _controller.searchQuery.value.isNotEmpty
-                    ? 'No results for "${_controller.searchQuery.value}"'
-                    : 'No contacts found',
+                    ? '${'no_results_for'.tr} "${_controller.searchQuery.value}"'
+                    : 'no_contacts_found'.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(14),
                   color: Colors.grey,
@@ -198,8 +198,8 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
             )
                 : Text(
               selectedCount == 0
-                  ? 'Add Member'
-                  : 'Add Member ($selectedCount)',
+                  ? 'add_member'.tr
+                  : '${'add_member'.tr} ($selectedCount)',
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(16),
                 fontWeight: FontWeight.w600,

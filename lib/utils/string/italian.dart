@@ -19,7 +19,7 @@ final Map<String, String> italian = {
   'already_account1': "Hai già un account? ",
 
   // -------- Sign In --------
-  'nick_name': 'Nickname',
+  'nick_name': 'Soprannome',
   'license_number_title': "Numero di Targa",
   'license_number1': "Targa",
   'license_plate_or_nick_name': 'Targa o Nickname',
@@ -130,7 +130,7 @@ final Map<String, String> italian = {
   //'block_': "Sblocca",
   //"blocked_user": "Utente bloccato",
   "blocked_user1": "Sblocca",
-
+  "add_rating":"Aggiungi valutazione",
   "blocked_user5": "Utenti bloccati",
 
   "unblock": "Sblocca",
@@ -269,5 +269,48 @@ final Map<String, String> italian = {
   "map_failed_to_load_parking_data": "Caricamento dati parcheggio non riuscito",
   "map_cost": "Costo",
   "map_ev": "EV",
-  "map_disabled": "Disabili"
+  "map_disabled": "Disabili",
+  "scan": "Scansiona",
+  "chat":"chiacchierata",
+  "map":"mappa",
+  "you":"Voi",
+  // -------- Group Message App Bar --------
+  'members': 'membri',
+  'leave_group': 'Lascia il gruppo',
+  'leave_group_confirmation': 'Sei sicuro di voler lasciare',
+  'cancel': 'Annulla',
+  'leave': 'Lascia',
+  'see_members': 'Vedi membri',
+  'add_members': 'Aggiungi membri',
+
+  //see members
+
+  'remove_member': 'Rimuovi membro',
+  'remove_member_confirmation': 'Rimuovere dal gruppo',
+  'remove': 'Rimuovi',
+  'no_members_found': 'Nessun membro trovato',
+//add member
+  'add_member': 'Aggiungi membro',
+  'no_results_for': 'Nessun risultato per',
+  'no_contacts_found': 'Nessun contatto trovato',
+  //use full
+
+
+
+  'retry': 'Riprova',
+  'no_useful_numbers_found': 'Nessun numero utile trovato nelle vicinanze.',
+  'loading': 'Caricamento...',
+  'map_free': 'Gratuito',
+  'map_paid': 'A pagamento',
+
+  //scan
+
+  'existing_chat': 'Chat esistente',
+  'new_user': 'Nuovo utente',
+  'open_chat': 'Apri chat',
+  "no_messages":"Nessun messaggio ancora",
+  'tap_to_retry': 'Tocca per riprovare',
+  'profile_not_found': 'Profilo non trovato',
+
+
 };

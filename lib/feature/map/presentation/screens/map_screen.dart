@@ -133,7 +133,7 @@ class _MapScreenState extends State<MapScreen> {
           );
           if (!mounted) return;
           if (success) {
-            _dropPinOnMap();
+       //
             showCustomSnackBar(
               _parkingCtrl.submitMessage.value.isNotEmpty
                   ? _parkingCtrl.submitMessage.value
@@ -158,21 +158,7 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  void _dropPinOnMap() {
-    setState(() {
-      _markers.add(
-        Marker(
-          markerId: const MarkerId('parking_pin'),
-          position: _mapCenter,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-          infoWindow: InfoWindow(
-            title: 'map_parking_pin'.tr,
-          ),
-        ),
-      );
-    });
-    mapDebug('dropped local parking pin at map center');
-  }
+
 
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
@@ -238,7 +224,7 @@ class _MapScreenState extends State<MapScreen> {
                   : const SizedBox.shrink(),
             ),
 
-            // ── Selected parking marker info card ─────────────────────────
+            /// ── Selected parking marker info card ─────────────────────────
             Obx(() {
               final selected = _parkingCtrl.selectedReport.value;
               if (selected == null) return const SizedBox.shrink();
@@ -255,7 +241,7 @@ class _MapScreenState extends State<MapScreen> {
               );
             }),
 
-            // ── Drop pin FAB ──────────────────────────────────────────────
+            // // ── Drop pin FAB ──────────────────────────────────────────────
             Positioned(
               left: ResponsiveHelper.padding(24),
               right: ResponsiveHelper.padding(24),
