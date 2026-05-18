@@ -28,7 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.reloadProfile();
-      Get.find<UploadDocumentController>().fetchDocuments();
+      Get.find<UploadDocumentController>().fetchDocuments(context: context);
     });
   }
 
@@ -241,7 +241,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required TextEditingController controller,
     required String hintText,
     bool enabled = true,
-  }) {
+  })
+  {
     return TextField(
       controller: controller,
       enabled: enabled,

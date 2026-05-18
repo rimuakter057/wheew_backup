@@ -326,5 +326,24 @@ final Map<String, String> english = {
   'tap_to_retry': 'Tap to retry',
   'profile_not_found': 'Profile not found',
 
+  //profile upload=====
+
+  // English
+  'upload_document': 'Upload Document',
+  'update_document': 'Update Document',
+  'unique_number': 'Unique Number',
+  'expire_date': 'Expire Date',
+  'upload_file': 'Upload File',
+  'replace_file': 'Replace File',
+  'tap_to_select_file': 'Tap to select file',
+  'pdf_jpg_png_doc_supported': 'PDF, JPG, PNG, DOC supported',
+  'please_enter_unique_number': 'Please enter a Unique Number',
+  'please_enter_expire_date': 'Please enter an Expire Date',
+  'please_select_file': 'Please select a file',
+  'please_select_new_file': 'Please select a new file',
+  'could_not_open_document': 'Could not open document',
+  'dd_mm_yyyy': 'DD/MM/YYYY',
+  'unique_number_hint': '123456789',
+
 
 };

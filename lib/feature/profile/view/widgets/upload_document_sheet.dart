@@ -5,17 +5,17 @@ import 'package:file_picker/file_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/profile/model/user_document.dart';
 import 'package:platchatapp/feature/profile/repository/upload_controller.dart';
+import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 
 // ─── Show Bottom Sheet ────────────────────────────────────────────────────────
 
 Future<void> showUploadDocumentSheet(
-    BuildContext context, {
-      required String documentType,
-      UserDocument? existingDoc, // null → create, non-null → update
-    }) {
+  BuildContext context, {
+  required String documentType,
+  UserDocument? existingDoc, // null → create, non-null → update
+}) {
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -27,7 +27,7 @@ Future<void> showUploadDocumentSheet(
     ),
     builder: (_) => UploadDocumentSheet(
       documentType: documentType,
-      existingDoc:  existingDoc,
+      existingDoc: existingDoc,
     ),
   );
 }
@@ -35,7 +35,7 @@ Future<void> showUploadDocumentSheet(
 // ─── Sheet Widget ─────────────────────────────────────────────────────────────
 
 class UploadDocumentSheet extends StatefulWidget {
-  final String        documentType;
+  final String documentType;
   final UserDocument? existingDoc;
 
   const UploadDocumentSheet({
@@ -119,20 +119,28 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
     }
   }
 
-  Future<void> _handleSubmit() async {
+
+
+  ///handle submit=================================
+  Future<void> _handleSubmit() async
+  {
     final uniqueId   = _uniqueNumberCtrl.text.trim();
     final expiryDate = _expireDateCtrl.text.trim();
 
     if (uniqueId.isEmpty) {
-      _snack('Please enter a Unique Number');
+
+
+      CustomSnackbar.error(context: context, message: 'Please enter a Unique Number');
+
       return;
     }
     if (expiryDate.isEmpty) {
-      _snack('Please enter an Expire Date');
+
+      CustomSnackbar.error(context: context, message: 'Please enter an Expire Date');
       return;
     }
     if (_selectedFile == null || _selectedFile!.path == null) {
-      _snack(_isEdit ? 'Please select a new file' : 'Please select a file');
+      CustomSnackbar.error(context: context, message:_isEdit? 'Please select a new file' : 'Please select a file');
       return;
     }
 
@@ -143,7 +151,7 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
         uniqueId:     uniqueId,
         expiryDate:   expiryDate,
         filePath:     _selectedFile!.path!,
-        fileName:     _selectedFile!.name,
+        fileName:     _selectedFile!.name, context: context,
       );
     } else {
       await controller.uploadDocument(
@@ -151,19 +159,12 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
         uniqueId:     uniqueId,
         expiryDate:   expiryDate,
         filePath:     _selectedFile!.path!,
-        fileName:     _selectedFile!.name,
+        fileName:     _selectedFile!.name, context: context,
       );
     }
   }
 
-  void _snack(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content:          Text(msg),
-      backgroundColor:  Colors.redAccent,
-      behavior:         SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-    ));
-  }
+
 
   DateTime? _parseDdMmYyyy(String s) {
     try {
@@ -192,7 +193,10 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
     if (uri == null) return;
     final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!ok && mounted) {
-      _snack('Could not open document');
+      CustomSnackbar.error(
+        context: context,
+        message: 'Could not open document',
+      );
     }
   }
 
@@ -201,39 +205,41 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-
+///button submit=========================================
     return Container(
       decoration: BoxDecoration(
-        color:        Colors.white,
+        color: Colors.white,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(ResponsiveHelper.borderRadius(24)),
         ),
       ),
       margin: ResponsiveHelper.isTablet
           ? EdgeInsets.symmetric(
-        horizontal: (ResponsiveHelper.screenWidth -
-            ResponsiveHelper.maxContentWidth) /
-            2,
-      )
+              horizontal:
+                  (ResponsiveHelper.screenWidth -
+                      ResponsiveHelper.maxContentWidth) /
+                  2,
+            )
           : EdgeInsets.zero,
       padding: EdgeInsets.only(
-        left:   ResponsiveHelper.padding(24),
-        right:  ResponsiveHelper.padding(24),
-        top:    ResponsiveHelper.padding(16),
+        left: ResponsiveHelper.padding(24),
+        right: ResponsiveHelper.padding(24),
+        top: ResponsiveHelper.padding(16),
         bottom: ResponsiveHelper.padding(32) + bottomInset,
       ),
       child: SingleChildScrollView(
         child: Column(
-          mainAxisSize:      MainAxisSize.min,
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Drag handle
             Center(
               child: Container(
-                width: 40, height: 4,
+                width: 40,
+                height: 4,
                 margin: EdgeInsets.only(bottom: ResponsiveHelper.spacing(20)),
                 decoration: BoxDecoration(
-                  color:        const Color(0xFFD1D5DB),
+                  color: const Color(0xFFD1D5DB),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -246,9 +252,9 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
                 Text(
                   _isEdit ? 'Update Document' : 'Upload Document',
                   style: GoogleFonts.poppins(
-                    fontSize:   ResponsiveHelper.titleFontSize(18),
+                    fontSize: ResponsiveHelper.titleFontSize(18),
                     fontWeight: FontWeight.w700,
-                    color:      const Color(0xFF111827),
+                    color: const Color(0xFF111827),
                   ),
                 ),
                 GestureDetector(
@@ -257,10 +263,12 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
                     width: ResponsiveHelper.iconSize(30),
                     height: ResponsiveHelper.iconSize(30),
                     decoration: const BoxDecoration(
-                      color: Color(0xFFF3F4F6), shape: BoxShape.circle,
+                      color: Color(0xFFF3F4F6),
+                      shape: BoxShape.circle,
                     ),
-                    child: Icon(Icons.close,
-                      size:  ResponsiveHelper.iconSize(16),
+                    child: Icon(
+                      Icons.close,
+                      size: ResponsiveHelper.iconSize(16),
                       color: const Color(0xFF6B7280),
                     ),
                   ),
@@ -273,18 +281,20 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
             Container(
               padding: EdgeInsets.symmetric(
                 horizontal: ResponsiveHelper.padding(10),
-                vertical:   ResponsiveHelper.padding(4),
+                vertical: ResponsiveHelper.padding(4),
               ),
               decoration: BoxDecoration(
-                color:        const Color(0xFFEFF6FF),
-                borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+                color: const Color(0xFFEFF6FF),
+                borderRadius: BorderRadius.circular(
+                  ResponsiveHelper.borderRadius(20),
+                ),
               ),
               child: Text(
                 widget.documentType,
                 style: GoogleFonts.poppins(
-                  fontSize:   ResponsiveHelper.fontSize(11),
+                  fontSize: ResponsiveHelper.fontSize(11),
                   fontWeight: FontWeight.w600,
-                  color:      const Color(0xFF2563EB),
+                  color: const Color(0xFF2563EB),
                 ),
               ),
             ),
@@ -297,9 +307,9 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
                 child: Text(
                   'view_document'.tr,
                   style: GoogleFonts.poppins(
-                    fontSize:   ResponsiveHelper.fontSize(13),
+                    fontSize: ResponsiveHelper.fontSize(13),
                     fontWeight: FontWeight.w600,
-                    color:      const Color(0xFF2563EB),
+                    color: const Color(0xFF2563EB),
                     decoration: TextDecoration.underline,
                   ),
                 ),
@@ -312,9 +322,9 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
             _label('Unique Number'),
             SizedBox(height: ResponsiveHelper.spacing(8)),
             _textField(
-              controller:      _uniqueNumberCtrl,
-              hint:            '123456789',
-              keyboardType:    TextInputType.number,
+              controller: _uniqueNumberCtrl,
+              hint: '123456789',
+              keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
 
@@ -328,9 +338,10 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
               child: AbsorbPointer(
                 child: _textField(
                   controller: _expireDateCtrl,
-                  hint:       'DD/MM/YYYY',
-                  suffixIcon: Icon(Icons.calendar_today_outlined,
-                    size:  ResponsiveHelper.iconSize(18),
+                  hint: 'DD/MM/YYYY',
+                  suffixIcon: Icon(
+                    Icons.calendar_today_outlined,
+                    size: ResponsiveHelper.iconSize(18),
                     color: const Color(0xFF9CA3AF),
                   ),
                 ),
@@ -346,13 +357,15 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
               onTap: _pickFile,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                width:  double.infinity,
+                width: double.infinity,
                 height: ResponsiveHelper.height(110),
                 decoration: BoxDecoration(
                   color: _selectedFile != null
                       ? const Color(0xFFEFF6FF)
                       : const Color(0xFFF9FAFB),
-                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveHelper.borderRadius(12),
+                  ),
                   border: Border.all(
                     color: _selectedFile != null
                         ? const Color(0xFF2563EB)
@@ -368,36 +381,39 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
 
             SizedBox(height: ResponsiveHelper.spacing(28)),
 
-            // Submit button
-            Obx(() => SizedBox(
-              width:  double.infinity,
-              height: ResponsiveHelper.buttonHeight(52),
-              child: ElevatedButton(
-                onPressed: _loading.value ? null : _handleSubmit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:         const Color(0xFF2563EB),
-                  disabledBackgroundColor: const Color(0xFF93C5FD),
-                  elevation: 0,
-                  shape:     const StadiumBorder(),
-                ),
-                child: _loading.value
-                    ? SizedBox(
-                  width: ResponsiveHelper.iconSize(22),
-                  height: ResponsiveHelper.iconSize(22),
-                  child: const CircularProgressIndicator(
-                    color: Colors.white, strokeWidth: 2.5,
+            /// Submit button============================================================
+            Obx(
+              () => SizedBox(
+                width: double.infinity,
+                height: ResponsiveHelper.buttonHeight(52),
+                child: ElevatedButton(
+                  onPressed: _loading.value ? null : _handleSubmit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2563EB),
+                    disabledBackgroundColor: const Color(0xFF93C5FD),
+                    elevation: 0,
+                    shape: const StadiumBorder(),
                   ),
-                )
-                    : Text(
-                  _isEdit ? 'Update' : 'Upload',
-                  style: GoogleFonts.poppins(
-                    fontSize:   ResponsiveHelper.fontSize(16),
-                    fontWeight: FontWeight.w600,
-                    color:      Colors.white,
-                  ),
+                  child: _loading.value
+                      ? SizedBox(
+                          width: ResponsiveHelper.iconSize(22),
+                          height: ResponsiveHelper.iconSize(22),
+                          child: const CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2.5,
+                          ),
+                        )
+                      : Text(
+                          _isEdit ? 'Update' : 'Upload',
+                          style: GoogleFonts.poppins(
+                            fontSize: ResponsiveHelper.fontSize(16),
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
                 ),
               ),
-            )),
+            ),
           ],
         ),
       ),
@@ -409,9 +425,9 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
   Widget _label(String text) => Text(
     text,
     style: GoogleFonts.poppins(
-      fontSize:   ResponsiveHelper.fontSize(14),
+      fontSize: ResponsiveHelper.fontSize(14),
       fontWeight: FontWeight.w500,
-      color:      const Color(0xFF374151),
+      color: const Color(0xFF374151),
     ),
   );
 
@@ -421,62 +437,64 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
     TextInputType keyboardType = TextInputType.text,
     List<TextInputFormatter>? inputFormatters,
     Widget? suffixIcon,
-  }) =>
-      TextField(
-        controller:      controller,
-        keyboardType:    keyboardType,
-        inputFormatters: inputFormatters,
-        style: TextStyle(
-          fontSize: ResponsiveHelper.fontSize(15),
-          color:    const Color(0xFF111827),
-        ),
-        decoration: InputDecoration(
-          hintText:  hint,
-          hintStyle: TextStyle(
-            color:    const Color(0xFF9CA3AF),
-            fontSize: ResponsiveHelper.fontSize(15),
-          ),
-          filled:     true,
-          fillColor:  const Color(0xFFF3F4F6),
-          suffixIcon: suffixIcon,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: ResponsiveHelper.padding(16),
-            vertical:   ResponsiveHelper.padding(14),
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
-            borderSide:   BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
-            borderSide:   BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
-            borderSide:   const BorderSide(color: Color(0xFF2563EB), width: 1.5),
-          ),
-        ),
-      );
+  }) => TextField(
+    controller: controller,
+    keyboardType: keyboardType,
+    inputFormatters: inputFormatters,
+    style: TextStyle(
+      fontSize: ResponsiveHelper.fontSize(15),
+      color: const Color(0xFF111827),
+    ),
+    decoration: InputDecoration(
+      hintText: hint,
+      hintStyle: TextStyle(
+        color: const Color(0xFF9CA3AF),
+        fontSize: ResponsiveHelper.fontSize(15),
+      ),
+      filled: true,
+      fillColor: const Color(0xFFF3F4F6),
+      suffixIcon: suffixIcon,
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: ResponsiveHelper.padding(16),
+        vertical: ResponsiveHelper.padding(14),
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
+        borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5),
+      ),
+    ),
+  );
 
   Widget _uploadPlaceholder() => Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
-      Icon(Icons.upload_outlined,
-        size:  ResponsiveHelper.iconSize(32),
+      Icon(
+        Icons.upload_outlined,
+        size: ResponsiveHelper.iconSize(32),
         color: const Color(0xFF9CA3AF),
       ),
       SizedBox(height: ResponsiveHelper.spacing(6)),
-      Text('Tap to select file',
+      Text(
+        'Tap to select file',
         style: TextStyle(
           fontSize: ResponsiveHelper.fontSize(13),
-          color:    const Color(0xFF9CA3AF),
+          color: const Color(0xFF9CA3AF),
         ),
       ),
       SizedBox(height: ResponsiveHelper.spacing(2)),
-      Text('PDF, JPG, PNG, DOC supported',
+      Text(
+        'PDF, JPG, PNG, DOC supported',
         style: TextStyle(
           fontSize: ResponsiveHelper.fontSize(11),
-          color:    const Color(0xFFD1D5DB),
+          color: const Color(0xFFD1D5DB),
         ),
       ),
     ],
@@ -489,18 +507,21 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
         Container(
           padding: EdgeInsets.all(ResponsiveHelper.padding(10)),
           decoration: BoxDecoration(
-            color:        const Color(0xFFDBEAFE),
-            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(8)),
+            color: const Color(0xFFDBEAFE),
+            borderRadius: BorderRadius.circular(
+              ResponsiveHelper.borderRadius(8),
+            ),
           ),
-          child: Icon(Icons.insert_drive_file_outlined,
+          child: Icon(
+            Icons.insert_drive_file_outlined,
             color: const Color(0xFF2563EB),
-            size:  ResponsiveHelper.iconSize(24),
+            size: ResponsiveHelper.iconSize(24),
           ),
         ),
         SizedBox(width: ResponsiveHelper.spacing(12)),
         Expanded(
           child: Column(
-            mainAxisAlignment:  MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
@@ -508,9 +529,9 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize:   ResponsiveHelper.fontSize(13),
+                  fontSize: ResponsiveHelper.fontSize(13),
                   fontWeight: FontWeight.w600,
-                  color:      const Color(0xFF1D4ED8),
+                  color: const Color(0xFF1D4ED8),
                 ),
               ),
               SizedBox(height: ResponsiveHelper.spacing(4)),
@@ -518,7 +539,7 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
                 '${(_selectedFile!.size / 1024).toStringAsFixed(1)} KB',
                 style: TextStyle(
                   fontSize: ResponsiveHelper.fontSize(12),
-                  color:    const Color(0xFF6B7280),
+                  color: const Color(0xFF6B7280),
                 ),
               ),
             ],
@@ -526,8 +547,9 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
         ),
         GestureDetector(
           onTap: () => setState(() => _selectedFile = null),
-          child: Icon(Icons.close,
-            size:  ResponsiveHelper.iconSize(18),
+          child: Icon(
+            Icons.close,
+            size: ResponsiveHelper.iconSize(18),
             color: const Color(0xFF6B7280),
           ),
         ),

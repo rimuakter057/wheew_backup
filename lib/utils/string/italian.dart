@@ -312,5 +312,25 @@ final Map<String, String> italian = {
   'tap_to_retry': 'Tocca per riprovare',
   'profile_not_found': 'Profilo non trovato',
 
+  //profile upload
+
+
+  'upload_document': 'Carica Documento',
+  'update_document': 'Aggiorna Documento',
+  'unique_number': 'Numero Univoco',
+  'expire_date': 'Data di Scadenza',
+  'upload_file': 'Carica File',
+  'replace_file': 'Sostituisci File',
+
+  'tap_to_select_file': 'Tocca per selezionare il file',
+  'pdf_jpg_png_doc_supported': 'PDF, JPG, PNG, DOC supportati',
+  'please_enter_unique_number': 'Inserisci un numero univoco',
+  'please_enter_expire_date': 'Inserisci una data di scadenza',
+  'please_select_file': 'Seleziona un file',
+  'please_select_new_file': 'Seleziona un nuovo file',
+  'could_not_open_document': 'Impossibile aprire il documento',
+  'dd_mm_yyyy': 'GG/MM/AAAA',
+  'unique_number_hint': '123456789',
+
 
 };

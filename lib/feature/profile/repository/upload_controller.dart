@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/feature/profile/model/user_document.dart';
+import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 
 
 class UploadDocumentController extends GetxController {
@@ -40,7 +42,7 @@ class UploadDocumentController extends GetxController {
   }
 
   // ── GET /user-documents ────────────────────────────────────────────────
-  Future<void> fetchDocuments() async {
+  Future<void> fetchDocuments({required BuildContext context}) async {
     try {
       isFetching.value = true;
       final response = await ApiClient.getData(uri: ApiUrl.getDocument);
@@ -60,20 +62,23 @@ class UploadDocumentController extends GetxController {
         }
       }
     } catch (e) {
-      _showError('Failed to load documents');
+
+      CustomSnackbar.error(context: context, message:'Failed to load documents');
     } finally {
       isFetching.value = false;
     }
   }
 
-  // ── POST /user-documents ───────────────────────────────────────────────
+  /// ── POST /user-documents ───────────────────────────────────────────────
   Future<void> uploadDocument({
     required String documentType,
     required String uniqueId,
     required String expiryDate,   // dd/MM/yyyy
     required String filePath,
     required String fileName,
-  }) async {
+    required BuildContext context
+  }) async
+  {
     final loading = loadingObs(documentType);
     try {
       loading.value = true;
@@ -94,20 +99,23 @@ class UploadDocumentController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        await fetchDocuments();
-        _showSuccess('Document uploaded successfully');
-        Get.back();
+        await fetchDocuments(context: context);
+
+        CustomSnackbar.success(context: context, message: 'Document uploaded successfully');
+        context.pop();
       } else {
-        _showError(_parseMessage(response.body));
+
+        CustomSnackbar.error(context: context, message:response.body);
       }
     } catch (e) {
-      _showError('Upload failed: $e');
+
+      CustomSnackbar.error(context: context, message:'Upload failed: $e');
     } finally {
       loading.value = false;
     }
   }
 
-  // ── PATCH /user-documents/:id ──────────────────────────────────────────
+  /// ── PATCH /user-documents/:id ──────────────────────────────────────────
   Future<void> updateDocument({
     required String documentId,
     required String documentType,
@@ -115,7 +123,9 @@ class UploadDocumentController extends GetxController {
     required String expiryDate,   // dd/MM/yyyy
     required String filePath,
     required String fileName,
-  }) async {
+    required BuildContext context,
+  }) async
+  {
     final loading = loadingObs(documentType);
     try {
       loading.value = true;
@@ -136,14 +146,18 @@ class UploadDocumentController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        await fetchDocuments();
-        _showSuccess('Document updated successfully');
-        Get.back();
+        await fetchDocuments(context: context);
+
+        CustomSnackbar.success(context: context, message:'Document updated successfully');
+        context.pop();
       } else {
-        _showError(_parseMessage(response.body));
+
+        CustomSnackbar.error(context: context, message:response.body);
       }
     } catch (e) {
-      _showError('Update failed: $e');
+
+
+      CustomSnackbar.error(context: context, message: 'Update failed: $e');
     } finally {
       loading.value = false;
     }
@@ -176,19 +190,8 @@ class UploadDocumentController extends GetxController {
     }
   }
 
-  void _showSuccess(String msg) => Get.snackbar(
-    'Success', msg,
-    snackPosition: SnackPosition.BOTTOM,
-    backgroundColor: const Color(0xFF2563EB),
-    colorText: Colors.white,
-  );
 
-  void _showError(String msg) => Get.snackbar(
-    'Error', msg,
-    snackPosition: SnackPosition.BOTTOM,
-    backgroundColor: const Color(0xFFEF4444),
-    colorText: Colors.white,
-  );
+
 
   static List<dynamic> _documentsListFromBody(dynamic decoded) {
     if (decoded is List) return decoded;
