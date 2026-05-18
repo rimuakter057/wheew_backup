@@ -718,17 +718,27 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
   final ChatController controller = Get.find<ChatController>();
   final ScrollController _scrollController = ScrollController();
 
+
   @override
   void initState() {
     super.initState();
+
+    controller.groupRoomID.value = widget.roomId;
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // ✅ আগে join
       controller.joinGroup(roomId: widget.roomId);
-      controller.fetchPresetMessages();
+
+      // ✅ তারপর fetch
       controller.fetchGroupMessages(roomId: widget.roomId, refresh: true);
+
+      // ✅ সবার শেষে listen
       controller.listenGroupMessages();
     });
+
     _scrollController.addListener(_onScroll);
   }
+
 
   void _onScroll() {
     if (!_scrollController.hasClients) return;
@@ -835,4 +845,5 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
       ),
     );
   }
+
 }

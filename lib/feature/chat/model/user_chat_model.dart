@@ -138,6 +138,13 @@ class Rooms {
   }
 }
 
+
+
+
+
+
+
+
 class OtherUser {
   String? id;
   String? nickName;

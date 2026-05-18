@@ -22,7 +22,7 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver{
   GoogleMapController? _mapController;
 
   LatLng _mapCenter = MapScreen.kInitialMapTarget;
@@ -36,6 +36,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _parkingCtrl = Get.isRegistered<ParkingReportController>()
         ? Get.find<ParkingReportController>()
         : Get.put(ParkingReportController());
@@ -45,16 +46,31 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _mapController?.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && _gpsPosition == null) {
+      _initializeMap(); // settings থেকে ফিরলে আবার try করবে
+    }
   }
 
   Future<void> _initializeMap() async {
     await _getUserLocation();
     final location = _gpsPosition;
+
+    // ✅ GPS না পেলে fetch করবেন না বা default দেখাবেন
+    if (location == null) {
+      mapDebug('No GPS — skipping parking fetch or using default');
+      return; // অথবা default location দিয়ে fetch করুন
+    }
+
     await _parkingCtrl.fetchParkingReport(
-      latitude: location?.latitude,
-      longitude: location?.longitude,
+      latitude: location.latitude,
+      longitude: location.longitude,
     );
   }
 
@@ -65,6 +81,8 @@ class _MapScreenState extends State<MapScreen> {
       if (!serviceEnabled) {
         mapDebug('location: services disabled → stop');
         setState(() => _isLocating = false);
+        // ✅ এখানে বসান
+        showCustomSnackBar('Please enable location service', isError: true);
         return;
       }
 
@@ -76,9 +94,12 @@ class _MapScreenState extends State<MapScreen> {
           permission == LocationPermission.deniedForever) {
         mapDebug('location: permission denied ($permission)');
         setState(() => _isLocating = false);
+        // ✅ এখানে বসান
+        showCustomSnackBar('Location permission denied', isError: true);
         return;
       }
 
+      // ... বাকি কোড একই থাকবে
       final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
@@ -187,8 +208,12 @@ class _MapScreenState extends State<MapScreen> {
 
             /// ── Map সবসময় visible — parking থাক বা না থাক ──────────────
             // ── Map / Shimmer ──────────────────────────────────────────────
-            if (_isLocating && _gpsPosition == null)
+
+            if (!_isLocating && _gpsPosition == null)
+              _buildLocationOffPrompt()
+            else if (_isLocating && _gpsPosition == null)
               const MapInitialShimmer()
+
             else
               Obx(() {
                 final markers = {
@@ -254,4 +279,85 @@ class _MapScreenState extends State<MapScreen> {
       ),
     );
   }
+
+
+
+
+
+
+
+///default location=================
+
+  Widget _buildLocationOffPrompt() {
+    return Container(
+      color: const Color(0xFF1a1a2e), // blurred map feel
+      child: Center(
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 32),
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 52, height: 52,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFE6F1FB),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.location_off, color: Color(0xFF185FA5), size: 26),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Location is turned off',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'Please enable location from your device to see nearby parking reports on the map.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 13, color: Colors.grey, height: 1.5),
+              ),
+              const SizedBox(height: 20),
+
+              // ✅ Enable location button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF185FA5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: () async {
+                    await Geolocator.openLocationSettings(); // system settings খুলবে
+                  },
+                  child: const Text('Enable location', style: TextStyle(color: Colors.white)),
+                ),
+              ),
+              const SizedBox(height: 8),
+
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
+
+
 }
+
+
+
+
+
+
+
+
+

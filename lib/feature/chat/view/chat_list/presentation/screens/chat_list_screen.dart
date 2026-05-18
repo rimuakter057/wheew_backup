@@ -182,7 +182,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
     if (isGroup) {
       if (room.latestMessage?.isMine == true) {
-        return '${'you'.tr}: ${room.latestMessage!.message!}';
+        return room.latestMessage!.message!;
       }
       final String senderName = room.latestMessage?.sender?.nickName ?? '';
       return senderName.isNotEmpty

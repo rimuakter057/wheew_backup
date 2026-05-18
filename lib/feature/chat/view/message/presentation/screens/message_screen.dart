@@ -61,6 +61,18 @@ class _MessageScreenState extends State<MessageScreen> {
     _scrollController.addListener(_onScroll);
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
   Future<void> _initChat() async {
     await Future.delayed(Duration.zero);
     chatController.userMessageList.clear();

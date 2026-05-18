@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:platchatapp/core/service/storage_service.dart';
 import 'package:platchatapp/feature/chat/model/message_response_model.dart'
     hide Sender;
 import 'package:get/get.dart' hide Response;
@@ -17,7 +18,9 @@ import 'package:platchatapp/feature/chat/model/rating_response_model.dart';
 import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import '../../../core/service/socket_service.dart';
+import '../../../utils/app_const/app_const.dart';
 import '../../profile/repository/user_model.dart';
+import '../model/preset_message.dart';
 import 'chat_repository.dart';
 
 class ChatController extends GetxController {
@@ -27,7 +30,8 @@ class ChatController extends GetxController {
     required String groupRoomId,
     required List<String> memberIds,
     required BuildContext context,
-  }) async {
+  }) async
+  {
     if (memberIds.isEmpty) return false;
     isAddingMember.value = true;
 
@@ -76,7 +80,8 @@ class ChatController extends GetxController {
   String? _lastRatingFetchRateeId;
 
   /// Load my rating for this chat partner (if any).
-  Future<void> fetchMyRating(String rateeId) async {
+  Future<void> fetchMyRating(String rateeId) async
+  {
     if (rateeId.isEmpty) return;
     _lastRatingFetchRateeId = rateeId;
     isLoadingMyRating.value = true;
@@ -99,7 +104,8 @@ class ChatController extends GetxController {
     }
   }
 
-  Map<String, dynamic>? _unwrapRatingMap(dynamic decoded) {
+  Map<String, dynamic>? _unwrapRatingMap(dynamic decoded)
+  {
     if (decoded is Map) {
       final m = Map<String, dynamic>.from(decoded);
       if (m['rating'] != null || m['ratee_id'] != null || m['id'] != null) {
@@ -122,7 +128,8 @@ class ChatController extends GetxController {
     required String rateeId,
     required double rating,
     required BuildContext context,
-  }) async {
+  }) async
+  {
     final stars = rating.round().clamp(1, 5);
     try {
       isSubmittingRating.value = true;
@@ -194,7 +201,8 @@ class ChatController extends GetxController {
   RxList<String> presetMessages = <String>[].obs;
   RxBool isPresetLoading = false.obs;
 
-  Future<void> fetchPresetMessages() async {
+  Future<void> fetchPresetMessages() async
+  {
     try {
       isPresetLoading.value = true;
 
@@ -258,6 +266,92 @@ class ChatController extends GetxController {
     }
   }
 
+
+
+
+
+
+
+  ///preset message=========================================
+
+  // RxList<PresetMessage> presetMessages = <PresetMessage>[].obs;
+  // RxBool isPresetLoading = false.obs;
+  //
+  // Future<void> fetchPresetMessages() async
+  // {
+  //   try {
+  //     isPresetLoading.value = true;
+  //
+  //     print('🔄 [PRESET] Fetching preset messages...');
+  //
+  //     final response = await ApiClient.getData(uri: ApiUrl.presetMessage);
+  //
+  //     print('📡 [PRESET] Status Code: ${response.statusCode}');
+  //     print('📡 [PRESET] Raw Body: ${response.body}');
+  //
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //
+  //       print('📦 [PRESET] Decoded data type: ${data.runtimeType}');
+  //       print('📦 [PRESET] Decoded data: $data');
+  //
+  //       // Case 1: { "messages": [ { "message": "..." } ] }
+  //       if (data is Map && data['messages'] != null) {
+  //         final list = List<Map<String, dynamic>>.from(data['messages']);
+  //         presetMessages.value = list
+  //             .map((e) => PresetMessage(
+  //           message: e['message'].toString(),
+  //           messageIt: e['message_it']?.toString() ?? '',
+  //         ))
+  //             .toList();
+  //         print(
+  //           '✅ [PRESET] Parsed from data["messages"]: ${presetMessages.value}',
+  //         );
+  //       }
+  //       // Case 2: [ { "message": "..." } ]  (direct array)
+  //       else if (data is List) {
+  //         presetMessages.value = data
+  //             .map((e) => PresetMessage(
+  //           message: e['message'].toString(),
+  //           messageIt: e['message_it']?.toString() ?? '',
+  //         ))
+  //             .toList();
+  //         print('✅ [PRESET] Parsed from direct List: ${presetMessages.value}');
+  //       }
+  //       // Case 3: { "data": [ { "message": "..." } ] }
+  //       else if (data is Map && data['data'] != null) {
+  //         final list = List<Map<String, dynamic>>.from(data['data']);
+  //         presetMessages.value = list
+  //             .map((e) => PresetMessage(
+  //           message: e['message'].toString(),
+  //           messageIt: e['message_it']?.toString() ?? '',
+  //         ))
+  //             .toList();
+  //         print('✅ [PRESET] Parsed from data["data"]: ${presetMessages.value}');
+  //       } else {
+  //         print('❌ [PRESET] Unknown structure! Cannot parse.');
+  //       }
+  //
+  //       print('📊 [PRESET] Total preset count: ${presetMessages.length}');
+  //     } else {
+  //       print('❌ [PRESET] Failed! Status: ${response.statusCode}');
+  //     }
+  //   } catch (e, stack) {
+  //     print('💥 [PRESET] Exception: $e');
+  //     print('💥 [PRESET] StackTrace: $stack');
+  //   } finally {
+  //     isPresetLoading.value = false;
+  //     print(
+  //       '🏁 [PRESET] Loading done. isPresetLoading = ${isPresetLoading.value}',
+  //     );
+  //     if (kDebugMode) {
+  //       print('🏁 [PRESET] presetMessages = ${presetMessages.value}');
+  //     }
+  //   }
+  // }
+  //
+
+
   ///==============================================================
   bool _listenersInitialized = false; // ⭐ Add this
 
@@ -271,23 +365,6 @@ class ChatController extends GetxController {
     debugPrint('✅ Socket listeners initialized');
   }
 
-  //
-  //   bool _listenersInitialized = false;
-  //
-  //   void initSocketListeners() {
-  //     if (_listenersInitialized) return;
-  //     _listenersInitialized = true;
-  //
-  //     sendNewListenMessage();
-  //     errorListenMessage();
-  //
-  //     debugPrint('✅ Socket listeners initialized');
-  //   }
-  //
-  // // ✅ এটা add করো
-  //   void resetListeners() {
-  //     _listenersInitialized = false;
-  //   }
 
   /// get all message list ================================================
   RxList<Messages> userMessageList = <Messages>[].obs;
@@ -376,7 +453,8 @@ class ChatController extends GetxController {
     required String receiverId,
     required String message,
     String? roomId, // ✅ নতুন parameter
-  }) {
+  })
+  {
     final payload = {
       'receiver_id': receiverId,
       'message': message,
@@ -517,6 +595,10 @@ class ChatController extends GetxController {
     }
   }
 
+
+
+
+
   Future<void> errorListenMessage() async {
     AppSocket.onEvent('exception', (value) {
       debugPrint(
@@ -541,7 +623,8 @@ class ChatController extends GetxController {
   Future<void> fetchChatList({
     bool refresh = false,
     bool loadMore = false,
-  }) async {
+  }) async
+  {
     if (refresh) {
       page.value = 1;
       total = 0;
@@ -601,7 +684,8 @@ class ChatController extends GetxController {
   Future<void> createGroup({
     required String groupName,
     List<String> memberIds = const [],
-  }) async {
+  }) async
+  {
     isCreatingGroup.value = true;
     try {
       final uri = ApiUrl.createGroup;
@@ -796,7 +880,7 @@ class ChatController extends GetxController {
     );
   }
 
-  ///group========================================================================
+  ///group========================================================================group
 
   // ── Group Message State ─────────────────────────────────────────
   RxList<GroupMessageResponseModel> groupMessageList =
@@ -813,11 +897,12 @@ class ChatController extends GetxController {
 
   bool get hasMoreGroupMessage => groupMessageList.length < groupTotalCount;
 
-  // ── Fetch Group Messages ────────────────────────────────────────
+  /// ── Fetch Group Messages ────────────────────────────────────────
   Future<void> fetchGroupMessages({
     required String roomId,
     bool refresh = false,
-  }) async {
+  }) async
+  {
     // ✅ roomId update
     if (roomId != null && roomId.isNotEmpty) {
       groupRoomID.value = roomId;
@@ -879,14 +964,44 @@ class ChatController extends GetxController {
   }
 
   /// ── Send Group Message (Socket) ─────────────────────────────────
+  // void sendGroupMessage({required String roomId, required String message}) {
+  //   if (message.trim().isEmpty) return;
+  //
+  //   final payload = {'groupChatRoomId': roomId, 'message': message};
+  //
+  //   // ✅ Optimistic local message
+  //   final localMsg = GroupMessageResponseModel(
+  //     id: DateTime.now().millisecondsSinceEpoch.toString(),
+  //     groupChatRoomId: roomId,
+  //     senderId: '',
+  //     message: message,
+  //     type: 'TEXT',
+  //     createdAt: DateTime.now().toIso8601String(),
+  //     updatedAt: DateTime.now().toIso8601String(),
+  //     isMine: true,
+  //     sender: null,
+  //   );
+  //
+  //   groupMessageList.insert(0, localMsg);
+  //   messageController.clear();
+  //
+  //   // ✅ Simple emit
+  //   AppSocket.socket?.emit('send-group-message', payload);
+  //
+  //   debugPrint('✅ Group message emitted: $message');
+  // }
+  //
+
+
+
   void sendGroupMessage({required String roomId, required String message}) {
     if (message.trim().isEmpty) return;
 
-    final payload = {'groupChatRoomId': roomId, 'message': message};
+    // ✅ temp_ prefix দিয়ে রাখুন — server confirmed হলে replace হবে
+    final tempId = 'temp_${DateTime.now().millisecondsSinceEpoch}';
 
-    // ✅ Optimistic local message
     final localMsg = GroupMessageResponseModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: tempId, // ← temp ID
       groupChatRoomId: roomId,
       senderId: '',
       message: message,
@@ -900,39 +1015,164 @@ class ChatController extends GetxController {
     groupMessageList.insert(0, localMsg);
     messageController.clear();
 
-    // ✅ Simple emit
-    AppSocket.socket?.emit('send-group-message', payload);
-
-    debugPrint('✅ Group message emitted: $message');
-  }
-
-  // ── New Group Message Socket Listen ────────────────────────────
-  void listenGroupMessages() {
-    AppSocket.socket?.off('group-message-sent');
-    AppSocket.socket?.on('group-message-sent', (value) {
-      try {
-        debugPrint('🔔 NEW GROUP MESSAGE: $value');
-
-        final GroupMessageResponseModel model =
-            GroupMessageResponseModel.fromJson(value);
-
-        if (model.groupChatRoomId == groupRoomID.value) {
-          // ✅ নিজের message হলে list এ add করবো না
-          // কিন্তু updateGroupChatRoomInList() অবশ্যই call হবে
-          if (model.isMine != true) {
-            groupMessageList.insert(0, model);
-          }
-        }
-
-        // ✅ সবসময় chat list update হবে
-        updateGroupChatRoomInList(model);
-      } catch (e) {
-        debugPrint('listenGroupMessages error: $e');
-      }
+    AppSocket.socket?.emit('send-group-message', {
+      'groupChatRoomId': roomId,
+      'message': message,
     });
   }
 
-  // ── Update Chat List after Group Message ───────────────────────
+///listen group message listen=================
+  void listenGroupMessages() {
+    AppSocket.socket?.off('send-group-message');
+    AppSocket.socket?.off('group-new-message');
+
+    debugPrint('🔌 Socket connected: ${AppSocket.socket?.connected}');
+    debugPrint('🔌 Socket id: ${AppSocket.socket?.id}');
+    debugPrint('🏠 Current groupRoomID: ${groupRoomID.value}');
+
+    // ✅ sender confirmation
+    AppSocket.socket?.on('send-group-message', (value) {
+      debugPrint('✅ My group message confirmed: $value');
+      try {
+        final confirmed = GroupMessageResponseModel(
+          id: value['id'],
+          groupChatRoomId: value['groupChatRoom_id'],
+          senderId: value['sender_id'],
+          message: value['message'],
+          type: value['type'],
+          createdAt: value['createdAt'],
+          updatedAt: value['updatedAt'],
+          isMine: value['is_mine'],
+          sender: value['sender'] != null
+              ? GroupSender(
+            id: value['sender']['id'],
+            nickName: value['sender']['nick_name'],
+            avatar: value['sender']['avatar'],
+          )
+              : null,
+        );
+
+        final tempIndex = groupMessageList.indexWhere(
+              (m) => (m.id?.startsWith('temp_') ?? false) &&
+              m.message == confirmed.message,
+        );
+        debugPrint('🔍 Temp index found: $tempIndex');
+        if (tempIndex != -1) {
+          groupMessageList[tempIndex] = confirmed;
+          debugPrint('✅ Temp message replaced with confirmed');
+        }
+      } catch (e) {
+        debugPrint('❌ send-group-message parse error: $e');
+      }
+    });
+
+    // ✅ সবার কাছে আসে
+    // AppSocket.socket?.on('group-new-message', (value) {
+    //   debugPrint('🔔 group-new-message RAW: $value');
+    //   debugPrint('🏠 groupRoomID at receive time: ${groupRoomID.value}');
+    //   try {
+    //     final GroupMessageResponseModel model =
+    //     GroupMessageResponseModel.fromJson(value);
+    //
+    //     debugPrint('📨 parsed groupChatRoomId: ${model.groupChatRoomId}');
+    //     debugPrint('📨 parsed message: ${model.message}');
+    //     debugPrint('📨 parsed isMine: ${model.isMine}');
+    //     debugPrint('🔍 roomId match: ${model.groupChatRoomId == groupRoomID.value}');
+    //
+    //     if (model.groupChatRoomId == groupRoomID.value) {
+    //       if (model.isMine == true) {
+    //         debugPrint('👤 My own message — replacing temp...');
+    //         final tempIndex = groupMessageList.indexWhere(
+    //               (m) => (m.id?.startsWith('temp_') ?? false) &&
+    //               m.message == model.message,
+    //         );
+    //         debugPrint('🔍 Temp index: $tempIndex');
+    //         if (tempIndex != -1) {
+    //           groupMessageList[tempIndex] = model;
+    //           debugPrint('✅ Temp replaced in group-new-message');
+    //         }
+    //         return;
+    //       }
+    //
+    //       final alreadyExists = groupMessageList.any((m) => m.id == model.id);
+    //       debugPrint('🔍 Already exists: $alreadyExists');
+    //       if (!alreadyExists) {
+    //         groupMessageList.insert(0, model);
+    //         debugPrint('✅ Others message added to list');
+    //       }
+    //     } else {
+    //       debugPrint('❌ Room ID mismatch!');
+    //       debugPrint('❌ Expected: ${groupRoomID.value}');
+    //       debugPrint('❌ Got: ${model.groupChatRoomId}');
+    //     }
+    //
+    //     updateGroupChatRoomInList(model);
+    //   } catch (e) {
+    //     debugPrint('❌ listenGroupMessages error: $e');
+    //   }
+    // });
+    //
+    //
+
+
+
+
+
+
+
+
+
+
+
+
+    // ✅ currentUserId SharedPreferences থেকে নিন
+    AppSocket.socket?.on('group-new-message', (value) async {
+      try {
+        final GroupMessageResponseModel model =
+        GroupMessageResponseModel.fromJson(value);
+
+        if (model.groupChatRoomId == groupRoomID.value) {
+
+          // ✅ sender_id দিয়ে check
+          final String myId = await SharePrefsHelper.getString(AppConst.userID);
+          final bool isMyMessage = model.senderId == myId;
+
+          debugPrint('👤 myId: $myId');
+          debugPrint('📨 senderId: ${model.senderId}');
+          debugPrint('🔍 isMyMessage: $isMyMessage');
+
+          if (isMyMessage) {
+            final tempIndex = groupMessageList.indexWhere(
+                  (m) => (m.id?.startsWith('temp_') ?? false) &&
+                  m.message == model.message,
+            );
+            if (tempIndex != -1) {
+              groupMessageList[tempIndex] = model;
+              debugPrint('✅ Temp replaced');
+            }
+            return;
+          }
+
+          // ✅ অন্যের message
+          final alreadyExists = groupMessageList.any((m) => m.id == model.id);
+          if (!alreadyExists) {
+            groupMessageList.insert(0, model);
+            debugPrint('✅ Others message added');
+          }
+        }
+
+        updateGroupChatRoomInList(model);
+      } catch (e) {
+        debugPrint('❌ listenGroupMessages error: $e');
+      }
+    });
+
+
+
+  }
+
+
+  /// ── Update Chat List after Group Message ───────────────────────
   void updateGroupChatRoomInList(GroupMessageResponseModel newMessage) {
     final int roomIndex = userChatList.indexWhere(
       (room) => room.id == newMessage.groupChatRoomId,
@@ -980,18 +1220,23 @@ class ChatController extends GetxController {
     }
   }
 
-  // ============================================================
-  // ChatController এর group section এ এই দুটো method add করো
-  // sendGroupMessage() এর আগে paste করো
-  // ============================================================
-
-  // ── Join Group ──────────────────────────────────────────────
-  // Screen open হলে call হয় — socket emit করে
+  /// Screen open হলে call হয় — socket emit করে
   void joinGroup({required String roomId}) {
     final payload = {'groupChatRoomId': roomId};
     AppSocket.socket?.emit('join-group-chat', payload);
     debugPrint('✅ Joined group room: $roomId');
   }
+
+
+
+
+
+
+
+
+
+
+
 
   /// ── Leave Group ─────────────────────────────────────────────
   // Leave button press করলে call হয়
@@ -1001,7 +1246,8 @@ class ChatController extends GetxController {
     required String roomId,
     required BuildContext context,
     bool navigateBack = true,
-  }) async {
+  }) async
+  {
     isLeavingGroup.value = true;
 
     final response = await ApiClient.deleteData(
