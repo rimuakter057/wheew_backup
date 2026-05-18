@@ -9,6 +9,7 @@ import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
+import 'package:platchatapp/feature/auth/repository/user_location_controller.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import '../../../core/service/api_checker.dart';
 import '../../../core/service/storage_service.dart';
@@ -92,7 +93,8 @@ class AuthController extends GetxController {
       await _saveUserData(data);
 
       debugPrint('✅ Login successful - navigating to mainNavScreen');
-
+      final locationController = Get.put(UserLocationController());
+      await locationController.initLocationTracking();
       await AppSocket.init(
         onSocketConnect: () {
           debugPrint('🔌 Socket connected - going to mainNavScreen');
@@ -101,6 +103,9 @@ class AuthController extends GetxController {
           }
         },
       );
+
+
+
 
       return true;
     } else {
