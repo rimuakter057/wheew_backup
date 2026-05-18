@@ -344,6 +344,10 @@ final Map<String, String> english = {
   'could_not_open_document': 'Could not open document',
   'dd_mm_yyyy': 'DD/MM/YYYY',
   'unique_number_hint': '123456789',
+  //add group member
+  'search_member': 'Search Member',
+  'search_by_name': 'Search by name',
+
 
 
 

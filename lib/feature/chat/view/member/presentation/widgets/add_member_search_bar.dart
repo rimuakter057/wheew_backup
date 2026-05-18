@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
@@ -18,7 +19,7 @@ class AddMemberSearchBar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Search Member',
+            'search_member'.tr,
             style: GoogleFonts.poppins(
               fontSize: ResponsiveHelper.fontSize(14),
               fontWeight: FontWeight.w500,
@@ -40,7 +41,7 @@ class AddMemberSearchBar extends StatelessWidget {
                 color: AppColors.black,
               ),
               decoration: InputDecoration(
-                hintText: 'Search by name',
+                hintText: 'search_by_name'.tr,
                 hintStyle: TextStyle(
                   fontSize: ResponsiveHelper.fontSize(14),
                   color: Colors.grey,

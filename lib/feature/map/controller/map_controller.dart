@@ -112,52 +112,133 @@ class ParkingReportController extends GetxController {
   // // ─── Fetch Data ──────────────────────────────────────────────────────────
 
   // ─── Build Map Markers ────────────────────────────────────────────────────
+  // Future<void> _buildMarkers() async {
+  //   final Set<Marker> newMarkers = {};
+  //
+  //   for (int i = 0; i < parkingList.length; i++) {
+  //     final parking = parkingList[i];
+  //
+  //     final double? lat = _toDouble(parking['latitude']);
+  //     final double? lng = _toDouble(parking['longitude']);
+  //     if (lat == null || lng == null) continue;
+  //
+  //     final bool isDisabled = parking['disabled_facility'] == true;
+  //     final bool hasCharging = parking['electric_charging'] == true;
+  //     final dynamic cost = parking['parking_cost'];
+  //     final bool isPaid = cost != null && cost != 0 && cost != '0' && cost != '';
+  //
+  //     // ── Color logic ──────────────────────────────────────────────────────
+  //     final Color pinColor;
+  //     if (isDisabled) {
+  //       pinColor = AppColors.disableOrange;
+  //     } else if (hasCharging) {
+  //       pinColor = AppColors.chargingGreen;
+  //     } else if (isPaid) {
+  //       pinColor = AppColors.paidBlue;
+  //     } else {
+  //       pinColor = AppColors.white;
+  //     }
+  //     // ────────────────────────────────────────────────────────────────────
+  //
+  //     // ── Icon: disabled_facility_location → SVG ──────────────────────────
+  //     final String locationKey = isDisabled
+  //         ? ((parking['disabled_facility_location'] as String?) ?? 'NONE')
+  //         .toUpperCase()
+  //         : 'NONE';
+  //
+  //     final BitmapDescriptor icon = await _getLocationIcon(locationKey, pinColor);
+  //     // ────────────────────────────────────────────────────────────────────
+  //
+  //     newMarkers.add(
+  //       Marker(
+  //         markerId: MarkerId(parking['id'] ?? 'parking_$i'),
+  //         position: LatLng(lat, lng),
+  //         icon: icon,
+  //         infoWindow: InfoWindow.noText,
+  //         onTap: () => _onMarkerTap(parking),
+  //       ),
+  //     );
+  //   }
+  //
+  //   markers.value = newMarkers;
+  //   mapDebug('markers: built ${newMarkers.length} from parking list');
+  // }
+
+
+
+
+
   Future<void> _buildMarkers() async {
     final Set<Marker> newMarkers = {};
 
+    // ── Same position-এ কতটা marker আছে track করুন ──────────────
+    final Map<String, List<int>> positionGroups = {};
+
     for (int i = 0; i < parkingList.length; i++) {
       final parking = parkingList[i];
-
       final double? lat = _toDouble(parking['latitude']);
       final double? lng = _toDouble(parking['longitude']);
       if (lat == null || lng == null) continue;
 
-      final bool isDisabled = parking['disabled_facility'] == true;
-      final bool hasCharging = parking['electric_charging'] == true;
-      final dynamic cost = parking['parking_cost'];
-      final bool isPaid = cost != null && cost != 0 && cost != '0' && cost != '';
+      final String posKey =
+          '${lat.toStringAsFixed(5)}_${lng.toStringAsFixed(5)}';
+      positionGroups.putIfAbsent(posKey, () => []).add(i);
+    }
+    // ─────────────────────────────────────────────────────────────
 
-      // ── Color logic ──────────────────────────────────────────────────────
-      final Color pinColor;
-      if (isDisabled) {
-        pinColor = AppColors.disableOrange;
-      } else if (hasCharging) {
-        pinColor = AppColors.chargingGreen;
-      } else if (isPaid) {
-        pinColor = AppColors.paidBlue;
-      } else {
-        pinColor = AppColors.white;
+    // ── প্রতিটা group process করুন ───────────────────────────────
+    for (final entry in positionGroups.entries) {
+      final List<int> indices = entry.value;
+
+      for (int g = 0; g < indices.length; g++) {
+        final int i = indices[g];
+        final parking = parkingList[i];
+
+        final double lat = _toDouble(parking['latitude'])!;
+        final double lng = _toDouble(parking['longitude'])!;
+
+        // ── Offset: একই position হলে উপর-নিচে সাজাও ─────────────
+        // প্রথমটা original position, পরেরগুলো নিচে নামবে
+        const double offsetStep = 0.00012; // ~13 মিটার
+        final double finalLat = lat - (g * offsetStep);
+        final double finalLng = lng;
+        // ─────────────────────────────────────────────────────────
+
+        final bool isDisabled = parking['disabled_facility'] == true;
+        final bool hasCharging = parking['electric_charging'] == true;
+        final dynamic cost = parking['parking_cost'];
+        final bool isPaid =
+            cost != null && cost != 0 && cost != '0' && cost != '';
+
+        final Color pinColor;
+        if (isDisabled) {
+          pinColor = AppColors.disableOrange;
+        } else if (hasCharging) {
+          pinColor = AppColors.chargingGreen;
+        } else if (isPaid) {
+          pinColor = AppColors.paidBlue;
+        } else {
+          pinColor = AppColors.white;
+        }
+
+        final String locationKey = isDisabled
+            ? ((parking['disabled_facility_location'] as String?) ?? 'NONE')
+            .toUpperCase()
+            : 'NONE';
+
+        final BitmapDescriptor icon =
+        await _getLocationIcon(locationKey, pinColor);
+
+        newMarkers.add(
+          Marker(
+            markerId: MarkerId(parking['id'] ?? 'parking_$i'),
+            position: LatLng(finalLat, finalLng), // ← offset position
+            icon: icon,
+            infoWindow: InfoWindow.noText,
+            onTap: () => _onMarkerTap(parking),
+          ),
+        );
       }
-      // ────────────────────────────────────────────────────────────────────
-
-      // ── Icon: disabled_facility_location → SVG ──────────────────────────
-      final String locationKey = isDisabled
-          ? ((parking['disabled_facility_location'] as String?) ?? 'NONE')
-          .toUpperCase()
-          : 'NONE';
-
-      final BitmapDescriptor icon = await _getLocationIcon(locationKey, pinColor);
-      // ────────────────────────────────────────────────────────────────────
-
-      newMarkers.add(
-        Marker(
-          markerId: MarkerId(parking['id'] ?? 'parking_$i'),
-          position: LatLng(lat, lng),
-          icon: icon,
-          infoWindow: InfoWindow.noText,
-          onTap: () => _onMarkerTap(parking),
-        ),
-      );
     }
 
     markers.value = newMarkers;
@@ -205,19 +286,84 @@ class ParkingReportController extends GetxController {
 
 
 
+  // Future<BitmapDescriptor> _svgMarker(String assetPath, Color color) async {
+  //   const double size = 88;
+  //
+  //   // ১. SVG থেকে base64 PNG extract করো
+  //   final String rawSvg = await rootBundle.loadString(assetPath);
+  //
+  //   // ── DEBUG ──────────────────────────────────────────────────
+  //   print('=== SVG PATH: $assetPath ===');
+  //   print('=== SVG FIRST 300 CHARS: ${rawSvg.substring(0, rawSvg.length.clamp(0, 300))} ===');
+  //   // ─
+  //
+  //   final RegExp regex = RegExp(r'href="data:image/png;base64,([^"]+)"');
+  //   final match = regex.firstMatch(rawSvg);
+  //
+  //   print('=== REGEX MATCH FOUND: ${match != null} ==='); // ← null হলে সমস্যা এখানে
+  //
+  //   if (match != null) {
+  //     final String base64Str = match.group(1)!.replaceAll(RegExp(r'\s'), '');
+  //     final Uint8List pngBytes = base64Decode(base64Str);
+  //
+  //     // ২. PNG decode করো
+  //     final ui.Codec codec = await ui.instantiateImageCodec(
+  //       pngBytes,
+  //       targetWidth: size.toInt(),
+  //       targetHeight: size.toInt(),
+  //     );
+  //     final ui.FrameInfo frame = await codec.getNextFrame();
+  //     final ui.Image srcImage = frame.image;
+  //
+  //     // ৩. Canvas এ draw করো + color tint দাও
+  //     final ui.PictureRecorder recorder = ui.PictureRecorder();
+  //     final ui.Canvas canvas = ui.Canvas(recorder);
+  //
+  //     // Original image আঁকো
+  //     canvas.drawImage(srcImage, Offset.zero, Paint());
+  //
+  //     // Color tint overlay করো
+  //     canvas.drawImage(
+  //       srcImage,
+  //       Offset.zero,
+  //       Paint()
+  //         ..colorFilter = ui.ColorFilter.mode(
+  //           color.withOpacity(0.65),
+  //           BlendMode.srcATop,
+  //         ),
+  //     );
+  //
+  //     final ui.Picture picture = recorder.endRecording();
+  //     final ui.Image image = await picture.toImage(size.toInt(), size.toInt());
+  //     final ByteData? byteData = await image.toByteData(
+  //       format: ui.ImageByteFormat.png,
+  //     );
+  //
+  //     srcImage.dispose();
+  //     return BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
+  //   }
+  //
+  //   // Fallback
+  //   return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
+  // }
+
+
+
+
+
   Future<BitmapDescriptor> _svgMarker(String assetPath, Color color) async {
     const double size = 88;
 
-    // ১. SVG থেকে base64 PNG extract করো
     final String rawSvg = await rootBundle.loadString(assetPath);
-    final RegExp regex = RegExp(r'href="data:image/png;base64,([^"]+)"');
+
+    // ── Case 1: base64 PNG embedded আছে ─────────────────────────
+    final RegExp regex = RegExp(r'(?:xlink:href|href)="data:image/png;base64,([^"]+)"');
     final match = regex.firstMatch(rawSvg);
 
     if (match != null) {
       final String base64Str = match.group(1)!.replaceAll(RegExp(r'\s'), '');
       final Uint8List pngBytes = base64Decode(base64Str);
 
-      // ২. PNG decode করো
       final ui.Codec codec = await ui.instantiateImageCodec(
         pngBytes,
         targetWidth: size.toInt(),
@@ -226,14 +372,10 @@ class ParkingReportController extends GetxController {
       final ui.FrameInfo frame = await codec.getNextFrame();
       final ui.Image srcImage = frame.image;
 
-      // ৩. Canvas এ draw করো + color tint দাও
       final ui.PictureRecorder recorder = ui.PictureRecorder();
       final ui.Canvas canvas = ui.Canvas(recorder);
 
-      // Original image আঁকো
       canvas.drawImage(srcImage, Offset.zero, Paint());
-
-      // Color tint overlay করো
       canvas.drawImage(
         srcImage,
         Offset.zero,
@@ -254,10 +396,46 @@ class ParkingReportController extends GetxController {
       return BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
     }
 
-    // Fallback
-    return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
-  }
+    // ── Case 2: Pure SVG → flutter_svg PictureInfo দিয়ে render ──
+    try {
+      final vg.PictureInfo pictureInfo = await vg.vg.loadPicture(
+        vg.SvgStringLoader(rawSvg),
+        null,
+      );
 
+      final ui.PictureRecorder recorder = ui.PictureRecorder();
+      final ui.Canvas canvas = ui.Canvas(recorder);
+
+      // Scale করো
+      final double scaleX = size / (pictureInfo.size.width);
+      final double scaleY = size / (pictureInfo.size.height);
+      canvas.scale(scaleX, scaleY);
+      canvas.drawPicture(pictureInfo.picture);
+
+      // Color overlay
+      canvas.drawRect(
+        Rect.fromLTWH(0, 0, pictureInfo.size.width, pictureInfo.size.height),
+        Paint()
+          ..colorFilter = ui.ColorFilter.mode(
+            color.withOpacity(0.55),
+            BlendMode.srcATop,
+          ),
+      );
+
+      pictureInfo.picture.dispose();
+
+      final ui.Picture picture = recorder.endRecording();
+      final ui.Image image = await picture.toImage(size.toInt(), size.toInt());
+      final ByteData? byteData = await image.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
+
+      return BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
+    } catch (e) {
+      mapDebug('SVG render error: $e');
+      return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange);
+    }
+  }
 
 
 

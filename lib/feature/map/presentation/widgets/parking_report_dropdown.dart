@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/feature/map/controller/map_controller.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/color/app_colors.dart'; // AppColors import
 
 class ParkingReportDropdown extends StatelessWidget {
   final ParkingReportController controller;
@@ -15,17 +16,17 @@ class ParkingReportDropdown extends StatelessWidget {
     required this.onClose,
   });
 
-  /// Core Status Color based on report data (Premium & High Contrast Palette)
+  /// Core Status Color based on report data
   Color _getStatusColor() {
     if (report['disabled_facility'] == true) {
-      return const Color(0xFFD97706); // Darker Amber/Orange for better visibility
+      return AppColors.disableOrange;
     }
     if (report['electric_charging'] == true) {
-      return const Color(0xFF059669); // Deep Emerald Green
+      return AppColors.chargingGreen;
     }
     final cost = report['parking_cost'];
     final isPaid = cost != null && cost != 0 && cost != '0' && cost != '';
-    return isPaid ? const Color(0xFF1D4ED8) : const Color(0xFF4B5563); // Deep Royal Blue or Slate Grey
+    return isPaid ? AppColors.paidBlue : AppColors.freeWhite;
   }
 
   /// Status Label Text
@@ -37,22 +38,30 @@ class ParkingReportDropdown extends StatelessWidget {
     return isPaid ? 'Paid Parking' : 'Free Parking';
   }
 
+  /// Free parking হলে icon/text কালো দেখাবে কারণ background white
+  bool get _isFree {
+    if (report['disabled_facility'] == true) return false;
+    if (report['electric_charging'] == true) return false;
+    final cost = report['parking_cost'];
+    return cost == null || cost == 0 || cost == '0' || cost == '';
+  }
+
   @override
   Widget build(BuildContext context) {
-
-
     final statusColor = _getStatusColor();
     final pinLabel = _getPinLabel();
-    final bool isFree = statusColor == const Color(0xFF4B5563);
 
-    // ম্যাপের ওপর শতভাগ ভিজিবিলিটি নিশ্চিত করার জন্য সলিড ব্যাকগ্রাউন্ড
-    final Color cardBgColor = Colors.white;
-    final Color titleColor = const Color(0xFF0F172A); // Slate 900 (High Contrast)
-    final Color borderColor = statusColor.withOpacity(0.3);
+    // Free হলে icon ও badge text কালো দেখাবে (white bg-তে contrast এর জন্য)
+    final Color iconAndBadgeTextColor = _isFree ? const Color(0xFF1E293B) : statusColor;
 
-    // ভেতরের টেক্সটের জন্য আরও ডার্ক কালার টোন
-    const Color textDark = Color(0xFF1E293B); // Slate 800
-    const Color textSecondary = Color(0xFF64748B); // Slate 500
+    const Color cardBgColor = Colors.white;
+    const Color titleColor = Color(0xFF0F172A);
+    final Color borderColor = _isFree
+        ? const Color(0xFFE2E8F0) // Free হলে light slate border
+        : statusColor.withOpacity(0.3);
+
+    const Color textDark = Color(0xFF1E293B);
+    const Color textSecondary = Color(0xFF64748B);
 
     return Container(
       margin: ResponsiveHelper.symmetric(horizontal: 16, vertical: 8),
@@ -64,7 +73,6 @@ class ParkingReportDropdown extends StatelessWidget {
           color: borderColor,
           width: ResponsiveHelper.borderWidth(1.5),
         ),
-        // ম্যাপের হিজিবিজি ভাব থেকে উইজেটকে আলাদা করতে স্ট্রং ব্লার শ্যাডো
         boxShadow: [
           BoxShadow(
             color: const Color(0xFF0F172A).withOpacity(0.15),
@@ -84,12 +92,15 @@ class ParkingReportDropdown extends StatelessWidget {
               Container(
                 padding: ResponsiveHelper.all(10),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.12),
-                  shape: BoxShape.circle, // সার্কেল শেপ আইকনকে বেশি প্রিমিয়াম লুক দেয়
+                  // Free হলে white bg, তাই icon container-এ হালকা grey ব্যবহার
+                  color: _isFree
+                      ? const Color(0xFFF1F5F9)
+                      : statusColor.withOpacity(0.12),
+                  shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.local_parking_rounded,
-                  color: statusColor,
+                  color: iconAndBadgeTextColor,
                   size: ResponsiveHelper.iconSize(22),
                 ),
               ),
@@ -102,23 +113,29 @@ class ParkingReportDropdown extends StatelessWidget {
                       'map_selected_report'.tr,
                       style: TextStyle(
                         color: titleColor,
-                        fontWeight: FontWeight.w600 ,
+                        fontWeight: FontWeight.w600,
                         fontSize: ResponsiveHelper.titleFontSize(16),
                         letterSpacing: -0.3,
                       ),
                     ),
                     SizedBox(height: ResponsiveHelper.spacing(2)),
-                    // স্ট্যাটাসকে হাইলাইট করার জন্য একটি ছোট ব্যাজ ডিজাইন
                     Container(
-                      padding:  EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: statusColor.withOpacity(0.1),
+                        // Free হলে badge bg হালকা grey, অন্যগুলো statusColor tint
+                        color: _isFree
+                            ? const Color(0xFFF1F5F9)
+                            : statusColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(6),
+                        // Free হলে border দিলে badge আলাদা বোঝা যায়
+                        border: _isFree
+                            ? Border.all(color: const Color(0xFFE2E8F0))
+                            : null,
                       ),
                       child: Text(
                         pinLabel,
                         style: TextStyle(
-                          color: statusColor,
+                          color: iconAndBadgeTextColor,
                           fontSize: ResponsiveHelper.fontSize(11),
                           fontWeight: FontWeight.w700,
                         ),
@@ -136,13 +153,13 @@ class ParkingReportDropdown extends StatelessWidget {
                   onTap: onClose,
                   child: Container(
                     padding: ResponsiveHelper.all(8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF1F5F9), // Slate 100
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFF1F5F9),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
                       Icons.close_rounded,
-                      color: Color(0xFF475569), // Slate 600
+                      color: Color(0xFF475569),
                       size: 16,
                     ),
                   ),
@@ -156,16 +173,16 @@ class ParkingReportDropdown extends StatelessWidget {
           // Info Box
           Container(
             decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC), // হালকা গ্রে-হোয়াইট ব্যাকগ্রাউন্ড যা ভেতরের রো-গুলোকে ম্যাপ থেকে সম্পূর্ণ আলাদা করে
+              color: const Color(0xFFF8FAFC),
               borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
-              border: Border.all(color: const Color(0xFFE2E8F0)), // Slate 200
+              border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
             padding: ResponsiveHelper.all(14),
             child: Column(
               children: [
                 _buildInfoRow(
                   icon: Icons.payments_rounded,
-                  iconColor: const Color(0xFF2563EB),
+                  iconColor: AppColors.paidBlue,
                   key: 'map_parking_cost',
                   value: controller.parkingCostText(report),
                   textDark: textDark,
@@ -177,7 +194,7 @@ class ParkingReportDropdown extends StatelessWidget {
                 ),
                 _buildInfoRow(
                   icon: Icons.electric_car_rounded,
-                  iconColor: const Color(0xFF10B981),
+                  iconColor: AppColors.chargingGreen,
                   key: 'map_electric_charging',
                   value: controller.boolFlag(report['electric_charging']),
                   textDark: textDark,
@@ -189,7 +206,7 @@ class ParkingReportDropdown extends StatelessWidget {
                 ),
                 _buildInfoRow(
                   icon: Icons.accessible_rounded,
-                  iconColor: const Color(0xFFF59E0B),
+                  iconColor: AppColors.disableOrange,
                   key: 'map_disabled_facility',
                   value: controller.boolFlag(report['disabled_facility']),
                   textDark: textDark,
@@ -211,9 +228,8 @@ class ParkingReportDropdown extends StatelessWidget {
     required Color textDark,
     required Color textSecondary,
   }) {
-    // ডানপাশের ভ্যালু অনুযায়ী ছোট ব্যাজ কালার (PAID/NO সহজে চেনার জন্য)
     final bool isNo = value.toLowerCase() == 'no';
-    final Color valueColor = isNo ? const Color(0xFFEF4444) : textDark; // 'NO' হলে লাল রঙ দেখাবে
+    final Color valueColor = isNo ? const Color(0xFFEF4444) : textDark;
 
     return Row(
       children: [
@@ -257,6 +273,6 @@ extension ColorDarken on Color {
     assert(amount >= 0.0 && amount <= 1.0);
     final hsl = HSLColor.fromColor(this);
     final hslDark = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
-    return hslDark.toColor ();
+    return hslDark.toColor();
   }
 }

@@ -332,5 +332,11 @@ final Map<String, String> italian = {
   'dd_mm_yyyy': 'GG/MM/AAAA',
   'unique_number_hint': '123456789',
 
+  //add group member
+
+  'search_member': 'Search Member',
+  'search_by_name': 'Search by name',
+
+
 
 };

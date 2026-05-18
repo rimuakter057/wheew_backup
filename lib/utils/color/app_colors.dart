@@ -30,6 +30,7 @@ class AppColors {
   static const Color greyBorder = Color(0xFFE0E0E0);
   static const Color red = Color(0xFFEF4444);
   static const Color paidBlue = Color(0xFF1D4ED8);
+  static const Color freeWhite = Color(0xFFFFFFFF);
   static const Color chargingGreen = Color(0xFF15803D);
   static const Color disableOrange = Color(0xFFF97316);
 

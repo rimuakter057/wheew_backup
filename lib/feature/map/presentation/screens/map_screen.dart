@@ -185,7 +185,7 @@ class _MapScreenState extends State<MapScreen> {
         body: Stack(
           children: [
 
-            // ── Map সবসময় visible — parking থাক বা না থাক ──────────────
+            /// ── Map সবসময় visible — parking থাক বা না থাক ──────────────
             // ── Map / Shimmer ──────────────────────────────────────────────
             if (_isLocating && _gpsPosition == null)
               const MapInitialShimmer()
@@ -203,7 +203,8 @@ class _MapScreenState extends State<MapScreen> {
                     zoom: 14,
                   ),
                   markers: markers,
-                  myLocationEnabled: true,
+                 // myLocationEnabled: true,
+                  myLocationEnabled: false,
                   myLocationButtonEnabled: false,
                   zoomControlsEnabled: false,
                   mapToolbarEnabled: false,
