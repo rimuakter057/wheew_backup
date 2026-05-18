@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/profile/model/user_document.dart';
 import 'package:platchatapp/feature/profile/repository/upload_controller.dart';
 import 'package:platchatapp/feature/profile/view/widgets/upload_document_sheet.dart';
+import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -120,11 +121,10 @@ class _CardShell extends StatelessWidget {
     if (uri == null) return;
     final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!ok && context.mounted) {
-      Get.snackbar(
-        'Error',
-        'Could not open document',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+
+
+      CustomSnackbar.error(context: context, message:  'Could not open document',);
+
     }
   }
 

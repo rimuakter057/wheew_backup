@@ -27,8 +27,7 @@ class ChatController extends GetxController {
     required String groupRoomId,
     required List<String> memberIds,
     required BuildContext context,
-  }) async
-  {
+  }) async {
     if (memberIds.isEmpty) return false;
     isAddingMember.value = true;
 
@@ -154,37 +153,37 @@ class ChatController extends GetxController {
           } catch (_) {}
         }
         if (context.mounted) Navigator.pop(context);
-        Get.snackbar(
-          'Success',
-          update ? 'rating_updated'.tr : 'rating_submitted'.tr,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.shade700,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 2),
+
+
+
+        CustomSnackbar.success(
+          context: context,
+          message:      update ? 'rating_updated'.tr : 'rating_submitted'.tr,
         );
+
       } else {
         String msg = 'rating_failed'.tr;
         try {
           final m = jsonDecode(response.body);
           if (m is Map && m['message'] != null) msg = '${m['message']}';
         } catch (_) {}
-        Get.snackbar(
-          'Error',
-          msg,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.shade700,
-          colorText: Colors.white,
+
+
+
+        CustomSnackbar.error(
+          context: context,
+          message: msg,
         );
+
       }
     } catch (e) {
       debugPrint('💥 [RATING] Error: $e');
-      Get.snackbar(
-        'Error',
-        e.toString(),
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.shade700,
-        colorText: Colors.white,
+
+      CustomSnackbar.error(
+        context: context,
+        message: e.toString(),
       );
+
     } finally {
       isSubmittingRating.value = false;
     }
@@ -666,7 +665,7 @@ class ChatController extends GetxController {
   final RxList searchResults = [].obs;
   Timer? _debounce;
 
-// Search method
+  // Search method
   void searchUsers(String query) {
     // Debounce - 500ms wait karo type karne ke baad
     if (_debounce?.isActive ?? false) _debounce!.cancel();
@@ -697,13 +696,11 @@ class ChatController extends GetxController {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final List users = data['users'] ?? []; // ✅ 'users' key
-        searchResults.value =
-            users.map((e) => UserModel.fromJson(e)).toList();
+        searchResults.value = users.map((e) => UserModel.fromJson(e)).toList();
       } else {
         searchResults.clear();
       }
     } catch (e) {
-
       searchResults.clear();
     } finally {
       isSearching.value = false;
@@ -711,7 +708,7 @@ class ChatController extends GetxController {
     }
   }
 
-// Dispose mein cancel karein
+  // Dispose mein cancel karein
   @override
   void onClose() {
     _debounce?.cancel();
@@ -1042,7 +1039,6 @@ class ChatController extends GetxController {
   }
 
   // Voice intent এর জন্য — direct search, debounce ছাড়া
-
 
   final ChatRepository _repo = ChatRepository();
   Future<List<SearchModel>> searchUsersForVoice(String query) async {

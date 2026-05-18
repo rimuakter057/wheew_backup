@@ -3,10 +3,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 void showCustomSnackBar(
-  String? message, {
-  bool isError = true,
-  bool getXSnackBar = false,
-}) {
+    String? message, {
+      bool isError = true,
+      bool getXSnackBar = false,
+    }) {
   if (message != null && message.isNotEmpty) {
     if (getXSnackBar) {
       Get.showSnackbar(
