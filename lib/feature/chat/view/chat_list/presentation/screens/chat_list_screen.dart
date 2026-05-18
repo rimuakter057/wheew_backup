@@ -177,7 +177,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
   /// Group হলে sender name prefix যোগ করে, না হলে plain message দেখায়
   String _buildLastMessage(Rooms room, bool isGroup) {
     if (room.latestMessage?.message == null) {
-      return isGroup ? 'No messages yet' : '';
+      return isGroup ? 'no_messages_yet'.tr : '';
     }
 
     if (isGroup) {

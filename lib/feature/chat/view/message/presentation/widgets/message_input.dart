@@ -138,7 +138,7 @@ class _MessageInputState extends State<MessageInput> {
                       }
                     },
                     decoration: InputDecoration(
-                      hintText: "type_here1".tr,
+                      hintText: "type_here".tr,
                       fillColor: AppColors.greyShade,
                       hintStyle: TextStyle(
                         color: AppColors.black,

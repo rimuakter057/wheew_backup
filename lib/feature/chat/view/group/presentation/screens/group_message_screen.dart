@@ -798,8 +798,8 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
                   // Pagination loader at the end
                   if (index == controller.groupMessageList.length) {
                     return controller.isLoadingMoreGroupMessage.value
-                        ? const Padding(
-                      padding: EdgeInsets.all(8),
+                        ?  Padding(
+                      padding: ResponsiveHelper.all(8),
                       child: Center(child: CircularProgressIndicator()),
                     )
                         : const SizedBox.shrink();
