@@ -113,7 +113,6 @@ class _ScanScreenState extends State<ScanScreen>
     }
 
     setState(() => _isLoading = false);
-
   }
 
   // ── Bottom sheet ─────────────────────────────────────────────────────────────
@@ -147,12 +146,12 @@ class _ScanScreenState extends State<ScanScreen>
             Expanded(
               child: _tabIndex == 0
                   ? ScanView(
-                scannerController: _scannerController,
-                lineAnimation: _lineAnimation,
-                isScanned: _scanned,
-                isLoading: _isLoading,
-                onDetect: _onDetect,
-              )
+                      scannerController: _scannerController,
+                      lineAnimation: _lineAnimation,
+                      isScanned: _scanned,
+                      isLoading: _isLoading,
+                      onDetect: _onDetect,
+                    )
                   : MyQrView(scanController: scanController),
             ),
           ],

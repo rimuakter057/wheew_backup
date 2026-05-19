@@ -30,8 +30,7 @@ class ChatController extends GetxController {
     required String groupRoomId,
     required List<String> memberIds,
     required BuildContext context,
-  }) async
-  {
+  }) async {
     if (memberIds.isEmpty) return false;
     isAddingMember.value = true;
 
@@ -80,8 +79,7 @@ class ChatController extends GetxController {
   String? _lastRatingFetchRateeId;
 
   /// Load my rating for this chat partner (if any).
-  Future<void> fetchMyRating(String rateeId) async
-  {
+  Future<void> fetchMyRating(String rateeId) async {
     if (rateeId.isEmpty) return;
     _lastRatingFetchRateeId = rateeId;
     isLoadingMyRating.value = true;
@@ -104,8 +102,7 @@ class ChatController extends GetxController {
     }
   }
 
-  Map<String, dynamic>? _unwrapRatingMap(dynamic decoded)
-  {
+  Map<String, dynamic>? _unwrapRatingMap(dynamic decoded) {
     if (decoded is Map) {
       final m = Map<String, dynamic>.from(decoded);
       if (m['rating'] != null || m['ratee_id'] != null || m['id'] != null) {
@@ -128,8 +125,7 @@ class ChatController extends GetxController {
     required String rateeId,
     required double rating,
     required BuildContext context,
-  }) async
-  {
+  }) async {
     final stars = rating.round().clamp(1, 5);
     try {
       isSubmittingRating.value = true;
@@ -161,13 +157,10 @@ class ChatController extends GetxController {
         }
         if (context.mounted) Navigator.pop(context);
 
-
-
         CustomSnackbar.success(
           context: context,
-          message:      update ? 'rating_updated'.tr : 'rating_submitted'.tr,
+          message: update ? 'rating_updated'.tr : 'rating_submitted'.tr,
         );
-
       } else {
         String msg = 'rating_failed'.tr;
         try {
@@ -175,22 +168,12 @@ class ChatController extends GetxController {
           if (m is Map && m['message'] != null) msg = '${m['message']}';
         } catch (_) {}
 
-
-
-        CustomSnackbar.error(
-          context: context,
-          message: msg,
-        );
-
+        CustomSnackbar.error(context: context, message: msg);
       }
     } catch (e) {
       debugPrint('💥 [RATING] Error: $e');
 
-      CustomSnackbar.error(
-        context: context,
-        message: e.toString(),
-      );
-
+      CustomSnackbar.error(context: context, message: e.toString());
     } finally {
       isSubmittingRating.value = false;
     }
@@ -201,8 +184,7 @@ class ChatController extends GetxController {
   RxList<String> presetMessages = <String>[].obs;
   RxBool isPresetLoading = false.obs;
 
-  Future<void> fetchPresetMessages() async
-  {
+  Future<void> fetchPresetMessages() async {
     try {
       isPresetLoading.value = true;
 
@@ -265,12 +247,6 @@ class ChatController extends GetxController {
       }
     }
   }
-
-
-
-
-
-
 
   ///preset message=========================================
 
@@ -351,20 +327,29 @@ class ChatController extends GetxController {
   // }
   //
 
-
   ///==============================================================
   bool _listenersInitialized = false; // ⭐ Add this
 
+  // void initSocketListeners() {
+  //   if (_listenersInitialized) return; // ⭐ Prevent multiple calls
+  //   _listenersInitialized = true;
+
+  //   sendNewListenMessage();
+  //   errorListenMessage();
+
+  //   debugPrint('✅ Socket listeners initialized');
+  // }
+
   void initSocketListeners() {
-    if (_listenersInitialized) return; // ⭐ Prevent multiple calls
+    if (_listenersInitialized) return;
     _listenersInitialized = true;
 
     sendNewListenMessage();
     errorListenMessage();
+    newMessage(); // ✅ এখানে একবার call করো
 
     debugPrint('✅ Socket listeners initialized');
   }
-
 
   /// get all message list ================================================
   RxList<Messages> userMessageList = <Messages>[].obs;
@@ -453,8 +438,7 @@ class ChatController extends GetxController {
     required String receiverId,
     required String message,
     String? roomId, // ✅ নতুন parameter
-  })
-  {
+  }) {
     final payload = {
       'receiver_id': receiverId,
       'message': message,
@@ -534,21 +518,46 @@ class ChatController extends GetxController {
 
   ///new message==========================
 
+  // Future<void> newMessage() async {
+  //   debugPrint('========== Call New Message');
+  //   AppSocket.onEvent('new-message', (value) {
+  //     debugPrint('🔔 NEW MESSAGE RECEIVED: $value'); // ← এটা print হচ্ছে?
+
+  //     Messages model = Messages.fromJson(value);
+  //     debugPrint('📨 Parsed Message: ${model.toJson()}');
+  //     debugPrint('🆔 Chat Room ID: ${model.chatRoomId}'); // ← এটা কি আসছে?
+
+  //     if (model.chatRoomId == roomID.value) {
+  //       userMessageList.insert(0, model);
+  //       debugPrint('✅ Added to message list');
+  //     }
+
+  //     debugPrint('🔄 Calling updateChatRoomInList...');
+  //     updateChatRoomInList(model);
+  //   });
+  // }
+
   Future<void> newMessage() async {
-    debugPrint('========== Call New Message');
-    AppSocket.onEvent('new-message', (value) {
-      debugPrint('🔔 NEW MESSAGE RECEIVED: $value'); // ← এটা print হচ্ছে?
+    // ✅ আগের listener সরাও, তারপর নতুন লাগাও
+    AppSocket.socket?.off('new-message');
+
+    AppSocket.socket?.on('new-message', (value) {
+      debugPrint('🔔 NEW MESSAGE RECEIVED: $value');
 
       Messages model = Messages.fromJson(value);
-      debugPrint('📨 Parsed Message: ${model.toJson()}');
-      debugPrint('🆔 Chat Room ID: ${model.chatRoomId}'); // ← এটা কি আসছে?
+
+      // ✅ ID দিয়ে duplicate চেক
+      final alreadyExists = userMessageList.any((m) => m.id == model.id);
+      if (alreadyExists) {
+        debugPrint('⚠️ Duplicate message ignored: ${model.id}');
+        return;
+      }
 
       if (model.chatRoomId == roomID.value) {
         userMessageList.insert(0, model);
         debugPrint('✅ Added to message list');
       }
 
-      debugPrint('🔄 Calling updateChatRoomInList...');
       updateChatRoomInList(model);
     });
   }
@@ -595,10 +604,6 @@ class ChatController extends GetxController {
     }
   }
 
-
-
-
-
   Future<void> errorListenMessage() async {
     AppSocket.onEvent('exception', (value) {
       debugPrint(
@@ -623,8 +628,7 @@ class ChatController extends GetxController {
   Future<void> fetchChatList({
     bool refresh = false,
     bool loadMore = false,
-  }) async
-  {
+  }) async {
     if (refresh) {
       page.value = 1;
       total = 0;
@@ -684,8 +688,7 @@ class ChatController extends GetxController {
   Future<void> createGroup({
     required String groupName,
     List<String> memberIds = const [],
-  }) async
-  {
+  }) async {
     isCreatingGroup.value = true;
     try {
       final uri = ApiUrl.createGroup;
@@ -901,8 +904,7 @@ class ChatController extends GetxController {
   Future<void> fetchGroupMessages({
     required String roomId,
     bool refresh = false,
-  }) async
-  {
+  }) async {
     // ✅ roomId update
     if (roomId != null && roomId.isNotEmpty) {
       groupRoomID.value = roomId;
@@ -992,8 +994,6 @@ class ChatController extends GetxController {
   // }
   //
 
-
-
   void sendGroupMessage({required String roomId, required String message}) {
     if (message.trim().isEmpty) return;
 
@@ -1021,7 +1021,7 @@ class ChatController extends GetxController {
     });
   }
 
-///listen group message listen=================
+  ///listen group message listen=================
   void listenGroupMessages() {
     AppSocket.socket?.off('send-group-message');
     AppSocket.socket?.off('group-new-message');
@@ -1045,15 +1045,16 @@ class ChatController extends GetxController {
           isMine: value['is_mine'],
           sender: value['sender'] != null
               ? GroupSender(
-            id: value['sender']['id'],
-            nickName: value['sender']['nick_name'],
-            avatar: value['sender']['avatar'],
-          )
+                  id: value['sender']['id'],
+                  nickName: value['sender']['nick_name'],
+                  avatar: value['sender']['avatar'],
+                )
               : null,
         );
 
         final tempIndex = groupMessageList.indexWhere(
-              (m) => (m.id?.startsWith('temp_') ?? false) &&
+          (m) =>
+              (m.id?.startsWith('temp_') ?? false) &&
               m.message == confirmed.message,
         );
         debugPrint('🔍 Temp index found: $tempIndex');
@@ -1114,25 +1115,13 @@ class ChatController extends GetxController {
     //
     //
 
-
-
-
-
-
-
-
-
-
-
-
     // ✅ currentUserId SharedPreferences থেকে নিন
     AppSocket.socket?.on('group-new-message', (value) async {
       try {
         final GroupMessageResponseModel model =
-        GroupMessageResponseModel.fromJson(value);
+            GroupMessageResponseModel.fromJson(value);
 
         if (model.groupChatRoomId == groupRoomID.value) {
-
           // ✅ sender_id দিয়ে check
           final String myId = await SharePrefsHelper.getString(AppConst.userID);
           final bool isMyMessage = model.senderId == myId;
@@ -1143,7 +1132,8 @@ class ChatController extends GetxController {
 
           if (isMyMessage) {
             final tempIndex = groupMessageList.indexWhere(
-                  (m) => (m.id?.startsWith('temp_') ?? false) &&
+              (m) =>
+                  (m.id?.startsWith('temp_') ?? false) &&
                   m.message == model.message,
             );
             if (tempIndex != -1) {
@@ -1166,11 +1156,7 @@ class ChatController extends GetxController {
         debugPrint('❌ listenGroupMessages error: $e');
       }
     });
-
-
-
   }
-
 
   /// ── Update Chat List after Group Message ───────────────────────
   void updateGroupChatRoomInList(GroupMessageResponseModel newMessage) {
@@ -1227,17 +1213,6 @@ class ChatController extends GetxController {
     debugPrint('✅ Joined group room: $roomId');
   }
 
-
-
-
-
-
-
-
-
-
-
-
   /// ── Leave Group ─────────────────────────────────────────────
   // Leave button press করলে call হয়
   var isLeavingGroup = false.obs;
@@ -1246,8 +1221,7 @@ class ChatController extends GetxController {
     required String roomId,
     required BuildContext context,
     bool navigateBack = true,
-  }) async
-  {
+  }) async {
     isLeavingGroup.value = true;
 
     final response = await ApiClient.deleteData(

@@ -14,7 +14,6 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../group/controller/group_controller.dart';
 
-
 class MessageScreen extends StatefulWidget {
   final String? roomId;
   final String otherUserName;
@@ -48,6 +47,19 @@ class _MessageScreenState extends State<MessageScreen> {
   final GroupController _groupController = Get.find<GroupController>();
   late String _currentRoomId;
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _currentRoomId = widget.roomId ?? '';
+
+  //   chatController.isBlockedByMe.value = widget.isBlockedByMe ?? false;
+  //   chatController.isBlockedMe.value = widget.isBlockedMe ?? false;
+  //   chatController.fetchPresetMessages();
+
+  //   _initChat();
+  //   _scrollController.addListener(_onScroll);
+  // }
+
   @override
   void initState() {
     super.initState();
@@ -57,21 +69,12 @@ class _MessageScreenState extends State<MessageScreen> {
     chatController.isBlockedMe.value = widget.isBlockedMe ?? false;
     chatController.fetchPresetMessages();
 
+    // ❌ এটা থাকলে সরাও — controller এ already আছে
+    // chatController.newMessage();
+
     _initChat();
     _scrollController.addListener(_onScroll);
   }
-
-
-
-
-
-
-
-
-
-
-
-
 
   Future<void> _initChat() async {
     await Future.delayed(Duration.zero);
@@ -161,7 +164,8 @@ class _MessageScreenState extends State<MessageScreen> {
                 if (!context.mounted) return;
                 showDialog(
                   context: context,
-                  builder: (dialogContext) => Obx(() {  // ← context আলাদা করো
+                  builder: (dialogContext) => Obx(() {
+                    // ← context আলাদা করো
                     final profile = _groupController.viewedProfile.value;
                     final isLoading = _groupController.isLoadingProfile.value;
                     return Dialog(
@@ -171,27 +175,35 @@ class _MessageScreenState extends State<MessageScreen> {
                           : profile == null
                           ? Center(child: Text('profile_not_found'.tr))
                           : ProfileCard(
-                        name: profile.nickName,
-                        rating: profile.rating,
-                        showRating: true,
-                        onRatingTap: () async {
-                          Navigator.pop(dialogContext);  // ← dialogContext দিয়ে বন্ধ করো
-                          await chatController.fetchMyRating(widget.receiverId);
-                          if (!context.mounted) return;
-                          showRatingDialog(
-                            context: context,
-                            status: chatController.myRatingForRatee.value?.status ?? '',
-                            image: widget.otherUserAvatar ?? '',
-                            name: widget.otherUserName,
-                            receiverId: widget.receiverId,
-                          );
-                        },
-                      ),
+                              name: profile.nickName,
+                              rating: profile.rating,
+                              showRating: true,
+                              onRatingTap: () async {
+                                Navigator.pop(
+                                  dialogContext,
+                                ); // ← dialogContext দিয়ে বন্ধ করো
+                                await chatController.fetchMyRating(
+                                  widget.receiverId,
+                                );
+                                if (!context.mounted) return;
+                                showRatingDialog(
+                                  context: context,
+                                  status:
+                                      chatController
+                                          .myRatingForRatee
+                                          .value
+                                          ?.status ??
+                                      '',
+                                  image: widget.otherUserAvatar ?? '',
+                                  name: widget.otherUserName,
+                                  receiverId: widget.receiverId,
+                                );
+                              },
+                            ),
                     );
                   }),
                 );
               },
-
             ),
 
             // ── Messages List ────────────────────────────────
@@ -277,9 +289,3 @@ class _MessageScreenState extends State<MessageScreen> {
     );
   }
 }
-
-
-
-
-
-
