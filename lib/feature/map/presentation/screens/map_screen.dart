@@ -221,6 +221,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver{
                   ..._parkingCtrl.markers,  // observable always read, no early return
                 };
                 return GoogleMap(
+                  mapType: MapType.hybrid,
                   key: const ValueKey<Object>('platechat_google_map'),
                   onMapCreated: _onMapCreated,
                   initialCameraPosition: CameraPosition(
@@ -228,8 +229,8 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver{
                     zoom: 14,
                   ),
                   markers: markers,
-                 // myLocationEnabled: true,
-                  myLocationEnabled: false,
+                 myLocationEnabled: true,
+                 // myLocationEnabled: false,
                   myLocationButtonEnabled: false,
                   zoomControlsEnabled: false,
                   mapToolbarEnabled: false,
