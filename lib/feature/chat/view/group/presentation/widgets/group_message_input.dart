@@ -125,7 +125,7 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
                     child: Icon(
                       Icons.send_rounded,
                       size: ResponsiveHelper.iconSize(24),
-                      color: AppColors.blueClient,
+                      color: AppColors.blue,
                     ),
                   ),
                 ),
@@ -159,9 +159,9 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
                 ),
                 categoryViewConfig: CategoryViewConfig(
                   initCategory: Category.SMILEYS,
-                  indicatorColor: AppColors.blueClient,
+                  indicatorColor: AppColors.blue,
                   iconColor: Colors.grey,
-                  iconColorSelected: AppColors.blueClient,
+                  iconColorSelected: AppColors.blue,
                   backspaceColor: Colors.red,
                 ),
                 bottomActionBarConfig: BottomActionBarConfig(

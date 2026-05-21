@@ -74,12 +74,12 @@ class _MessagePresetChipsState extends State<MessagePresetChips> {
                   vertical: ResponsiveHelper.padding(8),
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.blueClient.withOpacity(0.1),
+                  color: AppColors.blue.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(
                     ResponsiveHelper.borderRadius(20),
                   ),
                   border: Border.all(
-                    color: AppColors.blueClient,
+                    color: AppColors.blue,
                     width: 1,
                   ),
                 ),
@@ -87,7 +87,7 @@ class _MessagePresetChipsState extends State<MessagePresetChips> {
                   preset,
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(12),
-                    color: AppColors.blueClient,
+                    color: AppColors.blue,
                   ),
                 ),
               ),
@@ -117,7 +117,7 @@ class _ShimmerChip extends StatelessWidget {
           width: ResponsiveHelper.width(90),
           height: ResponsiveHelper.height(36),
           decoration: BoxDecoration(
-            color: AppColors.blueClient.withOpacity(0.15),
+            color: AppColors.blue.withOpacity(0.15),
             borderRadius: BorderRadius.circular(
               ResponsiveHelper.borderRadius(20),
             ),

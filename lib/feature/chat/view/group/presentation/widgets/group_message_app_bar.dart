@@ -119,7 +119,7 @@ class GroupMessageAppBar extends StatelessWidget {
               ),
               CircleAvatar(
                 radius: ResponsiveHelper.borderRadius(22),
-                backgroundColor: AppColors.blueClient.withOpacity(0.2),
+                backgroundColor: AppColors.blue.withOpacity(0.2),
                 backgroundImage: groupImage.isNotEmpty
                     ? NetworkImage(groupImage)
                     : null,

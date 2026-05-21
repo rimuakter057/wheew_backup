@@ -12,6 +12,7 @@ import 'package:platchatapp/feature/chat/view/widgets/chat_list_screen_shimmer.d
 import 'package:platchatapp/feature/chat/view/widgets/chat_tile.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
 import 'package:platchatapp/helper/data_converter/data_converter.dart';
+import 'package:platchatapp/helper/fromate_rating/formate_rating.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
@@ -80,7 +81,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
       body: RefreshIndicator(
         color: AppColors.white,
-        backgroundColor: AppColors.blueClient,
+        backgroundColor: AppColors.blue,
         onRefresh: () => controller.fetchChatList(refresh: true),
         child: Column(
           children: [
@@ -139,7 +140,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
                     return ChatTile(
                       name: room.displayName,
-                      imagePath: ImageHandler.imagesHandle(
+                      imagePath: isGroup
+                          ? "https://cdn-icons-png.flaticon.com/512/2352/2352167.png"
+                          : ImageHandler.imagesHandle(
                         room.displayAvatar.isNotEmpty
                             ? room.displayAvatar
                             : AppConst.unknown,
@@ -160,7 +163,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                               room.isBlockedMe == true),
                       isGroup: isGroup,
                       // group এ rating নেই
-                      rating: isGroup ? null : room.otherUser?.rating,
+                      rating: isGroup ? null :room.otherUser?.rating,
                       onTap: () => navigateToChat(context: context, room: room),
                     );
                   },

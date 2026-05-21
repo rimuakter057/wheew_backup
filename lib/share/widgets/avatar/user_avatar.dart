@@ -30,7 +30,7 @@ class UserAvatar extends StatelessWidget {
             height: radius * 2,
             fit: BoxFit.cover,
             placeholder: (context, url) => const LoadingWidget(
-              color: AppColors.blueClient,
+              color: AppColors.greyBg,
             ), // CircularProgressIndicator(),
             errorWidget: (context, url, error) =>
                 CustomNetworkImage(imageUrl: AppConst.unknown),

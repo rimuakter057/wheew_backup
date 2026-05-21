@@ -939,8 +939,8 @@ class WelcomeScreen extends StatelessWidget {
               child: OutlineButton(
                 title: 'sign_in'.tr,
                 onTap: () => context.pushNamed(RouteName.signIn),
-                borderColor: AppColors.blueClient,
-                textColor: AppColors.blueClient,
+                borderColor: AppColors.blue,
+                textColor: AppColors.blue,
               ),
             ),
 
@@ -954,7 +954,7 @@ class WelcomeScreen extends StatelessWidget {
               child: PrimaryButton(
                 title: 'sign_up'.tr,
                 onTap: () => _showAgeConfirmationDialog(context),
-                backgroundColor: AppColors.blueClient,
+                backgroundColor: AppColors.blue,
                 textColor: Colors.white,
               ),
             ),
@@ -1000,7 +1000,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.blueClient),
+                    border: Border.all(color: AppColors.blue),
                     borderRadius: BorderRadius.circular(
                       ResponsiveHelper.borderRadius(24),
                     ),
@@ -1023,8 +1023,8 @@ void _showAgeConfirmationDialog(BuildContext context) {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.blueClient,
-                    border: Border.all(color: AppColors.blueClient),
+                    color: AppColors.blue,
+                    border: Border.all(color: AppColors.blue),
                     borderRadius: BorderRadius.circular(
                       ResponsiveHelper.borderRadius(24),
                     ),

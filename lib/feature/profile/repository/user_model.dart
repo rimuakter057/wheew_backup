@@ -4,13 +4,15 @@ class UserModel {
   final String licenceId;
   final String? avatar;
   final String? designation;
+  final double?rating;
   final String? createdAt;
   ExistingRoom2? existingRoom; // mutable রাখো — room update হতে পারে
 
-  UserModel({
+  UserModel( {
     this.id,
     required this.nickName,
     required this.licenceId,
+    this.rating,
     this.avatar,
     this.designation,
     this.createdAt,
@@ -22,6 +24,7 @@ class UserModel {
       id: json['id'],
       nickName: json['nick_name'] ?? '',
       licenceId: json['licence_id'] ?? '',
+      rating: (json['rating'] ?? 0).toDouble(),
       avatar: json['avatar'],
       designation: json['designation'],
       createdAt: json['createdAt'],

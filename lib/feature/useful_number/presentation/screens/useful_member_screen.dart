@@ -180,7 +180,7 @@ class _UsefulNumberTile extends StatelessWidget {
             ),
             child: Icon(
               Icons.phone_outlined,
-              color: AppColors.blueClient,
+              color: AppColors.blue,
               size: ResponsiveHelper.iconSize(24),
             ),
           ),

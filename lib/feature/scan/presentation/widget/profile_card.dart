@@ -125,7 +125,7 @@ class ProfileCard extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: showRating
                       ? Colors.orange
-                      : AppColors.blueClient,
+                      : AppColors.blue,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(

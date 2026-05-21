@@ -47,18 +47,7 @@ class _MessageScreenState extends State<MessageScreen> {
   final GroupController _groupController = Get.find<GroupController>();
   late String _currentRoomId;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _currentRoomId = widget.roomId ?? '';
 
-  //   chatController.isBlockedByMe.value = widget.isBlockedByMe ?? false;
-  //   chatController.isBlockedMe.value = widget.isBlockedMe ?? false;
-  //   chatController.fetchPresetMessages();
-
-  //   _initChat();
-  //   _scrollController.addListener(_onScroll);
-  // }
 
   @override
   void initState() {

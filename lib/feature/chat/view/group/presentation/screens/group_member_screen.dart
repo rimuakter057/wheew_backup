@@ -207,12 +207,12 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
               contentPadding: EdgeInsets.zero,
               leading: CircleAvatar(
                 radius: ResponsiveHelper.borderRadius(22),
-                backgroundColor: AppColors.blueClient.withOpacity(0.2),
+                backgroundColor: AppColors.blue.withOpacity(0.2),
                 backgroundImage: member.avatar.isNotEmpty
                     ? NetworkImage(member.avatar)
                     : null,
                 child: member.avatar.isEmpty
-                    ? Icon(Icons.person, color: AppColors.blueClient)
+                    ? Icon(Icons.person, color: AppColors.blue)
                     : null,
               ),
               title: Text(
@@ -237,7 +237,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
                         vertical: ResponsiveHelper.padding(4),
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.blueClient.withOpacity(0.1),
+                        color: AppColors.blue.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(
                           ResponsiveHelper.borderRadius(20),
                         ),
@@ -246,7 +246,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
                         'admin'.tr,
                         style: GoogleFonts.poppins(
                           fontSize: ResponsiveHelper.fontSize(11),
-                          color: AppColors.blueClient,
+                          color: AppColors.blue,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

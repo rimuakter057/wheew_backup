@@ -200,7 +200,7 @@ void showRatingDialog({
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.blueClient,
+                    backgroundColor: AppColors.blue,
                     disabledBackgroundColor:
                     Colors.grey.shade200,
                     elevation: 0,

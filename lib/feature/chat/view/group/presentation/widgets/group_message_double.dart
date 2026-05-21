@@ -48,12 +48,12 @@ class GroupMessageBubble extends StatelessWidget {
                     ),
                   )
                       : null,
-                  backgroundColor: AppColors.blueClient.withOpacity(0.2),
+                  backgroundColor: AppColors.blue.withOpacity(0.2),
                   child: senderAvatar.isEmpty
                       ? Icon(
                     Icons.person,
                     size: ResponsiveHelper.iconSize(16),
-                    color: AppColors.blueClient,
+                    color: AppColors.blue,
                   )
                       : null,
                 ),
@@ -111,7 +111,7 @@ class _Bubble extends StatelessWidget {
         horizontal: ResponsiveHelper.width(14),
       ),
       decoration: BoxDecoration(
-        color: isMine ? AppColors.blueClient : AppColors.greenClient,
+        color: isMine ? AppColors.blue : AppColors.greenClient,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(ResponsiveHelper.borderRadius(15)),
           topRight: Radius.circular(ResponsiveHelper.borderRadius(15)),

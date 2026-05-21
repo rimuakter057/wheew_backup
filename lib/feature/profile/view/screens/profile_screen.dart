@@ -32,6 +32,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,15 +79,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 SizedBox(height: ResponsiveHelper.spacing(24)),
 
-                /// Profile Image
+
+                /// Profile Image - Fixed circular display
                 Center(
                   child: Obx(() {
                     final avatar = controller.userProfile.value?.avatar;
                     return GestureDetector(
                       onTap: () {
                         final image =
-                            controller.profileImage.value?.path ??
-                            controller.userProfile.value?.avatar;
+                            controller.tempCroppedImage.value?.path ?? // ✅ tempCroppedImage
+                                controller.userProfile.value?.avatar;
 
                         if (image != null && image.isNotEmpty) {
                           context.pushNamed(
@@ -94,32 +97,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           );
                         }
                       },
-
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          controller.profileImage.value != null
-                              ? CircleAvatar(
-                                  radius: ResponsiveHelper.width(45),
-                                  backgroundImage: FileImage(
-                                    controller.profileImage.value!,
-                                  ),
-                                )
-                              : avatar != null && avatar.isNotEmpty
-                              ? CircleAvatar(
-                                  radius: ResponsiveHelper.width(45),
-                                  backgroundImage: NetworkImage(avatar),
-                                  onBackgroundImageError: (_, __) {},
-                                )
-                              : CircleAvatar(
-                                  radius: ResponsiveHelper.width(45),
-                                  backgroundColor: AppColors.greyShade,
+                          SizedBox(
+                            width: ResponsiveHelper.iconSize(90),
+                            height: ResponsiveHelper.iconSize(90),
+                            child: ClipOval(
+                              child: controller.tempCroppedImage.value != null // ✅ tempCroppedImage
+                                  ? Image.file(
+                                controller.tempCroppedImage.value!, // ✅ tempCroppedImage
+                                width: ResponsiveHelper.iconSize(90),
+                                height: ResponsiveHelper.iconSize(90),
+                                fit: BoxFit.cover,
+                              )
+                                  : avatar != null && avatar.isNotEmpty
+                                  ? Image.network(
+                                avatar,
+                                width: ResponsiveHelper.iconSize(90),
+                                height: ResponsiveHelper.iconSize(90),
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Container(
+                                  width: ResponsiveHelper.iconSize(90),
+                                  height: ResponsiveHelper.iconSize(90),
+                                  color: AppColors.greyShade,
                                   child: Icon(
                                     Icons.person,
-                                    size: ResponsiveHelper.width(45),
-                                    color: AppColors.blueClient,
+                                    size: ResponsiveHelper.iconSize(45),
+                                    color: AppColors.blue,
                                   ),
                                 ),
+                              )
+                                  : Container(
+                                width: ResponsiveHelper.iconSize(90),
+                                height: ResponsiveHelper.iconSize(90),
+                                color: AppColors.greyShade,
+                                child: Icon(
+                                  Icons.person,
+                                  size: ResponsiveHelper.iconSize(45),
+                                  color: AppColors.blue,
+                                ),
+                              ),
+                            ),
+                          ),
+
                           if (controller.isEditing)
                             GestureDetector(
                               onTap: controller.pickImageFromGallery,
@@ -216,6 +237,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   title:        'car_tax'.tr,
                   documentType: 'TAX',
                 ),
+                SizedBox(height: ResponsiveHelper.spacing(12)),
 
               ],
             ),

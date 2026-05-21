@@ -141,7 +141,7 @@ void showCreateGroupDialog({
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.blueClient,
+                      backgroundColor: AppColors.blue,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(

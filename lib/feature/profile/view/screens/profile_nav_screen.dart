@@ -7,6 +7,7 @@ import 'package:platchatapp/feature/privacy_policy/help_suppoor_screen.dart';
 import 'package:platchatapp/feature/privacy_policy/privacy_policy_screen.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
 import 'package:platchatapp/feature/terms_condition/web_view_screen.dart';
+import 'package:platchatapp/helper/fromate_rating/formate_rating.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/language/language_controller.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
@@ -19,6 +20,9 @@ class ProfileNavScreen extends StatelessWidget {
     ProfileController(),
     permanent: false,
   );
+
+
+// rating display করার সময়
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +75,7 @@ class ProfileNavScreen extends StatelessWidget {
   Widget _buildProfileCard(BuildContext context, ProfileController controller) {
     final user = controller.userProfile.value;
     final avatarUrl = user?.avatar;
-
+    debugPrint("rating===========================${user!.rating.toString()}");
     return Container(
       width: double.infinity,
       padding: ResponsiveHelper.all(20),
@@ -142,7 +146,7 @@ class ProfileNavScreen extends StatelessWidget {
 
           // ✅ Nick name from controller
           Text(
-            user?.nickName.isNotEmpty == true ? user!.nickName : '---',
+            user?.nickName.isNotEmpty == true ? user.nickName : '---',
             style: TextStyle(
               color: Colors.white,
               fontSize: ResponsiveHelper.titleFontSize(24),
@@ -152,9 +156,10 @@ class ProfileNavScreen extends StatelessWidget {
           SizedBox(height: ResponsiveHelper.spacing(4)),
 
           // ✅ Licence ID from controller
-          if (user?.licenceId.isNotEmpty == true)
+
+
             Text(
-              user!.licenceId,
+              formatRating( user.rating),
               style: TextStyle(
                 color: Colors.white70,
                 fontSize: ResponsiveHelper.fontSize(13),

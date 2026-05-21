@@ -178,8 +178,8 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
           return ElevatedButton(
             onPressed: (selectedCount == 0 || isBusy) ? null : _onAddMember,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.blueClient,
-              disabledBackgroundColor: AppColors.blueClient.withOpacity(0.4),
+              backgroundColor: AppColors.blue,
+              disabledBackgroundColor: AppColors.blue.withOpacity(0.4),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(

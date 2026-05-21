@@ -15,7 +15,7 @@ class PrimaryButton extends StatelessWidget {
     super.key,
     required this.title,
     required this.onTap,
-    this.backgroundColor = AppColors.blueClient,
+    this.backgroundColor = AppColors.blue,
     this.textColor = Colors.white,
     this.height = 52,
     this.borderRadius = 16,

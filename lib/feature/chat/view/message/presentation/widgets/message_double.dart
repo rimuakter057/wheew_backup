@@ -32,7 +32,7 @@ class MessageBubble extends StatelessWidget {
           horizontal: ResponsiveHelper.width(14),
         ),
         decoration: BoxDecoration(
-          color: isMine ? AppColors.blueClient : AppColors.greenClient,
+          color: isMine ? AppColors.blue : AppColors.greenClient,
           borderRadius: BorderRadius.only(
             topLeft:
             Radius.circular(ResponsiveHelper.borderRadius(15)),

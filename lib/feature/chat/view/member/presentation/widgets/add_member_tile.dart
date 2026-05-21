@@ -97,7 +97,7 @@ class AddMemberTile extends StatelessWidget {
             ),
             Checkbox(
               value: isSelected,
-              activeColor: AppColors.blueClient,
+              activeColor: AppColors.blue,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(4),
               ),

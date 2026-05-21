@@ -666,7 +666,7 @@ class ParkingReportController extends GetxController {
   }
 
   Future<BitmapDescriptor> _svgMarker(String assetPath, Color color) async {
-    const double size = 88;
+    const double size = 45;
 
     final String rawSvg = await rootBundle.loadString(assetPath);
 
@@ -798,7 +798,8 @@ class ParkingReportController extends GetxController {
   Future<void> fetchParkingReport({
     double? latitude,
     double? longitude,
-  }) async {
+  }) async
+  {
     _locationIconCache.clear();
     try {
       isLoadingShowDetails.value = true;
