@@ -349,6 +349,15 @@ final Map<String, String> english = {
   'search_by_name': 'Search by name',
   'licence_validator': 'License plate must have at least 3 letters and 3 numbers',
   'share_link': 'Share Link',
+  'try_amazing_app': 'Try using this amazing app!',
+  'share_with_friends': 'Share with your friends',
+  'share_this_link_invite_friends': 'Share this link to invite your friends',
+  'link_copied': 'Link Copied',
+  'share': 'Share',
+  'app_invitation':"Invito all'app",
+  'use_app_with_me':"Use this app with me",
+
+
 
 
 

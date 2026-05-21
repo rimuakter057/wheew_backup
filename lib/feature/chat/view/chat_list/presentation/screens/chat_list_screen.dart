@@ -12,7 +12,6 @@ import 'package:platchatapp/feature/chat/view/widgets/chat_list_screen_shimmer.d
 import 'package:platchatapp/feature/chat/view/widgets/chat_tile.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
 import 'package:platchatapp/helper/data_converter/data_converter.dart';
-import 'package:platchatapp/helper/fromate_rating/formate_rating.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
@@ -43,10 +42,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.initSocketListeners(); // socket events listen শুরু
-      controller.fetchChatList(refresh: true); // প্রথমবার chat list load
-      controller.newMessage(); // নতুন message socket listen
-      Get.find<ProfileController>().reloadProfile(); // profile reload
+      controller.initSocketListeners();
+      controller.fetchChatList(refresh: true);
+      controller.newMessage();
+      Get.find<ProfileController>().reloadProfile();
     });
 
     scrollController.addListener(_onScroll);
@@ -141,7 +140,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                     return ChatTile(
                       name: room.displayName,
                       imagePath: isGroup
-                          ? "https://cdn-icons-png.flaticon.com/512/2352/2352167.png"
+                          ? AppConst.group
                           : ImageHandler.imagesHandle(
                         room.displayAvatar.isNotEmpty
                             ? room.displayAvatar

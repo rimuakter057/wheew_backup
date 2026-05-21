@@ -338,6 +338,13 @@ final Map<String, String> italian = {
   'search_by_name': 'Search by name',
   'licence_validator': 'La targa deve avere almeno 3 lettere e 3 numeri',
   'share_link': 'Condividi collegamento',
+  'try_amazing_app': 'Prova a usare questa fantastica app!',
+  'share_this_link_invite_friends': 'Condividi con i tuoi amici',
+  'link_copied': 'Collegamento copiato!',
+  'share': 'Condividere',
+  'app_invitation': 'App Invitation',
+  'use_app_with_me':"Usa questa app con me",
+  'share_with_friends': 'Condividi con i tuoi amici',
 
 
 

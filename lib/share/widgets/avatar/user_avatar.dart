@@ -22,6 +22,7 @@ class UserAvatar extends StatelessWidget {
           : '${ApiUrl.baseUrl}/$imagePath';
 
       return CircleAvatar(
+        backgroundColor: AppColors.greyBorder,
         radius: radius,
         child: ClipOval(
           child: CachedNetworkImage(

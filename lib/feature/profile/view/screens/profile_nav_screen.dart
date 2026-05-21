@@ -539,13 +539,13 @@ class ProfileNavScreen extends StatelessWidget {
         'icon': Icons.share_outlined,
         'title': 'share_link'.tr,
         'onTap': () {
-          // showDialog(
-          //   context: context,
-          //   builder: (_) => ShareLinkDialog(
-          //     shareUrl: 'https://yourapp.com/invite/abc123',
-          //     shareMessage: 'এই দারুণ অ্যাপটি ব্যবহার করে দেখো!',
-          //   ),
-          // );
+          showDialog(
+            context: context,
+            builder: (_) => ShareLinkDialog(
+              shareUrl: 'https://yourapp.com/invite/abc123',
+              shareMessage: 'try_amazing_app'.tr,
+            ),
+          );
         },
       },
 

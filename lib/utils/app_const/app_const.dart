@@ -12,6 +12,7 @@ class AppConst {
   static const String nickName = "nick_name";
   static const String loginUser = "login_user";
   static const String loginPass = "login_pass";
+  static const String group = "https://cdn-icons-png.flaticon.com/512/2352/2352167.png";
 
   // final String licenceId=data["licence_id"];
   // final String nickName=data["nick_name"];

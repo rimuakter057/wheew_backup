@@ -1,4 +1,7 @@
 class ApiUrl {
+
+  static const appUrl="https://yourapp.com/invite";
+
   // Base URL - Replace with your actual API base URL
 
   // Local url

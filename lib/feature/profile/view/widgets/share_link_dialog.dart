@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/color/app_colors.dart'; // নিশ্চিত হয়ে নিও এই পাথটি ঠিক আছে কিনা
+import 'package:platchatapp/utils/extension/base_extension.dart';
 import 'package:share_plus/share_plus.dart';
-
 
 class ShareLinkDialog extends StatelessWidget {
   final String shareUrl;
-  final String shareMessage;
+  final String? shareMessage;
 
-  const ShareLinkDialog({
+   ShareLinkDialog({
     super.key,
-    this.shareUrl = 'https://yourapp.com/invite',
-    this.shareMessage = 'Use this app with me! 🎉',
+    this.shareUrl = ApiUrl.appUrl,
+    this.shareMessage ,
   });
 
   @override
@@ -29,6 +32,7 @@ class ShareLinkDialog extends StatelessWidget {
         ),
       ),
       child: Container(
+        color: AppColors.backgroundColor, // ব্যাকগ্রাউন্ড হোয়াইট সেট করা হলো
         width: ResponsiveHelper.isTablet
             ? ResponsiveHelper.maxContentWidth
             : double.infinity,
@@ -41,10 +45,9 @@ class ShareLinkDialog extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Share Link',
-                  style: TextStyle(
-                    fontSize: ResponsiveHelper.titleFontSize(20),
-                    fontWeight: FontWeight.bold,
+                  'share_link'.tr,
+                  style: context.bodyLarge?.copyWith(
+                    color: AppColors.primaryText,
                   ),
                 ),
                 IconButton(
@@ -52,6 +55,7 @@ class ShareLinkDialog extends StatelessWidget {
                   icon: Icon(
                     Icons.close,
                     size: ResponsiveHelper.iconSize(24),
+                    color: AppColors.secondaryText,
                   ),
                 ),
               ],
@@ -63,16 +67,14 @@ class ShareLinkDialog extends StatelessWidget {
             Container(
               width: ResponsiveHelper.width(80),
               height: ResponsiveHelper.height(80),
-              decoration: BoxDecoration(
-                color: Theme.of(
-                  context,
-                ).primaryColor.withOpacity(0.1),
+              decoration: const BoxDecoration(
+                color: AppColors.softBrandColor, // হালকা ব্র্যান্ড কালার ব্যবহার করা হয়েছে
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.share_rounded,
                 size: ResponsiveHelper.iconSize(40),
-                color: Theme.of(context).primaryColor,
+                color: AppColors.blue, // মেইন ব্লু কালার
               ),
             ),
 
@@ -80,10 +82,10 @@ class ShareLinkDialog extends StatelessWidget {
 
             /// Title
             Text(
-              'Share with your friends',
-              style: TextStyle(
-                fontSize: ResponsiveHelper.fontSize(16),
-                fontWeight: FontWeight.w600,
+              'share_with_friends'.tr,
+              style: context.bodyLarge?.copyWith(
+                color: AppColors.primaryText,
+                fontWeight: FontWeight.bold,
               ),
             ),
 
@@ -91,11 +93,11 @@ class ShareLinkDialog extends StatelessWidget {
 
             /// Subtitle
             Text(
-              'Share this link to invite your friends',
+              'share_this_link_invite_friends'.tr,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: ResponsiveHelper.fontSize(13),
-                color: Colors.grey[600],
+                color: AppColors.secondaryText,
               ),
             ),
 
@@ -108,12 +110,12 @@ class ShareLinkDialog extends StatelessWidget {
                 vertical: 12,
               ),
               decoration: BoxDecoration(
-                color: Colors.grey[100],
+                color: AppColors.greyBg, // গ্রে ব্যাকগ্রাউন্ড
                 borderRadius: BorderRadius.circular(
                   ResponsiveHelper.borderRadius(12),
                 ),
                 border: Border.all(
-                  color: Colors.grey[300]!,
+                  color: AppColors.greyBorder, // হালকা গ্রে বর্ডার
                   width: ResponsiveHelper.borderWidth(1),
                 ),
               ),
@@ -124,7 +126,7 @@ class ShareLinkDialog extends StatelessWidget {
                       shareUrl,
                       style: TextStyle(
                         fontSize: ResponsiveHelper.fontSize(13),
-                        color: Colors.grey[700],
+                        color: AppColors.primaryText,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -139,8 +141,12 @@ class ShareLinkDialog extends StatelessWidget {
                       );
 
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Link copied!'),
+                         SnackBar(
+                          backgroundColor: AppColors.blue, // স্ন্যাকবার কালার ব্লু করা হলো
+                          content: Text(
+                            'link_copied'.tr,
+                            style: TextStyle(color: AppColors.white),
+                          ),
                           duration: Duration(seconds: 2),
                         ),
                       );
@@ -148,7 +154,7 @@ class ShareLinkDialog extends StatelessWidget {
                     child: Icon(
                       Icons.copy_rounded,
                       size: ResponsiveHelper.iconSize(20),
-                      color: Theme.of(context).primaryColor,
+                      color: AppColors.blue,
                     ),
                   ),
                 ],
@@ -169,14 +175,17 @@ class ShareLinkDialog extends StatelessWidget {
                 icon: Icon(
                   Icons.share_rounded,
                   size: ResponsiveHelper.iconSize(20),
+                  color: AppColors.white,
                 ),
                 label: Text(
-                  'Share',
+                  'share'.tr,
                   style: TextStyle(
                     fontSize: ResponsiveHelper.fontSize(15),
+                    color: AppColors.white,
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.blue, // বাটনের ব্যাকগ্রাউন্ড ব্লু
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(
                       ResponsiveHelper.borderRadius(12),
@@ -194,7 +203,7 @@ class ShareLinkDialog extends StatelessWidget {
   void _shareLink() {
     Share.share(
       '$shareMessage\n\n$shareUrl',
-      subject: 'App Invitation',
+      subject: 'app_invitation'.tr,
     );
   }
 }
