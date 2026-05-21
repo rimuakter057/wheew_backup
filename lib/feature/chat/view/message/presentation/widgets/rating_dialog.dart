@@ -1,9 +1,11 @@
 // widgets/rating_dialog.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
+import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
@@ -55,27 +57,44 @@ void showRatingDialog({
           children: [
             ///status show here
 
-          Container(
-          padding: EdgeInsets.symmetric(
-          horizontal: ResponsiveHelper.spacing(10),
-          vertical: ResponsiveHelper.spacing(4),
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.paidBlue,
-          borderRadius: BorderRadius.circular(
-            ResponsiveHelper.borderRadius(4),
+          Row(
+            children: [
+              Container(
+              padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveHelper.spacing(10),
+              vertical: ResponsiveHelper.spacing(4),
+                      ),
+                      decoration: BoxDecoration(
+              color: AppColors.paidBlue,
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(4),
+              ),
+                      ),
+                    child:   Text(
+                      status,
+                      style: GoogleFonts.poppins(
+                fontSize: ResponsiveHelper.fontSize(11),
+                fontWeight: FontWeight.w500,
+                color:AppColors.white
+                      ),
+                    ),
+                    ),
+
+
+            SizedBox(width: ResponsiveHelper.spacing(6),),
+                SvgPicture.asset(
+                  "assets/icons/i.svg",
+                  width: ResponsiveHelper.iconSize(18),
+                  height: ResponsiveHelper.iconSize(18),
+                  colorFilter: const ColorFilter.mode(
+                    AppColors.black,
+                    BlendMode.srcIn,
+                  ),
+                ),
+            ],
           ),
-        ),
-        child:   Text(
-          status,
-          style: GoogleFonts.poppins(
-              fontSize: ResponsiveHelper.fontSize(11),
-              fontWeight: FontWeight.w500,
-              color:AppColors.white
-          ),
-        ),
-      )
-        ,
+
+
 
 
 

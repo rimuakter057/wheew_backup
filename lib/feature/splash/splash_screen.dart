@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import '../../core/router/routes_name.dart';
 import '../../core/service/storage_service.dart';
 import '../../helper/responsive_helper/responsive_helper.dart';
+import '../../share/widgets/custom_image/custom_image.dart';
 import '../../utils/app_const/app_const.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -59,16 +61,34 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Container(
-          width: double.infinity,
-          alignment: Alignment.center,
-          child: Lottie.asset(
-            'assets/animations/logo2_animated.json',
-            width: ResponsiveHelper.iconSize(320),
-            height: ResponsiveHelper.iconSize(340),
-            fit: BoxFit.contain,
-            repeat: true,
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              crossAxisAlignment:  CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Lottie.asset(
+                  AssetsPath.homeJson,
+                  width: ResponsiveHelper.iconSize(70),
+                  height: ResponsiveHelper.iconSize(38),
+                  fit: BoxFit.cover,
+                  repeat: true,
+                ),
+
+
+                Transform.translate(
+                  offset: const Offset(0, 10), // নিচে নামাতে positive value বাড়ান
+                  child: Image.asset(
+                    AssetsPath.chatList,
+                    height: ResponsiveHelper.iconSize(38),
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

@@ -357,6 +357,10 @@ final Map<String, String> english = {
   'app_invitation':"Invito all'app",
   'use_app_with_me':"Use this app with me",
 
+  'delete_chat': 'Delete Chat',
+  'delete_chat_confirm': 'Are you sure you want to delete this chat?',
+
+
 
 
 

@@ -346,6 +346,10 @@ final Map<String, String> italian = {
   'use_app_with_me':"Usa questa app con me",
   'share_with_friends': 'Condividi con i tuoi amici',
 
+  'delete_chat': 'Elimina chat',
+  'delete_chat_confirm': 'Sei sicuro di voler eliminare questa chat?',
+
+
 
 
 };

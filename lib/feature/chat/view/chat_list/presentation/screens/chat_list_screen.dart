@@ -137,45 +137,50 @@ class _ChatListScreenState extends State<ChatListScreen> {
                     // Latest message text তৈরি করো
                     final String lastMessage = _buildLastMessage(room, isGroup);
 
-                    return ChatTile(
-                      name: room.displayName,
-                      imagePath: isGroup
-                          ? AppConst.group
-                          : ImageHandler.imagesHandle(
-                        room.displayAvatar.isNotEmpty
-                            ? room.displayAvatar
-                            : AppConst.unknown,
-                        isProfile: true,
+                    return GestureDetector(
+                      onLongPress: () => _showDeleteDialog(context, room),
+                      child: ChatTile(
+                        name: room.displayName,
+                        imagePath: isGroup
+                            ? AppConst.group
+                            : ImageHandler.imagesHandle(
+                                   room.displayAvatar.isNotEmpty
+                              ? room.displayAvatar
+                              : AppConst.unknown,
+                          isProfile: true,
+                        ),
+                        message: lastMessage,
+                        // unread হলে bold
+                        fontWeight: room.latestMessage?.isUnread == true
+                            ? FontWeight.w700
+                            : FontWeight.w400,
+                        time: room.latestMessage?.createdAt != null
+                            ? formatTime(room.latestMessage!.createdAt!)
+                            : '',
+                        // group chat এ block নেই
+                        isBlock:
+                            !isGroup &&
+                            (room.isBlockedByMe == true ||
+                                room.isBlockedMe == true),
+                        isGroup: isGroup,
+                        // group এ rating নেই
+                        rating: isGroup ? null :room.otherUser?.rating,
+                        onTap: () => navigateToChat(context: context, room: room),
                       ),
-                      message: lastMessage,
-                      // unread হলে bold
-                      fontWeight: room.latestMessage?.isUnread == true
-                          ? FontWeight.w700
-                          : FontWeight.w400,
-                      time: room.latestMessage?.createdAt != null
-                          ? formatTime(room.latestMessage!.createdAt!)
-                          : '',
-                      // group chat এ block নেই
-                      isBlock:
-                          !isGroup &&
-                          (room.isBlockedByMe == true ||
-                              room.isBlockedMe == true),
-                      isGroup: isGroup,
-                      // group এ rating নেই
-                      rating: isGroup ? null :room.otherUser?.rating,
-                      onTap: () => navigateToChat(context: context, room: room),
                     );
                   },
                 );
               }),
             ),
+
+
+
           ],
         ),
       ),
     );
   }
 
-  /// Latest message preview text তৈরি করে
   /// Group হলে sender name prefix যোগ করে, না হলে plain message দেখায়
   String _buildLastMessage(Rooms room, bool isGroup) {
     if (room.latestMessage?.message == null) {
@@ -193,5 +198,120 @@ class _ChatListScreenState extends State<ChatListScreen> {
     }
 
     return room.latestMessage!.message!;
+  }
+
+  ///show delete
+
+  void _showDeleteDialog(BuildContext context, Rooms room) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+
+            // Chat name preview
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  const Icon(Icons.chat_bubble_outline, color: Colors.grey),
+                  const SizedBox(width: 12),
+                  Text(
+                    room.displayName,
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const Divider(),
+
+            // Delete option
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: Colors.red),
+              title: Text(
+                'delete_chat'.tr,
+                style: GoogleFonts.poppins(
+                  color: Colors.red,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(ctx);
+                _confirmDelete(context, room);
+              },
+            ),
+
+            // Cancel
+            ListTile(
+              leading: const Icon(Icons.close),
+              title: Text(
+                'cancel'.tr,
+                style: GoogleFonts.poppins(),
+              ),
+              onTap: () => Navigator.pop(ctx),
+            ),
+
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _confirmDelete(BuildContext context, Rooms room) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        title: Text(
+          'delete_chat'.tr,
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+        ),
+        content: Text(
+          'delete_chat_confirm'.tr, // "Are you sure you want to delete this chat?"
+          style: GoogleFonts.poppins(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('cancel'.tr, style: GoogleFonts.poppins()),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            onPressed: () {
+              Navigator.pop(ctx);
+             // controller.deleteChat(room.id); // আপনার controller এ এই method থাকতে হবে
+            },
+            child: Text(
+              'delete'.tr,
+              style: GoogleFonts.poppins(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
