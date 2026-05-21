@@ -55,11 +55,19 @@ class _MessagePresetChipsState extends State<MessagePresetChips> {
           separatorBuilder: (_, __) =>
               SizedBox(width: ResponsiveHelper.spacing(8)),
           itemBuilder: (context, index) {
-            final preset =
-            widget.chatController.presetMessages[index];
+            final preset = widget.chatController.presetMessages[index];
+            debugPrint(
+                "englisg language===========================${preset.message}"
+            );
+            debugPrint(
+              "it language===========================${preset.messageIt}"
+            );
             return GestureDetector(
               onTap: () {
-                widget.chatController.messageController.text = preset;
+                final isItalian = Get.locale?.languageCode == 'it';
+                widget.chatController.messageController.text =
+                isItalian ? preset.messageIt : preset.message;
+
                 widget.chatController.messageController.selection =
                     TextSelection.fromPosition(
                       TextPosition(
@@ -67,6 +75,7 @@ class _MessagePresetChipsState extends State<MessagePresetChips> {
                             .chatController.messageController.text.length,
                       ),
                     );
+
               },
               child: Container(
                 padding: EdgeInsets.symmetric(
@@ -84,7 +93,9 @@ class _MessagePresetChipsState extends State<MessagePresetChips> {
                   ),
                 ),
                 child: Text(
-                  preset,
+                    Get.locale?.languageCode == 'it'
+                        ? preset.messageIt
+                        : preset.message,
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(12),
                     color: AppColors.blue,

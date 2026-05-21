@@ -218,9 +218,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'license_number_required'.tr;
-                  } else if (value.length < 6 || value.length > 7) {
+                  }
+
+                  final text = value.trim();
+
+                  // Check total length
+                  if (text.length < 6 || text.length > 7) {
                     return 'license_number_must_be'.tr;
                   }
+
+                  // Count letters and numbers
+                  final letterCount = RegExp(r'[A-Za-z]')
+                      .allMatches(text)
+                      .length;
+
+                  final numberCount = RegExp(r'[0-9]')
+                      .allMatches(text)
+                      .length;
+
+                  if (letterCount < 3 || numberCount < 3) {
+                    return 'licence_validator'.tr;
+                  }
+
                   return null;
                 },
               ),
@@ -373,49 +392,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               SizedBox(height: ResponsiveHelper.spacing(12)),
 
-              // /// Other Terms
-              // // Other Terms (Optional)
-              // Row(
-              //   children: [
-              //     SizedBox(
-              //       width: ResponsiveHelper.width(24),
-              //       height: ResponsiveHelper.height(24),
-              //       child: Checkbox(
-              //         value: agreeOtherTerms ?? false,
-              //         tristate: true, // allows null
-              //         activeColor: Colors.green,
-              //         onChanged: (value) =>
-              //             setState(() => agreeOtherTerms = value),
-              //       ),
-              //     ),
-              //     SizedBox(width: ResponsiveHelper.spacing(8)),
-              //     Expanded(
-              //       child: GestureDetector(
-              //         onTap: () => context.pushNamed(RouteName.terms),
-              //         child: RichText(
-              //           text: TextSpan(
-              //             style: TextStyle(
-              //               fontSize: ResponsiveHelper.fontSize(13),
-              //               color: Colors.black,
-              //             ),
-              //             children: [
-              //               TextSpan(text: 'i_agree_to1'.tr + ' '),
-              //               TextSpan(
-              //                 text: 'agree_terms1'.tr,
-              //                 style: TextStyle(
-              //                   color: Colors.blue,
-              //                   decoration: TextDecoration.underline,
-              //                   fontWeight: FontWeight.bold,
-              //                   fontSize: ResponsiveHelper.fontSize(13),
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
               /// Continue Button

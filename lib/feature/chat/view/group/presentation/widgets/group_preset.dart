@@ -54,10 +54,16 @@ class _GroupPresetMessagesState extends State<GroupPresetMessages> {
           separatorBuilder: (_, __) =>
               SizedBox(width: ResponsiveHelper.spacing(8)),
           itemBuilder: (context, index) {
-            final preset = widget.controller.presetMessages[index];
+            final preset = widget.controller.presetMessages[index]; // এখন PresetMessage object
             return GestureDetector(
               onTap: () {
-                widget.controller.messageController.text = preset;
+               // widget.controller.messageController.text = preset.message; // .message যোগ করো
+
+                final isItalian = Get.locale?.languageCode == 'it';
+                widget.controller.messageController.text =
+                isItalian ? preset.messageIt : preset.message;
+
+
                 widget.controller.messageController.selection =
                     TextSelection.fromPosition(
                       TextPosition(
@@ -78,7 +84,9 @@ class _GroupPresetMessagesState extends State<GroupPresetMessages> {
                   border: Border.all(color: AppColors.blue, width: 1),
                 ),
                 child: Text(
-                  preset,
+                  Get.locale?.languageCode == 'it'
+                      ? preset.messageIt
+                      : preset.message,
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(12),
                     color: AppColors.blue,

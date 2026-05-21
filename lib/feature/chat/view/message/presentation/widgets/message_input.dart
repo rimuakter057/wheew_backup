@@ -92,96 +92,6 @@ class _MessageInputState extends State<MessageInput> {
 
         SizedBox(height: ResponsiveHelper.height(6)),
 
-        // ── Text Input Row ────────────────────────────────
-        // Padding(
-        //   padding: EdgeInsets.fromLTRB(
-        //     ResponsiveHelper.padding(16),
-        //     ResponsiveHelper.padding(8),
-        //     ResponsiveHelper.padding(16),
-        //     ResponsiveHelper.padding(8),
-        //   ),
-        //   child: Container(
-        //     padding: EdgeInsets.symmetric(
-        //       horizontal: ResponsiveHelper.padding(8),
-        //       vertical: ResponsiveHelper.padding(4),
-        //     ),
-        //     decoration: BoxDecoration(
-        //       color: AppColors.greyShade,
-        //       borderRadius: BorderRadius.circular(
-        //         ResponsiveHelper.borderRadius(16),
-        //       ),
-        //     ),
-        //     child: Row(
-        //       crossAxisAlignment: CrossAxisAlignment.end,
-        //       children: [
-        //         // Emoji toggle
-        //         IconButton(
-        //           icon: const Icon(Icons.emoji_emotions,
-        //               color: AppColors.black),
-        //           onPressed: () {
-        //             _focusNode.unfocus();
-        //             setState(() => _isEmojiVisible = !_isEmojiVisible);
-        //           },
-        //         ),
-        //         SizedBox(width: ResponsiveHelper.width(4),),
-        //
-        //
-        //         GestureDetector(
-        //             onTap: (){},
-        //             child: Icon(Icons.add)),
-        //
-        //         // Text field
-        //         Expanded(
-        //           child: TextField(
-        //             focusNode: _focusNode,
-        //             controller:
-        //             widget.chatController.messageController,
-        //             minLines: 1,
-        //             maxLines: 3,
-        //             onTap: () {
-        //               if (_isEmojiVisible) {
-        //                 setState(() => _isEmojiVisible = false);
-        //               }
-        //             },
-        //             decoration: InputDecoration(
-        //               hintText: "type_here".tr,
-        //               fillColor: AppColors.greyShade,
-        //               hintStyle: TextStyle(
-        //                 color: AppColors.black,
-        //                 fontSize: ResponsiveHelper.fontSize(16),
-        //               ),
-        //               border: InputBorder.none,
-        //               isDense: true,
-        //               contentPadding: EdgeInsets.symmetric(
-        //                 vertical: ResponsiveHelper.padding(8),
-        //               ),
-        //             ),
-        //             style: TextStyle(
-        //               color: AppColors.black,
-        //               fontSize: ResponsiveHelper.fontSize(16),
-        //             ),
-        //           ),
-        //         ),
-        //
-        //         // Send button
-        //         GestureDetector(
-        //           onTap: _onSend,
-        //           child: Padding(
-        //             padding:
-        //             EdgeInsets.all(ResponsiveHelper.padding(8)),
-        //             child: Icon(
-        //               Icons.send_rounded,
-        //               size: ResponsiveHelper.iconSize(24),
-        //               color: AppColors.blueClient,
-        //             ),
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        // ),
-
-        // ── Emoji Picker ──────────────────────────────────
 
 
 
@@ -295,18 +205,7 @@ class _MessageInputState extends State<MessageInput> {
                 ),
               ),
 
-              // Mic icon — container এর বাইরে, ডানে
-              // Padding(
-              //   padding: EdgeInsets.only(
-              //     bottom: ResponsiveHelper.padding(4),
-              //     left: ResponsiveHelper.padding(8),
-              //   ),
-              //   child: Icon(
-              //     Icons.mic,
-              //     size: ResponsiveHelper.iconSize(24),
-              //     color: AppColors.black,
-              //   ),
-              // ),
+
             ],
           ),
         ),

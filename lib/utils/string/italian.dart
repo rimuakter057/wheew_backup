@@ -336,6 +336,8 @@ final Map<String, String> italian = {
 
   'search_member': 'Search Member',
   'search_by_name': 'Search by name',
+  'licence_validator': 'La targa deve avere almeno 3 lettere e 3 numeri',
+  'share_link': 'Condividi collegamento',
 
 
 

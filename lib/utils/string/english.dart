@@ -347,6 +347,8 @@ final Map<String, String> english = {
   //add group member
   'search_member': 'Search Member',
   'search_by_name': 'Search by name',
+  'licence_validator': 'License plate must have at least 3 letters and 3 numbers',
+  'share_link': 'Share Link',
 
 
 

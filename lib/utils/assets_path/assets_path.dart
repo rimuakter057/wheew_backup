@@ -49,6 +49,7 @@ class AssetsPath {
   static const String back="assets/icons/back.svg";
   static const String none="assets/icons/none.svg";
   static const String all="assets/icons/all.svg";
+  static const String scanIcon="assets/icons/scan_icon.svg";
 
 
 

@@ -181,10 +181,80 @@ class ChatController extends GetxController {
 
   ///preset message=========================================
 
-  RxList<String> presetMessages = <String>[].obs;
+  // RxList<String> presetMessages = <String>[].obs;
+  // RxBool isPresetLoading = false.obs;
+  //
+  // Future<void> fetchPresetMessages() async {
+  //   try {
+  //     isPresetLoading.value = true;
+  //
+  //     print('🔄 [PRESET] Fetching preset messages...');
+  //
+  //     final response = await ApiClient.getData(uri: ApiUrl.presetMessage);
+  //
+  //     print('📡 [PRESET] Status Code: ${response.statusCode}');
+  //     print('📡 [PRESET] Raw Body: ${response.body}');
+  //
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //
+  //       print('📦 [PRESET] Decoded data type: ${data.runtimeType}');
+  //       print('📦 [PRESET] Decoded data: $data');
+  //
+  //       // ── এখানে তোমার JSON structure অনুযায়ী parse করো ──
+  //       // Case 1: { "messages": [ { "message": "..." } ] }
+  //       if (data is Map && data['messages'] != null) {
+  //         final list = List<Map<String, dynamic>>.from(data['messages']);
+  //         presetMessages.value = list
+  //             .map((e) => e['message'].toString())
+  //             .toList();
+  //         print(
+  //           '✅ [PRESET] Parsed from data["messages"]: ${presetMessages.value}',
+  //         );
+  //       }
+  //       // Case 2: [ { "message": "..." } ]  (direct array)
+  //       else if (data is List) {
+  //         presetMessages.value = data
+  //             .map((e) => e['message'].toString())
+  //             .toList();
+  //         print('✅ [PRESET] Parsed from direct List: ${presetMessages.value}');
+  //       }
+  //       // Case 3: { "data": [ { "message": "..." } ] }
+  //       else if (data is Map && data['data'] != null) {
+  //         final list = List<Map<String, dynamic>>.from(data['data']);
+  //         presetMessages.value = list
+  //             .map((e) => e['message'].toString())
+  //             .toList();
+  //         print('✅ [PRESET] Parsed from data["data"]: ${presetMessages.value}');
+  //       } else {
+  //         print('❌ [PRESET] Unknown structure! Cannot parse.');
+  //       }
+  //
+  //       print('📊 [PRESET] Total preset count: ${presetMessages.length}');
+  //     } else {
+  //       print('❌ [PRESET] Failed! Status: ${response.statusCode}');
+  //     }
+  //   } catch (e, stack) {
+  //     print('💥 [PRESET] Exception: $e');
+  //     print('💥 [PRESET] StackTrace: $stack');
+  //   } finally {
+  //     isPresetLoading.value = false;
+  //     print(
+  //       '🏁 [PRESET] Loading done. isPresetLoading = ${isPresetLoading.value}',
+  //     );
+  //     if (kDebugMode) {
+  //       print('🏁 [PRESET] presetMessages = ${presetMessages.value}');
+  //     }
+  //   }
+  // }
+
+  ///preset message=========================================
+
+  RxList<PresetMessage> presetMessages = <PresetMessage>[].obs;
   RxBool isPresetLoading = false.obs;
 
-  Future<void> fetchPresetMessages() async {
+  Future<void> fetchPresetMessages() async
+  {
     try {
       isPresetLoading.value = true;
 
@@ -201,12 +271,14 @@ class ChatController extends GetxController {
         print('📦 [PRESET] Decoded data type: ${data.runtimeType}');
         print('📦 [PRESET] Decoded data: $data');
 
-        // ── এখানে তোমার JSON structure অনুযায়ী parse করো ──
         // Case 1: { "messages": [ { "message": "..." } ] }
         if (data is Map && data['messages'] != null) {
           final list = List<Map<String, dynamic>>.from(data['messages']);
           presetMessages.value = list
-              .map((e) => e['message'].toString())
+              .map((e) => PresetMessage(
+            message: e['message'].toString(),
+            messageIt: e['message_it']?.toString() ?? '',
+          ))
               .toList();
           print(
             '✅ [PRESET] Parsed from data["messages"]: ${presetMessages.value}',
@@ -215,7 +287,10 @@ class ChatController extends GetxController {
         // Case 2: [ { "message": "..." } ]  (direct array)
         else if (data is List) {
           presetMessages.value = data
-              .map((e) => e['message'].toString())
+              .map((e) => PresetMessage(
+            message: e['message'].toString(),
+            messageIt: e['message_it']?.toString() ?? '',
+          ))
               .toList();
           print('✅ [PRESET] Parsed from direct List: ${presetMessages.value}');
         }
@@ -223,7 +298,10 @@ class ChatController extends GetxController {
         else if (data is Map && data['data'] != null) {
           final list = List<Map<String, dynamic>>.from(data['data']);
           presetMessages.value = list
-              .map((e) => e['message'].toString())
+              .map((e) => PresetMessage(
+            message: e['message'].toString(),
+            messageIt: e['message_it']?.toString() ?? '',
+          ))
               .toList();
           print('✅ [PRESET] Parsed from data["data"]: ${presetMessages.value}');
         } else {
@@ -248,84 +326,6 @@ class ChatController extends GetxController {
     }
   }
 
-  ///preset message=========================================
-
-  // RxList<PresetMessage> presetMessages = <PresetMessage>[].obs;
-  // RxBool isPresetLoading = false.obs;
-  //
-  // Future<void> fetchPresetMessages() async
-  // {
-  //   try {
-  //     isPresetLoading.value = true;
-  //
-  //     print('🔄 [PRESET] Fetching preset messages...');
-  //
-  //     final response = await ApiClient.getData(uri: ApiUrl.presetMessage);
-  //
-  //     print('📡 [PRESET] Status Code: ${response.statusCode}');
-  //     print('📡 [PRESET] Raw Body: ${response.body}');
-  //
-  //     if (response.statusCode == 200) {
-  //       final data = jsonDecode(response.body);
-  //
-  //       print('📦 [PRESET] Decoded data type: ${data.runtimeType}');
-  //       print('📦 [PRESET] Decoded data: $data');
-  //
-  //       // Case 1: { "messages": [ { "message": "..." } ] }
-  //       if (data is Map && data['messages'] != null) {
-  //         final list = List<Map<String, dynamic>>.from(data['messages']);
-  //         presetMessages.value = list
-  //             .map((e) => PresetMessage(
-  //           message: e['message'].toString(),
-  //           messageIt: e['message_it']?.toString() ?? '',
-  //         ))
-  //             .toList();
-  //         print(
-  //           '✅ [PRESET] Parsed from data["messages"]: ${presetMessages.value}',
-  //         );
-  //       }
-  //       // Case 2: [ { "message": "..." } ]  (direct array)
-  //       else if (data is List) {
-  //         presetMessages.value = data
-  //             .map((e) => PresetMessage(
-  //           message: e['message'].toString(),
-  //           messageIt: e['message_it']?.toString() ?? '',
-  //         ))
-  //             .toList();
-  //         print('✅ [PRESET] Parsed from direct List: ${presetMessages.value}');
-  //       }
-  //       // Case 3: { "data": [ { "message": "..." } ] }
-  //       else if (data is Map && data['data'] != null) {
-  //         final list = List<Map<String, dynamic>>.from(data['data']);
-  //         presetMessages.value = list
-  //             .map((e) => PresetMessage(
-  //           message: e['message'].toString(),
-  //           messageIt: e['message_it']?.toString() ?? '',
-  //         ))
-  //             .toList();
-  //         print('✅ [PRESET] Parsed from data["data"]: ${presetMessages.value}');
-  //       } else {
-  //         print('❌ [PRESET] Unknown structure! Cannot parse.');
-  //       }
-  //
-  //       print('📊 [PRESET] Total preset count: ${presetMessages.length}');
-  //     } else {
-  //       print('❌ [PRESET] Failed! Status: ${response.statusCode}');
-  //     }
-  //   } catch (e, stack) {
-  //     print('💥 [PRESET] Exception: $e');
-  //     print('💥 [PRESET] StackTrace: $stack');
-  //   } finally {
-  //     isPresetLoading.value = false;
-  //     print(
-  //       '🏁 [PRESET] Loading done. isPresetLoading = ${isPresetLoading.value}',
-  //     );
-  //     if (kDebugMode) {
-  //       print('🏁 [PRESET] presetMessages = ${presetMessages.value}');
-  //     }
-  //   }
-  // }
-  //
 
   ///==============================================================
   bool _listenersInitialized = false; // ⭐ Add this
