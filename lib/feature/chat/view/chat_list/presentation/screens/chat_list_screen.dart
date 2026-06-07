@@ -89,8 +89,13 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
             // ── Chat List ────────────────────────────────────
             Expanded(
-              child: Obx(() {
-                // প্রথম load এ shimmer দেখাও
+
+
+          child: Obx(() {
+
+
+
+            // প্রথম load এ shimmer দেখাও
                 if (controller.isLoadingChat.value &&
                     controller.userChatList.isEmpty) {
                   return const ChatListShimmer();
@@ -103,11 +108,18 @@ class _ChatListScreenState extends State<ChatListScreen> {
                     children: [
                       SizedBox(height: MediaQuery.of(context).size.height * .3),
                       Center(
-                        child: Text(
-                          'no_chats'.tr,
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w500,
-                            fontSize: ResponsiveHelper.fontSize(18),
+
+                        child: Padding(
+                          padding:  ResponsiveHelper.symmetric(horizontal: 8.0),
+                          child: Text(
+                            'no_chats'.tr,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w500,
+                              fontSize: ResponsiveHelper.fontSize(18),
+                              color: AppColors.black,
+
+                            ),
                           ),
                         ),
                       ),

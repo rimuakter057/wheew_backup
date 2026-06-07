@@ -72,6 +72,9 @@ void showCreateGroupDialog({
                 SizedBox(height: ResponsiveHelper.spacing(4)),
 
                 // ── Dialog title ────────────────────────────
+
+
+
                 Text(
                   'create_group_chat'.tr,
                   style: ctx.bodyMedium.copyWith(

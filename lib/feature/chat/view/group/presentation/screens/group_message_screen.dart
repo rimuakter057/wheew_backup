@@ -772,7 +772,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
             roomId: widget.roomId,
             groupName: widget.groupName,
             groupImage: widget.groupImage,
-            groupMembers: widget.groupMembers,
+          //  groupMembers: widget.groupMembers,
             controller: controller,
           ),
 

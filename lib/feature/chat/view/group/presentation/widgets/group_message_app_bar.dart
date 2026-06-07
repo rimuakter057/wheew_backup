@@ -16,7 +16,7 @@ class GroupMessageAppBar extends StatelessWidget {
   final String roomId;
   final String groupName;
   final String groupImage;
-  final List<GroupMessage> groupMembers;
+  //final List<GroupMessage> groupMembers;
   final ChatController controller;
 
   const GroupMessageAppBar({
@@ -24,7 +24,7 @@ class GroupMessageAppBar extends StatelessWidget {
     required this.roomId,
     required this.groupName,
     required this.groupImage,
-    required this.groupMembers,
+    //required this.groupMembers,
     required this.controller,
   });
 
@@ -144,13 +144,13 @@ class GroupMessageAppBar extends StatelessWidget {
                       color: AppColors.black,
                     ),
                   ),
-                  Text(
-                    '${groupMembers.length} ${'members'.tr}',
-                    style: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.fontSize(12),
-                      color: Colors.grey,
-                    ),
-                  ),
+                  // Text(
+                  //   '${groupMembers.length} ${'members'.tr}',
+                  //   style: GoogleFonts.poppins(
+                  //     fontSize: ResponsiveHelper.fontSize(12),
+                  //     color: Colors.grey,
+                  //   ),
+                  // ),
                 ],
               ),
             ],

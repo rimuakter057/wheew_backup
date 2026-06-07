@@ -95,7 +95,8 @@ final Map<String, String> english = {
   // ------------------All chat-------------------------
   'all_chat': 'All Chat',
   'search_here': 'Search here',
-  'no_chats': 'No chats yet',
+ // 'no_chats': 'No chats yet',
+  'no_chats': 'No chats yet.\n\nSearch for your friends and start a conversation.',
 
   // ------------------Message Screen-------------------------
   'view_profile': 'View Profile',
