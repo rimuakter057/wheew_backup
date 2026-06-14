@@ -24,4 +24,5 @@ class RouteName {
   static const groupMessageScreen = 'GroupMessageScreen';
   static const addMemberScreen = 'AddMemberScreen';
   static const groupMemberScreen = 'GroupMemberScreen';
+  static const ocrScanner = 'OcrScanner';
 }

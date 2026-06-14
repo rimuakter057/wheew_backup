@@ -86,7 +86,7 @@ void showCreateGroupDialog({
 
                 // ── Subtitle ────────────────────────────────
                 Text(
-                  'group_chat_subtiftle'.tr,
+                  'group_chat_subtitle'.tr,
                   style: ctx.bodySmall,
                   textAlign: TextAlign.center,
                 ),
@@ -138,8 +138,7 @@ void showCreateGroupDialog({
                       if (formKey.currentState!.validate()) {
                         final String groupName =
                         groupNameController.text.trim();
-                        Navigator.pop(ctx); // dialog বন্ধ করো
-                        // Controller এ group create call
+                        Navigator.pop(ctx);
                         controller.createGroup(groupName: groupName);
                       }
                     },

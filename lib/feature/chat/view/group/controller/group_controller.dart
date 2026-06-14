@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/feature/chat/model/user_profile_model.dart';
@@ -13,6 +16,90 @@ import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/feature/chat/view/group/model/group_member.dart';
 
 class GroupController extends GetxController {
+  // --- Group Update Fields ---
+  final Rx<File?> groupImageFile = Rx<File?>(null);
+  final RxBool isUpdatingGroup = false.obs;
+  final groupNameController = TextEditingController();
+
+  Future<void> pickGroupImage() async {
+    try {
+      final picked = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+      );
+
+      if (picked != null) {
+        groupImageFile.value = File(picked.path);
+      }
+    } catch (e) {
+      debugPrint('pickGroupImage error: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>?> updateGroup({
+    required String roomId,
+    required BuildContext context,
+  }) async {
+    final newName = groupNameController.text.trim();
+    if (newName.isEmpty) {
+      CustomSnackbar.error(context: context, message: 'Group name cannot be empty');
+      return null;
+    }
+
+    isUpdatingGroup.value = true;
+
+    try {
+      final List<http.MultipartFile> files = [];
+
+      if (groupImageFile.value != null) {
+        files.add(
+          await http.MultipartFile.fromPath(
+            'image',
+            groupImageFile.value!.path,
+          ),
+        );
+      }
+
+      // ✅ DEBUG PRINT (এটাই তোমার দরকার)
+      final uri = ApiUrl.updateGroup(roomId: roomId);
+      debugPrint("🚀 UPDATE GROUP API HIT:");
+      debugPrint("➡️ URL: $uri");
+      debugPrint("➡️ METHOD: PUT");
+      debugPrint("➡️ NAME: $newName");
+      debugPrint("➡️ HAS IMAGE: ${groupImageFile.value != null}");
+
+      final response = await ApiClient.multipartRequest(
+        uri: uri,
+        method: 'PUT',
+        fields: {
+          'name': newName,
+        },
+        files: files.isNotEmpty ? files : null,
+      );
+
+      debugPrint("📩 RESPONSE STATUS: ${response.statusCode}");
+      debugPrint("📩 RESPONSE BODY: ${response.body}");
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        CustomSnackbar.success(context: context, message: 'Group updated successfully');
+        groupImageFile.value = null;
+        chatController.fetchChatList(refresh: true);
+        return data;
+      } else {
+        final message = data['message'] ?? 'Failed to update group';
+        CustomSnackbar.error(context: context, message: message);
+        return null;
+      }
+    } catch (e) {
+      debugPrint('updateGroup error: $e');
+      CustomSnackbar.error(context: context, message: 'An error occurred while updating group');
+      return null;
+    } finally {
+      isUpdatingGroup.value = false;
+    }
+  }
 ///view user ================
   final Rx<UserProfileModel?> viewedProfile = Rx(null);
   final RxBool isLoadingProfile = false.obs;
@@ -173,4 +260,9 @@ class GroupController extends GetxController {
     }
   }
 
+  @override
+  void onClose() {
+    groupNameController.dispose();
+    super.onClose();
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
@@ -25,15 +26,18 @@ import 'voice/voice_action_router.dart';
 import 'voice/intent_parser.dart';
 
 late VoiceActionRouter _voiceRouter; // নতুন
+List<CameraDescription> cameras = []; // ── OCR Camera ──
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  cameras = await availableCameras(); // ── OCR Camera init ──
+
   final languageController = Get.put(LanguageController());
   await languageController.loadSavedLanguage();
 
-   Get.addTranslations(AppTranslations().keys);
+  Get.addTranslations(AppTranslations().keys);
   AppBindings().dependencies();
   await AppSocket.init(
     onSocketConnect: () {
@@ -58,7 +62,7 @@ class App extends StatelessWidget {
     final languageController = Get.find<LanguageController>();
     ResponsiveHelper.init(context);
     return Obx(
-      () => MaterialApp.router(
+          () => MaterialApp.router(
         debugShowCheckedModeBanner: false,
         title: 'My App',
         theme: lightTheme,

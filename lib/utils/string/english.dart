@@ -363,7 +363,39 @@ final Map<String, String> english = {
 
 
 
+// -------- Scanner Screen --------
+  'camera_starting': 'Camera starting...',
+  'camera_permission_required': 'Grant camera permission (Settings > App > Camera)',
+  'no_permission': 'No permission',
+  'point_camera_at_plate': 'Point camera at the plate',
+  'scanning': 'Scanning...',
+  'scanning_from_gallery': 'Scanning from gallery...',
+  'scan_failed': 'Scan failed',
+  'gallery_scan_failed': 'Gallery scan failed',
+  'try_again': 'Try again',
+  'car_plate_scanner': 'Car Plate Scanner',
+  'gallery': 'Gallery',
+  'ocr_running': 'Processing OCR...',
+  'please_wait': 'Please wait',
 
+// -------- Result Dialog --------
+  'plate_found': 'Plate number found!',
+  'plate_not_found': 'Not found',
+  'candidates_detected': 'candidates detected',
+  'plate_not_clear': 'Plate may not be clear in image',
+  'best_match': 'BEST MATCH',
+  'tap_to_copy': 'Tap to copy',
+  'all_candidates': 'All candidates',
+  'plate_not_identified': 'Plate number not identified',
+  'point_camera_directly': 'Point camera directly at the number plate,\ncheck lighting is adequate and try again.',
+  'view_raw_ocr': 'View Raw OCR text',
+  'close': 'Close',
+  'copy': 'Copy',
+  'copied': 'copied!',
+
+  'auto_scanning': 'Auto scanning...',
+  'auto_on': 'AUTO',
+  'auto_off': 'OFF',
 
 
 

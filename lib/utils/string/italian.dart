@@ -350,6 +350,39 @@ final Map<String, String> italian = {
   'delete_chat_confirm': 'Sei sicuro di voler eliminare questa chat?',
 
 
+// -------- Scanner Screen --------
+  'camera_starting': 'Fotocamera in avvio...',
+  'camera_permission_required': 'Concedi il permesso fotocamera (Impostazioni > App > Fotocamera)',
+  'no_permission': 'Nessun permesso',
+  'point_camera_at_plate': 'Punta la fotocamera sulla targa',
+  'scanning': 'Scansione in corso...',
+  'scanning_from_gallery': 'Scansione dalla galleria...',
+  'scan_failed': 'Scansione non riuscita',
+  'gallery_scan_failed': 'Scansione galleria non riuscita',
+  'try_again': 'Riprova',
+  'car_plate_scanner': 'Scanner Targa Auto',
+  'gallery': 'Galleria',
+  'ocr_running': 'OCR in esecuzione...',
+  'please_wait': 'Attendere prego',
 
+// -------- Result Dialog --------
+  'plate_found': 'Numero targa trovato!',
+  'plate_not_found': 'Non trovato',
+  'candidates_detected': 'candidati rilevati',
+  'plate_not_clear': 'La targa potrebbe non essere chiara nell\'immagine',
+  'best_match': 'MIGLIORE CORRISPONDENZA',
+  'tap_to_copy': 'Tocca per copiare',
+  'all_candidates': 'Tutti i candidati',
+  'plate_not_identified': 'Numero targa non identificato',
+  'point_camera_directly': 'Punta la fotocamera direttamente sulla targa,\nverifica che la luce sia adeguata e riprova.',
+  'view_raw_ocr': 'Visualizza testo OCR grezzo',
+  'close': 'Chiudi',
+  'copy': 'Copia',
+  'copied': 'copiato!',
+
+
+  'auto_scanning': 'Scansione automatica...',
+  'auto_on': 'AUTO',
+  'auto_off': 'OFF',
 
 };

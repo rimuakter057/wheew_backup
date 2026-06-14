@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:platchatapp/feature/scan/controller/scan_controller.dart';
@@ -7,6 +8,7 @@ import 'package:platchatapp/feature/scan/presentation/widget/my_qr_view.dart';
 import 'package:platchatapp/feature/scan/presentation/widget/scan_painter.dart';
 import 'package:platchatapp/feature/scan/presentation/widget/scan_user_sheet.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/toast_message/toast_message.dart';
 
 import '../widget/scan_view_widget.dart';
@@ -135,13 +137,18 @@ class _ScanScreenState extends State<ScanScreen>
 
   @override
   Widget build(BuildContext context) {
-    ResponsiveHelper.init(context);
-    return Scaffold(
+        return Scaffold(
       backgroundColor: const Color(0xFF121212),
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: ResponsiveHelper.spacing(20)),
+            SizedBox(height: ResponsiveHelper.spacing(8)),
+   IconButton(onPressed: (){
+     context.pop();
+
+   }, icon: Icon(Icons.arrow_back_ios,color: AppColors.white,)),
+            
             _buildTabToggle(),
             Expanded(
               child: _tabIndex == 0

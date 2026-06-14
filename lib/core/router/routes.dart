@@ -12,6 +12,7 @@ import 'package:platchatapp/feature/auth/view/sign_up_screen.dart';
 import 'package:platchatapp/feature/chat/view/member/presentation/screens/add_member_screen.dart';
 import 'package:platchatapp/feature/main/presentation/main_nav-screen.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
+import 'package:platchatapp/feature/ocr/presentation/screens/ocr_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_nav_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/show_profile_screen.dart';
 import 'package:platchatapp/feature/useful_number/presentation/screens/useful_member_screen.dart';
@@ -27,6 +28,7 @@ import '../../feature/chat/view/group/presentation/screens/group_message_screen.
 import '../../feature/splash/splash_screen.dart';
 import '../../feature/auth/view/welcome_screen.dart';
 import '../../feature/auth/repository/auth_controller.dart';
+import '../../main.dart';
 
 class AppRouter {
   static final navigatorKey = GlobalKey<NavigatorState>();
@@ -250,6 +252,16 @@ class AppRouter {
           return UsefulMemberScreen();
         },
       ),
+
+
+      GoRoute(
+        path: RoutePath.ocrScanner,
+        name: RouteName.ocrScanner,
+        builder: (context, state) {
+          return OcrScannerScreen(cameras: cameras,);
+        },
+      ),
+      
     ],
   );
 }

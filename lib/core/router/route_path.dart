@@ -24,4 +24,5 @@ class RoutePath {
   static const groupMessageScreen = '/GroupMessageScreen';
   static const addMemberScreen = '/AddMemberScreen';
   static const groupMemberScreen = '/group-member-screen';
+  static const ocrScanner = '/ocrScanner';
 }

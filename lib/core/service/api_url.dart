@@ -123,4 +123,7 @@ class ApiUrl {
 
   static String searchGroupMember({required String roomId}) =>
       '/users/search?query=r&for=group&roomId=$roomId';
+
+  static String updateGroup({required String roomId}) =>
+      '/group/room/$roomId';
 }

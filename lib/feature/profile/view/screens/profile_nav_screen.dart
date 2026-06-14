@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart'; // GoRouter ইম্পোর্ট করুন
+import 'package:platchatapp/core/router/routes.dart';
 import 'package:platchatapp/core/router/routes_name.dart'; // RouteName ইম্পোর্ট করুন
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/feature/privacy_policy/help_suppoor_screen.dart';
@@ -186,241 +187,236 @@ class ProfileNavScreen extends StatelessWidget {
                       // ✅ SCANNER DESIGN (MATCHED WITH YOUR IMAGE)
                       InkWell(
 
+                        onTap: (){
 
-                        onTap: () {
-                          final scanController = Get.find<ScanController>();
-                          scanController.getQrCode();
-
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                            builder: (ctx) {
-                              final user = controller.userProfile.value;
-                              return Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                                ),
-                                padding: EdgeInsets.fromLTRB(
-                                  ResponsiveHelper.padding(24),
-                                  ResponsiveHelper.padding(12),
-                                  ResponsiveHelper.padding(24),
-                                  ResponsiveHelper.padding(36),
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-
-                                    // ── Drag Handle ──
-                                    Container(
-                                      width: ResponsiveHelper.width(40),
-                                      height: ResponsiveHelper.height(4),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.shade300,
-                                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
-                                      ),
-                                    ),
-                                    SizedBox(height: ResponsiveHelper.spacing(16)),
-
-                                    // ── Title + Close Button ──
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'My QR Code',
-                                          style: TextStyle(
-                                            fontSize: ResponsiveHelper.fontSize(18),
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () => Navigator.pop(ctx),
-                                          child: Container(
-                                            width: ResponsiveHelper.width(32),
-                                            height: ResponsiveHelper.width(32),
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey.shade100,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Icon(
-                                              Icons.close,
-                                              size: ResponsiveHelper.iconSize(18),
-                                              color: Colors.black54,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: ResponsiveHelper.spacing(24)),
-
-                                    // ── Avatar ──
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: Colors.grey.shade200,
-                                          width: ResponsiveHelper.width(3),
-                                        ),
-                                      ),
-                                      child: CircleAvatar(
-                                        radius: ResponsiveHelper.width(42),
-                                        backgroundColor: Colors.grey.shade200,
-                                        backgroundImage: (user?.avatar != null && user!.avatar!.isNotEmpty)
-                                            ? NetworkImage(user.avatar!)
-                                            : null,
-                                        child: (user?.avatar == null || user!.avatar!.isEmpty)
-                                            ? Icon(
-                                          Icons.person,
-                                          size: ResponsiveHelper.iconSize(38),
-                                          color: Colors.grey,
-                                        )
-                                            : null,
-                                      ),
-                                    ),
-                                    SizedBox(height: ResponsiveHelper.spacing(12)),
-
-                                    // ── Name ──
-                                    Text(
-                                      user?.nickName.isNotEmpty == true ? user!.nickName : '---',
-                                      style: TextStyle(
-                                        fontSize: ResponsiveHelper.fontSize(20),
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                    SizedBox(height: ResponsiveHelper.spacing(6)),
-
-                                    // ── Rating + Location ──
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.star_rounded,
-                                          color: const Color(0xFFFFC107),
-                                          size: ResponsiveHelper.iconSize(16),
-                                        ),
-                                        SizedBox(width: ResponsiveHelper.spacing(3)),
-                                        Text(
-                                          user != null ? formatRating(user.rating) : '0.0',
-                                          style: TextStyle(
-                                            fontSize: ResponsiveHelper.fontSize(14),
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                        SizedBox(width: ResponsiveHelper.spacing(12)),
-
-                                      ],
-                                    ),
-                                    SizedBox(height: ResponsiveHelper.spacing(28)),
-
-                                    // ── QR Code Box ──
-                                    Obx(() {
-                                      if (scanController.isLoadingQr.value) {
-                                        return Container(
-                                          width: ResponsiveHelper.width(200),
-                                          height: ResponsiveHelper.width(200),
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey.shade100,
-                                            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-                                          ),
-                                          child: const Center(
-                                            child: CircularProgressIndicator(
-                                              color: Color(0xFF3D72E8),
-                                              strokeWidth: 2.5,
-                                            ),
-                                          ),
-                                        );
-                                      }
-
-                                      if (scanController.qrBase64.value.isNotEmpty) {
-                                        final base64Str = scanController.qrBase64.value.replaceFirst(
-                                          'data:image/png;base64,',
-                                          '',
-                                        );
-                                        return Container(
-                                          width: ResponsiveHelper.width(200),
-                                          height: ResponsiveHelper.width(200),
-                                          padding: EdgeInsets.all(ResponsiveHelper.padding(16)),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withOpacity(0.08),
-                                                blurRadius: ResponsiveHelper.width(20),
-                                                offset: const Offset(0, 6),
-                                              ),
-                                            ],
-                                          ),
-                                          child: Image.memory(
-                                            base64Decode(base64Str),
-                                            fit: BoxFit.contain,
-                                          ),
-                                        );
-                                      }
-
-                                      // ── Error / Retry ──
-                                      return GestureDetector(
-                                        onTap: () => scanController.getQrCode(),
-                                        child: Container(
-                                          width: ResponsiveHelper.width(200),
-                                          height: ResponsiveHelper.width(200),
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey.shade100,
-                                            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                Icons.refresh_rounded,
-                                                color: Colors.grey.shade400,
-                                                size: ResponsiveHelper.iconSize(40),
-                                              ),
-                                              SizedBox(height: ResponsiveHelper.spacing(8)),
-                                              Text(
-                                                'Tap to retry',
-                                                style: TextStyle(
-                                                  fontSize: ResponsiveHelper.fontSize(13),
-                                                  color: Colors.grey.shade400,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    }),
-
-                                    SizedBox(height: ResponsiveHelper.spacing(20)),
-
-                                    // ── Bottom Text ──
-                                    Text(
-                                      'Let other drivers scan this to chat with you.',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: ResponsiveHelper.fontSize(13),
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          );
+                          context.pushNamed(RouteName.scanScreen);
                         },
 
 
-
-
-
-
-
-
-
-
+                        // onTap: () {
+                        //   final scanController = Get.find<ScanController>();
+                        //   scanController.getQrCode();
+                        //
+                        //   showModalBottomSheet(
+                        //     context: context,
+                        //     isScrollControlled: true,
+                        //     backgroundColor: Colors.transparent,
+                        //     builder: (ctx) {
+                        //       final user = controller.userProfile.value;
+                        //       return Container(
+                        //         decoration: const BoxDecoration(
+                        //           color: Colors.white,
+                        //           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                        //         ),
+                        //         padding: EdgeInsets.fromLTRB(
+                        //           ResponsiveHelper.padding(24),
+                        //           ResponsiveHelper.padding(12),
+                        //           ResponsiveHelper.padding(24),
+                        //           ResponsiveHelper.padding(36),
+                        //         ),
+                        //         child: Column(
+                        //           mainAxisSize: MainAxisSize.min,
+                        //           children: [
+                        //
+                        //             // ── Drag Handle ──
+                        //             Container(
+                        //               width: ResponsiveHelper.width(40),
+                        //               height: ResponsiveHelper.height(4),
+                        //               decoration: BoxDecoration(
+                        //                 color: Colors.grey.shade300,
+                        //                 borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
+                        //               ),
+                        //             ),
+                        //             SizedBox(height: ResponsiveHelper.spacing(16)),
+                        //
+                        //             // ── Title + Close Button ──
+                        //             Row(
+                        //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //               children: [
+                        //                 Text(
+                        //                   'My QR Code',
+                        //                   style: TextStyle(
+                        //                     fontSize: ResponsiveHelper.fontSize(18),
+                        //                     fontWeight: FontWeight.bold,
+                        //                     color: Colors.black87,
+                        //                   ),
+                        //                 ),
+                        //                 GestureDetector(
+                        //                   onTap: () => Navigator.pop(ctx),
+                        //                   child: Container(
+                        //                     width: ResponsiveHelper.width(32),
+                        //                     height: ResponsiveHelper.width(32),
+                        //                     decoration: BoxDecoration(
+                        //                       color: Colors.grey.shade100,
+                        //                       shape: BoxShape.circle,
+                        //                     ),
+                        //                     child: Icon(
+                        //                       Icons.close,
+                        //                       size: ResponsiveHelper.iconSize(18),
+                        //                       color: Colors.black54,
+                        //                     ),
+                        //                   ),
+                        //                 ),
+                        //               ],
+                        //             ),
+                        //             SizedBox(height: ResponsiveHelper.spacing(24)),
+                        //
+                        //             // ── Avatar ──
+                        //             Container(
+                        //               decoration: BoxDecoration(
+                        //                 shape: BoxShape.circle,
+                        //                 border: Border.all(
+                        //                   color: Colors.grey.shade200,
+                        //                   width: ResponsiveHelper.width(3),
+                        //                 ),
+                        //               ),
+                        //               child: CircleAvatar(
+                        //                 radius: ResponsiveHelper.width(42),
+                        //                 backgroundColor: Colors.grey.shade200,
+                        //                 backgroundImage: (user?.avatar != null && user!.avatar!.isNotEmpty)
+                        //                     ? NetworkImage(user.avatar!)
+                        //                     : null,
+                        //                 child: (user?.avatar == null || user!.avatar!.isEmpty)
+                        //                     ? Icon(
+                        //                   Icons.person,
+                        //                   size: ResponsiveHelper.iconSize(38),
+                        //                   color: Colors.grey,
+                        //                 )
+                        //                     : null,
+                        //               ),
+                        //             ),
+                        //             SizedBox(height: ResponsiveHelper.spacing(12)),
+                        //
+                        //             // ── Name ──
+                        //             Text(
+                        //               user?.nickName.isNotEmpty == true ? user!.nickName : '---',
+                        //               style: TextStyle(
+                        //                 fontSize: ResponsiveHelper.fontSize(20),
+                        //                 fontWeight: FontWeight.bold,
+                        //                 color: Colors.black87,
+                        //               ),
+                        //             ),
+                        //             SizedBox(height: ResponsiveHelper.spacing(6)),
+                        //
+                        //             // ── Rating + Location ──
+                        //             Row(
+                        //               mainAxisAlignment: MainAxisAlignment.center,
+                        //               children: [
+                        //                 Icon(
+                        //                   Icons.star_rounded,
+                        //                   color: const Color(0xFFFFC107),
+                        //                   size: ResponsiveHelper.iconSize(16),
+                        //                 ),
+                        //                 SizedBox(width: ResponsiveHelper.spacing(3)),
+                        //                 Text(
+                        //                   user != null ? formatRating(user.rating) : '0.0',
+                        //                   style: TextStyle(
+                        //                     fontSize: ResponsiveHelper.fontSize(14),
+                        //                     fontWeight: FontWeight.w600,
+                        //                     color: Colors.black87,
+                        //                   ),
+                        //                 ),
+                        //                 SizedBox(width: ResponsiveHelper.spacing(12)),
+                        //
+                        //               ],
+                        //             ),
+                        //             SizedBox(height: ResponsiveHelper.spacing(28)),
+                        //
+                        //             // ── QR Code Box ──
+                        //             Obx(() {
+                        //               if (scanController.isLoadingQr.value) {
+                        //                 return Container(
+                        //                   width: ResponsiveHelper.width(200),
+                        //                   height: ResponsiveHelper.width(200),
+                        //                   decoration: BoxDecoration(
+                        //                     color: Colors.grey.shade100,
+                        //                     borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+                        //                   ),
+                        //                   child: const Center(
+                        //                     child: CircularProgressIndicator(
+                        //                       color: Color(0xFF3D72E8),
+                        //                       strokeWidth: 2.5,
+                        //                     ),
+                        //                   ),
+                        //                 );
+                        //               }
+                        //
+                        //               if (scanController.qrBase64.value.isNotEmpty) {
+                        //                 final base64Str = scanController.qrBase64.value.replaceFirst(
+                        //                   'data:image/png;base64,',
+                        //                   '',
+                        //                 );
+                        //                 return Container(
+                        //                   width: ResponsiveHelper.width(200),
+                        //                   height: ResponsiveHelper.width(200),
+                        //                   padding: EdgeInsets.all(ResponsiveHelper.padding(16)),
+                        //                   decoration: BoxDecoration(
+                        //                     color: Colors.white,
+                        //                     borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+                        //                     boxShadow: [
+                        //                       BoxShadow(
+                        //                         color: Colors.black.withOpacity(0.08),
+                        //                         blurRadius: ResponsiveHelper.width(20),
+                        //                         offset: const Offset(0, 6),
+                        //                       ),
+                        //                     ],
+                        //                   ),
+                        //                   child: Image.memory(
+                        //                     base64Decode(base64Str),
+                        //                     fit: BoxFit.contain,
+                        //                   ),
+                        //                 );
+                        //               }
+                        //
+                        //               // ── Error / Retry ──
+                        //               return GestureDetector(
+                        //                 onTap: () => scanController.getQrCode(),
+                        //                 child: Container(
+                        //                   width: ResponsiveHelper.width(200),
+                        //                   height: ResponsiveHelper.width(200),
+                        //                   decoration: BoxDecoration(
+                        //                     color: Colors.grey.shade100,
+                        //                     borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+                        //                   ),
+                        //                   child: Column(
+                        //                     mainAxisAlignment: MainAxisAlignment.center,
+                        //                     children: [
+                        //                       Icon(
+                        //                         Icons.refresh_rounded,
+                        //                         color: Colors.grey.shade400,
+                        //                         size: ResponsiveHelper.iconSize(40),
+                        //                       ),
+                        //                       SizedBox(height: ResponsiveHelper.spacing(8)),
+                        //                       Text(
+                        //                         'Tap to retry',
+                        //                         style: TextStyle(
+                        //                           fontSize: ResponsiveHelper.fontSize(13),
+                        //                           color: Colors.grey.shade400,
+                        //                         ),
+                        //                       ),
+                        //                     ],
+                        //                   ),
+                        //                 ),
+                        //               );
+                        //             }),
+                        //
+                        //             SizedBox(height: ResponsiveHelper.spacing(20)),
+                        //
+                        //             // ── Bottom Text ──
+                        //             Text(
+                        //               'Let other drivers scan this to chat with you.',
+                        //               textAlign: TextAlign.center,
+                        //               style: TextStyle(
+                        //                 fontSize: ResponsiveHelper.fontSize(13),
+                        //                 color: Colors.grey,
+                        //               ),
+                        //             ),
+                        //           ],
+                        //         ),
+                        //       );
+                        //     },
+                        //   );
+                        // },
 
                         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(18)),
                         child: Container(
