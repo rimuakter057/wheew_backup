@@ -86,7 +86,7 @@ void showCreateGroupDialog({
 
                 // ── Subtitle ────────────────────────────────
                 Text(
-                  'group_chat_subtitle'.tr,
+                  'group_chat_subtiftle'.tr,
                   style: ctx.bodySmall,
                   textAlign: TextAlign.center,
                 ),
