@@ -24,6 +24,79 @@ class MessageResponseModel {
   }
 }
 
+// class Messages {
+//   String? id;
+//   String? chatRoomId;
+//   String? senderId;
+//   String? receiverId;
+//   String? message;
+//   String? type;
+//   bool? isRead;
+//   bool? isDelivered;
+//   String? createdAt;
+//   String? updatedAt;
+//   Sender? sender;
+//   Receiver? receiver;
+//   bool? isMine;
+//
+//   Messages({
+//     this.id,
+//     this.chatRoomId,
+//     this.senderId,
+//     this.receiverId,
+//     this.message,
+//     this.type,
+//     this.isRead,
+//     this.isDelivered,
+//     this.createdAt,
+//     this.updatedAt,
+//     this.sender,
+//     this.receiver,
+//     this.isMine,
+//   });
+//
+//   Messages.fromJson(Map<String, dynamic> json) {
+//     id = json['id'];
+//     chatRoomId = json['chatRoom_id'];
+//     senderId = json['sender_id'];
+//     receiverId = json['receiver_id'];
+//     message = json['message'];
+//     type = json['type'];
+//     isRead = json['is_read'];
+//     isDelivered = json['is_delivered'];
+//     createdAt = json['createdAt'];
+//     updatedAt = json['updatedAt'];
+//     sender = json['sender'] != null ? Sender.fromJson(json['sender']) : null;
+//     receiver = json['receiver'] != null
+//         ? Receiver.fromJson(json['receiver'])
+//         : null;
+//     isMine = json['is_mine'] ?? false;
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = <String, dynamic>{};
+//     data['id'] = id;
+//     data['chatRoom_id'] = chatRoomId;
+//     data['sender_id'] = senderId;
+//     data['receiver_id'] = receiverId;
+//     data['message'] = message;
+//     data['type'] = type;
+//     data['is_read'] = isRead;
+//     data['is_delivered'] = isDelivered;
+//     data['createdAt'] = createdAt;
+//     data['updatedAt'] = updatedAt;
+//     if (sender != null) {
+//       data['sender'] = sender!.toJson();
+//     }
+//     if (receiver != null) {
+//       data['receiver'] = receiver!.toJson();
+//     }
+//     data['is_mine'] = isMine;
+//     return data;
+//   }
+// }
+
+
 class Messages {
   String? id;
   String? chatRoomId;
@@ -38,6 +111,10 @@ class Messages {
   Sender? sender;
   Receiver? receiver;
   bool? isMine;
+  // ✅ নতুন fields
+  String? fileUrl;
+  String? fileName;
+  int? fileSize;
 
   Messages({
     this.id,
@@ -53,6 +130,9 @@ class Messages {
     this.sender,
     this.receiver,
     this.isMine,
+    this.fileUrl,
+    this.fileName,
+    this.fileSize,
   });
 
   Messages.fromJson(Map<String, dynamic> json) {
@@ -67,10 +147,12 @@ class Messages {
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     sender = json['sender'] != null ? Sender.fromJson(json['sender']) : null;
-    receiver = json['receiver'] != null
-        ? Receiver.fromJson(json['receiver'])
-        : null;
+    receiver = json['receiver'] != null ? Receiver.fromJson(json['receiver']) : null;
     isMine = json['is_mine'] ?? false;
+    // ✅ নতুন fields parse
+    fileUrl = json['file_url'];
+    fileName = json['file_name'];
+    fileSize = json['file_size'];
   }
 
   Map<String, dynamic> toJson() {
@@ -85,16 +167,17 @@ class Messages {
     data['is_delivered'] = isDelivered;
     data['createdAt'] = createdAt;
     data['updatedAt'] = updatedAt;
-    if (sender != null) {
-      data['sender'] = sender!.toJson();
-    }
-    if (receiver != null) {
-      data['receiver'] = receiver!.toJson();
-    }
+    if (sender != null) data['sender'] = sender!.toJson();
+    if (receiver != null) data['receiver'] = receiver!.toJson();
     data['is_mine'] = isMine;
+    // ✅ নতুন fields
+    data['file_url'] = fileUrl;
+    data['file_name'] = fileName;
+    data['file_size'] = fileSize;
     return data;
   }
 }
+
 
 class Sender {
   String? id;

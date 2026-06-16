@@ -126,4 +126,10 @@ class ApiUrl {
 
   static String updateGroup({required String roomId}) =>
       '/group/room/$roomId';
+
+
+  static const String sendGroup = '/group/message/file';
+  static const String sendUser = '/chat/message/file';
+
+
 }

@@ -243,6 +243,9 @@ class _MessageScreenState extends State<MessageScreen> {
                     return MessageBubble(
                       message: msg.message ?? '',
                       isMine: isMine,
+
+                      type: msg.type,
+                      fileUrl: msg.fileUrl,
                     );
                   },
                 );
@@ -269,6 +272,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   onRoomIdUpdate: (newId) {
                     setState(() => _currentRoomId = newId);
                   },
+
                 );
               }
             }),

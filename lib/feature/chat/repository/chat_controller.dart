@@ -22,6 +22,8 @@ import '../../../utils/app_const/app_const.dart';
 import '../../profile/repository/user_model.dart';
 import '../model/preset_message.dart';
 import 'chat_repository.dart';
+import 'package:http/http.dart' as http;
+
 
 class ChatController extends GetxController {
   var isAddingMember = false.obs;
@@ -30,7 +32,8 @@ class ChatController extends GetxController {
     required String groupRoomId,
     required List<String> memberIds,
     required BuildContext context,
-  }) async {
+  }) async
+  {
     if (memberIds.isEmpty) return false;
     isAddingMember.value = true;
 
@@ -125,7 +128,8 @@ class ChatController extends GetxController {
     required String rateeId,
     required double rating,
     required BuildContext context,
-  }) async {
+  }) async
+  {
     final stars = rating.round().clamp(1, 5);
     try {
       isSubmittingRating.value = true;
@@ -430,7 +434,8 @@ class ChatController extends GetxController {
     required String receiverId,
     required String message,
     String? roomId, // ✅ নতুন parameter
-  }) {
+  })
+  {
     final payload = {
       'receiver_id': receiverId,
       'message': message,
@@ -510,24 +515,7 @@ class ChatController extends GetxController {
 
   ///new message==========================
 
-  // Future<void> newMessage() async {
-  //   debugPrint('========== Call New Message');
-  //   AppSocket.onEvent('new-message', (value) {
-  //     debugPrint('🔔 NEW MESSAGE RECEIVED: $value'); // ← এটা print হচ্ছে?
 
-  //     Messages model = Messages.fromJson(value);
-  //     debugPrint('📨 Parsed Message: ${model.toJson()}');
-  //     debugPrint('🆔 Chat Room ID: ${model.chatRoomId}'); // ← এটা কি আসছে?
-
-  //     if (model.chatRoomId == roomID.value) {
-  //       userMessageList.insert(0, model);
-  //       debugPrint('✅ Added to message list');
-  //     }
-
-  //     debugPrint('🔄 Calling updateChatRoomInList...');
-  //     updateChatRoomInList(model);
-  //   });
-  // }
 
   Future<void> newMessage() async {
     // ✅ আগের listener সরাও, তারপর নতুন লাগাও
@@ -957,34 +945,7 @@ class ChatController extends GetxController {
     }
   }
 
-  /// ── Send Group Message (Socket) ─────────────────────────────────
-  // void sendGroupMessage({required String roomId, required String message}) {
-  //   if (message.trim().isEmpty) return;
-  //
-  //   final payload = {'groupChatRoomId': roomId, 'message': message};
-  //
-  //   // ✅ Optimistic local message
-  //   final localMsg = GroupMessageResponseModel(
-  //     id: DateTime.now().millisecondsSinceEpoch.toString(),
-  //     groupChatRoomId: roomId,
-  //     senderId: '',
-  //     message: message,
-  //     type: 'TEXT',
-  //     createdAt: DateTime.now().toIso8601String(),
-  //     updatedAt: DateTime.now().toIso8601String(),
-  //     isMine: true,
-  //     sender: null,
-  //   );
-  //
-  //   groupMessageList.insert(0, localMsg);
-  //   messageController.clear();
-  //
-  //   // ✅ Simple emit
-  //   AppSocket.socket?.emit('send-group-message', payload);
-  //
-  //   debugPrint('✅ Group message emitted: $message');
-  // }
-  //
+
 
   void sendGroupMessage({required String roomId, required String message}) {
     if (message.trim().isEmpty) return;
@@ -1059,55 +1020,7 @@ class ChatController extends GetxController {
       }
     });
 
-    // ✅ সবার কাছে আসে
-    // AppSocket.socket?.on('group-new-message', (value) {
-    //   debugPrint('🔔 group-new-message RAW: $value');
-    //   debugPrint('🏠 groupRoomID at receive time: ${groupRoomID.value}');
-    //   try {
-    //     final GroupMessageResponseModel model =
-    //     GroupMessageResponseModel.fromJson(value);
-    //
-    //     debugPrint('📨 parsed groupChatRoomId: ${model.groupChatRoomId}');
-    //     debugPrint('📨 parsed message: ${model.message}');
-    //     debugPrint('📨 parsed isMine: ${model.isMine}');
-    //     debugPrint('🔍 roomId match: ${model.groupChatRoomId == groupRoomID.value}');
-    //
-    //     if (model.groupChatRoomId == groupRoomID.value) {
-    //       if (model.isMine == true) {
-    //         debugPrint('👤 My own message — replacing temp...');
-    //         final tempIndex = groupMessageList.indexWhere(
-    //               (m) => (m.id?.startsWith('temp_') ?? false) &&
-    //               m.message == model.message,
-    //         );
-    //         debugPrint('🔍 Temp index: $tempIndex');
-    //         if (tempIndex != -1) {
-    //           groupMessageList[tempIndex] = model;
-    //           debugPrint('✅ Temp replaced in group-new-message');
-    //         }
-    //         return;
-    //       }
-    //
-    //       final alreadyExists = groupMessageList.any((m) => m.id == model.id);
-    //       debugPrint('🔍 Already exists: $alreadyExists');
-    //       if (!alreadyExists) {
-    //         groupMessageList.insert(0, model);
-    //         debugPrint('✅ Others message added to list');
-    //       }
-    //     } else {
-    //       debugPrint('❌ Room ID mismatch!');
-    //       debugPrint('❌ Expected: ${groupRoomID.value}');
-    //       debugPrint('❌ Got: ${model.groupChatRoomId}');
-    //     }
-    //
-    //     updateGroupChatRoomInList(model);
-    //   } catch (e) {
-    //     debugPrint('❌ listenGroupMessages error: $e');
-    //   }
-    // });
-    //
-    //
 
-    // ✅ currentUserId SharedPreferences থেকে নিন
     AppSocket.socket?.on('group-new-message', (value) async {
       try {
         final GroupMessageResponseModel model =
@@ -1272,4 +1185,136 @@ class ChatController extends GetxController {
     }
     return [];
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Future<void> sendMediaMessage({
+    required String receiverId,
+    required String filePath,
+    String? roomId,
+    String? caption,
+  }) async {
+    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    debugPrint('📤 sendMediaMessage CALLED');
+    debugPrint('👤 receiverId: $receiverId');
+    debugPrint('📁 filePath: $filePath');
+    debugPrint('🏠 roomId: $roomId');
+    debugPrint('💬 caption: $caption');
+    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+    try {
+      final file = await http.MultipartFile.fromPath('file', filePath);
+      debugPrint('✅ MultipartFile created: ${file.filename}');
+
+      final fields = <String, String>{
+        'receiver_id': receiverId,
+        if (caption != null && caption.isNotEmpty) 'message': caption,
+        if (roomId != null && roomId.isNotEmpty) 'room_id': roomId,
+      };
+
+      debugPrint('📦 Fields: $fields');
+
+      // final response = await ApiClient.multipartRequest(
+      //   uri: ApiUrl.sendUser,
+      //   method: 'POST',
+      //   fields: fields,
+      //   files: [file],
+      // );
+
+      final response = await ApiClient.multipartRequest(
+        uri: ApiUrl.sendUser,
+        method: 'POST',
+        fields: fields,
+        files: [file],
+      );
+
+      debugPrint('📥 sendMediaMessage RESPONSE');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Body: ${response.body}');
+
+// ✅ নতুন অংশ — response থেকে সরাসরি message বানিয়ে list এ ঢোকাও
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        final newMsg = Messages.fromJson(data);
+        newMsg.isMine = true; // server response এ is_mine আসছে না, manually সেট করো
+
+        if (roomID.value.isEmpty && data['chatRoom_id'] != null) {
+          roomID.value = data['chatRoom_id'].toString();
+        }
+
+        if (newMsg.chatRoomId == roomID.value) {
+          userMessageList.insert(0, newMsg);
+        }
+        updateChatRoomInListOptimistic(newMsg);
+      }
+
+      debugPrint('📥 sendMediaMessage RESPONSE');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Body: ${response.body}');
+      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    } catch (e, stackTrace) {
+      debugPrint('❌ sendMediaMessage ERROR: $e');
+      debugPrint('StackTrace: $stackTrace');
+      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    }
+  }
+
+  Future<void> sendGroupMediaMessage({
+    required String roomId,
+    required String filePath,
+    String? caption,
+  }) async {
+    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    debugPrint('📤 sendGroupMediaMessage CALLED');
+    debugPrint('🏠 roomId: $roomId');
+    debugPrint('📁 filePath: $filePath');
+    debugPrint('💬 caption: $caption');
+    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+    try {
+      final file = await http.MultipartFile.fromPath('file', filePath);
+      debugPrint('✅ MultipartFile created: ${file.filename}');
+
+      final fields = <String, String>{
+        'groupChatRoomId': roomId,
+        if (caption != null && caption.isNotEmpty) 'message': caption,
+      };
+
+      debugPrint('📦 Fields: $fields');
+
+      final response = await ApiClient.multipartRequest(
+        uri: ApiUrl.sendGroup,
+        method: 'POST',
+        fields: fields,
+        files: [file],
+      );
+
+      debugPrint('📥 sendGroupMediaMessage RESPONSE');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Body: ${response.body}');
+      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    } catch (e, stackTrace) {
+      debugPrint('❌ sendGroupMediaMessage ERROR: $e');
+      debugPrint('StackTrace: $stackTrace');
+      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    }
+  }
+
+
+
 }
