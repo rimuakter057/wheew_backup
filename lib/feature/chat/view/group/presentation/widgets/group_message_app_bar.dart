@@ -122,150 +122,387 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
     );
   }
 
+  // void _showEditGroupDialog(BuildContext context) {
+  //   groupController.groupNameController.text = _currentGroupName;
+  //   groupController.groupImageFile.value = null;
+  //
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (ctx) {
+  //       return AlertDialog(
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(16),
+  //         ),
+  //         title: Text(
+  //           'Edit Group Info',
+  //           style: GoogleFonts.poppins(
+  //             fontWeight: FontWeight.bold,
+  //             fontSize: 18,
+  //           ),
+  //         ),
+  //         content: SingleChildScrollView(
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               // Group Image Picker
+  //               GestureDetector(
+  //                 onTap: () async {
+  //                   await groupController.pickGroupImage();
+  //                 },
+  //                 child: Obx(() {
+  //                   final imageFile = groupController.groupImageFile.value;
+  //                   return Stack(
+  //                     alignment: Alignment.bottomRight,
+  //                     children: [
+  //                       CircleAvatar(
+  //                         radius: 50,
+  //                         backgroundColor: Colors.grey.shade200,
+  //                         backgroundImage: imageFile != null
+  //                             ? FileImage(imageFile)
+  //                             : (_currentGroupImage.isNotEmpty
+  //                                 ? NetworkImage(_buildImageUrl(_currentGroupImage))
+  //                                 : null) as ImageProvider?,
+  //                         child: imageFile == null && _currentGroupImage.isEmpty
+  //                             ? const Icon(
+  //                                 Icons.group,
+  //                                 size: 50,
+  //                                 color: Colors.grey,
+  //                               )
+  //                             : null,
+  //                       ),
+  //                       Container(
+  //                         padding: const EdgeInsets.all(6),
+  //                         decoration: const BoxDecoration(
+  //                           color: Colors.greenAccent,
+  //                           shape: BoxShape.circle,
+  //                         ),
+  //                         child: const Icon(
+  //                           Icons.camera_alt,
+  //                           size: 16,
+  //                           color: Colors.black,
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   );
+  //                 }),
+  //               ),
+  //               const SizedBox(height: 20),
+  //               // Group Name text field
+  //               TextField(
+  //                 controller: groupController.groupNameController,
+  //                 decoration: InputDecoration(
+  //                   labelText: 'Group Name',
+  //                   labelStyle: GoogleFonts.poppins(),
+  //                   border: OutlineInputBorder(
+  //                     borderRadius: BorderRadius.circular(12),
+  //                   ),
+  //                   contentPadding: const EdgeInsets.symmetric(
+  //                     horizontal: 16,
+  //                     vertical: 12,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.pop(ctx),
+  //             child: Text(
+  //               'Cancel',
+  //               style: GoogleFonts.poppins(color: Colors.grey),
+  //             ),
+  //           ),
+  //           Obx(() {
+  //             final isUpdating = groupController.isUpdatingGroup.value;
+  //             return ElevatedButton(
+  //               style: ElevatedButton.styleFrom(
+  //                 backgroundColor: Colors.greenAccent,
+  //                 shape: RoundedRectangleBorder(
+  //                   borderRadius: BorderRadius.circular(8),
+  //                 ),
+  //               ),
+  //               onPressed: isUpdating
+  //                   ? null
+  //                   : () async {
+  //                       final result = await groupController.updateGroup(
+  //                         roomId: widget.roomId,
+  //                         context: context,
+  //                       );
+  //                       if (result != null && ctx.mounted) {
+  //                         setState(() {
+  //                           _currentGroupName =
+  //                               groupController.groupNameController.text.trim();
+  //                           // Update image URL if returned from the API
+  //                           final newImage = result['image'] ??
+  //                               result['avatar'] ??
+  //                               result['room']?['image'] ??
+  //                               result['room']?['avatar'];
+  //                           if (newImage != null) {
+  //                             _currentGroupImage = newImage.toString();
+  //                           }
+  //                         });
+  //                         Navigator.pop(ctx);
+  //                       }
+  //                     },
+  //               child: isUpdating
+  //                   ? const SizedBox(
+  //                       width: 20,
+  //                       height: 20,
+  //                       child: CircularProgressIndicator(
+  //                         strokeWidth: 2.5,
+  //                         valueColor:
+  //                             AlwaysStoppedAnimation<Color>(Colors.black),
+  //                       ),
+  //                     )
+  //                   : Text(
+  //                       'Update',
+  //                       style: GoogleFonts.poppins(
+  //                         color: Colors.black,
+  //                         fontWeight: FontWeight.bold,
+  //                       ),
+  //                     ),
+  //             );
+  //           }),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
+
+
+
   void _showEditGroupDialog(BuildContext context) {
     groupController.groupNameController.text = _currentGroupName;
     groupController.groupImageFile.value = null;
 
     showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true, // বাইরে ক্লিক করলে যাতে বন্ধ হয়
       builder: (ctx) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: Text(
-            'Edit Group Info',
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(28), // ছবির মতো রাউন্ডেড কর্নার
             ),
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Group Image Picker
-                GestureDetector(
-                  onTap: () async {
-                    await groupController.pickGroupImage();
-                  },
-                  child: Obx(() {
-                    final imageFile = groupController.groupImageFile.value;
-                    return Stack(
-                      alignment: Alignment.bottomRight,
-                      children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: Colors.grey.shade200,
-                          backgroundImage: imageFile != null
-                              ? FileImage(imageFile)
-                              : (_currentGroupImage.isNotEmpty
-                                  ? NetworkImage(_buildImageUrl(_currentGroupImage))
-                                  : null) as ImageProvider?,
-                          child: imageFile == null && _currentGroupImage.isEmpty
-                              ? const Icon(
-                                  Icons.group,
-                                  size: 50,
-                                  color: Colors.grey,
-                                )
-                              : null,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(
-                            color: Colors.greenAccent,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.camera_alt,
-                            size: 16,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    );
-                  }),
-                ),
-                const SizedBox(height: 20),
-                // Group Name text field
-                TextField(
-                  controller: groupController.groupNameController,
-                  decoration: InputDecoration(
-                    labelText: 'Group Name',
-                    labelStyle: GoogleFonts.poppins(),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(
-                'Cancel',
-                style: GoogleFonts.poppins(color: Colors.grey),
-              ),
-            ),
-            Obx(() {
-              final isUpdating = groupController.isUpdatingGroup.value;
-              return ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.greenAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: isUpdating
-                    ? null
-                    : () async {
-                        final result = await groupController.updateGroup(
-                          roomId: widget.roomId,
-                          context: context,
-                        );
-                        if (result != null && ctx.mounted) {
-                          setState(() {
-                            _currentGroupName =
-                                groupController.groupNameController.text.trim();
-                            // Update image URL if returned from the API
-                            final newImage = result['image'] ??
-                                result['avatar'] ??
-                                result['room']?['image'] ??
-                                result['room']?['avatar'];
-                            if (newImage != null) {
-                              _currentGroupImage = newImage.toString();
-                            }
-                          });
-                          Navigator.pop(ctx);
-                        }
-                      },
-                child: isUpdating
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.black),
-                        ),
-                      )
-                    : Text(
-                        'Update',
-                        style: GoogleFonts.poppins(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
+            padding: const EdgeInsets.all(24),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start, // টেক্সটগুলো বামে এলাইন করার জন্য
+                children: [
+                  // Top Indicator and Close Button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const SizedBox(width: 32), // ব্যালেন্স করার জন্য খালি স্পেস
+                      // টপ গ্রে লাইন
+                      Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(2),
                         ),
                       ),
-              );
-            }),
-          ],
+                      // ক্লোজ (X) বাটন
+                      GestureDetector(
+                        onTap: () => Navigator.pop(ctx),
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.close, size: 18, color: Colors.black54),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Title
+                  Text(
+                    'Edit Group Chat',
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Profile Picture Label & Image Picker
+                  Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          'Profile Picture',
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        GestureDetector(
+                          onTap: () async {
+                            await groupController.pickGroupImage();
+                          },
+                          child: Obx(() {
+                            final imageFile = groupController.groupImageFile.value;
+                            return Stack(
+                              alignment: Alignment.bottomRight,
+                              children: [
+                                // মেইন ইমেজ বর্ডার (ছবির ব্লু বর্ডার স্টাইল)
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: const Color(0xFF1976D2), width: 2),
+                                  ),
+                                  child: CircleAvatar(
+                                    radius: 45,
+                                    backgroundColor: Colors.grey.shade200,
+                                    backgroundImage: imageFile != null
+                                        ? FileImage(imageFile)
+                                        : (_currentGroupImage.isNotEmpty
+                                        ? NetworkImage(_buildImageUrl(_currentGroupImage))
+                                        : null) as ImageProvider?,
+                                    child: imageFile == null && _currentGroupImage.isEmpty
+                                        ? Icon(
+                                      Icons.group,
+                                      size: 45,
+                                      color: Colors.grey.shade400,
+                                    )
+                                        : null,
+                                  ),
+                                ),
+                                // ছোট ক্যামেরা/ছবি আইকন (সাদা ব্যাকগ্রাউন্ড ও গ্রে বর্ডার)
+                                Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: Colors.grey.shade300, width: 1),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 4,
+                                        offset: const Offset(0, 2),
+                                      )
+                                    ],
+                                  ),
+                                  child: const Icon(
+                                    Icons.camera_alt_outlined,
+                                    size: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            );
+                          }),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Group Name Label
+                  Text(
+                    'Group Name',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Group Name Text Field (ছবির মতো লাইট গ্রে ব্যাকগ্রাউন্ড)
+                  TextField(
+                    controller: groupController.groupNameController,
+                    style: GoogleFonts.poppins(fontSize: 15),
+                    decoration: InputDecoration(
+                      hintText: 'e.g. I-95 Convoy',
+                      hintStyle: GoogleFonts.poppins(color: Colors.grey.shade400),
+                      filled: true,
+                      fillColor: const Color(0xFFF5F6F8), // ছবির ভেতরের লাইট গ্রে কালার
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none, // কোনো বর্ডার আউটলাইন থাকবে না
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+
+                  // Save & Change Button (ছবির ব্লু বাটন)
+                  Obx(() {
+                    final isUpdating = groupController.isUpdatingGroup.value;
+                    return SizedBox(
+                      width: double.infinity, // ফুল উইডথ বাটন
+                      height: 54,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1565C0), // ছবির মতো রয়েল ব্লু কালার
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(28), // রাউন্ডেড বাটন
+                          ),
+                        ),
+                        onPressed: isUpdating
+                            ? null
+                            : () async {
+                          final result = await groupController.updateGroup(
+                            roomId: widget.roomId,
+                            context: context,
+                          );
+                          if (result != null && ctx.mounted) {
+                            setState(() {
+                              _currentGroupName =
+                                  groupController.groupNameController.text.trim();
+                              final newImage = result['image'] ??
+                                  result['avatar'] ??
+                                  result['room']?['image'] ??
+                                  result['room']?['avatar'];
+                              if (newImage != null) {
+                                _currentGroupImage = newImage.toString();
+                              }
+                            });
+                            Navigator.pop(ctx);
+                          }
+                        },
+                        child: isUpdating
+                            ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                            : Text(
+                          'Save & Change',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ),
         );
       },
     );

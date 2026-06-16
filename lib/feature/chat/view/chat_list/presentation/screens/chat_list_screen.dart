@@ -51,7 +51,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
     scrollController.addListener(_onScroll);
   }
 
-  /// Scroll করে উপরে গেলে পুরনো data (pagination) load করে
   void _onScroll() {
     if (!scrollController.hasClients) return;
     if (scrollController.position.pixels >=
@@ -95,7 +94,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
 
 
-            // প্রথম load এ shimmer দেখাও
                 if (controller.isLoadingChat.value &&
                     controller.userChatList.isEmpty) {
                   return const ChatListShimmer();
@@ -153,14 +151,30 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       onLongPress: () => _showDeleteDialog(context, room),
                       child: ChatTile(
                         name: room.displayName,
+                        // imagePath: isGroup
+                        //     ? AppConst.group
+                        //     : ImageHandler.imagesHandle(
+                        //            room.displayAvatar.isNotEmpty
+                        //       ? room.displayAvatar
+                        //       : AppConst.unknown,
+                        //   isProfile: true,
+                        // ),
+
+
                         imagePath: isGroup
-                            ? AppConst.group
+                            ? ImageHandler.imagesHandle(
+                          room.displayAvatar.isNotEmpty
+                              ? room.displayAvatar
+                              : AppConst.group,
+                          isProfile: true,
+                        )
                             : ImageHandler.imagesHandle(
-                                   room.displayAvatar.isNotEmpty
+                          room.displayAvatar.isNotEmpty
                               ? room.displayAvatar
                               : AppConst.unknown,
                           isProfile: true,
                         ),
+
                         message: lastMessage,
                         // unread হলে bold
                         fontWeight: room.latestMessage?.isUnread == true
@@ -176,7 +190,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                 room.isBlockedMe == true),
                         isGroup: isGroup,
                         // group এ rating নেই
-                        rating: isGroup ? null :room.otherUser?.rating,
+                          rating: isGroup ? null : ((room.otherUser?.rating ?? 0) > 0 ? (room.otherUser!.rating!).toDouble() : null),
                         onTap: () => navigateToChat(context: context, room: room),
                       ),
                     );

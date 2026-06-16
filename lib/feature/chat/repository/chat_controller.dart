@@ -330,15 +330,7 @@ class ChatController extends GetxController {
   ///==============================================================
   bool _listenersInitialized = false; // ⭐ Add this
 
-  // void initSocketListeners() {
-  //   if (_listenersInitialized) return; // ⭐ Prevent multiple calls
-  //   _listenersInitialized = true;
 
-  //   sendNewListenMessage();
-  //   errorListenMessage();
-
-  //   debugPrint('✅ Socket listeners initialized');
-  // }
 
   void initSocketListeners() {
     if (_listenersInitialized) return;

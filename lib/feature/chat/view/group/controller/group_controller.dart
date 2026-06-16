@@ -35,7 +35,7 @@ class GroupController extends GetxController {
       debugPrint('pickGroupImage error: $e');
     }
   }
-
+///update group==================================
   Future<Map<String, dynamic>?> updateGroup({
     required String roomId,
     required BuildContext context,
@@ -60,7 +60,7 @@ class GroupController extends GetxController {
         );
       }
 
-      // ✅ DEBUG PRINT (এটাই তোমার দরকার)
+      /// DEBUG PRINT
       final uri = ApiUrl.updateGroup(roomId: roomId);
       debugPrint("🚀 UPDATE GROUP API HIT:");
       debugPrint("➡️ URL: $uri");
@@ -70,7 +70,7 @@ class GroupController extends GetxController {
 
       final response = await ApiClient.multipartRequest(
         uri: uri,
-        method: 'PUT',
+        method: 'PATCH',
         fields: {
           'name': newName,
         },
