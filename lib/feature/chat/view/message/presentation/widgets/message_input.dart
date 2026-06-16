@@ -9,6 +9,7 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/string/bad_words.dart';
 
+import 'attachment_bottom_sheet.dart';
 import 'message_preset_chips.dart';
 
 class MessageInput extends StatefulWidget {
@@ -109,7 +110,19 @@ class _MessageInputState extends State<MessageInput> {
             children: [
               // + icon — container এর বাইরে, বামে
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  AttachmentBottomSheet.show(
+                    context: context,
+                    onFileSelected: (filePath, type) {
+                      // type == 'image' or 'document'
+                      // এখানে upload logic দিন
+                      debugPrint('Selected: $filePath | Type: $type');
+
+                      // chatController এ পাঠান:
+                      // chatController.sendFile(filePath: filePath, type: type, ...);
+                    },
+                  );
+                },
                 child: Padding(
                   padding: EdgeInsets.only(
                     bottom: ResponsiveHelper.padding(4),
