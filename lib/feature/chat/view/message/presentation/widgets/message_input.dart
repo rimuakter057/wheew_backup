@@ -114,8 +114,7 @@ class _MessageInputState extends State<MessageInput> {
                   AttachmentBottomSheet.show(
                     context: context,
                     onFileSelected: (filePath, type) {
-                      // type == 'image' or 'document'
-                      // এখানে upload logic দিন
+
                       debugPrint('Selected: $filePath | Type: $type');
 
                       // chatController এ পাঠান:
