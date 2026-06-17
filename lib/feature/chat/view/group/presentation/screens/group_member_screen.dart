@@ -7,6 +7,9 @@ import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/feature/chat/view/group/controller/group_controller.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../../../../utils/app_const/app_const.dart';
 
 class GroupMemberScreen extends StatefulWidget {
   final String roomId;
@@ -25,14 +28,49 @@ class GroupMemberScreen extends StatefulWidget {
 class _GroupMemberScreenState extends State<GroupMemberScreen> {
   final GroupController groupController = Get.put(GroupController());
   final ChatController controller = Get.put(ChatController());
+  String currentUserId = '';
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     groupController.fetchGroupMembers(roomId: widget.roomId);
+  //   });
+  // }
+
+
+
+
+
 
   @override
   void initState() {
     super.initState();
+    _loadUserId();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       groupController.fetchGroupMembers(roomId: widget.roomId);
     });
   }
+
+  Future<void> _loadUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      currentUserId = prefs.getString(AppConst.userID) ?? '';
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
 
   void _showRemoveDialog(String memberId, String memberName) {
     showDialog(
@@ -103,6 +141,17 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final currentUser = groupController.groupMemberList.firstWhereOrNull(
+          (e) => e.userId == currentUserId,
+    );
+
+    bool isAdmin = groupController.groupMemberList.any(
+          (e) =>
+      e.userId == currentUserId &&
+          e.groupRole == 'GROUP_ADMIN',
+    );
+
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
@@ -121,6 +170,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
           ),
         ),
         actions: [
+          if (isAdmin)
           // ── Dropdown Menu ─────────────────────────────
           PopupMenuButton<String>(
             icon: Icon(Icons.more_vert, color: AppColors.black),
@@ -277,6 +327,18 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
                         ),
                       ],
                     ),
+
+
+
+
+
+
+
+
+
+
+
+
             );
           },
         );

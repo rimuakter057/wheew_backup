@@ -665,10 +665,38 @@ class ChatController extends GetxController {
   ///create group==========================================================
   var isCreatingGroup = false.obs;
 
-  Future<void> createGroup({
+  // Future<void> createGroup({
+  //   required String groupName,
+  //   List<String> memberIds = const [],
+  // }) async
+  // {
+  //   isCreatingGroup.value = true;
+  //   try {
+  //     final uri = ApiUrl.createGroup;
+  //     Response response = await ApiClient.postData(
+  //       uri: uri,
+  //       body: {"name": groupName, "memberIds": memberIds},
+  //     );
+  //
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       debugPrint('✅ Group created: $groupName');
+  //       await fetchChatList(refresh: true);
+  //     } else {
+  //       debugPrint('❌ Group create failed: ${response.body}');
+  //     }
+  //   } catch (e) {
+  //     debugPrint('createGroup error: $e');
+  //   } finally {
+  //     isCreatingGroup.value = false;
+  //   }
+  // }
+
+
+  Future<bool> createGroup({
     required String groupName,
     List<String> memberIds = const [],
   }) async {
+
     isCreatingGroup.value = true;
     try {
       final uri = ApiUrl.createGroup;
@@ -680,11 +708,14 @@ class ChatController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         debugPrint('✅ Group created: $groupName');
         await fetchChatList(refresh: true);
+        return true;          // ← success
       } else {
         debugPrint('❌ Group create failed: ${response.body}');
+        return false;         // ← failed
       }
     } catch (e) {
       debugPrint('createGroup error: $e');
+      return false;           // ← error
     } finally {
       isCreatingGroup.value = false;
     }

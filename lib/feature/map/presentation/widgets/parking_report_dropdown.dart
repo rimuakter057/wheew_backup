@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/feature/map/controller/map_controller.dart';
+import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
-import 'package:platchatapp/utils/color/app_colors.dart'; // AppColors import
+import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/extension/base_extension.dart'; // AppColors import
 
 class ParkingReportDropdown extends StatelessWidget {
   final ParkingReportController controller;
@@ -89,19 +91,21 @@ class ParkingReportDropdown extends StatelessWidget {
           // Header Row
           Row(
             children: [
-              Container(
-                padding: ResponsiveHelper.all(10),
-                decoration: BoxDecoration(
-                  // Free হলে white bg, তাই icon container-এ হালকা grey ব্যবহার
-                  color: _isFree
-                      ? const Color(0xFFF1F5F9)
-                      : statusColor.withOpacity(0.12),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.local_parking_rounded,
-                  color: iconAndBadgeTextColor,
-                  size: ResponsiveHelper.iconSize(22),
+              ///cross button================
+              InkWell(
+                borderRadius: BorderRadius.circular(100),
+                onTap: onClose,
+                child: Container(
+                  padding: ResponsiveHelper.all(8),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF1F5F9),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.close_rounded,
+                    color: Color(0xFF475569),
+                    size: 16,
+                  ),
                 ),
               ),
               SizedBox(width: ResponsiveHelper.spacing(12)),
@@ -122,7 +126,7 @@ class ParkingReportDropdown extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        // Free হলে badge bg হালকা grey, অন্যগুলো statusColor tint
+
                         color: _isFree
                             ? const Color(0xFFF1F5F9)
                             : statusColor.withOpacity(0.1),
@@ -145,26 +149,100 @@ class ParkingReportDropdown extends StatelessWidget {
                 ),
               ),
 
-              // Close Button
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(100),
-                  onTap: onClose,
-                  child: Container(
-                    padding: ResponsiveHelper.all(8),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFF1F5F9),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.close_rounded,
-                      color: Color(0xFF475569),
-                      size: 16,
-                    ),
+              /// leave Button
+
+              // GestureDetector(
+              //   onTap: () {
+              //     // leave action call করো এখানে
+              //   },
+              //   child: Container(
+              //     padding: ResponsiveHelper.symmetric(
+              //       horizontal: ResponsiveHelper.spacing(12),
+              //       vertical: ResponsiveHelper.spacing(6),
+              //     ),
+              //     decoration: BoxDecoration(
+              //       color: _isFree
+              //           ? const Color(0xFFF1F5F9)
+              //           : statusColor.withOpacity(0.12),
+              //       borderRadius: BorderRadius.circular(8),
+              //       border: Border.all(
+              //         color: statusColor.withOpacity(0.3),
+              //         width: 1,
+              //       ),
+              //     ),
+              //     child: Row(
+              //       mainAxisSize: MainAxisSize.min,
+              //       children: [
+              //         Icon(
+              //           Icons.logout_rounded,
+              //           size: ResponsiveHelper.iconSize(14),
+              //           color: iconAndBadgeTextColor,
+              //         ),
+              //         SizedBox(width: ResponsiveHelper.spacing(4)),
+              //         Text(
+              //           "Leave",
+              //           style: context.bodyMedium.copyWith(
+              //             color: iconAndBadgeTextColor,
+              //             fontWeight: FontWeight.w600,
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+
+
+              GestureDetector(
+                onTap: () async {
+                  final spotId = controller.selectedReport.value?['id']?.toString();
+                  if (spotId == null) return;
+
+                  final success = await controller.leaveSpot(spotId);
+
+                  if (success) {
+                    CustomSnackbar.success(context: context, message:'Leave successfully');
+                    controller.clearSelectedReport();
+                    // map refresh করতে চাইলে fetchParkingReport আবার call করো
+                  } else {
+                    CustomSnackbar.error(context: context, message:'Failed to leave');
+                  }
+                },
+                child: Obx(() => Container(
+                  padding: ResponsiveHelper.symmetric(
+                    horizontal: ResponsiveHelper.spacing(12),
+                    vertical: ResponsiveHelper.spacing(6),
                   ),
-                ),
+                  decoration: BoxDecoration(
+                    color: _isFree
+                        ? const Color(0xFFF1F5F9)
+                        : statusColor.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: statusColor.withOpacity(0.3)),
+                  ),
+                  child: controller.isLeaving.value
+                      ? SizedBox(
+                    width: 14, height: 14,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                      : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.logout_rounded,
+                          size: ResponsiveHelper.iconSize(14),
+                          color: iconAndBadgeTextColor),
+                      SizedBox(width: ResponsiveHelper.spacing(4)),
+                      Text("Leave",
+                          style: context.bodyMedium.copyWith(
+                            color: iconAndBadgeTextColor,
+                            fontWeight: FontWeight.w600,
+                          )),
+                    ],
+                  ),
+                )),
               ),
+
+
+
             ],
           ),
 

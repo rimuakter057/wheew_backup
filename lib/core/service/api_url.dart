@@ -66,7 +66,19 @@ class ApiUrl {
   static const String deleteAccount = "/users";
   static const String help = "/users/help-support";
   static const String createPin = "/parking-report";
-  static const String parkingReport = '/parking-report';
+ // static const String createPin = "/parking-report";
+  static const String addParking = '/parking-report/spot';
+  static const String verifyLicense= 'users/verify-license';
+ // static const String showDetails = "/parking-report";
+  static  String showDetails ({required double latitude,required double longitude}) => "/parking-report/spot/nearby?latitude=$latitude&longitude=$longitude&radiusInMeters=200";
+  static  String spotDetails ({required String spotId,}) => "/parking-report/spot/$spotId";
+
+  static  String leaveSpot  = "/parking-report/spot/leave";
+
+
+
+
+
 
   static const String profile = '/auth/me'; // ✅ same as chatList
 
@@ -92,7 +104,7 @@ class ApiUrl {
       myRatingForRatee(rateeId: id);
   static const String getQRCode = '/users/generate-code';
   static const String scanQr = '/users/scan-qr-code';
-  static const String showDetails = "/parking-report";
+
   static String usefulNumber({
     required double latitude,
     required double longitude,

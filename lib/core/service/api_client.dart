@@ -340,7 +340,7 @@ class ApiClient {
 
       return {
         "statusCode": 500,
-        "data": {"message": "Something went wrong"},
+        "data": {"message": "Internal error"},
       };
     }
   }

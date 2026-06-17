@@ -277,7 +277,8 @@ class _Bubble extends StatelessWidget {
             ? Colors.transparent
             : isMine
             ? AppColors.blue
-            : AppColors.greenClient,
+            : AppColors.white,
+        border: Border.all(color:isImage?Colors.transparent: isMine?AppColors.blue:AppColors.greyBorder),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(ResponsiveHelper.borderRadius(15)),
           topRight: Radius.circular(ResponsiveHelper.borderRadius(15)),
@@ -300,7 +301,7 @@ class _Bubble extends StatelessWidget {
       children: [
         Text(
           text,
-          style: GoogleFonts.poppins(color: AppColors.white),
+          style: GoogleFonts.inter(color:isMine? AppColors.white:AppColors.black,fontSize: 15,fontWeight: FontWeight.w400),
         ),
         SizedBox(height: ResponsiveHelper.height(4)),
         Text(

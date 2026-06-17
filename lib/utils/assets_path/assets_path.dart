@@ -50,7 +50,10 @@ class AssetsPath {
   static const String none="assets/icons/none.svg";
   static const String all="assets/icons/all.svg";
   static const String scanIcon="assets/icons/scan_icon.svg";
-  static const String commonCar="assets/icons/common_car.png";
+  static const String freeCar="assets/icons/free.png";
+  static const String paidCar="assets/icons/paid_car.png";
+  static const String electricCar="assets/icons/electric_car.png";
+  static const String disableCar="assets/icons/disable_car.png";
 
 
 

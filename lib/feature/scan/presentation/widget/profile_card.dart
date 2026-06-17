@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
@@ -11,13 +12,13 @@ class ProfileCard extends StatelessWidget {
     super.key,
     required this.name,
     required this.rating,
-
+    this.image, // ← add করা হলো
     required this.showRating,
     this.onRatingTap,
   });
   final String name;
   final double rating;
-
+  final String? image; // ← add করা হলো
   final bool showRating;
   final VoidCallback? onRatingTap;
 
@@ -71,8 +72,8 @@ class ProfileCard extends StatelessWidget {
               radius: ResponsiveHelper.width(50),
               backgroundColor: Colors.blue[50],
               backgroundImage: NetworkImage(
-                AppConst.unknown,
-              ), // আপনার ইমেজ লিঙ্ক দিন
+                ImageHandler.imagesHandle(image, isProfile: true),
+              ),
             ),
 
             SizedBox(height: ResponsiveHelper.spacing(15)),
@@ -124,7 +125,7 @@ class ProfileCard extends StatelessWidget {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: showRating
-                      ? Colors.orange
+                      ?  AppColors.blue
                       : AppColors.blue,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(

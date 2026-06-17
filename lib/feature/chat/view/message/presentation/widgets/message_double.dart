@@ -72,6 +72,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/main.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
 class MessageBubble extends StatelessWidget {
@@ -114,7 +115,8 @@ class MessageBubble extends StatelessWidget {
               ? Colors.transparent // ✅ image হলে background নেই
               : isMine
               ? AppColors.blue
-              : AppColors.greenClient,
+              : AppColors.white,
+          border: Border.all(color:isImage?Colors.transparent: isMine?AppColors.blue:AppColors.greyBorder),
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(ResponsiveHelper.borderRadius(15)),
             topRight: Radius.circular(ResponsiveHelper.borderRadius(15)),
@@ -130,7 +132,7 @@ class MessageBubble extends StatelessWidget {
             ? _buildFileContent(isImage)
             : Text(
           message,
-          style: GoogleFonts.poppins(color: AppColors.white),
+          style: GoogleFonts.inter(color:isMine? AppColors.white:AppColors.black,fontSize: 15,fontWeight: FontWeight.w400),
         ),
       ),
     );

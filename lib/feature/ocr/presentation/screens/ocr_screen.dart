@@ -1,6 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:platchatapp/feature/ocr/data/ocr_logic.dart';
+import 'package:platchatapp/feature/ocr/data/ocr_controller.dart';
 import 'package:platchatapp/feature/ocr/presentation/widgets/dialog.dart';
 
 class OcrScannerScreen extends StatefulWidget {
@@ -16,7 +16,7 @@ class OcrScannerScreen extends StatefulWidget {
 }
 
 class _OcrScannerScreenState extends State<OcrScannerScreen> {
-  final OcrController _ocr = OcrController();
+  final OcrController controller = OcrController();
 
   bool _loading = true;
   bool _autoScan = false;
@@ -30,7 +30,7 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
   }
 
   Future<void> _init() async {
-    await _ocr.initCamera(widget.cameras);
+    await controller.initCamera(widget.cameras);
 
     if (mounted) {
       setState(() {
@@ -54,7 +54,7 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
       ),
     );
 
-    final plate = await _ocr.captureAndScan();
+    final plate = await controller.captureAndScan();
 
     if (plate == null) {
       if (mounted) {
@@ -67,7 +67,9 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
     }
 
     if (mounted) {
-      await PlateDialog.show(context, plate);
+      await PlateDialog.show(context, plate,
+            (p) => controller.verifyUser(plateNumber: p),
+      );
       setState(() {
         _dialogOpen = false;
       });
@@ -94,14 +96,20 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
         continue;
       }
 
-      final plate = await _ocr.captureAndScan();
+      final plate = await controller.captureAndScan();
 
       if (plate != null && _autoScan && mounted) {
         setState(() {
           _dialogOpen = true;
         });
 
-        await PlateDialog.show(context, plate);
+        await PlateDialog.show(context, plate,  (String p) async {
+          return await controller.verifyUser(
+            plateNumber: p,
+          );
+        },);
+
+
 
         if (mounted) {
           setState(() {
@@ -134,7 +142,7 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
   @override
   void dispose() {
     _autoScan = false;
-    _ocr.dispose();
+    controller.dispose();
     super.dispose();
   }
 
@@ -163,8 +171,8 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
         children: [
           // 1. Full-screen Camera Preview
           Positioned.fill(
-            child: _ocr.cameraController!.value.isInitialized
-                ? CameraPreview(_ocr.cameraController!)
+            child: controller.cameraController!.value.isInitialized
+                ? CameraPreview(controller.cameraController!)
                 : Container(color: Colors.black),
           ),
 

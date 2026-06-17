@@ -40,10 +40,11 @@ class ParkingReportController extends GetxController {
   }
 
   // ── Submit ────────────────────────────────────────────────────────────────
-  Future<bool> submitParkingReport({
+  Future<bool> addParking({
     required double latitude,
     required double longitude,
-  }) async {
+  }) async
+  {
     isLoading.value = true;
     submitMessage.value = '';
     submitSuccess.value = false;
@@ -60,7 +61,7 @@ class ParkingReportController extends GetxController {
 
     try {
       final response = await ApiClient.postData(
-        uri: ApiUrl.parkingReport,
+        uri: ApiUrl.addParking,
         body: body,
       );
 
@@ -206,13 +207,13 @@ class ParkingReportController extends GetxController {
       String iconPath;
 
       if (isDisabled) {
-        iconPath = AssetsPath.commonCar;
+        iconPath = AssetsPath.disableCar;
       } else if (hasCharging) {
-        iconPath = AssetsPath.commonCar;
+        iconPath = AssetsPath.electricCar;
       } else if (isPaid) {
-        iconPath = AssetsPath.commonCar;
+        iconPath = AssetsPath.paidCar;
       } else {
-        iconPath = AssetsPath.commonCar;
+        iconPath = AssetsPath.freeCar;
       }
 
       final BitmapDescriptor icon =
@@ -247,13 +248,28 @@ class ParkingReportController extends GetxController {
     }
 
     final ByteData data = await rootBundle.load(assetPath);
-
-    final icon = BitmapDescriptor.bytes(
+    final Uint8List resizedBytes = await _resizeIcon(
       data.buffer.asUint8List(),
+      targetWidth: 48, // ← এখানে size adjust করো (কম মানে ছোট icon)
     );
+
+    final icon = BitmapDescriptor.bytes(resizedBytes);
 
     _carIconCache[assetPath] = icon;
     return icon;
+  }
+
+// ── নতুন helper ───────────────────────────────────────────────
+  Future<Uint8List> _resizeIcon(Uint8List data, {required int targetWidth}) async {
+    final ui.Codec codec = await ui.instantiateImageCodec(
+      data,
+      targetWidth: targetWidth,
+    );
+    final ui.FrameInfo frame = await codec.getNextFrame();
+    final ByteData? byteData = await frame.image.toByteData(
+      format: ui.ImageByteFormat.png,
+    );
+    return byteData!.buffer.asUint8List();
   }
 
   Future<BitmapDescriptor> _getLocationIcon(
@@ -373,19 +389,33 @@ class ParkingReportController extends GetxController {
       return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange);
     }
   }
+///show single spot details===============
+//   void _onMarkerTap(Map<String, dynamic> parking) {
+//     selectedReport.value = parking;
+//     mapDebug(
+//       'marker tap: id=${parking['id']} '
+//           'cost=${parking['parking_cost']} '
+//           'ev=${parking['electric_charging']} '
+//           'disabled=${parking['disabled_facility']} '
+//           'location=${parking['disabled_facility_location']}',
+//     );
+//   }
+
+  // ─── Helpers (UI) ─────────────────────────────────────────────────────────
 
   void _onMarkerTap(Map<String, dynamic> parking) {
     selectedReport.value = parking;
-    mapDebug(
-      'marker tap: id=${parking['id']} '
-          'cost=${parking['parking_cost']} '
-          'ev=${parking['electric_charging']} '
-          'disabled=${parking['disabled_facility']} '
-          'location=${parking['disabled_facility_location']}',
-    );
+
+    final spotId = parking['id']?.toString();
+    if (spotId != null) {
+      fetchSpotDetails(spotId); // ← নতুন call
+    }
+
+    mapDebug('marker tap: id=${parking['id']}');
   }
 
-  // ─── Helpers (UI) ─────────────────────────────────────────────────────────
+
+
   String parkingInfoText(Map<String, dynamic> parking) {
     return '${'map_cost'.tr}: ${parking['parking_cost']}  |  '
         '${'map_ev'.tr}: ${parking['electric_charging']}  |  '
@@ -419,8 +449,8 @@ class ParkingReportController extends GetxController {
 
   // ─── Fetch Data ───────────────────────────────────────────────────────────
   Future<void> fetchParkingReport({
-    double? latitude,
-    double? longitude,
+    required double latitude,
+    required double  longitude,
   }) async
   {
     _locationIconCache.clear();
@@ -430,10 +460,10 @@ class ParkingReportController extends GetxController {
       mapDebug('parking API: GET ${ApiUrl.showDetails}');
 
       final response = await ApiClient.getData(
-        uri: ApiUrl.showDetails,
+        uri: ApiUrl.showDetails(latitude:latitude ,longitude:longitude ),
         queryParams: {
-          if (latitude != null) 'latitude': latitude.toString(),
-          if (longitude != null) 'longitude': longitude.toString(),
+          'latitude': latitude.toString(),
+          'longitude': longitude.toString(),
         },
       );
 
@@ -446,7 +476,7 @@ class ParkingReportController extends GetxController {
           totalParking.value = decoded['total'] ?? 0;
           currentPage.value = decoded['page'] ?? 1;
 
-          final dynamic nested = decoded['reports'] ?? decoded['data'];
+          final dynamic nested = decoded['spots'] ?? decoded['reports'] ?? decoded['data'];
           if (nested is List) {
             rawList = nested;
           } else if (nested is Map<String, dynamic>) {
@@ -476,4 +506,73 @@ class ParkingReportController extends GetxController {
       mapDebug('parking API: fetch finished');
     }
   }
+
+
+
+
+
+
+
+
+  // ── Single Spot Details ──────────────────────────────────────────
+  final Rxn<Map<String, dynamic>> spotDetails = Rxn<Map<String, dynamic>>();
+  final RxBool isLoadingSpotDetails = false.obs;
+  final RxBool isLeaving = false.obs;
+
+  Future<void> fetchSpotDetails(String spotId) async {
+    try {
+      isLoadingSpotDetails.value = true;
+      spotDetails.value = null;
+
+      final response = await ApiClient.getData(
+        uri: ApiUrl.spotDetails(spotId: spotId), // ← '/parking-report/spot/$spotId'
+      );
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+        spotDetails.value = Map<String, dynamic>.from(decoded);
+        mapDebug('spot details: loaded for $spotId');
+      } else {
+        mapDebug('spot details: failed ${response.statusCode}');
+      }
+    } catch (e) {
+      mapDebug('spot details: exception $e');
+    } finally {
+      isLoadingSpotDetails.value = false;
+    }
+  }
+
+// ── Leave Spot ────────────────────────────────────────────────────
+  Future<bool> leaveSpot(String spotId) async {
+    try {
+      isLeaving.value = true;
+
+      final response = await ApiClient.postData(
+        uri: ApiUrl.leaveSpot,
+        body: {"spotId": spotId},
+      );
+
+      // ← debugPrint add করা হলো
+      debugPrint('🟡 LEAVE STATUS CODE: ${response.statusCode}');
+      debugPrint('🟡 LEAVE BODY: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        mapDebug('leave spot: success $spotId');
+        return true;
+      } else {
+        mapDebug('leave spot: failed ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('🔴 LEAVE EXCEPTION: $e'); // ← এটাও add করা হলো
+      mapDebug('leave spot: exception $e');
+      return false;
+    } finally {
+      isLeaving.value = false;
+    }
+  }
+
+
+
+
 }

@@ -28,6 +28,8 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver{
   LatLng _mapCenter = MapScreen.kInitialMapTarget;
   LatLng? _gpsPosition;
   bool _isLocating = true;
+  LatLng? _pickedLocation;        // ম্যাপে ট্যাপ করে পিক করা location
+  bool _isPickingLocation = false; // pick mode চালু আছে কিনা
 
   final Set<Marker> _markers = {};
 
@@ -127,34 +129,103 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver{
       setState(() => _isLocating = false);
     }
   }
+  //
+  // void _toggleParkingPin() {
+  //   HapticFeedback.mediumImpact();
+  //
+  //   if (_gpsPosition == null) {
+  //     showCustomSnackBar('Unable to get current location', isError: true);
+  //     return;
+  //   }
+  //
+  //   mapDebug(
+  //     'parking dialog open (submit will use GPS location '
+  //         'lat=${_gpsPosition!.latitude.toStringAsFixed(6)} '
+  //         'lng=${_gpsPosition!.longitude.toStringAsFixed(6)})',
+  //   );
+  //   _showParkingDialog();
+  // }
 
   void _toggleParkingPin() {
     HapticFeedback.mediumImpact();
-    mapDebug(
-      'parking dialog open (submit will use map center '
-          'lat=${_mapCenter.latitude.toStringAsFixed(6)} '
-          'lng=${_mapCenter.longitude.toStringAsFixed(6)})',
-    );
+    _pickedLocation = null; // ⚠️ গত বারের picked location cache থেকে মুছে ফেলা
+    mapDebug('parking dialog open');
     _showParkingDialog();
   }
 
+  ///fetch parking======================================================
+  // void _showParkingDialog() {
+  //   _parkingCtrl.reset();
+  //
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (_) => ParkingInfoDialog(
+  //       controller: _parkingCtrl,
+  //       onSubmit: () async {
+  //         Navigator.of(context).pop();
+  //         final success = await _parkingCtrl.addParking(
+  //           latitude: _mapCenter.latitude,
+  //           longitude: _mapCenter.longitude,
+  //         );
+  //         if (!mounted) return;
+  //         if (success) {
+  //      //
+  //           showCustomSnackBar(
+  //             _parkingCtrl.submitMessage.value.isNotEmpty
+  //                 ? _parkingCtrl.submitMessage.value
+  //                 : 'map_parking_report_submitted'.tr,
+  //             isError: false,
+  //           );
+  //           await _parkingCtrl.fetchParkingReport(
+  //             latitude: _gpsPosition!.latitude,
+  //             longitude: _gpsPosition!.longitude,
+  //           );
+  //         } else {
+  //           showCustomSnackBar(
+  //             _parkingCtrl.submitMessage.value.isNotEmpty
+  //                 ? _parkingCtrl.submitMessage.value
+  //                 : 'map_failed_to_submit_parking_report'.tr,
+  //             isError: true,
+  //           );
+  //         }
+  //       },
+  //       onCancel: () => Navigator.of(context).pop(),
+  //     ),
+  //   );
+  // }
+
+
+
   void _showParkingDialog() {
-    _parkingCtrl.reset();
+    _parkingCtrl.reset(); // ⚠️ আগে থেকেই আছে — controller এর পুরনো cost/charging/disabled state রিসেট করে, রাখুন
 
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => ParkingInfoDialog(
         controller: _parkingCtrl,
+        pickedLocation: _pickedLocation,
+        onPickOnMap: () {
+          Navigator.of(context).pop();
+          _startPickingLocation();
+        },
         onSubmit: () async {
           Navigator.of(context).pop();
-          final success = await _parkingCtrl.submitParkingReport(
-            latitude: _mapCenter.latitude,
-            longitude: _mapCenter.longitude,
+
+          if (_pickedLocation == null && _gpsPosition == null) {
+            showCustomSnackBar('Location not available', isError: true);
+            return;
+          }
+
+          final LatLng useLocation = _pickedLocation ?? _gpsPosition!;
+
+          final success = await _parkingCtrl.addParking(
+            latitude: useLocation.latitude,
+            longitude: useLocation.longitude,
           );
           if (!mounted) return;
           if (success) {
-       //
             showCustomSnackBar(
               _parkingCtrl.submitMessage.value.isNotEmpty
                   ? _parkingCtrl.submitMessage.value
@@ -162,9 +233,10 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver{
               isError: false,
             );
             await _parkingCtrl.fetchParkingReport(
-              latitude: _gpsPosition?.latitude,
-              longitude: _gpsPosition?.longitude,
+              latitude: useLocation.latitude,
+              longitude: useLocation.longitude,
             );
+            _pickedLocation = null; // ⚠️ সফল submit এর পর picked location মুছে ফেলা — পরের বার আবার GPS default এ ফিরবে
           } else {
             showCustomSnackBar(
               _parkingCtrl.submitMessage.value.isNotEmpty
@@ -174,9 +246,35 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver{
             );
           }
         },
-        onCancel: () => Navigator.of(context).pop(),
+        onCancel: () {
+          Navigator.of(context).pop();
+          _pickedLocation = null; // ⚠️ cancel করলেও picked location মুছে ফেলা, যাতে পরের বার stale lat/lng না থাকে
+        },
       ),
     );
+  }
+
+
+  void _startPickingLocation() {
+    setState(() => _isPickingLocation = true);
+    showCustomSnackBar('Tap on the map to select a location', isError: false);
+  }
+
+  void _onMapTapped(LatLng position) {
+    if (!_isPickingLocation) {
+      _parkingCtrl.clearSelectedReport(); // আগের behavior অক্ষত রাখা হলো
+      return;
+    }
+    setState(() {
+      _pickedLocation = position;
+      _isPickingLocation = false;
+    });
+    HapticFeedback.selectionClick();
+    mapDebug(
+      'picked location lat=${position.latitude.toStringAsFixed(6)} '
+          'lng=${position.longitude.toStringAsFixed(6)}',
+    );
+    _showParkingDialog();
   }
 
 
@@ -207,19 +305,37 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver{
           children: [
 
             /// ── Map সবসময় visible — parking থাক বা না থাক ──────────────
-            // ── Map / Shimmer ──────────────────────────────────────────────
 
             if (!_isLocating && _gpsPosition == null)
               _buildLocationOffPrompt()
             else if (_isLocating && _gpsPosition == null)
               const MapInitialShimmer()
-
+///see marker =======================
             else
               Obx(() {
+                // final markers = {
+                //   ..._markers,
+                //   ..._parkingCtrl.markers,
+                // };
+
+
+
                 final markers = {
                   ..._markers,
-                  ..._parkingCtrl.markers,  // observable always read, no early return
+                  ..._parkingCtrl.markers,
+                  if (_pickedLocation != null)
+                    Marker(
+                      markerId: const MarkerId('picked_location'),
+                      position: _pickedLocation!,
+                      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+                    ),
                 };
+
+
+
+
+
+
                 return GoogleMap(
                   mapType: MapType.hybrid,
                   key: const ValueKey<Object>('platechat_google_map'),
@@ -237,12 +353,38 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver{
                   compassEnabled: false,
                   rotateGesturesEnabled: false,
                   tiltGesturesEnabled: false,
-                  onTap: (_) => _parkingCtrl.clearSelectedReport(),
+                 // onTap: (_) => _parkingCtrl.clearSelectedReport(),
+                  onTap: _onMapTapped,
                 );
               }),
 
             // ── GPS locating banner (plain bool, Obx নেই) ────────────────
             if (_isLocating) const LocatingBanner(),
+
+
+
+
+            // ── Pick location mode banner ──────────────────────────────
+            if (_isPickingLocation)
+              Positioned(
+                top: MediaQuery.of(context).padding.top + ResponsiveHelper.padding(16),
+                left: ResponsiveHelper.padding(16),
+                right: ResponsiveHelper.padding(16),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.black87,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Text(
+                    'Tap on the map to select parking location',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white, fontSize: 13),
+                  ),
+                ),
+              ),
+
+
 
             // ── Parking API fetching indicator ────────────────────────────
             Obx(
@@ -268,13 +410,16 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver{
               );
             }),
 
-            // // ── Drop pin FAB ──────────────────────────────────────────────
+           /// // ── Drop pin add ──────────────────────────────────────────────
             Positioned(
-              left: ResponsiveHelper.padding(24),
               right: ResponsiveHelper.padding(24),
               bottom: ResponsiveHelper.padding(32),
-              child: DropPinButton(onTap: _toggleParkingPin),
+              child: AddParkingButton(
+                onPressed: _toggleParkingPin,
+              ),
             ),
+
+
           ],
         ),
       ),

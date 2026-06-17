@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
+import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
@@ -134,12 +135,22 @@ void showCreateGroupDialog({
                   width: double.infinity,
                   height: ResponsiveHelper.buttonHeight(48),
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async{
                       if (formKey.currentState!.validate()) {
                         final String groupName =
                         groupNameController.text.trim();
                         Navigator.pop(ctx);
-                        controller.createGroup(groupName: groupName);
+
+
+                        final success = await controller.createGroup(groupName: groupName);
+
+                        if (success) {
+                          CustomSnackbar.success(context: context, message:  'Group created successfully');
+                        } else {
+                        CustomSnackbar.error(context: context, message: 'Failed to create group');
+                        }
+
+
                       }
                     },
                     style: ElevatedButton.styleFrom(

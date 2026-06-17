@@ -166,7 +166,8 @@ class _MessageScreenState extends State<MessageScreen> {
                           : ProfileCard(
                               name: profile.nickName,
                               rating: profile.rating,
-                              showRating: true,
+                        image:widget.otherUserAvatar ?? '',
+                        showRating: true,
                               onRatingTap: () async {
                                 Navigator.pop(
                                   dialogContext,

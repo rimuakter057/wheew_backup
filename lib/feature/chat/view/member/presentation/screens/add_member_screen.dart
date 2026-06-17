@@ -179,7 +179,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
             onPressed: (selectedCount == 0 || isBusy) ? null : _onAddMember,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.blue,
-              disabledBackgroundColor: AppColors.blue.withOpacity(0.4),
+              disabledBackgroundColor: AppColors.blue,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(
@@ -200,9 +200,9 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
               selectedCount == 0
                   ? 'add_member'.tr
                   : '${'add_member'.tr} ($selectedCount)',
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.inter(
                 fontSize: ResponsiveHelper.fontSize(16),
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
                 color: Colors.white,
               ),
             ),
