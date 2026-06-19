@@ -141,13 +141,10 @@ class _ScanScreenState extends State<ScanScreen>
       backgroundColor: const Color(0xFF121212),
       body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: ResponsiveHelper.spacing(8)),
-   IconButton(onPressed: (){
-     context.pop();
 
-   }, icon: Icon(Icons.arrow_back_ios,color: AppColors.white,)),
             
             _buildTabToggle(),
             Expanded(

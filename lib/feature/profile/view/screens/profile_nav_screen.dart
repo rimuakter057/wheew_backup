@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart'; // GoRouter ইম্পোর্ট করুন
+import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/router/routes.dart';
 import 'package:platchatapp/core/router/routes_name.dart'; // RouteName ইম্পোর্ট করুন
 import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/core/service/storage_service.dart';
+import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
 import 'package:platchatapp/feature/privacy_policy/help_suppoor_screen.dart';
 import 'package:platchatapp/feature/privacy_policy/privacy_policy_screen.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
@@ -15,8 +18,10 @@ import 'package:platchatapp/feature/scan/presentation/widget/my_qr_view.dart';
 import 'package:platchatapp/feature/terms_condition/web_view_screen.dart';
 import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/helper/fromate_rating/formate_rating.dart';
+import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/language/language_controller.dart';
+import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
@@ -149,16 +154,9 @@ class ProfileNavScreen extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: ResponsiveHelper.width(40),
                                 backgroundColor: Colors.white.withOpacity(0.15),
-                                backgroundImage: (avatarUrl != null && avatarUrl.isNotEmpty)
-                                    ? NetworkImage(avatarUrl)
-                                    : null,
-                                child: (avatarUrl == null || avatarUrl.isEmpty)
-                                    ? Icon(
-                                  Icons.person,
-                                  size: ResponsiveHelper.iconSize(36),
-                                  color: Colors.white,
-                                )
-                                    : null,
+                                backgroundImage: NetworkImage(
+                                  (avatarUrl != null && avatarUrl.isNotEmpty) ? avatarUrl : AppConst.unknown,
+                                ),
                               ),
                             ),
                             if (controller.isLoading)
@@ -185,256 +183,167 @@ class ProfileNavScreen extends StatelessWidget {
                       ),
 
                       // ✅ SCANNER DESIGN (MATCHED WITH YOUR IMAGE)
-                      InkWell(
 
-                        onTap: (){
+                      // InkWell(
+                      //
+                      //   onTap: (){
+                      //
+                      //    // context.pushNamed(RouteName.scanScreen);
+                      //     context.pushNamed(RouteName.ocrScanner);
+                      //   },
+                      //
+                      //
+                      //
+                      //   borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(18)),
+                      //   child: Container(
+                      //     width: ResponsiveHelper.width(54),
+                      //     height: ResponsiveHelper.width(54),
+                      //     alignment: Alignment.center,
+                      //     decoration: BoxDecoration(
+                      //       // Image dynamic background color (Match color tone)
+                      //       color: const Color(0xFFFFFFFFF).withOpacity(0.15),
+                      //       borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(18)),
+                      //     ),
+                      //     child: CustomImage(
+                      //       imageSrc: AssetsPath.scanIcon,
+                      //       width: ResponsiveHelper.width(26),
+                      //       height: ResponsiveHelper.width(26),
+                      //     ),
+                      //   ),
+                      // ),
 
-                          context.pushNamed(RouteName.scanScreen);
+
+
+
+                      // FutureBuilder<bool?>(
+                      //   future: SharePrefsHelper.getBool(AppConst.licenseNoVerified),
+                      //   builder: (context, snapshot) {
+                      //     final bool isVerified = snapshot.data ?? false;
+                      //
+                      //     if (isVerified) {
+                      //       // ✅ Verified হলে — শুধু label দেখানো, কোনো tap/navigation নেই
+                      //       return Column(
+                      //         mainAxisSize: MainAxisSize.min,
+                      //         children: [
+                      //           Container(
+                      //             width: ResponsiveHelper.width(54),
+                      //             height: ResponsiveHelper.width(54),
+                      //             alignment: Alignment.center,
+                      //             decoration: BoxDecoration(
+                      //               color: const Color(0xFFFFFFFF).withOpacity(0.15),
+                      //               borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(18)),
+                      //             ),
+                      //             child: Icon(
+                      //               Icons.check_circle,
+                      //               color: AppColors.blue,
+                      //               size: ResponsiveHelper.width(26),
+                      //             ),
+                      //           ),
+                      //           SizedBox(height: ResponsiveHelper.height(4)),
+                      //           Text(
+                      //             'verified'.tr,
+                      //             style: GoogleFonts.poppins(
+                      //               fontSize: ResponsiveHelper.fontSize(10),
+                      //               color: AppColors.white,
+                      //               fontWeight: FontWeight.w500,
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       );
+                      //     }
+                      //
+                      //     // ❌ Verified না হলে — আগের মতো scan button, tap করলে navigate হবে
+                      //     return InkWell(
+                      //       onTap: () {
+                      //         context.pushNamed(RouteName.ocrScanner);
+                      //       },
+                      //       borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(18)),
+                      //       child: Container(
+                      //         width: ResponsiveHelper.width(54),
+                      //         height: ResponsiveHelper.width(54),
+                      //         alignment: Alignment.center,
+                      //         decoration: BoxDecoration(
+                      //           color: const Color(0xFFFFFFFF).withOpacity(0.15),
+                      //           borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(18)),
+                      //         ),
+                      //         child: CustomImage(
+                      //           imageSrc: AssetsPath.scanIcon,
+                      //           width: ResponsiveHelper.width(26),
+                      //           height: ResponsiveHelper.width(26),
+                      //         ),
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
+
+
+                      FutureBuilder<bool?>(
+                        future: SharePrefsHelper.getBool(AppConst.licenseNoVerified),
+                        builder: (context, snapshot) {
+                          final bool isVerified = snapshot.data ?? false;
+
+                          // ✅ Verified State — Clean & Premium Label
+                          if (isVerified) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                              CustomImage(imageSrc: "assets/icons/verified.svg"),
+                                SizedBox(height: ResponsiveHelper.height(6)),
+                                Text(
+                                  'verified'.tr,
+                                  style: context.bodyMedium.copyWith(color: AppColors.white)
+                                ),
+                              ],
+                            );
+                          }
+
+                          // ❌ Not Verified State — Modern Glassmorphism Scan Button
+                          return InkWell(
+                            onTap: () {
+                              context.pushNamed(RouteName.ocrScanner);
+                            },
+                            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: ResponsiveHelper.width(54),
+                                  height: ResponsiveHelper.width(54),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFFFFFFF).withOpacity(0.08),
+                                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
+                                    border: Border.all(
+                                      color: const Color(0xFFFFFFFF).withOpacity(0.2),
+                                      width: 1,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.05),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: CustomImage(
+                                    imageSrc: AssetsPath.scanIcon,
+                                    width: ResponsiveHelper.width(24),
+                                    height: ResponsiveHelper.width(24),
+                                    // color: AppColors.white, // আপনার প্রোজেক্ট অনুযায়ী কালার ফিল্টার দিতে পারেন
+                                  ),
+                                ),
+                                SizedBox(height: ResponsiveHelper.height(6)),
+                                Text(
+                                  'Scan Plate Number'.tr, // স্ক্যান করার জন্য নিচের লেবেল (যদি প্রয়োজন হয়)
+                                  style: context.bodySmall.copyWith(color: AppColors.white)
+                                ),
+                              ],
+                            ),
+                          );
                         },
+                      )
 
 
-                        // onTap: () {
-                        //   final scanController = Get.find<ScanController>();
-                        //   scanController.getQrCode();
-                        //
-                        //   showModalBottomSheet(
-                        //     context: context,
-                        //     isScrollControlled: true,
-                        //     backgroundColor: Colors.transparent,
-                        //     builder: (ctx) {
-                        //       final user = controller.userProfile.value;
-                        //       return Container(
-                        //         decoration: const BoxDecoration(
-                        //           color: Colors.white,
-                        //           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                        //         ),
-                        //         padding: EdgeInsets.fromLTRB(
-                        //           ResponsiveHelper.padding(24),
-                        //           ResponsiveHelper.padding(12),
-                        //           ResponsiveHelper.padding(24),
-                        //           ResponsiveHelper.padding(36),
-                        //         ),
-                        //         child: Column(
-                        //           mainAxisSize: MainAxisSize.min,
-                        //           children: [
-                        //
-                        //             // ── Drag Handle ──
-                        //             Container(
-                        //               width: ResponsiveHelper.width(40),
-                        //               height: ResponsiveHelper.height(4),
-                        //               decoration: BoxDecoration(
-                        //                 color: Colors.grey.shade300,
-                        //                 borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
-                        //               ),
-                        //             ),
-                        //             SizedBox(height: ResponsiveHelper.spacing(16)),
-                        //
-                        //             // ── Title + Close Button ──
-                        //             Row(
-                        //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //               children: [
-                        //                 Text(
-                        //                   'My QR Code',
-                        //                   style: TextStyle(
-                        //                     fontSize: ResponsiveHelper.fontSize(18),
-                        //                     fontWeight: FontWeight.bold,
-                        //                     color: Colors.black87,
-                        //                   ),
-                        //                 ),
-                        //                 GestureDetector(
-                        //                   onTap: () => Navigator.pop(ctx),
-                        //                   child: Container(
-                        //                     width: ResponsiveHelper.width(32),
-                        //                     height: ResponsiveHelper.width(32),
-                        //                     decoration: BoxDecoration(
-                        //                       color: Colors.grey.shade100,
-                        //                       shape: BoxShape.circle,
-                        //                     ),
-                        //                     child: Icon(
-                        //                       Icons.close,
-                        //                       size: ResponsiveHelper.iconSize(18),
-                        //                       color: Colors.black54,
-                        //                     ),
-                        //                   ),
-                        //                 ),
-                        //               ],
-                        //             ),
-                        //             SizedBox(height: ResponsiveHelper.spacing(24)),
-                        //
-                        //             // ── Avatar ──
-                        //             Container(
-                        //               decoration: BoxDecoration(
-                        //                 shape: BoxShape.circle,
-                        //                 border: Border.all(
-                        //                   color: Colors.grey.shade200,
-                        //                   width: ResponsiveHelper.width(3),
-                        //                 ),
-                        //               ),
-                        //               child: CircleAvatar(
-                        //                 radius: ResponsiveHelper.width(42),
-                        //                 backgroundColor: Colors.grey.shade200,
-                        //                 backgroundImage: (user?.avatar != null && user!.avatar!.isNotEmpty)
-                        //                     ? NetworkImage(user.avatar!)
-                        //                     : null,
-                        //                 child: (user?.avatar == null || user!.avatar!.isEmpty)
-                        //                     ? Icon(
-                        //                   Icons.person,
-                        //                   size: ResponsiveHelper.iconSize(38),
-                        //                   color: Colors.grey,
-                        //                 )
-                        //                     : null,
-                        //               ),
-                        //             ),
-                        //             SizedBox(height: ResponsiveHelper.spacing(12)),
-                        //
-                        //             // ── Name ──
-                        //             Text(
-                        //               user?.nickName.isNotEmpty == true ? user!.nickName : '---',
-                        //               style: TextStyle(
-                        //                 fontSize: ResponsiveHelper.fontSize(20),
-                        //                 fontWeight: FontWeight.bold,
-                        //                 color: Colors.black87,
-                        //               ),
-                        //             ),
-                        //             SizedBox(height: ResponsiveHelper.spacing(6)),
-                        //
-                        //             // ── Rating + Location ──
-                        //             Row(
-                        //               mainAxisAlignment: MainAxisAlignment.center,
-                        //               children: [
-                        //                 Icon(
-                        //                   Icons.star_rounded,
-                        //                   color: const Color(0xFFFFC107),
-                        //                   size: ResponsiveHelper.iconSize(16),
-                        //                 ),
-                        //                 SizedBox(width: ResponsiveHelper.spacing(3)),
-                        //                 Text(
-                        //                   user != null ? formatRating(user.rating) : '0.0',
-                        //                   style: TextStyle(
-                        //                     fontSize: ResponsiveHelper.fontSize(14),
-                        //                     fontWeight: FontWeight.w600,
-                        //                     color: Colors.black87,
-                        //                   ),
-                        //                 ),
-                        //                 SizedBox(width: ResponsiveHelper.spacing(12)),
-                        //
-                        //               ],
-                        //             ),
-                        //             SizedBox(height: ResponsiveHelper.spacing(28)),
-                        //
-                        //             // ── QR Code Box ──
-                        //             Obx(() {
-                        //               if (scanController.isLoadingQr.value) {
-                        //                 return Container(
-                        //                   width: ResponsiveHelper.width(200),
-                        //                   height: ResponsiveHelper.width(200),
-                        //                   decoration: BoxDecoration(
-                        //                     color: Colors.grey.shade100,
-                        //                     borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-                        //                   ),
-                        //                   child: const Center(
-                        //                     child: CircularProgressIndicator(
-                        //                       color: Color(0xFF3D72E8),
-                        //                       strokeWidth: 2.5,
-                        //                     ),
-                        //                   ),
-                        //                 );
-                        //               }
-                        //
-                        //               if (scanController.qrBase64.value.isNotEmpty) {
-                        //                 final base64Str = scanController.qrBase64.value.replaceFirst(
-                        //                   'data:image/png;base64,',
-                        //                   '',
-                        //                 );
-                        //                 return Container(
-                        //                   width: ResponsiveHelper.width(200),
-                        //                   height: ResponsiveHelper.width(200),
-                        //                   padding: EdgeInsets.all(ResponsiveHelper.padding(16)),
-                        //                   decoration: BoxDecoration(
-                        //                     color: Colors.white,
-                        //                     borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-                        //                     boxShadow: [
-                        //                       BoxShadow(
-                        //                         color: Colors.black.withOpacity(0.08),
-                        //                         blurRadius: ResponsiveHelper.width(20),
-                        //                         offset: const Offset(0, 6),
-                        //                       ),
-                        //                     ],
-                        //                   ),
-                        //                   child: Image.memory(
-                        //                     base64Decode(base64Str),
-                        //                     fit: BoxFit.contain,
-                        //                   ),
-                        //                 );
-                        //               }
-                        //
-                        //               // ── Error / Retry ──
-                        //               return GestureDetector(
-                        //                 onTap: () => scanController.getQrCode(),
-                        //                 child: Container(
-                        //                   width: ResponsiveHelper.width(200),
-                        //                   height: ResponsiveHelper.width(200),
-                        //                   decoration: BoxDecoration(
-                        //                     color: Colors.grey.shade100,
-                        //                     borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-                        //                   ),
-                        //                   child: Column(
-                        //                     mainAxisAlignment: MainAxisAlignment.center,
-                        //                     children: [
-                        //                       Icon(
-                        //                         Icons.refresh_rounded,
-                        //                         color: Colors.grey.shade400,
-                        //                         size: ResponsiveHelper.iconSize(40),
-                        //                       ),
-                        //                       SizedBox(height: ResponsiveHelper.spacing(8)),
-                        //                       Text(
-                        //                         'Tap to retry',
-                        //                         style: TextStyle(
-                        //                           fontSize: ResponsiveHelper.fontSize(13),
-                        //                           color: Colors.grey.shade400,
-                        //                         ),
-                        //                       ),
-                        //                     ],
-                        //                   ),
-                        //                 ),
-                        //               );
-                        //             }),
-                        //
-                        //             SizedBox(height: ResponsiveHelper.spacing(20)),
-                        //
-                        //             // ── Bottom Text ──
-                        //             Text(
-                        //               'Let other drivers scan this to chat with you.',
-                        //               textAlign: TextAlign.center,
-                        //               style: TextStyle(
-                        //                 fontSize: ResponsiveHelper.fontSize(13),
-                        //                 color: Colors.grey,
-                        //               ),
-                        //             ),
-                        //           ],
-                        //         ),
-                        //       );
-                        //     },
-                        //   );
-                        // },
-
-                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(18)),
-                        child: Container(
-                          width: ResponsiveHelper.width(54),
-                          height: ResponsiveHelper.width(54),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            // Image dynamic background color (Match color tone)
-                            color: const Color(0xFFFFFFFFF).withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(18)),
-                          ),
-                          child: CustomImage(
-                            imageSrc: AssetsPath.scanIcon,
-                            width: ResponsiveHelper.width(26),
-                            height: ResponsiveHelper.width(26),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                   SizedBox(height: ResponsiveHelper.spacing(15)),
@@ -640,8 +549,18 @@ class ProfileNavScreen extends StatelessWidget {
             ),
           ),
         ),
-        onPressed: () {
-          // লগআউট করার পর ওয়েলকাম স্ক্রিনে নিয়ে যাওয়া
+        onPressed: () async{
+    await SharePrefsHelper.remove(AppConst.token);
+    await SharePrefsHelper.remove(AppConst.userID);
+    await SharePrefsHelper.remove(AppConst.userData);
+    await SharePrefsHelper.remove(AppConst.licenceId);
+    await SharePrefsHelper.remove(AppConst.nickName);
+    await SharePrefsHelper.remove(AppConst.avatar);
+    await SharePrefsHelper.remove(AppConst.loginUser);
+    await SharePrefsHelper.remove(AppConst.loginPass);
+    await SharePrefsHelper.remove(AppConst.licenseNoVerified);
+    await SharePrefsHelper.setBool(AppConst.isLoggedIn, false);
+
           context.goNamed(RouteName.welcome);
         },
         child: Row(

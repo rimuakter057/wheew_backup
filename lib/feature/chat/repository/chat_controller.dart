@@ -430,20 +430,67 @@ class ChatController extends GetxController {
 
   final TextEditingController messageController = TextEditingController();
 
+  // void sendNewEmitMessage({
+  //   required String receiverId,
+  //   required String message,
+  //   String? roomId, // ✅ নতুন parameter
+  // })
+  // {
+  //   final payload = {
+  //     'receiver_id': receiverId,
+  //     'message': message,
+  //     if (roomId != null && roomId.isNotEmpty) 'room_id': roomId,
+  //   };
+  //
+  //   final localTempMessage = Messages(
+  //     id: DateTime.now().millisecondsSinceEpoch.toString(),
+  //     receiverId: receiverId,
+  //     senderId: '',
+  //     message: message,
+  //     createdAt: DateTime.now().toIso8601String(),
+  //     isMine: true,
+  //     isDelivered: false,
+  //     type: 'TEXT',
+  //     chatRoomId: roomID.value,
+  //   );
+  //
+  //   userMessageList.insert(0, localTempMessage);
+  //   updateChatRoomInListOptimistic(localTempMessage);
+  //   messageController.clear();
+  //
+  //   AppSocket.emitWithAck(
+  //     "message",
+  //     payload,
+  //     ack: (value) {
+  //       debugPrint("✅ Message sent successfully: $value");
+  //
+  //       if (value != null && value['chatRoom_id'] != null) {
+  //         final newRoomId = value['chatRoom_id'].toString();
+  //
+  //         roomID.value = newRoomId;
+  //
+  //         fetchChatList(refresh: true);
+  //       }
+  //     },
+  //   );
+  // }
+
+
   void sendNewEmitMessage({
     required String receiverId,
     required String message,
-    String? roomId, // ✅ নতুন parameter
-  })
-  {
+    String? roomId,
+  }) {
     final payload = {
       'receiver_id': receiverId,
       'message': message,
       if (roomId != null && roomId.isNotEmpty) 'room_id': roomId,
     };
 
+    final tempId = 'temp_${DateTime.now().millisecondsSinceEpoch}'; // ✅ temp_ prefix যেন আলাদা করে চেনা যায়
+
     final localTempMessage = Messages(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: tempId,
       receiverId: receiverId,
       senderId: '',
       message: message,
@@ -464,16 +511,28 @@ class ChatController extends GetxController {
       ack: (value) {
         debugPrint("✅ Message sent successfully: $value");
 
-        if (value != null && value['chatRoom_id'] != null) {
-          final newRoomId = value['chatRoom_id'].toString();
+        if (value != null) {
+          // ✅ temp message কে real server message দিয়ে replace করো
+          final tempIndex = userMessageList.indexWhere((m) => m.id == tempId);
+          if (tempIndex != -1) {
+            try {
+              final confirmed = Messages.fromJson(value);
+              confirmed.isMine = true;
+              userMessageList[tempIndex] = confirmed;
+            } catch (e) {
+              debugPrint("⚠️ ack parse failed: $e");
+            }
+          }
 
-          roomID.value = newRoomId;
-
-          fetchChatList(refresh: true);
+          if (value['chatRoom_id'] != null) {
+            roomID.value = value['chatRoom_id'].toString();
+            fetchChatList(refresh: true);
+          }
         }
       },
     );
   }
+
 
   void updateChatRoomInListOptimistic(Messages newMessage) {
     final roomIndex = userChatList.indexWhere(
@@ -517,16 +576,51 @@ class ChatController extends GetxController {
 
 
 
+  // Future<void> newMessage() async {
+  //   // ✅ আগের listener সরাও, তারপর নতুন লাগাও
+  //   AppSocket.socket?.off('new-message');
+  //
+  //   AppSocket.socket?.on('new-message', (value) {
+  //     debugPrint('🔔 NEW MESSAGE RECEIVED: $value');
+  //
+  //     Messages model = Messages.fromJson(value);
+  //
+  //     // ✅ ID দিয়ে duplicate চেক
+  //     final alreadyExists = userMessageList.any((m) => m.id == model.id);
+  //     if (alreadyExists) {
+  //       debugPrint('⚠️ Duplicate message ignored: ${model.id}');
+  //       return;
+  //     }
+  //
+  //     if (model.chatRoomId == roomID.value) {
+  //       userMessageList.insert(0, model);
+  //       debugPrint('✅ Added to message list');
+  //     }
+  //
+  //     updateChatRoomInList(model);
+  //   });
+  // }
+
+
   Future<void> newMessage() async {
-    // ✅ আগের listener সরাও, তারপর নতুন লাগাও
     AppSocket.socket?.off('new-message');
 
     AppSocket.socket?.on('new-message', (value) {
       debugPrint('🔔 NEW MESSAGE RECEIVED: $value');
-
       Messages model = Messages.fromJson(value);
 
-      // ✅ ID দিয়ে duplicate চেক
+      // ✅ আগে temp message থাকলে কিনা চেক করো (sender নিজে পেলে)
+      final tempIndex = userMessageList.indexWhere(
+            (m) => (m.id?.startsWith('temp_') ?? false) && m.message == model.message,
+      );
+      if (tempIndex != -1) {
+        userMessageList[tempIndex] = model;
+        debugPrint('✅ Temp message replaced by broadcast');
+        updateChatRoomInList(model);
+        return;
+      }
+
+      // ✅ real ID দিয়ে duplicate চেক
       final alreadyExists = userMessageList.any((m) => m.id == model.id);
       if (alreadyExists) {
         debugPrint('⚠️ Duplicate message ignored: ${model.id}');
@@ -541,6 +635,7 @@ class ChatController extends GetxController {
       updateChatRoomInList(model);
     });
   }
+
 
   void updateChatRoomInList(Messages newMessage) {
     final roomIndex = userChatList.indexWhere(
@@ -664,33 +759,6 @@ class ChatController extends GetxController {
 
   ///create group==========================================================
   var isCreatingGroup = false.obs;
-
-  // Future<void> createGroup({
-  //   required String groupName,
-  //   List<String> memberIds = const [],
-  // }) async
-  // {
-  //   isCreatingGroup.value = true;
-  //   try {
-  //     final uri = ApiUrl.createGroup;
-  //     Response response = await ApiClient.postData(
-  //       uri: uri,
-  //       body: {"name": groupName, "memberIds": memberIds},
-  //     );
-  //
-  //     if (response.statusCode == 200 || response.statusCode == 201) {
-  //       debugPrint('✅ Group created: $groupName');
-  //       await fetchChatList(refresh: true);
-  //     } else {
-  //       debugPrint('❌ Group create failed: ${response.body}');
-  //     }
-  //   } catch (e) {
-  //     debugPrint('createGroup error: $e');
-  //   } finally {
-  //     isCreatingGroup.value = false;
-  //   }
-  // }
-
 
   Future<bool> createGroup({
     required String groupName,

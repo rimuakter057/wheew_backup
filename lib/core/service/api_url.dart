@@ -5,12 +5,12 @@ class ApiUrl {
   // Base URL - Replace with your actual API base URL
 
   // Local url
-  static const String baseUrl = 'http://10.10.28.200:8003';
-  static const baseSocketUrl = 'ws://10.10.28.200:8003';
+  // static const String baseUrl = 'http://10.10.28.200:8003';
+  // static const baseSocketUrl = 'ws://10.10.28.200:8003';
 
   // live url
-  // static const String baseUrl = 'http://13.50.99.165:8003';
-  //  static const baseSocketUrl = 'ws://13.50.99.165:8003';
+  static const String baseUrl = 'http://13.50.99.165:8003';
+   static const baseSocketUrl = 'ws://13.50.99.165:8003';
 
   //http://13.50.99.165:8003
   //static const baseSocketUrl = 'ws://13.50.99.165:8003';
@@ -68,7 +68,7 @@ class ApiUrl {
   static const String createPin = "/parking-report";
  // static const String createPin = "/parking-report";
   static const String addParking = '/parking-report/spot';
-  static const String verifyLicense= 'users/verify-license';
+  static const String verifyLicense= '/users/verify-license';
  // static const String showDetails = "/parking-report";
   static  String showDetails ({required double latitude,required double longitude}) => "/parking-report/spot/nearby?latitude=$latitude&longitude=$longitude&radiusInMeters=200";
   static  String spotDetails ({required String spotId,}) => "/parking-report/spot/$spotId";

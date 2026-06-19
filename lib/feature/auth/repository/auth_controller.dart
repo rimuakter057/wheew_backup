@@ -1,4 +1,6 @@
 // ignore_for_file: dead_code, unnecessary_null_comparison
+import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -49,6 +51,74 @@ class AuthController extends GetxController {
 
   // ========================== LOGIN ==========================
 
+  // Future<bool> login({
+  //   required BuildContext context,
+  //   required String identifier,
+  //   required String password,
+  //   bool rememberMe = false,
+  // }) async
+  // {
+  //   _setLoading(true);
+  //
+  //   String? fcmToken = await FirebaseMessaging.instance.getToken();
+  //   debugPrint('🔥 FCM Token: $fcmToken'); // ✅ এখানে দেখবেন token আসছে কিনা
+  //
+  //   if (fcmToken == null) {
+  //
+  //     _setLoading(false);
+  //     return false;
+  //   }
+  //
+  //
+  //
+  //   final http.Response loginRes = await _repo.login(
+  //     identifier: identifier,
+  //     password: password,
+  //     fcmToken: fcmToken,
+  //   );
+  //
+  //
+  //   _setLoading(false);
+  //
+  //   if (loginRes.statusCode == 200) {
+  //     if (isRememberMe.value) {
+  //       await SharePrefsHelper.setString(AppConst.loginUser, identifier);
+  //       await SharePrefsHelper.setString(AppConst.loginPass, password);
+  //     }
+  //
+  //     final data = jsonDecode(loginRes.body);
+  //
+  //     await SharePrefsHelper.setString(AppConst.token, data['token'] ?? '');
+  //     await SharePrefsHelper.setString(AppConst.userID, data['id']?.toString() ?? '');
+  //     await SharePrefsHelper.setString(AppConst.licenceId, data['licence_id'] ?? '');
+  //     await SharePrefsHelper.setString(AppConst.nickName, data['nick_name'] ?? '');
+  //     await SharePrefsHelper.setBool(AppConst.isLoggedIn, true);
+  //     await _saveUserData(data);
+  //
+  //     debugPrint('✅ Login successful - navigating to mainNavScreen');
+  //     final locationController = Get.put(UserLocationController());
+  //     await locationController.initLocationTracking();
+  //     await AppSocket.init(
+  //       onSocketConnect: () {
+  //         debugPrint('🔌 Socket connected - going to mainNavScreen');
+  //         if (context.mounted) {
+  //           context.goNamed(RouteName.mainNavScreen);
+  //         }
+  //       },
+  //     );
+  //
+  //
+  //
+  //
+  //     return true;
+  //   } else {
+  //     debugPrint('❌ Login failed: ${loginRes.statusCode} - ${loginRes.body}');
+  //     ApiChecker.checkApi(loginRes);
+  //     return false;
+  //   }
+  // }
+
+
   Future<bool> login({
     required BuildContext context,
     required String identifier,
@@ -57,64 +127,89 @@ class AuthController extends GetxController {
   }) async {
     _setLoading(true);
 
-    String? fcmToken = await FirebaseMessaging.instance.getToken();
-    debugPrint('🔥 FCM Token: $fcmToken'); // ✅ এখানে দেখবেন token আসছে কিনা
+    try {
+      String? fcmToken = await FirebaseMessaging.instance.getToken();
+      debugPrint('🔥 FCM Token: $fcmToken');
 
-    if (fcmToken == null) {
-
-      _setLoading(false);
-      return false;
-    }
-
-
-
-    final http.Response loginRes = await _repo.login(
-      identifier: identifier,
-      password: password,
-      fcmToken: fcmToken,
-    );
-
-
-    _setLoading(false);
-
-    if (loginRes.statusCode == 200) {
-      if (isRememberMe.value) {
-        await SharePrefsHelper.setString(AppConst.loginUser, identifier);
-        await SharePrefsHelper.setString(AppConst.loginPass, password);
+      if (fcmToken == null) {
+        showErrorToast('notification_setup_failed'.tr);
+        // মেসেজ: "নোটিফিকেশন সেটআপ করা যাচ্ছে না, ইন্টারনেট কানেকশন চেক করে আবার চেষ্টা করুন।"
+        return false;
       }
 
-      final data = jsonDecode(loginRes.body);
-
-      await SharePrefsHelper.setString(AppConst.token, data['token'] ?? '');
-      await SharePrefsHelper.setString(AppConst.userID, data['id']?.toString() ?? '');
-      await SharePrefsHelper.setString(AppConst.licenceId, data['licence_id'] ?? '');
-      await SharePrefsHelper.setString(AppConst.nickName, data['nick_name'] ?? '');
-      await SharePrefsHelper.setBool(AppConst.isLoggedIn, true);
-      await _saveUserData(data);
-
-      debugPrint('✅ Login successful - navigating to mainNavScreen');
-      final locationController = Get.put(UserLocationController());
-      await locationController.initLocationTracking();
-      await AppSocket.init(
-        onSocketConnect: () {
-          debugPrint('🔌 Socket connected - going to mainNavScreen');
-          if (context.mounted) {
-            context.goNamed(RouteName.mainNavScreen);
-          }
-        },
+      final http.Response loginRes = await _repo.login(
+        identifier: identifier,
+        password: password,
+        fcmToken: fcmToken,
       );
 
+      if (loginRes.statusCode == 200) {
+        if (isRememberMe.value) {
+          await SharePrefsHelper.setString(AppConst.loginUser, identifier);
+          await SharePrefsHelper.setString(AppConst.loginPass, password);
+        }
+
+        final data = jsonDecode(loginRes.body);
+        debugPrint('📦 Parsed login response data: $data');
+
+        await SharePrefsHelper.setString(AppConst.token, data['token'] ?? '');
+        await SharePrefsHelper.setString(AppConst.userID, data['id']?.toString() ?? '');
+        await SharePrefsHelper.setString(AppConst.licenceId, data['licence_id'] ?? '');
+        await SharePrefsHelper.setString(AppConst.nickName, data['nick_name'] ?? '');
+       // await SharePrefsHelper.setString(AppConst.licenseNoVerified, data['license_no_verified'] ?? '');
+        await SharePrefsHelper.setBool(
+          AppConst.licenseNoVerified,
+          data['license_no_verified'] ?? false,
+        );
+
+
+        await SharePrefsHelper.setBool(AppConst.isLoggedIn, true);
 
 
 
-      return true;
-    } else {
-      debugPrint('❌ Login failed: ${loginRes.statusCode} - ${loginRes.body}');
-      ApiChecker.checkApi(loginRes);
+
+
+        await _saveUserData(data);
+
+        final locationController = Get.put(UserLocationController());
+        await locationController.initLocationTracking();
+
+        AppSocket.init(
+          onSocketConnect: () {
+            debugPrint('🔌 Socket connected - going to mainNavScreen');
+            if (context.mounted) {
+              context.goNamed(RouteName.mainNavScreen);
+            }
+            licenseController.clear();
+            passwordController.clear();
+          },
+        );
+
+        return true;
+      } else {
+        debugPrint('❌ Login failed: ${loginRes.statusCode} - ${loginRes.body}');
+        ApiChecker.checkApi(loginRes); // ব্যাকএন্ডের আসল error message (যেমন "Invalid credentials") দেখাবে
+        return false;
+      }
+    } on TimeoutException catch (e) {
+      debugPrint('⏰ Login timeout: $e');
+      showErrorToast('login_connection_timeout'.tr);
+      // মেসেজ: "সার্ভারের সাথে কানেক্ট হতে সময় বেশি লাগছে। ইন্টারনেট চেক করে আবার চেষ্টা করুন।"
       return false;
+    } on FormatException catch (e) {
+      debugPrint('❌ Login format/URL error: $e');
+      showErrorToast('login_unavailable_try_again'.tr);
+      // মেসেজ: "এই মুহূর্তে লগইন করা যাচ্ছে না। কিছুক্ষণ পর আবার চেষ্টা করুন।"
+      return false;
+    } catch (e) {
+      debugPrint('❌ Login exception: $e');
+      showErrorToast('login_failed_check_connection'.tr);
+      // মেসেজ: "লগইন সম্পন্ন করা যাচ্ছে না। আপনার ইন্টারনেট কানেকশন চেক করুন।"
+      return false;
+    } finally {
+      _setLoading(false);
     }
   }
-
   // ================= REGISTER & LOGIN ==================
 
   Future<bool> registerAndLogin({
@@ -388,6 +483,7 @@ class AuthController extends GetxController {
     await SharePrefsHelper.remove(AppConst.avatar); // ✅ clear avatar too
     await SharePrefsHelper.remove(AppConst.loginUser);
     await SharePrefsHelper.remove(AppConst.loginPass);
+    await SharePrefsHelper.remove(AppConst.licenseNoVerified);
     await SharePrefsHelper.setBool(AppConst.isLoggedIn, false);
   }
 }

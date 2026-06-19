@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
@@ -6,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image/image.dart' as img;
 import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/utils/toast_message/toast_message.dart';
 
 import '../../../core/service/api_client.dart';
 
@@ -107,10 +110,12 @@ class OcrController {
 
       _isProcessing = false;
       return plate;
+
     } catch (e) {
       debugPrint("Capture error: $e");
-      _isProcessing = false;
       return null;
+    } finally {
+      _isProcessing = false;
     }
   }
 
@@ -140,40 +145,57 @@ class OcrController {
   }
 
 
-
   var isVerify = false.obs;
+
   Future<bool> verifyUser({
     required String plateNumber,
-  }) async
-  {
+  }) async {
+    debugPrint('🚗 verifyUser() called | plateNumber: $plateNumber');
 
     isVerify.value = true;
 
     try {
       final uri = ApiUrl.verifyLicense;
+      debugPrint('📤 Calling API: $uri | body: {"plate_no": "$plateNumber"}');
 
       final http.Response response = await ApiClient.postData(
         uri: uri,
         body: {"plate_no": plateNumber},
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        debugPrint('✅ success verify');
-        return true;
-      } else {
-        debugPrint('❌ verify failed: ${response.body}');
-        return false;
+      debugPrint('📥 Response status: ${response.statusCode}');
+      debugPrint('📥 Response body: ${response.body}');
+
+      Map<String, dynamic>? data;
+      try {
+        data = jsonDecode(response.body);
+      } catch (e) {
+        debugPrint('⚠️ Response body parse failed: $e');
+        data = null;
       }
 
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        debugPrint('✅ success verify');
+        showSuccessToast(data?['message'] ?? 'license_verified_successfully'.tr);
+        return true;
+      } else {
+        debugPrint('❌ verify failed | status: ${response.statusCode} | body: ${response.body}');
+        showErrorToast(data?['message'] ?? 'license_verification_failed'.tr);
+        return false;
+      }
+    } on TimeoutException catch (e) {
+      debugPrint('⏰ verify timeout: $e');
+      showErrorToast('connection_timeout'.tr);
+      return false;
     } catch (e) {
       debugPrint('❌ verify error: $e');
+      showErrorToast('something_wrong'.tr);
       return false;
-
     } finally {
       isVerify.value = false;
+      debugPrint('🔚 verifyUser() finished | isVerify reset to false');
     }
   }
-
 
 
 

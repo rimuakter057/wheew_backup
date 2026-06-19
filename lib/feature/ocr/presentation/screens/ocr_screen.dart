@@ -1,7 +1,11 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:platchatapp/feature/ocr/data/ocr_controller.dart';
 import 'package:platchatapp/feature/ocr/presentation/widgets/dialog.dart';
+import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/extension/base_extension.dart';
 
 class OcrScannerScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -233,14 +237,18 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
                   //   onPressed: () => Navigator.pop(context),
                   // ),
                   const SizedBox(width: 8),
-                  const Text(
-                    "Plate Scanner",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.5,
-                    ),
+                  Row(
+                    children: [
+                      IconButton(onPressed: (){
+                        context.pop();
+
+                      }, icon: Icon(Icons.arrow_back_ios,color: AppColors.white,)),
+                      SizedBox(width: ResponsiveHelper.width(12),),
+                       Text(
+                        "Plate Scanner",
+                        style: context.titleMedium.copyWith(color: AppColors.white)
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -318,8 +326,10 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Colors.greenAccent, Colors.tealAccent],
+                          gradient:  LinearGradient(
+                            colors: [
+
+                              AppColors.blue, AppColors.blue],
                           ),
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
@@ -333,12 +343,12 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.camera_alt, color: Colors.black),
+                            Icon(Icons.camera_alt, color: Colors.white),
                             SizedBox(width: 8),
                             Text(
                               "SCAN NOW",
                               style: TextStyle(
-                                color: Colors.black,
+                                color: Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.1,

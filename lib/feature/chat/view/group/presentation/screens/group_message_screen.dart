@@ -763,85 +763,89 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      body: Column(
-        children: [
-          SizedBox(height: ResponsiveHelper.height(20)),
+      body: SafeArea(
+        top: true,
+        bottom: true,
+        child: Column(
+          children: [
+            SizedBox(height: ResponsiveHelper.height(20)),
 
-          // ── App Bar ──────────────────────────────────────
-          GroupMessageAppBar(
-            roomId: widget.roomId,
-            groupName: widget.groupName,
-            groupImage: widget.groupImage,
-          //  groupMembers: widget.groupMembers,
-            controller: controller,
-          ),
+            // ── App Bar ──────────────────────────────────────
+            GroupMessageAppBar(
+              roomId: widget.roomId,
+              groupName: widget.groupName,
+              groupImage: widget.groupImage,
+            //  groupMembers: widget.groupMembers,
+              controller: controller,
+            ),
 
-          // ── Messages List ────────────────────────────────
-          Expanded(
-            child: Obx(() {
-              if (controller.isLoadingGroupMessage.value &&
-                  controller.groupMessageList.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
-              }
+            // ── Messages List ────────────────────────────────
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoadingGroupMessage.value &&
+                    controller.groupMessageList.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              if (controller.groupMessageList.isEmpty) {
-                return Center(
-                  child: Text(
-                    'no_messages'.tr,
-                    style: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.fontSize(16),
-                      color: Colors.grey,
-                    ),
-                  ),
-                );
-              }
-
-              return ListView.builder(
-                controller: _scrollController,
-                reverse: true,
-                padding: EdgeInsets.symmetric(
-                  horizontal: ResponsiveHelper.width(16),
-                  vertical: ResponsiveHelper.height(8),
-                ),
-                itemCount: controller.groupMessageList.length + 1,
-                itemBuilder: (context, index) {
-                  // Pagination loader at the end
-                  if (index == controller.groupMessageList.length) {
-                    return controller.isLoadingMoreGroupMessage.value
-                        ?  Padding(
-                      padding: ResponsiveHelper.all(8),
-                      child: Center(child: CircularProgressIndicator()),
-                    )
-                        : const SizedBox.shrink();
-                  }
-
-                  final msg = controller.groupMessageList[index];
-                  final bool isMine = msg.isMine == true;
-
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      bottom: ResponsiveHelper.height(8),
-                    ),
-                    child: GroupMessageBubble(
-                      msg: msg,
-                      isMine: isMine,
-                      senderName: msg.sender?.nickName ?? '',
-                      senderAvatar: msg.sender?.avatar ?? '',
-                      text: msg.message ?? '',
-                      time: formatTime(msg.createdAt ?? ''),
+                if (controller.groupMessageList.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'no_messages'.tr,
+                      style: GoogleFonts.poppins(
+                        fontSize: ResponsiveHelper.fontSize(16),
+                        color: Colors.grey,
+                      ),
                     ),
                   );
-                },
-              );
-            }),
-          ),
+                }
 
-          // ── Message Input ────────────────────────────────
-          GroupMessageInput(
-            roomId: widget.roomId,
-            controller: controller,
-          ),
-        ],
+                return ListView.builder(
+                  controller: _scrollController,
+                  reverse: true,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveHelper.width(16),
+                    vertical: ResponsiveHelper.height(8),
+                  ),
+                  itemCount: controller.groupMessageList.length + 1,
+                  itemBuilder: (context, index) {
+                    // Pagination loader at the end
+                    if (index == controller.groupMessageList.length) {
+                      return controller.isLoadingMoreGroupMessage.value
+                          ?  Padding(
+                        padding: ResponsiveHelper.all(8),
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                          : const SizedBox.shrink();
+                    }
+
+                    final msg = controller.groupMessageList[index];
+                    final bool isMine = msg.isMine == true;
+
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        bottom: ResponsiveHelper.height(8),
+                      ),
+                      child: GroupMessageBubble(
+                        msg: msg,
+                        isMine: isMine,
+                        senderName: msg.sender?.nickName ?? '',
+                        senderAvatar: msg.sender?.avatar ?? '',
+                        text: msg.message ?? '',
+                        time: formatTime(msg.createdAt ?? ''),
+                      ),
+                    );
+                  },
+                );
+              }),
+            ),
+
+            // ── Message Input ────────────────────────────────
+            GroupMessageInput(
+              roomId: widget.roomId,
+              controller: controller,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -31,7 +31,8 @@ class _MainNavScreenState extends State<MainNavScreen> {
       case 0:
         return const ChatListScreen();
       case 1:
-        return  OcrScannerScreen(cameras: cameras,);
+       // return  OcrScannerScreen(cameras: cameras,);
+      return  ScanScreen();
       case 2:
         return const MapScreen();
       case 3:

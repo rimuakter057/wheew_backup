@@ -15,6 +15,7 @@ class MyQrView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Obx(() {
           // ── Loading ──────────────────────────────────
