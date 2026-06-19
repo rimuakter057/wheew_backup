@@ -228,13 +228,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   }
 
                   // Count letters and numbers
-                  final letterCount = RegExp(r'[A-Za-z]')
-                      .allMatches(text)
-                      .length;
+                  final letterCount = RegExp(
+                    r'[A-Za-z]',
+                  ).allMatches(text).length;
 
-                  final numberCount = RegExp(r'[0-9]')
-                      .allMatches(text)
-                      .length;
+                  final numberCount = RegExp(r'[0-9]').allMatches(text).length;
 
                   if (letterCount < 3 || numberCount < 3) {
                     return 'licence_validator'.tr;
