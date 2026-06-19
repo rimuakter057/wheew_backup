@@ -1,6 +1,8 @@
 // ignore_for_file: unnecessary_null_comparison, invalid_use_of_protected_member
 
 import 'dart:async';
+import 'package:audioplayers/audioplayers.dart';
+
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:platchatapp/core/service/storage_service.dart';
@@ -26,6 +28,16 @@ import 'package:http/http.dart' as http;
 
 
 class ChatController extends GetxController {
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
+  Future<void> _playMessageSound() async {
+    try {
+      await _audioPlayer.play(AssetSource('audio/message_chime.wav'));
+    } catch (e) {
+      debugPrint('Error playing message sound: $e');
+    }
+  }
+
   var isAddingMember = false.obs;
 
   Future<bool> addGroupMember({
@@ -413,10 +425,14 @@ class ChatController extends GetxController {
           // ✅ addAll করো, clear করো না!
           for (final msg in data.messages!) {
             msg.isMine = msg.isMine == true;
-            userMessageList.add(msg); // ✅ শুধু add, clear নয়
+            userMessageList.add(msg); // ✅ শুধু add, clear নয়
           }
           pageCount++;
         }
+
+        // ✅ Backend fetch হলে server automatically is_read = true করে দেয়
+        // তাই local UI-তেও সাথে সাথে unread badge সরিয়ে দিচ্ছি
+        _resetUnreadLocally(roomID.value);
       }
     } catch (e) {
       debugPrint("❌ Fetch error: $e");
@@ -550,11 +566,11 @@ class ChatController extends GetxController {
         receiverId: newMessage.receiverId,
         message: newMessage.message,
         type: newMessage.type,
-        isRead: false,
+        isRead: false,     // receiver-এর কাছে এখনো unread
         isDelivered: false,
         createdAt: newMessage.createdAt,
         updatedAt: newMessage.updatedAt,
-        isMine: true,
+        isMine: true,      // ✅ নিজের message হিসেবে mark — badge দেখাবে না
       );
 
       tempList.removeAt(roomIndex);
@@ -570,6 +586,25 @@ class ChatController extends GetxController {
       debugPrint('📤 Message sent confirmation: $value');
       // Optional: Server confirmation পেলে কিছু করতে চাইলে
     });
+  }
+
+  // ✅ Chat screen খুললে locally unread badge reset করো
+  // (backend fetch-এই automatically is_read = true হয় — কোনো socket event দরকার নেই)
+  void markMessagesAsRead({required String roomId}) {
+    if (roomId.isEmpty) return;
+    _resetUnreadLocally(roomId);
+  }
+
+  // ┉┉ Internal helper ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉
+  void _resetUnreadLocally(String roomId) {
+    if (roomId.isEmpty) return;
+    final idx = userChatList.indexWhere((r) => r.id == roomId);
+    if (idx != -1) {
+      userChatList[idx].unreadCount = 0;
+      userChatList[idx].latestMessage?.isRead = true;
+      userChatList.refresh(); // GetX UI trigger
+      debugPrint('✅ Local unread reset for room: $roomId');
+    }
   }
 
   ///new message==========================
@@ -632,8 +667,34 @@ class ChatController extends GetxController {
         debugPrint('✅ Added to message list');
       }
 
+      // ✅ Other user reply করলে = সে আমার message পড়েছে
+      // তাই আমার সব sent message isRead = true করে দাও (নীল ✓✓)
+      if (model.isMine == false && model.chatRoomId == roomID.value) {
+        _markMySentMessagesAsRead();
+        _playMessageSound();
+      } else if (model.isMine == false) {
+        _playMessageSound();
+      }
+
       updateChatRoomInList(model);
     });
+  }
+
+  // ✅ আমি যে room-এ আছি সেখানে other user reply করলে
+  // আমার সব sent message-এর isRead = true করো → নীল ✓✓
+  void _markMySentMessagesAsRead() {
+    bool changed = false;
+    for (int i = 0; i < userMessageList.length; i++) {
+      if (userMessageList[i].isMine == true &&
+          userMessageList[i].isRead != true) {
+        userMessageList[i].isRead = true;
+        changed = true;
+      }
+    }
+    if (changed) {
+      userMessageList.refresh(); // GetX UI trigger → bubble তে নীল tick
+      debugPrint('✅ My sent messages marked as read (they replied)');
+    }
   }
 
 
@@ -1125,11 +1186,10 @@ class ChatController extends GetxController {
         final GroupMessageResponseModel model =
             GroupMessageResponseModel.fromJson(value);
 
-        if (model.groupChatRoomId == groupRoomID.value) {
-          // ✅ sender_id দিয়ে check
-          final String myId = await SharePrefsHelper.getString(AppConst.userID);
-          final bool isMyMessage = model.senderId == myId;
+        final String myId = await SharePrefsHelper.getString(AppConst.userID);
+        final bool isMyMessage = model.senderId == myId;
 
+        if (model.groupChatRoomId == groupRoomID.value) {
           debugPrint('👤 myId: $myId');
           debugPrint('📨 senderId: ${model.senderId}');
           debugPrint('🔍 isMyMessage: $isMyMessage');
@@ -1153,6 +1213,10 @@ class ChatController extends GetxController {
             groupMessageList.insert(0, model);
             debugPrint('✅ Others message added');
           }
+        }
+
+        if (!isMyMessage) {
+          _playMessageSound();
         }
 
         updateGroupChatRoomInList(model);

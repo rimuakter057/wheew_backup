@@ -73,6 +73,8 @@ class _MessageScreenState extends State<MessageScreen> {
 
     if (_currentRoomId.isNotEmpty) {
       chatController.fetchInboxMessage(roomId: _currentRoomId, refresh: true);
+      // ✅ screen খুললেই সব message পড়া হিসেবে mark করো
+      chatController.markMessagesAsRead(roomId: _currentRoomId);
     }
 
     // ── Voice auto-send ──
@@ -247,9 +249,11 @@ class _MessageScreenState extends State<MessageScreen> {
                       return MessageBubble(
                         message: msg.message ?? '',
                         isMine: isMine,
-
                         type: msg.type,
                         fileUrl: msg.fileUrl,
+                        // ✅ read receipt ticks
+                        isRead: msg.isRead,
+                        isDelivered: msg.isDelivered,
                       );
                     },
                   );

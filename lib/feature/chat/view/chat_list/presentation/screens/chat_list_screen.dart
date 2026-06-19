@@ -151,16 +151,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       onLongPress: () => _showDeleteDialog(context, room),
                       child: ChatTile(
                         name: room.displayName,
-                        // imagePath: isGroup
-                        //     ? AppConst.group
-                        //     : ImageHandler.imagesHandle(
-                        //            room.displayAvatar.isNotEmpty
-                        //       ? room.displayAvatar
-                        //       : AppConst.unknown,
-                        //   isProfile: true,
-                        // ),
-
-
                         imagePath: isGroup
                             ? ImageHandler.imagesHandle(
                           room.displayAvatar.isNotEmpty
@@ -174,7 +164,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
                               : AppConst.unknown,
                           isProfile: true,
                         ),
-
                         message: lastMessage,
                         // unread হলে bold
                         fontWeight: room.latestMessage?.isUnread == true
@@ -190,7 +179,11 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                 room.isBlockedMe == true),
                         isGroup: isGroup,
                         // group এ rating নেই
-                          rating: isGroup ? null : ((room.otherUser?.rating ?? 0) > 0 ? (room.otherUser!.rating!).toDouble() : null),
+                        rating: isGroup ? null : ((room.otherUser?.rating ?? 0) > 0 ? (room.otherUser!.rating!).toDouble() : null),
+                        // ✅ unread badge — নিজের message হলে 0 দেখাবে
+                        unreadCount: room.latestMessage?.isMine == true
+                            ? 0
+                            : (room.unreadCount ?? 0),
                         onTap: () => navigateToChat(context: context, room: room),
                       ),
                     );

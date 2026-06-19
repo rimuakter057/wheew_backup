@@ -14,8 +14,9 @@ class ChatTile extends StatelessWidget {
   final VoidCallback onTap;
   final FontWeight fontWeight;
   final bool? isBlock;
-  final bool isGroup;        // ✅ নতুন
-  final double? rating;      // ✅ নতুন — OtherUser থেকে আসবে
+  final bool isGroup;
+  final double? rating;
+  final int? unreadCount;           // ✅ নতুন
   final void Function()? onUnblock;
 
   const ChatTile({
@@ -27,13 +28,16 @@ class ChatTile extends StatelessWidget {
     required this.onTap,
     required this.fontWeight,
     this.isBlock,
-    this.isGroup = false,    // ✅ default false
+    this.isGroup = false,
     this.rating,
+    this.unreadCount,               // ✅ নতুন
     this.onUnblock,
   });
 
   @override
   Widget build(BuildContext context) {
+    final bool hasUnread = (unreadCount ?? 0) > 0;
+
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -70,7 +74,7 @@ class ChatTile extends StatelessWidget {
                         ),
                       ),
 
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
 
                       isBlock == true
                           ? GestureDetector(
@@ -97,8 +101,13 @@ class ChatTile extends StatelessWidget {
                           : Text(
                         time,
                         style: GoogleFonts.questrial(
-                          color: AppColors.textBlack,
+                          color: hasUnread
+                              ? AppColors.blue
+                              : AppColors.textBlack,
                           fontSize: ResponsiveHelper.fontSize(12),
+                          fontWeight: hasUnread
+                              ? FontWeight.w700
+                              : FontWeight.w400,
                         ),
                       ),
                     ],
@@ -106,7 +115,7 @@ class ChatTile extends StatelessWidget {
 
                   SizedBox(height: ResponsiveHelper.height(4)),
 
-                  // ✅ Rating — শুধু ONE_TO_ONE এ দেখাবে (block বা group না হলে)
+                  // ✅ Rating — শুধু ONE_TO_ONE এ
                   if (isBlock != true && !isGroup && rating != null)
                     Row(
                       children: [
@@ -131,17 +140,49 @@ class ChatTile extends StatelessWidget {
 
                   SizedBox(height: ResponsiveHelper.height(4)),
 
-                  /// Message
+                  /// Message + Unread badge row
                   if (isBlock != true)
-                    Text(
-                      message,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.questrial(
-                        fontSize: ResponsiveHelper.fontSize(14),
-                        fontWeight: fontWeight,
-                        color: AppColors.textBlack,
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            message,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.questrial(
+                              fontSize: ResponsiveHelper.fontSize(14),
+                              fontWeight: fontWeight,
+                              color: hasUnread
+                                  ? AppColors.textBlack
+                                  : AppColors.textBlack.withValues(alpha: 0.65),
+                            ),
+                          ),
+                        ),
+
+                        // ✅ Unread count badge
+                        if (hasUnread) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            constraints: const BoxConstraints(minWidth: 20),
+                            height: 20,
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            decoration: const BoxDecoration(
+                              color: AppColors.blue,
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                            ),
+                            child: Center(
+                              child: Text(
+                                unreadCount! > 99 ? '99+' : '$unreadCount',
+                                style: GoogleFonts.questrial(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                 ],
               ),

@@ -32,8 +32,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,7 +77,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 SizedBox(height: ResponsiveHelper.spacing(24)),
 
-
                 /// Profile Image - Fixed circular display
                 Center(
                   child: Obx(() {
@@ -87,8 +84,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     return GestureDetector(
                       onTap: () {
                         final image =
-                            controller.tempCroppedImage.value?.path ?? // ✅ tempCroppedImage
-                                controller.userProfile.value?.avatar;
+                            controller
+                                .tempCroppedImage
+                                .value
+                                ?.path ?? // ✅ tempCroppedImage
+                            controller.userProfile.value?.avatar;
 
                         if (image != null && image.isNotEmpty) {
                           context.pushNamed(
@@ -104,40 +104,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             width: ResponsiveHelper.iconSize(90),
                             height: ResponsiveHelper.iconSize(90),
                             child: ClipOval(
-                              child: controller.tempCroppedImage.value != null // ✅ tempCroppedImage
+                              child:
+                                  controller.tempCroppedImage.value !=
+                                      null // ✅ tempCroppedImage
                                   ? Image.file(
-                                controller.tempCroppedImage.value!, // ✅ tempCroppedImage
-                                width: ResponsiveHelper.iconSize(90),
-                                height: ResponsiveHelper.iconSize(90),
-                                fit: BoxFit.cover,
-                              )
+                                      controller
+                                          .tempCroppedImage
+                                          .value!, // ✅ tempCroppedImage
+                                      width: ResponsiveHelper.iconSize(90),
+                                      height: ResponsiveHelper.iconSize(90),
+                                      fit: BoxFit.cover,
+                                    )
                                   : avatar != null && avatar.isNotEmpty
                                   ? Image.network(
-                                avatar,
-                                width: ResponsiveHelper.iconSize(90),
-                                height: ResponsiveHelper.iconSize(90),
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Container(
-                                  width: ResponsiveHelper.iconSize(90),
-                                  height: ResponsiveHelper.iconSize(90),
-                                  color: AppColors.greyShade,
-                                  child: Icon(
-                                    Icons.person,
-                                    size: ResponsiveHelper.iconSize(45),
-                                    color: AppColors.blue,
-                                  ),
-                                ),
-                              )
+                                      avatar,
+                                      width: ResponsiveHelper.iconSize(90),
+                                      height: ResponsiveHelper.iconSize(90),
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, _, _) => Container(
+                                        width: ResponsiveHelper.iconSize(90),
+                                        height: ResponsiveHelper.iconSize(90),
+                                        color: AppColors.greyShade,
+                                        child: Icon(
+                                          Icons.person,
+                                          size: ResponsiveHelper.iconSize(45),
+                                          color: AppColors.blue,
+                                        ),
+                                      ),
+                                    )
                                   : Container(
-                                width: ResponsiveHelper.iconSize(90),
-                                height: ResponsiveHelper.iconSize(90),
-                                color: AppColors.greyShade,
-                                child: Icon(
-                                  Icons.person,
-                                  size: ResponsiveHelper.iconSize(45),
-                                  color: AppColors.blue,
-                                ),
-                              ),
+                                      width: ResponsiveHelper.iconSize(90),
+                                      height: ResponsiveHelper.iconSize(90),
+                                      color: AppColors.greyShade,
+                                      child: Icon(
+                                        Icons.person,
+                                        size: ResponsiveHelper.iconSize(45),
+                                        color: AppColors.blue,
+                                      ),
+                                    ),
                             ),
                           ),
 
@@ -183,6 +187,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 SizedBox(height: ResponsiveHelper.spacing(20)),
 
+                // _label('license_number_title'.tr),
+                // SizedBox(height: ResponsiveHelper.spacing(4)),
+                // _textField(
+                //   controller: controller.licenseController,
+                //   hintText: 'license_number1'.tr,
+                //   enabled: false,
+                // ),
                 _label('license_number_title'.tr),
                 SizedBox(height: ResponsiveHelper.spacing(4)),
                 _textField(
@@ -190,16 +201,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   hintText: 'license_number1'.tr,
                   enabled: false,
                 ),
+                SizedBox(height: ResponsiveHelper.spacing(20)),
+                _label('license_number_title'.tr),
+                SizedBox(height: ResponsiveHelper.spacing(4)),
 
-
-
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    // এখানে ভুল হয়েছিল, নিচে সঠিক কোডটি দেওয়া হলো:
+                    border: Border.all(color: Colors.red.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.info_outline, color: Colors.red, size: 20),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Not verified (because the vehicle ownership document has not been registered)',
+                          style: TextStyle(
+                            color: Colors.red[700],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(20)),
                 Text(
                   'upload_documents'.tr,
                   textAlign: TextAlign.start,
                   style: GoogleFonts.poppins(
-                    fontSize:   ResponsiveHelper.fontSize(16),
+                    fontSize: ResponsiveHelper.fontSize(16),
                     fontWeight: FontWeight.w500,
-                    color:      AppColors.textBlack,
+                    color: AppColors.textBlack,
                   ),
                 ),
 
@@ -210,7 +249,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   }
                   return Padding(
                     padding: EdgeInsets.only(
-                      top:    ResponsiveHelper.spacing(12),
+                      top: ResponsiveHelper.spacing(12),
                       bottom: ResponsiveHelper.spacing(8),
                     ),
                     child: const LinearProgressIndicator(minHeight: 3),
@@ -220,25 +259,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: ResponsiveHelper.spacing(18)),
 
                 CustomUploadCard(
-                  title:        'drivers_license'.tr,
+                  title: 'drivers_license'.tr,
                   documentType: 'LICENSE',
                 ),
 
                 SizedBox(height: ResponsiveHelper.spacing(12)),
 
                 CustomUploadCard(
-                  title:        'car_insurance'.tr,
+                  title: 'car_insurance'.tr,
                   documentType: 'INSURANCE',
                 ),
 
                 SizedBox(height: ResponsiveHelper.spacing(12)),
 
-                CustomUploadCard(
-                  title:        'car_tax'.tr,
-                  documentType: 'TAX',
-                ),
+                CustomUploadCard(title: 'car_tax'.tr, documentType: 'TAX'),
                 SizedBox(height: ResponsiveHelper.spacing(12)),
-
               ],
             ),
           );
@@ -263,8 +298,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required TextEditingController controller,
     required String hintText,
     bool enabled = true,
-  })
-  {
+  }) {
     return TextField(
       controller: controller,
       enabled: enabled,

@@ -68,6 +68,7 @@ dependencies:
   geolocator: ^14.0.2
   mobile_scanner: ^7.2.0
   image: ^4.5.4
+  audioplayers: ^6.7.1
 
   #flutter_localizations:
 dev_dependencies:
@@ -97,3 +98,4 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/animations/
+    - assets/audio/

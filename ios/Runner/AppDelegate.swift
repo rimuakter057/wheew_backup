@@ -1,7 +1,8 @@
 import Flutter
 import UIKit
 import AppIntents
-import GoogleMaps  // ← Add this line
+import GoogleMaps
+import UserNotifications
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -19,8 +20,12 @@ import GoogleMaps  // ← Add this line
       PlateChatAppShortcuts.updateAppShortcutParameters()
     }
 
+    // ── Allow foreground notification banners on iOS ──
+    if #available(iOS 10.0, *) {
+      UNUserNotificationCenter.current().delegate = self
+    }
+
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
-
 }
