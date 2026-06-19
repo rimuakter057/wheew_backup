@@ -1,8 +1,8 @@
 // lib/voice/intent_parser.dart
 
-enum VoiceAction { openApp, openChat, sendMessage, findUser, unknown }
+enum VoiceAction { openApp, openChat, sendMessage, findUser, triggerVoiceMode, unknown }
 
-enum VoiceLang { bangla, english, italian, unknown }
+enum VoiceLang { english, italian, unknown }
 
 class ParsedIntent {
   final VoiceAction action;
@@ -49,7 +49,6 @@ class IntentParser {
   static final IntentParser instance = IntentParser._();
 
   static const _defaultMsg = {
-    VoiceLang.bangla: 'হ্যালো',
     VoiceLang.english: 'Hello',
     VoiceLang.italian: 'Ciao',
   };
@@ -71,109 +70,6 @@ class IntentParser {
   }
 
   static final List<_IntentPattern> _patterns = [
-    // ══ BANGLA — sendMessage ══
-    _p(
-      r'(\w+)\s+k(?:e|ে)?\s+(.+?)\s+(?:bolo|pathao|lekho|dao|janao|patha\s+dao|lekhe\s+pathao)',
-      VoiceAction.sendMessage,
-      VoiceLang.bangla,
-      nameG: 1,
-      msgG: 2,
-    ),
-    _p(
-      r'(\w+)\s+r?\s*kache\s+(.+?)\s+pathao',
-      VoiceAction.sendMessage,
-      VoiceLang.bangla,
-      nameG: 1,
-      msgG: 2,
-    ),
-    _p(
-      r'(\w+)\s+k(?:e|ে)?\s+hello\s+bolo',
-      VoiceAction.sendMessage,
-      VoiceLang.bangla,
-      nameG: 1,
-    ),
-    _p(
-      r'(\w+)\s+k(?:e|ে)?\s+hi\s+bolo',
-      VoiceAction.sendMessage,
-      VoiceLang.bangla,
-      nameG: 1,
-    ),
-    _p(
-      r'(\w+)\s+k(?:e|ে)?\s+salam\s+(?:deo|dao)',
-      VoiceAction.sendMessage,
-      VoiceLang.bangla,
-      nameG: 1,
-    ),
-    _p(
-      r'(\w+)\s+k(?:e|ে)?\s+message\s+pathao',
-      VoiceAction.sendMessage,
-      VoiceLang.bangla,
-      nameG: 1,
-    ),
-
-    // ══ BANGLA — openChat ══
-    _p(
-      r'(\w+)\s+er\s+sathe\s+(?:chat|kotha)\s+koro',
-      VoiceAction.openChat,
-      VoiceLang.bangla,
-      nameG: 1,
-    ),
-    _p(
-      r'(\w+)\s+k(?:e|ে)?\s+message\s+dite\s+chai',
-      VoiceAction.openChat,
-      VoiceLang.bangla,
-      nameG: 1,
-    ),
-    _p(
-      r'(\w+)\s+er\s+(?:inbox|chat|conversation)\s+kholo',
-      VoiceAction.openChat,
-      VoiceLang.bangla,
-      nameG: 1,
-    ),
-    _p(
-      r'(\w+)\s+er\s+sathe\s+kotha\s+bolte\s+chai',
-      VoiceAction.openChat,
-      VoiceLang.bangla,
-      nameG: 1,
-    ),
-    _p(
-      r'(\w+)\s+er\s+chat\s+open\s+koro',
-      VoiceAction.openChat,
-      VoiceLang.bangla,
-      nameG: 1,
-    ),
-    _p(
-      r'(\w+)\s+k(?:e|ে)?\s+dheko',
-      VoiceAction.openChat,
-      VoiceLang.bangla,
-      nameG: 1,
-    ),
-
-    // ══ BANGLA — findUser ══
-    _p(
-      r'(\w+)\s+k(?:e|ে)?\s+(?:khojo|khujchi|find\s+koro)',
-      VoiceAction.findUser,
-      VoiceLang.bangla,
-      nameG: 1,
-    ),
-    _p(r'(\w+)\s+ache\s+ki', VoiceAction.findUser, VoiceLang.bangla, nameG: 1),
-    _p(
-      r'(\w+)\s+r?\s*(?:profile|sathe)\s+(?:dekha|connect\s+koro)',
-      VoiceAction.findUser,
-      VoiceLang.bangla,
-      nameG: 1,
-    ),
-
-    // ══ BANGLA — openApp ══
-    _p(
-      r'platechat\s+(?:open|kholo|chhalu|start)\s+koro',
-      VoiceAction.openApp,
-      VoiceLang.bangla,
-    ),
-    _p(r'platechat\s+e\s+jao', VoiceAction.openApp, VoiceLang.bangla),
-    _p(r'chat\s+app\s+ta\s+khulo', VoiceAction.openApp, VoiceLang.bangla),
-    _p(r'app\s+ta\s+open\s+koro', VoiceAction.openApp, VoiceLang.bangla),
-
     // ══ ENGLISH — sendMessage ══
     _p(
       r"tell\s+(\w+)\s+(?:that\s+)?(.+)",
@@ -201,13 +97,6 @@ class IntentParser {
       VoiceLang.english,
       nameG: 1,
       msgG: 2,
-    ),
-    _p(
-      r"send\s+(.+?)\s+to\s+(\w+)",
-      VoiceAction.sendMessage,
-      VoiceLang.english,
-      nameG: 2,
-      msgG: 1,
     ),
     _p(
       r"text\s+(\w+)\s+(.+)",
@@ -488,7 +377,18 @@ class IntentParser {
       VoiceAction.openApp,
       VoiceLang.italian,
     ),
-    _p(r"apri\s+la\s+mia\s+chat", VoiceAction.openApp, VoiceLang.italian),
+    _p(
+      r"apri\s+la\s+mia\s+chat",
+      VoiceAction.openApp,
+      VoiceLang.italian,
+    ),
+
+    // ══ TRIGGER VOICE MODE ══
+    _p(
+      r"^trigger_voice_mode$",
+      VoiceAction.triggerVoiceMode,
+      VoiceLang.english,
+    ),
   ];
 
   ParsedIntent parse(String raw) {
@@ -530,7 +430,6 @@ class IntentParser {
     if (result.isValid) return result;
 
     final lower = raw.toLowerCase();
-    if (_looksLikeBangla(lower)) return parse(_normalizeBangla(lower));
     if (_looksLikeItalian(lower)) return parse(_normalizeItalian(lower));
 
     return result;
@@ -543,8 +442,6 @@ class IntentParser {
     'quickly',
     'per favore',
     'cortesemente',
-    'doya',
-    'kore',
   };
 
   String? _cleanName(String? name) {
@@ -559,13 +456,8 @@ class IntentParser {
     return (matchLen / input.length).clamp(0.3, 1.0);
   }
 
-  bool _looksLikeBangla(String s) =>
-      s.contains(RegExp(r'koro|bolo|pathao|kholo|jao|chai'));
-
   bool _looksLikeItalian(String s) =>
       s.contains(RegExp(r'\b(apri|manda|scrivi|trova|vai|invia)\b'));
-
-  String _normalizeBangla(String s) => s.replaceAll('  ', ' ');
 
   String _normalizeItalian(String s) => s
       .replaceAll("l'", "l ")

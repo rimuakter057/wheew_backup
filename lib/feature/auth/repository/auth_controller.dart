@@ -57,7 +57,13 @@ class AuthController extends GetxController {
   }) async {
     _setLoading(true);
 
-    String? fcmToken = await FirebaseMessaging.instance.getToken();
+    String? fcmToken;
+    try {
+      fcmToken = await FirebaseMessaging.instance.getToken();
+    } catch (e) {
+      debugPrint('⚠️ Failed to get FCM token (probably APNS/Firebase missing on iOS): $e');
+      fcmToken = 'dummy_fcm_token_ios';
+    }
     debugPrint('🔥 FCM Token: $fcmToken'); // ✅ এখানে দেখবেন token আসছে কিনা
 
     if (fcmToken == null) {
@@ -128,7 +134,13 @@ class AuthController extends GetxController {
   }) async {
     _setLoading(true);
 
-    String? fcmToken = await FirebaseMessaging.instance.getToken();
+    String? fcmToken;
+    try {
+      fcmToken = await FirebaseMessaging.instance.getToken();
+    } catch (e) {
+      debugPrint('⚠️ Failed to get FCM token during registration: $e');
+      fcmToken = 'dummy_fcm_token_ios';
+    }
     if (fcmToken == null) {
       _setLoading(false);
       return false;

@@ -16,6 +16,8 @@ import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/voice/conversational_voice_handler.dart';
+import 'package:platchatapp/voice/voice_action_router.dart';
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
@@ -27,10 +29,12 @@ class ChatListScreen extends StatefulWidget {
 class _ChatListScreenState extends State<ChatListScreen> {
   final ChatController controller = Get.put(ChatController());
   final ScrollController scrollController = ScrollController();
+  late final VoiceActionRouter voiceRouter;
 
   @override
   void initState() {
     super.initState();
+    voiceRouter = VoiceActionRouter(navigatorKey: Get.key);
 
     // Socket connect করো যদি এখনো connected না থাকে
     if (!AppSocket.isConnected) {
@@ -76,6 +80,14 @@ class _ChatListScreenState extends State<ChatListScreen> {
       appBar: ChatListAppBar(
         onCreateGroupTap: () =>
             showCreateGroupDialog(context: context, controller: controller),
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          ConversationalVoiceHandler.instance.startConversationalFlow(voiceRouter);
+        },
+        backgroundColor: AppColors.blueClient,
+        child: const Icon(Icons.mic, color: Colors.white),
       ),
 
       body: RefreshIndicator(

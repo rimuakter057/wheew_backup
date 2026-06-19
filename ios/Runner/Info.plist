@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>platchatapp</string>
+	<string>Platechat</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -32,7 +32,10 @@
 	<string>PlateChat uses the camera to scan QR codes</string>
 
 	<key>NSMicrophoneUsageDescription</key>
-	<string>PlateChat uses the microphone to send voice messages</string>
+	<string>PlateChat uses the microphone to send voice messages and for voice commands</string>
+
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>PlateChat uses speech recognition to understand your conversational voice commands.</string>
 
 	<key>NSSiriUsageDescription</key>
 	<string>PlateChat uses Siri to send messages with your voice</string>
@@ -60,9 +63,18 @@
 		<string>https</string>
 	</array>
 
+	<!-- ══ Custom URL Scheme for Siri Intent ══ -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>platechat</string>
+			</array>
+		</dict>
+	</array>
+
 	<!-- ══ UI ══ -->
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

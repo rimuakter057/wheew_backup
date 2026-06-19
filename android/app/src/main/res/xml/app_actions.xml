@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Google Assistant App Actions for PlateChat
+  ==========================================
+  Allows users to say:
+    "Hey Google, send a message to John on PlateChat"
+    "Hey Google, message John on PlateChat"
+    "Hey Google, open chat with John on PlateChat"
+
+  Deep-link format handled by MainActivity:
+    platechat://send?to={contactName}&msg={message}
+    platechat://chat?to={contactName}
+
+  Reference:
+    https://developers.google.com/assistant/app/action-types
+-->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- ══ SEND MESSAGE ══════════════════════════════════════════════════════ -->
+    <capability android:name="actions.intent.SEND_MESSAGE">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="me.platechat.app"
+            android:targetClass="me.platechat.app.MainActivity">
+            <!--
+              message.recipient.name → query param "to"
+              message.text           → query param "msg"
+            -->
+            <parameter
+                android:name="message.recipient.name"
+                android:key="to" />
+            <parameter
+                android:name="message.text"
+                android:key="msg" />
+            <data
+                android:scheme="platechat"
+                android:host="send" />
+        </intent>
+    </capability>
+
+    <!-- ══ OPEN CHAT (no message text) ══════════════════════════════════════ -->
+    <capability android:name="actions.intent.OPEN_APP_FEATURE">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="me.platechat.app"
+            android:targetClass="me.platechat.app.MainActivity">
+            <parameter
+                android:name="feature"
+                android:key="to" />
+            <data
+                android:scheme="platechat"
+                android:host="chat" />
+        </intent>
+    </capability>
+
+    <!-- ══ SEARCH / RAW VOICE QUERY ══════════════════════════════════════ -->
+    <capability android:name="actions.intent.GET_THING">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="me.platechat.app"
+            android:targetClass="me.platechat.app.MainActivity">
+            <parameter
+                android:name="thing.name"
+                android:key="query" />
+            <data
+                android:scheme="platechat"
+                android:host="search" />
+        </intent>
+    </capability>
+
+</shortcuts>

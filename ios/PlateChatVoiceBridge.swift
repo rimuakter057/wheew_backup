@@ -2,21 +2,28 @@
 
 import Flutter
 import UIKit
+import Intents
+import IntentsUI
 
-class PlateChatVoiceBridge: NSObject {
+class PlateChatVoiceBridge: NSObject, INUIAddVoiceShortcutViewControllerDelegate {
     static let shared = PlateChatVoiceBridge()
     private var channel: FlutterMethodChannel?
+    private weak var flutterViewController: FlutterViewController?
 
     func setup(with controller: FlutterViewController) {
+        self.flutterViewController = controller
         channel = FlutterMethodChannel(
             name: "com.platechat/voice_intent",
             binaryMessenger: controller.binaryMessenger
         )
 
-        // Flutter থেকে checkPendingIntent call আসলে respond করো
+        // Flutter থেকে call আসলে respond করো
         channel?.setMethodCallHandler { [weak self] call, result in
             if call.method == "checkPendingIntent" {
                 self?.checkPendingVoiceIntent()
+                result(nil)
+            } else if call.method == "triggerSiriShortcutPrompt" {
+                self?.presentSiriShortcutPrompt()
                 result(nil)
             }
         }
@@ -29,7 +36,9 @@ class PlateChatVoiceBridge: NSObject {
     }
 
     func checkPendingVoiceIntent() {
+        // group UserDefaults এর বদলে standard use করো
         let defaults = UserDefaults.standard
+        
         guard let action = defaults.string(forKey: "voice_action"),
               !action.isEmpty else { return }
 
@@ -43,13 +52,38 @@ class PlateChatVoiceBridge: NSObject {
 
         let rawText: String
         if action == "sendMessage" {
-            rawText = "\(contactName) k \(message) bolo"
+            rawText = "tell \(contactName) \(message)"
         } else {
-            rawText = "\(contactName) er chat open koro"
+            rawText = "open chat with \(contactName)"
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.sendToFlutter(rawText)
         }
+    }
+
+    func presentSiriShortcutPrompt() {
+        if #available(iOS 12.0, *) {
+            let userActivity = NSUserActivity(activityType: "com.platechat.sendMessage")
+            userActivity.title = "Send a message in PlateChat"
+            userActivity.suggestedInvocationPhrase = "Send a message in PlateChat"
+            let shortcut = INShortcut(userActivity: userActivity)
+            
+            DispatchQueue.main.async {
+                guard let rootVC = self.flutterViewController else { return }
+                let addVC = INUIAddVoiceShortcutViewController(shortcut: shortcut)
+                addVC.delegate = self
+                rootVC.present(addVC, animated: true, completion: nil)
+            }
+        }
+    }
+
+    // ══ INUIAddVoiceShortcutViewControllerDelegate ══
+    func addVoiceShortcutViewController(_ controller: INUIAddVoiceShortcutViewController, didFinishWith voiceShortcut: INVoiceShortcut?, error: Error?) {
+        controller.dismiss(animated: true, completion: nil)
+    }
+
+    func addVoiceShortcutViewControllerDidCancel(_ controller: INUIAddVoiceShortcutViewController) {
+        controller.dismiss(animated: true, completion: nil)
     }
 }

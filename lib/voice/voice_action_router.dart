@@ -8,6 +8,7 @@ import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'intent_parser.dart';
+import 'conversational_voice_handler.dart';
 
 class VoiceActionRouter {
   final GlobalKey<NavigatorState> navigatorKey;
@@ -29,6 +30,11 @@ class VoiceActionRouter {
     switch (intent.action) {
       case VoiceAction.openApp:
         _openApp();
+        break;
+
+      case VoiceAction.triggerVoiceMode:
+        ConversationalVoiceHandler.instance.startConversationalFlow(this);
+        break;
 
       case VoiceAction.openChat:
         if (intent.targetUser != null) {
@@ -70,47 +76,75 @@ class VoiceActionRouter {
     final ctx = _context;
     if (ctx == null) return;
 
-    final chatController = Get.find<ChatController>();
+    // Use Get.put to ensure it exists, preventing Get.find null crash
+    final chatController = Get.put(ChatController());
 
     // ── Direct search — debounce নেই, result সাথে সাথে আসবে ──
-    final results = await chatController.searchUsersForVoice(userName);
+    try {
+      final results = await chatController.searchUsersForVoice(userName);
 
-    debugPrint('[Voice] Search "$userName" → ${results.length} results');
+      debugPrint('[Voice] Search "$userName" → ${results.length} results');
 
-    if (results.isEmpty) {
-      debugPrint('[Voice] User not found → going to search screen');
+      if (results.isEmpty) {
+        debugPrint('[Voice] User not found → going to search screen');
+        _goToSearch();
+        return;
+      }
+
+      // Custom phonetic normalization to handle name spellings like sahin vs saheen
+      String _phoneticNormalize(String input) {
+        String s = input.toLowerCase();
+        s = s.replaceAll(RegExp(r'[^a-z]'), '');
+        s = s.replaceAll('ee', 'i');
+        s = s.replaceAll('sh', 's');
+        s = s.replaceAll('oo', 'u');
+        s = s.replaceAll('ou', 'u');
+        s = s.replaceAll('ph', 'f');
+        s = s.replaceAll('c', 'k');
+        s = s.replaceAll('z', 'j');
+        // Remove duplicate characters (e.g., 'ss' -> 's', 'll' -> 'l')
+        s = s.replaceAllMapped(RegExp(r'([a-z])\1+'), (match) => match.group(1)!);
+        return s;
+      }
+
+      final normalizedQuery = _phoneticNormalize(userName);
+
+      // 1. Case-insensitive exact match
+      // 2. Contains match
+      // 3. Phonetic match
+      final matched = results.firstWhere(
+        (u) => (u.nickName ?? '').toLowerCase() == userName.toLowerCase(),
+        orElse: () => results.firstWhere(
+          (u) => (u.nickName ?? '').toLowerCase().contains(userName.toLowerCase()),
+          orElse: () => results.firstWhere(
+            (u) => _phoneticNormalize(u.nickName ?? '').contains(normalizedQuery),
+            orElse: () => results.first,
+          ),
+        ),
+      );
+
+      debugPrint('[Voice] Matched user: ${matched.nickName} (id: ${matched.id})');
+
+      final ctx2 = _context;
+      if (ctx2 == null || !ctx2.mounted) return;
+
+      ctx2.pushNamed(
+        RouteName.message,
+        extra: {
+          'roomId': matched.existingRoom?.id ?? '',
+          'otherUserName': matched.nickName ?? userName,
+          'otherUserAvatar': matched.avatar ?? AppConst.unknown,
+          'receiverId': matched.id ?? '',
+          'isBlockedByMe': false,
+          'isBlockedMe': false,
+          'voiceAutoSend': autoSend,
+          'voiceMessage': message,
+        },
+      );
+    } catch (e) {
+      debugPrint('[Voice] Error in _openOrSendChat: $e');
       _goToSearch();
-      return;
     }
-
-    // Case-insensitive exact match আগে, না পেলে first result
-    final matched = results.firstWhere(
-      (u) => (u.nickName ?? '').toLowerCase() == userName.toLowerCase(),
-      orElse: () => results.firstWhere(
-        (u) =>
-            (u.nickName ?? '').toLowerCase().contains(userName.toLowerCase()),
-        orElse: () => results.first,
-      ),
-    );
-
-    debugPrint('[Voice] Matched user: ${matched.nickName} (id: ${matched.id})');
-
-    final ctx2 = _context;
-    if (ctx2 == null || !ctx2.mounted) return;
-
-    ctx2.pushNamed(
-      RouteName.message,
-      extra: {
-        'roomId': matched.existingRoom?.id ?? '',
-        'otherUserName': matched.nickName ?? userName,
-        'otherUserAvatar': matched.avatar ?? AppConst.unknown,
-        'receiverId': matched.id ?? '',
-        'isBlockedByMe': false,
-        'isBlockedMe': false,
-        'voiceAutoSend': autoSend,
-        'voiceMessage': message,
-      },
-    );
   }
 
   void _goToSearch() {

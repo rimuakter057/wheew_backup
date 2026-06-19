@@ -31,10 +31,16 @@ class VoiceHandler extends WidgetsBindingObserver {
 
     // App start এ একবার check করো
     _checkPending();
+
+    // App start এ Siri shortcut prompt দেখাও (iOS এর জন্য)
+    Future.delayed(const Duration(seconds: 2), () {
+      triggerSiriShortcutPrompt();
+    });
   }
 
   static void _checkPending() {
-    Future.delayed(const Duration(milliseconds: 500), () {
+    // Increase delay slightly to ensure plugins and GetX controllers are ready
+    Future.delayed(const Duration(milliseconds: 800), () {
       _channel.invokeMethod('checkPendingIntent');
     });
   }
@@ -53,6 +59,14 @@ class VoiceHandler extends WidgetsBindingObserver {
   static void simulateVoice(String raw, Function(ParsedIntent) onIntent) {
     final intent = IntentParser.instance.parse(raw);
     onIntent(intent);
+  }
+
+  static void triggerSiriShortcutPrompt() {
+    try {
+      _channel.invokeMethod('triggerSiriShortcutPrompt');
+    } on PlatformException catch (e) {
+      debugPrint('[Voice] Siri Shortcut prompt is only supported on iOS: $e');
+    }
   }
 }
 // ```
