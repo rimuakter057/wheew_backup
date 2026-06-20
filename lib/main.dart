@@ -56,11 +56,11 @@ void main() async {
   // ── Notification service (FCM + Local) ──
   await NotificationService.instance.init();
 
-  runApp(const App());
+  runApp(const WHEEW());
 }
 
-class App extends StatelessWidget {
-  const App({super.key});
+class WHEEW extends StatelessWidget {
+  const WHEEW({super.key});
 
   @override
   Widget build(BuildContext context) {

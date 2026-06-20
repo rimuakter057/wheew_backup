@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_nav_screen.dart';
 import 'package:platchatapp/feature/scan/presentation/screens/scan_screen.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../chat/view/chat_list/presentation/screens/chat_list_screen.dart';
 import '../../ocr/presentation/screens/ocr_screen.dart';
+import '../../search/presentation/screens/serach_screen.dart';
 
 
 class MainNavScreen extends StatefulWidget {
@@ -26,43 +28,54 @@ class _MainNavScreenState extends State<MainNavScreen> {
 
   /// Only the visible tab is built. [IndexedStack] kept Scanner + Map (camera + SurfaceView)
   /// mounted together and flooded logcat with `BufferQueueProducer` / `ImageReader` frames.
+
   Widget _bodyForIndex(int index) {
     switch (index) {
       case 0:
         return const ChatListScreen();
       case 1:
-       // return  OcrScannerScreen(cameras: cameras,);
-      return  ScanScreen();
+        return const SearchListScreen();
       case 2:
-        return const MapScreen();
+        return ScanScreen();
       case 3:
+        return const MapScreen();
+      case 4:
         return ProfileNavScreen();
       default:
         return const SizedBox.shrink();
     }
   }
 
+  // void _onTap(int index) {
+  //   HapticFeedback.lightImpact();
+  //   setState(() => _currentIndex = index);
+  // }
+
   void _onTap(int index) {
     HapticFeedback.lightImpact();
-    setState(() => _currentIndex = index);
+    mainNavIndex.value = index;
   }
+
 
   @override
   Widget build(BuildContext context) {
     ResponsiveHelper.init(context);
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
-      body: _bodyForIndex(_currentIndex),
-
-      bottomNavigationBar: _AppBottomNav(
-        currentIndex: _currentIndex,
-        onTap: _onTap,
-      ),
+    return ValueListenableBuilder<int>(
+      valueListenable: mainNavIndex,
+      builder: (context, currentIndex, _) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFF5F7FA),
+          body: _bodyForIndex(currentIndex),
+          bottomNavigationBar: _AppBottomNav(
+            currentIndex: currentIndex,
+            onTap: _onTap,
+          ),
+        );
+      },
     );
   }
 }
-
 // ─── Bottom Navigation Bar ────────────────────────────────────────────────────
 
 class _AppBottomNav extends StatelessWidget {
@@ -90,7 +103,7 @@ class _AppBottomNav extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: ResponsiveHelper.height(64),
+          height: ResponsiveHelper.height(72),
           child: Row(
             children: [
               _NavItem(
@@ -101,22 +114,30 @@ class _AppBottomNav extends StatelessWidget {
                 onTap: onTap,
               ),
 
-              ScanNavItem(
+              _NavItem(
+                icon: AssetsPath.searchNav,
+                label: 'search'.tr,
                 index: 1,
+                currentIndex: currentIndex,
+                onTap: onTap,
+              ),
+
+              ScanNavItem(
+                index: 2,
                 currentIndex: currentIndex,
                 onTap: onTap,
               ),
               _NavItem(
                 icon: AssetsPath.mapNav,
                 label: 'map'.tr,
-                index: 2,
+                index: 3,
                 currentIndex: currentIndex,
                 onTap: onTap,
               ),
               _NavItem(
                 icon: AssetsPath.profileNav,
                 label: 'profile'.tr,
-                index: 3,
+                index: 4,
                 currentIndex: currentIndex,
                 onTap: onTap,
               ),
@@ -207,6 +228,60 @@ class _NavItem extends StatelessWidget {
 }
 
 // ─── Center Scan Nav Item ─────────────────────────────────────────────────────
+// class ScanNavItem extends StatelessWidget {
+//   final int index;
+//   final int currentIndex;
+//   final ValueChanged<int> onTap;
+//
+//   const ScanNavItem({
+//     super.key,
+//     required this.index,
+//     required this.currentIndex,
+//     required this.onTap,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final bool isActive = index == currentIndex;
+//
+//     return Expanded(
+//       child: GestureDetector(
+//         onTap: () => onTap(index),
+//         behavior: HitTestBehavior.opaque,
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             SvgPicture.asset(
+//               AssetsPath.scanNav,
+//               width: ResponsiveHelper.iconSize(28),
+//               height: ResponsiveHelper.iconSize(28),
+//               colorFilter: ColorFilter.mode(
+//                 isActive
+//                     ? const Color(0xFF3D72E8)
+//                     : const Color(0xFF9EA8BB),
+//                 BlendMode.srcIn,
+//               ),
+//             ),
+//             SizedBox(height: ResponsiveHelper.spacing(2)),
+//             Text(
+//               'scan'.tr,
+//               style: GoogleFonts.poppins(
+//                 fontSize: ResponsiveHelper.fontSize(10),
+//                 fontWeight:
+//                 isActive ? FontWeight.w600 : FontWeight.w400,
+//                 color: isActive
+//                     ? const Color(0xFF3D72E8)
+//                     : const Color(0xFF9EA8BB),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
 class ScanNavItem extends StatelessWidget {
   final int index;
   final int currentIndex;
@@ -222,6 +297,8 @@ class ScanNavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isActive = index == currentIndex;
+    final Color color =
+    isActive ? const Color(0xFF3D72E8) : const Color(0xFF9EA8BB);
 
     return Expanded(
       child: GestureDetector(
@@ -232,27 +309,18 @@ class ScanNavItem extends StatelessWidget {
           children: [
             SvgPicture.asset(
               AssetsPath.scanNav,
-              width: ResponsiveHelper.iconSize(28),
-              height: ResponsiveHelper.iconSize(28),
-              colorFilter: ColorFilter.mode(
-                isActive
-                    ? const Color(0xFF3D72E8)
-                    : const Color(0xFF9EA8BB),
-                BlendMode.srcIn,
-              ),
+              width: ResponsiveHelper.iconSize(60),
+              height: ResponsiveHelper.iconSize(60),
             ),
-            SizedBox(height: ResponsiveHelper.spacing(2)),
-            Text(
-              'scan'.tr,
-              style: GoogleFonts.poppins(
-                fontSize: ResponsiveHelper.fontSize(10),
-                fontWeight:
-                isActive ? FontWeight.w600 : FontWeight.w400,
-                color: isActive
-                    ? const Color(0xFF3D72E8)
-                    : const Color(0xFF9EA8BB),
-              ),
-            ),
+             SizedBox(height: ResponsiveHelper.spacing(6)),
+            // Text(
+            //   'scan'.tr,
+            //   style: GoogleFonts.poppins(
+            //     fontSize: ResponsiveHelper.fontSize(10),
+            //     fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+            //     color: color,
+            //   ),
+            // ),
           ],
         ),
       ),

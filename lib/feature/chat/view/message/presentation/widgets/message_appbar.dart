@@ -2,13 +2,19 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart' hide Config;
+import 'package:platchatapp/core/router/route_path.dart';
+import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
+import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/scan/presentation/widget/profile_card.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/custom_container/custom_container.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+
+import '../../../../../../core/router/routes.dart';
 
 
 
@@ -43,10 +49,14 @@ class MessageAppBar extends StatelessWidget {
           Row(
             children: [
               IconButton(
-                onPressed: () {
+                onPressed: () async{
                   chatController.page.value = 1;
                   chatController.fetchChatList(refresh: false);
-                  Navigator.pop(context);
+
+                  mainNavIndex.value = 0;
+
+                 Navigator.pop(context);
+
                 },
                 icon: Icon(Icons.arrow_back, color: AppColors.black),
               ),

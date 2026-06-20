@@ -12,9 +12,11 @@ class ChatListAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// Create group button tap হলে এই callback call হয়
   final VoidCallback onCreateGroupTap;
 
+  final  VoidCallback onPlateScanTap;
+
   const ChatListAppBar({
     super.key,
-    required this.onCreateGroupTap,
+    required this.onCreateGroupTap,  required this.onPlateScanTap,
   });
 
   @override
@@ -23,7 +25,21 @@ class ChatListAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: AppColors.white,
       centerTitle: true,
 
-      // ── Center: Lottie icon + chat list image ────────────
+     // leadingWidth: ResponsiveHelper.width(130),
+
+      leading: GestureDetector(
+        onTap: onPlateScanTap,
+        child: Padding(
+          padding: EdgeInsets.only(left: ResponsiveHelper.width(12)),
+          child:       CustomImage(imageSrc: "assets/icons/scan_ocr.png",
+              sizeWidth:64,
+
+          ),
+
+        ),
+      ),
+
+
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
@@ -10,6 +12,7 @@ import 'package:platchatapp/feature/chat/view/chat_list/presentation/widgets/cha
 import 'package:platchatapp/feature/chat/view/chat_list/presentation/widgets/create_group.dart';
 import 'package:platchatapp/feature/chat/view/widgets/chat_list_screen_shimmer.dart';
 import 'package:platchatapp/feature/chat/view/widgets/chat_tile.dart';
+import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
 import 'package:platchatapp/helper/data_converter/data_converter.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
@@ -75,6 +78,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
       appBar: ChatListAppBar(
         onCreateGroupTap: () =>
             showCreateGroupDialog(context: context, controller: controller),
+
+        onPlateScanTap: () {
+          context.pushNamed(RouteName.ocrScanner);
+        },
       ),
 
       body: RefreshIndicator(

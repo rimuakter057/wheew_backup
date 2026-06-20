@@ -58,6 +58,23 @@ class AssetsPath {
 
 
 
+  static const String profile="assets/icons/profile.svg";
+  static const String usefulNumber="assets/icons/useful_number.svg";
+  static const String terms="assets/icons/terms.svg";
+  static const String privacy="assets/icons/privacy.svg";
+  static const String help="assets/icons/help.svg";
+  static const String share="assets/icons/share.svg";
+  static const String blocked="assets/icons/block_user.svg";
+  static const String remove="assets/icons/remove_account.svg";
+  static const String changePass="assets/icons/change_pass.svg";
+
+
+
+
+
+
+
+
 
 
 }

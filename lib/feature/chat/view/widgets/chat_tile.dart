@@ -31,7 +31,8 @@ class ChatTile extends StatelessWidget {
     this.isGroup = false,
     this.rating,
     this.unreadCount,               // ✅ নতুন
-    this.onUnblock,
+
+  this.onUnblock,
   });
 
   @override

@@ -21,7 +21,7 @@ import 'package:platchatapp/feature/auth/view/otp_screen.dart';
 import 'package:platchatapp/feature/chat/view/block/block_list_screen.dart';
 import 'package:platchatapp/feature/chat/view/chat_list/presentation/screens/chat_list_screen.dart';
 import 'package:platchatapp/feature/chat/view/message/presentation/screens/message_screen.dart';
-import 'package:platchatapp/feature/chat/view/search/serach_screen.dart';
+import 'package:platchatapp/feature/search/presentation/screens/serach_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_screen.dart';
 import '../../feature/chat/view/group/presentation/screens/group_member_screen.dart';
 import '../../feature/chat/view/group/presentation/screens/group_message_screen.dart';

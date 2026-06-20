@@ -11,6 +11,7 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/toast_message/toast_message.dart';
 
+import '../../../profile/repository/profile_controller.dart';
 import '../widget/scan_view_widget.dart';
 
 class ScanScreen extends StatefulWidget {
@@ -23,6 +24,10 @@ class ScanScreen extends StatefulWidget {
 class _ScanScreenState extends State<ScanScreen>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   final ScanController scanController = Get.put(ScanController());
+  final ProfileController profileController = Get.put(
+    ProfileController(),
+    permanent: false,
+  );
 
   int _tabIndex = 0;
   bool _scanned = false;
@@ -145,7 +150,6 @@ class _ScanScreenState extends State<ScanScreen>
           children: [
             SizedBox(height: ResponsiveHelper.spacing(8)),
 
-            
             _buildTabToggle(),
             Expanded(
               child: _tabIndex == 0
@@ -156,7 +160,19 @@ class _ScanScreenState extends State<ScanScreen>
                       isLoading: _isLoading,
                       onDetect: _onDetect,
                     )
-                  : MyQrView(scanController: scanController),
+                  : GetBuilder<ProfileController>(
+                builder: (controller) {
+                  final user = controller.userProfile.value;
+                  return MyQrView(
+                    scanController: scanController,
+                    avatarUrl: user?.avatar,
+                    name: user?.nickName,
+                    rating: user?.rating,
+                    margin: ResponsiveHelper.symmetric(horizontal: 16,vertical: 0),
+                  );
+                },
+              ),
+
             ),
           ],
         ),

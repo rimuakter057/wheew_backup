@@ -47,12 +47,14 @@ dependencies:
   emoji_picker_flutter: ^4.4.0
   shimmer: ^3.0.0
   auto_size_text: ^3.0.0
-  file_picker: ^12.0.0-beta.7
+ # file_picker: ^12.0.0-beta.7
+  file_picker: ^11.0.2
   google_maps_flutter_android: ^2.14.0
   logger: ^2.7.0
   firebase_core: ^4.8.0
   firebase_messaging: ^16.2.1
-  share_plus: ^13.1.0
+  #share_plus: ^13.1.0
+  share_plus: any
   camera: ^0.12.0+1
   #google_mlkit_text_recognition: ^0.13.0
   google_mlkit_text_recognition: ^0.15.0
@@ -62,7 +64,7 @@ dependencies:
   http: ^1.2.0
   flutter_localization: ^0.4.0
   #flutter_local_notifications: ^21.0.0
-  flutter_local_notifications: ^22.0.1
+  flutter_local_notifications: ^19.4.2
   receive_intent: ^0.2.7
   google_maps_flutter: ^2.14.2
   geolocator: ^14.0.2
