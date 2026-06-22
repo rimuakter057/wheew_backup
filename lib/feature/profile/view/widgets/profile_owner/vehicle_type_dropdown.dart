@@ -5,7 +5,6 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
-
 /// Vehicle Type dropdown — API accept করে: CAR, MOTORCYCLE, VAN, OTHER
 class VehicleTypeDropdown extends StatelessWidget {
   final ProfileController controller;
@@ -24,6 +23,8 @@ class VehicleTypeDropdown extends StatelessWidget {
       value: currentValue,
       decoration: InputDecoration(
         hintText: AppStrings.vehicleType.tr,
+        // hint text এর সাইজ ছোট করার জন্য
+        hintStyle: const TextStyle(fontSize: 13.0),
         filled: true,
         // edit mode এ white, otherwise grey
         fillColor: controller.isEditing
@@ -42,8 +43,14 @@ class VehicleTypeDropdown extends StatelessWidget {
           borderSide: BorderSide(color: AppColors.greyShade),
         ),
       ),
+      // selected value (যেটা ড্রপডাউনে শো করবে) সেটার টেক্সট স্টাইল
+      style: const TextStyle(fontSize: 13.0, color: Colors.black),
       items: _options
-          .map((e) => DropdownMenuItem(value: e, child: Text(e.tr)))
+          .map((e) => DropdownMenuItem(
+        value: e,
+        // ড্রপডাউন অপশনগুলোর টেক্সট সাইজ ছোট করার জন্য
+        child: Text(e.tr, style: const TextStyle(fontSize: 13.0)),
+      ))
           .toList(),
       // edit mode OFF হলে null — dropdown disable হয়
       onChanged: controller.isEditing

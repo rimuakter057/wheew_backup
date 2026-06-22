@@ -436,14 +436,31 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
                   elevation: 0,
                   shape: const StadiumBorder(),
                 ),
+                // child: _loading
+                //     ? const CircularProgressIndicator(
+                //   color: Colors.white,
+                //   strokeWidth: 2.5,
+                // )
+                //     : Text(
+                //   _isEdit ? AppStrings.update.tr : AppStrings.upload.tr,
+                // ),
+
+
                 child: _loading
-                    ? const CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 2.5,
+                    ? const Center(
+                  child: SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2.5,
+                    ),
+                  ),
                 )
                     : Text(
                   _isEdit ? AppStrings.update.tr : AppStrings.upload.tr,
                 ),
+
               ),
             )),
 

@@ -661,7 +661,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // ─── Editable Vehicle fields ──────────────────────────────
 
                 // Vehicle Type — Dropdown (CAR / MOTORCYCLE / VAN / OTHER)
-                _label(AppStrings.vehicleType.tr),
+               // _label(AppStrings.vehicleType.tr),
+                _label("Vehicle Type"),
                 SizedBox(height: ResponsiveHelper.spacing(4)),
                 GetBuilder<ProfileController>(
                   id: 'vehicle_fields', // শুধু এই widget rebuild হবে
@@ -671,7 +672,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: ResponsiveHelper.spacing(20)),
 
                 // Vehicle Model — free text
-                _label(AppStrings.vehicleModel.tr),
+               // _label(AppStrings.vehicleModel.tr),
+                _label("Vehicle Model"),
                 SizedBox(height: ResponsiveHelper.spacing(4)),
                 GetBuilder<ProfileController>(
                   id: 'vehicle_fields', // type করলে পুরো screen rebuild হবে না
@@ -687,7 +689,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: ResponsiveHelper.spacing(20)),
 
                 // Vehicle Color — free text
-                _label(AppStrings.vehicleColor.tr),
+              //  _label(AppStrings.vehicleColor.tr),
+                _label("Vehicle Color"),
                 SizedBox(height: ResponsiveHelper.spacing(4)),
                 GetBuilder<ProfileController>(
                   id: 'vehicle_fields',
