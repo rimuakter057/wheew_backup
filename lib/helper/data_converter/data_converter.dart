@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-// Suppose createdAt string looks like: "2026-02-08T14:30:00.000Z"
+// Suppose createdAt language looks like: "2026-02-08T14:30:00.000Z"
 String formatTime(String createdAt) {
   if (createdAt.isEmpty) return "";
 

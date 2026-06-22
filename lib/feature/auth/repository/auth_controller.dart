@@ -15,6 +15,7 @@ import 'package:platchatapp/feature/auth/repository/user_location_controller.dar
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import '../../../core/service/api_checker.dart';
 import '../../../core/service/storage_service.dart';
+import '../../../helper/custom_snack_bar/custom_snack_bar.dart';
 import '../../../utils/toast_message/toast_message.dart';
 import 'auth_repository.dart';
 
@@ -179,6 +180,9 @@ class AuthController extends GetxController {
             debugPrint('🔌 Socket connected - going to mainNavScreen');
             if (context.mounted) {
               context.goNamed(RouteName.mainNavScreen);
+
+
+              CustomSnackbar.success(context: context, message: "Login Successful");
             }
             licenseController.clear();
             passwordController.clear();
@@ -186,24 +190,36 @@ class AuthController extends GetxController {
         );
 
         return true;
-      } else {
+      }
+
+
+
+
+
+
+
+      else {
         debugPrint('❌ Login failed: ${loginRes.statusCode} - ${loginRes.body}');
         ApiChecker.checkApi(loginRes); // ব্যাকএন্ডের আসল error message (যেমন "Invalid credentials") দেখাবে
         return false;
       }
     } on TimeoutException catch (e) {
       debugPrint('⏰ Login timeout: $e');
-      showErrorToast('login_connection_timeout'.tr);
+    //  showErrorToast('login_connection_timeout'.tr);
+      CustomSnackbar.error(message:'login_connection_timeout'.tr, context: context);
+
       // মেসেজ: "সার্ভারের সাথে কানেক্ট হতে সময় বেশি লাগছে। ইন্টারনেট চেক করে আবার চেষ্টা করুন।"
       return false;
     } on FormatException catch (e) {
       debugPrint('❌ Login format/URL error: $e');
-      showErrorToast('login_unavailable_try_again'.tr);
+    //  showErrorToast('login_unavailable_try_again'.tr);
+      CustomSnackbar.error(message:'login_unavailable_try_again'.tr, context: context);
       // মেসেজ: "এই মুহূর্তে লগইন করা যাচ্ছে না। কিছুক্ষণ পর আবার চেষ্টা করুন।"
       return false;
     } catch (e) {
       debugPrint('❌ Login exception: $e');
-      showErrorToast('login_failed_check_connection'.tr);
+      // showErrorToast('login_failed_check_connection'.tr);
+      CustomSnackbar.error(message:'login_failed_check_connection'.tr, context: context);
       // মেসেজ: "লগইন সম্পন্ন করা যাচ্ছে না। আপনার ইন্টারনেট কানেকশন চেক করুন।"
       return false;
     } finally {

@@ -12,7 +12,7 @@ import 'package:platchatapp/core/theme/light_theme.dart';
 import 'package:platchatapp/firebase_options.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/language/language_controller.dart';
-import 'package:platchatapp/utils/string/AppTranslations.dart';
+import 'package:platchatapp/utils/language/AppTranslations.dart';
 
 import 'core/binding/app_binding.dart';
 
@@ -56,11 +56,11 @@ void main() async {
   // ── Notification service (FCM + Local) ──
   await NotificationService.instance.init();
 
-  runApp(const WHEEW());
+  runApp(const Wheew());
 }
 
-class WHEEW extends StatelessWidget {
-  const WHEEW({super.key});
+class Wheew extends StatelessWidget {
+  const Wheew({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +69,7 @@ class WHEEW extends StatelessWidget {
     return Obx(
       () => MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        title: 'My App',
+        title: 'Wheew',
         theme: lightTheme,
         routerConfig: AppRouter.router,
         locale: languageController.currentLocale.value,
@@ -89,7 +89,7 @@ class WHEEW extends StatelessWidget {
 // import 'package:platchatapp/core/service/socket_service.dart';
 // import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
 // import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
-// import 'package:platchatapp/utils/string/AppTranslations.dart';
+// import 'package:platchatapp/utils/language/AppTranslations.dart';
 // import 'core/router/routes.dart';
 // import 'core/theme/light_theme.dart';
 // import 'feature/chat/repository/chat_controller.dart';

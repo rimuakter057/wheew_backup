@@ -30,7 +30,7 @@ class ApiUrl {
   // Chat rooms pagination
   static String getChatList({required int page, required int limit}) =>
       "/chat/rooms?page=$page&limit=$limit";
-
+  static const String qrCard = "/users/qr-card";
   static String getInboxMessage({
     required String roomId,
     required int page,
@@ -69,11 +69,13 @@ class ApiUrl {
  // static const String createPin = "/parking-report";
   static const String addParking = '/parking-report/spot';
   static const String verifyLicense= '/users/verify-license';
+  static const String vehicle= '/users/vehicle';
  // static const String showDetails = "/parking-report";
   static  String showDetails ({required double latitude,required double longitude}) => "/parking-report/spot/nearby?latitude=$latitude&longitude=$longitude&radiusInMeters=200";
   static  String spotDetails ({required String spotId,}) => "/parking-report/spot/$spotId";
 
   static  String leaveSpot  = "/parking-report/spot/leave";
+  static  String verifyPlate  = "/chat/rooms/by-plate";
 
 
 

@@ -6,6 +6,7 @@ import 'package:platchatapp/feature/profile/repository/upload_controller.dart';
 import 'package:platchatapp/feature/profile/view/widgets/upload_document_sheet.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
@@ -16,7 +17,7 @@ class CustomUploadCard extends StatelessWidget {
   final String title;
   final String documentType; // 'LICENSE' | 'INSURANCE' | 'TAX'
 
-  const CustomUploadCard({
+  const  CustomUploadCard({
     super.key,
     required this.title,
     required this.documentType,
@@ -27,8 +28,8 @@ class CustomUploadCard extends StatelessWidget {
     final controller = Get.find<UploadDocumentController>();
 
     return Obx(() {
-      final doc     = controller.docObs(documentType).value;
-      final loading = controller.loadingObs(documentType).value;
+      final doc     = controller.getDoc(documentType); // controller.docObs(documentType).value;
+      final loading = controller.isLoading(documentType);       //controller.loadingObs(documentType).value;
 
       final state = doc == null
           ? _CardState.empty
@@ -199,7 +200,7 @@ class _CardShell extends StatelessWidget {
     switch (state) {
       case _CardState.empty:
         return Text(
-          'tap_to_upload'.tr,
+          AppStrings.tapToUpload.tr,
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(12),
             color:    const Color(0xFF9CA3AF),
@@ -211,14 +212,14 @@ class _CardShell extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '${'id'.tr}: ${doc!.uniqueId}',
+              '${AppStrings.id.tr}: ${doc!.uniqueId}',
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(11),
                 color:    const Color(0xFF6B7280),
               ),
             ),
             Text(
-              '${'expires'.tr}: ${ctrl.toDisplayDate(doc!.expiryDate)}  •  ${doc!.daysUntilExpiry} ${'days_left'.tr}',
+              '${AppStrings.expires.tr}: ${ctrl.toDisplayDate(doc!.expiryDate)}  •  ${doc!.daysUntilExpiry} ${AppStrings.daysLeft.tr}',
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(11),
                 color:    const Color(0xFF2563EB),
@@ -229,7 +230,7 @@ class _CardShell extends StatelessWidget {
               GestureDetector(
                 onTap: () => _openFileUrl(context, doc!.resolvedDocumentUrl),
                 child: Text(
-                  'view_document'.tr,
+                  AppStrings.viewDocument.tr,
                   style: GoogleFonts.poppins(
                     fontSize:   ResponsiveHelper.fontSize(11),
                     fontWeight: FontWeight.w600,
@@ -247,14 +248,14 @@ class _CardShell extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '${'id'.tr}: ${doc!.uniqueId}',
+              '${AppStrings.id.tr}: ${doc!.uniqueId}',
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(11),
                 color:    const Color(0xFF6B7280),
               ),
             ),
             Text(
-              'expired'.tr,
+              AppStrings.expired.tr,
               style: GoogleFonts.poppins(
                 fontSize:   ResponsiveHelper.fontSize(11),
                 fontWeight: FontWeight.w600,
@@ -266,7 +267,7 @@ class _CardShell extends StatelessWidget {
               GestureDetector(
                 onTap: () => _openFileUrl(context, doc!.resolvedDocumentUrl),
                 child: Text(
-                  'view_document'.tr,
+                  AppStrings.viewDocument.tr,
                   style: GoogleFonts.poppins(
                     fontSize:   ResponsiveHelper.fontSize(11),
                     fontWeight: FontWeight.w600,
@@ -294,7 +295,7 @@ class _CardShell extends StatelessWidget {
             borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
           ),
           child: Text(
-            'upload'.tr,
+            AppStrings.upload.tr,
             style: GoogleFonts.poppins(
               fontSize:   ResponsiveHelper.fontSize(12),
               fontWeight: FontWeight.w500,
@@ -316,7 +317,7 @@ class _CardShell extends StatelessWidget {
               borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
             ),
             child: Text(
-              'update'.tr,
+              AppStrings.update.tr,
               style: GoogleFonts.poppins(
                 fontSize:   ResponsiveHelper.fontSize(12),
                 fontWeight: FontWeight.w500,
@@ -339,7 +340,7 @@ class _CardShell extends StatelessWidget {
               borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
             ),
             child: Text(
-              'renew'.tr,
+              AppStrings.renew.tr,
               style: GoogleFonts.poppins(
                 fontSize:   ResponsiveHelper.fontSize(12),
                 fontWeight: FontWeight.w500,

@@ -268,7 +268,7 @@ Text("My QR Code",style: context.bodyMedium.copyWith(color: AppColors.black),),
             }
 
             return GestureDetector(
-              onTap: () => scanController.getQrCode(),
+              onTap: () => scanController.getScanQrCode(),
               child: Container(
                 width: ResponsiveHelper.width(200),
                 height: ResponsiveHelper.width(200),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../share/widgets/button/primary_button.dart';
 import '../../../share/widgets/custom_appbar/custom_appbar.dart';
@@ -38,7 +39,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(title: 'delete_account'.tr),
+      appBar: CustomAppBar(title:AppStrings.deleteAccount.tr),
       body: GetBuilder<AuthController>(
         builder: (controller) {
           return SingleChildScrollView(
@@ -72,7 +73,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                               ),
                               SizedBox(width: ResponsiveHelper.spacing(8)),
                               Text(
-                                'warning'.tr,
+                                AppStrings.warning.tr,
                                 style: GoogleFonts.poppins(
                                   color: Colors.red,
                                   fontSize: ResponsiveHelper.fontSize(15),
@@ -83,7 +84,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                           ),
                           SizedBox(height: ResponsiveHelper.spacing(8)),
                           Text(
-                            'delete_account_warning'.tr,
+                            AppStrings.deleteAccountWarning.tr,
                             style: GoogleFonts.poppins(
                               color: Colors.red.shade700,
                               fontSize: ResponsiveHelper.fontSize(13),
@@ -99,15 +100,15 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                     /// Password Field
                     CustomTextField(
                       controller: _passwordController,
-                      title: 'password'.tr,
-                      hintText: 'type_here'.tr,
+                      title: AppStrings.password.tr,
+                      hintText: AppStrings.typeHere.tr,
                       isPassword: true,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'password_is_required'.tr;
+                          return AppStrings.passwordIsRequired.tr;
                         }
                         if (value.length < 6) {
-                          return 'password_must_6_character'.tr;
+                          return AppStrings.passwordMustBe6Characters.tr;
                         }
                         return null;
                       },
@@ -120,7 +121,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                       () => controller.isLoadingDeleteAccount.value
                           ? const Center(child: CircularProgressIndicator())
                           : PrimaryButton(
-                              title: 'delete'.tr,
+                              title: AppStrings.delete.tr,
                               onTap: _handleDelete,
                             ),
                     ),

@@ -6,6 +6,8 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+    <string>We need access to save your QR card to your photo library</string>
 	<key>CFBundleDisplayName</key>
 	<string>Platechat</string>
 	<key>CFBundleExecutable</key>

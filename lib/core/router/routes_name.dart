@@ -25,4 +25,5 @@ class RouteName {
   static const addMemberScreen = 'AddMemberScreen';
   static const groupMemberScreen = 'GroupMemberScreen';
   static const ocrScanner = 'OcrScanner';
+  static const vehicle = 'Vehicle';
 }

@@ -1,8 +1,10 @@
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/feature/ocr/data/ocr_controller.dart';
-import 'package:platchatapp/feature/ocr/presentation/widgets/dialog.dart';
+import 'package:platchatapp/feature/scan/presentation/widget/scan_user_sheet.dart';
+
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
@@ -71,13 +73,45 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
     }
 
     if (mounted) {
-      await PlateDialog.show(context, plate,
-            (p) => controller.verifyUser(plateNumber: p),
-      );
+      await _showScannedUserSheet(plate);
       setState(() {
         _dialogOpen = false;
       });
     }
+  }
+
+  /// প্লেট স্ক্যান হওয়ার পর by-plate API কল করে ScannedUserSheet দেখানো হয়।
+  /// start_chat / open_chat নেভিগেশন লজিক ScannedUserSheet এর ভেতরেই আছে,
+  /// কারণ রেসপন্স একই structure এর — তাই same screen এ navigate হবে।
+  Future<void> _showScannedUserSheet(String plate) async {
+    // লোডিং ডায়ালগ — API কল চলাকালীন
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.greenAccent),
+        ),
+      ),
+    );
+
+    final data = await controller.getChatRoomByPlate(plateNumber: plate);
+
+    if (!mounted) return;
+    Navigator.pop(context); // লোডার বন্ধ
+
+    if (data == null) {
+      // controller এর ভেতরেই error toast দেখানো হয়, তাই এখানে শুধু snackbar
+      return;
+    }
+
+    if (!mounted) return;
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => ScannedUserSheet(data: data),
+    );
   }
 
   Future<void> _toggleAutoScan() async {
@@ -107,13 +141,7 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
           _dialogOpen = true;
         });
 
-        await PlateDialog.show(context, plate,  (String p) async {
-          return await controller.verifyUser(
-            plateNumber: p,
-          );
-        },);
-
-
+        await _showScannedUserSheet(plate);
 
         if (mounted) {
           setState(() {
@@ -232,21 +260,16 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
               ),
               child: Row(
                 children: [
-                  // IconButton(
-                  //   icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-                  //   onPressed: () => Navigator.pop(context),
-                  // ),
                   const SizedBox(width: 8),
                   Row(
                     children: [
                       IconButton(onPressed: (){
                         context.pop();
-
                       }, icon: Icon(Icons.arrow_back_ios,color: AppColors.white,)),
                       SizedBox(width: ResponsiveHelper.width(12),),
-                       Text(
-                        "Plate Scanner",
-                        style: context.titleMedium.copyWith(color: AppColors.white)
+                      Text(
+                          "Plate Scanner",
+                          style: context.titleMedium.copyWith(color: AppColors.white)
                       ),
                     ],
                   ),
@@ -257,7 +280,7 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
 
           // 5. Custom Bottom Control Panel
           Positioned(
-            bottom: 0,
+            bottom: ResponsiveHelper.height(50),
             left: 0,
             right: 0,
             child: Container(
@@ -328,7 +351,6 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
                         decoration: BoxDecoration(
                           gradient:  LinearGradient(
                             colors: [
-
                               AppColors.blue, AppColors.blue],
                           ),
                           borderRadius: BorderRadius.circular(16),
@@ -488,3 +510,12 @@ class _ScanLineState extends State<ScanLine> with SingleTickerProviderStateMixin
     );
   }
 }
+
+
+
+
+
+
+
+
+

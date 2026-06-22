@@ -7,6 +7,7 @@ import 'package:platchatapp/feature/profile/model/user_document.dart';
 import 'package:platchatapp/feature/profile/repository/upload_controller.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // ─── Show Bottom Sheet ────────────────────────────────────────────────────────
@@ -127,21 +128,21 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
     if (uniqueId.isEmpty) {
       CustomSnackbar.error(
         context: context,
-        message: 'please_enter_unique_number'.tr,
+        message: AppStrings.pleaseEnterUniqueNumber.tr,
       );
       return;
     }
     if (expiryDate.isEmpty) {
       CustomSnackbar.error(
         context: context,
-        message: 'please_enter_expire_date'.tr,
+        message: AppStrings.pleaseEnterExpireDate.tr,
       );
       return;
     }
     if (_selectedFile == null || _selectedFile!.path == null) {
       CustomSnackbar.error(
         context: context,
-        message: _isEdit ? 'please_select_new_file'.tr : 'please_select_file'.tr,
+        message: _isEdit ? AppStrings.pleaseSelectNewFile.tr : AppStrings.pleaseSelectFile.tr,
       );
       return;
     }
@@ -197,12 +198,14 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
     if (!ok && mounted) {
       CustomSnackbar.error(
         context: context,
-        message: 'could_not_open_document'.tr,
+        message: AppStrings.couldNotOpenDocument.tr,
       );
     }
   }
 
-  RxBool get _loading => controller.loadingObs(widget.documentType);
+  //RxBool get _loading =>  //controller.loadingObs(widget.documentType);
+
+  bool get _loading => controller.isLoading(widget.documentType);
 
   @override
   Widget build(BuildContext context) {
@@ -252,7 +255,7 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  _isEdit ? 'update_document'.tr : 'upload_document'.tr,
+                  _isEdit ? AppStrings.updateDocument.tr : AppStrings.uploadDocument.tr,
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.titleFontSize(18),
                     fontWeight: FontWeight.w700,
@@ -307,7 +310,7 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
               GestureDetector(
                 onTap: _openExistingFile,
                 child: Text(
-                  'view_document'.tr,
+                  AppStrings.viewDocument.tr,
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(13),
                     fontWeight: FontWeight.w600,
@@ -321,7 +324,7 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
             SizedBox(height: ResponsiveHelper.spacing(20)),
 
             // Unique Number
-            _label('unique_number'.tr),
+            _label(AppStrings.uniqueNumber.tr),
             SizedBox(height: ResponsiveHelper.spacing(8)),
             _textField(
               controller: _uniqueNumberCtrl,
@@ -333,14 +336,14 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
             SizedBox(height: ResponsiveHelper.spacing(16)),
 
             // Expire Date
-            _label('expire_date'.tr),
+            _label(AppStrings.expireDate.tr),
             SizedBox(height: ResponsiveHelper.spacing(8)),
             GestureDetector(
               onTap: _selectDate,
               child: AbsorbPointer(
                 child: _textField(
                   controller: _expireDateCtrl,
-                  hint: 'dd_mm_yyyy'.tr,
+                  hint: AppStrings.ddMmYyyy.tr,
                   suffixIcon: Icon(
                     Icons.calendar_today_outlined,
                     size: ResponsiveHelper.iconSize(18),
@@ -353,7 +356,7 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
             SizedBox(height: ResponsiveHelper.spacing(16)),
 
             // Upload / Replace File
-            _label(_isEdit ? 'replace_file'.tr : 'upload_file'.tr),
+            _label(_isEdit ? AppStrings.replaceFile.tr : AppStrings.uploadFile.tr),
             SizedBox(height: ResponsiveHelper.spacing(8)),
             GestureDetector(
               onTap: _pickFile,
@@ -384,38 +387,67 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
             SizedBox(height: ResponsiveHelper.spacing(28)),
 
             // Submit button
-            Obx(
-                  () => SizedBox(
-                width: double.infinity,
-                height: ResponsiveHelper.buttonHeight(52),
-                child: ElevatedButton(
-                  onPressed: _loading.value ? null : _handleSubmit,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2563EB),
-                    disabledBackgroundColor: const Color(0xFF93C5FD),
-                    elevation: 0,
-                    shape: const StadiumBorder(),
-                  ),
-                  child: _loading.value
-                      ? SizedBox(
-                    width: ResponsiveHelper.iconSize(22),
-                    height: ResponsiveHelper.iconSize(22),
-                    child: const CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2.5,
-                    ),
-                  )
-                      : Text(
-                    _isEdit ? 'update'.tr : 'upload'.tr,
-                    style: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.fontSize(16),
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
+            // Obx(
+            //       () => SizedBox(
+            //     width: double.infinity,
+            //     height: ResponsiveHelper.buttonHeight(52),
+            //     child: ElevatedButton(
+            //       onPressed: _loading.value ? null : _handleSubmit,
+            //       style: ElevatedButton.styleFrom(
+            //         backgroundColor: const Color(0xFF2563EB),
+            //         disabledBackgroundColor: const Color(0xFF93C5FD),
+            //         elevation: 0,
+            //         shape: const StadiumBorder(),
+            //       ),
+            //       child: _loading.value
+            //           ? SizedBox(
+            //         width: ResponsiveHelper.iconSize(22),
+            //         height: ResponsiveHelper.iconSize(22),
+            //         child: const CircularProgressIndicator(
+            //           color: Colors.white,
+            //           strokeWidth: 2.5,
+            //         ),
+            //       )
+            //           : Text(
+            //         _isEdit ? 'update'.tr : 'upload'.tr,
+            //         style: GoogleFonts.poppins(
+            //           fontSize: ResponsiveHelper.fontSize(16),
+            //           fontWeight: FontWeight.w600,
+            //           color: Colors.white,
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
+
+
+
+
+
+
+            Obx(() => SizedBox(
+              width: double.infinity,
+              height: ResponsiveHelper.buttonHeight(52),
+              child: ElevatedButton(
+                onPressed: _loading ? null : _handleSubmit,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF2563EB),
+                  disabledBackgroundColor: const Color(0xFF93C5FD),
+                  elevation: 0,
+                  shape: const StadiumBorder(),
+                ),
+                child: _loading
+                    ? const CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2.5,
+                )
+                    : Text(
+                  _isEdit ? AppStrings.update.tr : AppStrings.upload.tr,
                 ),
               ),
-            ),
+            )),
+
+
             SizedBox(height: ResponsiveHelper.spacing(28)),
           ],
         ),
@@ -490,7 +522,7 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
       ),
       SizedBox(height: ResponsiveHelper.spacing(6)),
       Text(
-        'tap_to_select_file'.tr,
+        AppStrings.tapToSelectFile.tr,
         style: TextStyle(
           fontSize: ResponsiveHelper.fontSize(13),
           color: const Color(0xFF9CA3AF),
@@ -498,7 +530,7 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
       ),
       SizedBox(height: ResponsiveHelper.spacing(2)),
       Text(
-        'pdf_jpg_png_doc_supported'.tr,
+        AppStrings.pdfJpgPngDocSupported.tr,
         style: TextStyle(
           fontSize: ResponsiveHelper.fontSize(11),
           color: const Color(0xFFD1D5DB),

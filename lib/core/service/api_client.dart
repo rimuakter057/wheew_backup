@@ -351,7 +351,8 @@ class ApiClient {
     required String method,
     Map<String, String>? fields,
     List<http.MultipartFile>? files,
-  }) async {
+  }) async
+  {
     if (!await _checkConnection()) {
       throw Exception('No Internet Connection');
     }

@@ -8,6 +8,7 @@ import 'package:lottie/lottie.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../repository/auth_controller.dart';
 import '../../../share/widgets/text_field/custom_text_field.dart';
@@ -57,7 +58,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(title: 'sign_in'.tr),
+      appBar: CustomAppBar(title: AppStrings.signIn.tr),
       body: GetBuilder<AuthController>(
         builder: (controller) {
           return SingleChildScrollView(
@@ -78,6 +79,13 @@ class _SignInScreenState extends State<SignInScreen> {
                       fit: BoxFit.cover,
                       repeat: true,
                     ),
+
+
+                    // CustomImage(
+                    //   imageSrc: AssetsPath.appLogoUpdate,
+                    //   width: ResponsiveHelper.iconSize(250),
+                    //   height: ResponsiveHelper.iconSize(250),
+                    // ),
 
                     SizedBox(height: ResponsiveHelper.spacing(18)),
 
@@ -151,7 +159,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
                                 Flexible(
                                   child: Text(
-                                    "remember_me".tr,
+                                    AppStrings.rememberMe.tr,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.poppins(

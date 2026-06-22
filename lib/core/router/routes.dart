@@ -9,6 +9,7 @@ import 'package:platchatapp/feature/auth/view/reset_password_screen.dart';
 import 'package:platchatapp/feature/auth/view/forgot_password_screen.dart';
 import 'package:platchatapp/feature/auth/view/sign_in_screen.dart';
 import 'package:platchatapp/feature/auth/view/sign_up_screen.dart';
+import 'package:platchatapp/feature/auth/view/vehicle_info_screen.dart';
 import 'package:platchatapp/feature/chat/view/member/presentation/screens/add_member_screen.dart';
 import 'package:platchatapp/feature/main/presentation/main_nav-screen.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
@@ -259,6 +260,14 @@ class AppRouter {
         name: RouteName.ocrScanner,
         builder: (context, state) {
           return OcrScannerScreen(cameras: cameras,);
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.vehicle,
+        name: RouteName.vehicle,
+        builder: (context, state) {
+          return VehicleInfoScreen();
         },
       ),
       

@@ -108,7 +108,7 @@ class ParkingReportController extends GetxController {
   final RxSet<Marker> markers = <Marker>{}.obs;
 
   // ── isPaid helper ─────────────────────────────────────────────────────────
-  // API থেকে "FREE" string আসে — সব case handle করে
+  // API থেকে "FREE" language আসে — সব case handle করে
   bool _isPaid(dynamic cost) {
     if (cost == null) return false;
     if (cost is bool) return false;

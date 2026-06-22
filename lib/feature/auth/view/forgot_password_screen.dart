@@ -7,6 +7,7 @@ import 'package:platchatapp/share/widgets/button/primary_button.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
 import 'package:platchatapp/share/widgets/text_field/custom_text_field.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
@@ -25,7 +26,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'forgot_password'.tr),
+      appBar: CustomAppBar(title: AppStrings.forgotPassword.tr),
 
       body: Padding(
         padding: EdgeInsets.all(ResponsiveHelper.padding(20)),
@@ -34,7 +35,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           children: [
             // SizedBox(height: ResponsiveHelper.spacing(20)),
             Text(
-              'forgot_password'.tr,
+              AppStrings.forgotPassword.tr,
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.titleFontSize(18),
                 fontWeight: FontWeight.w500,
@@ -45,7 +46,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             SizedBox(height: ResponsiveHelper.spacing(8)),
 
             Text(
-              "don't_worry_enter_your_email".tr,
+              AppStrings.dontWorryEnterYourEmail
+                  .tr,
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(14),
                 color: Colors.grey,
@@ -55,8 +57,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             SizedBox(height: ResponsiveHelper.spacing(24)),
 
             CustomTextField(
-              title: 'email'.tr,
-              hintText: 'please_enter_valid_email'.tr,
+              title: AppStrings.email.tr,
+              hintText: AppStrings.pleaseEnterValidEmail.tr,
               controller: emailController,
             ),
 
@@ -66,12 +68,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               width: double.infinity,
               height: ResponsiveHelper.buttonHeight(50),
               child: PrimaryButton(
-                title: 'send_otp'.tr,
+                title: AppStrings.sendOtp.tr,
 
                 onTap: () async {
                   if (emailController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("email_required".tr)),
+                      SnackBar(content: Text(AppStrings.emailIsRequired.tr)),
                     );
 
                     return;

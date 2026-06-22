@@ -6,6 +6,7 @@ import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
 import 'package:platchatapp/share/widgets/button/primary_button.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
 import 'package:platchatapp/share/widgets/text_field/custom_text_field.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -38,7 +39,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'reset_code'.tr),
+      appBar: CustomAppBar(title: AppStrings.resetCode.tr),
       body: Padding(
         padding: EdgeInsets.all(ResponsiveHelper.padding(20)),
         child: Column(
@@ -47,33 +48,33 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             const SizedBox(height: 20),
 
             CustomTextField(
-              title: 'new_password'.tr,
+              title: AppStrings.newPassRequired.tr,
               controller: newPasswordController,
             ),
 
             const SizedBox(height: 16),
 
             CustomTextField(
-              title: 'confirm_password'.tr,
+              title: AppStrings.confirmPassword.tr,
               controller: confirmedPasswordController,
             ),
 
             const Spacer(),
 
             PrimaryButton(
-              title: 'save'.tr,
+              title: AppStrings.save.tr,
               onTap: () async {
                 // ✅ Validation
                 if (newPasswordController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("new_pass_required".tr)),
+                    SnackBar(content: Text(AppStrings.newPassRequired.tr)),
                   );
                   return;
                 }
 
                 if (confirmedPasswordController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("confirmed_pass_required".tr)),
+                    SnackBar(content: Text(AppStrings.confirmedPassRequired.tr)),
                   );
                   return;
                 }
@@ -82,14 +83,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     confirmedPasswordController.text) {
                   ScaffoldMessenger.of(
                     context,
-                  ).showSnackBar(SnackBar(content: Text("pass_not_match".tr)));
+                  ).showSnackBar(SnackBar(content: Text(AppStrings.passNotMatch.tr)));
                   return;
                 }
 
                 if (newPasswordController.text.length < 6) {
                   ScaffoldMessenger.of(
                     context,
-                  ).showSnackBar(SnackBar(content: Text("pass_six_char".tr)));
+                  ).showSnackBar(SnackBar(content: Text(AppStrings.passwordMust6Character.tr)));
                   return;
                 }
 

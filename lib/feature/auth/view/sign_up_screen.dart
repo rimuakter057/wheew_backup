@@ -1,5 +1,10 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings, use_build_context_synchronously
 
+import 'dart:async';
+import 'dart:convert';
+import 'dart:developer' as developer;
+import 'dart:io';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +12,13 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/core/service/storage_service.dart';
 import 'package:platchatapp/feature/privacy_policy/privacy_policy_screen.dart';
 import 'package:platchatapp/feature/terms_condition/web_view_screen.dart';
+import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
+import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import '../../../core/router/route_path.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../core/service/api_checker.dart';
@@ -67,7 +76,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           icon: Icon(Icons.arrow_back, size: ResponsiveHelper.iconSize(24)),
         ),
         title: Text(
-          'sign_up'.tr,
+          AppStrings.signUp.tr,
           style: GoogleFonts.poppins(
             color: Colors.black,
             fontSize: ResponsiveHelper.fontSize(18),
@@ -87,10 +96,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
               /// Nickname
               CustomTextField(
                 controller: nicknameController,
-                title: 'nick_name'.tr,
-                hintText: 'type_here1'.tr,
+                title:AppStrings.nickName.tr,
+                hintText: AppStrings.typeHere1.tr,
                 validator: (value) => (value == null || value.trim().isEmpty)
-                    ? 'nickname_is_required'.tr
+                    ? AppStrings.nicknameIsRequired.tr
                     : null,
               ),
 
@@ -101,7 +110,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'select_designation'.tr,
+              AppStrings.selectDesignation.tr,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       color: AppColors.secondaryText,
@@ -112,7 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   DropdownButtonFormField2<String>(
                     value: selectedDesignation,
                     hint: Text(
-                      'select'.tr,
+                        AppStrings.select.tr,
                       style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
                     ),
                     isExpanded: true,
@@ -204,8 +213,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               /// License Number
               CustomTextField(
                 controller: licenseController,
-                title: 'license_number'.tr,
-                hintText: 'type_here'.tr,
+                title:    AppStrings.licenseNumber.tr,
+                hintText:    AppStrings.typeHere.tr,
 
                 // validator: (value) {
                 //   if (value == null || value.trim().isEmpty) {
@@ -335,7 +344,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
 
                           TextSpan(
-                            text: 'terms_and_conditions'.tr,
+                            text:    AppStrings.termsAndConditions.tr,
                             style: GoogleFonts.poppins(
                               color: AppColors.blue,
                               decoration: TextDecoration.underline,
@@ -355,7 +364,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
 
                           TextSpan(
-                            text: 'and'.tr,
+                            text:   AppStrings.and.tr,
                             style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w400,
                               fontSize: 14,
@@ -363,7 +372,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                           ),
                           TextSpan(
-                            text: 'privacy_policy'.tr,
+                            text:   AppStrings.privacyPolicy.tr,
                             style: GoogleFonts.poppins(
                               color: AppColors.blue,
                               decoration: TextDecoration.underline,
@@ -392,7 +401,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
-              /// Continue Button
+
               PrimaryButton(
                 title: 'continue'.tr,
                 onTap: () async {
@@ -401,15 +410,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     return;
                   }
 
+                  if (selectedDesignation == null) {
+                    showErrorSnackBar('please_select_designation'.tr);
+                    return;
+                  }
+
                   if (!agree) {
                     showWarningSnackBar('please accept terms'.tr);
                     return;
                   }
 
-                  showLoadingDialog(
-                    message: 'creating_account'.tr,
-                    context: context,
-                  );
+                  showLoadingDialog(message: 'creating_account'.tr, context: context);
 
                   try {
                     final response = await AuthRepository().register(
@@ -421,25 +432,72 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       designation: selectedDesignation!,
                     );
 
-                    hideLoadingDialog(context);
+                    developer.log(
+                      'Register Result -> code: ${response.statusCode}, body: ${response.body}',
+                      name: 'SIGNUP',
+                    );
 
-                    if (response.statusCode == 200 ||
-                        response.statusCode == 201) {
-                      showSuccessToast('registration_successful!'.tr);
-                      if (context.mounted) {
-                        context.go(RoutePath.signIn);
+                    // dialog বন্ধ করুন response আসার পরপরই, context চেক করার আগে
+                    if (context.mounted) hideLoadingDialog(context);
+
+                    if (response.statusCode == 200 || response.statusCode == 201) {
+                      // if (context.mounted) {
+                      //   showSuccessToast('registration_successful'.tr);
+                      //  // context.go(RoutePath.signIn);
+                      //   context.go(RoutePath.vehicle);
+                      // }
+
+                      final data = jsonDecode(response.body); // 🔥 IMPORTANT
+
+                      final token = data['token']; // or data['data']['token'] depending on API
+
+                      if (token != null && token.isNotEmpty) {
+                        await SharePrefsHelper.setString(AppConst.token, token);
                       }
+
+                      if (context.mounted) {
+                        showSuccessToast('registration_successful'.tr);
+                        context.go(RoutePath.vehicle);
+                      }
+
+
                     } else {
                       if (context.mounted) {
                         ApiChecker.checkApi(response);
                       }
                     }
-                  } catch (e) {
-                    hideLoadingDialog(context);
-                    showErrorSnackBar('Error: $e');
+                  }catch (e, st) {
+                    developer.log('Register Exception: $e', name: 'SIGNUP');
+                    developer.log('StackTrace: $st', name: 'SIGNUP');
+
+                    if (context.mounted) {
+                      hideLoadingDialog(context);
+
+                      String userMessage;
+
+                      if (e is TimeoutException) {
+
+                        CustomSnackbar.error(message:"server_not_responding_check_connection", context: context);
+                        userMessage = 'server_not_responding_check_connection'.tr;
+                        // বাংলা ফলব্যাক: 'সার্ভারের সাথে সংযোগ করা যাচ্ছে না। আপনার ইন্টারনেট/নেটওয়ার্ক চেক করুন।'
+                      } else if (e is SocketException) {
+                        userMessage = 'no_internet_connection_check_network'.tr;
+                        CustomSnackbar.error(message:"no_internet_connection_check_network", context: context);
+                        // 'ইন্টারনেট কানেকশন নেই অথবা সার্ভার আনরিচেবল।'
+                      } else if (e is FormatException) {
+                        userMessage = 'unexpected_server_response'.tr;
+                        CustomSnackbar.error(message:"unexpected_server_respons", context: context);
+                      } else {
+                        userMessage = '${'something_went_wrong'.tr}';
+                      }
+
+                      showErrorSnackBar(userMessage);
+                    }
                   }
+
                 },
               ),
+
 
               SizedBox(height: ResponsiveHelper.spacing(8)),
 

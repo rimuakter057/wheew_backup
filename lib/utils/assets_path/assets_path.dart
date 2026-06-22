@@ -9,6 +9,7 @@ class AssetsPath {
   static const String plateIcon = '${_logoBase}platechat_icon.svg';
   static const String plateLogo = '${_logoBase}platechat_logo.svg';
   static const String logoPng = '${_logoBase}logo.png';
+  static const String appLogoUpdate = 'assets/logo/app_logo_update.png';
 
   //icons====================================
   static const String send = '${_iconsBase}send.svg';

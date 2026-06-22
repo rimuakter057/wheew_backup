@@ -7,7 +7,7 @@
 // import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 // import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 // import 'package:platchatapp/utils/color/app_colors.dart';
-// import 'package:platchatapp/utils/string/bad_words.dart';
+// import 'package:platchatapp/utils/language/bad_words.dart';
 //
 // import 'attachment_bottom_sheet.dart';
 // import 'message_preset_chips.dart';
@@ -328,7 +328,7 @@ import 'package:google_fonts/google_fonts.dart' hide Config;
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
-import 'package:platchatapp/utils/string/bad_words.dart';
+import 'package:platchatapp/utils/language/bad_words.dart';
 
 import 'attachment_bottom_sheet.dart';
 import 'message_preset_chips.dart';

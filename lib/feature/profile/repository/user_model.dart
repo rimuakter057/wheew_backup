@@ -1,33 +1,134 @@
+// class UserModel {
+//   final String? id;
+//   final String nickName;
+//   final String licenceId;
+//   final String? avatar;
+//   final String? designation;
+//   final double?rating;
+//   final String? createdAt;
+//   ExistingRoom2? existingRoom; // mutable রাখো — room update হতে পারে
+//
+//   UserModel( {
+//     this.id,
+//     required this.nickName,
+//     required this.licenceId,
+//     this.rating,
+//     this.avatar,
+//     this.designation,
+//     this.createdAt,
+//     this.existingRoom,
+//   });
+//
+//   factory UserModel.fromJson(Map<String, dynamic> json) {
+//     return UserModel(
+//       id: json['id'],
+//       nickName: json['nick_name'] ?? '',
+//       licenceId: json['licence_id'] ?? '',
+//       rating: (json['rating'] ?? 0).toDouble(),
+//       avatar: json['avatar'],
+//       designation: json['designation'],
+//       createdAt: json['createdAt'],
+//       existingRoom: json['existingRoom'] != null
+//           ? ExistingRoom2.fromJson(json['existingRoom'])
+//           : null,
+//     );
+//   }
+//
+//   UserModel copyWith({
+//     String? id,
+//     String? nickName,
+//     String? licenceId,
+//     String? avatar,
+//     String? designation,
+//     String? createdAt,
+//     ExistingRoom2? existingRoom,
+//   }) {
+//     return UserModel(
+//       id: id ?? this.id,
+//       nickName: nickName ?? this.nickName,
+//       licenceId: licenceId ?? this.licenceId,
+//       avatar: avatar ?? this.avatar,
+//       designation: designation ?? this.designation,
+//       createdAt: createdAt ?? this.createdAt,
+//       existingRoom: existingRoom ?? this.existingRoom,
+//     );
+//   }
+//
+//   Map<String, dynamic> toJson() => {
+//     'id': id,
+//     'nick_name': nickName,
+//     'licence_id': licenceId,
+//     'avatar': avatar,
+//     'designation': designation,
+//     'createdAt': createdAt,
+//     'existingRoom': existingRoom?.toJson(),
+//   };
+// }
+
+// ExistingRoom2 Model
+
+
+
 class UserModel {
   final String? id;
+  final String? email;
+
   final String nickName;
   final String licenceId;
   final String? avatar;
   final String? designation;
-  final double?rating;
+  final double? rating;
   final String? createdAt;
-  ExistingRoom2? existingRoom; // mutable রাখো — room update হতে পারে
+  final String? role;
 
-  UserModel( {
+  final bool? licenseNoVerified;
+  final String? vehicleType;
+  final String? vehicleModel;
+  final String? vehicleColor;
+  final bool? isVehicleVerified;
+  final bool? isVehicleOwnershipDocumentSubmitted;
+
+  ExistingRoom2? existingRoom;
+
+  UserModel({
     this.id,
+    this.email,
     required this.nickName,
     required this.licenceId,
     this.rating,
     this.avatar,
     this.designation,
     this.createdAt,
+    this.role,
+    this.licenseNoVerified,
+    this.vehicleType,
+    this.vehicleModel,
+    this.vehicleColor,
+    this.isVehicleVerified,
+    this.isVehicleOwnershipDocumentSubmitted,
     this.existingRoom,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'],
+      email: json['email'],
       nickName: json['nick_name'] ?? '',
       licenceId: json['licence_id'] ?? '',
       rating: (json['rating'] ?? 0).toDouble(),
       avatar: json['avatar'],
       designation: json['designation'],
       createdAt: json['createdAt'],
+      role: json['role'],
+
+      licenseNoVerified: json['license_no_verified'],
+      vehicleType: json['vehicle_type'],
+      vehicleModel: json['vehicle_model'],
+      vehicleColor: json['vehicle_color'],
+      isVehicleVerified: json['is_vehicle_verified'],
+      isVehicleOwnershipDocumentSubmitted:
+      json['is_vehicle_ownership_document_submitted'],
+
       existingRoom: json['existingRoom'] != null
           ? ExistingRoom2.fromJson(json['existingRoom'])
           : null,
@@ -36,36 +137,67 @@ class UserModel {
 
   UserModel copyWith({
     String? id,
+    String? email,
     String? nickName,
     String? licenceId,
     String? avatar,
     String? designation,
+    double? rating,
     String? createdAt,
+    String? role,
+    bool? licenseNoVerified,
+    String? vehicleType,
+    String? vehicleModel,
+    String? vehicleColor,
+    bool? isVehicleVerified,
+    bool? isVehicleOwnershipDocumentSubmitted,
     ExistingRoom2? existingRoom,
   }) {
     return UserModel(
       id: id ?? this.id,
+      email: email ?? this.email,
       nickName: nickName ?? this.nickName,
       licenceId: licenceId ?? this.licenceId,
       avatar: avatar ?? this.avatar,
       designation: designation ?? this.designation,
+      rating: rating ?? this.rating,
       createdAt: createdAt ?? this.createdAt,
+      role: role ?? this.role,
+      licenseNoVerified: licenseNoVerified ?? this.licenseNoVerified,
+      vehicleType: vehicleType ?? this.vehicleType,
+      vehicleModel: vehicleModel ?? this.vehicleModel,
+      vehicleColor: vehicleColor ?? this.vehicleColor,
+      isVehicleVerified: isVehicleVerified ?? this.isVehicleVerified,
+      isVehicleOwnershipDocumentSubmitted:
+      isVehicleOwnershipDocumentSubmitted ??
+          this.isVehicleOwnershipDocumentSubmitted,
       existingRoom: existingRoom ?? this.existingRoom,
     );
   }
 
   Map<String, dynamic> toJson() => {
     'id': id,
+    'email': email,
     'nick_name': nickName,
     'licence_id': licenceId,
     'avatar': avatar,
     'designation': designation,
+    'rating': rating,
     'createdAt': createdAt,
+    'role': role,
+    'license_no_verified': licenseNoVerified,
+    'vehicle_type': vehicleType,
+    'vehicle_model': vehicleModel,
+    'vehicle_color': vehicleColor,
+    'is_vehicle_verified': isVehicleVerified,
+    'is_vehicle_ownership_document_submitted':
+    isVehicleOwnershipDocumentSubmitted,
     'existingRoom': existingRoom?.toJson(),
   };
 }
 
-// ExistingRoom2 Model
+
+
 class ExistingRoom2 {
   final String? id;
   final String? user1Id;

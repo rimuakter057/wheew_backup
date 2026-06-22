@@ -201,6 +201,42 @@ class OcrController {
 
 
 
+
+
+
+
+
+  Future<Map<String, dynamic>?> getChatRoomByPlate({
+    required String plateNumber,
+  }) async {
+    try {
+      final http.Response response = await ApiClient.postData(
+        uri: ApiUrl.verifyPlate,
+        body: {"plate_no": plateNumber},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        return Map<String, dynamic>.from(data);
+      } else {
+        String message = 'License plate not found';
+        try {
+          final decoded = jsonDecode(response.body);
+          if (decoded is Map && decoded['message'] != null) {
+            message = decoded['message'].toString();
+          }
+        } catch (_) {}
+        showErrorToast(message);
+        return null;
+      }
+    } catch (e) {
+      showErrorToast('something_wrong'.tr);
+      return null;
+    }
+  }
+
+
+
   Future<void> dispose() async {
     debugPrint("Disposing OCR...");
     await cameraController?.dispose();

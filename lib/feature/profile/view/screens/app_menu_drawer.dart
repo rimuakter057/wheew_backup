@@ -70,9 +70,10 @@ class AppMenuDrawer extends StatelessWidget {
               context,
               icon: Icons.person_outline,
               title: 'profile'.tr,
-              onTap: () {
+              onTap: () async {
                 Navigator.pop(context);
-                context.pushNamed(RouteName.profile);
+                await context.pushNamed(RouteName.profile);
+                profileController.reloadProfile();
               },
             ),
 

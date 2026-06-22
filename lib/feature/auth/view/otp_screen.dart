@@ -5,6 +5,8 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
 import 'package:platchatapp/share/widgets/button/primary_button.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
+
 import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../utils/color/app_colors.dart';
@@ -25,7 +27,6 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     debugPrint("==============================${widget.email}");
   }
@@ -33,7 +34,9 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'verification_code'.tr),
+      appBar: CustomAppBar(
+        title: AppStrings.verificationCode.tr,
+      ),
 
       body: SafeArea(
         child: Padding(
@@ -42,16 +45,21 @@ class _OtpScreenState extends State<OtpScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'enter_verification_code'.tr,
-                style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
-              ),
-              SizedBox(height: ResponsiveHelper.height(16)),
-              Text(
-                'we_sent_6_digit_code'.tr,
-                style: TextStyle(fontSize: ResponsiveHelper.fontSize(14)),
+                AppStrings.enterVerificationCode.tr,
+                style: TextStyle(
+                  fontSize: ResponsiveHelper.fontSize(16),
+                ),
               ),
 
-              //const Spacer(),
+              SizedBox(height: ResponsiveHelper.height(16)),
+
+              Text(
+                AppStrings.weSent6DigitCode.tr,
+                style: TextStyle(
+                  fontSize: ResponsiveHelper.fontSize(14),
+                ),
+              ),
+
               const SizedBox(height: 32),
 
               /// OTP FIELD
@@ -80,7 +88,8 @@ class _OtpScreenState extends State<OtpScreen> {
                   inactiveFillColor: AppColors.softBrandColor,
                 ),
 
-                textStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
+                textStyle:
+                Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: AppColors.primaryText,
                   fontSize: ResponsiveHelper.fontSize(16),
@@ -89,25 +98,29 @@ class _OtpScreenState extends State<OtpScreen> {
                 beforeTextPaste: (text) => true,
 
                 onChanged: (_) {
-                  if (hasError) setState(() => hasError = false);
+                  if (hasError) {
+                    setState(() => hasError = false);
+                  }
                 },
 
                 onCompleted: (value) {
                   debugPrint('OTP: $value');
                 },
               ),
-              const Spacer(),
-              PrimaryButton(
-                title: 'send'.tr,
 
-                //     onTap: () {
-                //   context.pushNamed(RouteName.resetPassword);
-                // },
+              const Spacer(),
+
+              PrimaryButton(
+                title: AppStrings.send.tr,
                 onTap: () async {
                   if (_otpController.text.isEmpty) {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(SnackBar(content: Text("otp_required".tr)));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          AppStrings.otpRequired.tr,
+                        ),
+                      ),
+                    );
                     return;
                   }
 
@@ -118,11 +131,14 @@ class _OtpScreenState extends State<OtpScreen> {
                   );
 
                   if (otpToken != null) {
-                    // Navigate with token
                     context.pushNamed(
                       RouteName.resetPassword,
-                      extra: {"otpToken": otpToken, "email": widget.email},
+                      extra: {
+                        "otpToken": otpToken,
+                        "email": widget.email,
+                      },
                     );
+
                     _otpController.clear();
                   }
                 },
