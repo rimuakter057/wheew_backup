@@ -9,7 +9,9 @@ import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
+import '../../../helper/custom_image/custom_image.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
+import '../../../utils/assets_path/assets_path.dart';
 import '../repository/auth_controller.dart';
 import '../../../share/widgets/text_field/custom_text_field.dart';
 import '../../../share/widgets/button/primary_button.dart';
@@ -73,19 +75,19 @@ class _SignInScreenState extends State<SignInScreen> {
                       AssetsPath.signLogo,
                       width: ResponsiveHelper.width(120),
                     ),*/
-                    Lottie.asset(
-                      'assets/animations/icon_animated.json',
-                      width: ResponsiveHelper.iconSize(120),
-                      fit: BoxFit.cover,
-                      repeat: true,
-                    ),
-
-
-                    // CustomImage(
-                    //   imageSrc: AssetsPath.appLogoUpdate,
-                    //   width: ResponsiveHelper.iconSize(250),
-                    //   height: ResponsiveHelper.iconSize(250),
+                    // Lottie.asset(
+                    //   'assets/animations/icon_animated.json',
+                    //   width: ResponsiveHelper.iconSize(120),
+                    //   fit: BoxFit.cover,
+                    //   repeat: true,
                     // ),
+                    //
+
+                    CustomImage(
+                      imageSrc: AssetsPath.appLogoUpdate,
+                      width: ResponsiveHelper.iconSize(200),
+                      height: ResponsiveHelper.iconSize(200),
+                    ),
 
                     SizedBox(height: ResponsiveHelper.spacing(18)),
 
