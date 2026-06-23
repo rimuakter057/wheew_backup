@@ -36,7 +36,9 @@ class _MainNavScreenState extends State<MainNavScreen> {
       case 1:
         return const SearchListScreen();
       case 2:
-        return ScanScreen();
+       // return ScanScreen();
+
+        return Scaffold(backgroundColor: Colors.white,);
       case 3:
         return const MapScreen();
       case 4:
@@ -127,6 +129,10 @@ class _AppBottomNav extends StatelessWidget {
                 currentIndex: currentIndex,
                 onTap: onTap,
               ),
+
+
+
+
               _NavItem(
                 icon: AssetsPath.mapNav,
                 label: 'map'.tr,
@@ -302,13 +308,19 @@ class ScanNavItem extends StatelessWidget {
 
     return Expanded(
       child: GestureDetector(
-        onTap: () => onTap(index),
+       onTap: () => onTap(index),
+    //     onTap: (){
+    //
+    //
+    //
+    //     },
         behavior: HitTestBehavior.opaque,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SvgPicture.asset(
-              AssetsPath.scanNav,
+             // AssetsPath.scanNav,
+              AssetsPath.pNav,
               width: ResponsiveHelper.iconSize(60),
               height: ResponsiveHelper.iconSize(60),
             ),

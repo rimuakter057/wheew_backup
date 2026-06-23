@@ -88,11 +88,11 @@ class AppSocket {
   ///<------------------ Listen for Events ------------------>
   // Public method for listening to socket events
   static void onEvent(String eventName, Function(dynamic) callback) {
-    if (socket != null && socket!.connected) {
-      debugPrint(' Socket connected.  listen for "$eventName".');
+    if (socket != null) {
+      debugPrint('Registering socket listener for event: "$eventName".');
       socket!.on(eventName, callback);
     } else {
-      debugPrint('⚠️ Socket not connected. Cannot listen for "$eventName".');
+      debugPrint('⚠️ Socket is null. Cannot listen for "$eventName".');
     }
   }
 

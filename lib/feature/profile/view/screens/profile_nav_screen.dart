@@ -744,7 +744,7 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
                   Row(
                     children: [
                       Text(
-                        user?.nickName.isNotEmpty == true ? user!.nickName : '---',
+                        user?.nickName.isNotEmpty == true ? user!.nickName : 'unknown',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: ResponsiveHelper.titleFontSize(22),

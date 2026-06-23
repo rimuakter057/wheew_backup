@@ -571,7 +571,12 @@ class ParkingReportController extends GetxController {
       isLeaving.value = false;
     }
   }
-
+  void toggleDisabledFacility() {
+    disabledFacility.value = !disabledFacility.value;
+    if (disabledFacility.value) {
+      parkingCost.value = 'FREE'; // disabled facility থাকলে auto FREE
+    }
+  }
 
 
 

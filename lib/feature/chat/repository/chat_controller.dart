@@ -344,31 +344,23 @@ class ChatController extends GetxController {
 
 
   ///==============================================================
-  bool _listenersInitialized = false; // ⭐ Add this
-
-
-
-  // void initSocketListeners() {
-  //   if (_listenersInitialized) return;
-  //   _listenersInitialized = true;
-  //
-  //   sendNewListenMessage();
-  //   errorListenMessage();
-  //   newMessage(); // ✅ এখানে একবার call করো
-  //   listenMessageDelivered();
-  //
-  //   debugPrint('✅ Socket listeners initialized');
-  // }
-
-
+  Object? _lastBoundSocket; // ⭐ Track specific socket instance to avoid redundant registrations and handle re-initialization
 
   void initSocketListeners() {
-    if (_listenersInitialized) return;
-    _listenersInitialized = true;
+    final s = AppSocket.socket;
+    if (s == null) {
+      debugPrint('🔌 AppSocket.socket is null, skipping listener initialization');
+      return;
+    }
+    if (_lastBoundSocket == s) {
+      debugPrint('🔌 Socket listeners already initialized for this socket instance');
+      return;
+    }
+    _lastBoundSocket = s;
 
     // ✅ এই prints গুলো add করো
-    debugPrint('🔌 Socket connected: ${AppSocket.socket?.connected}');
-    debugPrint('🔌 Socket id: ${AppSocket.socket?.id}');
+    debugPrint('🔌 Socket connected: ${s.connected}');
+    debugPrint('🔌 Socket id: ${s.id}');
     debugPrint('🔌 Socket listeners initializing...');
 
     sendNewListenMessage();
@@ -722,19 +714,72 @@ class ChatController extends GetxController {
     AppSocket.socket?.off('message-delivered');
 
     AppSocket.socket?.on('message-delivered', (value) {
-      debugPrint('📦 message-delivered====================================: $value');
+      debugPrint('📦 message-delivered event received: $value');
 
-      final String messageId = value['id']?.toString() ?? '';
-      final bool isDelivered = value['is_delivered'] ?? false;
+      List<String> deliveredIds = [];
+      bool isDelivered = true; // default to true if the event fires
 
-      if (messageId.isEmpty) return;
+      if (value is Map) {
+        isDelivered = value['is_delivered'] ?? value['isDelivered'] ?? true;
+        if (value['id'] != null) {
+          deliveredIds.add(value['id'].toString());
+        }
+        if (value['messageId'] != null) {
+          deliveredIds.add(value['messageId'].toString());
+        }
+        if (value['messageIds'] != null) {
+          final ids = value['messageIds'];
+          if (ids is List) {
+            deliveredIds.addAll(ids.map((e) => e.toString()));
+          }
+        }
+      } else if (value is List) {
+        for (final item in value) {
+          if (item is Map) {
+            final id = item['id'] ?? item['messageId'];
+            if (id != null) deliveredIds.add(id.toString());
+          } else if (item != null) {
+            deliveredIds.add(item.toString());
+          }
+        }
+      } else if (value is String) {
+        deliveredIds.add(value);
+      }
 
-      // ✅ userMessageList এ সেই message খুঁজে update করো
-      final index = userMessageList.indexWhere((m) => m.id == messageId);
-      if (index != -1) {
-        userMessageList[index].isDelivered = isDelivered;
+      if (deliveredIds.isEmpty) {
+        debugPrint('⚠️ No message IDs resolved from message-delivered event: $value');
+        return;
+      }
+
+      debugPrint('✅ Resolved delivered message IDs: $deliveredIds');
+
+      bool messageListUpdated = false;
+      bool chatListUpdated = false;
+
+      for (final messageId in deliveredIds) {
+        // Update userMessageList (chat screen UI)
+        final index = userMessageList.indexWhere((m) => m.id == messageId);
+        if (index != -1) {
+          userMessageList[index].isDelivered = isDelivered;
+          messageListUpdated = true;
+          debugPrint('✅ Chat screen message delivered status updated: $messageId');
+        }
+
+        // Update userChatList (chat list screen UI)
+        final roomIndex = userChatList.indexWhere((room) => room.latestMessage?.id == messageId);
+        if (roomIndex != -1) {
+          userChatList[roomIndex].latestMessage?.isDelivered = isDelivered;
+          chatListUpdated = true;
+          debugPrint('✅ Chat list room latestMessage delivered status updated: $messageId');
+        }
+      }
+
+      if (messageListUpdated) {
         userMessageList.refresh(); // ✅ UI instantly update
-        debugPrint('✅ Message delivered status updated: $messageId');
+      }
+
+      if (chatListUpdated) {
+        userChatList.refresh(); // ✅ Chat list UI instantly update
       }
     });
   }

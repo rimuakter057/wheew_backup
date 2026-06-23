@@ -24,6 +24,34 @@ class ApiUrl {
       "$baseSocketUrl?userId=$userId";
 
   // Fixed endpoints to match your backend
+
+
+
+
+
+
+
+
+
+
+  static String getNotifications({required int page, required int limit}) =>
+      '/notifications/events?page=$page&limit=$limit';
+
+  static String markNotificationRead({required String id}) =>
+      '/notifications/events/$id/read';
+
+  static String get markAllNotificationsRead =>
+      '/notifications/read-all';
+
+  static String deleteNotification({required String id}) =>
+      '/notifications/events/$id';
+
+  static String get deleteAllNotifications =>
+      '/notifications/events';
+
+
+
+
   static const String register = '/auth/register';
   static const String login = '/auth/signin';
   static const String chatList = '/auth/me';

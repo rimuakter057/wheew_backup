@@ -40,13 +40,13 @@ void main() async {
   await languageController.loadSavedLanguage();
 
   Get.addTranslations(AppTranslations().keys);
-  AppBindings().dependencies();
+
   await AppSocket.init(
     onSocketConnect: () {
       debugPrint('======= main Socket connected =======');
     },
   );
-
+  AppBindings().dependencies();
   // ── Voice setup (নতুন 5 লাইন) ──
   _voiceRouter = VoiceActionRouter(navigatorKey: AppRouter.navigatorKey);
   VoiceHandler.initialize(

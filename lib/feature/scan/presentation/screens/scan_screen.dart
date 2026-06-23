@@ -149,7 +149,11 @@ class _ScanScreenState extends State<ScanScreen>
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: ResponsiveHelper.spacing(8)),
-
+Row(children: [
+  IconButton(onPressed: (){
+    context.pop();
+  }, icon: Icon(Icons.arrow_back_ios,color: AppColors.white,)),
+],),
             _buildTabToggle(),
             Expanded(
               child: _tabIndex == 0

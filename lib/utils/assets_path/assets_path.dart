@@ -17,9 +17,12 @@ class AssetsPath {
   static const String mapNav = '${_iconsBase}map_nav.svg';
   static const String profileNav = '${_iconsBase}profile_nav.svg';
   static const String scanNav = '${_iconsBase}scan_nav.svg';
+  static const String pNav = '${_iconsBase}p_nav.svg';
   static const String searchNav = '${_iconsBase}search_nav.svg';
   static const String insurance = '${_iconsBase}insurance.png';
   static const String license = '${_iconsBase}license.png';
+  static const String scanCommon = '${_iconsBase}scan_common.svg';
+  static const String scanOcr = '${_iconsBase}scan_ocr.png';
 
 
   // Animations

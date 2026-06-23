@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+import 'package:platchatapp/core/router/route_path.dart';
 import 'package:platchatapp/feature/auth/repository/vihecal_controller.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
@@ -11,7 +13,7 @@ class VehicleInfoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ResponsiveHelper.init(context); // 🔥 IMPORTANT
+
 
     // Common input decoration to avoid repetitive code
     InputDecoration customInputDecoration({required String labelText, IconData? prefixIcon}) {
@@ -45,16 +47,68 @@ class VehicleInfoScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white, // ক্লিন ব্যাকগ্রাউন্ড
+      // appBar: AppBar(
+      //   title: const Text(
+      //       "Vehicle Info",
+      //       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
+      //   ),
+      //   centerTitle: true,
+      //   elevation: 0,
+      //   backgroundColor: Colors.white,
+      //   foregroundColor: Colors.black,
+      // ),
+
+
       appBar: AppBar(
         title: const Text(
-            "Vehicle Info",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
+          "Vehicle Info",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
         ),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: TextButton.icon(
+              onPressed: () {
+                context.go(RoutePath.mainNavScreen);
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: AppColors.blue.withOpacity(0.08),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              icon: const Icon(
+                Icons.arrow_forward_rounded,
+                size: 18,
+                color: AppColors.blue,
+              ),
+              label: const Text(
+                "Skip",
+                style: TextStyle(
+                  color: AppColors.blue,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
+
+
+
+
+
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -92,9 +146,9 @@ class VehicleInfoScreen extends StatelessWidget {
                       labelText: "Vehicle Type",
                       prefixIcon: Icons.directions_car_rounded
                   ),
-                  // ড্রপডাউন ওপেন হলে আইটেমগুলোর স্টাইল এবং সাইজ নিয়ন্ত্রণ
+
                   style: TextStyle(
-                    fontSize: ResponsiveHelper.fontSize(14), // 🔥 এখানে ড্রপডাউন টেক্সট সাইজ ফিক্সড করা হয়েছে
+                    fontSize: ResponsiveHelper.fontSize(14),
                     color: Colors.black87,
                   ),
                   items: controller.vehicleTypes.map((type) {

@@ -630,12 +630,77 @@ class ParkingInfoDialog extends StatelessWidget {
                 label: 'map_parking_cost'.tr,
               ),
               SizedBox(height: ResponsiveHelper.spacing(8)),
+              // Row(
+              //   children: ['FREE', 'PAID'].map((val) {
+              //     final selected = controller.parkingCost.value == val;
+              //     return Expanded(
+              //       child: GestureDetector(
+              //         onTap: () => controller.parkingCost.value = val,
+              //         child: AnimatedContainer(
+              //           duration: const Duration(milliseconds: 200),
+              //           margin: EdgeInsets.only(
+              //             right: val == 'FREE' ? ResponsiveHelper.spacing(8) : 0,
+              //           ),
+              //           padding: EdgeInsets.symmetric(
+              //             vertical: ResponsiveHelper.padding(12),
+              //           ),
+              //           decoration: BoxDecoration(
+              //             color: selected
+              //                 ? const Color(0xFF3D72E8)
+              //                 : const Color(0xFFF4F6FB),
+              //             borderRadius: BorderRadius.circular(
+              //               ResponsiveHelper.borderRadius(12),
+              //             ),
+              //             border: Border.all(
+              //               color: selected
+              //                   ? const Color(0xFF3D72E8)
+              //                   : Colors.transparent,
+              //             ),
+              //           ),
+              //           child: Row(
+              //             mainAxisAlignment: MainAxisAlignment.center,
+              //             children: [
+              //               Icon(
+              //                 val == 'FREE'
+              //                     ? Icons.money_off_rounded
+              //                     : Icons.attach_money_rounded,
+              //                 color: selected
+              //                     ? Colors.white
+              //                     : const Color(0xFF6B7280),
+              //                 size: ResponsiveHelper.iconSize(18),
+              //               ),
+              //               SizedBox(width: ResponsiveHelper.spacing(6)),
+              //               Text(
+              //                 (val == 'FREE'
+              //                     ? 'map_free'
+              //                     : 'map_paid')
+              //                     .tr,
+              //                 style: GoogleFonts.poppins(
+              //                   fontSize: ResponsiveHelper.fontSize(13),
+              //                   fontWeight: FontWeight.w600,
+              //                   color: selected
+              //                       ? Colors.white
+              //                       : const Color(0xFF6B7280),
+              //                 ),
+              //               ),
+              //             ],
+              //           ),
+              //         ),
+              //       ),
+              //     );
+              //   }).toList(),
+              // ),
+
               Row(
                 children: ['FREE', 'PAID'].map((val) {
                   final selected = controller.parkingCost.value == val;
+                  final isDisabledLock = controller.disabledFacility.value && val == 'PAID';
+
                   return Expanded(
                     child: GestureDetector(
-                      onTap: () => controller.parkingCost.value = val,
+                      onTap: isDisabledLock
+                          ? null   // ← disabled facility on থাকলে PAID এ ক্লিক কাজ করবে না
+                          : () => controller.parkingCost.value = val,
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         margin: EdgeInsets.only(
@@ -690,6 +755,7 @@ class ParkingInfoDialog extends StatelessWidget {
                   );
                 }).toList(),
               ),
+
               SizedBox(height: ResponsiveHelper.spacing(16)),
               ToggleRow(
                 icon: Icons.electric_bolt_rounded,
@@ -699,13 +765,26 @@ class ParkingInfoDialog extends StatelessWidget {
                 onTap: () => controller.electricCharging.toggle(),
               ),
               SizedBox(height: ResponsiveHelper.spacing(12)),
+              // ToggleRow(
+              //   icon: Icons.accessible_rounded,
+              //   iconColor: const Color(0xFF10B981),
+              //   label: 'map_disabled_facility'.tr,
+              //   value: controller.disabledFacility.value,
+              //   onTap: () => controller.disabledFacility.toggle(),
+              // ),
+              //
+
+
+
+
               ToggleRow(
                 icon: Icons.accessible_rounded,
                 iconColor: const Color(0xFF10B981),
                 label: 'map_disabled_facility'.tr,
                 value: controller.disabledFacility.value,
-                onTap: () => controller.disabledFacility.toggle(),
+                onTap: controller.toggleDisabledFacility,
               ),
+
               if (controller.disabledFacility.value) ...[
                 SizedBox(height: ResponsiveHelper.spacing(16)),
                 SectionLabel(

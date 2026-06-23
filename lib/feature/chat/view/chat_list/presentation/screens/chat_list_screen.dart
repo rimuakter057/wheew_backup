@@ -79,9 +79,42 @@ class _ChatListScreenState extends State<ChatListScreen> {
         onCreateGroupTap: () =>
             showCreateGroupDialog(context: context, controller: controller),
 
-        onPlateScanTap: () {
-          context.pushNamed(RouteName.ocrScanner);
+        // onScanTap: () {
+        //   context.pushNamed(RouteName.ocrScanner);
+        //   context.pushNamed(RouteName.scanScreen);
+        // },
+        //
+        onScanTap: () async {
+          final result = await showModalBottomSheet<String>(
+            context: context,
+            builder: (context) {
+              return SafeArea(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.document_scanner),
+                      title: const Text('OCR Scanner'),
+                      onTap: () => Navigator.pop(context, 'ocr'),
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.qr_code_scanner),
+                      title: const Text('Scan QR Code'),
+                      onTap: () => Navigator.pop(context, 'scan'),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+
+          if (result == 'ocr') {
+            context.pushNamed(RouteName.ocrScanner);
+          } else if (result == 'scan') {
+            context.pushNamed(RouteName.scanScreen);
+          }
         },
+
       ),
 
       body: RefreshIndicator(

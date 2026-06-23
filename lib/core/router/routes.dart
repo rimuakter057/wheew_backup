@@ -13,6 +13,7 @@ import 'package:platchatapp/feature/auth/view/vehicle_info_screen.dart';
 import 'package:platchatapp/feature/chat/view/member/presentation/screens/add_member_screen.dart';
 import 'package:platchatapp/feature/main/presentation/main_nav-screen.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
+import 'package:platchatapp/feature/notification/presentation/screens/notification_screen.dart';
 import 'package:platchatapp/feature/ocr/presentation/screens/ocr_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_nav_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/show_profile_screen.dart';
@@ -276,7 +277,7 @@ class AppRouter {
         path: RoutePath.notification,
         name: RouteName.notification,
         builder: (context, state) {
-          return VehicleInfoScreen();
+          return NotificationScreen();
         },
       ),
 

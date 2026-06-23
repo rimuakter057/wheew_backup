@@ -48,7 +48,8 @@ class VehicleController extends GetxController {
         Get.snackbar('Success', 'Vehicle info saved');
 
         CustomSnackbar.success(context: context, message: 'Vehicle info saved');
-        context.go(RoutePath.signIn);
+       // context.go(RoutePath.signIn);
+        context.go(RoutePath.mainNavScreen);
 
       } else {
         CustomSnackbar.error(context: context, message: 'Failed Saved');
