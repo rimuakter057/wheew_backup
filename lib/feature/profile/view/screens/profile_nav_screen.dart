@@ -87,10 +87,14 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
                 padding: ResponsiveHelper.symmetric(horizontal: 20),
                 child: Column(
                   children: [
+
+                    ///profile card====================
                     _buildProfileCard(context, controller),
                     SizedBox(height: ResponsiveHelper.spacing(20)),
+                    ///profile menu item==========================
                     _buildMenuItems(context),
                     SizedBox(height: ResponsiveHelper.spacing(30)),
+                    ///build logout button==============
                     _buildLogoutButton(context),
                     SizedBox(height: ResponsiveHelper.spacing(30)),
                   ],
@@ -106,11 +110,12 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
 
 
 
-
+///profile card=====================================================================
 
   Widget _buildProfileCard(BuildContext context, ProfileController controller) {
     final user = controller.userProfile.value;
     final avatarUrl = user?.avatar;
+    final isVerified=user?.isVehicleVerified;
 
     debugPrint("rating===========================${user?.rating?.toString()}");
 
@@ -129,7 +134,7 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
         child: Stack(
           children: [
-            /// ─── 🔵 BACKGROUND DESIGN (THE SOFT CIRCLE) ───
+            ///  BACKGROUND DESIGN (THE SOFT CIRCLE) ───
             Positioned(
               right: -ResponsiveHelper.width(90),
             //  top: -ResponsiveHelper.width(40),
@@ -154,7 +159,7 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ✅ Avatar Section with Loading Overlay
+                      /// Avatar Section with Loading Overlay
                       GestureDetector(
                         onTap: () {
                           if (avatarUrl != null && avatarUrl.isNotEmpty) {
@@ -200,16 +205,12 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
                       ),
 
 
-
+///=================scan================================
 
                       FutureBuilder<bool?>(
                         future: SharePrefsHelper.getBool(AppConst.licenseNoVerified),
                         builder: (context, snapshot) {
                           final bool isVerified = snapshot.data ?? false;
-
-                          // ✅ Verified State — Clean & Premium Label
-
-///get scan========
 
 
 
@@ -739,18 +740,29 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
                   ),
                   SizedBox(height: ResponsiveHelper.spacing(15)),
 
-                  // ✅ Nick name from controller
-                  Text(
-                    user?.nickName.isNotEmpty == true ? user!.nickName : '---',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: ResponsiveHelper.titleFontSize(24),
-                      fontWeight: FontWeight.bold,
-                    ),
+                  /// ✅ Nick name from controller=====================================
+                  Row(
+                    children: [
+                      Text(
+                        user?.nickName.isNotEmpty == true ? user!.nickName : '---',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: ResponsiveHelper.titleFontSize(22),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: ResponsiveHelper.spacing(8)),
+                      CustomImage(imageSrc:isVerified==true? AssetsPath.verified:AppStrings.autoScanningInProgress,
+                      height: ResponsiveHelper.iconSize(20),
+                        width:ResponsiveHelper.iconSize(20),
+
+                      ),
+                      
+                    ],
                   ),
                   SizedBox(height: ResponsiveHelper.spacing(6)),
 
-                  // ✅ Rating from controller
+                  /// ✅ Rating from controller======================================
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

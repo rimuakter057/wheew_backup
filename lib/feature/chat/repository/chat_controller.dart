@@ -1298,7 +1298,7 @@ class ChatController extends GetxController {
 
     isLeavingGroup.value = false;
 
-    if (response['statusCode'] == 200) {
+    if (response['statusCode'] == 200 || response['statusCode'] == 201) {
       // ✅ Chat list থেকে remove
       userChatList.removeWhere((room) => room.id == roomId);
 

@@ -514,6 +514,27 @@ class AppStrings {
   static const String noVehicleColorTapEdit = 'no_vehicle_color_tap_edit';
 
 
+  // -------- Missing / Hardcoded in Screens --------
+  static const String letsAddYourVehicle = 'lets_add_your_vehicle';
+  static const String pleaseFillDetailsToProceed = 'please_fill_details_to_proceed';
+  static const String selectVehicleType = 'select_vehicle_type';
+  static const String editGroupChat = 'edit_group_chat';
+  static const String profilePicture = 'profile_picture';
+  static const String groupNameHint = 'group_name_hint';
+  static const String saveAndChange = 'save_and_change';
+  static const String statusInfo = 'status_info';
+  static const String gotIt = 'got_it';
+  static const String none = 'none';
+  static const String carInspection = 'car_inspection';
+  static const String vehicleOwnership = 'vehicle_ownership';
+  static const String accessDenied = 'access_denied';
+  static const String ageRestrictionMessage = 'age_restriction_message';
 
+  static const String car = 'car';
+  static const String motorcycle = 'motorcycle';
+  static const String van = 'van';
+  static const String other = 'other';
+
+  static const String editGroup = 'edit_group';
 
 }

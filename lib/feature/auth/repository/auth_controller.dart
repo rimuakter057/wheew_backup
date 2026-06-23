@@ -144,7 +144,7 @@ class AuthController extends GetxController {
         fcmToken: fcmToken,
       );
 
-      if (loginRes.statusCode == 200) {
+      if (loginRes.statusCode == 200 || loginRes.statusCode == 201) {
         if (isRememberMe.value) {
           await SharePrefsHelper.setString(AppConst.loginUser, identifier);
           await SharePrefsHelper.setString(AppConst.loginPass, password);
@@ -263,7 +263,7 @@ class AuthController extends GetxController {
 
       _setLoading(false);
 
-      if (loginRes.statusCode == 200) {
+      if (loginRes.statusCode == 200 || loginRes.statusCode == 201) {
         final data = jsonDecode(loginRes.body);
 
         await SharePrefsHelper.setString(AppConst.token, data['token'] ?? '');
@@ -448,7 +448,7 @@ class AuthController extends GetxController {
       final response = await ApiClient.getData(uri: ApiUrl.help);
       final body = jsonDecode(response.body);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         message.value = body['message'] ?? '';
       } else {
         errorMessage.value = body['message'] ?? 'something_wrong'.tr;
@@ -479,7 +479,7 @@ class AuthController extends GetxController {
 
     final data = response["data"];
 
-    if (response["statusCode"] == 200) {
+    if (response["statusCode"] == 200 || response["statusCode"] == 201) {
       await clearUserData();
       showSuccessToast(data['message'] ?? 'deleted'.tr);
       context.goNamed(RouteName.signIn);

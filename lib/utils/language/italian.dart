@@ -470,6 +470,52 @@ final Map<String, String> italian = {
   AppStrings.noVehicleModelTapEdit: 'Nessun modello di veicolo — tocca Modifica per aggiungere',
   AppStrings.noVehicleColorTapEdit: 'Nessun colore del veicolo — tocca Modifica per aggiungere',
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // Missing in Screens
+  AppStrings.letsAddYourVehicle: "Let's add your vehicle",
+  AppStrings.pleaseFillDetailsToProceed: 'Please fill out the details below to proceed.',
+  AppStrings.selectVehicleType: 'Select Vehicle Type',
+  AppStrings.editGroupChat: 'Edit Group Chat',
+  AppStrings.profilePicture: 'Profile Picture',
+  AppStrings.groupNameHint: 'e.g. I-95 Convoy',
+  AppStrings.saveAndChange: 'Save & Change',
+  AppStrings.statusInfo: 'Status Info',
+  AppStrings.gotIt: 'Got it',
+  AppStrings.none: 'None',
+  AppStrings.carInspection: 'CAR INSPECTION',
+  AppStrings.vehicleOwnership: 'VEHICLE OWNERSHIP',
+  AppStrings.accessDenied: 'Access Denied',
+  AppStrings.ageRestrictionMessage: 'You must be at least 16 years old to use this app.',
+
+  AppStrings.car: 'Auto',
+  AppStrings.motorcycle: 'Moto',
+  AppStrings.van: 'Furgone',
+  AppStrings.other: 'Altro',
+  AppStrings.vehicleInfo: 'Vehicle Info',
+  AppStrings.vehicleType: 'Vehicle Type',
+  AppStrings.vehicleModel: 'Vehicle Model',
+  AppStrings.vehicleColor: 'Vehicle Color',
+  AppStrings.submit: 'Submit',
+  AppStrings.editGroup: 'Edit Group',
+
+
+
   // Vehicle types
   'CAR': 'Auto',
   'MOTORCYCLE': 'Moto',

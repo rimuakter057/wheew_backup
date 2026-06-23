@@ -68,6 +68,8 @@ class AssetsPath {
   static const String blocked="assets/icons/block_user.svg";
   static const String remove="assets/icons/remove_account.svg";
   static const String changePass="assets/icons/change_pass.svg";
+  static const String verified="assets/icons/verified.png";
+  static const String unverified="assets/icons/unverified.png";
 
 
 
