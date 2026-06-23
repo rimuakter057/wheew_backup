@@ -41,10 +41,11 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  final ChatController chatController = Get.put(ChatController());
+ // final ChatController chatController = Get.put(ChatController());
   final ScrollController _scrollController = ScrollController();
 
   final GroupController _groupController = Get.find<GroupController>();
+  final ChatController chatController = Get.find<ChatController>();
   late String _currentRoomId;
 
 
@@ -70,6 +71,8 @@ class _MessageScreenState extends State<MessageScreen> {
     chatController.userMessageList.clear();
     chatController.page.value = 1;
     chatController.roomID.value = widget.roomId ?? '';
+
+    chatController.initSocketListeners();
 
     if (_currentRoomId.isNotEmpty) {
       chatController.fetchInboxMessage(roomId: _currentRoomId, refresh: true);

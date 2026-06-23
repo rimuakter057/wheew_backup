@@ -348,13 +348,33 @@ class ChatController extends GetxController {
 
 
 
+  // void initSocketListeners() {
+  //   if (_listenersInitialized) return;
+  //   _listenersInitialized = true;
+  //
+  //   sendNewListenMessage();
+  //   errorListenMessage();
+  //   newMessage(); // ✅ এখানে একবার call করো
+  //   listenMessageDelivered();
+  //
+  //   debugPrint('✅ Socket listeners initialized');
+  // }
+
+
+
   void initSocketListeners() {
     if (_listenersInitialized) return;
     _listenersInitialized = true;
 
+    // ✅ এই prints গুলো add করো
+    debugPrint('🔌 Socket connected: ${AppSocket.socket?.connected}');
+    debugPrint('🔌 Socket id: ${AppSocket.socket?.id}');
+    debugPrint('🔌 Socket listeners initializing...');
+
     sendNewListenMessage();
     errorListenMessage();
-    newMessage(); // ✅ এখানে একবার call করো
+    newMessage();
+    listenMessageDelivered();
 
     debugPrint('✅ Socket listeners initialized');
   }
@@ -640,9 +660,22 @@ class ChatController extends GetxController {
   Future<void> newMessage() async {
     AppSocket.socket?.off('new-message');
 
-    AppSocket.socket?.on('new-message', (value) {
+    AppSocket.socket?.on('new-message', (value) async {
       debugPrint('🔔 NEW MESSAGE RECEIVED: $value');
       Messages model = Messages.fromJson(value);
+
+      final String myId = await SharePrefsHelper.getString(AppConst.userID);
+      model.isMine = model.senderId == myId;
+
+
+      if (model.isMine == false && model.id != null) {
+        AppSocket.socket?.emit('message-received', {
+          'messageIds': [model.id],
+        });
+        debugPrint('📨 message-received emitted: ${model.id}');
+      }
+
+
 
       // ✅ আগে temp message থাকলে কিনা চেক করো (sender নিজে পেলে)
       final tempIndex = userMessageList.indexWhere(
@@ -679,6 +712,33 @@ class ChatController extends GetxController {
       updateChatRoomInList(model);
     });
   }
+
+
+
+
+
+
+  void listenMessageDelivered() {
+    AppSocket.socket?.off('message-delivered');
+
+    AppSocket.socket?.on('message-delivered', (value) {
+      debugPrint('📦 message-delivered====================================: $value');
+
+      final String messageId = value['id']?.toString() ?? '';
+      final bool isDelivered = value['is_delivered'] ?? false;
+
+      if (messageId.isEmpty) return;
+
+      // ✅ userMessageList এ সেই message খুঁজে update করো
+      final index = userMessageList.indexWhere((m) => m.id == messageId);
+      if (index != -1) {
+        userMessageList[index].isDelivered = isDelivered;
+        userMessageList.refresh(); // ✅ UI instantly update
+        debugPrint('✅ Message delivered status updated: $messageId');
+      }
+    });
+  }
+
 
   // ✅ আমি যে room-এ আছি সেখানে other user reply করলে
   // আমার সব sent message-এর isRead = true করো → নীল ✓✓
@@ -765,18 +825,18 @@ class ChatController extends GetxController {
     bool refresh = false,
     bool loadMore = false,
   }) async {
+    // ✅ Already fetching হলে skip
+    if (_isFetching) return;
+
     if (refresh) {
       page.value = 1;
       total = 0;
       userChatList.clear();
-      _isFetching = false;
     }
 
     // ✅ আর data নেই তাহলে skip
     if (loadMore && !hasMore) return;
 
-    // ✅ Already fetching হলে skip
-    if (_isFetching) return;
     _isFetching = true;
 
     if (page.value == 1) {
@@ -1155,7 +1215,7 @@ class ChatController extends GetxController {
           type: value['type'],
           createdAt: value['createdAt'],
           updatedAt: value['updatedAt'],
-          isMine: value['is_mine'],
+          isMine: true, // ✅ Sender confirmation event is always my message
           sender: value['sender'] != null
               ? GroupSender(
                   id: value['sender']['id'],
@@ -1188,6 +1248,7 @@ class ChatController extends GetxController {
 
         final String myId = await SharePrefsHelper.getString(AppConst.userID);
         final bool isMyMessage = model.senderId == myId;
+        model.isMine = isMyMessage; // ✅ Explicitly set isMine based on sender ID
 
         if (model.groupChatRoomId == groupRoomID.value) {
           debugPrint('👤 myId: $myId');

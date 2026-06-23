@@ -172,6 +172,10 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:platchatapp/core/service/api_client.dart';
+import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/core/service/storage_service.dart';
+import 'package:platchatapp/utils/app_const/app_const.dart';
 
 // ══════════════════════════════════════════════════════════════════
 //  Background handler — top-level function, isolate-safe
@@ -249,7 +253,46 @@ class NotificationService {
     // 6. App opened from a notification (background → foreground)
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
 
+    // 7. Auto-upload FCM token on token refreshes and app launch
+    FirebaseMessaging.instance.onTokenRefresh.listen((token) {
+      _uploadToken(token);
+    });
+    _uploadCurrentToken();
+
     debugPrint('✅ NotificationService initialized');
+  }
+
+  Future<void> _uploadCurrentToken() async {
+    try {
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token != null) {
+        await _uploadToken(token);
+      }
+    } catch (e) {
+      debugPrint('Error getting FCM token: $e');
+    }
+  }
+
+  Future<void> _uploadToken(String token) async {
+    try {
+      final bool isLoggedIn = await SharePrefsHelper.getBool(AppConst.isLoggedIn) ?? false;
+      if (!isLoggedIn) {
+        debugPrint('Skipping FCM token upload: User is not logged in');
+        return;
+      }
+
+      final response = await ApiClient.patchData(
+        uri: ApiUrl.updateProfile,
+        body: {'fcm_token': token},
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        debugPrint('✅ FCM token successfully updated on backend: $token');
+      } else {
+        debugPrint('❌ Failed to update FCM token on backend: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error uploading FCM token: $e');
+    }
   }
 
   // ── Permission ────────────────────────────────────────────────

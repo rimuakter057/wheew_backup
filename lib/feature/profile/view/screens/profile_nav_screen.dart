@@ -752,11 +752,19 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
                         ),
                       ),
                       SizedBox(height: ResponsiveHelper.spacing(8)),
-                      CustomImage(imageSrc:isVerified==true? AssetsPath.verified:AppStrings.autoScanningInProgress,
-                      height: ResponsiveHelper.iconSize(20),
-                        width:ResponsiveHelper.iconSize(20),
 
+                      CustomImage(
+                        imageSrc: isVerified == true
+                            ? AssetsPath.verified
+                            : AssetsPath.unverified,
+                        height: ResponsiveHelper.iconSize(20),
+                        width: ResponsiveHelper.iconSize(20),
                       ),
+                      // CustomImage(imageSrc:isVerified==true? AssetsPath.verified:AppStrings.autoScanningInProgress,
+                      // height: ResponsiveHelper.iconSize(20),
+                      //   width:ResponsiveHelper.iconSize(20),
+                      //
+                      // ),
                       
                     ],
                   ),

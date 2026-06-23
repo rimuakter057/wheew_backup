@@ -306,10 +306,7 @@ class _Bubble extends StatelessWidget {
         SizedBox(height: ResponsiveHelper.height(4)),
         Text(
           time,
-          style: GoogleFonts.poppins(
-            fontSize: ResponsiveHelper.fontSize(10),
-            color: AppColors.white.withOpacity(0.7),
-          ),
+          style: GoogleFonts.inter(color:isMine? AppColors.white:AppColors.black,fontSize: 10,fontWeight: FontWeight.w400),
         ),
       ],
     );

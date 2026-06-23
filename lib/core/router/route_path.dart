@@ -26,4 +26,6 @@ class RoutePath {
   static const groupMemberScreen = '/group-member-screen';
   static const ocrScanner = '/ocrScanner';
   static const vehicle = '/vehicle';
+  static const notification = '/notification';
+  static const faq = '/faq';
 }

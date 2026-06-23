@@ -270,6 +270,27 @@ class AppRouter {
           return VehicleInfoScreen();
         },
       ),
+
+
+      GoRoute(
+        path: RoutePath.notification,
+        name: RouteName.notification,
+        builder: (context, state) {
+          return VehicleInfoScreen();
+        },
+      ),
+
+
+
+
+      GoRoute(
+        path: RoutePath.faq,
+        name: RouteName.faq,
+        builder: (context, state) {
+          return VehicleInfoScreen();
+        },
+      ),
+
       
     ],
   );

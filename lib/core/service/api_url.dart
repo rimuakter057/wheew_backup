@@ -40,7 +40,8 @@ class ApiUrl {
   //static const String searchUsers = '/users/search';
   static  String searchUsers({required String search}) => '/users/search?query=$search';
 
-  static const String updateProfile = '/users/';
+ // static const String updateProfile = '/users/';
+  static const String updateProfile = '/users';
 
   static const String blockList = '/users/block-list';
   static const String unblock = '/users/unblock';
