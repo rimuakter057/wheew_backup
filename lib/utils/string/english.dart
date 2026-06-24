@@ -1,6 +1,8 @@
 // import 'package:platchatapp/utils/string/app_text_key.dart';
 
 final Map<String, String> english = {
+  "no_chats": 'No chats yet.\n\nSearch for your friends and start a conversation.',
+  "no_users_found": 'No users found',
   // -------- Welcome Screen --------
   'splash': 'CONNECTING DRIVERS ONE PLATE AT A TIME',
 
@@ -182,4 +184,6 @@ final Map<String, String> english = {
   'logout_success': 'Logged out!',
   'no_data': 'No data!',
   'dismiss': 'Dismiss',
+  "license_number_length_error": "License plate must be exactly 7 characters",
+  "license_number_format_error": "License plate must contain both letters and numbers"
 };

@@ -218,8 +218,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'license_number_required'.tr;
-                  } else if (value.length < 6 || value.length > 7) {
-                    return 'license_number_must_be'.tr;
+                  }
+                  else if (value.length != 7) {
+                    return 'license_number_length_error'.tr;
+                  } else if (!RegExp(r'^(?=.*[A-Za-z])(?=.*[0-9])[A-Za-z0-9]+$').hasMatch(value)) {
+                    return 'license_number_format_error'.tr;
                   }
                   return null;
                 },

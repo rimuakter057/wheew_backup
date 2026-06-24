@@ -291,30 +291,97 @@ class ChatController extends GetxController {
   ///get all user chat list========================================================
 
 
+  // RxList<Rooms> userChatList = <Rooms>[].obs;
+  // var isLoadingChat = false.obs;
+  // var isLoadingMore = false.obs;
+  // RxInt page = 1.obs;
+  // final int limit = 30;
+  // int total = 0;
+  //
+  // bool _isFetching = false; // ✅ simple bool, reactive না
+  //
+  //
+  //
+  // Future<void> fetchChatList({bool refresh = false, bool loadMore = false}) async {
+  //
+  //   if (refresh) {
+  //     page.value = 1;
+  //     total = 0;
+  //     userChatList.clear();
+  //     _isFetching = false;
+  //   }
+  //
+  //   // ✅ আর data নেই তাহলে skip
+  //   if (loadMore && !hasMore) return;
+  //
+  //   // ✅ Already fetching হলে skip
+  //   if (_isFetching) return;
+  //   _isFetching = true;
+  //
+  //   if (page.value == 1) {
+  //     isLoadingChat.value = true;
+  //   } else {
+  //     isLoadingMore.value = true;
+  //   }
+  //
+  //   try {
+  //     final uri = ApiUrl.getChatList(page: page.value, limit: limit);
+  //     Response response = await ApiClient.getData(uri: uri);
+  //     final body = Map<String, dynamic>.from(jsonDecode(response.body));
+  //
+  //     if (response.statusCode == 200 && body['rooms'] != null) {
+  //       final data = UserChatModel.fromJson(body);
+  //       total = data.total ?? 0;
+  //
+  //       if (data.rooms != null && data.rooms!.isNotEmpty) {
+  //
+  //         if (page.value == 1) {
+  //           // ✅ প্রথম page এ replace করো (refresh এর জন্য)
+  //           userChatList.value = List<Rooms>.from(data.rooms!);
+  //         } else {
+  //           // ✅ পরের page এ শুধু add করো — replace করো না!
+  //           userChatList.addAll(data.rooms!);
+  //         }
+  //
+  //         page.value++; // ✅ page.value++ করো, page++ নয়
+  //       }
+  //
+  //     } else {
+  //       if (refresh) userChatList.clear();
+  //     }
+  //   } catch (e) {
+  //     debugPrint('fetchChatList error: $e');
+  //   } finally {
+  //     isLoadingChat.value = false;
+  //     isLoadingMore.value = false;
+  //     _isFetching = false;
+  //   }
+  // }
+  //
+  // bool get hasMore => userChatList.length < total;
+
+
+
   RxList<Rooms> userChatList = <Rooms>[].obs;
   var isLoadingChat = false.obs;
   var isLoadingMore = false.obs;
   RxInt page = 1.obs;
-  final int limit = 15;
+  final int limit = 25;
   int total = 0;
+  RxBool hasMoreData = true.obs; // ✅ নতুন reliable flag
 
-  bool _isFetching = false; // ✅ simple bool, reactive না
-
-
+  bool _isFetching = false;
 
   Future<void> fetchChatList({bool refresh = false, bool loadMore = false}) async {
-
     if (refresh) {
       page.value = 1;
       total = 0;
       userChatList.clear();
+      hasMoreData.value = true;
       _isFetching = false;
     }
 
-    // ✅ আর data নেই তাহলে skip
-    if (loadMore && !hasMore) return;
-
-    // ✅ Already fetching হলে skip
+    if (loadMore && !hasMoreData.value) return;
     if (_isFetching) return;
     _isFetching = true;
 
@@ -332,22 +399,24 @@ class ChatController extends GetxController {
       if (response.statusCode == 200 && body['rooms'] != null) {
         final data = UserChatModel.fromJson(body);
         total = data.total ?? 0;
+        final newRooms = data.rooms ?? [];
 
-        if (data.rooms != null && data.rooms!.isNotEmpty) {
-
+        if (newRooms.isNotEmpty) {
           if (page.value == 1) {
-            // ✅ প্রথম page এ replace করো (refresh এর জন্য)
-            userChatList.value = List<Rooms>.from(data.rooms!);
+            userChatList.value = List<Rooms>.from(newRooms);
           } else {
-            // ✅ পরের page এ শুধু add করো — replace করো না!
-            userChatList.addAll(data.rooms!);
+            userChatList.addAll(newRooms);
           }
-
-          page.value++; // ✅ page.value++ করো, page++ নয়
+          page.value++;
         }
 
+        // ✅ যদি returned data limit এর চেয়ে কম হয়, মানে আর data নেই
+        if (newRooms.length < limit) {
+          hasMoreData.value = false;
+        }
       } else {
         if (refresh) userChatList.clear();
+        hasMoreData.value = false;
       }
     } catch (e) {
       debugPrint('fetchChatList error: $e');
@@ -358,11 +427,7 @@ class ChatController extends GetxController {
     }
   }
 
-
-
-
-
-  bool get hasMore => userChatList.length < total;
+  bool get hasMore => hasMoreData.value;
 
   ///get block list==============================================================
 

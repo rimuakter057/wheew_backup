@@ -1,4 +1,8 @@
 final Map<String, String> italian = {
+
+  "no_chats": 'Nessuna chat ancora.\n\nCerca i tuoi amici e inizia una conversazione.',
+  "no_users_found": 'Nessun utente trovato',
+
   // -------- Welcome Screen --------
   'splash': 'COLLEGAMENTO DEI PILOTI UNA PIASTRA ALLA VOLTA',
 
@@ -183,4 +187,6 @@ final Map<String, String> italian = {
   'logout_success': 'Disconnesso!',
   'no_data': 'Nessun dato!',
   'dismiss': 'Annulla',
+  "license_number_length_error": "La targa deve contenere esattamente 7 caratteri",
+  "license_number_format_error": "La targa deve contenere sia lettere che numeri"
 };

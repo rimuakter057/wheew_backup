@@ -101,10 +101,10 @@ class _SearchListScreenState extends State<SearchListScreen> {
                     : controller.isSearching
                     ? const Center(child: CircularProgressIndicator())
                     : controller.searchResults.isEmpty
-                    ? const Center(
+                    ?  Center(
                   child: Text(
-                    "No users found",
-                    style: TextStyle(fontSize: 16),
+                    "no_users_found",
+                    style: TextStyle(fontSize: 16,color: AppColors.black),
                   ),
                 )
                     : ListView.builder(

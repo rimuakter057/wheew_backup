@@ -837,130 +837,132 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ResponsiveHelper.init(context);
+
 
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            /// Language Toggle
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: EdgeInsets.only(
-                  top: ResponsiveHelper.spacing(20),
-                  right: 16,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              /// Language Toggle
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    top: ResponsiveHelper.spacing(20),
+                    right: 16,
+                  ),
+                  child: const LanguageToggleWidget(),
                 ),
-                child: const LanguageToggleWidget(),
               ),
-            ),
-
-            SizedBox(height: ResponsiveHelper.spacing(20)),
-
-            /// Logo Animation
-            Container(
-              width: double.infinity,
-              alignment: Alignment.center,
-              child: Lottie.asset(
-                'assets/animations/logo2_animated.json',
-                width: ResponsiveHelper.iconSize(320),
-                height: ResponsiveHelper.iconSize(340),
-                fit: BoxFit.contain,
-                repeat: true,
+          
+              SizedBox(height: ResponsiveHelper.spacing(20)),
+          
+              /// Logo Animation
+              Container(
+                width: double.infinity,
+                alignment: Alignment.center,
+                child: Lottie.asset(
+                  'assets/animations/logo2_animated.json',
+                  width: ResponsiveHelper.iconSize(320),
+                  height: ResponsiveHelper.iconSize(340),
+                  fit: BoxFit.contain,
+                  repeat: true,
+                ),
               ),
-            ),
-
-            SizedBox(height: ResponsiveHelper.spacing(24)),
-
-            /// Welcome Text
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: ResponsiveHelper.padding(24),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AutoSizeText(
-                    'welcome_message'.tr,
-                    maxLines: 1,
-                    minFontSize: 18,
-                    style: context.titleLarge.copyWith(
-                      fontSize: ResponsiveHelper.fontSize(32),
-                      fontWeight: FontWeight.w400,
+          
+              SizedBox(height: ResponsiveHelper.spacing(24)),
+          
+              /// Welcome Text
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveHelper.padding(24),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AutoSizeText(
+                      'welcome_message'.tr,
+                      maxLines: 1,
+                      minFontSize: 18,
+                      style: context.titleLarge.copyWith(
+                        fontSize: ResponsiveHelper.fontSize(32),
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
-                  ),
-
-                  SizedBox(height: ResponsiveHelper.spacing(4)),
-
-                  AutoSizeText(
-                    'welcome_message1'.tr,
-                    maxLines: 1,
-                    minFontSize: 10,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.titleLarge.copyWith(
-                      fontSize: ResponsiveHelper.fontSize(16),
-                      fontWeight: FontWeight.w400,
+          
+                    SizedBox(height: ResponsiveHelper.spacing(4)),
+          
+                    AutoSizeText(
+                      'welcome_message1'.tr,
+                      maxLines: 1,
+                      minFontSize: 10,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.titleLarge.copyWith(
+                        fontSize: ResponsiveHelper.fontSize(16),
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
-                  ),
-
-                  AutoSizeText(
-                    'welcome_message2'.tr,
-                    maxLines: 1,
-                    minFontSize: 10,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.titleLarge.copyWith(
-                      fontSize: ResponsiveHelper.fontSize(16),
-                      fontWeight: FontWeight.w400,
+          
+                    AutoSizeText(
+                      'welcome_message2'.tr,
+                      maxLines: 1,
+                      minFontSize: 10,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.titleLarge.copyWith(
+                        fontSize: ResponsiveHelper.fontSize(16),
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
-                  ),
-
-                  AutoSizeText(
-                    'welcome_message3'.tr,
-                    maxLines: 1,
-                    minFontSize: 10,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.titleLarge.copyWith(
-                      fontSize: ResponsiveHelper.fontSize(16),
-                      fontWeight: FontWeight.w400,
+          
+                    AutoSizeText(
+                      'welcome_message3'.tr,
+                      maxLines: 1,
+                      minFontSize: 10,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.titleLarge.copyWith(
+                        fontSize: ResponsiveHelper.fontSize(16),
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-
-            SizedBox(height: ResponsiveHelper.spacing(32)),
-
-            /// Sign In Button
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: ResponsiveHelper.padding(24),
+          
+              SizedBox(height: ResponsiveHelper.spacing(32)),
+          
+              /// Sign In Button
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveHelper.padding(24),
+                ),
+                child: OutlineButton(
+                  title: 'sign_in'.tr,
+                  onTap: () => context.pushNamed(RouteName.signIn),
+                  borderColor: AppColors.blueClient,
+                  textColor: AppColors.blueClient,
+                ),
               ),
-              child: OutlineButton(
-                title: 'sign_in'.tr,
-                onTap: () => context.pushNamed(RouteName.signIn),
-                borderColor: AppColors.blueClient,
-                textColor: AppColors.blueClient,
+          
+              SizedBox(height: ResponsiveHelper.height(8)),
+          
+              /// Sign Up Button
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveHelper.padding(24),
+                ),
+                child: PrimaryButton(
+                  title: 'sign_up'.tr,
+                  onTap: () => _showAgeConfirmationDialog(context),
+                  backgroundColor: AppColors.blueClient,
+                  textColor: Colors.white,
+                ),
               ),
-            ),
-
-            SizedBox(height: ResponsiveHelper.height(8)),
-
-            /// Sign Up Button
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: ResponsiveHelper.padding(24),
-              ),
-              child: PrimaryButton(
-                title: 'sign_up'.tr,
-                onTap: () => _showAgeConfirmationDialog(context),
-                backgroundColor: AppColors.blueClient,
-                textColor: Colors.white,
-              ),
-            ),
-
-            SizedBox(height: ResponsiveHelper.spacing(24)),
-          ],
+          
+              SizedBox(height: ResponsiveHelper.spacing(24)),
+            ],
+          ),
         ),
       ),
     );
