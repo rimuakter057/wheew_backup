@@ -157,6 +157,24 @@ class ChatListAppBar extends StatelessWidget implements PreferredSizeWidget {
 
 
       actions: [
+
+          GestureDetector(
+            onTap: onCreateGroupTap,
+            child: Padding(
+              padding: EdgeInsets.only(
+                right: ResponsiveHelper.width(10),
+              ),
+              child: CircleAvatar(
+                radius: ResponsiveHelper.iconSize(25),
+                backgroundColor: AppColors.greyShade,
+                child: CustomImage(
+                  imageSrc: AssetsPath.group,
+                  height: ResponsiveHelper.iconSize(25),
+                  width: ResponsiveHelper.iconSize(25),
+                ),
+              ),
+            ),
+          ),
         Obx(
               () => GestureDetector(
             onTap: () {
