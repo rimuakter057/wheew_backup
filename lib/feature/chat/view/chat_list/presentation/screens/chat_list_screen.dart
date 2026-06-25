@@ -224,6 +224,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         unreadCount: room.latestMessage?.isMine == true
                             ? 0
                             : (room.unreadCount ?? 0),
+                        isVehicleVerified:  room.otherUser?.isVehicleVerified,
                         onTap: () => navigateToChat(context: context, room: room),
                       ),
                     );

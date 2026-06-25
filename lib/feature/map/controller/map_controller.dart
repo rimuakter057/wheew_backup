@@ -451,20 +451,21 @@ class ParkingReportController extends GetxController {
   Future<void> fetchParkingReport({
     required double latitude,
     required double  longitude,
+    required int radius,
   }) async
   {
     _locationIconCache.clear();
     try {
       isLoadingShowDetails.value = true;
       errorMessage.value = '';
-      mapDebug('parking API: GET ${ApiUrl.showDetails}');
+      mapDebug('parking API: GET ${ApiUrl.showMapDetails}');
 
       final response = await ApiClient.getData(
-        uri: ApiUrl.showDetails(latitude:latitude ,longitude:longitude ),
-        queryParams: {
-          'latitude': latitude.toString(),
-          'longitude': longitude.toString(),
-        },
+        uri: ApiUrl.showMapDetails(latitude:latitude ,longitude:longitude,radius: radius ),
+        // queryParams: {
+        //   'latitude': latitude.toString(),
+        //   'longitude': longitude.toString(),
+        // },
       );
 
       if (response.statusCode == 200) {

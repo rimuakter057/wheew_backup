@@ -36,9 +36,9 @@ class _MainNavScreenState extends State<MainNavScreen> {
       case 1:
         return const SearchListScreen();
       case 2:
-       // return ScanScreen();
+        return ScanScreen();
 
-        return Scaffold(backgroundColor: Colors.white,);
+       // return Scaffold(backgroundColor: Colors.white,);
       case 3:
         return const MapScreen();
       case 4:
@@ -319,8 +319,8 @@ class ScanNavItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SvgPicture.asset(
-             // AssetsPath.scanNav,
-              AssetsPath.pNav,
+              AssetsPath.scanNav,
+              //AssetsPath.pNav,
               width: ResponsiveHelper.iconSize(60),
               height: ResponsiveHelper.iconSize(60),
             ),

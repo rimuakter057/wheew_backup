@@ -35,19 +35,22 @@ class ChatListAppBar extends StatelessWidget implements PreferredSizeWidget {
 
      // leadingWidth: ResponsiveHelper.width(130),
 
-      leading: GestureDetector(
-        onTap: onScanTap,
-        child: Padding(
-          padding: EdgeInsets.only(left: ResponsiveHelper.width(12)),
-          child:       CustomImage(imageSrc: AssetsPath.scanCommon,
+      // leading: GestureDetector(
+      //   onTap: onScanTap,
+      //   child: Padding(
+      //     padding: EdgeInsets.only(left: ResponsiveHelper.width(12)),
+      //     child:       CustomImage(imageSrc: AssetsPath.scanCommon,
+      //
+      //       height: ResponsiveHelper.height(24),
+      //       width: ResponsiveHelper.height(24),
+      //       boxFit: BoxFit.contain,
+      //     ),
+      //
+      //   ),
+      // ),
 
-            height: ResponsiveHelper.height(24),
-            width: ResponsiveHelper.height(24),
-            boxFit: BoxFit.contain,
-          ),
 
-        ),
-      ),
+      leading: IconButton(onPressed: onScanTap, icon: Icon(Icons.document_scanner_outlined,color: AppColors.blue,)),
 
 
       title: Row(

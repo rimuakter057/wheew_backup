@@ -100,7 +100,7 @@ class ApiUrl {
   static const String verifyLicense= '/users/verify-license';
   static const String vehicle= '/users/vehicle';
  // static const String showDetails = "/parking-report";
-  static  String showDetails ({required double latitude,required double longitude}) => "/parking-report/spot/nearby?latitude=$latitude&longitude=$longitude&radiusInMeters=200";
+  static  String showMapDetails ({required double latitude,required double longitude,required int radius}) => "/parking-report/spot/nearby?latitude=$latitude&longitude=$longitude&radiusInMeters=$radius";
   static  String spotDetails ({required String spotId,}) => "/parking-report/spot/$spotId";
 
   static  String leaveSpot  = "/parking-report/spot/leave";

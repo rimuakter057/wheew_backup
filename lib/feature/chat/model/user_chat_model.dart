@@ -150,17 +150,25 @@ class OtherUser {
   String? nickName;
   String? licenceId;
   String? avatar;
-  double? rating; // ✅ double
+  double? rating;
+  bool? isVehicleVerified;
 
-  OtherUser({this.id, this.nickName, this.licenceId, this.avatar, this.rating});
+  OtherUser({
+    this.id,
+    this.nickName,
+    this.licenceId,
+    this.avatar,
+    this.rating,
+    this.isVehicleVerified,
+  });
 
   OtherUser.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     nickName = json['nick_name'];
     licenceId = json['licence_id'];
     avatar = json['avatar'];
-    // ✅ int বা double যাই আসুক — safe convert
     rating = json['rating'] != null ? (json['rating'] as num).toDouble() : null;
+    isVehicleVerified = json['is_vehicle_verified']; // ✅ '=' দিয়ে ঠিক করা
   }
 
   Map<String, dynamic> toJson() {
@@ -170,6 +178,7 @@ class OtherUser {
     data['licence_id'] = licenceId;
     data['avatar'] = avatar;
     data['rating'] = rating;
+    data['is_vehicle_verified'] = isVehicleVerified; // ✅ ঠিক করা — data['...'] = ... ফরম্যাটে
     return data;
   }
 }

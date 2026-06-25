@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
 import '../../../../helper/responsive_helper/responsive_helper.dart';
@@ -18,6 +19,7 @@ class ChatTile extends StatelessWidget {
   final double? rating;
   final int? unreadCount;           // ✅ নতুন
   final void Function()? onUnblock;
+  final bool? isVehicleVerified;
 
   const ChatTile({
     super.key,
@@ -32,7 +34,7 @@ class ChatTile extends StatelessWidget {
     this.rating,
     this.unreadCount,               // ✅ নতুন
 
-  this.onUnblock,
+  this.onUnblock, this.isVehicleVerified,
   });
 
   @override
@@ -63,15 +65,44 @@ class ChatTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: Text(
-                          name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.questrial(
-                            fontSize: ResponsiveHelper.fontSize(16),
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textBlack,
-                          ),
+                        child: Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.questrial(
+                                  fontSize: ResponsiveHelper.fontSize(16),
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textBlack,
+                                ),
+                              ),
+                            ),
+
+                            // ✅ Vehicle verified icon — শুধু true হলে দেখাবে
+                            // if (isVehicleVerified == false) ...[
+                            //   SizedBox(width: ResponsiveHelper.width(4)),
+                            //   Icon(
+                            //     Icons.verified,
+                            //     color: AppColors.blue,
+                            //     size: ResponsiveHelper.iconSize(16),
+                            //   ),
+                            // ],
+                            //
+
+
+                            if (!isGroup) ...[
+                              SizedBox(width: ResponsiveHelper.width(4)),
+                              Image.asset(
+                                isVehicleVerified == true
+                                    ? AssetsPath.verified
+                                    : AssetsPath.unverified,
+                                width: ResponsiveHelper.iconSize(16),
+                                height: ResponsiveHelper.iconSize(16),
+                              ),
+                            ],
+                          ],
                         ),
                       ),
 
@@ -102,13 +133,9 @@ class ChatTile extends StatelessWidget {
                           : Text(
                         time,
                         style: GoogleFonts.questrial(
-                          color: hasUnread
-                              ? AppColors.blue
-                              : AppColors.textBlack,
+                          color: hasUnread ? AppColors.blue : AppColors.textBlack,
                           fontSize: ResponsiveHelper.fontSize(12),
-                          fontWeight: hasUnread
-                              ? FontWeight.w700
-                              : FontWeight.w400,
+                          fontWeight: hasUnread ? FontWeight.w700 : FontWeight.w400,
                         ),
                       ),
                     ],

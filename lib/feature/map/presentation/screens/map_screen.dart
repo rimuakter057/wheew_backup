@@ -9,6 +9,7 @@ import 'package:platchatapp/feature/map/presentation/widgets/map_initial_shimmer
 import 'package:platchatapp/feature/map/presentation/widgets/map_loading_banners.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/parking_info_dialog.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/parking_report_dropdown.dart';
+import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
 import 'package:platchatapp/feature/map/utils/map_debug.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/toast_message/toast_message.dart';
@@ -18,12 +19,14 @@ class MapScreen extends StatefulWidget {
 
   static const LatLng kInitialMapTarget = LatLng(34.052235, -118.243683);
 
+
   @override
   State<MapScreen> createState() => _MapScreenState();
 }
 
 class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver{
   GoogleMapController? _mapController;
+  int _selectedRadiusMeter = 100; // default 1000m
 
   LatLng _mapCenter = MapScreen.kInitialMapTarget;
   LatLng? _gpsPosition;
@@ -73,6 +76,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver{
     await _parkingCtrl.fetchParkingReport(
       latitude: location.latitude,
       longitude: location.longitude,
+      radius: _selectedRadiusMeter,
     );
   }
 
@@ -129,6 +133,10 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver{
       setState(() => _isLocating = false);
     }
   }
+
+
+
+
   //
   // void _toggleParkingPin() {
   //   HapticFeedback.mediumImpact();
@@ -235,6 +243,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver{
             await _parkingCtrl.fetchParkingReport(
               latitude: useLocation.latitude,
               longitude: useLocation.longitude,
+              radius: _selectedRadiusMeter,
             );
             _pickedLocation = null; // ⚠️ সফল submit এর পর picked location মুছে ফেলা — পরের বার আবার GPS default এ ফিরবে
           } else {
@@ -410,6 +419,22 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver{
               );
             }),
 
+
+
+
+            Positioned(
+              right: ResponsiveHelper.padding(30),
+              top: ResponsiveHelper.padding(100), // AddParkingButton এর ঠিক উপরে
+              child: FloatingActionButton(
+                heroTag: 'filterRadiusBtn',
+                backgroundColor: Colors.white,
+                elevation: 3,
+                onPressed: _showRadiusFilterSheet,
+                child: const Icon(Icons.tune, color: Color(0xFF185FA5)),
+              ),
+            ),
+
+
            /// // ── Drop pin add ──────────────────────────────────────────────
             Positioned(
               right: ResponsiveHelper.padding(24),
@@ -491,6 +516,43 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver{
           ),
         ),
       ),
+    );
+  }
+
+
+
+
+
+
+
+///show radius=========================
+
+
+  void _showRadiusFilterSheet() {
+    HapticFeedback.lightImpact();
+    RadiusFilterSheet.show(
+      context,
+      initialRadiusMeter: _selectedRadiusMeter,
+      onApply: (radiusMeter) {
+        setState(() => _selectedRadiusMeter = radiusMeter);
+        _applyRadiusFilter();
+      },
+    );
+  }
+
+  Future<void> _applyRadiusFilter() async {
+    final location = _gpsPosition ?? _mapCenter;
+
+    await _parkingCtrl.fetchParkingReport(
+      latitude: location.latitude,
+      longitude: location.longitude,
+      radius: _selectedRadiusMeter, // ✅ সরাসরি মিটার, কোনো কনভার্সন নেই
+    );
+
+    if (!mounted) return;
+    showCustomSnackBar(
+      'Showing parking within $_selectedRadiusMeter m',
+      isError: false,
     );
   }
 
