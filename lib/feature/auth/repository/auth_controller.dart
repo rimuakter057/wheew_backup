@@ -183,9 +183,13 @@ class AuthController extends GetxController {
 
 
               CustomSnackbar.success(context: context, message: "Login Successful");
+
+              Future.delayed(const Duration(milliseconds: 300), () {
+                licenseController.clear();
+                passwordController.clear();
+              });
             }
-            licenseController.clear();
-            passwordController.clear();
+
           },
         );
 

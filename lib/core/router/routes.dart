@@ -11,6 +11,7 @@ import 'package:platchatapp/feature/auth/view/sign_in_screen.dart';
 import 'package:platchatapp/feature/auth/view/sign_up_screen.dart';
 import 'package:platchatapp/feature/auth/view/vehicle_info_screen.dart';
 import 'package:platchatapp/feature/chat/view/member/presentation/screens/add_member_screen.dart';
+import 'package:platchatapp/feature/faq/presentation/screens/faq_screen.dart';
 import 'package:platchatapp/feature/main/presentation/main_nav-screen.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
 import 'package:platchatapp/feature/notification/presentation/screens/notification_screen.dart';
@@ -288,7 +289,7 @@ class AppRouter {
         path: RoutePath.faq,
         name: RouteName.faq,
         builder: (context, state) {
-          return VehicleInfoScreen();
+          return FaqScreen();
         },
       ),
 

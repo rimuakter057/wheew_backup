@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart' hide Config;
 import 'package:go_router/go_router.dart';
@@ -386,9 +387,14 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                     : null,
                 child: _currentGroupImage.isEmpty
                     ? CircleAvatar(
-                        radius: ResponsiveHelper.borderRadius(22),
-                        backgroundImage: NetworkImage(AppConst.unknown),
-                      )
+                  radius: ResponsiveHelper.borderRadius(22),
+                  backgroundColor: AppColors.greyBorder,
+                  child: SvgPicture.asset(
+                    'assets/icons/group_chat.svg',
+                    width: ResponsiveHelper.borderRadius(22),
+                    height: ResponsiveHelper.borderRadius(22),
+                  ),
+                )
                     : null,
               ),
               SizedBox(width: ResponsiveHelper.spacing(12)),

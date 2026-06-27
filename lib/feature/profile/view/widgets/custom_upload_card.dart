@@ -4,8 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/profile/model/user_document.dart';
 import 'package:platchatapp/feature/profile/repository/upload_controller.dart';
 import 'package:platchatapp/feature/profile/view/widgets/upload_document_sheet.dart';
+import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -16,11 +19,13 @@ enum _CardState { empty, uploaded, expired }
 class CustomUploadCard extends StatelessWidget {
   final String title;
   final String documentType; // 'LICENSE' | 'INSURANCE' | 'TAX'
+  final String iconText;
 
   const  CustomUploadCard({
     super.key,
     required this.title,
     required this.documentType,
+    required this.iconText,
   });
 
   @override
@@ -44,6 +49,7 @@ class CustomUploadCard extends StatelessWidget {
         loading:      loading,
         documentType: documentType,
         ctrl:         controller,
+        iconText: iconText,
       );
     });
   }
@@ -58,6 +64,7 @@ class _CardShell extends StatelessWidget {
   final bool         loading;
   final String       documentType;
   final UploadDocumentController ctrl;
+  final String iconText;
 
   const _CardShell({
     required this.state,
@@ -66,13 +73,14 @@ class _CardShell extends StatelessWidget {
     required this.loading,
     required this.documentType,
     required this.ctrl,
+    required this.iconText,
   });
 
   // colours per state
   Color get _borderColor {
     switch (state) {
       case _CardState.empty:    return const Color(0xFFE5E7EB);
-      case _CardState.uploaded: return const Color(0xFF2563EB);
+      case _CardState.uploaded: return const Color(0xFFE0E0E0);
       case _CardState.expired:  return const Color(0xFFEF4444);
     }
   }
@@ -85,29 +93,29 @@ class _CardShell extends StatelessWidget {
     }
   }
 
-  Color get _iconBgColor {
-    switch (state) {
-      case _CardState.empty:    return const Color(0xFFF3F4F6);
-      case _CardState.uploaded: return const Color(0xFFDBEAFE);
-      case _CardState.expired:  return const Color(0xFFFEE2E2);
-    }
-  }
-
-  Color get _iconColor {
-    switch (state) {
-      case _CardState.empty:    return const Color(0xFF9CA3AF);
-      case _CardState.uploaded: return const Color(0xFF2563EB);
-      case _CardState.expired:  return const Color(0xFFEF4444);
-    }
-  }
-
-  IconData get _icon {
-    switch (state) {
-      case _CardState.empty:    return Icons.upload_file_outlined;
-      case _CardState.uploaded: return Icons.insert_drive_file_outlined;
-      case _CardState.expired:  return Icons.warning_amber_rounded;
-    }
-  }
+  // Color get _iconBgColor {
+  //   switch (state) {
+  //     case _CardState.empty:    return const Color(0xFFF3F4F6);
+  //     case _CardState.uploaded: return const Color(0xFFDBEAFE);
+  //     case _CardState.expired:  return const Color(0xFFFEE2E2);
+  //   }
+  // }
+  //
+  // Color get _iconColor {
+  //   switch (state) {
+  //     case _CardState.empty:    return const Color(0xFF9CA3AF);
+  //     case _CardState.uploaded: return const Color(0xFF2563EB);
+  //     case _CardState.expired:  return const Color(0xFFEF4444);
+  //   }
+  // }
+  //
+  // IconData get _icon {
+  //   switch (state) {
+  //     case _CardState.empty:    return Icons.upload_file_outlined;
+  //     case _CardState.uploaded: return Icons.insert_drive_file_outlined;
+  //     case _CardState.expired:  return Icons.warning_amber_rounded;
+  //   }
+  // }
 
   void _openSheet(BuildContext context) {
     showUploadDocumentSheet(
@@ -142,28 +150,33 @@ class _CardShell extends StatelessWidget {
         decoration: BoxDecoration(
           color:        _bgColor,
           borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(14)),
-          border:       Border.all(color: _borderColor, width: 1.5),
+          border:       Border.all(color: _borderColor, width: 2),
         ),
         child: Row(
           children: [
             // ── Icon ──
-            Container(
-              width:  ResponsiveHelper.iconSize(44),
-              height: ResponsiveHelper.iconSize(44),
-              decoration: BoxDecoration(
-                color:        _iconBgColor,
-                borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
-              ),
-              child: loading
-                  ? Padding(
-                padding: const EdgeInsets.all(10),
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: _iconColor,
-                ),
-              )
-                  : Icon(_icon, color: _iconColor, size: ResponsiveHelper.iconSize(22)),
-            ),
+            // Container(
+            //   width:  ResponsiveHelper.iconSize(44),
+            //   height: ResponsiveHelper.iconSize(44),
+            //   decoration: BoxDecoration(
+            //     color:        _iconBgColor,
+            //     borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
+            //   ),
+            //   child: loading
+            //       ? Padding(
+            //     padding: const EdgeInsets.all(10),
+            //     child: CircularProgressIndicator(
+            //       strokeWidth: 2,
+            //       color: _iconColor,
+            //     ),
+            //   )
+            //       : Icon(_icon, color: _iconColor, size: ResponsiveHelper.iconSize(22)),
+            // ),
+
+            Text(iconText,style: TextStyle(
+              fontSize: ResponsiveHelper.fontSize(18),
+
+            ),),
 
             SizedBox(width: ResponsiveHelper.spacing(14)),
 
@@ -195,7 +208,7 @@ class _CardShell extends StatelessWidget {
       ),
     );
   }
-
+///sub title==============================
   Widget _buildSubtitle(BuildContext context) {
     switch (state) {
       case _CardState.empty:
@@ -281,7 +294,7 @@ class _CardShell extends StatelessWidget {
         );
     }
   }
-
+///trailing=======================
   Widget _buildTrailing(BuildContext context) {
     switch (state) {
       case _CardState.empty:
@@ -292,15 +305,21 @@ class _CardShell extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color:        const Color(0xFF2563EB),
-            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(6)),
           ),
-          child: Text(
-            AppStrings.upload.tr,
-            style: GoogleFonts.poppins(
-              fontSize:   ResponsiveHelper.fontSize(12),
-              fontWeight: FontWeight.w500,
-              color:      Colors.white,
-            ),
+          child: Row(
+            children: [
+CustomImage(imageSrc: AssetsPath.upload),
+           SizedBox(width: ResponsiveHelper.width(8),),
+              Text(
+                AppStrings.upload.tr,
+                style: GoogleFonts.poppins(
+                  fontSize:   ResponsiveHelper.fontSize(12),
+                  fontWeight: FontWeight.w500,
+                  color:      Colors.white,
+                ),
+              ),
+            ],
           ),
         );
 
@@ -314,15 +333,22 @@ class _CardShell extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               color:        const Color(0xFFDBEAFE),
-              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(6)),
             ),
-            child: Text(
-              AppStrings.update.tr,
-              style: GoogleFonts.poppins(
-                fontSize:   ResponsiveHelper.fontSize(12),
-                fontWeight: FontWeight.w500,
-                color:      const Color(0xFF2563EB),
-              ),
+            child: Row(
+              children: [
+                CustomImage(imageSrc: AssetsPath.upload),
+                SizedBox(width: ResponsiveHelper.width(8),),
+
+                Text(
+                  AppStrings.update.tr,
+                  style: GoogleFonts.poppins(
+                    fontSize:   ResponsiveHelper.fontSize(12),
+                    fontWeight: FontWeight.w500,
+                    color:      const Color(0xFF2563EB),
+                  ),
+                ),
+              ],
             ),
           ),
         );
@@ -337,15 +363,21 @@ class _CardShell extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               color:        const Color(0xFFFEE2E2),
-              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(6)),
             ),
-            child: Text(
-              AppStrings.renew.tr,
-              style: GoogleFonts.poppins(
-                fontSize:   ResponsiveHelper.fontSize(12),
-                fontWeight: FontWeight.w500,
-                color:      const Color(0xFFEF4444),
-              ),
+            child: Row(
+              children: [
+                CustomImage(imageSrc: AssetsPath.upload,imageColor: AppColors.red,),
+                SizedBox(width: ResponsiveHelper.width(8),),
+                Text(
+                  AppStrings.renew.tr,
+                  style: GoogleFonts.poppins(
+                    fontSize:   ResponsiveHelper.fontSize(12),
+                    fontWeight: FontWeight.w500,
+                    color:      const Color(0xFFEF4444),
+                  ),
+                ),
+              ],
             ),
           ),
         );

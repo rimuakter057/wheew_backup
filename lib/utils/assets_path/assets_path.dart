@@ -67,12 +67,21 @@ class AssetsPath {
   static const String terms="assets/icons/terms.svg";
   static const String privacy="assets/icons/privacy.svg";
   static const String help="assets/icons/help.svg";
+  static const String faq="assets/icons/faq.svg";
   static const String share="assets/icons/share.svg";
   static const String blocked="assets/icons/block_user.svg";
   static const String remove="assets/icons/remove_account.svg";
   static const String changePass="assets/icons/change_pass.svg";
   static const String verified="assets/icons/verified.png";
   static const String unverified="assets/icons/unverified.png";
+  static const String searchCar="assets/icons/searching-car.png";
+  static const String wheew="assets/logo/wheew.png";
+  static const String upload="assets/icons/upload_icon.svg";
+  static const String driverLicenseUpload="assets/icons/driver_license_icon.svg";
+  static const String otherUpload="assets/icons/other_upload_icon.svg";
+  static const String info="assets/icons/i.svg";
+  static const String groupChat="assets/icons/group_chat.svg";
+
 
 
 

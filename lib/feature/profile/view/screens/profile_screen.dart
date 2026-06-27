@@ -509,6 +509,10 @@ import 'package:platchatapp/feature/profile/view/widgets/profile_owner/profile_a
 import 'package:platchatapp/feature/profile/view/widgets/profile_owner/profile_textfield.dart';
 import 'package:platchatapp/feature/profile/view/widgets/profile_owner/vehicle-owner.dart';
 import 'package:platchatapp/feature/profile/view/widgets/profile_owner/vehicle_type_dropdown.dart';
+import 'package:platchatapp/helper/custom_image/custom_image.dart';
+import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
+import 'package:platchatapp/utils/extension/base_extension.dart';
 
 import '../../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../../utils/color/app_colors.dart';
@@ -706,21 +710,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: ResponsiveHelper.spacing(20)),
 
                 // ─── Vehicle Ownership Status ─────────────────────────────
-                _label(AppStrings.vehicleOwnershipStatus.tr),
-                SizedBox(height: ResponsiveHelper.spacing(6)),
-                const VehicleOwnershipStatusWidget(),
 
-                SizedBox(height: ResponsiveHelper.spacing(20)),
+              //  SizedBox(height: ResponsiveHelper.spacing(6)),
+             //   const VehicleOwnershipStatusWidget(),
 
-                // ─── Document Upload Section ──────────────────────────────
-                Text(
-                  AppStrings.uploadDocuments.tr,
-                  style: GoogleFonts.poppins(
-                    fontSize: ResponsiveHelper.fontSize(16),
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textBlack,
-                  ),
-                ),
+
+
 
                 // Document fetch হওয়ার সময় progress bar
                 Obx(() {
@@ -735,18 +730,119 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   );
                 }),
 
+               // SizedBox(height: ResponsiveHelper.spacing(18)),
+
+
+
+                Row(
+                  children: [
+                    Text(
+                      AppStrings.vehicleOwnershipStatus.tr,
+                      style: GoogleFonts.poppins(
+                        fontSize: ResponsiveHelper.fontSize(16),
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.textBlack,
+                      ),
+                    ),
+                    SizedBox(width: ResponsiveHelper.spacing(8)),
+                    // GestureDetector(
+                    //     onTap: (){
+                    //       showDialog(
+                    //         context: context,
+                    //         builder: (context) {
+                    //           return AlertDialog(
+                    //         //    contentPadding: EdgeInsets.zero,
+                    //             content: const VehicleOwnershipStatusWidget(),
+                    //           );
+                    //         },
+                    //       );
+                    //     },
+                    //     child: CustomImage(imageSrc: AssetsPath.info,imageColor: AppColors.black,))
+                  ],
+                ),
+
+
                 SizedBox(height: ResponsiveHelper.spacing(18)),
 
+
+                const VehicleOwnershipStatusWidget(),
+                SizedBox(height: ResponsiveHelper.spacing(8)),
                 // প্রতিটি document type আলাদা card
-                CustomUploadCard(title: AppStrings.vehicleOwnershipStatus.tr, documentType: 'VEHICLE_OWNERSHIP'),
+                CustomUploadCard(title: AppStrings.vehicleOwnershipStatus.tr, documentType: 'VEHICLE_OWNERSHIP',
+                  iconText: "📋",
+                  //  iconPath: AssetsPath.otherUpload,
+                ),
+
+
+                SizedBox(height: ResponsiveHelper.spacing(32)),
+
+
+
+                ///  Document Upload Section===========================================================
+                Text(
+                  AppStrings.uploadDocuments.tr,
+                  style: GoogleFonts.poppins(
+                    fontSize: ResponsiveHelper.fontSize(16),
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textBlack,
+                  ),
+                ),
+
                 SizedBox(height: ResponsiveHelper.spacing(12)),
-                CustomUploadCard(title: "CAR INSPECTION", documentType: 'CAR_INSPECTION'),
+
+                CustomUploadCard(title: AppStrings.driversLicense.tr, documentType: 'LICENSE',
+                  iconText: "🪪",
+                ),
+
                 SizedBox(height: ResponsiveHelper.spacing(12)),
-                CustomUploadCard(title: AppStrings.driversLicense.tr, documentType: 'LICENSE'),
+                CustomUploadCard(title: "CAR INSPECTION", documentType: 'CAR_INSPECTION',
+
+                  iconText: "📋",
+                ),
                 SizedBox(height: ResponsiveHelper.spacing(12)),
-                CustomUploadCard(title: AppStrings.carInsurance.tr, documentType: 'INSURANCE'),
+                // CustomUploadCard(title: AppStrings.driversLicense.tr, documentType: 'LICENSE',
+                //   iconText: "🪪",
+                // ),
+               // SizedBox(height: ResponsiveHelper.spacing(12)),
+                CustomUploadCard(title: AppStrings.carInsurance.tr, documentType: 'INSURANCE',
+                  iconText: "📋",
+                ),
                 SizedBox(height: ResponsiveHelper.spacing(12)),
-                CustomUploadCard(title: AppStrings.carTax.tr, documentType: 'TAX'),
+                CustomUploadCard(title: AppStrings.carTax.tr, documentType: 'TAX',
+                  iconText: "📋",
+                ),
+
+
+                SizedBox(height: ResponsiveHelper.spacing(12)),
+
+
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE6EFF9), // হালকা নীল ব্যাকগ্রাউন্ড কালার
+                    borderRadius: BorderRadius.circular(12.0), // রাউন্ডেড কর্নার
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start, // আইকন এবং টেক্সট যেন ওপর থেকে শুরু হয়
+                    children: [
+                      // ওয়ার্নিং বা অ্যালার্ট আইকন
+                      const Icon(
+                        Icons.warning_rounded,
+                        color: Color(0xFF1E6BBB), // টেক্সটের সাথে মিলানো নীল কালার
+                        size: 20.0,
+                      ),
+                       SizedBox(height: ResponsiveHelper.height(24)), // আইকন এবং টেক্সটের মাঝের গ্যাপ
+
+                      // টেক্সট সেকশন
+                       Expanded(
+                        child: Text(
+                          'Make sure all documents are clear and readable.Blurry images may delay your approval.',
+                          style: context.bodySmall.copyWith(color: AppColors.blue)
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
                 SizedBox(height: ResponsiveHelper.spacing(78)),
               ],

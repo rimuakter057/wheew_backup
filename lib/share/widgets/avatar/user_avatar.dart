@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/share/widgets/loading/loading_widget.dart';
 import 'package:platchatapp/share/widgets/network_image/custom_network_image.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
@@ -41,10 +43,30 @@ class UserAvatar extends StatelessWidget {
     }
 
     // Local asset or default
+    // return CircleAvatar(
+    //   radius: radius,
+    //   backgroundImage: imagePath != null ? AssetImage(imagePath!) : null,
+    //   child: imagePath == null ? CustomImage(imageSrc: AppConst.unknown) : null,
+    // );
+
+
+    // Local asset or default
     return CircleAvatar(
       radius: radius,
-      backgroundImage: imagePath != null ? AssetImage(imagePath!) : null,
-      child: imagePath == null ? const Icon(Icons.person) : null,
+      backgroundColor: AppColors.greyBorder,
+      child: imagePath != null && imagePath!.endsWith('.svg')
+          ? SvgPicture.asset(
+        imagePath!,
+        width: radius,
+        height: radius,
+        // colorFilter:  ColorFilter.mode(
+        //   AppColors.greyBg,
+        //   BlendMode.srcIn,
+        // ),
+      )
+          : CustomImage(imageSrc: AppConst.unknown),
     );
+
+
   }
 }

@@ -10,6 +10,7 @@ import 'package:platchatapp/core/router/routes_name.dart'; // RouteName ইম�
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/core/service/storage_service.dart';
 import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
+import 'package:platchatapp/feature/faq/presentation/screens/faq_screen.dart';
 import 'package:platchatapp/feature/privacy_policy/help_suppoor_screen.dart';
 import 'package:platchatapp/feature/privacy_policy/privacy_policy_screen.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
@@ -20,6 +21,7 @@ import 'package:platchatapp/feature/scan/presentation/widget/download_qr_code.da
 import 'package:platchatapp/feature/scan/presentation/widget/my_qr_view.dart';
 import 'package:platchatapp/feature/terms_condition/web_view_screen.dart';
 import 'package:platchatapp/helper/custom_image/custom_image.dart';
+import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/helper/fromate_rating/formate_rating.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -753,12 +755,23 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
                       ),
                       SizedBox(height: ResponsiveHelper.spacing(8)),
 
-                      CustomImage(
-                        imageSrc: isVerified == true
-                            ? AssetsPath.verified
-                            : AssetsPath.unverified,
-                        height: ResponsiveHelper.iconSize(20),
-                        width: ResponsiveHelper.iconSize(20),
+                      GestureDetector(
+                        onTap: ()async{
+                          if (isVerified == false) {
+                            await context.pushNamed(RouteName.profile);
+                            profileController.reloadProfile();
+                          } else {
+
+                            CustomSnackbar.success(context: context, message:  "You are already verified");
+                          }
+                        },
+                        child: CustomImage(
+                          imageSrc: isVerified == true
+                              ? AssetsPath.verified
+                              : AssetsPath.unverified,
+                          height: ResponsiveHelper.iconSize(20),
+                          width: ResponsiveHelper.iconSize(20),
+                        ),
                       ),
                       // CustomImage(imageSrc:isVerified==true? AssetsPath.verified:AppStrings.autoScanningInProgress,
                       // height: ResponsiveHelper.iconSize(20),
@@ -851,6 +864,18 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
           );
         },
       },
+
+      {
+        'icon': AssetsPath.faq,
+        'title': AppStrings.faq.tr,
+        'onTap': () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => FaqScreen()),
+          );
+        },
+      },
+
 
       {
         'icon': AssetsPath.share,

@@ -191,13 +191,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       onLongPress: () => _showDeleteDialog(context, room),
                       child: ChatTile(
                         name: room.displayName,
-                        imagePath: isGroup
-                            ? ImageHandler.imagesHandle(
-                          room.displayAvatar.isNotEmpty
-                              ? room.displayAvatar
-                              : AppConst.group,
-                          isProfile: true,
-                        )
+                    imagePath:  isGroup
+                    ? (room.displayAvatar.isNotEmpty
+                    ? ImageHandler.imagesHandle(room.displayAvatar, isProfile: true)
+                    : 'assets/icons/group_chat.svg')
                             : ImageHandler.imagesHandle(
                           room.displayAvatar.isNotEmpty
                               ? room.displayAvatar
@@ -219,7 +216,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                 room.isBlockedMe == true),
                         isGroup: isGroup,
                         // group এ rating নেই
-                        rating: isGroup ? null : ((room.otherUser?.rating ?? 0) > 0 ? (room.otherUser!.rating!).toDouble() : null),
+                      //  rating: isGroup ? null : ((room.otherUser?.rating ?? 0) > 0 ? (room.otherUser!.rating!).toDouble() : null),
+                        rating: isGroup ? null : (room.otherUser?.rating ?? 0).toDouble(),
                         // ✅ unread badge — নিজের message হলে 0 দেখাবে
                         unreadCount: room.latestMessage?.isMine == true
                             ? 0

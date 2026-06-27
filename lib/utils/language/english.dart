@@ -206,6 +206,9 @@ final Map<String, String> english = {
   AppStrings.failedDeleteAccount: 'Failed to delete account',
 
   AppStrings.helpSupport: 'Help and Support',
+  AppStrings.faq: 'FAQ',
+  AppStrings.frequentlyAskedQuestions:'frequently Asked Questions',
+AppStrings.findAnswersBelow:'Find Answers Below',
   AppStrings.supportText1: 'For any help and support contact us at',
   AppStrings.supportText2: 'Our support team is available to help you anytime.',
 
@@ -473,4 +476,5 @@ final Map<String, String> english = {
   AppStrings.vehicleColor: 'Vehicle Color',
   AppStrings.submit: 'Submit',
   AppStrings.editGroup: 'Edit Group',
+  AppStrings.imageSaveToGallery: 'Image Save To Gallery',
 };

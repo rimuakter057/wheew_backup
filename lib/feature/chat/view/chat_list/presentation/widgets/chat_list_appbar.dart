@@ -50,112 +50,60 @@ class ChatListAppBar extends StatelessWidget implements PreferredSizeWidget {
       // ),
 
 
-      leading: IconButton(onPressed: onScanTap, icon: Icon(Icons.document_scanner_outlined,color: AppColors.blue,)),
+      //leading: IconButton(onPressed: onScanTap, icon: Icon(Icons.document_scanner_outlined,color: AppColors.blue,)),
 
+      leading: GestureDetector(
+        onTap: onScanTap,
 
-      title: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Lottie.asset(
-            AssetsPath.homeJson,
-            width: ResponsiveHelper.iconSize(28),
-            height: ResponsiveHelper.iconSize(28),
-            fit: BoxFit.cover,
-            repeat: true,
+        child: Container(
+          margin: EdgeInsets.only(left: ResponsiveHelper.width(12)),
+          width: ResponsiveHelper.iconSize(60),
+          height:ResponsiveHelper.iconSize(60),
+          decoration: BoxDecoration(
+            color: AppColors.greyBg,
+            shape: BoxShape.circle,
           ),
-          SizedBox(width: ResponsiveHelper.spacing(6)),
-          CustomImage(
-            imageSrc: AssetsPath.chatList,
-            height: ResponsiveHelper.height(28),
-            fit: BoxFit.contain,
+          child: Center(
+            child: Image.asset(
+            //  'assets/icons/searching-car.png',
+              AssetsPath.searchCar,
+              width:ResponsiveHelper.iconSize(30),
+              height: ResponsiveHelper.iconSize(30),
+
+            ),
           ),
-        ],
+        ),
       ),
 
 
+      title: Image.asset(
 
+        AssetsPath.wheew,
+        width:ResponsiveHelper.iconSize(200),
+        height: ResponsiveHelper.iconSize(50),
 
-
-
-      // actions: [
-      //   // Create Group
-      //   GestureDetector(
-      //     onTap: onCreateGroupTap,
-      //     child: Padding(
-      //       padding: EdgeInsets.only(
-      //         right: ResponsiveHelper.width(10),
-      //       ),
-      //       child: CircleAvatar(
-      //         radius: ResponsiveHelper.iconSize(25),
-      //         backgroundColor: AppColors.greyShade,
-      //         child: CustomImage(
-      //           imageSrc: AssetsPath.group,
-      //           height: ResponsiveHelper.iconSize(25),
-      //           width: ResponsiveHelper.iconSize(25),
-      //         ),
-      //       ),
+      ),
+      
+      // title: Row(
+      //   mainAxisSize: MainAxisSize.min,
+      //   children: [
+      //     Lottie.asset(
+      //       AssetsPath.homeJson,
+      //       width: ResponsiveHelper.iconSize(28),
+      //       height: ResponsiveHelper.iconSize(28),
+      //       fit: BoxFit.cover,
+      //       repeat: true,
       //     ),
-      //   ),
-      //
-      //   // Notification
-      //   GestureDetector(
-      //     onTap: () {
-      //       // Notification Screen
-      //
-      //       context.pushNamed(RouteName.notification);
-      //     },
-      //     child: Padding(
-      //       padding: EdgeInsets.only(
-      //         right: ResponsiveHelper.width(16),
-      //       ),
-      //       child: Stack(
-      //         clipBehavior: Clip.none,
-      //         children: [
-      //           CircleAvatar(
-      //             radius: ResponsiveHelper.iconSize(25),
-      //             backgroundColor: AppColors.greyShade,
-      //             child: Icon(
-      //               Icons.notifications_outlined,
-      //               size: ResponsiveHelper.iconSize(24),
-      //             ),
-      //           ),
-      //
-      //         //  if (notificationCount > 0)
-      //             Positioned(
-      //               right: -2,
-      //               top: -2,
-      //               child: Container(
-      //                 padding: const EdgeInsets.symmetric(
-      //                   horizontal: 5,
-      //                   vertical: 2,
-      //                 ),
-      //                 decoration: BoxDecoration(
-      //                   color: Colors.red,
-      //                   borderRadius: BorderRadius.circular(20),
-      //                 ),
-      //                 constraints: const BoxConstraints(
-      //                   minWidth: 18,
-      //                   minHeight: 18,
-      //                 ),
-      //                 child: Center(
-      //                   child: Text("9+",
-      //                     // notificationCount > 9
-      //                     //     ? "9+"
-      //                     //     : notificationCount.toString(),
-      //                     style: const TextStyle(
-      //                       color: Colors.white,
-      //                       fontSize: 10,
-      //                       fontWeight: FontWeight.bold,
-      //                     ),
-      //                   ),
-      //                 ),
-      //               ),
-      //             ),
-      //         ],
-      //       ),
+      //     SizedBox(width: ResponsiveHelper.spacing(6)),
+      //     CustomImage(
+      //       imageSrc: AssetsPath.chatList,
+      //       height: ResponsiveHelper.height(28),
+      //       fit: BoxFit.contain,
       //     ),
-      //   ),
-      // ],
+      //   ],
+      // ),
+
+
 
 
 

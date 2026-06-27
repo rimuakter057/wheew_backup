@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/extension/base_extension.dart';
 
 import '../../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../../share/widgets/avatar/user_avatar.dart';
@@ -80,16 +82,6 @@ class ChatTile extends StatelessWidget {
                               ),
                             ),
 
-                            // ✅ Vehicle verified icon — শুধু true হলে দেখাবে
-                            // if (isVehicleVerified == false) ...[
-                            //   SizedBox(width: ResponsiveHelper.width(4)),
-                            //   Icon(
-                            //     Icons.verified,
-                            //     color: AppColors.blue,
-                            //     size: ResponsiveHelper.iconSize(16),
-                            //   ),
-                            // ],
-                            //
 
 
                             if (!isGroup) ...[
@@ -130,14 +122,44 @@ class ChatTile extends StatelessWidget {
                           ),
                         ),
                       )
-                          : Text(
-                        time,
-                        style: GoogleFonts.questrial(
-                          color: hasUnread ? AppColors.blue : AppColors.textBlack,
-                          fontSize: ResponsiveHelper.fontSize(12),
-                          fontWeight: hasUnread ? FontWeight.w700 : FontWeight.w400,
-                        ),
-                      ),
+                          : Row(
+                            children: [
+
+
+
+                              if (isGroup) ...[
+                                Container(
+                                  padding: ResponsiveHelper.symmetric(horizontal: 8,vertical: 4),
+                                  decoration: BoxDecoration(color: AppColors.greyShade,
+
+                                      borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(18))
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                        AssetsPath.group,
+                                        width: ResponsiveHelper.iconSize(16),
+                                        height: ResponsiveHelper.iconSize(16),
+                                      ),
+                                   SizedBox(width: ResponsiveHelper.width(4),),
+                                      Text("Group",style: context.bodyMedium.copyWith(color: AppColors.black),),
+
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(width: ResponsiveHelper.width(4)),
+                              ],
+
+                              Text(
+                                                      time,
+                                                      style: GoogleFonts.questrial(
+                              color: hasUnread ? AppColors.blue : AppColors.textBlack,
+                              fontSize: ResponsiveHelper.fontSize(12),
+                              fontWeight: hasUnread ? FontWeight.w700 : FontWeight.w400,
+                                                      ),
+                                                    ),
+                            ],
+                          ),
                     ],
                   ),
 

@@ -256,6 +256,9 @@ class _MessageScreenState extends State<MessageScreen> {
                         fileUrl: msg.fileUrl,
                         // ✅ read receipt ticks
                         isRead: msg.isRead,
+                        fileName: msg.fileName,         // file_name
+
+                        fileSize: msg.fileSize,         // file_size
                         isDelivered: msg.isDelivered,
                       );
                     },

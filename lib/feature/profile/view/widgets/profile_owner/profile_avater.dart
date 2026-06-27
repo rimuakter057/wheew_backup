@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
 /// Profile avatar — tap করলে full screen দেখায়, edit mode এ camera icon দেখায়
@@ -98,15 +99,11 @@ class ProfileAvatarWidget extends StatelessWidget {
   }
 
   Widget _placeholder(double size) {
-    return Container(
+    return Image.network(
+      AppConst.unknown,
       width: size,
       height: size,
-      color: AppColors.greyShade,
-      child: Icon(
-        Icons.person,
-        size: size / 2,
-        color: AppColors.blue,
-      ),
+      fit: BoxFit.cover,
     );
   }
 }

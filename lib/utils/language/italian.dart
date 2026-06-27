@@ -202,6 +202,9 @@ final Map<String, String> italian = {
   AppStrings.failedDeleteAccount: "Impossibile eliminare l'account",
 
   AppStrings.helpSupport: "Aiuto e Supporto",
+  AppStrings.faq: "FAQ",
+  AppStrings.frequentlyAskedQuestions:'Domande frequenti',
+  AppStrings.findAnswersBelow:'Trova le risposte qui sotto',
   AppStrings.supportText1: "Per qualsiasi aiuto e supporto, contattaci a ",
   AppStrings.supportText2: "Il nostro team di supporto è disponibile per assisterti con qualsiasi problema o richiesta.",
 
@@ -499,5 +502,8 @@ final Map<String, String> italian = {
   'MOTORCYCLE': 'Moto',
   'VAN': 'Furgone',
   'OTHER': 'Altro',
+
+
+  AppStrings.imageSaveToGallery: 'Salva immagine nella galleria',
 
 };

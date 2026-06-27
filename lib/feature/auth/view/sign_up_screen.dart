@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -98,6 +99,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: nicknameController,
                 title:AppStrings.nickName.tr,
                 hintText: AppStrings.typeHere1.tr,
+                inputFormatters: [
+                  TextInputFormatter.withFunction((oldValue, newValue) {
+                    return newValue.copyWith(text: newValue.text.toLowerCase());
+                  }),
+                ],
+
                 validator: (value) => (value == null || value.trim().isEmpty)
                     ? AppStrings.nicknameIsRequired.tr
                     : null,

@@ -228,6 +228,9 @@ class AppStrings {
   static const String failedDeleteAccount = 'failed_delete_account';
 
   static const String helpSupport = 'help_support';
+  static const String faq = 'faq';
+  static const String frequentlyAskedQuestions = 'frequently_asked_questions';
+  static const String findAnswersBelow = 'find_answers_below';
 
   static const String supportText1 = 'support_text1';
   static const String supportText2 = 'support_text2';
@@ -536,5 +539,6 @@ class AppStrings {
   static const String other = 'other';
 
   static const String editGroup = 'edit_group';
+  static const String imageSaveToGallery = 'image_saved_to_gallery';
 
 }
