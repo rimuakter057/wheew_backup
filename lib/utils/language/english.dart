@@ -477,4 +477,5 @@ AppStrings.findAnswersBelow:'Find Answers Below',
   AppStrings.submit: 'Submit',
   AppStrings.editGroup: 'Edit Group',
   AppStrings.imageSaveToGallery: 'Image Save To Gallery',
+  AppStrings.notification:"Notification"
 };

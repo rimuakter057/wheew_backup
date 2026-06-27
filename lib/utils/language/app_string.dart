@@ -540,5 +540,6 @@ class AppStrings {
 
   static const String editGroup = 'edit_group';
   static const String imageSaveToGallery = 'image_saved_to_gallery';
+  static const String notification="notification";
 
 }

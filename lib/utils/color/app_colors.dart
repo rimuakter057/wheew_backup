@@ -31,5 +31,6 @@ class AppColors {
   static const Color freeWhite = Color(0xFFFFFFFF);
   static const Color chargingGreen = Color(0xFF15803D);
   static const Color disableOrange = Color(0xFFF97316);
+  static const Color rating = Color(0xFFFBBF24);
 
 }

@@ -126,59 +126,59 @@ class ChatListAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
           ),
-        Obx(
-              () => GestureDetector(
-            onTap: () {
-              context.pushNamed(RouteName.notification);
-            },
-            child: Padding(
-              padding: EdgeInsets.only(
-                right: ResponsiveHelper.width(16),
-              ),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Icon(
-                    Icons.notifications_outlined,
-                    color: AppColors.blue,
-                    size: ResponsiveHelper.iconSize(32),
-                  ),
-
-                  if (notificationController.unreadCount.value > 0)
-                    Positioned(
-                      right: -2,
-                      top: -1,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 5,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.blue,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 18,
-                          minHeight: 18,
-                        ),
-                        child: Text(
-                          notificationController.unreadCount.value > 9
-                              ? "9+"
-                              : notificationController.unreadCount.value.toString(),
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-        ),
+        // Obx(
+        //       () => GestureDetector(
+        //     onTap: () {
+        //       context.pushNamed(RouteName.notification);
+        //     },
+        //     child: Padding(
+        //       padding: EdgeInsets.only(
+        //         right: ResponsiveHelper.width(16),
+        //       ),
+        //       child: Stack(
+        //         clipBehavior: Clip.none,
+        //         children: [
+        //           Icon(
+        //             Icons.notifications_outlined,
+        //             color: AppColors.blue,
+        //             size: ResponsiveHelper.iconSize(32),
+        //           ),
+        //
+        //           if (notificationController.unreadCount.value > 0)
+        //             Positioned(
+        //               right: -2,
+        //               top: -1,
+        //               child: Container(
+        //                 padding: const EdgeInsets.symmetric(
+        //                   horizontal: 5,
+        //                   vertical: 2,
+        //                 ),
+        //                 decoration: BoxDecoration(
+        //                   color: AppColors.blue,
+        //                   borderRadius: BorderRadius.circular(20),
+        //                 ),
+        //                 constraints: const BoxConstraints(
+        //                   minWidth: 18,
+        //                   minHeight: 18,
+        //                 ),
+        //                 child: Text(
+        //                   notificationController.unreadCount.value > 9
+        //                       ? "9+"
+        //                       : notificationController.unreadCount.value.toString(),
+        //                   textAlign: TextAlign.center,
+        //                   style: const TextStyle(
+        //                     color: Colors.white,
+        //                     fontSize: 10,
+        //                     fontWeight: FontWeight.bold,
+        //                   ),
+        //                 ),
+        //               ),
+        //             ),
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
 
 

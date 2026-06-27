@@ -4,12 +4,14 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
+import 'package:platchatapp/feature/notification/presentation/screens/notification_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_nav_screen.dart';
 import 'package:platchatapp/feature/scan/presentation/screens/scan_screen.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/main.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 import '../../chat/view/chat_list/presentation/screens/chat_list_screen.dart';
 import '../../ocr/presentation/screens/ocr_screen.dart';
@@ -34,9 +36,11 @@ class _MainNavScreenState extends State<MainNavScreen> {
       case 0:
         return const ChatListScreen();
       case 1:
-        return const SearchListScreen();
+      //  return const SearchListScreen();
+        return NotificationScreen();
       case 2:
         return ScanScreen();
+
 
        // return Scaffold(backgroundColor: Colors.white,);
       case 3:
@@ -117,8 +121,8 @@ class _AppBottomNav extends StatelessWidget {
               ),
 
               _NavItem(
-                icon: AssetsPath.searchNav,
-                label: 'search'.tr,
+                icon: AssetsPath.notificationNav,
+                label:AppStrings.notification.tr,
                 index: 1,
                 currentIndex: currentIndex,
                 onTap: onTap,

@@ -22,6 +22,7 @@ class ChatTile extends StatelessWidget {
   final int? unreadCount;           // ✅ নতুন
   final void Function()? onUnblock;
   final bool? isVehicleVerified;
+  final Color?ratingColor;
 
   const ChatTile({
     super.key,
@@ -36,7 +37,7 @@ class ChatTile extends StatelessWidget {
     this.rating,
     this.unreadCount,               // ✅ নতুন
 
-  this.onUnblock, this.isVehicleVerified,
+  this.onUnblock, this.isVehicleVerified, this.ratingColor,
   });
 
   @override
@@ -171,7 +172,7 @@ class ChatTile extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.star,
-                          color: Colors.orange,
+                          color:ratingColor?? AppColors.rating,
                           size: ResponsiveHelper.iconSize(14),
                         ),
                         SizedBox(width: ResponsiveHelper.width(4)),

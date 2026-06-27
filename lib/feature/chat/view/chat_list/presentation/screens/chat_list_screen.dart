@@ -218,6 +218,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         // group এ rating নেই
                       //  rating: isGroup ? null : ((room.otherUser?.rating ?? 0) > 0 ? (room.otherUser!.rating!).toDouble() : null),
                         rating: isGroup ? null : (room.otherUser?.rating ?? 0).toDouble(),
+                        ratingColor:(room.otherUser?.rating ?? 0) > 0 ? null : Colors.grey,
                         // ✅ unread badge — নিজের message হলে 0 দেখাবে
                         unreadCount: room.latestMessage?.isMine == true
                             ? 0

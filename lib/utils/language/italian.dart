@@ -505,5 +505,6 @@ final Map<String, String> italian = {
 
 
   AppStrings.imageSaveToGallery: 'Salva immagine nella galleria',
+  AppStrings.notification:"Notifica"
 
 };
