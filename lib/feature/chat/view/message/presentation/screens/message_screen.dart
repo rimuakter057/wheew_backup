@@ -172,7 +172,8 @@ class _MessageScreenState extends State<MessageScreen> {
                             : profile == null
                             ? Center(child: Text('profile_not_found'.tr))
                             : ProfileCard(
-                                name: profile.nickName,
+                          profile: profile,
+                                name: profile.nickName??"",
                                 rating: profile.rating,
                           image:widget.otherUserAvatar ?? '',
                           showRating: true,

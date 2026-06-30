@@ -151,6 +151,7 @@ class OtherUser {
   String? licenceId;
   String? avatar;
   double? rating;
+  int?totalRatings;
   bool? isVehicleVerified;
 
   OtherUser({
@@ -159,6 +160,7 @@ class OtherUser {
     this.licenceId,
     this.avatar,
     this.rating,
+    this.totalRatings,
     this.isVehicleVerified,
   });
 
@@ -168,6 +170,7 @@ class OtherUser {
     licenceId = json['licence_id'];
     avatar = json['avatar'];
     rating = json['rating'] != null ? (json['rating'] as num).toDouble() : null;
+
     isVehicleVerified = json['is_vehicle_verified']; // ✅ '=' দিয়ে ঠিক করা
   }
 

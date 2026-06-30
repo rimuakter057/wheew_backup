@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/feature/chat/model/user_profile_model.dart';
+import 'package:platchatapp/feature/chat/model/view_user_profile_model.dart';
 import 'package:platchatapp/feature/chat/repository/add_member_repo.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
@@ -100,23 +101,27 @@ class GroupController extends GetxController {
       isUpdatingGroup.value = false;
     }
   }
-///view user ================
-  final Rx<UserProfileModel?> viewedProfile = Rx(null);
+///view other user profile=====================================================
   final RxBool isLoadingProfile = false.obs;
+
+  final Rx<ViewUserProfileModel?> viewedProfile = Rx<ViewUserProfileModel?>(null);
 
   Future<void> fetchUserProfile(String userId) async {
     isLoadingProfile.value = true;
     viewedProfile.value = null;
+
     try {
       final response = await ApiClient.getData(
         uri: ApiUrl.userProfile(userId),
       );
+
       if (response.statusCode == 200) {
-        final json = jsonDecode(response.body);
-        viewedProfile.value = UserProfileModel.fromJson(json);
+        viewedProfile.value = ViewUserProfileModel.fromJson(
+          jsonDecode(response.body),
+        );
       }
     } catch (e) {
-      debugPrint('fetchUserProfile error: $e');
+      debugPrint(e.toString());
     } finally {
       isLoadingProfile.value = false;
     }

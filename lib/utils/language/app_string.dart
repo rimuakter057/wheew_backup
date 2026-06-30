@@ -358,10 +358,6 @@ class AppStrings {
   static const String noUsefulNumbersFound = 'no_useful_numbers_found';
   static const String loading = 'loading';
 
-  // -------- Map --------
-  static const String mapFree = 'map_free';
-  static const String mapPaid = 'map_paid';
-
   // -------- Scan --------
   static const String existingChat = 'existing_chat';
   static const String newUser = 'new_user';
@@ -541,5 +537,63 @@ class AppStrings {
   static const String editGroup = 'edit_group';
   static const String imageSaveToGallery = 'image_saved_to_gallery';
   static const String notification="notification";
+
+  static const String submitDetails = 'submit_details';
+  static const String makeSureAllDocuments ='make_sure_all_documents';
+  static const String group ='group';
+
+
+  // -------- Notification Screen --------
+  static const String notifications = 'notifications';
+  static const String markAllRead = 'mark all read';
+  static const String deleteAllNotifications = 'delete all notifications confirm';
+
+  static const String justNow = 'just now';
+  static const String notificationNotYet = 'Notification Not Yet';
+  static const String markAsRead = 'mark as read';
+  static const String read = 'read';
+  static const String deleteSuccess = 'delete_success';
+  static const String addParking = 'add_parking';
+
+  static const String locationTurnedOff = 'location_turned_off';
+  static const String locationOffDesc = 'location_off_desc';
+  static const String enableLocation = 'enable_location';
+  static const String showingParking = 'showing_parking';
+
+  static const String usingCurrentLocation = 'using_current_location';
+  static const String selectedLocation = 'selected_location';
+  static const String pickOnMap = 'pick_on_map';
+  static const String change = 'change';
+  static const String mapFree = 'Map Free';
+  static const String mapPaid = 'Map Paid';
+
+  static const String disabledParking = 'disabled_parking';
+  static const String electricCharging2 = 'electric_charging_label';
+  static const String paidParking = 'paid_parking';
+  static const String freeParking = 'free_parking';
+
+  static const String leaveSuccess = 'leave_success';
+  static const String failedToLeave = 'failed_to_leave';
+
+
+  static const String plateScanner = 'plate_scanner';
+
+  static const String noPlateDetected = 'no_plate_detected';
+
+  static const String ocrScanner = 'ocr_scanner';
+  static const String scanQrCode = 'scan_qr_code';
+
+
+
+  static const String downloading = 'downloading';
+  static const String download = 'download';
+
+  static const String groupCreatedSuccess = 'group_created_success';
+  static const String groupCreatedFailed = 'group_created_failed';
+
+
+
+
+
 
 }

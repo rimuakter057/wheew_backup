@@ -125,7 +125,8 @@ class AuthController extends GetxController {
     required String identifier,
     required String password,
     bool rememberMe = false,
-  }) async {
+  }) async
+  {
     _setLoading(true);
 
     try {
@@ -232,59 +233,7 @@ class AuthController extends GetxController {
   }
   // ================= REGISTER & LOGIN ==================
 
-  Future<bool> registerAndLogin({
-    required BuildContext context,
-    required String licenceId,
-    required String nickName,
-    required String email,
-    required String password,
-    required String confirmPassword,
-    required String designation,
-  }) async {
-    _setLoading(true);
 
-    String? fcmToken = await FirebaseMessaging.instance.getToken();
-    if (fcmToken == null) {
-      _setLoading(false);
-      return false;
-    }
-
-    final http.Response registerRes = await _repo.register(
-      licenceId: licenceId,
-      nickName: nickName,
-      email: email,
-      password: password,
-      confirmPassword: confirmPassword,
-      designation: designation,
-    );
-
-    if (registerRes.statusCode == 200 || registerRes.statusCode == 201) {
-      final http.Response loginRes = await _repo.login(
-        identifier: licenceId,
-        password: password,
-        fcmToken: fcmToken,
-      );
-
-      _setLoading(false);
-
-      if (loginRes.statusCode == 200 || loginRes.statusCode == 201) {
-        final data = jsonDecode(loginRes.body);
-
-        await SharePrefsHelper.setString(AppConst.token, data['token'] ?? '');
-        await SharePrefsHelper.setBool(AppConst.isLoggedIn, true);
-        await _saveUserData(data);
-
-        return true;
-      } else {
-        ApiChecker.checkApi(loginRes);
-        return false;
-      }
-    } else {
-      _setLoading(false);
-      ApiChecker.checkApi(registerRes);
-      return false;
-    }
-  }
 
   // ================= SAVE USER DATA ====================
 

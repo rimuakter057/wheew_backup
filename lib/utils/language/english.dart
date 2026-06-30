@@ -330,9 +330,7 @@ AppStrings.findAnswersBelow:'Find Answers Below',
   AppStrings.noUsefulNumbersFound: 'No useful numbers found nearby.',
   AppStrings.loading: 'Loading...',
 
-  // -------- Map --------
-  AppStrings.mapFree: 'Free',
-  AppStrings.mapPaid: 'Paid',
+
 
   // -------- Scan --------
   AppStrings.existingChat: 'Existing Chat',
@@ -477,5 +475,52 @@ AppStrings.findAnswersBelow:'Find Answers Below',
   AppStrings.submit: 'Submit',
   AppStrings.editGroup: 'Edit Group',
   AppStrings.imageSaveToGallery: 'Image Save To Gallery',
-  AppStrings.notification:"Notification"
+  AppStrings.notification:"Notification",
+  AppStrings.submitDetails:"Submit Details",
+  AppStrings.makeSureAllDocuments:"Make sure all documents are clear and readable.Blurry images may delay your approval.",
+AppStrings.group:"Group",
+
+  // -------- Notification Screen --------
+  AppStrings.notifications: "Notifications",
+  AppStrings.markAllRead: "Mark all read",
+  AppStrings.deleteAllNotifications: "Are you sure you want to delete all notifications?",
+
+  AppStrings.justNow: "just now",
+  AppStrings.notificationNotYet: "No Notifications Yet",
+  AppStrings.markAsRead: "Mark as read",
+  AppStrings.read: "Read",
+
+  AppStrings.deleteSuccess: "Deleted Successfully",
+  AppStrings.addParking: "Add Parking",
+
+  AppStrings.locationTurnedOff: "Location is turned off",
+  AppStrings.locationOffDesc: "Please enable location from your device to see nearby parking reports on the map.",
+  AppStrings.enableLocation: "Enable location",
+  AppStrings.showingParking: "Showing parking within",
+
+  AppStrings.usingCurrentLocation: "Using current location",
+  AppStrings.selectedLocation: "Selected",
+  AppStrings.pickOnMap: "Pick on map",
+  AppStrings.change: "Change",
+  AppStrings.mapFree: "Free",
+  AppStrings.mapPaid: "Paid",
+
+  AppStrings.disabledParking: "Disabled Parking",
+  AppStrings.electricCharging2: "Electric Charging",
+  AppStrings.paidParking: "Paid Parking",
+  AppStrings.freeParking: "Free Parking",
+  AppStrings.leaveSuccess: "Leave successfully",
+  AppStrings.failedToLeave: "Failed to leave",
+
+  AppStrings.plateScanner: "Plate Scanner",
+
+  AppStrings.noPlateDetected: "No plate/number detected",
+
+  AppStrings.ocrScanner: "OCR Scanner",
+  AppStrings.scanQrCode: "Scan QR Code",
+  AppStrings.groupCreatedSuccess: "Group created successfully",
+  AppStrings.groupCreatedFailed: "Failed to create group",
+  AppStrings.downloading: "Downloading...",
+  AppStrings.download: "Download",
+
 };

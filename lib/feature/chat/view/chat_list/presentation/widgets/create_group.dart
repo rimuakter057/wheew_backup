@@ -9,6 +9,7 @@ import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 /// Chat list screen থেকে call করা হয়
 /// Group name নিয়ে controller.createGroup() trigger করে
@@ -145,11 +146,10 @@ void showCreateGroupDialog({
                         final success = await controller.createGroup(groupName: groupName);
 
                         if (success) {
-                          CustomSnackbar.success(context: context, message:  'Group created successfully');
+                          CustomSnackbar.success(context: context, message: AppStrings.groupCreatedSuccess.tr);
                         } else {
-                        CustomSnackbar.error(context: context, message: 'Failed to create group');
+                          CustomSnackbar.error(context: context, message: AppStrings.groupCreatedFailed.tr);
                         }
-
 
                       }
                     },

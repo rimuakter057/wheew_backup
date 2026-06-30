@@ -68,7 +68,6 @@
 // ExistingRoom2 Model
 
 
-
 class UserModel {
   final String? id;
   final String? email;
@@ -78,6 +77,8 @@ class UserModel {
   final String? avatar;
   final String? designation;
   final double? rating;
+
+  final int? totalRatings;
   final String? createdAt;
   final String? role;
 
@@ -88,6 +89,9 @@ class UserModel {
   final bool? isVehicleVerified;
   final bool? isVehicleOwnershipDocumentSubmitted;
 
+  final String? country;
+  final String? city;
+
   ExistingRoom2? existingRoom;
 
   UserModel({
@@ -95,9 +99,10 @@ class UserModel {
     this.email,
     required this.nickName,
     required this.licenceId,
-    this.rating,
     this.avatar,
     this.designation,
+    this.rating,
+    this.totalRatings,
     this.createdAt,
     this.role,
     this.licenseNoVerified,
@@ -106,6 +111,8 @@ class UserModel {
     this.vehicleColor,
     this.isVehicleVerified,
     this.isVehicleOwnershipDocumentSubmitted,
+    this.country,
+    this.city,
     this.existingRoom,
   });
 
@@ -115,9 +122,10 @@ class UserModel {
       email: json['email'],
       nickName: json['nick_name'] ?? '',
       licenceId: json['licence_id'] ?? '',
-      rating: (json['rating'] ?? 0).toDouble(),
       avatar: json['avatar'],
       designation: json['designation'],
+      rating: (json['rating'] ?? 0).toDouble(),
+      totalRatings: json['totalRatings'] ?? 0,
       createdAt: json['createdAt'],
       role: json['role'],
 
@@ -128,6 +136,9 @@ class UserModel {
       isVehicleVerified: json['is_vehicle_verified'],
       isVehicleOwnershipDocumentSubmitted:
       json['is_vehicle_ownership_document_submitted'],
+
+      country: json['country'],
+      city: json['city'],
 
       existingRoom: json['existingRoom'] != null
           ? ExistingRoom2.fromJson(json['existingRoom'])
@@ -143,6 +154,8 @@ class UserModel {
     String? avatar,
     String? designation,
     double? rating,
+
+    int? totalRatings,
     String? createdAt,
     String? role,
     bool? licenseNoVerified,
@@ -151,6 +164,8 @@ class UserModel {
     String? vehicleColor,
     bool? isVehicleVerified,
     bool? isVehicleOwnershipDocumentSubmitted,
+    String? country,
+    String? city,
     ExistingRoom2? existingRoom,
   }) {
     return UserModel(
@@ -161,6 +176,8 @@ class UserModel {
       avatar: avatar ?? this.avatar,
       designation: designation ?? this.designation,
       rating: rating ?? this.rating,
+
+      totalRatings: totalRatings ?? this.totalRatings,
       createdAt: createdAt ?? this.createdAt,
       role: role ?? this.role,
       licenseNoVerified: licenseNoVerified ?? this.licenseNoVerified,
@@ -171,6 +188,8 @@ class UserModel {
       isVehicleOwnershipDocumentSubmitted:
       isVehicleOwnershipDocumentSubmitted ??
           this.isVehicleOwnershipDocumentSubmitted,
+      country: country ?? this.country,
+      city: city ?? this.city,
       existingRoom: existingRoom ?? this.existingRoom,
     );
   }
@@ -183,6 +202,8 @@ class UserModel {
     'avatar': avatar,
     'designation': designation,
     'rating': rating,
+
+    'totalRatings': totalRatings,
     'createdAt': createdAt,
     'role': role,
     'license_no_verified': licenseNoVerified,
@@ -192,10 +213,11 @@ class UserModel {
     'is_vehicle_verified': isVehicleVerified,
     'is_vehicle_ownership_document_submitted':
     isVehicleOwnershipDocumentSubmitted,
+    'country': country,
+    'city': city,
     'existingRoom': existingRoom?.toJson(),
   };
 }
-
 
 
 class ExistingRoom2 {

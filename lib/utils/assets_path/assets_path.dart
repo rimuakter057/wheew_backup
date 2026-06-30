@@ -26,6 +26,22 @@ class AssetsPath {
   static const String scanOcr = '${_iconsBase}scan_ocr.png';
 
 
+  ///==============================================
+  static const String camper = '${_iconsBase}Camper.svg';
+  static const String cityCar = '${_iconsBase}Ct Car.svg';
+  static const String eScooter = '${_iconsBase}E Scooter.svg';
+  static const String microCar = '${_iconsBase}Micro car.svg';
+  static const String motorcycle = '${_iconsBase}Motorcycle.svg';
+  static const String pickup = '${_iconsBase}Pick up.svg';
+  static const String scooter = '${_iconsBase}Scooter.svg';
+  static const String suv = '${_iconsBase}Suv.svg';
+  static const String truck = '${_iconsBase}Track.svg';
+  static const String van = '${_iconsBase}Van.svg';
+
+
+  ///===================================
+
+
   // Animations
   static const String chatJson = '${_animationBase}Chat.json';
   static const String iconJson = '${_animationBase}icon_animated.json';
@@ -82,6 +98,16 @@ class AssetsPath {
   static const String otherUpload="assets/icons/other_upload_icon.svg";
   static const String info="assets/icons/i.svg";
   static const String groupChat="assets/icons/group_chat.svg";
+
+
+  static const String scanChat="assets/icons/scan.svg";
+  static const String blueCar="assets/icons/blue_car.svg";
+  static const String greenCar="assets/icons/green_car.svg";
+  static const String orangeCar="assets/icons/orange_car.svg";
+  static const String profileOneIcon="assets/icons/profile_one_icon.svg";
+  static const String profileTwoIcon="assets/icons/profile_two_icon.svg";
+  static const String profileThreeIcon="assets/icons/profile_three_icon.svg";
+  static const String profileFourIcon="assets/icons/profile_four_icon.svg";
 
 
 

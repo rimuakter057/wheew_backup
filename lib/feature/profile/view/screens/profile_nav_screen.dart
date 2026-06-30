@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart'; // GoRouter ইম্পোর্ট করুন
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/router/routes.dart';
-import 'package:platchatapp/core/router/routes_name.dart'; // RouteName ইম্পোর্ট করুন
+import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/core/service/storage_service.dart';
 import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
@@ -59,8 +59,53 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
     });
   }
 
+  /// ✅ vehicle color name → actual Color
+  Color _getVehicleColor(String? colorName) {
+    switch (colorName) {
+      case 'Bianco':
+        return const Color(0xFFF4F4F2);
+      case 'Nero':
+        return const Color(0xFF1B1B1D);
+      case 'Grigio':
+        return const Color(0xFF6E7074);
+      case 'Blu':
+        return const Color(0xFF2C3E5C);
+      case 'Rosso':
+        return const Color(0xFFB11724);
+      case 'Bianco2':
+        return Colors.white;
+      default:
+        return Colors.grey;
+    }
+  }
 
-// rating display করার সময়
+  /// ✅ backend vehicle_type string → icon asset path
+  String _getVehicleTypeIcon(String? type) {
+    switch (type) {
+      case 'VAN':
+        return AssetsPath.van;
+      case 'SUV':
+        return AssetsPath.suv;
+      case 'TRUCK':
+        return AssetsPath.truck;
+      case 'CAMPER':
+        return AssetsPath.camper;
+      case 'SCOOTER':
+        return AssetsPath.scooter;
+      case 'MOTORCYCLE':
+        return AssetsPath.motorcycle;
+      case 'PICKUP':
+        return AssetsPath.pickup;
+      case 'MICRO_CAR':
+        return AssetsPath.microCar;
+      case 'CITY_CAR':
+        return AssetsPath.cityCar;
+      case 'E_SCOOTER':
+        return AssetsPath.eScooter;
+      default:
+        return AssetsPath.camper;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +134,6 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
                 padding: ResponsiveHelper.symmetric(horizontal: 20),
                 child: Column(
                   children: [
-
                     ///profile card====================
                     _buildProfileCard(context, controller),
                     SizedBox(height: ResponsiveHelper.spacing(20)),
@@ -109,23 +153,485 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
     );
   }
 
+  ///profile card=====================================================================
+//   Widget _buildProfileCard(BuildContext context, ProfileController controller) {
+//     final user = controller.userProfile.value;
+//     final avatarUrl = user?.avatar;
+//     final isVerified = user?.isVehicleVerified;
+//
+//     debugPrint("rating===========================${user?.rating?.toString()}");
+//
+//     return Container(
+//       width: double.infinity,
+//       decoration: BoxDecoration(
+//         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+//         gradient: const LinearGradient(
+//           colors: [Color(0xFF1E88E5), Color(0xFF1565C0)],
+//           begin: Alignment.topLeft,
+//           end: Alignment.bottomRight,
+//         ),
+//       ),
+//       child: ClipRRect(
+//         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+//         child: Stack(
+//           children: [
+//             ///  BACKGROUND DESIGN (THE SOFT CIRCLE) ───
+//             Positioned(
+//               right: -ResponsiveHelper.width(90),
+//               bottom: ResponsiveHelper.height(50),
+//               child: Container(
+//                 width: ResponsiveHelper.width(280),
+//                 height: ResponsiveHelper.width(280),
+//                 decoration: BoxDecoration(
+//                   shape: BoxShape.circle,
+//                   color: Colors.white.withOpacity(0.08),
+//                 ),
+//               ),
+//             ),
+//
+//             /// ─── CARD CONTENT ───=======================
+//             Padding(
+//               padding: ResponsiveHelper.all(20),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       /// Avatar Section with Loading Overlay
+//                       GestureDetector(
+//                         onTap: () {
+//                           if (avatarUrl != null && avatarUrl.isNotEmpty) {
+//                             context.pushNamed(RouteName.showProfile, extra: avatarUrl);
+//                           }
+//                         },
+//                         child: Stack(
+//                           children: [
+//                             Container(
+//                               decoration: BoxDecoration(
+//                                 shape: BoxShape.circle,
+//                                 border: Border.all(color: Colors.white24, width: 2),
+//                               ),
+//                               child: CircleAvatar(
+//                                 radius: ResponsiveHelper.width(40),
+//                                 backgroundColor: Colors.white.withOpacity(0.15),
+//                                 backgroundImage: NetworkImage(
+//                                   (avatarUrl != null && avatarUrl.isNotEmpty) ? avatarUrl : AppConst.unknown,
+//                                 ),
+//                               ),
+//                             ),
+//                             if (controller.isLoading)
+//                               Positioned.fill(
+//                                 child: Container(
+//                                   decoration: const BoxDecoration(
+//                                     color: Colors.black38,
+//                                     shape: BoxShape.circle,
+//                                   ),
+//                                   child: const Center(
+//                                     child: SizedBox(
+//                                       width: 20,
+//                                       height: 20,
+//                                       child: CircularProgressIndicator(
+//                                         strokeWidth: 2,
+//                                         color: Colors.white,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 ),
+//                               ),
+//                           ],
+//                         ),
+//                       ),
+//
+//                       ///=================scan================================
+//                       FutureBuilder<bool?>(
+//                         future: SharePrefsHelper.getBool(AppConst.licenseNoVerified),
+//                         builder: (context, snapshot) {
+//                           final bool isVerified = snapshot.data ?? false;
+//
+//                           return InkWell(
+//                             onTap: () {
+//                               if (scanController.qrCardHtml.value.isEmpty) {
+//                                 scanController.getQrCode();
+//                               }
+//
+//                               debugPrint("Current context: ${qrCardKey.currentContext}");
+//
+//                               showModalBottomSheet(
+//                                 context: context,
+//                                 backgroundColor: AppColors.white,
+//                                 isScrollControlled: true,
+//                                 shape: RoundedRectangleBorder(
+//                                   borderRadius: BorderRadius.vertical(
+//                                     top: Radius.circular(
+//                                       ResponsiveHelper.borderRadius(24),
+//                                     ),
+//                                   ),
+//                                 ),
+//                                 builder: (context) {
+//                                   return Padding(
+//                                     padding: EdgeInsets.only(
+//                                       bottom: MediaQuery.of(context).viewInsets.bottom +
+//                                           ResponsiveHelper.padding(24),
+//                                       left: ResponsiveHelper.padding(16),
+//                                       right: ResponsiveHelper.padding(16),
+//                                     ),
+//                                     child: Container(
+//                                       width: double.infinity,
+//                                       padding: ResponsiveHelper.all(20),
+//                                       constraints: BoxConstraints(
+//                                         minHeight: ResponsiveHelper.height(650),
+//                                         maxHeight: ResponsiveHelper.height(650),
+//                                       ),
+//                                       child: Column(
+//                                         mainAxisSize: MainAxisSize.min,
+//                                         crossAxisAlignment: CrossAxisAlignment.center,
+//                                         children: [
+//                                           Row(
+//                                             mainAxisAlignment: MainAxisAlignment.end,
+//                                             children: [
+//                                               IconButton(
+//                                                 onPressed: () => context.pop(),
+//                                                 icon: Icon(
+//                                                   Icons.close,
+//                                                   color: AppColors.black,
+//                                                 ),
+//                                               ),
+//                                             ],
+//                                           ),
+//                                           Expanded(
+//                                             child: Obx(() {
+//                                               if (scanController.isLoadingQr.value) {
+//                                                 return const Center(
+//                                                   child: CircularProgressIndicator(
+//                                                     color: AppColors.blue,
+//                                                     strokeWidth: 2.5,
+//                                                   ),
+//                                                 );
+//                                               }
+//
+//                                               if (scanController.qrCardHtml.value.isEmpty) {
+//                                                 return Center(
+//                                                   child: GestureDetector(
+//                                                     onTap: () =>
+//                                                         scanController.getQrCode(),
+//                                                     child: Column(
+//                                                       mainAxisAlignment:
+//                                                       MainAxisAlignment.center,
+//                                                       children: [
+//                                                         Icon(
+//                                                           Icons.refresh_rounded,
+//                                                           color: Colors.grey.shade400,
+//                                                           size: 36,
+//                                                         ),
+//                                                         SizedBox(
+//                                                           height:
+//                                                           ResponsiveHelper.spacing(8),
+//                                                         ),
+//                                                         Text(
+//                                                           AppStrings.tapToRetry.tr,
+//                                                           style: GoogleFonts.poppins(
+//                                                             fontSize:
+//                                                             ResponsiveHelper.fontSize(
+//                                                                 13),
+//                                                             color: Colors.grey.shade400,
+//                                                           ),
+//                                                         ),
+//                                                       ],
+//                                                     ),
+//                                                   ),
+//                                                 );
+//                                               }
+//
+//                                               return RepaintBoundary(
+//                                                 key: qrCardKey,
+//                                                 child: ClipRRect(
+//                                                   borderRadius: BorderRadius.circular(
+//                                                     ResponsiveHelper.borderRadius(16),
+//                                                   ),
+//                                                   child: QrCardWebView(
+//                                                     htmlContent:
+//                                                     scanController.qrCardHtml.value,
+//                                                   ),
+//                                                 ),
+//                                               );
+//                                             }),
+//                                           ),
+//                                           SizedBox(
+//                                             height: ResponsiveHelper.spacing(16),
+//                                           ),
+//                                           Obx(() {
+//                                             if (scanController.qrCardHtml.value.isEmpty) {
+//                                               return const SizedBox.shrink();
+//                                             }
+//
+//                                             return SizedBox(
+//                                               width: double.infinity,
+//                                               child: ElevatedButton.icon(
+//                                                 onPressed:
+//                                                 scanController.isDownloadingQr.value
+//                                                     ? null
+//                                                     : () async {
+//                                                   scanController
+//                                                       .isDownloadingQr
+//                                                       .value = true;
+//
+//                                                   try {
+//                                                     await downloadQrCard(
+//                                                         context);
+//
+//                                                     if (context.mounted) Navigator.pop(context);
+//                                                   } finally {
+//                                                     scanController
+//                                                         .isDownloadingQr
+//                                                         .value = false;
+//                                                   }
+//                                                 },
+//                                                 icon: scanController
+//                                                     .isDownloadingQr.value
+//                                                     ? const SizedBox(
+//                                                   width: 18,
+//                                                   height: 18,
+//                                                   child:
+//                                                   CircularProgressIndicator(
+//                                                     strokeWidth: 2,
+//                                                     color: Colors.white,
+//                                                   ),
+//                                                 )
+//                                                     : const Icon(
+//                                                   Icons.download_rounded,
+//                                                   color: Colors.white,
+//                                                 ),
+//                                                 label: Text(
+//                                                   scanController
+//                                                       .isDownloadingQr.value
+//                                                       ? AppStrings.downloading.tr
+//                                                       : AppStrings.download.tr,
+//                                                   style: GoogleFonts.poppins(
+//                                                     fontSize:
+//                                                     ResponsiveHelper.fontSize(15),
+//                                                     fontWeight: FontWeight.w600,
+//                                                     color: Colors.white,
+//                                                   ),
+//                                                 ),
+//                                                 style: ElevatedButton.styleFrom(
+//                                                   backgroundColor:
+//                                                   const Color(0xFF3D72E8),
+//                                                   padding: EdgeInsets.symmetric(
+//                                                     vertical:
+//                                                     ResponsiveHelper.padding(14),
+//                                                   ),
+//                                                   shape: RoundedRectangleBorder(
+//                                                     borderRadius:
+//                                                     BorderRadius.circular(
+//                                                       ResponsiveHelper
+//                                                           .borderRadius(12),
+//                                                     ),
+//                                                   ),
+//                                                 ),
+//                                               ),
+//                                             );
+//                                           }),
+//                                           SizedBox(
+//                                             height: ResponsiveHelper.spacing(46),
+//                                           ),
+//                                         ],
+//                                       ),
+//                                     ),
+//                                   );
+//                                 },
+//                               );
+//                             },
+//                             borderRadius: BorderRadius.circular(
+//                               ResponsiveHelper.borderRadius(16),
+//                             ),
+//                             child: Column(
+//                               mainAxisSize: MainAxisSize.min,
+//                               children: [
+//                                 Container(
+//                                   width: ResponsiveHelper.width(54),
+//                                   height: ResponsiveHelper.width(54),
+//                                   alignment: Alignment.center,
+//                                   decoration: BoxDecoration(
+//                                     color: const Color(0xFFFFFFFF).withOpacity(0.4),
+//                                     borderRadius: BorderRadius.circular(
+//                                       ResponsiveHelper.borderRadius(16),
+//                                     ),
+//                                     boxShadow: [
+//                                       BoxShadow(
+//                                         color: Colors.black.withOpacity(0.05),
+//                                         blurRadius: 10,
+//                                         offset: const Offset(0, 4),
+//                                       ),
+//                                     ],
+//                                   ),
+//                                   child: CustomImage(
+//                                     imageSrc: AssetsPath.scanIcon,
+//                                     width: ResponsiveHelper.width(24),
+//                                     height: ResponsiveHelper.width(24),
+//                                   ),
+//                                 ),
+//                               ],
+//                             ),
+//                           );
+//                         },
+//                       )
+//                     ],
+//                   ),
+//                   SizedBox(height: ResponsiveHelper.spacing(15)),
+//
+//                   /// ✅ Nick name from controller=====================================
+//                   Row(
+//                     children: [
+//                       Text(
+//                         user?.nickName.isNotEmpty == true ? user!.nickName : 'unknown',
+//                         style: TextStyle(
+//                           color: Colors.white,
+//                           fontSize: ResponsiveHelper.titleFontSize(22),
+//                           fontWeight: FontWeight.w500,
+//                         ),
+//                       ),
+//                       SizedBox(height: ResponsiveHelper.spacing(8)),
+//                       GestureDetector(
+//                         onTap: () async {
+//                           if (isVerified == false) {
+//                             await context.pushNamed(RouteName.profile);
+//                             profileController.reloadProfile();
+//                           } else {
+//                             CustomSnackbar.success(context: context, message: "You are already verified");
+//                           }
+//                         },
+//                         child: CustomImage(
+//                           imageSrc: isVerified == true
+//                               ? AssetsPath.verified
+//                               : AssetsPath.unverified,
+//                           height: ResponsiveHelper.iconSize(20),
+//                           width: ResponsiveHelper.iconSize(20),
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//
+//                   Text(
+//                     user?.licenceId??"",
+//                     style: TextStyle(
+//                       color: Colors.white,
+//                       fontSize: ResponsiveHelper.titleFontSize(16),
+//                       fontWeight: FontWeight.w500,
+//                     ),
+//                   ),
+// SizedBox(height: ResponsiveHelper.height(4),),
+//                   /// ✅ Rating + Location + Vehicle info — fully dynamic
+//                   Wrap(
+//                     crossAxisAlignment: WrapCrossAlignment.center,
+//                     spacing: ResponsiveHelper.width(4),
+//                     runSpacing: ResponsiveHelper.height(4),
+//                     children: [
+//                       Row(
+//                         mainAxisSize: MainAxisSize.min,
+//                         children: [
+//                           Icon(
+//                             Icons.star,
+//                             color: Colors.white,
+//                             size: ResponsiveHelper.iconSize(18),
+//                           ),
+//                           SizedBox(width: ResponsiveHelper.spacing(4)),
+//                           Text(
+//                             user != null ? formatRating(user.rating) : '0.0',
+//                             style: context.bodyMedium.copyWith(color: AppColors.white),
+//                           ),
+//                           Text(
+//                             "(${user?.totalRatings ?? 0})",
+//                             style: context.bodySmall.copyWith(color: AppColors.white, fontSize: 8),
+//                           ),
+//                         ],
+//                       ),
+//
+//                       SizedBox(width: ResponsiveHelper.width(4),),
+//                       /// ✅ location — city/country থেকে dynamic, না থাকলে hide
+//                       // if ((user?.city != null && user!.city!.isNotEmpty) ||
+//                       //     (user?.country != null && user!.country!.isNotEmpty))
+//                         Row(
+//                           mainAxisSize: MainAxisSize.min,
+//                           children: [
+//                             SizedBox(width: ResponsiveHelper.width(4)),
+//                             CustomImage(imageSrc: "assets/icons/location.svg"),
+//                             SizedBox(width: ResponsiveHelper.width(4)),
+//                             Text(
+//                                   () {
+//                                 final parts = [user?.city, user?.country]
+//                                     .where((e) => e != null && e.isNotEmpty)
+//                                     .join(", ");
+//                                 return parts.isEmpty ? "N/A" : parts;
+//                               }(),
+//                               style: context.bodyMedium.copyWith(color: AppColors.white),
+//                             ),
+//                           ],
+//                         ),
+// SizedBox(width: ResponsiveHelper.width(8),),
+//                       /// ✅ vehicle model — real data
+//                    //   if (user?.vehicleModel != null && user!.vehicleModel!.isNotEmpty)
+//                         Row(
+//                           children: [
+//                             Text(
+//                               user?.vehicleModel??"N/A",
+//                               style: context.bodyMedium.copyWith(color: AppColors.white),
+//                             ),
+//
+//                                                   /// ✅ vehicle color circle
+//                                                 //  if (user?.vehicleColor != null && user!.vehicleColor!.isNotEmpty)
+//                             Container(
+//                               width: ResponsiveHelper.iconSize(14),
+//                               height: ResponsiveHelper.iconSize(14),
+//                               decoration: BoxDecoration(
+//                                 shape: BoxShape.circle,
+//                                 color: _getVehicleColor(user?.vehicleColor??"N/A"),
+//                                 border: Border.all(color: Colors.white, width: 1),
+//                               ),
+//                             ),
+//
+//                                                   /// ✅ vehicle type icon — dynamic
+//                                                   CustomImage(
+//                             imageSrc: _getVehicleTypeIcon(user?.vehicleType),
+//                             width: ResponsiveHelper.iconSize(18),
+//                             height: ResponsiveHelper.iconSize(18),
+//                             imageColor: AppColors.white,
+//                                                   ),
+//                           ],
+//                         ),
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
 
 
 
-///profile card=====================================================================
 
+
+
+
+
+  ///profile card=====================================================================
   Widget _buildProfileCard(BuildContext context, ProfileController controller) {
     final user = controller.userProfile.value;
     final avatarUrl = user?.avatar;
-    final isVerified=user?.isVehicleVerified;
+    final isVerified = user?.isVehicleVerified;
+
+    final bool hasRating = (user?.rating ?? 0) > 0;
 
     debugPrint("rating===========================${user?.rating?.toString()}");
 
     return Container(
       width: double.infinity,
-      // Background design achieve korar jonno amra ClipRRect and Stack use korbo
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
         gradient: const LinearGradient(
           colors: [Color(0xFF1E88E5), Color(0xFF1565C0)],
           begin: Alignment.topLeft,
@@ -139,14 +645,13 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
             ///  BACKGROUND DESIGN (THE SOFT CIRCLE) ───
             Positioned(
               right: -ResponsiveHelper.width(90),
-            //  top: -ResponsiveHelper.width(40),
-              bottom:ResponsiveHelper.height(50),
+              bottom: ResponsiveHelper.height(50),
               child: Container(
                 width: ResponsiveHelper.width(280),
                 height: ResponsiveHelper.width(280),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.08), // Soft circular overlay
+                  color: Colors.white.withOpacity(0.08),
                 ),
               ),
             ),
@@ -154,655 +659,517 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
             /// ─── CARD CONTENT ───=======================
             Padding(
               padding: ResponsiveHelper.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// Avatar Section with Loading Overlay
-                      GestureDetector(
-                        onTap: () {
-                          if (avatarUrl != null && avatarUrl.isNotEmpty) {
-                            context.pushNamed(RouteName.showProfile, extra: avatarUrl);
-                          }
-                        },
-                        child: Stack(
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white24, width: 2),
-                              ),
-                              child: CircleAvatar(
-                                radius: ResponsiveHelper.width(40),
-                                backgroundColor: Colors.white.withOpacity(0.15),
-                                backgroundImage: NetworkImage(
-                                  (avatarUrl != null && avatarUrl.isNotEmpty) ? avatarUrl : AppConst.unknown,
-                                ),
-                              ),
-                            ),
-                            if (controller.isLoading)
-                              Positioned.fill(
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    color: Colors.black38,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Center(
-                                    child: SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.white,
+                            /// Avatar Section with Scan/QR Overlay on Top-Left
+                            Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    if (avatarUrl != null && avatarUrl.isNotEmpty) {
+                                      context.pushNamed(RouteName.showProfile, extra: avatarUrl);
+                                    }
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(color: Colors.white24, width: 2),
+                                        ),
+                                        child: CircleAvatar(
+                                          radius: ResponsiveHelper.width(40),
+                                          backgroundColor: Colors.white.withOpacity(0.15),
+                                          backgroundImage: NetworkImage(
+                                            (avatarUrl != null && avatarUrl.isNotEmpty) ? avatarUrl : AppConst.unknown,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-
-
-///=================scan================================
-
-                      FutureBuilder<bool?>(
-                        future: SharePrefsHelper.getBool(AppConst.licenseNoVerified),
-                        builder: (context, snapshot) {
-                          final bool isVerified = snapshot.data ?? false;
-
-
-
-
-                      return    InkWell(
-                            onTap: () {
-                              if (scanController.qrCardHtml.value.isEmpty) {
-                                scanController.getQrCode();
-                              }
-
-                              debugPrint("Current context: ${qrCardKey.currentContext}");
-
-                              showModalBottomSheet(
-                                context: context,
-                                backgroundColor: AppColors.white,
-                                isScrollControlled: true,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(
-                                      ResponsiveHelper.borderRadius(24),
-                                    ),
-                                  ),
-                                ),
-                                builder: (context) {
-                                  return Padding(
-                                    padding: EdgeInsets.only(
-                                      bottom: MediaQuery.of(context).viewInsets.bottom +
-                                          ResponsiveHelper.padding(24),
-                                      left: ResponsiveHelper.padding(16),
-                                      right: ResponsiveHelper.padding(16),
-                                    ),
-                                    child: Container(
-                                      width: double.infinity,
-                                      padding: ResponsiveHelper.all(20),
-                                      constraints: BoxConstraints(
-                                        minHeight: ResponsiveHelper.height(650),
-                                        maxHeight: ResponsiveHelper.height(650),
-                                      ),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              IconButton(
-                                                onPressed: () => context.pop(),
-                                                icon: Icon(
-                                                  Icons.close,
-                                                  color: AppColors.black,
+                                      if (controller.isLoading)
+                                        Positioned.fill(
+                                          child: Container(
+                                            decoration: const BoxDecoration(
+                                              color: Colors.black38,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: const Center(
+                                              child: SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                  color: Colors.white,
                                                 ),
                                               ),
-                                            ],
+                                            ),
                                           ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
 
-                                          Expanded(
-                                            child: Obx(() {
-                                              if (scanController.isLoadingQr.value) {
-                                                return const Center(
-                                                  child: CircularProgressIndicator(
-                                                    color: AppColors.blue,
-                                                    strokeWidth: 2.5,
+                                ///================= scan overlay ================================
+                                Positioned(
+                                  top: -ResponsiveHelper.height(4),
+                                  left: -ResponsiveHelper.width(4),
+                                  child: FutureBuilder<bool?>(
+                                    future: SharePrefsHelper.getBool(AppConst.licenseNoVerified),
+                                    builder: (context, snapshot) {
+                                      final bool isVerified = snapshot.data ?? false;
+
+                                      return InkWell(
+                                        onTap: () {
+                                          if (scanController.qrCardHtml.value.isEmpty) {
+                                            scanController.getQrCode();
+                                          }
+
+                                          debugPrint("Current context: ${qrCardKey.currentContext}");
+
+                                          showModalBottomSheet(
+                                            context: context,
+                                            backgroundColor: AppColors.white,
+                                            isScrollControlled: true,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.vertical(
+                                                top: Radius.circular(
+                                                  ResponsiveHelper.borderRadius(24),
+                                                ),
+                                              ),
+                                            ),
+                                            builder: (context) {
+                                              return Padding(
+                                                padding: EdgeInsets.only(
+                                                  bottom: MediaQuery.of(context).viewInsets.bottom +
+                                                      ResponsiveHelper.padding(24),
+                                                  left: ResponsiveHelper.padding(16),
+                                                  right: ResponsiveHelper.padding(16),
+                                                ),
+                                                child: Container(
+                                                  width: double.infinity,
+                                                  padding: ResponsiveHelper.all(20),
+                                                  constraints: BoxConstraints(
+                                                    minHeight: ResponsiveHelper.height(650),
+                                                    maxHeight: ResponsiveHelper.height(650),
                                                   ),
-                                                );
-                                              }
-
-                                              if (scanController.qrCardHtml.value.isEmpty) {
-                                                return Center(
-                                                  child: GestureDetector(
-                                                    onTap: () =>
-                                                        scanController.getQrCode(),
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                      children: [
-                                                        Icon(
-                                                          Icons.refresh_rounded,
-                                                          color: Colors.grey.shade400,
-                                                          size: 36,
-                                                        ),
-                                                        SizedBox(
-                                                          height:
-                                                          ResponsiveHelper.spacing(8),
-                                                        ),
-                                                        Text(
-                                                          'Tap to retry',
-                                                          style: GoogleFonts.poppins(
-                                                            fontSize:
-                                                            ResponsiveHelper.fontSize(
-                                                                13),
-                                                            color: Colors.grey.shade400,
+                                                  child: Column(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.end,
+                                                        children: [
+                                                          IconButton(
+                                                            onPressed: () => context.pop(),
+                                                            icon: Icon(
+                                                              Icons.close,
+                                                              color: AppColors.black,
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              }
+                                                        ],
+                                                      ),
+                                                      Expanded(
+                                                        child: Obx(() {
+                                                          if (scanController.isLoadingQr.value) {
+                                                            return const Center(
+                                                              child: CircularProgressIndicator(
+                                                                color: AppColors.blue,
+                                                                strokeWidth: 2.5,
+                                                              ),
+                                                            );
+                                                          }
 
-                                              return RepaintBoundary(
-                                                key: qrCardKey,
-                                                child: ClipRRect(
-                                                  borderRadius: BorderRadius.circular(
-                                                    ResponsiveHelper.borderRadius(16),
-                                                  ),
-                                                  child: QrCardWebView(
-                                                    htmlContent:
-                                                    scanController.qrCardHtml.value,
+                                                          if (scanController.qrCardHtml.value.isEmpty) {
+                                                            return Center(
+                                                              child: GestureDetector(
+                                                                onTap: () =>
+                                                                    scanController.getQrCode(),
+                                                                child: Column(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment.center,
+                                                                  children: [
+                                                                    Icon(
+                                                                      Icons.refresh_rounded,
+                                                                      color: Colors.grey.shade400,
+                                                                      size: 36,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      height:
+                                                                      ResponsiveHelper.spacing(8),
+                                                                    ),
+                                                                    Text(
+                                                                      AppStrings.tapToRetry.tr,
+                                                                      style: GoogleFonts.poppins(
+                                                                        fontSize:
+                                                                        ResponsiveHelper.fontSize(
+                                                                            13),
+                                                                        color: Colors.grey.shade400,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }
+
+                                                          return RepaintBoundary(
+                                                            key: qrCardKey,
+                                                            child: ClipRRect(
+                                                              borderRadius: BorderRadius.circular(
+                                                                ResponsiveHelper.borderRadius(16),
+                                                              ),
+                                                              child: QrCardWebView(
+                                                                htmlContent:
+                                                                scanController.qrCardHtml.value,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }),
+                                                      ),
+                                                      SizedBox(
+                                                        height: ResponsiveHelper.spacing(16),
+                                                      ),
+                                                      Obx(() {
+                                                        if (scanController.qrCardHtml.value.isEmpty) {
+                                                          return const SizedBox.shrink();
+                                                        }
+
+                                                        return SizedBox(
+                                                          width: double.infinity,
+                                                          child: ElevatedButton.icon(
+                                                            onPressed:
+                                                            scanController.isDownloadingQr.value
+                                                                ? null
+                                                                : () async {
+                                                              scanController
+                                                                  .isDownloadingQr
+                                                                  .value = true;
+
+                                                              try {
+                                                                await downloadQrCard(
+                                                                    context);
+
+                                                                if (context.mounted) Navigator.pop(context);
+                                                              } finally {
+                                                                scanController
+                                                                    .isDownloadingQr
+                                                                    .value = false;
+                                                              }
+                                                            },
+                                                            icon: scanController
+                                                                .isDownloadingQr.value
+                                                                ? const SizedBox(
+                                                              width: 18,
+                                                              height: 18,
+                                                              child:
+                                                              CircularProgressIndicator(
+                                                                strokeWidth: 2,
+                                                                color: Colors.white,
+                                                              ),
+                                                            )
+                                                                : const Icon(
+                                                              Icons.download_rounded,
+                                                              color: Colors.white,
+                                                            ),
+                                                            label: Text(
+                                                              scanController
+                                                                  .isDownloadingQr.value
+                                                                  ? AppStrings.downloading.tr
+                                                                  : AppStrings.download.tr,
+                                                              style: GoogleFonts.poppins(
+                                                                fontSize:
+                                                                ResponsiveHelper.fontSize(15),
+                                                                fontWeight: FontWeight.w600,
+                                                                color: Colors.white,
+                                                              ),
+                                                            ),
+                                                            style: ElevatedButton.styleFrom(
+                                                              backgroundColor:
+                                                              const Color(0xFF3D72E8),
+                                                              padding: EdgeInsets.symmetric(
+                                                                vertical:
+                                                                ResponsiveHelper.padding(14),
+                                                              ),
+                                                              shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                BorderRadius.circular(
+                                                                  ResponsiveHelper
+                                                                      .borderRadius(12),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }),
+                                                      SizedBox(
+                                                        height: ResponsiveHelper.spacing(46),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
                                               );
-                                            }),
+                                            },
+                                          );
+                                        },
+                                        borderRadius: BorderRadius.circular(
+                                          ResponsiveHelper.borderRadius(12),
+                                        ),
+                                        child: Container(
+                                          width: ResponsiveHelper.width(32),
+                                          height: ResponsiveHelper.width(32),
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            color:  Color(0xFF70ADDF),
+                                            borderRadius: BorderRadius.circular(
+                                              ResponsiveHelper.borderRadius(8),
+                                            ),
                                           ),
-
-                                          SizedBox(
-                                            height: ResponsiveHelper.spacing(16),
+                                          child: CustomImage(
+                                            imageSrc: AssetsPath.scanIcon,
+                                            width: ResponsiveHelper.width(16),
+                                            height: ResponsiveHelper.width(16),
+                                            imageColor: Colors.white,
                                           ),
-
-                                          Obx(() {
-                                            if (scanController.qrCardHtml.value.isEmpty) {
-                                              return const SizedBox.shrink();
-                                            }
-
-                                            return SizedBox(
-                                              width: double.infinity,
-                                              child: ElevatedButton.icon(
-                                                onPressed:
-                                                scanController.isDownloadingQr.value
-                                                    ? null
-                                                    : () async {
-                                                  scanController
-                                                      .isDownloadingQr
-                                                      .value = true;
-
-                                                  try {
-                                                    await downloadQrCard(
-                                                        context);
-
-                                                    if (context.mounted) Navigator.pop(context);
-
-                                                  } finally {
-                                                    scanController
-                                                        .isDownloadingQr
-                                                        .value = false;
-                                                  }
-                                                },
-                                                icon: scanController
-                                                    .isDownloadingQr.value
-                                                    ? const SizedBox(
-                                                  width: 18,
-                                                  height: 18,
-                                                  child:
-                                                  CircularProgressIndicator(
-                                                    strokeWidth: 2,
-                                                    color: Colors.white,
-                                                  ),
-                                                )
-                                                    : const Icon(
-                                                  Icons.download_rounded,
-                                                  color: Colors.white,
-                                                ),
-                                                label: Text(
-                                                  scanController
-                                                      .isDownloadingQr.value
-                                                      ? 'Downloading...'
-                                                      : 'Download',
-                                                  style: GoogleFonts.poppins(
-                                                    fontSize:
-                                                    ResponsiveHelper.fontSize(15),
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor:
-                                                  const Color(0xFF3D72E8),
-                                                  padding: EdgeInsets.symmetric(
-                                                    vertical:
-                                                    ResponsiveHelper.padding(14),
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                      ResponsiveHelper
-                                                          .borderRadius(12),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          }),
-
-                                          SizedBox(
-                                            height: ResponsiveHelper.spacing(46),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                            borderRadius: BorderRadius.circular(
-                              ResponsiveHelper.borderRadius(16),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: ResponsiveHelper.width(54),
-                                  height: ResponsiveHelper.width(54),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFFFFFFF).withOpacity(0.4),
-                                    borderRadius: BorderRadius.circular(
-                                      ResponsiveHelper.borderRadius(16),
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.05),
-                                        blurRadius: 10,
-                                        offset: const Offset(0, 4),
-                                      ),
-                                    ],
-                                  ),
-                                  child: CustomImage(
-                                    imageSrc: AssetsPath.scanIcon,
-                                    width: ResponsiveHelper.width(24),
-                                    height: ResponsiveHelper.width(24),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ],
                             ),
-                          );
 
 
-                      //     return InkWell(
-                      //       onTap: () {
-                      //         // QR না থাকলে আগে fetch করে নিন
-                      //         if (scanController.qrBase64.value.isEmpty) {
-                      //           scanController.getQrCode();
-                      //         }
-                      //
-                      //         showModalBottomSheet(
-                      //           context: context,
-                      //           backgroundColor:AppColors.white,// card-এর পেছনের কালো background
-                      //           isScrollControlled: true,
-                      //           shape: RoundedRectangleBorder(
-                      //             borderRadius: BorderRadius.vertical(
-                      //               top: Radius.circular(ResponsiveHelper.borderRadius(24)),
-                      //             ),
-                      //           ),
-                      //           builder: (context) {
-                      //             return Padding(
-                      //               padding: EdgeInsets.only(
-                      //                // top: ResponsiveHelper.padding(24),
-                      //                 bottom: MediaQuery.of(context).viewInsets.bottom + ResponsiveHelper.padding(24),
-                      //                 left: ResponsiveHelper.padding(16),
-                      //                 right: ResponsiveHelper.padding(16),
-                      //               ),
-                      //               // child: MyQrView(
-                      //               //   scanController: scanController,
-                      //               //   avatarUrl: profileController.userProfile.value?.avatar,
-                      //               //   name: profileController.userProfile.value?.nickName,
-                      //               //   rating: profileController.userProfile.value?.rating,
-                      //               //
-                      //               // ),
-                      //
-                      //
-                      //               child: Container(
-                      //                 width: double.infinity,
-                      //                 padding: ResponsiveHelper.all(20),
-                      //                 constraints: BoxConstraints(
-                      //                   minHeight: ResponsiveHelper.height(650),
-                      //                 ),
-                      //                 decoration: BoxDecoration(
-                      //                   color: AppColors.white,
-                      //                   borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
-                      //                   boxShadow: [
-                      //                     BoxShadow(
-                      //                       color: Colors.black.withOpacity(0.08),
-                      //                       blurRadius: 24,
-                      //                       offset: const Offset(0, 8),
-                      //                     ),
-                      //                   ],
-                      //                 ),
-                      //                 child: Column(
-                      //                   mainAxisSize: MainAxisSize.min,
-                      //                   crossAxisAlignment: CrossAxisAlignment.center,
-                      //                   children: [
-                      //                     // ── Avatar ─────────────────────────────────
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.end,
-                      //   children: [
-                      //     IconButton(onPressed: (){
-                      //       context.pop();
-                      //
-                      //     }, icon: Icon(Icons.close,color: AppColors.black,))
-                      //   ],
-                      //
-                      // ),
-                      //                     Text("My QR Code",style: context.bodyMedium.copyWith(color: AppColors.black),),
-                      //                     SizedBox(height: ResponsiveHelper.spacing(32)),
-                      //                     UserAvatar(imagePath: profileController.userProfile.value?.avatar??AppConst.unknown),
-                      //
-                      //                     SizedBox(height: ResponsiveHelper.spacing(12)),
-                      //
-                      //                     // ── Name ───────────────────────────────────
-                      //                     Text(
-                      //                         profileController.userProfile.value?.nickName??"unknown",
-                      //                       style: GoogleFonts.poppins(
-                      //                         fontSize: ResponsiveHelper.fontSize(18),
-                      //                         fontWeight: FontWeight.bold,
-                      //                         color: Colors.black87,
-                      //                       ),
-                      //                     ),
-                      //
-                      //                     SizedBox(height: ResponsiveHelper.spacing(6)),
-                      //
-                      //                     // ── Rating + Location ─────────────────────
-                      //                     Row(
-                      //                       mainAxisAlignment: MainAxisAlignment.center,
-                      //                       children: [
-                      //                         Icon(Icons.star, color: Colors.amber, size: ResponsiveHelper.iconSize(16)),
-                      //                         SizedBox(width: ResponsiveHelper.spacing(4)),
-                      //                         Text(
-                      //                           ((profileController.userProfile.value?.rating as num?)?.toDouble() ?? 0.0).toStringAsFixed(1),
-                      //                           style: GoogleFonts.poppins(
-                      //                             fontSize: ResponsiveHelper.fontSize(13),
-                      //                             fontWeight: FontWeight.w600,
-                      //                             color: Colors.black87,
-                      //                           ),
-                      //                         ),
-                      //                         SizedBox(width: ResponsiveHelper.spacing(10)),
-                      //
-                      //
-                      //                       ],
-                      //                     ),
-                      //
-                      //                     SizedBox(height: ResponsiveHelper.spacing(24)),
-                      //
-                      //                     /// ── QR Box ─────────────────────────────────
-                      //                     Obx(() {
-                      //                       if (scanController.isLoadingQr.value) {
-                      //                         return Container(
-                      //                           width: ResponsiveHelper.width(200),
-                      //                           height: ResponsiveHelper.width(200),
-                      //                           decoration: BoxDecoration(
-                      //                             color: const Color(0xFFF5F5F5),
-                      //                             borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
-                      //                           ),
-                      //                           child: const Center(
-                      //                             child: CircularProgressIndicator(
-                      //                               color: Color(0xFF3D72E8),
-                      //                               strokeWidth: 2.5,
-                      //                             ),
-                      //                           ),
-                      //                         );
-                      //                       }
-                      //
-                      //                       if (scanController.qrBase64.value.isNotEmpty) {
-                      //                         final base64Str = scanController.qrBase64.value.replaceFirst(
-                      //                           'data:image/png;base64,',
-                      //                           '',
-                      //                         );
-                      //
-                      //
-                      //                         return SizedBox(
-                      //                           width: ResponsiveHelper.width(200),
-                      //                           height: ResponsiveHelper.width(200),
-                      //                           child: Card(
-                      //                             elevation: 10,
-                      //                             shape: RoundedRectangleBorder(
-                      //                               borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
-                      //                             ),
-                      //                             color: AppColors.black,
-                      //                             clipBehavior: Clip.antiAlias, // ⬅️ এটা দিলে ভেতরের Image-ও radius অনুযায়ী কাটা যাবে
-                      //                             child: Image.memory(base64Decode(base64Str), fit: BoxFit.contain),
-                      //                           ),
-                      //                         );
-                      //                       }
-                      //
-                      //                       return GestureDetector(
-                      //                         onTap: () => scanController.getQrCode(),
-                      //                         child: Container(
-                      //                           width: ResponsiveHelper.width(200),
-                      //                           height: ResponsiveHelper.width(200),
-                      //                           decoration: BoxDecoration(
-                      //                             color: const Color(0xFFF5F5F5),
-                      //                             borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
-                      //                           ),
-                      //                           child: Column(
-                      //                             mainAxisAlignment: MainAxisAlignment.center,
-                      //                             children: [
-                      //                               Icon(
-                      //                                 Icons.refresh_rounded,
-                      //                                 color: Colors.grey.shade400,
-                      //                                 size: 36,
-                      //                               ),
-                      //                               SizedBox(height: ResponsiveHelper.spacing(8)),
-                      //                               Text(
-                      //                                 'Tap to retry',
-                      //                                 style: GoogleFonts.poppins(
-                      //                                   fontSize: ResponsiveHelper.fontSize(13),
-                      //                                   color: Colors.grey.shade400,
-                      //                                 ),
-                      //                               ),
-                      //                             ],
-                      //                           ),
-                      //                         ),
-                      //                       );
-                      //                     }),
-                      //
-                      //                     SizedBox(height: ResponsiveHelper.spacing(24)),
-                      //
-                      //                     // ── Caption ────────────────────────────────
-                      //                     Text(
-                      //                       'let_others_scan'.tr,
-                      //                       textAlign: TextAlign.center,
-                      //                       style: GoogleFonts.poppins(
-                      //                         fontSize: ResponsiveHelper.fontSize(13),
-                      //                         color: Colors.grey.shade500,
-                      //                       ),
-                      //                     ),
-                      //
-                      //
-                      //                     SizedBox(height: ResponsiveHelper.spacing(12)),
-                      //                   ],
-                      //                 ),
-                      //               ),
-                      //
-                      //             );
-                      //           },
-                      //         );
-                      //       },
-                      //       borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
-                      //       child: Column(
-                      //         mainAxisSize: MainAxisSize.min,
-                      //         children: [
-                      //           Container(
-                      //             width: ResponsiveHelper.width(54),
-                      //             height: ResponsiveHelper.width(54),
-                      //             alignment: Alignment.center,
-                      //             decoration: BoxDecoration(
-                      //               color: const Color(0xFFFFFFFF).withOpacity(0.4),
-                      //               borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
-                      //               boxShadow: [
-                      //                 BoxShadow(
-                      //                   color: Colors.black.withOpacity(0.05),
-                      //                   blurRadius: 10,
-                      //                   offset: const Offset(0, 4),
-                      //                 ),
-                      //               ],
-                      //             ),
-                      //             child: CustomImage(
-                      //               imageSrc: AssetsPath.scanIcon,
-                      //               width: ResponsiveHelper.width(24),
-                      //               height: ResponsiveHelper.width(24),
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     );
+                          ],
+                        ),
+                        SizedBox(height: ResponsiveHelper.spacing(15)),
+
+                        /// ✅ Nick name from controller=====================================
+                        Row(
+                          children: [
+                            Text(
+                              user?.nickName.isNotEmpty == true ? user!.nickName : 'unknown',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: ResponsiveHelper.titleFontSize(22),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            SizedBox(width: ResponsiveHelper.spacing(8)),
+                            GestureDetector(
+                              onTap: () async {
+                                if (isVerified == false) {
+                                  await context.pushNamed(RouteName.profile);
+                                  profileController.reloadProfile();
+                                } else {
+                                  CustomSnackbar.success(context: context, message: "You are already verified");
+                                }
+                              },
+                              child: CustomImage(
+                                imageSrc: isVerified == true
+                                    ? AssetsPath.verified
+                                    : AssetsPath.unverified,
+                                height: ResponsiveHelper.iconSize(20),
+                                width: ResponsiveHelper.iconSize(20),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        Text(
+                          user?.licenceId??"",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: ResponsiveHelper.titleFontSize(14),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        SizedBox(height: ResponsiveHelper.height(8)),
+
+                        // /// ✅ Rating + Location + Vehicle info — fully dynamic
+                        // Row(
+                        //   children: [
+                        //     Row(
+                        //       mainAxisSize: MainAxisSize.min,
+                        //       children: [
+                        //         Icon(
+                        //           Icons.star,
+                        //           color: Colors.white,
+                        //           size: ResponsiveHelper.iconSize(18),
+                        //         ),
+                        //         SizedBox(width: ResponsiveHelper.spacing(4)),
+                        //         Text(
+                        //           user != null ? formatRating(user.rating) : '0.0',
+                        //           style: context.bodyMedium.copyWith(color: AppColors.white),
+                        //         ),
+                        //         Text(
+                        //           "(${user?.totalRatings ?? 0})",
+                        //           style: context.bodySmall.copyWith(color: AppColors.white, fontSize: 8),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //
+                        //     SizedBox(width: ResponsiveHelper.width(4)),
+                        //     Row(
+                        //       mainAxisSize: MainAxisSize.min,
+                        //       children: [
+                        //         SizedBox(width: ResponsiveHelper.width(4)),
+                        //         CustomImage(imageSrc: "assets/icons/location.svg"),
+                        //         SizedBox(width: ResponsiveHelper.width(4)),
+                        //         Text(
+                        //               () {
+                        //             final parts = [user?.city, user?.country]
+                        //                 .where((e) => e != null && e.isNotEmpty)
+                        //                 .join(", ");
+                        //             return parts.isEmpty ? "N/A" : parts;
+                        //           }(),
+                        //           style: context.bodyMedium.copyWith(color: AppColors.white),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //     SizedBox(width: ResponsiveHelper.width(8)),
+                        //   ],
+                        // ),
 
 
-                          // return InkWell(
-                          //   onTap: () {
-                          //     showModalBottomSheet(
-                          //       context: context,
-                          //       backgroundColor: const Color(0xFF1E1E1E), // MyQrView এর dark theme এর সাথে match
-                          //       isScrollControlled: true,
-                          //       shape: RoundedRectangleBorder(
-                          //         borderRadius: BorderRadius.vertical(
-                          //           top: Radius.circular(ResponsiveHelper.borderRadius(24)),
-                          //         ),
-                          //       ),
-                          //       builder: (context) {
-                          //         return Padding(
-                          //           padding: EdgeInsets.only(
-                          //             top: ResponsiveHelper.padding(24),
-                          //             bottom: MediaQuery.of(context).viewInsets.bottom +
-                          //                 ResponsiveHelper.padding(24),
-                          //             left: ResponsiveHelper.padding(16),
-                          //             right: ResponsiveHelper.padding(16),
-                          //           ),
-                          //           child: MyQrView(scanController: scanController),
-                          //         );
-                          //       },
-                          //     );
-                          //   },
-                          //   borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
-                          //   child: Column(
-                          //     mainAxisSize: MainAxisSize.min,
-                          //     children: [
-                          //       Container(
-                          //         width: ResponsiveHelper.width(54),
-                          //         height: ResponsiveHelper.width(54),
-                          //         alignment: Alignment.center,
-                          //         decoration: BoxDecoration(
-                          //           color:  const Color(0xFFFFFFFF).withOpacity(0.4),
-                          //           borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
-                          //
-                          //           boxShadow: [
-                          //             BoxShadow(
-                          //               color: Colors.black.withOpacity(0.05),
-                          //               blurRadius: 10,
-                          //               offset: const Offset(0, 4),
-                          //             ),
-                          //           ],
-                          //         ),
-                          //         child: CustomImage(
-                          //           imageSrc: AssetsPath.scanIcon,
-                          //           width: ResponsiveHelper.width(24),
-                          //           height: ResponsiveHelper.width(24),
-                          //           // color: AppColors.white, // আপনার প্রোজেক্ট অনুযায়ী কালার ফিল্টার দিতে পারেন
-                          //         ),
-                          //       ),
-                          //
-                          //     ],
-                          //   ),
-                          // );
-                        },
-                      )
 
 
-                    ],
+
+
+                //final bool hasRating = profile.rating > 0;
+//
+
+
+                        Row(
+                          children: [
+                            /// ⭐ Rating
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  color: hasRating ? Colors.orange : Colors.grey,
+                                  size: ResponsiveHelper.iconSize(18),
+                                ),
+                                SizedBox(width: ResponsiveHelper.width(4)),
+
+                                Text(
+                                  (user?.rating ?? 0).toStringAsFixed(1),
+                                  style: context.bodyMedium.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+
+                                Text(
+                                  " (${user?.totalRatings ?? 0})",
+                                  style: context.bodySmall.copyWith(
+                                    color: Colors.white70,
+                                    fontSize: ResponsiveHelper.fontSize(10),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            SizedBox(width: ResponsiveHelper.width(10)),
+
+                            /// 📍 Location
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CustomImage(
+                                  imageSrc: "assets/icons/location.svg",
+                                  width: ResponsiveHelper.iconSize(14),
+                                  height: ResponsiveHelper.iconSize(14),
+                                  imageColor: Colors.white,
+                                ),
+
+                                SizedBox(width: ResponsiveHelper.width(4)),
+
+                                Text(
+                                      () {
+                                    final location = [
+                                      user?.city,
+                                      user?.country,
+                                    ].where((e) => e != null && e.isNotEmpty).join(", ");
+
+                                    return location.isEmpty ? "N/A" : location;
+                                  }(),
+                                  style: context.bodyMedium.copyWith(
+                                    color: AppColors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+
+
+
+                        SizedBox(height: ResponsiveHelper.height(6)),
+                        /// ✅ vehicle model — real data
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              user?.vehicleModel??"N/A",
+                              style: context.bodyMedium.copyWith(color: AppColors.white),
+                            ),
+                            SizedBox(width: ResponsiveHelper.width(6)),
+                            Container(
+                              width: ResponsiveHelper.iconSize(14),
+                              height: ResponsiveHelper.iconSize(14),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: _getVehicleColor(user?.vehicleColor??"N/A"),
+                                border: Border.all(color: Colors.white, width: 1),
+                              ),
+                            ),
+                            SizedBox(width: ResponsiveHelper.width(6)),
+                            CustomImage(
+                              imageSrc: _getVehicleTypeIcon(user?.vehicleType),
+                              width: ResponsiveHelper.iconSize(18),
+                              height: ResponsiveHelper.iconSize(18),
+                              imageColor: AppColors.white,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: ResponsiveHelper.spacing(15)),
 
-                  /// ✅ Nick name from controller=====================================
-                  Row(
+
+
+
+
+
+
+
+                  /// ✅ 4 Right side icons and text list ───
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        user?.nickName.isNotEmpty == true ? user!.nickName : 'unknown',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: ResponsiveHelper.titleFontSize(22),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      SizedBox(height: ResponsiveHelper.spacing(8)),
-
-                      GestureDetector(
-                        onTap: ()async{
-                          if (isVerified == false) {
-                            await context.pushNamed(RouteName.profile);
-                            profileController.reloadProfile();
-                          } else {
-
-                            CustomSnackbar.success(context: context, message:  "You are already verified");
-                          }
-                        },
-                        child: CustomImage(
-                          imageSrc: isVerified == true
-                              ? AssetsPath.verified
-                              : AssetsPath.unverified,
-                          height: ResponsiveHelper.iconSize(20),
-                          width: ResponsiveHelper.iconSize(20),
-                        ),
-                      ),
-                      // CustomImage(imageSrc:isVerified==true? AssetsPath.verified:AppStrings.autoScanningInProgress,
-                      // height: ResponsiveHelper.iconSize(20),
-                      //   width:ResponsiveHelper.iconSize(20),
-                      //
-                      // ),
-                      
+                      //_buildRightIndicatorRow("${user?.daysLeftOne ?? 65} days left", AssetsPath.profileOneIcon),
+                      _buildRightIndicatorRow("65 \n days left", AssetsPath.profileOneIcon),
+                      SizedBox(height: ResponsiveHelper.height(8)),
+                      //_buildRightIndicatorRow("${user?.daysLeftTwo ?? 65} days left", AssetsPath.profileTwoIcon),
+                      _buildRightIndicatorRow("65 \n days left", AssetsPath.profileTwoIcon),
+                      SizedBox(height: ResponsiveHelper.height(8)),
+                      // _buildRightIndicatorRow("${user?.daysLeftThree ?? 65} days left", AssetsPath.profileThreeIcon),
+                      _buildRightIndicatorRow("65 \n days left", AssetsPath.profileThreeIcon),
+                      SizedBox(height: ResponsiveHelper.height(8)),
+                      // _buildRightIndicatorRow("${user?.daysLeftFour ?? 65} days left", AssetsPath.profileFourIcon),
+                      _buildRightIndicatorRow("65 \n days left", AssetsPath.profileFourIcon),
                     ],
                   ),
-                  SizedBox(height: ResponsiveHelper.spacing(6)),
 
-                  /// ✅ Rating from controller======================================
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.star,
-                        color: Colors.white,
-                        size: ResponsiveHelper.iconSize(18),
-                      ),
-                      SizedBox(width: ResponsiveHelper.spacing(4)),
-                      Text(
-                        user != null ? formatRating(user.rating) : '0.0',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: ResponsiveHelper.fontSize(16),
-                          fontFamily: 'monospace',
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -811,6 +1178,31 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
       ),
     );
   }
+
+  /// Helper widget to build the right-side dynamic indicator rows
+  Widget _buildRightIndicatorRow(String text, String iconPath) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          text,
+          style: context.bodyMedium.copyWith(color: AppColors.white,fontSize: ResponsiveHelper.fontSize(12)),
+          textAlign: TextAlign.end,
+        ),
+        SizedBox(width: ResponsiveHelper.spacing(8)),
+        CustomImage(
+          imageSrc: iconPath,
+          width: ResponsiveHelper.width(28),
+          height: ResponsiveHelper.width(28),
+          imageColor: AppColors.white,
+        ),
+      ],
+    );
+  }
+
+
+
+
 
 
 
@@ -864,7 +1256,6 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
           );
         },
       },
-
       {
         'icon': AssetsPath.faq,
         'title': AppStrings.faq.tr,
@@ -875,8 +1266,6 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
           );
         },
       },
-
-
       {
         'icon': AssetsPath.share,
         'title': AppStrings.shareLink.tr,
@@ -890,7 +1279,6 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
           );
         },
       },
-
       {
         'icon': AssetsPath.blocked,
         'title': AppStrings.blockedUser5.tr,
@@ -910,7 +1298,7 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
     return Column(
       children: [
         ...items.map(
-          (item) => Column(
+              (item) => Column(
             children: [
               ListTile(
                 contentPadding: EdgeInsets.zero,
@@ -957,7 +1345,7 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
             ),
           ),
           subtitle: Obx(
-            () => Text(
+                () => Text(
               languageController.currentLanguageDisplay,
               style: TextStyle(fontSize: ResponsiveHelper.fontSize(12)),
             ),
@@ -987,17 +1375,17 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
             ),
           ),
         ),
-        onPressed: () async{
-    await SharePrefsHelper.remove(AppConst.token);
-    await SharePrefsHelper.remove(AppConst.userID);
-    await SharePrefsHelper.remove(AppConst.userData);
-    await SharePrefsHelper.remove(AppConst.licenceId);
-    await SharePrefsHelper.remove(AppConst.nickName);
-    await SharePrefsHelper.remove(AppConst.avatar);
-    await SharePrefsHelper.remove(AppConst.loginUser);
-    await SharePrefsHelper.remove(AppConst.loginPass);
-    await SharePrefsHelper.remove(AppConst.licenseNoVerified);
-    await SharePrefsHelper.setBool(AppConst.isLoggedIn, false);
+        onPressed: () async {
+          await SharePrefsHelper.remove(AppConst.token);
+          await SharePrefsHelper.remove(AppConst.userID);
+          await SharePrefsHelper.remove(AppConst.userData);
+          await SharePrefsHelper.remove(AppConst.licenceId);
+          await SharePrefsHelper.remove(AppConst.nickName);
+          await SharePrefsHelper.remove(AppConst.avatar);
+          await SharePrefsHelper.remove(AppConst.loginUser);
+          await SharePrefsHelper.remove(AppConst.loginPass);
+          await SharePrefsHelper.remove(AppConst.licenseNoVerified);
+          await SharePrefsHelper.setBool(AppConst.isLoggedIn, false);
 
           context.goNamed(RouteName.welcome);
         },
@@ -1050,7 +1438,6 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
                   ),
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(12)),
-
                 ...controller.availableLanguageNames.map((language) {
                   final isSelected = controller.isLanguageSelected(language);
 

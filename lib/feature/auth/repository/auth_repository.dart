@@ -6,25 +6,28 @@ import '../../../core/service/api_url.dart';
 class AuthRepository {
 
   Future<http.Response> register({
-  required String licenceId,
-  required String nickName,
-  required String password,
-  required String confirmPassword,
-  required String designation,
-  required String email,
+    required String licenceId,
+    required String nickName,
+    required String password,
+    required String confirmPassword,
+    required String designation,
+    required String email,
+    required String country,   // ✅ নতুন
+    required String city,      // ✅ নতুন
   }) async {
-  return await ApiClient.postData(
-  uri: ApiUrl.register,
-  body: {
-  "licence_id": licenceId,
-  "nick_name": nickName,
-  "password": password,
-  "confirmPassword": confirmPassword,
-  "designation": designation,
-  "email": email,
-  // "is_more_options_accepted": true, // লাগলে uncomment করুন
-  },
-  );
+    return await ApiClient.postData(
+      uri: ApiUrl.register,
+      body: {
+        "licence_id": licenceId,
+        "nick_name": nickName,
+        "password": password,
+        "confirmPassword": confirmPassword,
+        "designation": designation,
+        "email": email,
+        "country": country,   // ✅ নতুন
+        "city": city,         // ✅ নতুন
+      },
+    );
   }
 
   Future<http.Response> login({

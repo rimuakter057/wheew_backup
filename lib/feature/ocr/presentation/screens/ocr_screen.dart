@@ -1,6 +1,7 @@
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/feature/ocr/data/ocr_controller.dart';
 import 'package:platchatapp/feature/scan/presentation/widget/scan_user_sheet.dart';
@@ -8,6 +9,7 @@ import 'package:platchatapp/feature/scan/presentation/widget/scan_user_sheet.dar
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 class OcrScannerScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -54,8 +56,8 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
 
     // Show processing indicator
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Scanning..."),
+       SnackBar(
+        content: Text(AppStrings.scanning.tr),
         duration: Duration(milliseconds: 800),
       ),
     );
@@ -68,7 +70,7 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
           _dialogOpen = false;
         });
       }
-      _showMessage("No plate/number detected");
+      _showMessage(AppStrings.noPlateDetected.tr);
       return;
     }
 
@@ -268,7 +270,7 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
                       }, icon: Icon(Icons.arrow_back_ios,color: AppColors.white,)),
                       SizedBox(width: ResponsiveHelper.width(12),),
                       Text(
-                          "Plate Scanner",
+                          AppStrings.plateScanner.tr,
                           style: context.titleMedium.copyWith(color: AppColors.white)
                       ),
                     ],
@@ -308,8 +310,8 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "Automatic Detection",
+                           Text(
+                            AppStrings.automaticDetection.tr,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -319,8 +321,8 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
                           const SizedBox(height: 4),
                           Text(
                             _autoScan
-                                ? "Auto scanning in progress..."
-                                : "Manual scan mode active",
+                                ? AppStrings.autoScanningInProgress.tr
+                                : AppStrings.manualScanModeActive.tr,
                             style: TextStyle(
                               color: _autoScan ? Colors.greenAccent : Colors.grey,
                               fontSize: 14,
@@ -362,13 +364,13 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
                             ),
                           ],
                         ),
-                        child: const Row(
+                        child:  Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.camera_alt, color: Colors.white),
                             SizedBox(width: 8),
                             Text(
-                              "SCAN NOW",
+                              AppStrings.scanNow.tr,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,

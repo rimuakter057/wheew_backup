@@ -6,6 +6,7 @@ import 'package:platchatapp/feature/privacy_policy/help_suppoor_screen.dart';
 import 'package:platchatapp/feature/privacy_policy/privacy_policy_screen.dart';
 import 'package:platchatapp/feature/terms_condition/web_view_screen.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import '../../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../../language/language_controller.dart';
 import '../../../../utils/extension/base_extension.dart';
@@ -50,7 +51,7 @@ class AppMenuDrawer extends StatelessWidget {
                     SizedBox(width: ResponsiveHelper.spacing(12)),
                     Expanded(
                       child: Text(
-                        user?.nickName ?? 'Loading...',
+                        user?.nickName ?? AppStrings.loading.tr,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: ResponsiveHelper.fontSize(16),
@@ -69,7 +70,7 @@ class AppMenuDrawer extends StatelessWidget {
             _drawerItem(
               context,
               icon: Icons.person_outline,
-              title: 'profile'.tr,
+              title: AppStrings.profile.tr,
               onTap: () async {
                 Navigator.pop(context);
                 await context.pushNamed(RouteName.profile);
@@ -80,7 +81,7 @@ class AppMenuDrawer extends StatelessWidget {
             _drawerItem(
               context,
               icon: Icons.description_outlined,
-              title: 'terms_and_conditions'.tr,
+              title: AppStrings.termsAndConditions.tr,
               onTap: () {
                 Navigator.push(
                   context,

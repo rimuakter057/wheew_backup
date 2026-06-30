@@ -1,6 +1,159 @@
+// import 'package:flutter/material.dart';
+// import 'package:get/get.dart';
+// import 'package:go_router/go_router.dart';
+// import 'package:platchatapp/helper/image_handler/image_handler.dart';
+// import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+// import 'package:platchatapp/utils/app_const/app_const.dart';
+// import 'package:platchatapp/utils/color/app_colors.dart';
+// import 'package:platchatapp/utils/extension/base_extension.dart';
+//
+// class ProfileCard extends StatelessWidget {
+//   const ProfileCard({
+//     super.key,
+//     required this.name,
+//     required this.rating,
+//     this.image, // ← add করা হলো
+//     required this.showRating,
+//     this.onRatingTap,
+//   });
+//
+//   final String name;
+//   final double rating;
+//   final String? image; // ← add করা হলো
+//   final bool showRating;
+//   final VoidCallback? onRatingTap;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(
+//       child: Container(
+//         width: ResponsiveHelper.width(300),
+//         padding: ResponsiveHelper.all(20),
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           borderRadius: BorderRadius.circular(
+//             ResponsiveHelper.borderRadius(30),
+//           ),
+//           boxShadow: [
+//             BoxShadow(
+//               color: Colors.black.withOpacity(0.1),
+//               blurRadius: 10,
+//               offset: const Offset(0, 5),
+//             ),
+//           ],
+//         ),
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             // Top handle line and Close button
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.end,
+//               children: [
+//                 GestureDetector(
+//                   onTap: () {
+//                     context.pop();
+//                   },
+//                   child: CircleAvatar(
+//                     radius: ResponsiveHelper.iconSize(16),
+//                     backgroundColor: Colors.grey[100],
+//                     child: Icon(
+//                       Icons.close,
+//                       size: ResponsiveHelper.iconSize(16),
+//                       color: Colors.black,
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//
+//             SizedBox(height: ResponsiveHelper.spacing(20)),
+//
+//             // Profile Image
+//             CircleAvatar(
+//               radius: ResponsiveHelper.width(50),
+//               backgroundColor: Colors.blue[50],
+//               backgroundImage: NetworkImage(
+//                 ImageHandler.imagesHandle(image, isProfile: true),
+//               ),
+//             ),
+//
+//             SizedBox(height: ResponsiveHelper.spacing(15)),
+//
+//             // Name
+//             Text(
+//               name,
+//               style: context.bodyMedium.copyWith(color: AppColors.black),
+//             ),
+//
+//             SizedBox(height: ResponsiveHelper.spacing(8)),
+//
+//             // Rating and Location
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 Icon(
+//                   Icons.star,
+//                   color: Colors.orange,
+//                   size: ResponsiveHelper.iconSize(18),
+//                 ),
+//                 SizedBox(width: 4),
+//                 Text(rating.toString(), style: context.bodySmall),
+//               ],
+//             ),
+//
+//             SizedBox(height: ResponsiveHelper.spacing(25)),
+//
+//             // Start Chat Button
+//             SizedBox(
+//               width: double.infinity,
+//               height: ResponsiveHelper.buttonHeight(55),
+//               child: ElevatedButton.icon(
+//                 onPressed: () {
+//                   if (showRating) {
+//                     onRatingTap?.call(); // rating screen এ যাবে
+//                   }
+//                 },
+//                 icon: Icon(
+//                   showRating ? Icons.star_outline : Icons.chat_bubble_outline,
+//                   size: ResponsiveHelper.iconSize(20),
+//                 ),
+//                 label: Text(
+//                   showRating ? 'give_rating'.tr : 'start_chat'.tr,
+//                   style: TextStyle(
+//                     fontSize: ResponsiveHelper.fontSize(18),
+//                     fontWeight: FontWeight.w600,
+//                   ),
+//                 ),
+//                 style: ElevatedButton.styleFrom(
+//                   backgroundColor: showRating
+//                       ?  AppColors.blue
+//                       : AppColors.blue,
+//                   foregroundColor: Colors.white,
+//                   shape: RoundedRectangleBorder(
+//                     borderRadius: BorderRadius.circular(
+//                       ResponsiveHelper.borderRadius(15),
+//                     ),
+//                   ),
+//                   elevation: 0,
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
+
+
+
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:platchatapp/feature/chat/model/view_user_profile_model.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
@@ -10,48 +163,71 @@ import 'package:platchatapp/utils/extension/base_extension.dart';
 class ProfileCard extends StatelessWidget {
   const ProfileCard({
     super.key,
+    required this.profile,
     required this.name,
     required this.rating,
-    this.image, // ← add করা হলো
+    this.image,
     required this.showRating,
     this.onRatingTap,
   });
+
+  final ViewUserProfileModel profile;
   final String name;
   final double rating;
-  final String? image; // ← add করা হলো
+  final String? image;
   final bool showRating;
   final VoidCallback? onRatingTap;
 
   @override
   Widget build(BuildContext context) {
+    // profile.avatar কে priority দাও, না থাকলে fallback হিসেবে passed image ব্যবহার করো
+    final avatarPath = (profile.avatar != null && profile.avatar!.isNotEmpty)
+        ? profile.avatar
+        : image;
+
+    final displayName = (profile.nickName != null && profile.nickName!.isNotEmpty)
+        ? profile.nickName!
+        : (profile.name ?? name);
+
+    final hasVehicleInfo = (profile.vehicleType != null && profile.vehicleType!.isNotEmpty) ||
+        (profile.vehicleModel != null && profile.vehicleModel!.isNotEmpty) ||
+        (profile.vehicleColor != null && profile.vehicleColor!.isNotEmpty);
+
+    final hasLocation = (profile.city != null && profile.city!.isNotEmpty) ||
+        (profile.country != null && profile.country!.isNotEmpty);
+
+
+    final location = [profile.city, profile.country]
+        .where((e) => e != null && e.isNotEmpty)
+        .join(', ');
+
+
     return Center(
       child: Container(
-        width: ResponsiveHelper.width(300),
+        width: ResponsiveHelper.width(320),
         padding: ResponsiveHelper.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(
-            ResponsiveHelper.borderRadius(30),
+            ResponsiveHelper.borderRadius(28),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
+              color: Colors.black.withOpacity(0.12),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Top handle line and Close button
+            // ── Close button ─────────────────────────────
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 GestureDetector(
-                  onTap: () {
-                    context.pop();
-                  },
+                  onTap: () => context.pop(),
                   child: CircleAvatar(
                     radius: ResponsiveHelper.iconSize(16),
                     backgroundColor: Colors.grey[100],
@@ -65,51 +241,210 @@ class ProfileCard extends StatelessWidget {
               ],
             ),
 
-            SizedBox(height: ResponsiveHelper.spacing(20)),
+            SizedBox(height: ResponsiveHelper.spacing(8)),
 
-            // Profile Image
-            CircleAvatar(
-              radius: ResponsiveHelper.width(50),
-              backgroundColor: Colors.blue[50],
-              backgroundImage: NetworkImage(
-                ImageHandler.imagesHandle(image, isProfile: true),
+            // ── Avatar + verified badge ──────────────────
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                CircleAvatar(
+                  radius: ResponsiveHelper.width(48),
+                  backgroundColor: Colors.blue[50],
+                  backgroundImage: NetworkImage(
+                    ImageHandler.imagesHandle(avatarPath, isProfile: true),
+                  ),
+                ),
+                if (profile.emailVerified)
+                  Positioned(
+                    right: -2,
+                    bottom: -2,
+                    child: Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.verified,
+                        size: ResponsiveHelper.iconSize(18),
+                        color: AppColors.blue,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+
+            SizedBox(height: ResponsiveHelper.spacing(12)),
+
+            // ── Name ──────────────────────────────────────
+            Text(
+              displayName,
+              style: context.bodyMedium.copyWith(
+                color: AppColors.black,
+                fontWeight: FontWeight.w700,
               ),
             ),
 
-            SizedBox(height: ResponsiveHelper.spacing(15)),
+            // ── Designation ───────────────────────────────
+            if (profile.designation != null && profile.designation!.isNotEmpty) ...[
+              SizedBox(height: ResponsiveHelper.spacing(4)),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveHelper.width(10),
+                  vertical: ResponsiveHelper.height(3),
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.blue.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveHelper.borderRadius(20),
+                  ),
+                ),
+                child: Text(
+                  profile.designation!.capitalizeFirst ?? profile.designation!,
+                  style: context.bodySmall.copyWith(
+                    color: AppColors.blue,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
 
-            // Name
-            Text(
-              name,
-              style: context.bodyMedium.copyWith(color: AppColors.black),
-            ),
+            SizedBox(height: ResponsiveHelper.spacing(10)),
 
-            SizedBox(height: ResponsiveHelper.spacing(8)),
-
-            // Rating and Location
+            // ── Rating + Location row ─────────────────────
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.star,
-                  color: Colors.orange,
+                  color: profile.totalRatings > 0
+                      ? Colors.orange
+                      : Colors.grey,
                   size: ResponsiveHelper.iconSize(18),
                 ),
-                SizedBox(width: 4),
-                Text(rating.toString(), style: context.bodySmall),
+                const SizedBox(width: 4),
+                Text(
+                  rating.toStringAsFixed(1),
+                  style: context.bodySmall,
+                ),
+                if (profile.totalRatings > 0) ...[
+                  const SizedBox(width: 4),
+                  Text(
+                    '(${profile.totalRatings})',
+                    style: context.bodySmall.copyWith(
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+
+                  SizedBox(width: ResponsiveHelper.width(10)),
+                  Icon(
+                    Icons.location_on_outlined,
+                    color: AppColors.black,
+                    size: ResponsiveHelper.iconSize(16),
+                  ),
+                  const SizedBox(width: 2),
+
+                Flexible(
+                  child: Text(
+                    location.isEmpty ? 'N/A' : location,
+                    style: context.bodySmall,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+
               ],
             ),
 
-            SizedBox(height: ResponsiveHelper.spacing(25)),
+            // ── Vehicle info card ──────────────────────────
+            if (hasVehicleInfo) ...[
+              SizedBox(height: ResponsiveHelper.spacing(16)),
+              Container(
+                width: double.infinity,
+                padding: ResponsiveHelper.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveHelper.borderRadius(14),
+                  ),
+                  border: Border.all(color: Colors.grey.withOpacity(0.15)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.directions_car_filled_outlined,
+                          size: ResponsiveHelper.iconSize(16),
+                          color: AppColors.blue,
+                        ),
+                        SizedBox(width: ResponsiveHelper.width(6)),
+                        Text(
+                          'vehicle_details'.tr,
+                          style: context.bodySmall.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.black,
+                          ),
+                        ),
+                        const Spacer(),
+                        if (profile.isVehicleVerified)
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.check_circle,
+                                size: ResponsiveHelper.iconSize(14),
+                                color: Colors.green,
+                              ),
+                              const SizedBox(width: 2),
+                              Text(
+                                'verified'.tr,
+                                style: context.bodySmall.copyWith(
+                                  color: Colors.green,
+                                  fontSize: ResponsiveHelper.fontSize(11),
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                    SizedBox(height: ResponsiveHelper.spacing(8)),
+                    Wrap(
+                      spacing: ResponsiveHelper.width(8),
+                      runSpacing: ResponsiveHelper.height(6),
+                      children: [
+                        if (profile.vehicleType != null && profile.vehicleType!.isNotEmpty)
+                          _InfoChip(
+                            label: profile.vehicleType!,
+                          ),
+                        if (profile.vehicleModel != null && profile.vehicleModel!.isNotEmpty)
+                          _InfoChip(
+                            label: profile.vehicleModel!,
+                          ),
+                        if (profile.vehicleColor != null && profile.vehicleColor!.isNotEmpty)
+                          _InfoChip(
+                            label: profile.vehicleColor!,
+                            dotColor: _colorFromName(profile.vehicleColor!),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
 
-            // Start Chat Button
+
+
+            SizedBox(height: ResponsiveHelper.spacing(20)),
+
+            // ── Start Chat / Rate Button ──────────────────
             SizedBox(
               width: double.infinity,
               height: ResponsiveHelper.buttonHeight(55),
               child: ElevatedButton.icon(
                 onPressed: () {
                   if (showRating) {
-                    onRatingTap?.call(); // rating screen এ যাবে
+                    onRatingTap?.call();
                   }
                 },
                 icon: Icon(
@@ -124,9 +459,7 @@ class ProfileCard extends StatelessWidget {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: showRating
-                      ?  AppColors.blue
-                      : AppColors.blue,
+                  backgroundColor: AppColors.blue,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(
@@ -139,6 +472,118 @@ class ProfileCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Color _colorFromName(String name) {
+    switch (name.toLowerCase().trim()) {
+      case 'red':
+        return Colors.red;
+      case 'blue':
+        return Colors.blue;
+      case 'green':
+        return Colors.green;
+      case 'black':
+        return Colors.black;
+      case 'white':
+        return Colors.grey.shade300;
+      case 'yellow':
+        return Colors.yellow.shade700;
+      case 'orange':
+        return Colors.orange;
+      case 'grey':
+      case 'gray':
+        return Colors.grey;
+      case 'silver':
+        return Colors.grey.shade400;
+      default:
+        return Colors.grey;
+    }
+  }
+}
+
+class _InfoChip extends StatelessWidget {
+  const _InfoChip({required this.label, this.dotColor});
+
+  final String label;
+  final Color? dotColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: ResponsiveHelper.width(10),
+        vertical: ResponsiveHelper.height(5),
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (dotColor != null) ...[
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: dotColor,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.grey.withOpacity(0.3)),
+              ),
+            ),
+            const SizedBox(width: 5),
+          ],
+          Text(
+            label,
+            style: context.bodySmall.copyWith(
+              fontSize: ResponsiveHelper.fontSize(11),
+              color: AppColors.black,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatTile extends StatelessWidget {
+  const _StatTile({
+    required this.icon,
+    required this.value,
+    required this.label,
+  });
+
+  final IconData icon;
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: ResponsiveHelper.all(10),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, size: ResponsiveHelper.iconSize(18), color: AppColors.blue),
+          SizedBox(height: ResponsiveHelper.spacing(4)),
+          Text(
+            value,
+            style: context.bodyMedium.copyWith(fontWeight: FontWeight.w700),
+          ),
+          Text(
+            label,
+            style: context.bodySmall.copyWith(
+              color: Colors.grey,
+              fontSize: ResponsiveHelper.fontSize(10),
+            ),
+          ),
+        ],
       ),
     );
   }

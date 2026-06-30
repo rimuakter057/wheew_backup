@@ -4,7 +4,8 @@ import 'package:platchatapp/feature/map/controller/map_controller.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
-import 'package:platchatapp/utils/extension/base_extension.dart'; // AppColors import
+import 'package:platchatapp/utils/extension/base_extension.dart';
+import 'package:platchatapp/utils/language/app_string.dart'; // AppColors import
 
 class ParkingReportDropdown extends StatelessWidget {
   final ParkingReportController controller;
@@ -19,33 +20,42 @@ class ParkingReportDropdown extends StatelessWidget {
   });
 
   /// Core Status Color based on report data
+  // Color _getStatusColor() {
+  //   if (report['disabled_facility'] == true) {
+  //     return AppColors.disableOrange;
+  //   }
+  //   if (report['electric_charging'] == true) {
+  //     return AppColors.chargingGreen;
+  //   }
+  //   final cost = report['parking_cost'];
+  //   final isPaid = cost != null && cost != 0 && cost != '0' && cost != '';
+  //   return isPaid ? AppColors.paidBlue : AppColors.freeWhite;
+  // }
+
+
   Color _getStatusColor() {
-    if (report['disabled_facility'] == true) {
-      return AppColors.disableOrange;
-    }
-    if (report['electric_charging'] == true) {
-      return AppColors.chargingGreen;
-    }
-    final cost = report['parking_cost'];
-    final isPaid = cost != null && cost != 0 && cost != '0' && cost != '';
+    if (report['disabled_facility'] == true) return AppColors.disableOrange;
+    if (report['electric_charging'] == true) return AppColors.chargingGreen;
+    final cost = report['parking_cost']?.toString().trim().toUpperCase();
+    final isPaid = cost != null && cost != '' && cost != '0' && cost != 'FREE';
     return isPaid ? AppColors.paidBlue : AppColors.freeWhite;
   }
 
   /// Status Label Text
   String _getPinLabel() {
-    if (report['disabled_facility'] == true) return 'Disabled Parking';
-    if (report['electric_charging'] == true) return 'Electric Charging';
-    final cost = report['parking_cost'];
-    final isPaid = cost != null && cost != 0 && cost != '0' && cost != '';
-    return isPaid ? 'Paid Parking' : 'Free Parking';
+    if (report['disabled_facility'] == true) return AppStrings.disabledParking.tr;
+    if (report['electric_charging'] == true) return AppStrings.electricCharging2.tr;
+    final cost = report['parking_cost']?.toString().trim().toUpperCase();
+    final isPaid = cost != null && cost != '' && cost != '0' && cost != 'FREE';
+    return isPaid ? AppStrings.paidParking.tr : AppStrings.freeParking.tr;
   }
 
   /// Free parking হলে icon/text কালো দেখাবে কারণ background white
   bool get _isFree {
     if (report['disabled_facility'] == true) return false;
     if (report['electric_charging'] == true) return false;
-    final cost = report['parking_cost'];
-    return cost == null || cost == 0 || cost == '0' || cost == '';
+    final cost = report['parking_cost']?.toString().trim().toUpperCase();
+    return cost == null || cost == '' || cost == '0' || cost == 'FREE';
   }
 
   @override
@@ -200,11 +210,11 @@ class ParkingReportDropdown extends StatelessWidget {
                   final success = await controller.leaveSpot(spotId);
 
                   if (success) {
-                    CustomSnackbar.success(context: context, message:'Leave successfully');
+                    CustomSnackbar.success(context: context, message: AppStrings.leaveSuccess.tr);
                     controller.clearSelectedReport();
                     // map refresh করতে চাইলে fetchParkingReport আবার call করো
                   } else {
-                    CustomSnackbar.error(context: context, message:'Failed to leave');
+                    CustomSnackbar.error(context: context, message: AppStrings.failedToLeave.tr);
                   }
                 },
                 child: Obx(() => Container(
@@ -231,7 +241,7 @@ class ParkingReportDropdown extends StatelessWidget {
                           size: ResponsiveHelper.iconSize(14),
                           color: iconAndBadgeTextColor),
                       SizedBox(width: ResponsiveHelper.spacing(4)),
-                      Text("Leave",
+                      Text(AppStrings.leave.tr,
                           style: context.bodyMedium.copyWith(
                             color: iconAndBadgeTextColor,
                             fontWeight: FontWeight.w600,

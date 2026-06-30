@@ -486,6 +486,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:platchatapp/feature/map/controller/map_controller.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 class ParkingInfoDialog extends StatelessWidget {
   final ParkingReportController controller;
@@ -546,7 +547,7 @@ class ParkingInfoDialog extends StatelessWidget {
                   ),
                   SizedBox(width: ResponsiveHelper.spacing(10)),
                   Text(
-                    'map_parking_details'.tr,
+                   AppStrings.mapParkingDetails.tr,
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.titleFontSize(16),
                       fontWeight: FontWeight.w700,
@@ -598,8 +599,8 @@ class ParkingInfoDialog extends StatelessWidget {
                       Expanded(
                         child: Text(
                           pickedLocation == null
-                              ? 'Using current location'
-                              : 'Selected: ${pickedLocation!.latitude.toStringAsFixed(5)}, '
+                              ? AppStrings.usingCurrentLocation.tr
+                              : '${AppStrings.selectedLocation.tr}: ${pickedLocation!.latitude.toStringAsFixed(5)}, '
                               '${pickedLocation!.longitude.toStringAsFixed(5)}',
                           style: GoogleFonts.poppins(
                             fontSize: ResponsiveHelper.fontSize(12),
@@ -612,7 +613,9 @@ class ParkingInfoDialog extends StatelessWidget {
                       ),
                       SizedBox(width: ResponsiveHelper.spacing(8)),
                       Text(
-                        pickedLocation == null ? 'Pick on map' : 'Change',
+                        pickedLocation == null
+                            ? AppStrings.pickOnMap.tr
+                            : AppStrings.change.tr,
                         style: GoogleFonts.poppins(
                           fontSize: ResponsiveHelper.fontSize(12),
                           fontWeight: FontWeight.w700,
@@ -630,66 +633,7 @@ class ParkingInfoDialog extends StatelessWidget {
                 label: 'map_parking_cost'.tr,
               ),
               SizedBox(height: ResponsiveHelper.spacing(8)),
-              // Row(
-              //   children: ['FREE', 'PAID'].map((val) {
-              //     final selected = controller.parkingCost.value == val;
-              //     return Expanded(
-              //       child: GestureDetector(
-              //         onTap: () => controller.parkingCost.value = val,
-              //         child: AnimatedContainer(
-              //           duration: const Duration(milliseconds: 200),
-              //           margin: EdgeInsets.only(
-              //             right: val == 'FREE' ? ResponsiveHelper.spacing(8) : 0,
-              //           ),
-              //           padding: EdgeInsets.symmetric(
-              //             vertical: ResponsiveHelper.padding(12),
-              //           ),
-              //           decoration: BoxDecoration(
-              //             color: selected
-              //                 ? const Color(0xFF3D72E8)
-              //                 : const Color(0xFFF4F6FB),
-              //             borderRadius: BorderRadius.circular(
-              //               ResponsiveHelper.borderRadius(12),
-              //             ),
-              //             border: Border.all(
-              //               color: selected
-              //                   ? const Color(0xFF3D72E8)
-              //                   : Colors.transparent,
-              //             ),
-              //           ),
-              //           child: Row(
-              //             mainAxisAlignment: MainAxisAlignment.center,
-              //             children: [
-              //               Icon(
-              //                 val == 'FREE'
-              //                     ? Icons.money_off_rounded
-              //                     : Icons.attach_money_rounded,
-              //                 color: selected
-              //                     ? Colors.white
-              //                     : const Color(0xFF6B7280),
-              //                 size: ResponsiveHelper.iconSize(18),
-              //               ),
-              //               SizedBox(width: ResponsiveHelper.spacing(6)),
-              //               Text(
-              //                 (val == 'FREE'
-              //                     ? 'map_free'
-              //                     : 'map_paid')
-              //                     .tr,
-              //                 style: GoogleFonts.poppins(
-              //                   fontSize: ResponsiveHelper.fontSize(13),
-              //                   fontWeight: FontWeight.w600,
-              //                   color: selected
-              //                       ? Colors.white
-              //                       : const Color(0xFF6B7280),
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //         ),
-              //       ),
-              //     );
-              //   }).toList(),
-              // ),
+
 
               Row(
                 children: ['FREE', 'PAID'].map((val) {
@@ -736,10 +680,10 @@ class ParkingInfoDialog extends StatelessWidget {
                             ),
                             SizedBox(width: ResponsiveHelper.spacing(6)),
                             Text(
-                              (val == 'FREE'
-                                  ? 'map_free'
-                                  : 'map_paid')
-                                  .tr,
+                                (val == 'FREE'
+                                    ? AppStrings.mapFree
+                                    : AppStrings.mapPaid)
+                                    .tr,
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(13),
                                 fontWeight: FontWeight.w600,
@@ -760,7 +704,7 @@ class ParkingInfoDialog extends StatelessWidget {
               ToggleRow(
                 icon: Icons.electric_bolt_rounded,
                 iconColor: const Color(0xFFF59E0B),
-                label: 'map_electric_charging'.tr,
+                label: AppStrings.mapElectricCharging.tr,
                 value: controller.electricCharging.value,
                 onTap: () => controller.electricCharging.toggle(),
               ),

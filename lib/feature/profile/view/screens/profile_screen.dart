@@ -504,6 +504,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/profile/repository/upload_controller.dart';
+import 'package:platchatapp/feature/profile/view/widgets/color_picker.dart';
 import 'package:platchatapp/feature/profile/view/widgets/custom_upload_card.dart';
 import 'package:platchatapp/feature/profile/view/widgets/profile_owner/profile_avater.dart';
 import 'package:platchatapp/feature/profile/view/widgets/profile_owner/profile_textfield.dart';
@@ -666,7 +667,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 // Vehicle Type — Dropdown (CAR / MOTORCYCLE / VAN / OTHER)
                // _label(AppStrings.vehicleType.tr),
-                _label("Vehicle Type"),
+                _label(AppStrings.vehicleType.tr),
                 SizedBox(height: ResponsiveHelper.spacing(4)),
                 GetBuilder<ProfileController>(
                   id: 'vehicle_fields', // শুধু এই widget rebuild হবে
@@ -676,8 +677,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: ResponsiveHelper.spacing(20)),
 
                 // Vehicle Model — free text
-               // _label(AppStrings.vehicleModel.tr),
-                _label("Vehicle Model"),
+                _label(AppStrings.vehicleModel.tr),
+              //  _label("Vehicle Model"),
                 SizedBox(height: ResponsiveHelper.spacing(4)),
                 GetBuilder<ProfileController>(
                   id: 'vehicle_fields', // type করলে পুরো screen rebuild হবে না
@@ -694,17 +695,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 // Vehicle Color — free text
               //  _label(AppStrings.vehicleColor.tr),
-                _label("Vehicle Color"),
-                SizedBox(height: ResponsiveHelper.spacing(4)),
+               // // _label("Vehicle Color"),
+               //  SizedBox(height: ResponsiveHelper.spacing(4)),
+               //  GetBuilder<ProfileController>(
+               //    id: 'vehicle_fields',
+               //    builder: (controller) => ProfileTextField(
+               //      controller: controller.vehicleColorController,
+               //      hintText: ctrl.vehicleModelController.text.isEmpty && !ctrl.isEditing
+               //          ? AppStrings.noVehicleColorTapEdit.tr
+               //          : AppStrings.vehicleColor.tr,
+               //      enabled: controller.isEditing,
+               //    ),
+               //  ),
+
+
+                _label(AppStrings.vehicleColor.tr),
+                SizedBox(height: ResponsiveHelper.spacing(8)),
                 GetBuilder<ProfileController>(
                   id: 'vehicle_fields',
-                  builder: (controller) => ProfileTextField(
-                    controller: controller.vehicleColorController,
-                    hintText: ctrl.vehicleModelController.text.isEmpty && !ctrl.isEditing
-                        ? AppStrings.noVehicleColorTapEdit.tr
-                        : AppStrings.vehicleColor.tr,
-                    enabled: controller.isEditing,
-                  ),
+                  builder: (controller) => VehicleColorPicker(controller: controller),
                 ),
 
                 SizedBox(height: ResponsiveHelper.spacing(20)),
@@ -770,6 +779,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // প্রতিটি document type আলাদা card
                 CustomUploadCard(title: AppStrings.vehicleOwnershipStatus.tr, documentType: 'VEHICLE_OWNERSHIP',
                   iconText: "📋",
+
                   //  iconPath: AssetsPath.otherUpload,
                 ),
 
@@ -795,7 +805,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
 
                 SizedBox(height: ResponsiveHelper.spacing(12)),
-                CustomUploadCard(title: "CAR INSPECTION", documentType: 'CAR_INSPECTION',
+                CustomUploadCard(title: AppStrings.carInspection.tr, documentType: 'CAR_INSPECTION',
 
                   iconText: "📋",
                 ),
@@ -836,7 +846,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       // টেক্সট সেকশন
                        Expanded(
                         child: Text(
-                          'Make sure all documents are clear and readable.Blurry images may delay your approval.',
+                       AppStrings.makeSureAllDocuments.tr,
                           style: context.bodySmall.copyWith(color: AppColors.blue)
                         ),
                       ),

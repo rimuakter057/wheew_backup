@@ -82,8 +82,10 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 import '../../../../utils/color/app_colors.dart';
 
@@ -127,7 +129,7 @@ class AddParkingButton extends StatelessWidget {
             ),
             SizedBox(width: ResponsiveHelper.padding(8)),
             Text(
-              "Add Parking",
+             AppStrings.addParking.tr,
               style: GoogleFonts.poppins(
                 color: AppColors.white,
                 fontSize: ResponsiveHelper.fontSize(16),

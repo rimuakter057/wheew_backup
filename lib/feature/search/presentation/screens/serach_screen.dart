@@ -52,6 +52,9 @@ class _SearchListScreenState extends State<SearchListScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.white,
         centerTitle: true,
+        leading: IconButton(onPressed: (){
+          context.pop();
+        }, icon: Icon(Icons.arrow_back_ios,color: AppColors.black,)),
         title: Text(
 
           'Search Drivers'.tr,

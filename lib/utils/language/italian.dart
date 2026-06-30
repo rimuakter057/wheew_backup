@@ -505,6 +505,56 @@ final Map<String, String> italian = {
 
 
   AppStrings.imageSaveToGallery: 'Salva immagine nella galleria',
-  AppStrings.notification:"Notifica"
+  AppStrings.notification:"Notifica",
+  AppStrings.submitDetails:"Invia Dettagli",
+  AppStrings.makeSureAllDocuments:"Assicurati che tutti i documenti siano nitidi e leggibili. Immagini sfocate potrebbero ritardare l'approvazione.",
+  AppStrings.group:"Gruppo",
 
+
+  // -------- Notification Screen --------
+  AppStrings.notifications: "Notifiche",
+  AppStrings.markAllRead: "Segna tutto come letto",
+  AppStrings.deleteAllNotifications: "Sei sicuro di voler eliminare tutte le notifiche?",
+
+  AppStrings.justNow: "proprio ora",
+  AppStrings.notificationNotYet: "Nessuna Notifica Ancora",
+  AppStrings.markAsRead: "Segna come letto",
+  AppStrings.read: "Letto",
+
+  AppStrings.deleteSuccess: "Eliminato con successo",
+  AppStrings.addParking: "Aggiungi Parcheggio",
+  AppStrings.locationTurnedOff: "La posizione è disattivata",
+  AppStrings.locationOffDesc: "Abilita la posizione dal tuo dispositivo per vedere i rapporti sui parcheggi nelle vicinanze sulla mappa.",
+  AppStrings.enableLocation: "Attiva la posizione",
+  AppStrings.showingParking: "Mostrando parcheggi entro",
+
+
+
+  AppStrings.usingCurrentLocation: "Utilizzo della posizione attuale",
+  AppStrings.selectedLocation: "Selezionato",
+  AppStrings.pickOnMap: "Scegli sulla mappa",
+  AppStrings.change: "Cambia",
+  AppStrings.mapFree: "Gratuito",
+  AppStrings.mapPaid: "A pagamento",
+
+
+  AppStrings.disabledParking: "Parcheggio Disabili",
+  AppStrings.electricCharging2: "Ricarica Elettrica",
+  AppStrings.paidParking: "Parcheggio a Pagamento",
+  AppStrings.freeParking: "Parcheggio Gratuito",
+  AppStrings.leaveSuccess: "Uscita avvenuta con successo",
+  AppStrings.failedToLeave: "Uscita non riuscita",
+
+  AppStrings.plateScanner: "Scanner Targa",
+  AppStrings.noPlateDetected: "Nessuna targa/numero rilevato",
+
+
+  AppStrings.ocrScanner: "Scanner OCR",
+  AppStrings.scanQrCode: "Scansiona Codice QR",
+
+  AppStrings.downloading: "Download in corso...",
+  AppStrings.download: "Scarica",
+
+  AppStrings.groupCreatedSuccess: "Gruppo creato con successo",
+  AppStrings.groupCreatedFailed: "Creazione del gruppo fallita",
 };

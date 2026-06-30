@@ -19,6 +19,7 @@ import 'package:platchatapp/feature/terms_condition/web_view_screen.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/extension/base_extension.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import '../../../core/router/route_path.dart';
 import '../../../core/router/routes_name.dart';
@@ -29,6 +30,7 @@ import '../../../share/widgets/text_field/custom_text_field.dart';
 import '../../../share/widgets/button/primary_button.dart';
 import '../../../utils/toast_message/toast_message.dart';
 import '../repository/auth_repository.dart';
+import '../repository/country_list.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -45,6 +47,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController licenseController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController countryController = TextEditingController();
+  final TextEditingController cityController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
@@ -53,6 +57,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool? agreeOtherTerms; // optional (nullable)
 
   String? selectedDesignation;
+  String? selectedCountry;
+
 
   @override
   void dispose() {
@@ -60,6 +66,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     licenseController.dispose();
     passwordController.dispose();
     emailController.dispose();
+    countryController.dispose();
+    cityController.dispose();
     confirmPasswordController.dispose();
     super.dispose();
   }
@@ -278,6 +286,118 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
+
+
+
+              SizedBox(height: ResponsiveHelper.spacing(16)),
+
+              /// Country
+              // CustomTextField(
+              //   controller: countryController,
+              //   title: 'country'.tr,
+              //   hintText: AppStrings.typeHere.tr,
+              //   validator: (value) => (value == null || value.trim().isEmpty)
+              //       ? 'country_is_required'.tr
+              //       : null,
+              // ),
+
+
+
+
+
+
+
+
+
+
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'country'.tr,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.secondaryText,
+                      fontSize: ResponsiveHelper.fontSize(14),
+                    ),
+                  ),
+                  SizedBox(height: ResponsiveHelper.spacing(8)),
+                  DropdownButtonFormField2<String>(
+                    value: selectedCountry,
+                    isExpanded: true,
+                    hint: Text(
+                      'select'.tr,
+                      style: TextStyle(
+                        fontSize: ResponsiveHelper.fontSize(16),
+                      ),
+                    ),
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveHelper.padding(12),
+                        vertical: ResponsiveHelper.padding(16),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveHelper.borderRadius(12),
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveHelper.borderRadius(12),
+                        ),
+                        borderSide: const BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveHelper.borderRadius(12),
+                        ),
+                        borderSide: const BorderSide(
+                          color: Colors.blue,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    items: countries
+                        .map(
+                          (country) => DropdownMenuItem(
+                        value: country,
+                        child: Text(country, style: context.bodySmall,),
+                      ),
+                    )
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedCountry = value;
+                        countryController.text = value ?? '';
+                      });
+                    },
+                    validator: (value) =>
+                    value == null ? 'country_is_required'.tr : null,
+                    dropdownStyleData: DropdownStyleData(
+                      maxHeight: 250,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+
+
+
+              SizedBox(height: ResponsiveHelper.spacing(16)),
+
+              /// City
+              CustomTextField(
+                controller: cityController,
+                title: 'city'.tr,
+                hintText: AppStrings.typeHere.tr,
+                validator: (value) => (value == null || value.trim().isEmpty)
+                    ? 'city_is_required'.tr
+                    : null,
+              ),
               SizedBox(height: ResponsiveHelper.spacing(16)),
 
               /// Password
@@ -317,6 +437,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
+
 
               SizedBox(height: ResponsiveHelper.spacing(12)),
 
@@ -437,6 +558,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       password: passwordController.text.trim(),
                       confirmPassword: confirmPasswordController.text.trim(),
                       designation: selectedDesignation!,
+                      country: selectedCountry ?? '',
+                      city: cityController.text.trim(),
                     );
 
                     developer.log(

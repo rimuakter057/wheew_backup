@@ -12,6 +12,7 @@ import 'package:platchatapp/feature/map/presentation/widgets/parking_report_drop
 import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
 import 'package:platchatapp/feature/map/utils/map_debug.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:platchatapp/utils/toast_message/toast_message.dart';
 
 class MapScreen extends StatefulWidget {
@@ -333,7 +334,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
             /// ── Map Type Dropdown (Modernized) ──────────────────────────────────────
             Positioned(
               right: ResponsiveHelper.padding(30), // প্যাডিং কিছুটা মডার্ন গ্যাপে আনা হয়েছে
-              top: ResponsiveHelper.padding(70),
+              top: ResponsiveHelper.padding(80),
               child: Container(
                 height: ResponsiveHelper.padding(45), // একটি ফিক্সড ও ক্লিন হাইট
                 decoration: BoxDecoration(
@@ -394,8 +395,8 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
 
             /// ── Radius filter button ──────────────────────────────────────
             Positioned(
-              right: ResponsiveHelper.padding(30),
-              top: ResponsiveHelper.padding(140),
+              left: ResponsiveHelper.padding(30), // প্যাডিং কিছুটা মডার্ন গ্যাপে আনা হয়েছে
+              top: ResponsiveHelper.padding(80),
               child: FloatingActionButton(
                 heroTag: 'filterRadiusBtn',
                 backgroundColor: Colors.white,
@@ -444,14 +445,14 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                     color: Color(0xFF185FA5), size: 26),
               ),
               const SizedBox(height: 12),
-              const Text(
-                'Location is turned off',
+               Text(
+                  AppStrings.locationTurnedOff.tr,
                 style:
                 TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 6),
-              const Text(
-                'Please enable location from your device to see nearby parking reports on the map.',
+               Text(
+                AppStrings.locationOffDesc.tr,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 13, color: Colors.grey, height: 1.5),
@@ -469,7 +470,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                   onPressed: () async {
                     await Geolocator.openLocationSettings();
                   },
-                  child: const Text('Enable location',
+                  child:  Text(AppStrings.enableLocation.tr,
                       style: TextStyle(color: Colors.white)),
                 ),
               ),
@@ -503,7 +504,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
 
     if (!mounted) return;
     showCustomSnackBar(
-      'Showing parking within $_selectedRadiusMeter m',
+      '${AppStrings.showingParking.tr} $_selectedRadiusMeter m',
       isError: false,
     );
   }

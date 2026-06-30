@@ -6,6 +6,7 @@ import 'package:platchatapp/feature/notification/models/notification_model.dart'
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -98,14 +99,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
           borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
         ),
         title: Text(
-          'delete all notifications'.tr,
+        //  'delete all notifications'.tr,
+          AppStrings.delete.tr,
+
           style: GoogleFonts.inter(
             fontSize: ResponsiveHelper.fontSize(16),
             fontWeight: FontWeight.w600,
           ),
         ),
         content: Text(
-          'delete all notifications confirm'.tr,
+         AppStrings.deleteAllNotifications.tr,
           style: GoogleFonts.inter(
             fontSize: ResponsiveHelper.fontSize(14),
             color: Colors.grey.shade600,
@@ -114,7 +117,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('cancel'.tr),
+            child: Text(AppStrings.cancel.tr),
           ),
           Obx(() => TextButton(
             onPressed: controller.isDeleting.value
@@ -122,7 +125,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 : () async {
               Navigator.pop(ctx);
               await controller.deleteAll(context);
-              CustomSnackbar.success( context:context, message: "Delete Successfully Complete");
+              CustomSnackbar.success( context:context, message: AppStrings.deleteSuccess.tr);
             },
             child: controller.isDeleting.value
                 ? const SizedBox(
@@ -150,7 +153,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         title: Obx(() => Row(
           children: [
             Text(
-              'notifications'.tr,
+           AppStrings.notification.tr,
               style: TextStyle(
                 color: Colors.black87,
                 fontWeight: FontWeight.w600,
@@ -187,7 +190,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             return TextButton(
               onPressed: controller.markAllAsRead,
               child: Text(
-                'mark all read'.tr,
+              AppStrings.markAllRead.tr,
                 style: TextStyle(
                   color: AppColors.blue,
                   fontSize: ResponsiveHelper.fontSize(13),
@@ -245,7 +248,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 onMarkRead: () => controller.markOneAsRead(notification.id),
                 onDelete: () async {
                   await controller.deleteOne(notification.id);
-                  CustomSnackbar.success(context: context, message: "Delete Success");
+                  CustomSnackbar.success(context: context, message: AppStrings.deleteSuccess.tr);
                 },
               );
             },

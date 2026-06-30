@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 import '../../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../../share/widgets/avatar/user_avatar.dart';
@@ -23,6 +24,8 @@ class ChatTile extends StatelessWidget {
   final void Function()? onUnblock;
   final bool? isVehicleVerified;
   final Color?ratingColor;
+  final int?totalRating;
+  final String?plateNumber;
 
   const ChatTile({
     super.key,
@@ -37,7 +40,7 @@ class ChatTile extends StatelessWidget {
     this.rating,
     this.unreadCount,               // ✅ নতুন
 
-  this.onUnblock, this.isVehicleVerified, this.ratingColor,
+  this.onUnblock, this.isVehicleVerified, this.ratingColor, this.totalRating, this.plateNumber,
   });
 
   @override
@@ -52,7 +55,8 @@ class ChatTile extends StatelessWidget {
           vertical: ResponsiveHelper.padding(10),
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             UserAvatar(imagePath: imagePath),
 
@@ -143,7 +147,7 @@ class ChatTile extends StatelessWidget {
                                         height: ResponsiveHelper.iconSize(16),
                                       ),
                                    SizedBox(width: ResponsiveHelper.width(4),),
-                                      Text("Group",style: context.bodyMedium.copyWith(color: AppColors.black),),
+                                      Text(AppStrings.group.tr,style: context.bodyMedium.copyWith(color: AppColors.black),),
 
                                     ],
                                   ),
@@ -166,16 +170,29 @@ class ChatTile extends StatelessWidget {
 
                   SizedBox(height: ResponsiveHelper.height(4)),
 
+
                   // ✅ Rating — শুধু ONE_TO_ONE এ
-                  if (isBlock != true && !isGroup && rating != null)
+                  if (isBlock != true && !isGroup)
                     Row(
                       children: [
+                        Text(
+                          plateNumber.toString(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.questrial(
+                            fontSize: ResponsiveHelper.fontSize(15),
+                            fontWeight: FontWeight.w600,
+                            color:Color(0xFF6A6969),
+                          ),
+                        ),
+
+                        SizedBox(width: ResponsiveHelper.width(8)),
                         Icon(
                           Icons.star,
                           color:ratingColor?? AppColors.rating,
                           size: ResponsiveHelper.iconSize(14),
                         ),
-                        SizedBox(width: ResponsiveHelper.width(4)),
+                      //  SizedBox(width: ResponsiveHelper.width(4)),
                         Text(
                           rating!.toStringAsFixed(1),
                           maxLines: 1,
@@ -186,6 +203,19 @@ class ChatTile extends StatelessWidget {
                             color: AppColors.textBlack,
                           ),
                         ),
+
+                        SizedBox(width: ResponsiveHelper.width(4)),
+                        Text(
+                          "(${totalRating.toString()})",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.questrial(
+                            fontSize: ResponsiveHelper.fontSize(12),
+                            fontWeight: FontWeight.w200,
+                            color: AppColors.black,
+                          ),
+                        ),
+
                       ],
                     ),
 

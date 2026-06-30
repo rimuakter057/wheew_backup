@@ -19,6 +19,7 @@ import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
@@ -94,12 +95,12 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   children: [
                     ListTile(
                       leading: const Icon(Icons.document_scanner),
-                      title: const Text('OCR Scanner'),
+                      title: Text(AppStrings.ocrScanner.tr),
                       onTap: () => Navigator.pop(context, 'ocr'),
                     ),
                     ListTile(
                       leading: const Icon(Icons.qr_code_scanner),
-                      title: const Text('Scan QR Code'),
+                      title: Text(AppStrings.scanQrCode.tr),
                       onTap: () => Navigator.pop(context, 'scan'),
                     ),
                   ],
@@ -202,6 +203,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                           isProfile: true,
                         ),
                         message: lastMessage,
+
                         // unread হলে bold
                         fontWeight: room.latestMessage?.isUnread == true
                             ? FontWeight.w700
@@ -215,9 +217,11 @@ class _ChatListScreenState extends State<ChatListScreen> {
                             (room.isBlockedByMe == true ||
                                 room.isBlockedMe == true),
                         isGroup: isGroup,
+                        plateNumber: room.otherUser?.licenceId,
                         // group এ rating নেই
                       //  rating: isGroup ? null : ((room.otherUser?.rating ?? 0) > 0 ? (room.otherUser!.rating!).toDouble() : null),
                         rating: isGroup ? null : (room.otherUser?.rating ?? 0).toDouble(),
+                        totalRating: isGroup ? null : (room.otherUser?.totalRatings ?? 0).toInt(),
                         ratingColor:(room.otherUser?.rating ?? 0) > 0 ? null : Colors.grey,
                         // ✅ unread badge — নিজের message হলে 0 দেখাবে
                         unreadCount: room.latestMessage?.isMine == true

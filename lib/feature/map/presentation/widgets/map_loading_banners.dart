@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 class LocatingBanner extends StatelessWidget {
   const LocatingBanner({super.key});
@@ -36,7 +37,7 @@ class LocatingBanner extends StatelessWidget {
               ),
               SizedBox(width: ResponsiveHelper.spacing(8)),
               Text(
-                'map_getting_location'.tr,
+                AppStrings.mapGettingLocation.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(12),
                   color: const Color(0xFF1A1A2E),
@@ -83,7 +84,7 @@ class FetchingParkingBanner extends StatelessWidget {
               ),
               SizedBox(width: ResponsiveHelper.spacing(8)),
               Text(
-                'map_loading_parking_spots'.tr,
+                AppStrings.mapDisabledParkingLocation.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(12),
                   color: const Color(0xFF1A1A2E),

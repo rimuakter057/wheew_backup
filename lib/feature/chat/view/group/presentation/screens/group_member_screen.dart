@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/feature/chat/view/group/controller/group_controller.dart';
+import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -191,7 +192,9 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
                 value: 'AddMembers',
                 child: Row(
                   children: [
-                    Icon(Icons.person_add_outlined, color: AppColors.black),
+                  //  Icon(Icons.person_add_outlined, color: AppColors.black),
+                    CustomImage(imageSrc: "assets/icons/add_member.svg"),
+
                     const SizedBox(width: 8),
                     Text(
                       'add_members'.tr,
@@ -211,7 +214,9 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
                 value: 'LeaveGroup',
                 child: Row(
                   children: [
-                    const Icon(Icons.exit_to_app_outlined, color: Colors.red),
+              //      const Icon(Icons.exit_to_app_outlined, color: Colors.red),
+
+                    CustomImage(imageSrc: "assets/icons/leave_group.svg"),
                     const SizedBox(width: 8),
                     Text(
                       'leave_group'.tr,

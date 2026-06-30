@@ -12,6 +12,7 @@ import 'package:platchatapp/share/widgets/custom_container/custom_container.dart
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 class GroupMessageAppBar extends StatefulWidget {
   final String roomId;
@@ -50,6 +51,9 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
     final cleanPath = imgStr.replaceAll('\\', '/');
     return '${ApiUrl.baseUrl}/$cleanPath';
   }
+
+
+  ///leave group==============================
 
   void _showLeaveGroupDialog(BuildContext context) {
     showDialog(
@@ -126,7 +130,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
 
 
 
-
+///edit group=======================================
   void _showEditGroupDialog(BuildContext context) {
     groupController.groupNameController.text = _currentGroupName;
     groupController.groupImageFile.value = null;
@@ -181,7 +185,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
 
                   // Title
                   Text(
-                    'Edit Group Chat',
+                    AppStrings.editGroupChat.tr,
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.bold,
                       fontSize: 22,
@@ -195,7 +199,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                     child: Column(
                       children: [
                         Text(
-                          'Profile Picture',
+                    AppStrings.profilePicture.tr,
                           style: GoogleFonts.poppins(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -267,7 +271,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
 
                   // Group Name Label
                   Text(
-                    'Group Name',
+                    AppStrings.groupName.tr,
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -281,7 +285,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                     controller: groupController.groupNameController,
                     style: GoogleFonts.poppins(fontSize: 15),
                     decoration: InputDecoration(
-                      hintText: 'e.g. I-95 Convoy',
+                      hintText: AppStrings.groupNameHint.tr,
                       hintStyle: GoogleFonts.poppins(color: Colors.grey.shade400),
                       filled: true,
                       fillColor: const Color(0xFFF5F6F8), // ছবির ভেতরের লাইট গ্রে কালার
@@ -343,7 +347,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                           ),
                         )
                             : Text(
-                          'Save & Change',
+                          AppStrings.saveAndChange.tr,
                           style: GoogleFonts.poppins(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -486,7 +490,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                     Icon(Icons.edit_outlined, color: AppColors.black),
                     const SizedBox(width: 8),
                     Text(
-                      'Edit Group',
+                      'edit_group'.tr,
                       style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(14),
                         color: AppColors.black,

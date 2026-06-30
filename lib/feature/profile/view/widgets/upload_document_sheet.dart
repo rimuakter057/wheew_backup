@@ -16,6 +16,7 @@ Future<void> showUploadDocumentSheet(
     BuildContext context, {
       required String documentType,
       UserDocument? existingDoc, // null → create, non-null → update
+      bool isOwner = false,
     }) {
   return showModalBottomSheet(
     context: context,
@@ -29,6 +30,7 @@ Future<void> showUploadDocumentSheet(
     builder: (_) => UploadDocumentSheet(
       documentType: documentType,
       existingDoc: existingDoc,
+      isOwner: isOwner,
     ),
   );
 }
@@ -38,11 +40,13 @@ Future<void> showUploadDocumentSheet(
 class UploadDocumentSheet extends StatefulWidget {
   final String documentType;
   final UserDocument? existingDoc;
+  final bool isOwner;
 
   const UploadDocumentSheet({
     super.key,
     required this.documentType,
     this.existingDoc,
+    this.isOwner = false,
   });
 
   @override
@@ -335,23 +339,43 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
 
             SizedBox(height: ResponsiveHelper.spacing(16)),
 
-            // Expire Date
-            _label(AppStrings.expireDate.tr),
-            SizedBox(height: ResponsiveHelper.spacing(8)),
-            GestureDetector(
-              onTap: _selectDate,
-              child: AbsorbPointer(
-                child: _textField(
-                  controller: _expireDateCtrl,
-                  hint: AppStrings.ddMmYyyy.tr,
-                  suffixIcon: Icon(
-                    Icons.calendar_today_outlined,
-                    size: ResponsiveHelper.iconSize(18),
-                    color: const Color(0xFF9CA3AF),
+            /// Expire Date========================================================
+            // _label(AppStrings.expireDate.tr),
+            // SizedBox(height: ResponsiveHelper.spacing(8)),
+            // GestureDetector(
+            //   onTap: _selectDate,
+            //   child: AbsorbPointer(
+            //     child: _textField(
+            //       controller: _expireDateCtrl,
+            //       hint: AppStrings.ddMmYyyy.tr,
+            //       suffixIcon: Icon(
+            //         Icons.calendar_today_outlined,
+            //         size: ResponsiveHelper.iconSize(18),
+            //         color: const Color(0xFF9CA3AF),
+            //       ),
+            //     ),
+            //   ),
+            // ),
+
+            if (!widget.isOwner) ...[
+              _label(AppStrings.expireDate.tr),
+              SizedBox(height: ResponsiveHelper.spacing(8)),
+              GestureDetector(
+                onTap: _selectDate,
+                child: AbsorbPointer(
+                  child: _textField(
+                    controller: _expireDateCtrl,
+                    hint: AppStrings.ddMmYyyy.tr,
+                    suffixIcon: Icon(
+                      Icons.calendar_today_outlined,
+                      size: ResponsiveHelper.iconSize(18),
+                      color: const Color(0xFF9CA3AF),
+                    ),
                   ),
                 ),
               ),
-            ),
+              SizedBox(height: ResponsiveHelper.spacing(16)),
+            ],
 
             SizedBox(height: ResponsiveHelper.spacing(16)),
 
