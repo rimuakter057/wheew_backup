@@ -290,7 +290,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         isBlock: false,
                         name: room.otherUser?.nickName ?? 'No Name',
                         message: room.latestMessage?.message ?? '',
-                        fontWeight: room.latestMessage!.isRead == true
+                        fontWeight:  (room.latestMessage?.isRead ?? true)
                             ? FontWeight.w400
                             : FontWeight.w700,
                         time: formatTime(room.latestMessage?.createdAt ?? ''),
