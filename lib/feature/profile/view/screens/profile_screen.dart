@@ -554,7 +554,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
 
-    // ✅ আগে registered থাকলে নতুন করে put করো না
+
     controller = Get.isRegistered<ProfileController>()
         ? Get.find<ProfileController>()
         : Get.put(ProfileController());
@@ -587,13 +587,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           // Edit / Save button — isEditing এর উপর নির্ভর করে
           GetBuilder<ProfileController>(
-            builder: (ctrl) {
+            builder: (controller) {
               return TextButton(
                 onPressed: () {
-                  ctrl.isEditing ? ctrl.updateProfile() : ctrl.toggleEdit();
+                  controller.isEditing ? controller.updateProfile() : controller.toggleEdit();
                 },
                 child: Text(
-                  ctrl.isEditing ? AppStrings.save.tr : AppStrings.edit.tr,
+                  controller.isEditing ? AppStrings.save.tr : AppStrings.edit.tr,
                   style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
                 ),
               );
@@ -671,44 +671,81 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: ResponsiveHelper.spacing(4)),
                 GetBuilder<ProfileController>(
                   id: 'vehicle_fields', // শুধু এই widget rebuild হবে
-                  builder: (ctrl) => VehicleTypeDropdown(controller: ctrl),
-                ),
-
-                SizedBox(height: ResponsiveHelper.spacing(20)),
-
-                // Vehicle Model — free text
-                _label(AppStrings.vehicleModel.tr),
-              //  _label("Vehicle Model"),
-                SizedBox(height: ResponsiveHelper.spacing(4)),
-                GetBuilder<ProfileController>(
-                  id: 'vehicle_fields', // type করলে পুরো screen rebuild হবে না
-                  builder: (controller) => ProfileTextField(
-                    controller: controller.vehicleModelController,
-                    hintText: ctrl.vehicleModelController.text.isEmpty && !ctrl.isEditing
-                        ? AppStrings.noVehicleModelTapEdit.tr
-                        : AppStrings.vehicleModel.tr,
-                    enabled: controller.isEditing,
+                  builder: (ctrl) => VehicleTypeDropdown(controller: ctrl,
+                    onSelected: (value) => ctrl.setVehicleType(value.backendKey),
                   ),
                 ),
 
                 SizedBox(height: ResponsiveHelper.spacing(20)),
 
-                // Vehicle Color — free text
-              //  _label(AppStrings.vehicleColor.tr),
-               // // _label("Vehicle Color"),
-               //  SizedBox(height: ResponsiveHelper.spacing(4)),
-               //  GetBuilder<ProfileController>(
-               //    id: 'vehicle_fields',
-               //    builder: (controller) => ProfileTextField(
-               //      controller: controller.vehicleColorController,
-               //      hintText: ctrl.vehicleModelController.text.isEmpty && !ctrl.isEditing
-               //          ? AppStrings.noVehicleColorTapEdit.tr
-               //          : AppStrings.vehicleColor.tr,
-               //      enabled: controller.isEditing,
-               //    ),
-               //  ),
+
+                // 👁️ Vehicle Model — READ ONLY (client request অনুযায়ী edit বন্ধ)
+                // এখানে enabled সবসময় false, isEditing হলেও change হবে না
+                _label(AppStrings.vehicleModel.tr),
+                SizedBox(height: ResponsiveHelper.spacing(4)),
+                GetBuilder<ProfileController>(
+                  id: 'vehicle_fields',
+                  builder: (controller) => ProfileTextField(
+                    controller: controller.vehicleModelController,
+                    hintText: controller.vehicleModelController.text.isEmpty
+                        ? AppStrings.noVehicleModelTapEdit.tr
+                        : AppStrings.vehicleModel.tr,
+                    enabled: false, // ✅ সবসময় read-only, isEditing দিয়ে control হচ্ছে না
+                  ),
+                ),
+
+                SizedBox(height: ResponsiveHelper.spacing(20)),
+
+                // 👁️ Vehicle Color — READ ONLY (client request অনুযায়ী edit বন্ধ)
+                _label(AppStrings.vehicleColor.tr),
+                SizedBox(height: ResponsiveHelper.spacing(4)),
+                GetBuilder<ProfileController>(
+                  id: 'vehicle_fields',
+                  builder: (controller) => ProfileTextField(
+                    controller: controller.vehicleColorController,
+                    hintText: controller.vehicleColorController.text.isEmpty
+                        ? AppStrings.noVehicleColorTapEdit.tr
+                        : AppStrings.vehicleColor.tr,
+                    enabled: false, // ✅ সবসময় read-only
+                  ),
+                ),
 
 
+
+
+                // Vehicle Model — free text
+              //   _label(AppStrings.vehicleModel.tr),
+              // //  _label("Vehicle Model"),
+              //   SizedBox(height: ResponsiveHelper.spacing(4)),
+              //   GetBuilder<ProfileController>(
+              //     id: 'vehicle_fields', // type করলে পুরো screen rebuild হবে না
+              //     builder: (controller) => ProfileTextField(
+              //       controller: controller.vehicleModelController,
+              //       hintText: ctrl.vehicleModelController.text.isEmpty && !ctrl.isEditing
+              //           ? AppStrings.noVehicleModelTapEdit.tr
+              //           : AppStrings.vehicleModel.tr,
+              //       enabled: controller.isEditing,
+              //     ),
+              //   ),
+              //
+              //   SizedBox(height: ResponsiveHelper.spacing(20)),
+              //
+              //   // Vehicle Color — free text
+              // //  _label(AppStrings.vehicleColor.tr),
+              //  // // _label("Vehicle Color"),
+              //  //  SizedBox(height: ResponsiveHelper.spacing(4)),
+              //  //  GetBuilder<ProfileController>(
+              //  //    id: 'vehicle_fields',
+              //  //    builder: (controller) => ProfileTextField(
+              //  //      controller: controller.vehicleColorController,
+              //  //      hintText: ctrl.vehicleModelController.text.isEmpty && !ctrl.isEditing
+              //  //          ? AppStrings.noVehicleColorTapEdit.tr
+              //  //          : AppStrings.vehicleColor.tr,
+              //  //      enabled: controller.isEditing,
+              //  //    ),
+              //  //  ),
+              //
+              //
                 _label(AppStrings.vehicleColor.tr),
                 SizedBox(height: ResponsiveHelper.spacing(8)),
                 GetBuilder<ProfileController>(
@@ -772,13 +809,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
                 SizedBox(height: ResponsiveHelper.spacing(18)),
-
+///owner ship document==========================================================
 
                 const VehicleOwnershipStatusWidget(),
                 SizedBox(height: ResponsiveHelper.spacing(8)),
                 // প্রতিটি document type আলাদা card
                 CustomUploadCard(title: AppStrings.vehicleOwnershipStatus.tr, documentType: 'VEHICLE_OWNERSHIP',
                   iconText: "📋",
+                  isOwner: true,
 
                   //  iconPath: AssetsPath.otherUpload,
                 ),

@@ -61,6 +61,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
 
   @override
+  void initState() {
+    super.initState();
+    selectedCountry = "Italia";
+    countryController.text = "Italia";
+  }
+
+  @override
   void dispose() {
     nicknameController.dispose();
     licenseController.dispose();

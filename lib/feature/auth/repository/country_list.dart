@@ -1,5 +1,5 @@
 final List<String> countries = [
-  "Italy",
+  "Italia",
   "Albania",
   "Andorra",
   "Austria",
@@ -17,7 +17,6 @@ final List<String> countries = [
   "Grecia",
   "Irlanda",
   "Islanda",
-  "Italia",
   "Kosovo",
   "Lettonia",
   "Liechtenstein",

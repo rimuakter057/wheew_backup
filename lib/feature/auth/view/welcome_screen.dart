@@ -826,6 +826,7 @@ import 'package:go_router/go_router.dart';
 import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../share/widgets/button/outline_button.dart';
@@ -891,12 +892,13 @@ class WelcomeScreen extends StatelessWidget {
 
                     // Welcome Text
                     AutoSizeText(
-                      'welcome_message'.tr,
+                     // 'welcome_message'.tr,
+                      AppStrings.welcomeTitle.tr,
                       maxLines: 1,
                       minFontSize: 18,
                       textAlign: TextAlign.center,
                       style: context.titleLarge.copyWith(
-                        fontSize: ResponsiveHelper.fontSize(32),
+                        fontSize: ResponsiveHelper.fontSize(24),
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -904,40 +906,41 @@ class WelcomeScreen extends StatelessWidget {
                     SizedBox(height: ResponsiveHelper.spacing(16)),
 
                     AutoSizeText(
-                      'welcome_message1'.tr,
-                      maxLines: 1,
-                      minFontSize: 10,
+                      AppStrings.welcomeSubtitle.tr,
+                      //Register quickly and connect with a wheewer wherever you go
+
+                      minFontSize: 16,
                       textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
+
                       style: context.titleLarge.copyWith(
-                        fontSize: ResponsiveHelper.fontSize(16),
+                        fontSize: ResponsiveHelper.fontSize(14),
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    SizedBox(height: ResponsiveHelper.spacing(6)),
-                    AutoSizeText(
-                      'welcome_message2'.tr,
-                      maxLines: 1,
-                      minFontSize: 10,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.titleLarge.copyWith(
-                        fontSize: ResponsiveHelper.fontSize(16),
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    SizedBox(height: ResponsiveHelper.spacing(6)),
-                    AutoSizeText(
-                      'welcome_message3'.tr,
-                      maxLines: 1,
-                      minFontSize: 10,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.titleLarge.copyWith(
-                        fontSize: ResponsiveHelper.fontSize(16),
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
+                    // SizedBox(height: ResponsiveHelper.spacing(6)),
+                    // AutoSizeText(
+                    //   'welcome_message2'.tr,
+                    //   maxLines: 1,
+                    //   minFontSize: 10,
+                    //   textAlign: TextAlign.center,
+                    //   overflow: TextOverflow.ellipsis,
+                    //   style: context.titleLarge.copyWith(
+                    //     fontSize: ResponsiveHelper.fontSize(16),
+                    //     fontWeight: FontWeight.w400,
+                    //   ),
+                    // ),
+                    // SizedBox(height: ResponsiveHelper.spacing(6)),
+                    // AutoSizeText(
+                    //   'welcome_message3'.tr,
+                    //   maxLines: 1,
+                    //   minFontSize: 10,
+                    //   textAlign: TextAlign.center,
+                    //   overflow: TextOverflow.ellipsis,
+                    //   style: context.titleLarge.copyWith(
+                    //     fontSize: ResponsiveHelper.fontSize(16),
+                    //     fontWeight: FontWeight.w400,
+                    //   ),
+                    // ),
 
                     SizedBox(height: ResponsiveHelper.spacing(32)),
 

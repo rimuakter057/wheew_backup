@@ -590,6 +590,8 @@ class AppStrings {
 
   static const String groupCreatedSuccess = 'group_created_success';
   static const String groupCreatedFailed = 'group_created_failed';
+  static const String welcomeTitle = 'your_license_plate_your_chat';
+  static const String welcomeSubtitle= 'welcome_subtitle';
 
 
 

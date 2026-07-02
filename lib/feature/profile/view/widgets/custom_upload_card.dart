@@ -20,12 +20,14 @@ class CustomUploadCard extends StatelessWidget {
   final String title;
   final String documentType; // 'LICENSE' | 'INSURANCE' | 'TAX'
   final String iconText;
+  final bool isOwner;
 
   const  CustomUploadCard({
     super.key,
     required this.title,
     required this.documentType,
     required this.iconText,
+    this.isOwner = false,
   });
 
   @override
@@ -50,6 +52,7 @@ class CustomUploadCard extends StatelessWidget {
         documentType: documentType,
         ctrl:         controller,
         iconText: iconText,
+        isOwner:      isOwner,
       );
     });
   }
@@ -65,6 +68,7 @@ class _CardShell extends StatelessWidget {
   final String       documentType;
   final UploadDocumentController ctrl;
   final String iconText;
+  final bool isOwner;
 
   const _CardShell({
     required this.state,
@@ -74,6 +78,7 @@ class _CardShell extends StatelessWidget {
     required this.documentType,
     required this.ctrl,
     required this.iconText,
+    this.isOwner = false,
   });
 
   // colours per state
@@ -93,35 +98,14 @@ class _CardShell extends StatelessWidget {
     }
   }
 
-  // Color get _iconBgColor {
-  //   switch (state) {
-  //     case _CardState.empty:    return const Color(0xFFF3F4F6);
-  //     case _CardState.uploaded: return const Color(0xFFDBEAFE);
-  //     case _CardState.expired:  return const Color(0xFFFEE2E2);
-  //   }
-  // }
-  //
-  // Color get _iconColor {
-  //   switch (state) {
-  //     case _CardState.empty:    return const Color(0xFF9CA3AF);
-  //     case _CardState.uploaded: return const Color(0xFF2563EB);
-  //     case _CardState.expired:  return const Color(0xFFEF4444);
-  //   }
-  // }
-  //
-  // IconData get _icon {
-  //   switch (state) {
-  //     case _CardState.empty:    return Icons.upload_file_outlined;
-  //     case _CardState.uploaded: return Icons.insert_drive_file_outlined;
-  //     case _CardState.expired:  return Icons.warning_amber_rounded;
-  //   }
-  // }
+
 
   void _openSheet(BuildContext context) {
     showUploadDocumentSheet(
       context,
       documentType: documentType,
       existingDoc: doc,   // null → POST, non-null → PATCH
+      isOwner: isOwner,
     );
   }
 
@@ -154,24 +138,7 @@ class _CardShell extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // ── Icon ──
-            // Container(
-            //   width:  ResponsiveHelper.iconSize(44),
-            //   height: ResponsiveHelper.iconSize(44),
-            //   decoration: BoxDecoration(
-            //     color:        _iconBgColor,
-            //     borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
-            //   ),
-            //   child: loading
-            //       ? Padding(
-            //     padding: const EdgeInsets.all(10),
-            //     child: CircularProgressIndicator(
-            //       strokeWidth: 2,
-            //       color: _iconColor,
-            //     ),
-            //   )
-            //       : Icon(_icon, color: _iconColor, size: ResponsiveHelper.iconSize(22)),
-            // ),
+
 
             Text(iconText,style: TextStyle(
               fontSize: ResponsiveHelper.fontSize(18),

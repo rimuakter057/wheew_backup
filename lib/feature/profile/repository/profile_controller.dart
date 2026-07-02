@@ -206,20 +206,30 @@ class ProfileController extends GetxController {
     }
   }
 
+
+
+
+
+
   /// Profile update — avatar + vehicle fields একসাথে PATCH /users
   Future<void> updateProfile() async {
     final hasImage = tempCroppedImage.value != null;
-    final hasVehicleData =
-        vehicleTypeController.text.isNotEmpty ||
-            vehicleModelController.text.isNotEmpty ||
-            vehicleColorController.text.isNotEmpty;
+
+    // ✅ FIX: Model আর Color আপাতত edit করা যাবে না (client request অনুযায়ী)
+    // শুধু vehicle type change হলেই hasVehicleData true হবে
+    final hasVehicleData = vehicleTypeController.text.isNotEmpty;
+
+    // ⏸️ আগে সব field (type + model + color) দিয়ে চেক হতো — পরে সব field আবার
+    // editable করতে চাইলে নিচেরটা uncomment করে উপরেরটা comment করে দাও:
+    // final hasVehicleData =
+    //     vehicleTypeController.text.isNotEmpty ||
+    //         vehicleModelController.text.isNotEmpty ||
+    //         vehicleColorController.text.isNotEmpty;
 
     debugPrint('🔄 updateProfile called');
     debugPrint('📸 hasImage: $hasImage');
     debugPrint('🚗 hasVehicleData: $hasVehicleData');
     debugPrint('🚗 vehicleType: ${vehicleTypeController.text}');
-    debugPrint('🚗 vehicleModel: ${vehicleModelController.text}');
-    debugPrint('🚗 vehicleColor: ${vehicleColorController.text}');
 
     if (!hasImage && !hasVehicleData) {
       debugPrint('⚠️ Nothing to update — returning');
@@ -234,8 +244,8 @@ class ProfileController extends GetxController {
       final res = await profileRepository.updateAvatar(
         imageFile: tempCroppedImage.value,
         vehicleType: vehicleTypeController.text,
-        vehicleModel: vehicleModelController.text,
-        vehicleColor: vehicleColorController.text,
+        vehicleModel: vehicleModelController.text, // backend-এ পুরনো value-ই যাবে, change হবে না
+        vehicleColor: vehicleColorController.text, // backend-এ পুরনো value-ই যাবে, change হবে না
       );
 
       debugPrint('📡 updateProfile statusCode: ${res.statusCode}');
@@ -259,6 +269,65 @@ class ProfileController extends GetxController {
     update();
   }
 
+  // /// Profile update — avatar + vehicle fields একসাথে PATCH /users
+  // Future<void> updateProfile() async {
+  //   final hasImage = tempCroppedImage.value != null;
+  //   final hasVehicleData =
+  //       vehicleTypeController.text.isNotEmpty ||
+  //           vehicleModelController.text.isNotEmpty ||
+  //           vehicleColorController.text.isNotEmpty;
+  //
+  //   debugPrint('🔄 updateProfile called');
+  //   debugPrint('📸 hasImage: $hasImage');
+  //   debugPrint('🚗 hasVehicleData: $hasVehicleData');
+  //   debugPrint('🚗 vehicleType: ${vehicleTypeController.text}');
+  //   debugPrint('🚗 vehicleModel: ${vehicleModelController.text}');
+  //   debugPrint('🚗 vehicleColor: ${vehicleColorController.text}');
+  //
+  //   if (!hasImage && !hasVehicleData) {
+  //     debugPrint('⚠️ Nothing to update — returning');
+  //     showErrorToast(AppStrings.nothingToUpdate.tr);
+  //     return;
+  //   }
+  //
+  //   isLoading = true;
+  //   update();
+  //
+  //   try {
+  //     final res = await profileRepository.updateAvatar(
+  //       imageFile: tempCroppedImage.value,
+  //       vehicleType: vehicleTypeController.text,
+  //       vehicleModel: vehicleModelController.text,
+  //       vehicleColor: vehicleColorController.text,
+  //     );
+  //
+  //     debugPrint('📡 updateProfile statusCode: ${res.statusCode}');
+  //     debugPrint('📡 updateProfile body: ${res.body}');
+  //
+  //     if (res.statusCode == 200 || res.statusCode == 201) {
+  //       tempCroppedImage.value = null;
+  //       isEditing = false;
+  //       showSuccessToast(AppStrings.profileUpdatedSuccessfully.tr);
+  //       await fetchProfileFromApi();
+  //     } else {
+  //       debugPrint('❌ Update failed: ${res.statusCode} — ${res.body}');
+  //       showErrorToast(AppStrings.failedToUpdateProfile.tr);
+  //     }
+  //   } catch (e) {
+  //     debugPrint('❌ updateProfile exception: $e');
+  //     showErrorToast(AppStrings.somethingWrong.tr);
+  //   }
+  //
+  //   isLoading = false;
+  //   update();
+  // }
+
+
+  void setVehicleType(String? value) {
+    vehicleTypeController.text = value ?? '';
+    update(['vehicle_fields']); // ✅ এইটা মিসিং ছিল, এই কারণেই UI-তে selection দেখা যাচ্ছিল না
+  }
+
   /// Edit mode toggle — off হলে temp image clear করো
   void toggleEdit() {
     isEditing = !isEditing;
@@ -268,6 +337,16 @@ class ProfileController extends GetxController {
     update(['vehicle_fields']); // vehicle fields rebuild
     update(); // বাকি সব rebuild
   }
+
+  // /// Edit mode toggle — off হলে temp image clear করো
+  // void toggleEdit() {
+  //   isEditing = !isEditing;
+  //   if (!isEditing) {
+  //     tempCroppedImage.value = null;
+  //   }
+  //   update(['vehicle_fields']); // vehicle fields rebuild
+  //   update(); // বাকি সব rebuild
+  // }
 
   @override
   void onClose() {

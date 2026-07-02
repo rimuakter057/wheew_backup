@@ -305,7 +305,11 @@ class UploadDocumentController extends GetxController {
           documents[doc.typeKey.toUpperCase()] = doc;
         }
       } else {
-        _showError(context, response.body);
+        _showError(
+          context,
+          response.statusCode,
+          response.body,
+        );
       }
     } catch (e) {
       CustomSnackbar.error(
@@ -361,7 +365,11 @@ class UploadDocumentController extends GetxController {
 
         context.pop();
       } else {
-        _showError(context, response.body);
+        _showError(
+          context,
+          response.statusCode,
+          response.body,
+        );
       }
     } catch (e) {
       CustomSnackbar.error(
@@ -418,7 +426,11 @@ class UploadDocumentController extends GetxController {
 
         context.pop();
       } else {
-        _showError(context, response.body);
+        _showError(
+          context,
+          response.statusCode,
+          response.body,
+        );
       }
     } catch (e) {
       CustomSnackbar.error(
@@ -430,33 +442,7 @@ class UploadDocumentController extends GetxController {
     }
   }
 
-  // ─────────────────────────────────────────────
-  // ERROR HANDLER (IMPORTANT)
-  // ─────────────────────────────────────────────
 
-  void _showError(BuildContext context, String body) {
-    try {
-      final decoded = jsonDecode(body);
-
-      String msg = 'Something went wrong';
-
-      if (decoded['message'] is List) {
-        msg = (decoded['message'] as List).join('\n');
-      } else if (decoded['message'] is String) {
-        msg = decoded['message'];
-      }
-
-      CustomSnackbar.error(
-        context: context,
-        message: msg,
-      );
-    } catch (_) {
-      CustomSnackbar.error(
-        context: context,
-        message: 'Something went wrong',
-      );
-    }
-  }
 
   // ─────────────────────────────────────────────
   // DATE HELPERS
@@ -499,4 +485,79 @@ class UploadDocumentController extends GetxController {
 
     return const [];
   }
+
+
+
+
+
+
+
+
+
+
+  void _showError(
+      BuildContext context,
+      int statusCode,
+      String body,
+      ) {
+    String message;
+
+    switch (statusCode) {
+      case 400:
+        try {
+          final decoded = jsonDecode(body);
+
+          if (decoded['message'] is List) {
+            message = (decoded['message'] as List).join('\n');
+          } else if (decoded['message'] is String &&
+              decoded['message'].toString().trim().isNotEmpty) {
+            message = decoded['message'];
+          } else {
+            message = 'Invalid request. Please check your information.';
+          }
+        } catch (_) {
+          message = 'Invalid request. Please check your information.';
+        }
+        break;
+
+      case 401:
+        message = 'Unauthorized. Please sign in again.';
+        break;
+
+      case 403:
+        message = 'You do not have permission to perform this action.';
+        break;
+
+      case 404:
+        message = 'The requested resource was not found.';
+        break;
+
+      case 409:
+        message = 'This document already exists.';
+        break;
+
+      case 422:
+        message = 'Please check the entered information and try again.';
+        break;
+
+      case 500:
+        message = 'Internal server error. Please try again later.';
+        break;
+
+      case 502:
+      case 503:
+      case 504:
+        message = 'Server is temporarily unavailable. Please try again later.';
+        break;
+
+      default:
+        message = 'Something went wrong. Please try again.';
+    }
+
+    CustomSnackbar.error(
+      context: context,
+      message: message,
+    );
+  }
+
 }

@@ -37,9 +37,15 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
+
+      final rawIdentifier = authController.licenseController.text.trim();
+
+      // license plate হোক বা nickname — backend-এ পাঠানোর আগে lowercase করে দেওয়া হচ্ছে
+      final identifier = rawIdentifier.toLowerCase();
+
       bool success = await authController.login(
         context: context,
-        identifier: authController.licenseController.text.trim(),
+        identifier: identifier,
         password: authController.passwordController.text.trim(),
         rememberMe: true,
       );

@@ -522,5 +522,7 @@ AppStrings.group:"Group",
   AppStrings.groupCreatedFailed: "Failed to create group",
   AppStrings.downloading: "Downloading...",
   AppStrings.download: "Download",
+   AppStrings.welcomeTitle : 'Your License Plate, Your Chat',
+   AppStrings.welcomeSubtitle : 'Registrati rapidamente e connettiti con un Wheewer ovunque tu vada.',
 
 };
