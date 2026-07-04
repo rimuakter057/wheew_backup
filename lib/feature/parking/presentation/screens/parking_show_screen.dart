@@ -15,29 +15,39 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:platchatapp/utils/toast_message/toast_message.dart';
 
-class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+class ParkingShowScreen extends StatefulWidget {
+  const ParkingShowScreen({super.key});
 
   static const LatLng kInitialMapTarget = LatLng(34.052235, -118.243683);
 
   @override
-  State<MapScreen> createState() => _MapScreenState();
+  State<ParkingShowScreen> createState() => _ParkingShowScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
-  GoogleMapController? _mapController;
-  int _selectedRadiusMeter = 100;
+// class _ParkingShowScreenState extends State<ParkingShowScreen> with WidgetsBindingObserver {
+//
 
-  LatLng _mapCenter = MapScreen.kInitialMapTarget;
+
+class _ParkingShowScreenState extends State<ParkingShowScreen>
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+  GoogleMapController? _mapController;
+  int _selectedRadiusMeter = 300;
+
+  LatLng _mapCenter = ParkingShowScreen.kInitialMapTarget;
   LatLng? _gpsPosition;
   bool _isLocating = true;
   LatLng? _pickedLocation;
   bool _isPickingLocation = false;
-  MapType _selectedMapType = MapType.hybrid; // ✅ নতুন
+  MapType _selectedMapType = MapType.hybrid;
 
   final Set<Marker> _markers = {};
 
   late final ParkingReportController _parkingCtrl;
+
+
+  bool _showLocationPulse = false;
+  late AnimationController _pulseController;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -47,13 +57,24 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
         ? Get.find<ParkingReportController>()
         : Get.put(ParkingReportController());
     mapDebug('screen init → resolve GPS and fetch parking');
+
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat();
+
+
     _initializeMap();
   }
+
+
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _mapController?.dispose();
+    _pulseController.dispose(); // ✅ নতুন
+    _searchController.dispose(); // ✅ নতুন
     super.dispose();
   }
 
@@ -64,7 +85,6 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     }
   }
 
-
   Future<void> _initializeMap() async {
     await _getUserLocation();
 
@@ -73,24 +93,12 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     final location = _gpsPosition;
 
     if (location == null) {
-      mapDebug('No GPS — skipping parking fetch');
+      mapDebug('No GPS — skipping parking flow');
       return;
     }
 
-    await _parkingCtrl.fetchParkingReport(
-      latitude: location.latitude,
-      longitude: location.longitude,
-      radius: _selectedRadiusMeter,
-    );
+    _showParkingConfirmationPopup();
   }
-
-
-
-
-
-
-
-
 
 
 
@@ -178,14 +186,6 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     }
   }
 
-
-  void _toggleParkingPin() {
-    HapticFeedback.mediumImpact();
-    _pickedLocation = null;
-    mapDebug('parking dialog open');
-    _showParkingDialog();
-  }
-
   void _showParkingDialog() {
     _parkingCtrl.reset();
 
@@ -244,12 +244,6 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     );
   }
 
-  // void _startPickingLocation() {
-  //   setState(() => _isPickingLocation = true);
-  //   showCustomSnackBar('Tap on the map to select a location', isError: false);
-  // }
-
-
   void _startPickingLocation() {
     if (!mounted) return;
 
@@ -262,25 +256,6 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
       isError: false,
     );
   }
-
-  // void _onMapTapped(LatLng position) {
-  //   if (!_isPickingLocation) {
-  //     _parkingCtrl.clearSelectedReport();
-  //     return;
-  //   }
-  //   setState(() {
-  //     _pickedLocation = position;
-  //     _isPickingLocation = false;
-  //   });
-  //   HapticFeedback.selectionClick();
-  //   mapDebug(
-  //     'picked location lat=${position.latitude.toStringAsFixed(6)} '
-  //         'lng=${position.longitude.toStringAsFixed(6)}',
-  //   );
-  //   _showParkingDialog();
-  // }
-
-
 
   void _onMapTapped(LatLng position) {
     if (!_isPickingLocation) {
@@ -354,7 +329,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                   key: const ValueKey<Object>('platechat_google_map'),
                   onMapCreated: _onMapCreated,
                   initialCameraPosition: CameraPosition(
-                    target: MapScreen.kInitialMapTarget,
+                    target: ParkingShowScreen.kInitialMapTarget,
                     zoom: 14,
                   ),
                   markers: markers,
@@ -421,8 +396,8 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
 
             /// ── Map Type Dropdown (Modernized) ──────────────────────────────────────
             Positioned(
-              right: ResponsiveHelper.padding(30), // প্যাডিং কিছুটা মডার্ন গ্যাপে আনা হয়েছে
-              top: ResponsiveHelper.padding(80),
+              top: MediaQuery.of(context).padding.top + ResponsiveHelper.padding(72),
+              right: ResponsiveHelper.padding(16),
               child: Container(
                 height: ResponsiveHelper.padding(45), // একটি ফিক্সড ও ক্লিন হাইট
                 decoration: BoxDecoration(
@@ -480,11 +455,10 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                 ),
               ),
             ),
-
             /// ── Radius filter button ──────────────────────────────────────
             Positioned(
               left: ResponsiveHelper.padding(30), // প্যাডিং কিছুটা মডার্ন গ্যাপে আনা হয়েছে
-              top: ResponsiveHelper.padding(80),
+              bottom: ResponsiveHelper.padding(80),
               child: FloatingActionButton(
                 heroTag: 'filterRadiusBtn',
                 backgroundColor: Colors.white,
@@ -494,14 +468,75 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
               ),
             ),
 
-            /// ── Add parking button ────────────────────────────────────────
-            Positioned(
-              right: ResponsiveHelper.padding(24),
-              bottom: ResponsiveHelper.padding(32),
-              child: AddParkingButton(
-                onPressed: _toggleParkingPin,
+
+            if (_showLocationPulse)
+              Positioned(
+                top: MediaQuery.of(context).padding.top + ResponsiveHelper.padding(16),
+                left: ResponsiveHelper.padding(16),
+                right: ResponsiveHelper.padding(80),
+                child: Container(
+                  height: ResponsiveHelper.padding(45),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search parking',
+                      hintStyle: const TextStyle(fontSize: 14, color: Colors.grey),
+                      prefixIcon: const Icon(Icons.search, color: Color(0xFF185FA5), size: 20),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
               ),
-            ),
+
+            if (_showLocationPulse && _gpsPosition != null)
+              IgnorePointer(
+                child: AnimatedBuilder(
+                  animation: _pulseController,
+                  builder: (context, child) {
+                    // 0.0 → 1.0 → 0.0 (breathing effect)
+                    final t = _pulseController.value < 0.5
+                        ? _pulseController.value * 2
+                        : (1.0 - _pulseController.value) * 2;
+
+                    final glowWidth = 6.0 + (t * 14.0); // border পুরুত্ব বাড়বে-কমবে
+                    final glowOpacity = 0.4 + (t * 0.6);
+
+                    return Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: const Color(0xFF185FA5)
+                                .withOpacity(glowOpacity),
+                            width: glowWidth,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF185FA5)
+                                  .withOpacity(glowOpacity * 0.5),
+                              blurRadius: 24,
+                              spreadRadius: 4,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+
           ],
         ),
       ),
@@ -533,13 +568,13 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                     color: Color(0xFF185FA5), size: 26),
               ),
               const SizedBox(height: 12),
-               Text(
-                  AppStrings.locationTurnedOff.tr,
+              Text(
+                AppStrings.locationTurnedOff.tr,
                 style:
                 TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 6),
-               Text(
+              Text(
                 AppStrings.locationOffDesc.tr,
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -569,6 +604,151 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     );
   }
 
+  void _showParkingConfirmationPopup() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24.0), // Extra smooth corners
+          ),
+          elevation: 10,
+          backgroundColor: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 28.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Auto-wrap content
+              children: [
+                // --- Premium Minimal Icon ---
+                Container(
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.local_parking_rounded,
+                    size: 44,
+                    color: Colors.blue.shade700,
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // --- Bold Title ---
+                const Text(
+                  'Parking Confirmation',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1A1A1A), // Dark elegant black
+                    letterSpacing: -0.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+
+                // --- Descriptive Subtitle ---
+                Text(
+                  'Are you leaving a parking spot right now?',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.grey.shade600,
+                    height: 1.4,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 32),
+
+                // --- Modern Action Buttons ---
+                Row(
+                  children: [
+                    // No Button (Will trigger API fetch)
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          _onParkingNo(); // 🟢 API Call trigger
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          side: BorderSide(color: Colors.grey.shade300, width: 1.5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: Text(
+                          'No',
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+
+                    // Yes Button (Will just zoom map)
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          _onParkingYes(); // 🟢 Map camera zoom trigger
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue.shade600,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: const Text(
+                          'Yes',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _onParkingNo() {
+    final location = _gpsPosition;
+    if (location == null) return;
+    setState(() {
+      _showLocationPulse = true; // ✅ নতুন — blue pulse effect চালু হবে
+    });
+
+    // ✅ No selected → ekhon API call suru hobe
+    _parkingCtrl.fetchParkingReport(
+      latitude: location.latitude,
+      longitude: location.longitude,
+      radius: _selectedRadiusMeter,
+    );
+  }
+
+  void _onParkingYes() {
+    // ✅ Yes selected → kono API call na, just current location e thakbe
+    final location = _gpsPosition;
+    if (location == null) return;
+
+    _mapController?.animateCamera(
+      CameraUpdate.newLatLngZoom(location, 17),
+    );
+  }
+
 
 
 
@@ -591,6 +771,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   }
 
 
+
   Future<void> _applyRadiusFilter() async {
     final location = _gpsPosition ?? _mapCenter;
 
@@ -606,4 +787,9 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
       isError: false,
     );
   }
-}
+
+  }
+
+
+
+

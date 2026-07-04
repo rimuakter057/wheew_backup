@@ -28,4 +28,5 @@ class RoutePath {
   static const vehicle = '/vehicle';
   static const notification = '/notification';
   static const faq = '/faq';
+  static const parkingShow = '/parkingShowScreen';
 }

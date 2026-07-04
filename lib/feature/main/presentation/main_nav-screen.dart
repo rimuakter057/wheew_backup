@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
 import 'package:platchatapp/feature/notification/presentation/screens/notification_screen.dart';
+import 'package:platchatapp/feature/parking/presentation/screens/parking_show_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_nav_screen.dart';
 import 'package:platchatapp/feature/scan/presentation/screens/scan_screen.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -39,10 +40,9 @@ class _MainNavScreenState extends State<MainNavScreen> {
        // return const SearchListScreen();
         return NotificationScreen();
       case 2:
-        return ScanScreen();
+       // return ScanScreen();
+        return ParkingShowScreen();
 
-
-       // return Scaffold(backgroundColor: Colors.white,);
       case 3:
         return const MapScreen();
       case 4:
@@ -135,7 +135,13 @@ class _AppBottomNav extends StatelessWidget {
               ),
 
 
-
+              // _NavItem(
+              //   icon: AssetsPath.notificationNav,
+              //   label:AppStrings.notification.tr,
+              //   index: 1,
+              //   currentIndex: currentIndex,
+              //   onTap: onTap,
+              // ),
 
               _NavItem(
                 icon: AssetsPath.mapNav,
@@ -237,59 +243,7 @@ class _NavItem extends StatelessWidget {
   }
 }
 
-// ─── Center Scan Nav Item ─────────────────────────────────────────────────────
-// class ScanNavItem extends StatelessWidget {
-//   final int index;
-//   final int currentIndex;
-//   final ValueChanged<int> onTap;
-//
-//   const ScanNavItem({
-//     super.key,
-//     required this.index,
-//     required this.currentIndex,
-//     required this.onTap,
-//   });
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final bool isActive = index == currentIndex;
-//
-//     return Expanded(
-//       child: GestureDetector(
-//         onTap: () => onTap(index),
-//         behavior: HitTestBehavior.opaque,
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             SvgPicture.asset(
-//               AssetsPath.scanNav,
-//               width: ResponsiveHelper.iconSize(28),
-//               height: ResponsiveHelper.iconSize(28),
-//               colorFilter: ColorFilter.mode(
-//                 isActive
-//                     ? const Color(0xFF3D72E8)
-//                     : const Color(0xFF9EA8BB),
-//                 BlendMode.srcIn,
-//               ),
-//             ),
-//             SizedBox(height: ResponsiveHelper.spacing(2)),
-//             Text(
-//               'scan'.tr,
-//               style: GoogleFonts.poppins(
-//                 fontSize: ResponsiveHelper.fontSize(10),
-//                 fontWeight:
-//                 isActive ? FontWeight.w600 : FontWeight.w400,
-//                 color: isActive
-//                     ? const Color(0xFF3D72E8)
-//                     : const Color(0xFF9EA8BB),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+
 
 
 class ScanNavItem extends StatelessWidget {
@@ -323,20 +277,13 @@ class ScanNavItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SvgPicture.asset(
-              AssetsPath.scanNav,
+             "assets/icons/p_nav.svg",
               //AssetsPath.pNav,
               width: ResponsiveHelper.iconSize(60),
               height: ResponsiveHelper.iconSize(60),
             ),
              SizedBox(height: ResponsiveHelper.spacing(6)),
-            // Text(
-            //   'scan'.tr,
-            //   style: GoogleFonts.poppins(
-            //     fontSize: ResponsiveHelper.fontSize(10),
-            //     fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-            //     color: color,
-            //   ),
-            // ),
+
           ],
         ),
       ),

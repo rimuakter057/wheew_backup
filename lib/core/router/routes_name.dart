@@ -28,5 +28,6 @@ class RouteName {
   static const vehicle = 'Vehicle';
   static const notification = 'notification';
   static const faq = 'faq';
+  static const parkingShow = 'parkingShow';
 
 }
