@@ -269,58 +269,7 @@ class ProfileController extends GetxController {
     update();
   }
 
-  // /// Profile update — avatar + vehicle fields একসাথে PATCH /users
-  // Future<void> updateProfile() async {
-  //   final hasImage = tempCroppedImage.value != null;
-  //   final hasVehicleData =
-  //       vehicleTypeController.text.isNotEmpty ||
-  //           vehicleModelController.text.isNotEmpty ||
-  //           vehicleColorController.text.isNotEmpty;
-  //
-  //   debugPrint('🔄 updateProfile called');
-  //   debugPrint('📸 hasImage: $hasImage');
-  //   debugPrint('🚗 hasVehicleData: $hasVehicleData');
-  //   debugPrint('🚗 vehicleType: ${vehicleTypeController.text}');
-  //   debugPrint('🚗 vehicleModel: ${vehicleModelController.text}');
-  //   debugPrint('🚗 vehicleColor: ${vehicleColorController.text}');
-  //
-  //   if (!hasImage && !hasVehicleData) {
-  //     debugPrint('⚠️ Nothing to update — returning');
-  //     showErrorToast(AppStrings.nothingToUpdate.tr);
-  //     return;
-  //   }
-  //
-  //   isLoading = true;
-  //   update();
-  //
-  //   try {
-  //     final res = await profileRepository.updateAvatar(
-  //       imageFile: tempCroppedImage.value,
-  //       vehicleType: vehicleTypeController.text,
-  //       vehicleModel: vehicleModelController.text,
-  //       vehicleColor: vehicleColorController.text,
-  //     );
-  //
-  //     debugPrint('📡 updateProfile statusCode: ${res.statusCode}');
-  //     debugPrint('📡 updateProfile body: ${res.body}');
-  //
-  //     if (res.statusCode == 200 || res.statusCode == 201) {
-  //       tempCroppedImage.value = null;
-  //       isEditing = false;
-  //       showSuccessToast(AppStrings.profileUpdatedSuccessfully.tr);
-  //       await fetchProfileFromApi();
-  //     } else {
-  //       debugPrint('❌ Update failed: ${res.statusCode} — ${res.body}');
-  //       showErrorToast(AppStrings.failedToUpdateProfile.tr);
-  //     }
-  //   } catch (e) {
-  //     debugPrint('❌ updateProfile exception: $e');
-  //     showErrorToast(AppStrings.somethingWrong.tr);
-  //   }
-  //
-  //   isLoading = false;
-  //   update();
-  // }
+
 
 
   void setVehicleType(String? value) {

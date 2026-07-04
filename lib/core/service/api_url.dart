@@ -1,6 +1,6 @@
 class ApiUrl {
 
-  static const appUrl="https://yourapp.com/invite";
+  static const appUrl="https://play.google.com/store/apps/details?id=me.platechat.app&pcampaignid=web_share";
 
   // Base URL - Replace with your actual API base URL
 

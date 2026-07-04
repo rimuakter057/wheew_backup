@@ -2,6 +2,7 @@
 import 'package:platchatapp/utils/assets_path/assets_path.dart'; // adjust import path
 
 enum VehicleType {
+  cityCar,
   van,
   suv,
   truck,
@@ -10,11 +11,12 @@ enum VehicleType {
   motorcycle,
   pickup,
   microCar,
-  cityCar,
   eScooter;
 
   String get displayName {
     switch (this) {
+      case VehicleType.cityCar:
+        return 'City car';
       case VehicleType.van:
         return 'Van';
       case VehicleType.suv:
@@ -31,8 +33,6 @@ enum VehicleType {
         return 'Pickup';
       case VehicleType.microCar:
         return 'Micro car';
-      case VehicleType.cityCar:
-        return 'City car';
       case VehicleType.eScooter:
         return 'e-scooter';
     }
@@ -40,6 +40,9 @@ enum VehicleType {
 
   String get backendKey {
     switch (this) {
+      case VehicleType.cityCar:
+        return 'CITY_CAR';
+
       case VehicleType.van:
         return 'VAN';
       case VehicleType.suv:
@@ -56,8 +59,6 @@ enum VehicleType {
         return 'PICKUP';
       case VehicleType.microCar:
         return 'MICRO_CAR';
-      case VehicleType.cityCar:
-        return 'CITY_CAR';
       case VehicleType.eScooter:
         return 'E_SCOOTER';
     }
@@ -66,6 +67,9 @@ enum VehicleType {
   /// UI icon for dropdown
   String get icon {
     switch (this) {
+      case VehicleType.cityCar:
+        return AssetsPath.cityCar;
+
       case VehicleType.van:
         return AssetsPath.van;
       case VehicleType.suv:
@@ -82,8 +86,6 @@ enum VehicleType {
         return AssetsPath.pickup;
       case VehicleType.microCar:
         return AssetsPath.microCar;
-      case VehicleType.cityCar:
-        return AssetsPath.cityCar;
       case VehicleType.eScooter:
         return AssetsPath.eScooter;
     }

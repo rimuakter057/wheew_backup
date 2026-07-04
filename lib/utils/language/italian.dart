@@ -558,6 +558,6 @@ final Map<String, String> italian = {
   AppStrings.groupCreatedSuccess: "Gruppo creato con successo",
   AppStrings.groupCreatedFailed: "Creazione del gruppo fallita",
   AppStrings.welcomeTitle : 'La tua targa, la tua Chat',
-  AppStrings.welcomeSubtitle : 'Register quickly and connect with a wheewer wherever you go',
+  AppStrings.welcomeSubtitle : 'Registrati rapidamente e connettiti con un Wheewer ovunque tu vada.',
 
 };

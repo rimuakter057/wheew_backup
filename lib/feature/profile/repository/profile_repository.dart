@@ -43,32 +43,6 @@ class ProfileRepository {
     return await ApiClient.getData(uri: ApiUrl.profile);
   }
 
-  /// ✅ Update ONLY avatar
-  // Future<http.Response> updateAvatar({required File imageFile}) async {
-  //   final multipartFile = await http.MultipartFile.fromPath(
-  //     'avatar',
-  //     imageFile.path,
-  //     contentType: MediaType('image', 'jpeg'),
-  //   );
-  //
-  //   return await ApiClient.multipartRequest(
-  //     uri: ApiUrl.updateProfile,
-  //     method: 'PATCH',
-  //     files: [multipartFile],
-  //   );
-  // }
-  //
-  //
-  //
-
-
-
-
-
-
-
-
-
   /// ✅ Update avatar + vehicle fields
   Future<http.Response> updateAvatar({
     File? imageFile,
@@ -87,15 +61,21 @@ class ProfileRepository {
       ));
     }
 
-    if (vehicleType != null) fields['vehicle_type'] = vehicleType;
-    if (vehicleModel != null) fields['vehicle_model'] = vehicleModel;
-    if (vehicleColor != null) fields['vehicle_color'] = vehicleColor;
+    if (vehicleType != null && vehicleType.isNotEmpty) {
+      fields['vehicle_type'] = vehicleType;
+    }
+    if (vehicleModel != null && vehicleModel.isNotEmpty) {
+      fields['vehicle_model'] = vehicleModel;
+    }
+    if (vehicleColor != null && vehicleColor.isNotEmpty) {
+      fields['vehicle_color'] = vehicleColor;
+    }
 
     return await ApiClient.multipartRequest(
       uri: ApiUrl.updateProfile,
       method: 'PATCH',
       files: files,
-      fields: fields, // ✅ ApiClient এ fields support থাকতে হবে
+      fields: fields,
     );
   }
 

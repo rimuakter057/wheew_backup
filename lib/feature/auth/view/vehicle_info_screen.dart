@@ -22,13 +22,15 @@ class VehicleInfoScreen extends StatefulWidget {
 class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
   late final VehicleController controller;
 
+  // VehicleColorPicker widget-এর সাথে হুবহু মিল রেখে কালার লিস্ট
   final List<Map<String, dynamic>> colorOptions = [
-    {'name': 'Bianco', 'color': const Color(0xFFF4F4F2)},
-    {'name': 'Nero', 'color': const Color(0xFF1B1B1D)},
-    {'name': 'Grigio', 'color': const Color(0xFF6E7074)},
-    {'name': 'Blu', 'color': const Color(0xFF2C3E5C)},
-    {'name': 'Rosso', 'color': const Color(0xFFB11724)},
-    {'name': 'Bianco2', 'color': Colors.white},
+    {'name': 'Bianco', 'color': AppColors.bianco},
+    {'name': 'Nero', 'color':  AppColors.nero},
+    {'name': 'Grigio / Argento', 'color':  AppColors.grigioArgento},
+    {'name': 'Blu', 'color':  AppColors.blu},
+    {'name': 'Rosso', 'color': AppColors.rosso},
+    {'name': 'Verde', 'color':  AppColors.verde},
+    {'name': 'Marrone / Bronzo', 'color':  AppColors.marroneBronzo},
   ];
 
   @override
@@ -41,6 +43,16 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
   void dispose() {
     Get.delete<VehicleController>(force: true); // ✅ এটাই মূল fix
     super.dispose();
+  }
+
+  // ৩D ইফেক্টের গভীরতা বাড়ানোর জন্য বেস কালারকে ডার্ক করার হেল্পার মেথড
+  Color _getDarkerShade(Color color) {
+    // সাদা বা হালকা কালার হলে একটু আলাদা গ্রে-শেড ছায়া দেবো
+    if (color.computeLuminance() > 0.8) {
+      return const Color(0xFFB0B0B0);
+    }
+    // অন্য কালারগুলোর ক্ষেত্রে কালারটিকে ২৫% ডার্ক বা ব্ল্যাকিশ করা হবে ছায়ার জন্য
+    return Color.lerp(color, Colors.black, 0.25)!;
   }
 
   @override
@@ -152,159 +164,29 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
                 ),
                 SizedBox(height: ResponsiveHelper.height(30)),
 
-                /// TYPE DROPDOWN (Professional Modern UI)
-                /// TYPE DROPDOWN (Professional Box UI with controlled width)
-                /// TYPE DROPDOWN (Controlled Width & Professional UI)
-                /// TYPE DROPDOWN (Fixed Menu Width 200)
-                // Obx(() => DropdownButtonFormField<VehicleType>(
-                //   value: controller.selectedType.value,
-                //   hint: Text(
-                //     "Select Vehicle Type",
-                //     style: TextStyle(
-                //       fontSize: ResponsiveHelper.fontSize(14),
-                //       color: Colors.grey[600],
-                //     ),
-                //   ),
-                //   isExpanded: true, // এটি ইনপুট বক্সের ভেতরের টেক্সটকে ফুল উইডথ দেবে
-                //   icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.grey, size: 24),
-                //   dropdownColor: Colors.white,
-                //   menuMaxHeight: 300,
-                //   borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(14)),
-                //   decoration: customInputDecoration(
-                //     labelText: AppStrings.vehicleType.tr,
-                //   ),
-                //   style: TextStyle(
-                //     fontSize: ResponsiveHelper.fontSize(14),
-                //     color: Colors.black87,
-                //   ),
-                //   selectedItemBuilder: (context) {
-                //     return controller.vehicleTypes.map((type) {
-                //       return Row(
-                //         children: [
-                //           SvgPicture.asset(
-                //             type.icon,
-                //             width: 22,
-                //             height: 22,
-                //             colorFilter: const ColorFilter.mode(
-                //                 AppColors.black, BlendMode.srcIn),
-                //           ),
-                //           SizedBox(width: ResponsiveHelper.width(12)),
-                //           Text(
-                //             type.displayName,
-                //             style: TextStyle(
-                //               fontSize: ResponsiveHelper.fontSize(14),
-                //               color: Colors.black87,
-                //               fontWeight: FontWeight.w500,
-                //             ),
-                //           ),
-                //         ],
-                //       );
-                //     }).toList();
-                //   },
-                //   items: controller.vehicleTypes.map((type) {
-                //     return DropdownMenuItem<VehicleType>(
-                //       value: type,
-                //       child: Row(
-                //         mainAxisSize: MainAxisSize.min,
-                //         children: [
-                //           Container(
-                //
-                //             padding: const EdgeInsets.all(8),
-                //             decoration: BoxDecoration(
-                //               color: Colors.grey[100],
-                //               borderRadius: BorderRadius.circular(10),
-                //             ),
-                //             child: SvgPicture.asset(
-                //               type.icon,
-                //               width: 20,
-                //               height: 20,
-                //               colorFilter: const ColorFilter.mode(
-                //                   Colors.black87, BlendMode.srcIn),
-                //             ),
-                //           ),
-                //           SizedBox(width: ResponsiveHelper.width(12)),
-                //           Expanded(
-                //             child: Text(
-                //               type.displayName,
-                //               style: TextStyle(
-                //                 fontSize: ResponsiveHelper.fontSize(14),
-                //                 fontWeight: FontWeight.w500,
-                //                 color: Colors.black87,
-                //               ),
-                //               maxLines: 1,
-                //               overflow: TextOverflow.ellipsis,
-                //             ),
-                //           ),
-                //         ],
-                //       ),
-                //     );
-                //   }).toList(),
-                //   onChanged: (value) {
-                //     if (value != null) controller.selectedType.value = value;
-                //   },
-                // )),
-
-
-              Obx(
-                    () => PopupMenuButton<VehicleType>(
-                      offset: const Offset(120, 0), // ডানে সরাবে
-                  constraints: const BoxConstraints(
-                    minWidth: 200,
-                    maxWidth: 200,
-                  ),
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  onSelected: (value) {
-                    controller.selectedType.value = value;
-                  },
-                  itemBuilder: (context) {
-                    return controller.vehicleTypes.map((type) {
-                      return PopupMenuItem<VehicleType>(
-                        value: type,
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              type.icon,
-                              width: 20,
-                              height: 20,
-                              colorFilter: const ColorFilter.mode(
-                                Colors.black87,
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                type.displayName,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList();
-                  },
-                  child: InputDecorator(
-                    decoration: customInputDecoration(
-                      labelText: AppStrings.vehicleType.tr,
+                /// TYPE DROPDOWN
+                Obx(
+                      () => PopupMenuButton<VehicleType>(
+                    offset: const Offset(120, 0), // ডানে সরাবে
+                    constraints: const BoxConstraints(
+                      minWidth: 200,
+                      maxWidth: 200,
                     ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: controller.selectedType.value == null
-                              ? Text(
-                            "Select Vehicle Type",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: ResponsiveHelper.fontSize(14),
-                            ),
-                          )
-                              : Row(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    onSelected: (value) {
+                      controller.selectedType.value = value;
+                    },
+                    itemBuilder: (context) {
+                      return controller.vehicleTypes.map((type) {
+                        return PopupMenuItem<VehicleType>(
+                          value: type,
+                          child: Row(
                             children: [
                               SvgPicture.asset(
-                                controller.selectedType.value!.icon,
+                                type.icon,
                                 width: 20,
                                 height: 20,
                                 colorFilter: const ColorFilter.mode(
@@ -315,34 +197,72 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
-                                  controller.selectedType.value!.displayName,
+                                  type.displayName,
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: ResponsiveHelper.fontSize(14),
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.black
-                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        const Icon(Icons.keyboard_arrow_down_rounded),
-                      ],
+                        );
+                      }).toList();
+                    },
+                    child: InputDecorator(
+                      decoration: customInputDecoration(
+                        labelText: AppStrings.vehicleType.tr,
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: controller.selectedType.value == null
+                                ? Text(
+                              "Select Vehicle Type",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: ResponsiveHelper.fontSize(14),
+                              ),
+                            )
+                                : Row(
+                              children: [
+                                SvgPicture.asset(
+                                  controller.selectedType.value!.icon,
+                                  width: 20,
+                                  height: 20,
+                                  colorFilter: const ColorFilter.mode(
+                                    Colors.black87,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    controller.selectedType.value!.displayName,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: ResponsiveHelper.fontSize(14),
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.black,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.keyboard_arrow_down_rounded),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
 
                 SizedBox(height: ResponsiveHelper.spacing(20)),
 
                 /// MODEL
                 Obx(
                       () => PopupMenuButton<String>(
-                        offset: const Offset(150, 0),
-                    constraints:  BoxConstraints(
-                      minWidth:  ResponsiveHelper.height(200),
-                      maxWidth:  ResponsiveHelper.width(220),
+                    offset: const Offset(150, 0),
+                    constraints: BoxConstraints(
+                      minWidth: ResponsiveHelper.height(200),
+                      maxWidth: ResponsiveHelper.width(220),
                       maxHeight: ResponsiveHelper.height(450),
                       minHeight: ResponsiveHelper.height(350),
                     ),
@@ -352,7 +272,6 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
                     ),
                     onSelected: (value) {
                       controller.selectedVehicleModel.value = value;
-
                     },
                     itemBuilder: (context) {
                       return vehicleModels.map((model) {
@@ -398,7 +317,7 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
 
                 SizedBox(height: ResponsiveHelper.spacing(20)),
 
-                /// COLOR CHIPS
+                /// COLOR CHIPS (Glossy 3D Circle Design — VehicleColorPicker এর মতো)
                 Obx(() => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -411,11 +330,14 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
                     ),
                     SizedBox(height: ResponsiveHelper.height(12)),
                     Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
+                      spacing: 14,
+                      runSpacing: 14,
                       children: colorOptions.map((c) {
                         final bool isSelected =
                             controller.selectedColor.value == c['name'];
+                        // সিলেক্ট করা কালারেরই ডিপ শেড — বর্ডার/গ্লো কালার হিসেবে ব্যবহার হবে
+                        final Color selectionColor =
+                        _getDarkerShade(c['color']);
                         return GestureDetector(
                           onTap: () =>
                           controller.selectedColor.value = c['name'],
@@ -423,38 +345,83 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
                             message: c['name'],
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
-                              width: 44,
-                              height: 44,
+                              width:ResponsiveHelper.iconSize(38),
+                              height: ResponsiveHelper.iconSize(38),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: c['color'],
+                                // সিলেকশন হাইলাইট বর্ডার এবং গ্লো শ্যাডো (নিজের কালারের ডিপ শেড)
                                 border: Border.all(
                                   color: isSelected
-                                      ? AppColors.blue
-                                      : Colors.grey.shade300,
-                                  width: isSelected ? 3 : 1,
+                                      ? selectionColor
+                                      : Colors.transparent,
+                                  width: isSelected ?1.5 : 0,
                                 ),
                                 boxShadow: isSelected
                                     ? [
                                   BoxShadow(
-                                    color: AppColors.blue
-                                        .withOpacity(0.3),
-                                    blurRadius: 6,
-                                    spreadRadius: 1,
-                                  )
+                                    color: selectionColor.withOpacity(0.4),
+                                    blurRadius: 8,
+                                    spreadRadius: 2,
+                                  ),
                                 ]
-                                    : [],
+                                    : [
+                                  // বাস্তবসম্মত ৩D আউটার শ্যাডো
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
-                              child: isSelected
-                                  ? Icon(
-                                Icons.check,
-                                color: c['name'] == 'Bianco' ||
-                                    c['name'] == 'Bianco2'
-                                    ? AppColors.blue
-                                    : Colors.white,
-                                size: 20,
-                              )
-                                  : null,
+                              child: ClipOval(
+                                child: Stack(
+                                  children: [
+                                    // ১. ৩D বেস শেডিং (Radial Gradient)
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        gradient: RadialGradient(
+                                          colors: [
+                                            c['color'],
+                                            _getDarkerShade(c['color']),
+                                          ],
+                                          center: const Alignment(-0.25, -0.25),
+                                          radius: 0.85,
+                                        ),
+                                      ),
+                                    ),
+
+                                    // ২. গ্লসি বা গ্লাস রিফ্লেকশন লেয়ার
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Colors.white.withOpacity(0.55),
+                                            Colors.white.withOpacity(0.0),
+                                            Colors.black.withOpacity(0.15),
+                                          ],
+                                          stops: const [0.0, 0.45, 1.0],
+                                        ),
+                                      ),
+                                    ),
+
+                                    // ৩. সিলেক্টেড চেক আইকন লেয়ার
+                                    if (isSelected)
+                                      Positioned.fill(
+                                        child: Icon(
+                                          Icons.check,
+                                          // হালকা/সাদা কালারের ক্ষেত্রে ডিপ শেড, নাহলে সাদা
+                                          color: c['color'].computeLuminance() >
+                                              0.6
+                                              ? selectionColor
+                                              : Colors.white,
+                                          size: 20,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         );

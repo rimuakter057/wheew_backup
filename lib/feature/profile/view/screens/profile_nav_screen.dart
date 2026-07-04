@@ -1081,32 +1081,39 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
                             SizedBox(width: ResponsiveHelper.width(10)),
 
                             /// 📍 Location
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                CustomImage(
-                                  imageSrc: "assets/icons/location.svg",
-                                  width: ResponsiveHelper.iconSize(14),
-                                  height: ResponsiveHelper.iconSize(14),
-                                  imageColor: Colors.white,
-                                ),
+                            Expanded(
+                              child: Row(
 
-                                SizedBox(width: ResponsiveHelper.width(4)),
-
-                                Text(
-                                      () {
-                                    final location = [
-                                      user?.city,
-                                      user?.country,
-                                    ].where((e) => e != null && e.isNotEmpty).join(", ");
-
-                                    return location.isEmpty ? "N/A" : location;
-                                  }(),
-                                  style: context.bodyMedium.copyWith(
-                                    color: AppColors.white,
+                                children: [
+                                  CustomImage(
+                                    imageSrc: "assets/icons/location.svg",
+                                    width: ResponsiveHelper.iconSize(14),
+                                    height: ResponsiveHelper.iconSize(14),
+                                    imageColor: Colors.white,
                                   ),
-                                ),
-                              ],
+
+                                  SizedBox(width: ResponsiveHelper.width(4)),
+
+                                  Expanded(
+                                    child: Text(
+                                          () {
+                                        final location = [
+                                          user?.city,
+                                          user?.country,
+                                        ].where((e) => e != null && e.isNotEmpty).join(", ");
+
+                                        return location.isEmpty ? "N/A" : location;
+                                      }(),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: context.bodyMedium.copyWith(
+                                        color: AppColors.white,
+
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),

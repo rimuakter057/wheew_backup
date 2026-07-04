@@ -63,13 +63,32 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
       _initializeMap();
     }
   }
+  //
+  // Future<void> _initializeMap() async {
+  //   await _getUserLocation();
+  //   final location = _gpsPosition;
+  //
+  //   if (location == null) {
+  //     mapDebug('No GPS — skipping parking fetch or using default');
+  //     return;
+  //   }
+  //
+  //   await _parkingCtrl.fetchParkingReport(
+  //     latitude: location.latitude,
+  //     longitude: location.longitude,
+  //     radius: _selectedRadiusMeter,
+  //   );
+  // }
 
   Future<void> _initializeMap() async {
     await _getUserLocation();
+
+    if (!mounted) return;
+
     final location = _gpsPosition;
 
     if (location == null) {
-      mapDebug('No GPS — skipping parking fetch or using default');
+      mapDebug('No GPS — skipping parking fetch');
       return;
     }
 
@@ -80,26 +99,101 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     );
   }
 
+
+
+  // Future<void> _getUserLocation() async {
+  //   mapDebug('location: start');
+  //   try {
+  //     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  //     if (!serviceEnabled) {
+  //       mapDebug('location: services disabled → stop');
+  //       setState(() => _isLocating = false);
+  //       showCustomSnackBar('Please enable location service', isError: true);
+  //       return;
+  //     }
+  //
+  //     var permission = await Geolocator.checkPermission();
+  //     if (permission == LocationPermission.denied) {
+  //       permission = await Geolocator.requestPermission();
+  //     }
+  //     if (permission == LocationPermission.denied ||
+  //         permission == LocationPermission.deniedForever) {
+  //       mapDebug('location: permission denied ($permission)');
+  //       setState(() => _isLocating = false);
+  //       showCustomSnackBar('Location permission denied', isError: true);
+  //       return;
+  //     }
+  //
+  //     final position = await Geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.high,
+  //     );
+  //
+  //     final latLng = LatLng(position.latitude, position.longitude);
+  //     mapDebug(
+  //       'location: GPS ok lat=${position.latitude.toStringAsFixed(6)} '
+  //           'lng=${position.longitude.toStringAsFixed(6)} '
+  //           'accuracy=${position.accuracy.toStringAsFixed(1)}m',
+  //     );
+  //
+  //     setState(() {
+  //       _gpsPosition = latLng;
+  //       _mapCenter = latLng;
+  //       _isLocating = false;
+  //     });
+  //
+  //     await _mapController?.animateCamera(
+  //       CameraUpdate.newLatLngZoom(latLng, 15),
+  //     );
+  //     mapDebug('location: camera animated to GPS');
+  //   } catch (e, st) {
+  //     mapDebug('location: error $e');
+  //     mapDebug('location: stack $st');
+  //     setState(() => _isLocating = false);
+  //   }
+  // }
+
+
+
+
+
+
+
   Future<void> _getUserLocation() async {
     mapDebug('location: start');
+
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
+      if (!mounted) return;
+
       if (!serviceEnabled) {
-        mapDebug('location: services disabled → stop');
         setState(() => _isLocating = false);
-        showCustomSnackBar('Please enable location service', isError: true);
+
+        showCustomSnackBar(
+          'Please enable location service',
+          isError: true,
+        );
         return;
       }
 
       var permission = await Geolocator.checkPermission();
+
+      if (!mounted) return;
+
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
+
+        if (!mounted) return;
       }
+
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
-        mapDebug('location: permission denied ($permission)');
         setState(() => _isLocating = false);
-        showCustomSnackBar('Location permission denied', isError: true);
+
+        showCustomSnackBar(
+          'Location permission denied',
+          isError: true,
+        );
         return;
       }
 
@@ -107,11 +201,17 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
         desiredAccuracy: LocationAccuracy.high,
       );
 
-      final latLng = LatLng(position.latitude, position.longitude);
+      if (!mounted) return;
+
+      final latLng = LatLng(
+        position.latitude,
+        position.longitude,
+      );
+
       mapDebug(
-        'location: GPS ok lat=${position.latitude.toStringAsFixed(6)} '
-            'lng=${position.longitude.toStringAsFixed(6)} '
-            'accuracy=${position.accuracy.toStringAsFixed(1)}m',
+        'location: GPS ok '
+            'lat=${position.latitude.toStringAsFixed(6)} '
+            'lng=${position.longitude.toStringAsFixed(6)}',
       );
 
       setState(() {
@@ -120,16 +220,28 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
         _isLocating = false;
       });
 
-      await _mapController?.animateCamera(
-        CameraUpdate.newLatLngZoom(latLng, 15),
-      );
-      mapDebug('location: camera animated to GPS');
+      if (_mapController != null) {
+        await _mapController!.animateCamera(
+          CameraUpdate.newLatLngZoom(
+            latLng,
+            15,
+          ),
+        );
+      }
+
+      mapDebug('location: camera animated');
     } catch (e, st) {
       mapDebug('location: error $e');
       mapDebug('location: stack $st');
-      setState(() => _isLocating = false);
+
+      if (!mounted) return;
+
+      setState(() {
+        _isLocating = false;
+      });
     }
   }
+
 
   void _toggleParkingPin() {
     HapticFeedback.mediumImpact();
@@ -196,25 +308,65 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     );
   }
 
+  // void _startPickingLocation() {
+  //   setState(() => _isPickingLocation = true);
+  //   showCustomSnackBar('Tap on the map to select a location', isError: false);
+  // }
+
+
   void _startPickingLocation() {
-    setState(() => _isPickingLocation = true);
-    showCustomSnackBar('Tap on the map to select a location', isError: false);
+    if (!mounted) return;
+
+    setState(() {
+      _isPickingLocation = true;
+    });
+
+    showCustomSnackBar(
+      'Tap on the map to select a location',
+      isError: false,
+    );
   }
+
+  // void _onMapTapped(LatLng position) {
+  //   if (!_isPickingLocation) {
+  //     _parkingCtrl.clearSelectedReport();
+  //     return;
+  //   }
+  //   setState(() {
+  //     _pickedLocation = position;
+  //     _isPickingLocation = false;
+  //   });
+  //   HapticFeedback.selectionClick();
+  //   mapDebug(
+  //     'picked location lat=${position.latitude.toStringAsFixed(6)} '
+  //         'lng=${position.longitude.toStringAsFixed(6)}',
+  //   );
+  //   _showParkingDialog();
+  // }
+
+
 
   void _onMapTapped(LatLng position) {
     if (!_isPickingLocation) {
       _parkingCtrl.clearSelectedReport();
       return;
     }
+
+    if (!mounted) return;
+
     setState(() {
       _pickedLocation = position;
       _isPickingLocation = false;
     });
+
     HapticFeedback.selectionClick();
+
     mapDebug(
-      'picked location lat=${position.latitude.toStringAsFixed(6)} '
+      'picked location '
+          'lat=${position.latitude.toStringAsFixed(6)} '
           'lng=${position.longitude.toStringAsFixed(6)}',
     );
+
     _showParkingDialog();
   }
 
@@ -481,17 +633,38 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     );
   }
 
+  // void _showRadiusFilterSheet() {
+  //   HapticFeedback.lightImpact();
+  //   RadiusFilterSheet.show(
+  //     context,
+  //     initialRadiusMeter: _selectedRadiusMeter,
+  //     onApply: (radiusMeter) {
+  //       setState(() => _selectedRadiusMeter = radiusMeter);
+  //       _applyRadiusFilter();
+  //     },
+  //   );
+  // }
+
+
+
   void _showRadiusFilterSheet() {
     HapticFeedback.lightImpact();
+
     RadiusFilterSheet.show(
       context,
       initialRadiusMeter: _selectedRadiusMeter,
       onApply: (radiusMeter) {
-        setState(() => _selectedRadiusMeter = radiusMeter);
+        if (!mounted) return;
+
+        setState(() {
+          _selectedRadiusMeter = radiusMeter;
+        });
+
         _applyRadiusFilter();
       },
     );
   }
+
 
   Future<void> _applyRadiusFilter() async {
     final location = _gpsPosition ?? _mapCenter;

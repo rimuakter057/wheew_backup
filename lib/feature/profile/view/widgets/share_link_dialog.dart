@@ -19,7 +19,7 @@ class ShareLinkDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ResponsiveHelper.init(context);
+ 
 
     return Dialog(
       insetPadding: ResponsiveHelper.symmetric(
@@ -37,164 +37,166 @@ class ShareLinkDialog extends StatelessWidget {
             ? ResponsiveHelper.maxContentWidth
             : double.infinity,
         padding: ResponsiveHelper.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            /// Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'share_link'.tr,
-                  style: context.bodyLarge?.copyWith(
-                    color: AppColors.primaryText,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(
-                    Icons.close,
-                    size: ResponsiveHelper.iconSize(24),
-                    color: AppColors.secondaryText,
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: ResponsiveHelper.spacing(16)),
-
-            /// Share Icon
-            Container(
-              width: ResponsiveHelper.width(80),
-              height: ResponsiveHelper.height(80),
-              decoration: const BoxDecoration(
-                color: AppColors.softBrandColor, // হালকা ব্র্যান্ড কালার ব্যবহার করা হয়েছে
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.share_rounded,
-                size: ResponsiveHelper.iconSize(40),
-                color: AppColors.blue, // মেইন ব্লু কালার
-              ),
-            ),
-
-            SizedBox(height: ResponsiveHelper.spacing(16)),
-
-            /// Title
-            Text(
-              'share_with_friends'.tr,
-              style: context.bodyLarge?.copyWith(
-                color: AppColors.primaryText,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            SizedBox(height: ResponsiveHelper.spacing(8)),
-
-            /// Subtitle
-            Text(
-              'share_this_link_invite_friends'.tr,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: ResponsiveHelper.fontSize(13),
-                color: AppColors.secondaryText,
-              ),
-            ),
-
-            SizedBox(height: ResponsiveHelper.spacing(20)),
-
-            /// Link Box
-            Container(
-              padding: ResponsiveHelper.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.greyBg, // গ্রে ব্যাকগ্রাউন্ড
-                borderRadius: BorderRadius.circular(
-                  ResponsiveHelper.borderRadius(12),
-                ),
-                border: Border.all(
-                  color: AppColors.greyBorder, // হালকা গ্রে বর্ডার
-                  width: ResponsiveHelper.borderWidth(1),
-                ),
-              ),
-              child: Row(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Text(
-                      shareUrl,
-                      style: TextStyle(
-                        fontSize: ResponsiveHelper.fontSize(13),
-                        color: AppColors.primaryText,
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                  Text(
+                    'share_link'.tr,
+                    style: context.bodyLarge?.copyWith(
+                      color: AppColors.primaryText,
                     ),
                   ),
-
-                  SizedBox(width: ResponsiveHelper.spacing(8)),
-
-                  GestureDetector(
-                    onTap: () {
-                      Clipboard.setData(
-                        ClipboardData(text: shareUrl),
-                      );
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                         SnackBar(
-                          backgroundColor: AppColors.blue, // স্ন্যাকবার কালার ব্লু করা হলো
-                          content: Text(
-                            'link_copied'.tr,
-                            style: TextStyle(color: AppColors.white),
-                          ),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                    child: Icon(
-                      Icons.copy_rounded,
-                      size: ResponsiveHelper.iconSize(20),
-                      color: AppColors.blue,
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(
+                      Icons.close,
+                      size: ResponsiveHelper.iconSize(24),
+                      color: AppColors.secondaryText,
                     ),
                   ),
                 ],
               ),
-            ),
-
-            SizedBox(height: ResponsiveHelper.spacing(20)),
-
-            /// Share Button
-            SizedBox(
-              width: double.infinity,
-              height: ResponsiveHelper.buttonHeight(50),
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _shareLink();
-                },
-                icon: Icon(
-                  Icons.share_rounded,
-                  size: ResponsiveHelper.iconSize(20),
-                  color: AppColors.white,
+          
+              SizedBox(height: ResponsiveHelper.spacing(16)),
+          
+              /// Share Icon
+              Container(
+                width: ResponsiveHelper.width(80),
+                height: ResponsiveHelper.height(80),
+                decoration: const BoxDecoration(
+                  color: AppColors.softBrandColor, // হালকা ব্র্যান্ড কালার ব্যবহার করা হয়েছে
+                  shape: BoxShape.circle,
                 ),
-                label: Text(
-                  'share'.tr,
-                  style: TextStyle(
-                    fontSize: ResponsiveHelper.fontSize(15),
-                    color: AppColors.white,
+                child: Icon(
+                  Icons.share_rounded,
+                  size: ResponsiveHelper.iconSize(40),
+                  color: AppColors.blue, // মেইন ব্লু কালার
+                ),
+              ),
+          
+              SizedBox(height: ResponsiveHelper.spacing(16)),
+          
+              /// Title
+              Text(
+                'share_with_friends'.tr,
+                style: context.bodyLarge?.copyWith(
+                  color: AppColors.primaryText,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+          
+              SizedBox(height: ResponsiveHelper.spacing(8)),
+          
+              /// Subtitle
+              Text(
+                'share_this_link_invite_friends'.tr,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: ResponsiveHelper.fontSize(13),
+                  color: AppColors.secondaryText,
+                ),
+              ),
+          
+              SizedBox(height: ResponsiveHelper.spacing(20)),
+          
+              /// Link Box
+              Container(
+                padding: ResponsiveHelper.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.greyBg, // গ্রে ব্যাকগ্রাউন্ড
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveHelper.borderRadius(12),
+                  ),
+                  border: Border.all(
+                    color: AppColors.greyBorder, // হালকা গ্রে বর্ডার
+                    width: ResponsiveHelper.borderWidth(1),
                   ),
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.blue, // বাটনের ব্যাকগ্রাউন্ড ব্লু
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                      ResponsiveHelper.borderRadius(12),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        shareUrl,
+                        style: TextStyle(
+                          fontSize: ResponsiveHelper.fontSize(13),
+                          color: AppColors.primaryText,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+          
+                    SizedBox(width: ResponsiveHelper.spacing(8)),
+          
+                    GestureDetector(
+                      onTap: () {
+                        Clipboard.setData(
+                          ClipboardData(text: shareUrl),
+                        );
+          
+                        ScaffoldMessenger.of(context).showSnackBar(
+                           SnackBar(
+                            backgroundColor: AppColors.blue, // স্ন্যাকবার কালার ব্লু করা হলো
+                            content: Text(
+                              'link_copied'.tr,
+                              style: TextStyle(color: AppColors.white),
+                            ),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                      child: Icon(
+                        Icons.copy_rounded,
+                        size: ResponsiveHelper.iconSize(20),
+                        color: AppColors.blue,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          
+              SizedBox(height: ResponsiveHelper.spacing(20)),
+          
+              /// Share Button
+              SizedBox(
+                width: double.infinity,
+                height: ResponsiveHelper.buttonHeight(50),
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _shareLink();
+                  },
+                  icon: Icon(
+                    Icons.share_rounded,
+                    size: ResponsiveHelper.iconSize(20),
+                    color: AppColors.white,
+                  ),
+                  label: Text(
+                    'share'.tr,
+                    style: TextStyle(
+                      fontSize: ResponsiveHelper.fontSize(15),
+                      color: AppColors.white,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.blue, // বাটনের ব্যাকগ্রাউন্ড ব্লু
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(12),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

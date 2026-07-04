@@ -93,7 +93,6 @@
 
 
 
-
 import 'package:flutter/material.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -105,15 +104,15 @@ class VehicleColorPicker extends StatelessWidget {
 
   const VehicleColorPicker({super.key, required this.controller});
 
-  // immagine 2.png অনুযায়ী কালার লিস্ট
+  // immagine 2.png অনুযায়ী কালার লিস্ট
   static const List<Map<String, dynamic>> _colorOptions = [
-    {'name': 'Bianco', 'color': Color(0xFFF4F4F2)},
-    {'name': 'Nero', 'color': Color(0xFF1B1B1D)},
-    {'name': 'Grigio / Argento', 'color': Color(0xFF888B8D)},
-    {'name': 'Blu', 'color': Color(0xFF1E3A8A)}, // ডিপ রয়্যাল ব্লু
-    {'name': 'Rosso', 'color': Color(0xFFB11724)},
-    {'name': 'Verde', 'color': Color(0xFF006A4E)},
-    {'name': 'Marrone / Bronzo', 'color': Color(0xFF915135)},
+    {'name': 'Bianco', 'color': AppColors.bianco},
+    {'name': 'Nero', 'color':  AppColors.nero},
+    {'name': 'Grigio / Argento', 'color':  AppColors.grigioArgento},
+    {'name': 'Blu', 'color':  AppColors.blu},
+    {'name': 'Rosso', 'color': AppColors.rosso},
+    {'name': 'Verde', 'color':  AppColors.verde},
+    {'name': 'Marrone / Bronzo', 'color':  AppColors.marroneBronzo},
   ];
 
   @override
@@ -133,7 +132,7 @@ class VehicleColorPicker extends StatelessWidget {
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
         border: Border.all(color: AppColors.greyShade),
       ),
-      // অনুভূমিকভাবে (Horizontal) ৩D সার্কেলগুলো সাজানোর জন্য Wrap ব্যবহার করা হয়েছে
+
       child: Wrap(
         spacing: 14,
         runSpacing: 14,
@@ -141,6 +140,8 @@ class VehicleColorPicker extends StatelessWidget {
         crossAxisAlignment: WrapCrossAlignment.center,
         children: _colorOptions.map((c) {
           final bool isSelected = selectedColor == c['name'];
+          // সিলেক্ট করা কালারেরই ডিপ শেড — বর্ডার/গ্লো কালার হিসেবে ব্যবহার হবে
+          final Color selectionColor = _getDarkerShade(c['color']);
 
           return GestureDetector(
             onTap: controller.isEditing
@@ -153,19 +154,19 @@ class VehicleColorPicker extends StatelessWidget {
               message: c['name'],
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                width: 40, // ৩D ইফেক্টটি সুন্দরভাবে ফুটিয়ে তুলতে সাইজ ৪০ করা হয়েছে
-                height: 40,
+                width: ResponsiveHelper.iconSize(30), // ৩D ইফেক্টটি সুন্দরভাবে ফুটিয়ে তুলতে সাইজ ৪০ করা হয়েছে
+                height: ResponsiveHelper.iconSize(30),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  // সিলেকশন হাইলাইট বর্ডার এবং গ্লো শ্যাডো
+                  // সিলেকশন হাইলাইট বর্ডার এবং গ্লো শ্যাডো (নিজের কালারের ডিপ শেড)
                   border: Border.all(
-                    color: isSelected ? AppColors.blue : Colors.transparent,
-                    width: isSelected ? 3 : 0,
+                    color: isSelected ? selectionColor : Colors.transparent,
+                    width: isSelected ? 1.5 : 0,
                   ),
                   boxShadow: isSelected
                       ? [
                     BoxShadow(
-                      color: AppColors.blue.withOpacity(0.4),
+                      color: selectionColor.withOpacity(0.4),
                       blurRadius: 8,
                       spreadRadius: 2,
                     ),
@@ -182,13 +183,13 @@ class VehicleColorPicker extends StatelessWidget {
                 child: ClipOval(
                   child: Stack(
                     children: [
-                      // ১. ৩D বেস শেডিং (Radial Gradient দিয়ে ত্রিমাত্রিক গোলকের মতো ফিল তৈরি করা হয়েছে)
+                      // ১. ৩D বেস শেডিং (Radial Gradient দিয়ে ত্রিমাত্রিক গোলকের মতো ফিল তৈরি করা হয়েছে)
                       Container(
                         decoration: BoxDecoration(
                           gradient: RadialGradient(
                             colors: [
                               c['color'], // কেন্দ্র বা আলোর দিকটা উজ্জ্বল
-                              _getDarkerShade(c['color']), // বাইরের দিকটা ডার্ক বা ছায়া
+                              _getDarkerShade(c['color']), // বাইরের দিকটা ডার্ক বা ছায়া
                             ],
                             center: const Alignment(-0.25, -0.25), // আলোর কেন্দ্র (টপ-লেফট)
                             radius: 0.85,
@@ -205,20 +206,22 @@ class VehicleColorPicker extends StatelessWidget {
                             colors: [
                               Colors.white.withOpacity(0.55), // ছবির মতো উপরের চমৎকার সাদা লাইট রিফ্লেকশন
                               Colors.white.withOpacity(0.0),   // মাঝখানে ট্রান্সপারেন্ট
-                              Colors.black.withOpacity(0.15),  // নিচের অংশে গভীর ছায়া বা ডেপ্থ
+                              Colors.black.withOpacity(0.15),  // নিচের অংশে গভীর ছায়া বা ডেপ্থ
                             ],
                             stops: const [0.0, 0.45, 1.0],
                           ),
                         ),
                       ),
 
-                      // ৩. সিলেক্টেড চেক আইকন লেয়ার
+                      // ৩. সিলেক্টেড চেক আইকন লেয়ার
                       if (isSelected)
                         Positioned.fill(
                           child: Icon(
                             Icons.check,
-                            color: c['name'] == 'Bianco'
-                                ? AppColors.blue
+                            // হালকা/সাদা কালারের ক্ষেত্রে ডিপ শেড, নাহলে সাদা (কনট্রাস্টের জন্য)
+                            color: (c['color'] as Color).computeLuminance() >
+                                0.6
+                                ? selectionColor
                                 : Colors.white,
                             size: 20,
                           ),
@@ -234,13 +237,13 @@ class VehicleColorPicker extends StatelessWidget {
     );
   }
 
-  // ৩D ইফেক্টের গভীরতা বাড়ানোর জন্য বেস কালারকে ডার্ক করার হেল্পার মেথড
+  // ৩D ইফেক্টের গভীরতা বাড়ানোর জন্য বেস কালারকে ডার্ক করার হেল্পার মেথড
   Color _getDarkerShade(Color color) {
-    // সাদা বা হালকা কালার হলে একটু আলাদা গ্রে-শেড ছায়া দেবো
+    // সাদা বা হালকা কালার হলে একটু আলাদা গ্রে-শেড ছায়া দেবো
     if (color.computeLuminance() > 0.8) {
       return const Color(0xFFB0B0B0);
     }
-    // অন্য কালারগুলোর ক্ষেত্রে কালারটিকে ২০% ডার্ক বা ব্ল্যাকিশ করা হবে ছায়ার জন্য
+
     return Color.lerp(color, Colors.black, 0.25)!;
   }
 }

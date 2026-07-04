@@ -523,6 +523,7 @@ AppStrings.group:"Group",
   AppStrings.downloading: "Downloading...",
   AppStrings.download: "Download",
    AppStrings.welcomeTitle : 'Your License Plate, Your Chat',
-   AppStrings.welcomeSubtitle : 'Registrati rapidamente e connettiti con un Wheewer ovunque tu vada.',
+
+  AppStrings.welcomeSubtitle : 'Register quickly and connect with a wheewer wherever you go',
 
 };

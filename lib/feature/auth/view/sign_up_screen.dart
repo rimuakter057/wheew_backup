@@ -399,7 +399,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               /// City
               CustomTextField(
                 controller: cityController,
-                title: 'city'.tr,
+                title: "${'city'.tr} (${ 'optional'.tr })",
                 hintText: AppStrings.typeHere.tr,
                 validator: (value) => (value == null || value.trim().isEmpty)
                     ? 'city_is_required'.tr
@@ -555,7 +555,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     return;
                   }
 
-                  showLoadingDialog(message: 'creating_account'.tr, context: context);
+                  showLoadingDialog(
+                    message: 'creating_account'.tr,
+                    context: context,
+                  );
 
                   try {
                     final response = await AuthRepository().register(
@@ -574,64 +577,125 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       name: 'SIGNUP',
                     );
 
-                    // dialog বন্ধ করুন response আসার পরপরই, context চেক করার আগে
-                    if (context.mounted) hideLoadingDialog(context);
+                    if (!context.mounted) return;
+
+                    hideLoadingDialog(context);
+
+                    final Map<String, dynamic>? body =
+                    response.body.isNotEmpty
+                        ? jsonDecode(response.body) as Map<String, dynamic>
+                        : null;
 
                     if (response.statusCode == 200 || response.statusCode == 201) {
-                      // if (context.mounted) {
-                      //   showSuccessToast('registration_successful'.tr);
-                      //  // context.go(RoutePath.signIn);
-                      //   context.go(RoutePath.vehicle);
-                      // }
+                      final token = body?['token'];
 
-                      final data = jsonDecode(response.body); // 🔥 IMPORTANT
-
-                      final token = data['token']; // or data['data']['token'] depending on API
-
-                      if (token != null && token.isNotEmpty) {
-                        await SharePrefsHelper.setString(AppConst.token, token);
+                      if (token != null && token.toString().isNotEmpty) {
+                        await SharePrefsHelper.setString(
+                          AppConst.token,
+                          token.toString(),
+                        );
                       }
 
-                      if (context.mounted) {
-                        showSuccessToast('registration_successful'.tr);
-                        context.go(RoutePath.vehicle);
-                      }
+                      ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(
+                          const SnackBar(
+                            content: Text('Registration successful'),
+                            backgroundColor: Colors.green,
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
 
-
-                    } else {
-                      if (context.mounted) {
-                        ApiChecker.checkApi(response);
-                      }
+                      context.go(RoutePath.vehicle);
+                      return;
                     }
-                  }catch (e, st) {
+
+                    final message = body?['message']?.toString() ??
+                        'Request failed (${response.statusCode})';
+
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        SnackBar(
+                          content: Text(message),
+                          backgroundColor: Colors.red,
+                          behavior: SnackBarBehavior.floating,
+                          margin: const EdgeInsets.all(16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      );
+                  } on TimeoutException {
+                    if (!context.mounted) return;
+
+                    hideLoadingDialog(context);
+
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Server is not responding. Please check your connection.',
+                          ),
+                          backgroundColor: Colors.red,
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                  } on SocketException {
+                    if (!context.mounted) return;
+
+                    hideLoadingDialog(context);
+
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'No internet connection. Please check your network.',
+                          ),
+                          backgroundColor: Colors.red,
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                  } on FormatException {
+                    if (!context.mounted) return;
+
+                    hideLoadingDialog(context);
+
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        const SnackBar(
+                          content: Text('Unexpected server response.'),
+                          backgroundColor: Colors.red,
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                  } catch (e, st) {
                     developer.log('Register Exception: $e', name: 'SIGNUP');
                     developer.log('StackTrace: $st', name: 'SIGNUP');
 
-                    if (context.mounted) {
-                      hideLoadingDialog(context);
+                    if (!context.mounted) return;
 
-                      String userMessage;
+                    hideLoadingDialog(context);
 
-                      if (e is TimeoutException) {
-
-                        CustomSnackbar.error(message:"server_not_responding_check_connection", context: context);
-                        userMessage = 'server_not_responding_check_connection'.tr;
-                        // বাংলা ফলব্যাক: 'সার্ভারের সাথে সংযোগ করা যাচ্ছে না। আপনার ইন্টারনেট/নেটওয়ার্ক চেক করুন।'
-                      } else if (e is SocketException) {
-                        userMessage = 'no_internet_connection_check_network'.tr;
-                        CustomSnackbar.error(message:"no_internet_connection_check_network", context: context);
-                        // 'ইন্টারনেট কানেকশন নেই অথবা সার্ভার আনরিচেবল।'
-                      } else if (e is FormatException) {
-                        userMessage = 'unexpected_server_response'.tr;
-                        CustomSnackbar.error(message:"unexpected_server_respons", context: context);
-                      } else {
-                        userMessage = '${'something_went_wrong'.tr}';
-                      }
-
-                      showErrorSnackBar(userMessage);
-                    }
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            e.toString().replaceFirst('Exception: ', ''),
+                          ),
+                          backgroundColor: Colors.red,
+                          behavior: SnackBarBehavior.floating,
+                          margin: const EdgeInsets.all(16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      );
                   }
-
                 },
               ),
 
