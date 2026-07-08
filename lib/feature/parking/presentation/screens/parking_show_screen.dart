@@ -399,10 +399,10 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
               top: MediaQuery.of(context).padding.top + ResponsiveHelper.padding(72),
               right: ResponsiveHelper.padding(16),
               child: Container(
-                height: ResponsiveHelper.padding(45), // একটি ফিক্সড ও ক্লিন হাইট
+                height: ResponsiveHelper.padding(45),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(12), // আরও কার্ভড এবং মডার্ন কর্নার
+                  borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.08), // খুব সফট এবং প্রিমিয়াম শ্যাডো
