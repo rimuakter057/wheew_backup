@@ -47,6 +47,8 @@ class AssetsPath {
   static const String iconJson = '${_animationBase}icon_animated.json';
   static const String logoJson = '${_animationBase}logo_animated.json';
   static const String logo2Json = '${_animationBase}logo2_animated.json';
+  static const String wheewAnimationOne = '${_animationBase}wheew_animation_one.json';
+  static const String wheewAnimationTwo = '${_animationBase}wheew_animation_two.json';
 
   // Images
   static const String person0 = '${_imagesBase}person0.png';

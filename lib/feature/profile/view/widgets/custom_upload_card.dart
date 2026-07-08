@@ -176,6 +176,94 @@ class _CardShell extends StatelessWidget {
     );
   }
 ///sub title==============================
+//   Widget _buildSubtitle(BuildContext context) {
+//     switch (state) {
+//       case _CardState.empty:
+//         return Text(
+//           AppStrings.tapToUpload.tr,
+//           style: GoogleFonts.poppins(
+//             fontSize: ResponsiveHelper.fontSize(12),
+//             color:    const Color(0xFF9CA3AF),
+//           ),
+//         );
+//
+//       case _CardState.uploaded:
+//         return Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Text(
+//               '${AppStrings.id.tr}: ${doc!.uniqueId}',
+//               style: GoogleFonts.poppins(
+//                 fontSize: ResponsiveHelper.fontSize(11),
+//                 color:    const Color(0xFF6B7280),
+//               ),
+//             ),
+//             Text(
+//               '${AppStrings.expires.tr}: ${ctrl.toDisplayDate(doc!.expiryDate)}  •  ${doc!.daysUntilExpiry} ${AppStrings.daysLeft.tr}',
+//               style: GoogleFonts.poppins(
+//                 fontSize: ResponsiveHelper.fontSize(11),
+//                 color:    const Color(0xFF2563EB),
+//               ),
+//             ),
+//             if (doc!.resolvedDocumentUrl.isNotEmpty) ...[
+//               SizedBox(height: ResponsiveHelper.spacing(4)),
+//               GestureDetector(
+//                 onTap: () => _openFileUrl(context, doc!.resolvedDocumentUrl),
+//                 child: Text(
+//                   AppStrings.viewDocument.tr,
+//                   style: GoogleFonts.poppins(
+//                     fontSize:   ResponsiveHelper.fontSize(11),
+//                     fontWeight: FontWeight.w600,
+//                     color:      const Color(0xFF2563EB),
+//                     decoration: TextDecoration.underline,
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ],
+//         );
+//
+//       case _CardState.expired:
+//         return Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Text(
+//               '${AppStrings.id.tr}: ${doc!.uniqueId}',
+//               style: GoogleFonts.poppins(
+//                 fontSize: ResponsiveHelper.fontSize(11),
+//                 color:    const Color(0xFF6B7280),
+//               ),
+//             ),
+//             Text(
+//               AppStrings.expired.tr,
+//               style: GoogleFonts.poppins(
+//                 fontSize:   ResponsiveHelper.fontSize(11),
+//                 fontWeight: FontWeight.w600,
+//                 color:      const Color(0xFFEF4444),
+//               ),
+//             ),
+//             if (doc!.resolvedDocumentUrl.isNotEmpty) ...[
+//               SizedBox(height: ResponsiveHelper.spacing(4)),
+//               GestureDetector(
+//                 onTap: () => _openFileUrl(context, doc!.resolvedDocumentUrl),
+//                 child: Text(
+//                   AppStrings.viewDocument.tr,
+//                   style: GoogleFonts.poppins(
+//                     fontSize:   ResponsiveHelper.fontSize(11),
+//                     fontWeight: FontWeight.w600,
+//                     color:      const Color(0xFF2563EB),
+//                     decoration: TextDecoration.underline,
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ],
+//         );
+//     }
+//   }
+
+
+
   Widget _buildSubtitle(BuildContext context) {
     switch (state) {
       case _CardState.empty:
@@ -198,13 +286,15 @@ class _CardShell extends StatelessWidget {
                 color:    const Color(0xFF6B7280),
               ),
             ),
-            Text(
-              '${AppStrings.expires.tr}: ${ctrl.toDisplayDate(doc!.expiryDate)}  •  ${doc!.daysUntilExpiry} ${AppStrings.daysLeft.tr}',
-              style: GoogleFonts.poppins(
-                fontSize: ResponsiveHelper.fontSize(11),
-                color:    const Color(0xFF2563EB),
+            // ✅ FIX: isOwner হলে Expires line hide
+            if (!isOwner)
+              Text(
+                '${AppStrings.expires.tr}: ${ctrl.toDisplayDate(doc!.expiryDate)}  •  ${doc!.daysUntilExpiry} ${AppStrings.daysLeft.tr}',
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(11),
+                  color:    const Color(0xFF2563EB),
+                ),
               ),
-            ),
             if (doc!.resolvedDocumentUrl.isNotEmpty) ...[
               SizedBox(height: ResponsiveHelper.spacing(4)),
               GestureDetector(
