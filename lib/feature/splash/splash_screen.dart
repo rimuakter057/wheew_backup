@@ -65,31 +65,31 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Row(
-            //   crossAxisAlignment:  CrossAxisAlignment.center,
-            //   mainAxisSize: MainAxisSize.min,
-            //   children: [
-            //     Lottie.asset(
-            //       AssetsPath.homeJson,
-            //       width: ResponsiveHelper.iconSize(70),
-            //       height: ResponsiveHelper.iconSize(38),
-            //       fit: BoxFit.cover,
-            //       repeat: true,
-            //     ),
-            //
-            //
-            //     Transform.translate(
-            //       offset: const Offset(0, 10), // নিচে নামাতে positive value বাড়ান
-            //       child: Image.asset(
-            //         AssetsPath.chatList,
-            //         height: ResponsiveHelper.iconSize(38),
-            //         fit: BoxFit.contain,
-            //       ),
-            //     ),
-            //   ],
-            // ),
+            Row(
+              crossAxisAlignment:  CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Lottie.asset(
+                  AssetsPath.wheewAnimationTwo,
+                  width: ResponsiveHelper.iconSize(250),
+                  height: ResponsiveHelper.iconSize(300),
+                  fit: BoxFit.cover,
+                  repeat: true,
+                ),
 
-            CustomImage(imageSrc:AssetsPath.appLogoUpdate)
+
+                // Transform.translate(
+                //   offset: const Offset(0, 10), // নিচে নামাতে positive value বাড়ান
+                //   child: Image.asset(
+                //     AssetsPath.chatList,
+                //     height: ResponsiveHelper.iconSize(38),
+                //     fit: BoxFit.contain,
+                //   ),
+                // ),
+              ],
+            ),
+
+           // CustomImage(imageSrc:AssetsPath.appLogoUpdate)
 
 
           ],
