@@ -544,6 +544,12 @@ class ParkingReportController extends GetxController {
   }
 
 // ── Leave Spot ────────────────────────────────────────────────────
+
+
+
+
+
+
   Future<bool> leaveSpot(String spotId) async {
     try {
       isLeaving.value = true;
@@ -572,6 +578,20 @@ class ParkingReportController extends GetxController {
       isLeaving.value = false;
     }
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   void toggleDisabledFacility() {
     disabledFacility.value = !disabledFacility.value;
     if (disabledFacility.value) {

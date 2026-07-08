@@ -59,7 +59,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String? selectedDesignation;
   String? selectedCountry;
 
-
   @override
   void initState() {
     super.initState();
@@ -112,7 +111,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               /// Nickname
               CustomTextField(
                 controller: nicknameController,
-                title:AppStrings.nickName.tr,
+                title: AppStrings.nickName.tr,
                 hintText: AppStrings.typeHere1.tr,
                 inputFormatters: [
                   TextInputFormatter.withFunction((oldValue, newValue) {
@@ -132,7 +131,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-              AppStrings.selectDesignation.tr,
+                    AppStrings.selectDesignation.tr,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       color: AppColors.secondaryText,
@@ -143,7 +142,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   DropdownButtonFormField2<String>(
                     value: selectedDesignation,
                     hint: Text(
-                        AppStrings.select.tr,
+                      AppStrings.select.tr,
                       style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
                     ),
                     isExpanded: true,
@@ -235,8 +234,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               /// License Number
               CustomTextField(
                 controller: licenseController,
-                title:    AppStrings.licenseNumber.tr,
-                hintText:    AppStrings.typeHere.tr,
+                title: AppStrings.licenseNumber.tr,
+                hintText: AppStrings.typeHere.tr,
 
                 // validator: (value) {
                 //   if (value == null || value.trim().isEmpty) {
@@ -294,8 +293,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
               ),
 
-
-
               SizedBox(height: ResponsiveHelper.spacing(16)),
 
               /// Country
@@ -307,16 +304,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               //       ? 'country_is_required'.tr
               //       : null,
               // ),
-
-
-
-
-
-
-
-
-
-
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -334,9 +321,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     isExpanded: true,
                     hint: Text(
                       'select'.tr,
-                      style: TextStyle(
-                        fontSize: ResponsiveHelper.fontSize(16),
-                      ),
+                      style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
                     ),
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.symmetric(
@@ -367,10 +352,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     items: countries
                         .map(
                           (country) => DropdownMenuItem(
-                        value: country,
-                        child: Text(country, style: context.bodySmall,),
-                      ),
-                    )
+                            value: country,
+                            child: Text(country, style: context.bodySmall),
+                          ),
+                        )
                         .toList(),
                     onChanged: (value) {
                       setState(() {
@@ -379,7 +364,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       });
                     },
                     validator: (value) =>
-                    value == null ? 'country_is_required'.tr : null,
+                        value == null ? 'country_is_required'.tr : null,
                     dropdownStyleData: DropdownStyleData(
                       maxHeight: 250,
                       decoration: BoxDecoration(
@@ -391,15 +376,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ],
               ),
 
-
-
-
               SizedBox(height: ResponsiveHelper.spacing(16)),
 
               /// City
               CustomTextField(
                 controller: cityController,
-                title: "${'city'.tr} (${ 'optional'.tr })",
+                title: "${'city'.tr} (${'optional'.tr})",
                 hintText: AppStrings.typeHere.tr,
                 validator: (value) => (value == null || value.trim().isEmpty)
                     ? 'city_is_required'.tr
@@ -413,11 +395,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 title: 'password'.tr,
                 hintText: 'password'.tr,
                 isPassword: true,
+
+                // validator: (value) {
+                //   if (value == null || value.trim().isEmpty) {
+                //     return 'password_is_required'.tr;
+                //   } else if (value.trim().length < 6) {
+                //     return 'password_must_be_6_characters'.tr;
+                //   }
+                //
+                //   return null;
+                // },
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'password_is_required'.tr;
-                  } else if (value.trim().length < 6) {
-                    return 'password_must_be_6_characters'.tr;
+                  }
+
+                  final password = value.trim();
+
+                  if (password.length < 8) {
+                    return 'password_must_be_at_least_8_characters'.tr;
+                  }
+
+                  if (!RegExp(r'[A-Z]').hasMatch(password)) {
+                    return 'password_must_contain_uppercase'.tr;
+                  }
+
+                  if (!RegExp(r'[a-z]').hasMatch(password)) {
+                    return 'password_must_contain_lowercase'.tr;
+                  }
+
+                  if (!RegExp(r'[0-9]').hasMatch(password)) {
+                    return 'password_must_contain_number'.tr;
+                  }
+
+                  if (!RegExp(
+                    r'[!@#$%^&*(),.?":{}|<>_\-+=/\\[\]~`]',
+                  ).hasMatch(password)) {
+                    return 'password_must_contain_special_character'.tr;
                   }
 
                   return null;
@@ -444,7 +458,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
-
 
               SizedBox(height: ResponsiveHelper.spacing(12)),
 
@@ -479,7 +492,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
 
                           TextSpan(
-                            text:    AppStrings.termsAndConditions.tr,
+                            text: AppStrings.termsAndConditions.tr,
                             style: GoogleFonts.poppins(
                               color: AppColors.blue,
                               decoration: TextDecoration.underline,
@@ -499,7 +512,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
 
                           TextSpan(
-                            text:   AppStrings.and.tr,
+                            text: AppStrings.and.tr,
                             style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w400,
                               fontSize: 14,
@@ -507,7 +520,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                           ),
                           TextSpan(
-                            text:   AppStrings.privacyPolicy.tr,
+                            text: AppStrings.privacyPolicy.tr,
                             style: GoogleFonts.poppins(
                               color: AppColors.blue,
                               decoration: TextDecoration.underline,
@@ -535,7 +548,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               SizedBox(height: ResponsiveHelper.spacing(12)),
 
               SizedBox(height: ResponsiveHelper.spacing(20)),
-
 
               PrimaryButton(
                 title: 'continue'.tr,
@@ -581,12 +593,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                     hideLoadingDialog(context);
 
-                    final Map<String, dynamic>? body =
-                    response.body.isNotEmpty
+                    final Map<String, dynamic>? body = response.body.isNotEmpty
                         ? jsonDecode(response.body) as Map<String, dynamic>
                         : null;
 
-                    if (response.statusCode == 200 || response.statusCode == 201) {
+                    if (response.statusCode == 200 ||
+                        response.statusCode == 201) {
                       final token = body?['token'];
 
                       if (token != null && token.toString().isNotEmpty) {
@@ -610,7 +622,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       return;
                     }
 
-                    final message = body?['message']?.toString() ??
+                    final message =
+                        body?['message']?.toString() ??
                         'Request failed (${response.statusCode})';
 
                     ScaffoldMessenger.of(context)
@@ -698,7 +711,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   }
                 },
               ),
-
 
               SizedBox(height: ResponsiveHelper.spacing(8)),
 

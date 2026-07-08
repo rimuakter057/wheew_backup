@@ -594,7 +594,18 @@ class AppStrings {
   static const String welcomeSubtitle= 'welcome_subtitle';
 
 
+  // -------- Password Validation --------
 
+  static const String passwordMustBeAtLeast8Characters =
+      'password_must_be_at_least_8_characters';
+  static const String passwordMustContainUppercase =
+      'password_must_contain_uppercase';
+  static const String passwordMustContainLowercase =
+      'password_must_contain_lowercase';
+  static const String passwordMustContainNumber =
+      'password_must_contain_number';
+  static const String passwordMustContainSpecialCharacter =
+      'password_must_contain_special_character';
 
 
 

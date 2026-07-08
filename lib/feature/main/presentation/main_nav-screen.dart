@@ -40,8 +40,8 @@ class _MainNavScreenState extends State<MainNavScreen> {
        // return const SearchListScreen();
         return NotificationScreen();
       case 2:
-        return ScanScreen();
-        //return ParkingShowScreen();
+        //return ScanScreen();
+        return ParkingShowScreen();
 
       case 3:
         return const MapScreen();
@@ -277,8 +277,8 @@ class ScanNavItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SvgPicture.asset(
-           // "assets/icons/p_nav.svg",
-              AssetsPath.scanNav,
+           "assets/icons/p_nav.svg",
+             // AssetsPath.scanNav,
               width: ResponsiveHelper.iconSize(60),
               height: ResponsiveHelper.iconSize(60),
             ),

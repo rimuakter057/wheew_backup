@@ -39,7 +39,7 @@ class AppColors {
   static const Color bianco = Color(0xFFF4F4F2);
   static const Color nero = Color(0xFF1B1B1D);
   static const Color grigioArgento = Color(0xFF888B8D);
-  static const Color blu = Color(0xFF0245BB);
+  static const Color blu = Color(0xFF0070B6);
   static const Color rosso = Color(0xFFD41B19);
   static const Color verde = Color(0xFF0AA409);
   static const Color marroneBronzo = Color(0xFF784520);

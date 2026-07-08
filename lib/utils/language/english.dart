@@ -526,4 +526,21 @@ AppStrings.group:"Group",
 
   AppStrings.welcomeSubtitle : 'Register quickly and connect with a wheewer wherever you go',
 
+
+
+
+  // -------- Password Validation --------
+
+  AppStrings.passwordMustBeAtLeast8Characters:
+  "Password must be at least 8 characters",
+  AppStrings.passwordMustContainUppercase:
+  "Password must contain at least one uppercase letter",
+  AppStrings.passwordMustContainLowercase:
+  "Password must contain at least one lowercase letter",
+  AppStrings.passwordMustContainNumber:
+  "Password must contain at least one number",
+  AppStrings.passwordMustContainSpecialCharacter:
+  "Password must contain at least one special character",
+
+
 };

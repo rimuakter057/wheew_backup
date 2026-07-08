@@ -560,4 +560,16 @@ final Map<String, String> italian = {
   AppStrings.welcomeTitle : 'La tua targa, la tua Chat',
   AppStrings.welcomeSubtitle : 'Registrati rapidamente e connettiti con un Wheewer ovunque tu vada.',
 
+
+  AppStrings.passwordMustBeAtLeast8Characters:
+  "La password deve contenere almeno 8 caratteri",
+  AppStrings.passwordMustContainUppercase:
+  "La password deve contenere almeno una lettera maiuscola",
+  AppStrings.passwordMustContainLowercase:
+  "La password deve contenere almeno una lettera minuscola",
+  AppStrings.passwordMustContainNumber:
+  "La password deve contenere almeno un numero",
+  AppStrings.passwordMustContainSpecialCharacter:
+  "La password deve contenere almeno un carattere speciale",
+
 };
