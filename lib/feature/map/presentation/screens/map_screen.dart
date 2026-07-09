@@ -18,6 +18,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:platchatapp/utils/toast_message/toast_message.dart';
 
 import '../widgets/location_of_promt.dart';
+import '../widgets/parking_location_card.dart';
 import '../widgets/picking-location_banner.dart';
 
 class MapScreen extends StatefulWidget {
@@ -395,6 +396,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
               return Positioned(
                 left: 0,
                 right: 0,
+
                 top: MediaQuery.of(context).padding.top +
                     ResponsiveHelper.padding(92),
                 child: ParkingReportDropdown(
@@ -414,14 +416,29 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
             /// ── Radius filter button ──────────────────────────────────────
             RadiusFilterButton(onPressed: _showRadiusFilterSheet),
 
+              ///static design-======
+
+            /// ── Static parking location card ──────────────────────────────
+            // Positioned(
+            //   right: ResponsiveHelper.padding(24),
+            //   bottom: ResponsiveHelper.padding(132),
+            //   child: ParkingLocationCard(),
+            // ),
+
             /// ── Add parking button ────────────────────────────────────────
             Positioned(
               right: ResponsiveHelper.padding(24),
-              bottom: ResponsiveHelper.padding(32),
+              bottom: ResponsiveHelper.padding(232),
               child: AddParkingButton(
                 onPressed: _toggleParkingPin,
               ),
             ),
+
+
+
+
+
+
           ],
         ),
       ),

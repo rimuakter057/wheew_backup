@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
-/// "Submit Details" বাটন — লোডিং স্টেট, গ্রাডিয়েন্ট এবং Card উইজেট সহ
 class VehicleSubmitButton extends StatelessWidget {
   final bool isLoading;
   final String label;
@@ -19,16 +18,15 @@ class VehicleSubmitButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isButtonDisabled = isLoading || onPressed == null;
     final borderRadius = BorderRadius.circular(ResponsiveHelper.borderRadius(30));
-// এখানে আপনার ৩টি কালার কোড বসিয়ে নিন (উদাহরণস্বরূপ নিচে দেওয়া হলো)
-    final Color color1 = const Color(0xFF0C7DC9); // ১ম কালার (গ্রাডিয়েন্ট শুরু)
-    final Color color2 = const Color(0xFF014495); // ২য় কালার (গ্রাডিয়েন্ট মাঝখানে/শেষে)
-    final Color shadowColor = const Color(0xFF6FB1FC); // ৩য় কালার (শ্যাডো-র জন্য)
-    return Card(
 
+    final Color color1 = const Color(0xFF0C7DC9);
+    final Color color2 = const Color(0xFF014495);
+    final Color shadowColor = const Color(0xFF587CA7);
+    return Card(
       margin: EdgeInsets.zero,
-      clipBehavior: Clip.antiAlias, // গ্রাডিয়েন্ট যেন কার্ডের রাউন্ড শেপের বাইরে না যায়
-      elevation: 6, // কার্ডের সুন্দর থ্রিডি শ্যাডো
-      shadowColor: AppColors.blue.withOpacity(0.5), // ইমেজের মতো ব্লু শেডের শ্যাডো
+      clipBehavior: Clip.antiAlias,
+      elevation: 6,
+      shadowColor:shadowColor,
       shape: RoundedRectangleBorder(
         borderRadius: borderRadius,
       ),
@@ -37,19 +35,30 @@ class VehicleSubmitButton extends StatelessWidget {
         height: ResponsiveHelper.buttonHeight(54),
         decoration: BoxDecoration(
           borderRadius: borderRadius,
-          // বাটনের সুন্দর গ্রাডিয়েন্ট ব্যাকগ্রাউন্ড
+
           gradient: isButtonDisabled
               ? null
               : LinearGradient(
             colors: [
               color1,
               color2,
-              color1,// সলিড ব্লু (ডানপাশে)
+              color1,
             ],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
           color: isButtonDisabled ? Colors.grey.shade400 : null,
+          border: Border(
+
+            // top:  BorderSide(
+            //   color: AppColors.topBorderBlue,
+            //   width: 1.5,
+            // ),
+            bottom:  BorderSide(
+              color: AppColors.darBlue,
+              width: 1.5,
+            ),
+          ),
         ),
         child: InkWell(
           onTap: isButtonDisabled ? null : onPressed,

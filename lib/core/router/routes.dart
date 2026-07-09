@@ -12,7 +12,7 @@ import 'package:platchatapp/feature/auth/view/sign_up_screen.dart';
 import 'package:platchatapp/feature/auth/view/vehicle_info_screen.dart';
 import 'package:platchatapp/feature/chat/view/member/presentation/screens/add_member_screen.dart';
 import 'package:platchatapp/feature/faq/presentation/screens/faq_screen.dart';
-import 'package:platchatapp/feature/main/presentation/main_nav-screen.dart';
+import 'package:platchatapp/feature/main/presentation/screens/main_nav-screen.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
 import 'package:platchatapp/feature/notification/presentation/screens/notification_screen.dart';
 import 'package:platchatapp/feature/ocr/presentation/screens/ocr_screen.dart';

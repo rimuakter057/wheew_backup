@@ -13,11 +13,13 @@ class AssetsPath {
 
   //icons====================================
   static const String send = '${_iconsBase}send.svg';
+  static const String pNav = '${_iconsBase}p.svg';
   static const String chatNav = '${_iconsBase}chat_nav.svg';
   static const String mapNav = '${_iconsBase}map_nav.svg';
+  static const String homeNav = '${_iconsBase}home_nav.svg';
   static const String profileNav = '${_iconsBase}profile_nav.svg';
   static const String scanNav = '${_iconsBase}scan_nav.svg';
-  static const String pNav = '${_iconsBase}p_nav.svg';
+  //static const String pNav = '${_iconsBase}p_nav.svg';
   static const String searchNav = '${_iconsBase}search_nav.svg';
   static const String notificationNav = '${_iconsBase}notification_nav.svg';
   static const String insurance = '${_iconsBase}insurance.png';

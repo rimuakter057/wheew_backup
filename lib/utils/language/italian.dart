@@ -572,4 +572,53 @@ final Map<String, String> italian = {
   AppStrings.passwordMustContainSpecialCharacter:
   "La password deve contenere almeno un carattere speciale",
 
+
+
+
+  AppStrings.personalInformationSubtitle:
+  "Visualizza e aggiorna i tuoi dati personali.",
+
+
+  AppStrings.myVehiclesSubtitle:
+  "Gestisci i tuoi veicoli.",
+
+
+  AppStrings.usefulNumbersSubtitle:
+  "Accesso rapido ai contatti importanti.",
+
+
+  AppStrings.notificationsSubtitle:
+  "Gestisci le impostazioni delle notifiche.",
+
+
+  AppStrings.languageSubtitle:
+  "Cambia la lingua dell'app.",
+
+  AppStrings.english: "Inglese",
+  AppStrings.italian: "Italiano",
+
+
+  AppStrings.termsAndConditionsSubtitle:
+  "Leggi i nostri termini e condizioni.",
+
+  AppStrings.privacyPolicySubtitle:
+  "Scopri come proteggiamo la tua privacy.",
+
+  AppStrings.helpSupportSubtitle:
+  "Ottieni assistenza e contatta il supporto.",
+
+  AppStrings.faqSubtitle:
+  "Trova le risposte alle domande più frequenti.",
+
+  AppStrings.shareLinkSubtitle:
+  "Condividi l'app con i tuoi amici.",
+
+  AppStrings.blockedUsersSubtitle:
+  "Gestisci gli utenti bloccati.",
+
+  AppStrings.deleteAccountSubtitle:
+  "Elimina definitivamente il tuo account.",
+
+  AppStrings.changeAppLanguage:"Cambia la lingua dell'app."
+
 };

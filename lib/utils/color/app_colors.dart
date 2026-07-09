@@ -2,8 +2,27 @@ import "package:flutter/material.dart";
 
 class AppColors {
 
+  static const Color lightBlue = Color(0xFFE3EAF2);
+  static const Color lightBlue1 = Color(0xFFDEE7F0);
+  static const Color lightBlue2 = Color(0xFFD0DCE8);
+  static const Color blueGrey = Color(0xFFB6C5DA);
+
+  static const LinearGradient primaryBackgroundGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      lightBlue,
+      lightBlue1,
+      lightBlue2,
+      blueGrey,
+    ],
+  );
+
   static const Color blue = Color(0xFF1070B7);
+  static const Color darBlue = Color(0xFF014495);
+  static const Color topBorderBlue = Color(0xFF81ADD5);
   static const Color black = Color(0xFF333333);
+  static const Color divider = Color(0xFFC0CCDC);
 
   static const Color white = Color(0xFFFFFFFF);
   static const Color textBlack = Color(0xFF333333);

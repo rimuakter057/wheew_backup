@@ -543,4 +543,53 @@ AppStrings.group:"Group",
   "Password must contain at least one special character",
 
 
+
+
+  AppStrings.personalInformationSubtitle:
+  "View and update your personal details.",
+
+
+  AppStrings.myVehiclesSubtitle:
+  "Manage your vehicles.",
+
+
+  AppStrings.usefulNumbersSubtitle:
+  "Quick access to important contacts.",
+
+
+  AppStrings.notificationsSubtitle:
+  "Manage your notification settings.",
+
+
+  AppStrings.languageSubtitle:
+  "Change app language.",
+
+  AppStrings.english: "English",
+  AppStrings.italian: "Italian",
+
+
+  AppStrings.termsAndConditionsSubtitle:
+  "Read our terms and conditions.",
+
+  AppStrings.privacyPolicySubtitle:
+  "Learn how we protect your privacy.",
+
+  AppStrings.helpSupportSubtitle:
+  "Get help and contact support.",
+
+  AppStrings.faqSubtitle:
+  "Find answers to common questions.",
+
+  AppStrings.shareLinkSubtitle:
+  "Share the app with your friends.",
+
+  AppStrings.blockedUsersSubtitle:
+  "Manage your blocked users.",
+
+  AppStrings.deleteAccountSubtitle:
+  "Permanently delete your account.",
+
+  AppStrings.changeAppLanguage:"Change app language."
+
+
 };

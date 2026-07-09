@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/core/service/cypto_service.dart';
 import 'package:platchatapp/core/service/storage_service.dart';
 import 'package:platchatapp/feature/privacy_policy/privacy_policy_screen.dart';
 import 'package:platchatapp/feature/terms_condition/web_view_screen.dart';
@@ -31,6 +32,24 @@ import '../../../share/widgets/button/primary_button.dart';
 import '../../../utils/toast_message/toast_message.dart';
 import '../repository/auth_repository.dart';
 import '../repository/country_list.dart';
+
+
+Future<void> onSignupSuccess(String userId) async {
+  final cryptoService = CryptoService();
+
+  // Key pair জেনারেট + secure storage-এ সেভ
+  final keyPair = await cryptoService.generateKeyPair();
+  await cryptoService.savePrivateKey(keyPair);
+
+  // Console-এ দেখার জন্য দুটো key প্রিন্ট করা
+  final privateKeyBytes = await keyPair.extractPrivateKeyBytes();
+  final publicKey = await keyPair.extractPublicKey();
+
+  print('===== KEY GENERATED =====');
+  print('Private Key (base64): ${base64Encode(privateKeyBytes)}');
+  print('Public Key (base64): ${base64Encode(publicKey.bytes)}');
+  print('==========================');
+}
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -383,9 +402,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: cityController,
                 title: "${'city'.tr} (${'optional'.tr})",
                 hintText: AppStrings.typeHere.tr,
-                validator: (value) => (value == null || value.trim().isEmpty)
-                    ? 'city_is_required'.tr
-                    : null,
+
               ),
               SizedBox(height: ResponsiveHelper.spacing(16)),
 
@@ -617,6 +634,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             behavior: SnackBarBehavior.floating,
                           ),
                         );
+
+
+
+                      final cryptoService = CryptoService();
+
+                      // Key pair জেনারেট + secure storage-এ সেভ
+                      final keyPair = await cryptoService.generateKeyPair();
+                      await cryptoService.savePrivateKey(keyPair);
+
+                      // Console-এ দেখার জন্য দুটো key প্রিন্ট করা
+                      final privateKeyBytes = await keyPair.extractPrivateKeyBytes();
+                      final publicKey = await keyPair.extractPublicKey();
+
+                      print('===== KEY GENERATED =====');
+                      print('Private Key (base64)==================: ${base64Encode(privateKeyBytes)}');
+                      print('Public Key (base64)====================: ${base64Encode(publicKey.bytes)}');
+                      print('==========================');
+
 
                       context.go(RoutePath.vehicle);
                       return;

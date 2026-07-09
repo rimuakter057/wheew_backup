@@ -608,5 +608,37 @@ class AppStrings {
       'password_must_contain_special_character';
 
 
+  static const String personalInformationSubtitle =
+      "personal_information_subtitle";
+
+
+  static const String myVehiclesSubtitle =
+      "my_vehicles_subtitle";
+
+
+  static const String usefulNumbersSubtitle =
+      "useful_numbers_subtitle";
+
+
+  static const String notificationsSubtitle =
+      "notifications_subtitle";
+
+
+  static const String languageSubtitle =
+      "language_subtitle";
+
+  static const String english = "english";
+  static const String italian = "italian";
+
+
+
+  static const String termsAndConditionsSubtitle = "terms_and_conditions_subtitle";
+  static const String privacyPolicySubtitle = "privacy_policy_subtitle";
+  static const String helpSupportSubtitle = "help_support_subtitle";
+  static const String faqSubtitle = "faq_subtitle";
+  static const String shareLinkSubtitle = "share_link_subtitle";
+  static const String blockedUsersSubtitle = "blocked_users_subtitle";
+  static const String deleteAccountSubtitle = "delete_account_subtitle";
+  static const String changeAppLanguage = "change_language";
 
 }
