@@ -12,3 +12,6 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+# Google/Firebase credentials
+android/app/client_secret.json
+android/app/google-services.json
