@@ -20,9 +20,12 @@ class AppColors {
 
   static const Color blue = Color(0xFF1070B7);
   static const Color darBlue = Color(0xFF014495);
+  static const Color blueShadeConBg = Color(0xFFBDC9D7);
   static const Color topBorderBlue = Color(0xFF81ADD5);
   static const Color black = Color(0xFF333333);
   static const Color divider = Color(0xFFC0CCDC);
+  static const Color gradientOne =    Color(0xFF0C7DC9);
+  static  Color gradientTwo =    Color(0xFF014495);
 
   static const Color white = Color(0xFFFFFFFF);
   static const Color textBlack = Color(0xFF333333);

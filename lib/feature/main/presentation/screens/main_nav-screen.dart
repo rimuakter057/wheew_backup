@@ -210,12 +210,16 @@ class _NavItem extends StatelessWidget {
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
             child: Card(
-              elevation: isActive ? 100 : 10,
-              shadowColor: Colors.blue.withOpacity(0.15),
-              color: isActive ? null :   Color(0xFFBDC9D7),
+              elevation: isActive ? 20 : 10,
+              shadowColor: Color(0xFF587CA7),
+              color: isActive ? null : AppColors.blueShadeConBg,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(
-                  ResponsiveHelper.borderRadius(27),
+                  ResponsiveHelper.borderRadius(25),
+                ),
+                side:  BorderSide(
+                  color:isActive? AppColors.darBlue:AppColors.blueShadeConBg,
+                  width: 1,
                 ),
               ),
               child: Ink(
@@ -224,13 +228,14 @@ class _NavItem extends StatelessWidget {
                     ResponsiveHelper.borderRadius(27),
                   ),
                   gradient: isActive
-                      ? const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                      ?  LinearGradient(
                     colors: [
-                      Color(0xff0076FF),
-                      Color(0xff0046B5),
+                AppColors.gradientOne,
+                      AppColors.gradientTwo,
+                      AppColors.gradientOne,
                     ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
                   )
                       : null,
                 ),

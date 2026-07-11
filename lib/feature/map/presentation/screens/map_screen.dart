@@ -418,12 +418,6 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
 
               ///static design-======
 
-            /// ── Static parking location card ──────────────────────────────
-            // Positioned(
-            //   right: ResponsiveHelper.padding(24),
-            //   bottom: ResponsiveHelper.padding(132),
-            //   child: ParkingLocationCard(),
-            // ),
 
             /// ── Add parking button ────────────────────────────────────────
             Positioned(

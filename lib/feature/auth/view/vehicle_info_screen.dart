@@ -9,6 +9,7 @@ import 'package:platchatapp/feature/auth/view/widgets/vehicle_model_field.dart';
 import 'package:platchatapp/feature/auth/view/widgets/vihele_type.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/extension/base_extension.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
 import 'widgets/vehicle_color_picker.dart';
@@ -26,7 +27,7 @@ class VehicleInfoScreen extends StatefulWidget {
 class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
   late final VehicleController controller;
 
-  // আগের কোডে যেই ৭টা কালার ছিল, সেগুলোই রাখা হলো
+  /// color select===========================
   final List<Map<String, dynamic>> colorOptions = [
     {'name': 'Blu', 'color': AppColors.blu},
     {'name': 'Nero', 'color': AppColors.nero},
@@ -83,10 +84,11 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
                   SizedBox(height: ResponsiveHelper.height(10)),
                   _buildTypeWheel(),
                   SizedBox(height: ResponsiveHelper.spacing(30)),
+                  ///vihecle model and color ========
                   _buildSectionTitle(),
                   SizedBox(height: ResponsiveHelper.height(16)),
 
-
+                  ///vihecle model and color ========
                   CustomBackgroundContainer(
                     child: Column(
                       children: [
@@ -97,6 +99,8 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
                   ),
 
                   SizedBox(height: ResponsiveHelper.spacing(40)),
+
+                  ///submit button=================================
                   _buildSubmitButton(),
                   SizedBox(height: ResponsiveHelper.height(20)),
                 ],
@@ -108,11 +112,13 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
     );
   }
 
+
+  ///app bar===================
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      title: const Text(
+      title:  Text(
         "Add Your Vehicle",
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        style: context.bodyLarge.copyWith(color: AppColors.black,fontWeight: FontWeight.w600)
       ),
       centerTitle: true,
       elevation: 0,
@@ -142,6 +148,8 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
     );
   }
 
+  ///vehicle type============================
+
   Widget _buildTypeWheel() {
     return Obx(
           () => VehicleTypeWheel(
@@ -153,19 +161,17 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
   }
 
 
-
+///build title text=========================
 
 
   Widget _buildSectionTitle() {
     return Text(
       "Vehicle Model & Color",
-      style: TextStyle(
-        fontSize: ResponsiveHelper.fontSize(18),
-        fontWeight: FontWeight.bold,
-        color: Colors.black87,
-      ),
+      style: context.bodyLarge.copyWith(color: AppColors.black)
     );
   }
+
+  ///build vehicle model===============
 
   Widget _buildModelField() {
     return Obx(
@@ -176,6 +182,8 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
     );
   }
 
+  ///build color picker=================================
+
   Widget _buildColorPicker() {
     return Obx(
           () => Column(
@@ -183,11 +191,7 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
         children: [
           Text(
             AppStrings.vehicleColor.tr,
-            style: TextStyle(
-              fontSize: ResponsiveHelper.fontSize(14),
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
-            ),
+            style: context.bodyLarge.copyWith(color: AppColors.black)
           ),
           SizedBox(height: ResponsiveHelper.height(12)),
           VehicleColorPicker(
@@ -199,6 +203,8 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
       ),
     );
   }
+
+  ///build submit button====================================
 
   Widget _buildSubmitButton() {
     return Obx(
