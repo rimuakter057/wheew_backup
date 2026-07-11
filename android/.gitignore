@@ -13,5 +13,5 @@ key.properties
 **/*.keystore
 **/*.jks
 # Google/Firebase credentials
-android/app/client_secret.json
-android/app/google-services.json
+app/client_secret.json
+app/google-services.json
