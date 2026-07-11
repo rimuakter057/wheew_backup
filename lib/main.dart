@@ -31,7 +31,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // ── Background FCM handler (must be registered before runApp) ──
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
   cameras = await availableCameras(); // ── OCR Camera init ──
@@ -53,7 +52,7 @@ void main() async {
     onIntent: (ParsedIntent intent) => _voiceRouter.route(intent),
   );
 
-  // ── Notification service (FCM + Local) ──
+
   await NotificationService.instance.init();
 
   runApp(const Wheew());

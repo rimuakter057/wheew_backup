@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lottie/lottie.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
+import 'package:platchatapp/core/service/google_sign_in.dart';
+import 'package:platchatapp/feature/auth/view/widgets/custom_devider_or.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
@@ -37,7 +40,6 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
-
       final rawIdentifier = authController.licenseController.text.trim();
 
       // license plate হোক বা nickname — backend-এ পাঠানোর আগে lowercase করে দেওয়া হচ্ছে
@@ -88,7 +90,6 @@ class _SignInScreenState extends State<SignInScreen> {
                     //   repeat: true,
                     // ),
                     //
-
                     CustomImage(
                       imageSrc: AssetsPath.appLogoUpdate,
                       width: ResponsiveHelper.iconSize(200),
@@ -213,10 +214,32 @@ class _SignInScreenState extends State<SignInScreen> {
                             title: 'sign_in'.tr,
                             onTap: _handleLogin,
                           ),
-                    SizedBox(height: ResponsiveHelper.spacing(8)),
+                    SizedBox(height: ResponsiveHelper.spacing(18)),
 
+                    CustomDividerOr(),
 
-                    SocialButton(icon: AssetsPath.apple, onTap: () {  },),
+                    SizedBox(height: ResponsiveHelper.spacing(28)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SocialButton(icon: AssetsPath.apple, onTap: () {}),
+
+                        SizedBox(width: ResponsiveHelper.width(36)),
+                        SocialButton(
+                          icon: AssetsPath.google,
+                          onTap: () async {
+                            final account = await GoogleSignInService()
+                                .signIn();
+
+                            if (account != null) {
+                              print("Login Success");
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: ResponsiveHelper.spacing(28)),
 
                     Center(
                       child: RichText(
@@ -257,9 +280,7 @@ class _SignInScreenState extends State<SignInScreen> {
       ),
     );
   }
-
 }
-
 
 class SocialButton extends StatelessWidget {
   final String icon;
@@ -271,18 +292,20 @@ class SocialButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width:  ResponsiveHelper.width(52),
+        width: ResponsiveHelper.width(52),
         height: ResponsiveHelper.height(52),
         decoration: BoxDecoration(
-          color:        AppColors.white,
-          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
-          border:       Border.all(color: AppColors.inputBorderColor),
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.borderRadius(12),
+          ),
+          border: Border.all(color: AppColors.inputBorderColor),
         ),
         child: Center(
           child: CustomImage(
             imageSrc: icon,
-            height:   ResponsiveHelper.height(24),
-            width:    ResponsiveHelper.width(24),
+            height: ResponsiveHelper.height(24),
+            width: ResponsiveHelper.width(24),
           ),
         ),
       ),
