@@ -253,8 +253,8 @@ class _NavItem extends StatelessWidget {
                       children: [
                         SvgPicture.asset(
                           icon,
-                          width: ResponsiveHelper.iconSize(22),
-                          height: ResponsiveHelper.iconSize(22),
+                          width: ResponsiveHelper.iconSize(15),
+                          height: ResponsiveHelper.iconSize(15),
                           colorFilter: ColorFilter.mode(
                             isActive ? Colors.white : Color(0xFF1E252E),
                             BlendMode.srcIn,
@@ -266,8 +266,8 @@ class _NavItem extends StatelessWidget {
                             label,
                             style: GoogleFonts.poppins(
                               color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: ResponsiveHelper.fontSize(13),
+                              fontWeight: FontWeight.w400,
+                              fontSize: ResponsiveHelper.fontSize(12),
                             ),
                           ),
                         ],
