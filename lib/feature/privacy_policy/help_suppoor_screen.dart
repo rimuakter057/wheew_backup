@@ -21,156 +21,160 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
 
   @override
   void initState() {
-    controller.fetchHelpSupport();
     super.initState();
+    controller.fetchHelpSupport();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: AppStrings.helpSupport.tr),
-      body: Obx(() {
-        if (controller.isLoadingHelp.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.transparent,
+      appBar: CustomAppBar(
+        title: AppStrings.helpSupport.tr,
+         bgColor: AppColors.lightBlue,
+      ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: AppColors.primaryBackgroundGradient,
+        ),
+        child: Obx(() {
+          if (controller.isLoadingHelp.value) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-        if (controller.errorMessage.value.isNotEmpty) {
-          return Center(
-            child: Text(
-              controller.errorMessage.value,
-              style: context.bodyMedium.copyWith(color: AppColors.errorColor),
-              textAlign: TextAlign.center,
+          if (controller.errorMessage.value.isNotEmpty) {
+            return Center(
+              child: Text(
+                controller.errorMessage.value,
+                style: context.bodyMedium.copyWith(
+                  color: AppColors.errorColor,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            );
+          }
+
+          return SafeArea(
+            child: Center(
+              child: Padding(
+                padding: ResponsiveHelper.symmetric(horizontal: 24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    /// Support Icon
+                    Container(
+                      width: ResponsiveHelper.width(82),
+                      height: ResponsiveHelper.width(82),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(.35),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.blue.withOpacity(.45),
+                          width: 1,
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.support_agent_outlined,
+                        color: AppColors.blue,
+                        size: ResponsiveHelper.width(38),
+                      ),
+                    ),
+
+                    SizedBox(
+                      height: ResponsiveHelper.height(18),
+                    ),
+
+                    /// Title
+                    Text(
+                      "Contact us at",
+                      style: context.bodyLarge.copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.black,
+                      ),
+                    ),
+
+                    SizedBox(
+                      height: ResponsiveHelper.height(20),
+                    ),
+
+                    /// Email Button
+                    InkWell(
+                      borderRadius: BorderRadius.circular(50),
+                      onTap: () =>
+                          _launchEmail(controller.message.value),
+                      child: Container(
+                        constraints: BoxConstraints(
+                          minWidth: ResponsiveHelper.width(230),
+                          maxWidth: ResponsiveHelper.width(320),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: ResponsiveHelper.width(22),
+                          vertical: ResponsiveHelper.height(14),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(.45),
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(.6),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.mail_outline_rounded,
+                              color: AppColors.blue,
+                              size: ResponsiveHelper.width(20),
+                            ),
+                            SizedBox(
+                              width: ResponsiveHelper.width(10),
+                            ),
+                            Expanded(
+                              child: Text(
+                                controller.message.value,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: context.bodyLarge.copyWith(
+                                  color: AppColors.blue,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(
+                      height: ResponsiveHelper.height(18),
+                    ),
+
+                    /// Description
+                    SizedBox(
+                      width: ResponsiveHelper.width(250),
+                      child: Text(
+                        "support_text2".tr,
+                        textAlign: TextAlign.center,
+                        style: context.bodyMedium.copyWith(
+                          color: Colors.black54,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           );
-        }
-
-        return SingleChildScrollView(
-          child: Padding(
-            padding: ResponsiveHelper.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Icon at top
-                Container(
-                  width: ResponsiveHelper.width(72),
-                  height: ResponsiveHelper.height(72),
-                  decoration: BoxDecoration(
-                    color: AppColors.blue.withOpacity(0.08),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.headset_mic_outlined,
-                    color: AppColors.blue,
-                    size: ResponsiveHelper.width(34),
-                  ),
-                ),
-          
-                SizedBox(height: ResponsiveHelper.height(20)),
-          
-                // Support text 1
-                Text(
-                  "support_text1".tr,
-                  style: context.bodyLarge.copyWith(
-                    color: AppColors.black,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-          
-                SizedBox(height: ResponsiveHelper.height(16)),
-          
-                // Email button with card style
-                GestureDetector(
-                  onTap: () => _launchEmail(controller.message.value),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: ResponsiveHelper.width(20),
-                      vertical: ResponsiveHelper.height(12),
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.blue.withOpacity(0.08),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: AppColors.blue.withOpacity(0.25),
-                        width: 1,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.mail_outline_rounded,
-                          color: AppColors.blue,
-                          size: ResponsiveHelper.width(24),
-                        ),
-                        SizedBox(width: ResponsiveHelper.width(8)),
-                        Flexible(
-                          // ✅ added
-                          child: Text(
-                            controller.message.value,
-                            style: context.bodyLarge.copyWith(
-                              color: AppColors.blue,
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.center,
-                            maxLines: 3, // ✅ added
-                            overflow: TextOverflow.ellipsis, // ✅ added
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  /*Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: ResponsiveHelper.width(20),
-                      vertical: ResponsiveHelper.height(12),
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.blue.withOpacity(0.08),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: AppColors.blue.withOpacity(0.25),
-                        width: 1,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.mail_outline_rounded,
-                          color: AppColors.blue,
-                          size: ResponsiveHelper.width(18),
-                        ),
-                        SizedBox(width: ResponsiveHelper.width(8)),
-                        Text(
-                          controller.message.value,
-                          style: context.bodyLarge.copyWith(
-                            color: AppColors.blue,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),*/
-                ),
-          
-                SizedBox(height: ResponsiveHelper.height(16)),
-          
-                // Support text 2
-                Text(
-                  "support_text2".tr,
-                  style: context.bodyLarge.copyWith(
-                    color: AppColors.black,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-        );
-      }),
+        }),
+      ),
     );
   }
 }
@@ -180,27 +184,32 @@ Future<void> _launchEmail(String email) async {
   if (trimmed.isEmpty) return;
 
   final subject = Uri.encodeComponent('support_request'.tr);
-  final mailto = 'mailto:${Uri.encodeComponent(trimmed)}?subject=$subject';
-  final emailUri = Uri.parse(mailto);
+  final emailUri = Uri.parse(
+    'mailto:${Uri.encodeComponent(trimmed)}?subject=$subject',
+  );
 
   try {
     if (await canLaunchUrl(emailUri)) {
-      final ok = await launchUrl(
+      final launched = await launchUrl(
         emailUri,
         mode: LaunchMode.externalApplication,
       );
-      if (ok) return;
+
+      if (launched) return;
     }
-    throw StateError('launch_failed');
+
+    throw Exception();
   } catch (_) {
-    await Clipboard.setData(ClipboardData(text: trimmed));
+    await Clipboard.setData(
+      ClipboardData(text: trimmed),
+    );
+
     Get.snackbar(
       'email_copied'.tr,
-      '${'email_copied'.tr}: $trimmed',
+      trimmed,
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: AppColors.blue.withOpacity(0.9),
+      backgroundColor: AppColors.blue,
       colorText: Colors.white,
-      duration: const Duration(seconds: 3),
     );
   }
 }
