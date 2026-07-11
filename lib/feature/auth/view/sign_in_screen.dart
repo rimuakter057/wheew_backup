@@ -215,6 +215,9 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                     SizedBox(height: ResponsiveHelper.spacing(8)),
 
+
+                    SocialButton(icon: AssetsPath.apple, onTap: () {  },),
+
                     Center(
                       child: RichText(
                         text: TextSpan(
@@ -251,6 +254,37 @@ class _SignInScreenState extends State<SignInScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+
+}
+
+
+class SocialButton extends StatelessWidget {
+  final String icon;
+  final VoidCallback onTap;
+  const SocialButton({super.key, required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width:  ResponsiveHelper.width(52),
+        height: ResponsiveHelper.height(52),
+        decoration: BoxDecoration(
+          color:        AppColors.white,
+          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+          border:       Border.all(color: AppColors.inputBorderColor),
+        ),
+        child: Center(
+          child: CustomImage(
+            imageSrc: icon,
+            height:   ResponsiveHelper.height(24),
+            width:    ResponsiveHelper.width(24),
+          ),
+        ),
       ),
     );
   }

@@ -39,6 +39,8 @@ class AssetsPath {
   static const String suv = '${_iconsBase}Suv.svg';
   static const String truck = '${_iconsBase}Track.svg';
   static const String van = '${_iconsBase}Van.svg';
+  static const String apple = '${_iconsBase}apple.svg';
+  static const String google = '${_iconsBase}apple.svg';
 
 
   ///===================================
