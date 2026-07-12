@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -8,7 +7,6 @@ import 'package:platchatapp/feature/map/presentation/widgets/map_loading_banners
 import 'package:platchatapp/feature/map/utils/map_debug.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
-import 'package:platchatapp/utils/toast_message/toast_message.dart';
 import 'package:platchatapp/feature/parking/controller/parking_show_controller.dart';
 
 class ParkingShowScreen extends StatefulWidget {
@@ -24,7 +22,6 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   GoogleMapController? _mapController;
   MapType _selectedMapType = MapType.hybrid;
-
 
   late final ParkingShowController _parkingShowCtrl;
 
@@ -59,7 +56,8 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && _parkingShowCtrl.gpsPosition.value == null) {
+    if (state == AppLifecycleState.resumed &&
+        _parkingShowCtrl.gpsPosition.value == null) {
       _initializeMap();
     }
   }
@@ -90,13 +88,11 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
         backgroundColor: Colors.white,
         body: Stack(
           children: [
-            /// ── Map and overlay banners ───────────────────────────────────
             Obx(() {
               final isLocating = _parkingShowCtrl.isLocating.value;
               final gpsPosition = _parkingShowCtrl.gpsPosition.value;
               final showLocationPulse = _parkingShowCtrl.showLocationPulse.value;
               final isLoading = _parkingShowCtrl.isLoading.value;
-              final currentPolylines = _parkingShowCtrl.polylines.toSet();   // 👈 নতুন
 
               if (!isLocating && gpsPosition == null) {
                 return _buildLocationOffPrompt();
@@ -106,16 +102,11 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
 
               return Stack(
                 children: [
-                  // ── Markers/Polygons need their OWN Obx so GetX actually
-                  // tracks changes to `markers`/`polygons` RxSet. Passing the
-                  // RxSet as a plain object reference (no `.value` read) does
-                  // NOT register a listener, so the map would never refresh
-                  // when the controller reassigns markers.value / polygons.value.
                   Obx(() {
                     final currentMarkers = _parkingShowCtrl.markers.toSet();
                     final currentPolygons = _parkingShowCtrl.polygons.toSet();
                     final currentCircles = _parkingShowCtrl.circles.toSet();
-
+                    final currentPolylines = _parkingShowCtrl.polylines.toSet();
 
                     return GoogleMap(
                       mapType: _selectedMapType,
@@ -128,11 +119,11 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       markers: currentMarkers,
                       polygons: currentPolygons,
                       circles: currentCircles,
+                      polylines: currentPolylines,
                       myLocationEnabled: true,
                       myLocationButtonEnabled: false,
                       zoomControlsEnabled: false,
                       mapToolbarEnabled: false,
-                      polylines: currentPolylines,
                       compassEnabled: false,
                       rotateGesturesEnabled: false,
                       tiltGesturesEnabled: false,
@@ -145,7 +136,8 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
 
                   if (showLocationPulse)
                     Positioned(
-                      top: MediaQuery.of(context).padding.top + ResponsiveHelper.padding(16),
+                      top: MediaQuery.of(context).padding.top +
+                          ResponsiveHelper.padding(16),
                       left: ResponsiveHelper.padding(16),
                       right: ResponsiveHelper.padding(80),
                       child: Container(
@@ -155,7 +147,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
+                              color: Colors.black.withValues(alpha: 0.08),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -165,8 +157,13 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                           controller: _searchController,
                           decoration: const InputDecoration(
                             hintText: 'Search parking',
-                            hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
-                            prefixIcon: Icon(Icons.search, color: Color(0xFF185FA5), size: 20),
+                            hintStyle:
+                                TextStyle(fontSize: 14, color: Colors.grey),
+                            prefixIcon: Icon(
+                              Icons.search,
+                              color: Color(0xFF185FA5),
+                              size: 20,
+                            ),
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.symmetric(vertical: 12),
                           ),
@@ -180,23 +177,24 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                         child: AnimatedBuilder(
                           animation: _pulseController,
                           builder: (context, child) {
-                            // 0.0 → 1.0 → 0.0 (breathing effect)
                             final t = _pulseController.value < 0.5
                                 ? _pulseController.value * 2
                                 : (1.0 - _pulseController.value) * 2;
 
-                            final glowWidth = 6.0 + (t * 14.0); // border পুরুত্ব বাড়বে-কমবে
+                            final glowWidth = 6.0 + (t * 14.0);
                             final glowOpacity = 0.4 + (t * 0.6);
 
                             return Container(
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: const Color(0xFF185FA5).withOpacity(glowOpacity),
+                                  color: const Color(0xFF185FA5)
+                                      .withValues(alpha: glowOpacity),
                                   width: glowWidth,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFF185FA5).withOpacity(glowOpacity * 0.5),
+                                    color: const Color(0xFF185FA5)
+                                        .withValues(alpha: glowOpacity * 0.5),
                                     blurRadius: 24,
                                     spreadRadius: 4,
                                   ),
@@ -211,7 +209,6 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
               );
             }),
 
-            /// ── Map Type Dropdown (Modernized) ──────────────────────────────────────
             Positioned(
               top: MediaQuery.of(context).padding.top + ResponsiveHelper.padding(72),
               right: ResponsiveHelper.padding(16),
@@ -222,28 +219,32 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.08), // খুব সফট এবং প্রিমিয়াম শ্যাডো
+                      color: Colors.black.withValues(alpha: 0.08),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
                   ],
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: DropdownButtonHideUnderline( // আন্ডারলাইন রিমুভ করার স্ট্যান্ডার্ড ওয়ে
+                child: DropdownButtonHideUnderline(
                   child: DropdownButton<MapType>(
                     value: _selectedMapType,
                     icon: const Padding(
                       padding: EdgeInsets.only(left: 6),
-                      child: Icon(Icons.layers_outlined, color: Color(0xFF185FA5), size: 20),
+                      child: Icon(
+                        Icons.layers_outlined,
+                        color: Color(0xFF185FA5),
+                        size: 20,
+                      ),
                     ),
-                    elevation: 3, // ড্রপডাউন ওপেন হলে নিচের মেনুর শ্যাডো ডেপথ
-                    borderRadius: BorderRadius.circular(12), // ওপেন হওয়া মেনুর কর্নারও রাউন্ডেড হবে
+                    elevation: 3,
+                    borderRadius: BorderRadius.circular(12),
                     dropdownColor: Colors.white,
                     alignment: Alignment.center,
                     style: const TextStyle(
                       color: Colors.black87,
                       fontSize: 14,
-                      fontWeight: FontWeight.w500, // একটু বোল্ড ও প্রিমিয়াম লুক
+                      fontWeight: FontWeight.w500,
                     ),
                     items: const [
                       DropdownMenuItem(
@@ -299,21 +300,29 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                   color: Color(0xFFE6F1FB),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.location_off,
-                    color: Color(0xFF185FA5), size: 26),
+                child: const Icon(
+                  Icons.location_off,
+                  color: Color(0xFF185FA5),
+                  size: 26,
+                ),
               ),
               const SizedBox(height: 12),
               Text(
                 AppStrings.locationTurnedOff.tr,
-                style:
-                const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               const SizedBox(height: 6),
               Text(
                 AppStrings.locationOffDesc.tr,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                    fontSize: 13, color: Colors.grey, height: 1.5),
+                  fontSize: 13,
+                  color: Colors.grey,
+                  height: 1.5,
+                ),
               ),
               const SizedBox(height: 20),
               SizedBox(
@@ -328,8 +337,10 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                   onPressed: () async {
                     await Geolocator.openLocationSettings();
                   },
-                  child:  Text(AppStrings.enableLocation.tr,
-                      style: const TextStyle(color: Colors.white)),
+                  child: Text(
+                    AppStrings.enableLocation.tr,
+                    style: const TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
             ],
@@ -343,19 +354,18 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return Dialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24.0), // Extra smooth corners
+            borderRadius: BorderRadius.circular(24),
           ),
           elevation: 10,
           backgroundColor: Colors.white,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 28.0),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
             child: Column(
-              mainAxisSize: MainAxisSize.min, // Auto-wrap content
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // --- Premium Minimal Icon ---
                 Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
@@ -369,21 +379,17 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                   ),
                 ),
                 const SizedBox(height: 24),
-
-                // --- Bold Title ---
                 const Text(
                   'Parking Confirmation',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A1A1A), // Dark elegant black
+                    color: Color(0xFF1A1A1A),
                     letterSpacing: -0.5,
                   ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
-
-                // --- Descriptive Subtitle ---
                 Text(
                   'Are you leaving a parking spot right now?',
                   style: TextStyle(
@@ -394,20 +400,20 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 32),
-
-                // --- Modern Action Buttons ---
                 Row(
                   children: [
-                    // No Button
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          Navigator.of(dialogContext).pop();
                           _onParkingNo();
                         },
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 15),
-                          side: BorderSide(color: Colors.grey.shade300, width: 1.5),
+                          side: BorderSide(
+                            color: Colors.grey.shade300,
+                            width: 1.5,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
                           ),
@@ -423,12 +429,10 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       ),
                     ),
                     const SizedBox(width: 14),
-
-                    // Yes Button
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          Navigator.of(dialogContext).pop();
                           _onParkingYes();
                         },
                         style: ElevatedButton.styleFrom(
