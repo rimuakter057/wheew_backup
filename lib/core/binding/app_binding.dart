@@ -5,7 +5,7 @@ import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
 import 'package:platchatapp/feature/auth/repository/user_location_controller.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/feature/notification/controller/notification_controller.dart';
-import 'package:platchatapp/feature/parking/controller/parking_controller.dart';
+
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
 import 'package:platchatapp/feature/scan/controller/scan_controller.dart';
 import 'package:platchatapp/feature/useful_number/controller/useful_number_controller.dart';
