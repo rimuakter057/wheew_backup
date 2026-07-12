@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:platchatapp/core/router/route_path.dart';
 
 import '../../../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../../../utils/color/app_colors.dart';
@@ -27,45 +29,50 @@ class ProfileNavAppBar extends StatelessWidget
         ),
       ),
       actions: [
-        Padding(
-          padding: EdgeInsets.only(
-            right: ResponsiveHelper.padding(16),
-          ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                height: ResponsiveHelper.height(40),
-                width: ResponsiveHelper.height(40),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.notifications_none_rounded,
-                  color: Color(0xFF1A1D20),
-                ),
-              ),
-              Positioned(
-                top: 2,
-                right: 2,
-                child: Container(
-                  padding: const EdgeInsets.all(4),
+        GestureDetector(
+          onTap: (){
+            context.push(RoutePath.notification);
+          },
+          child: Padding(
+            padding: EdgeInsets.only(
+              right: ResponsiveHelper.padding(16),
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  height: ResponsiveHelper.height(40),
+                  width: ResponsiveHelper.height(40),
                   decoration: const BoxDecoration(
-                    color: Color(0xFF2F80ED),
+                    color: Colors.white,
                     shape: BoxShape.circle,
                   ),
-                  child: const Text(
-                    '3',
-                    style: TextStyle(
-                      fontSize: 8,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                  child: const Icon(
+                    Icons.notifications_none_rounded,
+                    color: Color(0xFF1A1D20),
+                  ),
+                ),
+                Positioned(
+                  top: 2,
+                  right: 2,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF2F80ED),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Text(
+                      '3',
+                      style: TextStyle(
+                        fontSize: 8,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],

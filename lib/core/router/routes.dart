@@ -39,8 +39,8 @@ class AppRouter {
 
   static final GoRouter router = GoRouter(
     navigatorKey: navigatorKey,
-   // initialLocation: RoutePath.splash,
-    initialLocation: RoutePath.vehicle,
+    initialLocation: RoutePath.splash,
+   // initialLocation: RoutePath.vehicle,
     debugLogDiagnostics: true,
     routes: [
       ///----------Auth-------

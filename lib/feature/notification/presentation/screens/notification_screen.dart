@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/notification/controller/notification_controller.dart';
 import 'package:platchatapp/feature/notification/models/notification_model.dart';
@@ -150,6 +151,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        leading: IconButton(onPressed: (){
+          context.pop();
+
+        }, icon: Icon(Icons.arrow_back_ios,color: AppColors.black,)),
         title: Obx(() => Row(
           children: [
             Text(
