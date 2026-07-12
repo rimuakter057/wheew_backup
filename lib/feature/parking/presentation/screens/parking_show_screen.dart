@@ -455,19 +455,6 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                 ),
               ),
             ),
-            /// ── Radius filter button ──────────────────────────────────────
-            Positioned(
-              left: ResponsiveHelper.padding(30), // প্যাডিং কিছুটা মডার্ন গ্যাপে আনা হয়েছে
-              bottom: ResponsiveHelper.padding(80),
-              child: FloatingActionButton(
-                heroTag: 'filterRadiusBtn',
-                backgroundColor: Colors.white,
-                elevation: 3,
-                onPressed: _showRadiusFilterSheet,
-                child: const Icon(Icons.tune, color: Color(0xFF185FA5)),
-              ),
-            ),
-
 
             if (_showLocationPulse)
               Positioned(
@@ -752,41 +739,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
 
 
 
-  void _showRadiusFilterSheet() {
-    HapticFeedback.lightImpact();
 
-    RadiusFilterSheet.show(
-      context,
-      initialRadiusMeter: _selectedRadiusMeter,
-      onApply: (radiusMeter) {
-        if (!mounted) return;
-
-        setState(() {
-          _selectedRadiusMeter = radiusMeter;
-        });
-
-        _applyRadiusFilter();
-      },
-    );
-  }
-
-
-
-  Future<void> _applyRadiusFilter() async {
-    final location = _gpsPosition ?? _mapCenter;
-
-    await _parkingCtrl.fetchParkingReport(
-      latitude: location.latitude,
-      longitude: location.longitude,
-      radius: _selectedRadiusMeter,
-    );
-
-    if (!mounted) return;
-    showCustomSnackBar(
-      '${AppStrings.showingParking.tr} $_selectedRadiusMeter m',
-      isError: false,
-    );
-  }
 
   }
 
