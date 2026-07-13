@@ -4,6 +4,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer' as developer;
 import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:platchatapp/core/service/api_client.dart';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/gestures.dart';
@@ -652,6 +654,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       print('Public Key (base64)====================: ${base64Encode(publicKey.bytes)}');
                       print('==========================');
 
+                      final publicKeyBase64 = base64Encode(publicKey.bytes);
+                      _registerDeviceKey(publicKeyBase64);
 
                       context.go(RoutePath.vehicle);
                       return;
@@ -818,5 +822,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
         backgroundColor: Colors.red,
       ),
     );
+  }
+
+  Future<void> _registerDeviceKey(String publicKeyBase64) async {
+    try {
+      print('🔑 Device Key Registration Started...');
+      final deviceInfo = DeviceInfoPlugin();
+      String deviceId = 'unknown_device';
+      if (Platform.isAndroid) {
+        final androidInfo = await deviceInfo.androidInfo;
+        deviceId = androidInfo.id;
+      } else if (Platform.isIOS) {
+        final iosInfo = await deviceInfo.iosInfo;
+        deviceId = iosInfo.identifierForVendor ?? 'unknown_ios';
+      }
+      
+      print('📱 Device ID: $deviceId');
+      print('🔑 Public Key Base64: $publicKeyBase64');
+
+      final response = await ApiClient.postData(
+        uri: '/chat/e2ee/device-key',
+        body: {
+          'deviceId': deviceId,
+          'publicKey': publicKeyBase64,
+        },
+      );
+
+      print('📡 Device Key API Response Code: ${response.statusCode}');
+      print('📡 Device Key API Response Body: ${response.body}');
+    } catch (e, stackTrace) {
+      print('❌ Failed to register device key silently: $e');
+      print(stackTrace);
+    }
   }
 }
