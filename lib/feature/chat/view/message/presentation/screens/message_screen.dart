@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/feature/chat/view/message/presentation/widgets/message_appbar.dart';
@@ -41,26 +42,23 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
- // final ChatController chatController = Get.put(ChatController());
   final ScrollController _scrollController = ScrollController();
 
   final GroupController _groupController = Get.find<GroupController>();
   final ChatController chatController = Get.find<ChatController>();
   late String _currentRoomId;
-
-
+  bool _isAccepted = true;
 
   @override
   void initState() {
     super.initState();
     _currentRoomId = widget.roomId ?? '';
+    _isAccepted = _currentRoomId
+        .isEmpty; // Sender is accepted by default. Recipient has to accept message request.
 
     chatController.isBlockedByMe.value = widget.isBlockedByMe ?? false;
     chatController.isBlockedMe.value = widget.isBlockedMe ?? false;
     chatController.fetchPresetMessages();
-
-    // ❌ এটা থাকলে সরাও — controller এ already আছে
-    // chatController.newMessage();
 
     _initChat();
     _scrollController.addListener(_onScroll);
@@ -172,15 +170,15 @@ class _MessageScreenState extends State<MessageScreen> {
                             : profile == null
                             ? Center(child: Text('profile_not_found'.tr))
                             : ProfileCard(
-                          profile: profile,
-                                name: profile.nickName??"",
+                                profile: profile,
+                                name: profile.nickName ?? "",
                                 rating: profile.rating,
-                          image:widget.otherUserAvatar ?? '',
-                          showRating: true,
+                                image: widget.otherUserAvatar ?? '',
+                                showRating: true,
                                 onRatingTap: () async {
                                   Navigator.pop(
                                     dialogContext,
-                                  ); // ← dialogContext দিয়ে বন্ধ করো
+                                  );
                                   await chatController.fetchMyRating(
                                     widget.receiverId,
                                   );
@@ -210,7 +208,8 @@ class _MessageScreenState extends State<MessageScreen> {
                 child: Obx(() {
                   final messages = chatController.userMessageList;
 
-                  if (chatController.isLoadingMessage.value && messages.isEmpty) {
+                  if (chatController.isLoadingMessage.value &&
+                      messages.isEmpty) {
                     return MessageScreenShimmer();
                   }
 
@@ -231,7 +230,8 @@ class _MessageScreenState extends State<MessageScreen> {
                       vertical: ResponsiveHelper.height(8),
                     ),
                     itemCount:
-                        messages.length + (chatController.hasMoreMessage ? 1 : 0),
+                        messages.length +
+                        (chatController.hasMoreMessage ? 1 : 0),
                     itemBuilder: (context, index) {
                       // Pagination loader
                       if (index == messages.length) {
@@ -257,9 +257,9 @@ class _MessageScreenState extends State<MessageScreen> {
                         fileUrl: msg.fileUrl,
                         // ✅ read receipt ticks
                         isRead: msg.isRead,
-                        fileName: msg.fileName,         // file_name
+                        fileName: msg.fileName, // file_name
 
-                        fileSize: msg.fileSize,         // file_size
+                        fileSize: msg.fileSize, // file_size
                         isDelivered: msg.isDelivered,
                       );
                     },
@@ -287,7 +287,6 @@ class _MessageScreenState extends State<MessageScreen> {
                     onRoomIdUpdate: (newId) {
                       setState(() => _currentRoomId = newId);
                     },
-
                   );
                 }
               }),

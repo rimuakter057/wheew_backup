@@ -114,50 +114,14 @@ class _SearchListScreenState extends State<SearchListScreen> {
           itemBuilder: (context, index) {
           final user = controller.searchResults[index];
 
+
                     return GestureDetector(
                       onTap: () async {
-                        final roomId =
-                            user.existingRoom?.id ?? '';
-
-                        debugPrint(
-                          "before search navigate room id================================== $roomId",
+                        await controller.createMessageRequest(
+                          receiverId: user.id ?? '',
+                          firstMessage: "Hi, can I message you?",
+                          context: context,
                         );
-
-                        controller.roomID.value = roomId;
-
-                        await context.pushNamed(
-                          RouteName.message,
-                          extra: {
-                            'roomId': roomId,
-                            'otherUserName': user.nickName,
-                            'otherUserAvatar':
-                            user.avatar ??
-                                AppConst.unknown,
-                            'receiverId': user.id,
-                            "isBlockedByMe": false,
-                            "isBlockedMe": false,
-                            'voiceAutoSend': false,
-                            'voiceMessage': null,
-                          },
-                        );
-
-                        debugPrint(
-                          "after search navigate room id================================== $roomId",
-                        );
-
-                        final newRoomId =
-                            controller.roomID.value;
-
-                        if (newRoomId.isNotEmpty &&
-                            (user.existingRoom?.id ?? '') !=
-                                newRoomId) {
-                          setState(() {
-                            user.existingRoom =
-                                ExistingRoom2(
-                                  id: newRoomId,
-                                );
-                          });
-                        }
                       },
                       child: Container(
                         padding: ResponsiveHelper.all(16),
@@ -166,7 +130,6 @@ class _SearchListScreenState extends State<SearchListScreen> {
                           border: Border.all(color: AppColors.greyBorder),
                           borderRadius: BorderRadius.circular(8)
                         ),
-
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -174,7 +137,7 @@ class _SearchListScreenState extends State<SearchListScreen> {
                               children: [
                                 UserAvatar(imagePath: user.avatar ?? AppConst.unknown),
                                 SizedBox(width: ResponsiveHelper.width(12)),
-                                Expanded(   // ← এটা বাইরে যোগ করুন
+                                Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -203,8 +166,8 @@ class _SearchListScreenState extends State<SearchListScreen> {
                                 ),
                               ],
                             ),
-
-                        ],),
+                          ],
+                        ),
 
                         // child: ChatTile(
                         //   isBlock: false,

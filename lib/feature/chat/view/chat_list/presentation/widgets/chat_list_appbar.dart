@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:platchatapp/feature/chat/view/message/presentation/screens/message_requests_screen.dart';
 import 'package:lottie/lottie.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/notification/controller/notification_controller.dart';
@@ -54,101 +56,49 @@ leading: GestureDetector(
 
       ),
       
-      // title: Row(
-      //   mainAxisSize: MainAxisSize.min,
-      //   children: [
-      //     Lottie.asset(
-      //       AssetsPath.homeJson,
-      //       width: ResponsiveHelper.iconSize(28),
-      //       height: ResponsiveHelper.iconSize(28),
-      //       fit: BoxFit.cover,
-      //       repeat: true,
-      //     ),
-      //     SizedBox(width: ResponsiveHelper.spacing(6)),
-      //     CustomImage(
-      //       imageSrc: AssetsPath.chatList,
-      //       height: ResponsiveHelper.height(28),
-      //       fit: BoxFit.contain,
-      //     ),
-      //   ],
-      // ),
 
 
 
 
 
       actions: [
-
-          GestureDetector(
-            onTap: onCreateGroupTap,
-            child: Padding(
-              padding: EdgeInsets.only(
-                right: ResponsiveHelper.width(10),
-              ),
-              child: CircleAvatar(
-                radius: ResponsiveHelper.iconSize(25),
-                backgroundColor: AppColors.greyShade,
-                child: CustomImage(
-                  imageSrc: AssetsPath.group,
-                  height: ResponsiveHelper.iconSize(25),
-                  width: ResponsiveHelper.iconSize(25),
-                ),
+        GestureDetector(
+          onTap: () {
+            _showMessageRequestOptions(context);
+          },
+          child: Padding(
+            padding: EdgeInsets.only(
+              right: ResponsiveHelper.width(10),
+            ),
+            child: CircleAvatar(
+              radius: ResponsiveHelper.iconSize(25),
+              backgroundColor: AppColors.greyShade,
+              child: const Icon(
+                Icons.mark_email_unread_outlined,
+                color: AppColors.blue,
+                size: 20,
               ),
             ),
           ),
-        // Obx(
-        //       () => GestureDetector(
-        //     onTap: () {
-        //       context.pushNamed(RouteName.notification);
-        //     },
-        //     child: Padding(
-        //       padding: EdgeInsets.only(
-        //         right: ResponsiveHelper.width(16),
-        //       ),
-        //       child: Stack(
-        //         clipBehavior: Clip.none,
-        //         children: [
-        //           Icon(
-        //             Icons.notifications_outlined,
-        //             color: AppColors.blue,
-        //             size: ResponsiveHelper.iconSize(32),
-        //           ),
-        //
-        //           if (notificationController.unreadCount.value > 0)
-        //             Positioned(
-        //               right: -2,
-        //               top: -1,
-        //               child: Container(
-        //                 padding: const EdgeInsets.symmetric(
-        //                   horizontal: 5,
-        //                   vertical: 2,
-        //                 ),
-        //                 decoration: BoxDecoration(
-        //                   color: AppColors.blue,
-        //                   borderRadius: BorderRadius.circular(20),
-        //                 ),
-        //                 constraints: const BoxConstraints(
-        //                   minWidth: 18,
-        //                   minHeight: 18,
-        //                 ),
-        //                 child: Text(
-        //                   notificationController.unreadCount.value > 9
-        //                       ? "9+"
-        //                       : notificationController.unreadCount.value.toString(),
-        //                   textAlign: TextAlign.center,
-        //                   style: const TextStyle(
-        //                     color: Colors.white,
-        //                     fontSize: 10,
-        //                     fontWeight: FontWeight.bold,
-        //                   ),
-        //                 ),
-        //               ),
-        //             ),
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-        // ),
+        ),
+        GestureDetector(
+          onTap: onCreateGroupTap,
+          child: Padding(
+            padding: EdgeInsets.only(
+              right: ResponsiveHelper.width(10),
+            ),
+            child: CircleAvatar(
+              radius: ResponsiveHelper.iconSize(25),
+              backgroundColor: AppColors.greyShade,
+              child: CustomImage(
+                imageSrc: AssetsPath.group,
+                height: ResponsiveHelper.iconSize(25),
+                width: ResponsiveHelper.iconSize(25),
+              ),
+            ),
+          ),
+        ),
+
       ],
 
 
@@ -160,4 +110,92 @@ leading: GestureDetector(
   /// AppBar এর height ঠিক রাখার জন্য
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
+
+void _showMessageRequestOptions(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) {
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              Text(
+                'Message Requests',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 8),
+              ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: AppColors.blue.withValues(alpha: 0.1),
+                  child: const Icon(Icons.inbox_outlined, color: AppColors.blue),
+                ),
+                title: Text(
+                  'Received Requests',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+                subtitle: Text(
+                  'Requests others sent to you',
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    color: Colors.grey.shade500,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  context.pushNamed(RouteName.messageRequests);
+                },
+              ),
+              ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: AppColors.blue.withValues(alpha: 0.1),
+                  child: const Icon(Icons.send_outlined, color: AppColors.blue),
+                ),
+                title: Text(
+                  'Sent Requests',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+                subtitle: Text(
+                  'Requests you sent to others',
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    color: Colors.grey.shade500,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  context.pushNamed(RouteName.sendRequests);
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

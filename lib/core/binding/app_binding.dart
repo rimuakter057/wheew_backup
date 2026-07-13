@@ -11,6 +11,7 @@ import 'package:platchatapp/feature/scan/controller/scan_controller.dart';
 import 'package:platchatapp/feature/useful_number/controller/useful_number_controller.dart';
 
 import '../../feature/chat/view/group/controller/group_controller.dart';
+import '../../feature/chat/view/message/controller/message_controller.dart';
 
 class AppBindings extends Bindings {
   @override
@@ -22,6 +23,7 @@ class AppBindings extends Bindings {
     Get.put(UsefulNumberController());
     Get.put(GroupController());
     Get.put(NotificationController());
+    Get.put(MessageController());
    // Get.put(ParkingController());
 
   }

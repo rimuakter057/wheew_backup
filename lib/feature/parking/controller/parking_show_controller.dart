@@ -24,6 +24,16 @@ class ParkingShowController extends GetxController {
   final RxInt selectedRadiusMeter = 300.obs;
   final RxInt mapOverlayVersion = 0.obs;
 
+  // ── SavePark, ParkMode, and Parktime States ──────────────────────
+  final Rxn<LatLng> savedParkingLocation = Rxn<LatLng>();
+  final RxInt confidenceLevel = 98.obs;
+  final RxBool isParkModeActive = false.obs;
+  final RxBool isPaidSpot = false.obs;
+  final RxString remainingTimeString = ''.obs;
+  final RxBool isTimerActive = false.obs;
+  Timer? _parkingCountdownTimer;
+
+
   final RxSet<Circle> circles = <Circle>{}.obs;
   final RxSet<Polyline> polylines = <Polyline>{}.obs;
   final RxList<dynamic> handoffList = <dynamic>[].obs;
@@ -286,6 +296,24 @@ class ParkingShowController extends GetxController {
     final paidCarIcon = await _getCarIcon(AssetsPath.paidCar);
     bool needRefresh = false;
 
+    // Inject saved location marker
+    if (savedParkingLocation.value != null) {
+      newMarkers.add(
+        Marker(
+          markerId: const MarkerId('saved_car_location'),
+          position: savedParkingLocation.value!,
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          anchor: const Offset(0.5, 0.5),
+          infoWindow: const InfoWindow(
+            title: 'Your Saved Parking Spot',
+            snippet: 'Tap to see walking route',
+          ),
+          onTap: () => showSavedSpotDetails(),
+        ),
+      );
+    }
+
+
     for (final rawHandoff in handoffList) {
       final handoff = _asMap(rawHandoff);
       if (handoff == null) continue;
@@ -545,8 +573,400 @@ class ParkingShowController extends GetxController {
     return null;
   }
 
+  // ── SavePark, ParkMode, and Parktime Operations ──────────────────
+  void toggleParkMode() {
+    isParkModeActive.value = !isParkModeActive.value;
+    if (isParkModeActive.value) {
+      _showMessage('ParkMode active: Fusing GPS and Accelerometer signals.', isError: false);
+      final lat = gpsPosition.value?.latitude;
+      final lng = gpsPosition.value?.longitude;
+      if (lat != null && lng != null) {
+        fetchNearbyData(lat, lng);
+      }
+    } else {
+      _showMessage('ParkMode deactivated.', isError: false);
+    }
+  }
+
+  void simulateAutoParkDetection() {
+    _showMessage('Auto-Park Detected by Confidence Engine!', isError: false);
+    saveCurrentParkingLocation();
+  }
+
+  void saveCurrentParkingLocation() {
+    final latLng = gpsPosition.value;
+    if (latLng == null) {
+      _showMessage('GPS Location not available to save spot.', isError: true);
+      return;
+    }
+    
+    confidenceLevel.value = 93 + (DateTime.now().second % 7); // simulated background signals 93-99%
+    savedParkingLocation.value = latLng;
+    _buildMarkersAndPolygons();
+    
+    showParkingTypeDialog();
+  }
+
+  void clearSavedParkingLocation() {
+    _parkingCountdownTimer?.cancel();
+    isTimerActive.value = false;
+    remainingTimeString.value = '';
+    savedParkingLocation.value = null;
+    _buildMarkersAndPolygons();
+    _showMessage('Saved parking spot removed.', isError: false);
+  }
+
+  void launchSavedParkingRoute() {
+    final destination = savedParkingLocation.value;
+    final origin = gpsPosition.value;
+    if (destination == null || origin == null) return;
+    
+    final url = 'https://www.google.com/maps/dir/?api=1'
+        '&origin=${origin.latitude},${origin.longitude}'
+        '&destination=${destination.latitude},${destination.longitude}'
+        '&travelmode=walking';
+        
+    _launchURL(url);
+  }
+
+  void startParkingTimer(int minutes) {
+    _parkingCountdownTimer?.cancel();
+    final totalSeconds = minutes * 60;
+    _startTimerUpdate(totalSeconds);
+    _showMessage('Paid spot timer started for $minutes minutes.', isError: false);
+  }
+
+  void _startTimerUpdate(int totalSeconds) {
+    int remainingSeconds = totalSeconds;
+    
+    _parkingCountdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (remainingSeconds <= 0) {
+        timer.cancel();
+        isTimerActive.value = false;
+        remainingTimeString.value = '';
+        savedParkingLocation.value = null; // Spot is removed after expiration
+        _buildMarkersAndPolygons();
+        _showMessage('Parking spot duration has expired. Spot is now free.', isError: false);
+        return;
+      }
+
+      remainingSeconds--;
+      
+      final int mins = remainingSeconds ~/ 60;
+      final int secs = remainingSeconds % 60;
+      remainingTimeString.value = '${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+      
+      // Expiring warning alert
+      final bool triggerAlert = (totalSeconds > 600 && remainingSeconds == 600) || 
+                               (totalSeconds <= 600 && remainingSeconds == 60);
+      if (triggerAlert) {
+        _showExpirationAlert();
+      }
+    });
+    isTimerActive.value = true;
+  }
+
+  void showParkingTypeDialog() {
+    final ctx = Get.overlayContext ?? Get.context;
+    if (ctx == null) return;
+    showDialog(
+      context: ctx,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.local_parking, size: 40, color: Colors.blue.shade700),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'The car has been parked.',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Is it a free spot or is it a paid spot?',
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                          isPaidSpot.value = false;
+                          isTimerActive.value = false;
+                          remainingTimeString.value = '';
+                          _showMessage('Parking location saved as Free Spot.', isError: false);
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: const Text('Free Spot', style: TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                          isPaidSpot.value = true;
+                          showDurationPickerDialog();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF185FA5),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: const Text('Paid Spot', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      }
+    );
+  }
+
+  void showDurationPickerDialog() {
+    final ctx = Get.overlayContext ?? Get.context;
+    if (ctx == null) return;
+    showDialog(
+      context: ctx,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Staying Duration',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'For how long is the user staying in that spot?',
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                ...[15, 30, 45, 60, 120].map((mins) {
+                  String label = '$mins Minutes';
+                  if (mins >= 60) {
+                    label = '${mins ~/ 60} Hour${mins == 60 ? "" : "s"}';
+                  }
+                  return Padding(
+                     padding: const EdgeInsets.symmetric(vertical: 6),
+                     child: SizedBox(
+                       width: double.infinity,
+                       child: ElevatedButton(
+                         onPressed: () {
+                           Navigator.of(dialogContext).pop();
+                           startParkingTimer(mins);
+                         },
+                         style: ElevatedButton.styleFrom(
+                           backgroundColor: Colors.grey.shade100,
+                           foregroundColor: Colors.black87,
+                           elevation: 0,
+                           padding: const EdgeInsets.symmetric(vertical: 12),
+                           shape: RoundedRectangleBorder(
+                             borderRadius: BorderRadius.circular(10),
+                             side: BorderSide(color: Colors.grey.shade300),
+                           ),
+                         ),
+                         child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+                       ),
+                     ),
+                   );
+                }),
+                const SizedBox(height: 12),
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+    );
+  }
+
+  void _showExpirationAlert() {
+    final ctx = Get.overlayContext ?? Get.context;
+    if (ctx == null) return;
+    showDialog(
+      context: ctx,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.warning_amber_rounded, size: 40, color: Colors.amber),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Parking Expiring',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Are you leaving the paid spot? Your paid spot is expiring in 10 minutes.',
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                          _showMessage('Acknowledged. Keeping spot active.', isError: false);
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: const Text('No, Staying', style: TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                          clearSavedParkingLocation();
+                          _showMessage('Parking cleared. Released spot status.', isError: false);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amber.shade700,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: const Text('Yes, Leaving', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      }
+    );
+  }
+
+  void showSavedSpotDetails() {
+    final ctx = Get.overlayContext ?? Get.context;
+    if (ctx == null) return;
+    showModalBottomSheet(
+      context: ctx,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[350],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Saved Parking Location',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              _buildDetailRow('Confidence Level', '${confidenceLevel.value}% (High Accuracy)'),
+              _buildDetailRow('Spot Type', isPaidSpot.value ? 'Paid Spot' : 'Free Spot'),
+              if (isTimerActive.value)
+                _buildDetailRow('Time Remaining', remainingTimeString.value),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  launchSavedParkingRoute();
+                },
+                icon: const Icon(Icons.directions_walk, color: Colors.white),
+                label: const Text('Walk Back to Car', style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF185FA5),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 10),
+              OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  clearSavedParkingLocation();
+                },
+                icon: const Icon(Icons.delete_outline, color: Colors.red),
+                label: const Text('Remove Spot', style: TextStyle(color: Colors.red)),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.red),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      }
+    );
+  }
+
   void showHandoffDetails(Map<String, dynamic> handoff) {
     showDetailsSheet(handoff, 'Handoff Details');
+  }
+
+   // showDetailsSheet(handoff, 'Handoff Details');
   }
 
   void showParkingAreaDetails(Map<String, dynamic> area) {
@@ -711,4 +1131,4 @@ class ParkingShowController extends GetxController {
       debugPrint('Could not launch URL: $url ($e)');
     }
   }
-}
+

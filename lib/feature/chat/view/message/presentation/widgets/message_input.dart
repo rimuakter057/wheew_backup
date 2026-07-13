@@ -631,7 +631,7 @@ class _MessageInputState extends State<MessageInput> {
     });
   }
 
-  // ── Voice recording: send (DEBUG ONLY for now) ──
+  // ── Voice recording: send ──
   Future<void> _sendRecording() async {
     _recordTimer?.cancel();
     String? finalPath;
@@ -643,32 +643,117 @@ class _MessageInputState extends State<MessageInput> {
 
     finalPath ??= _recordedFilePath;
 
-    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    debugPrint('🎤 Send Voice Button Tapped (DEBUG ONLY — not sent yet)');
-    debugPrint('📁 recordedFilePath: $finalPath');
-    debugPrint('⏱️ duration: ${_formatDuration(_recordDuration)}');
-
     if (finalPath != null) {
       final file = File(finalPath);
       if (await file.exists()) {
-        final int size = await file.length();
-        debugPrint('✅ File exists, size: $size bytes — recording looks good');
-      } else {
-        debugPrint('❌ File does NOT exist — recording failed');
+        await widget.chatController.sendMediaMessage(
+          receiverId: widget.receiverId,
+          filePath: finalPath,
+          roomId: widget.currentRoomId,
+        );
       }
-    } else {
-      debugPrint('❌ No recorded file path found — recording failed');
     }
-    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
-    // NOTE: actual sending to chat is intentionally NOT wired up yet.
-    // This just resets the recording UI after the debug check.
     setState(() {
       _isRecording = false;
       _recordedFilePath = null;
       _recordDuration = Duration.zero;
     });
   }
+
+  // ── Show Alert Presets Bottom Sheet ──
+  void _showAlertPresetsBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[350],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.warning_amber_rounded, color: Colors.orange.shade800),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Send Quick Alert Preset',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Alert messages are delivered instantly without requiring recipient confirmation.',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ...[
+                'Warning! Please check your car immediately.',
+                'Alert: Your car alarm is active.',
+                'Alert: Your car is being towed or blocked.',
+                'Emergency: Please move your vehicle.'
+              ].map((msg) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(sheetContext);
+                      widget.chatController.sendNewEmitMessage(
+                        receiverId: widget.receiverId,
+                        message: msg,
+                        roomId: widget.currentRoomId,
+                      );
+                      final ctx = Get.overlayContext ?? Get.context;
+                      if (ctx != null) {
+                        ScaffoldMessenger.of(ctx).showSnackBar(
+                          SnackBar(
+                            content: Text('Alert message sent: "$msg"'),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange.shade50,
+                      foregroundColor: Colors.orange.shade900,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(color: Colors.orange.shade300),
+                      ),
+                    ),
+                    child: Text(msg, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                );
+              }),
+              const SizedBox(height: 12),
+            ],
+          ),
+        );
+      }
+    );
+  }
+
 
   String _formatDuration(Duration d) {
     final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
@@ -914,6 +999,22 @@ class _MessageInputState extends State<MessageInput> {
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+
+          // Warning/Alert Preset Icon
+          GestureDetector(
+            onTap: _showAlertPresetsBottomSheet,
+            child: Padding(
+              padding: EdgeInsets.only(
+                bottom: ResponsiveHelper.padding(4),
+                right: ResponsiveHelper.padding(8),
+              ),
+              child: Icon(
+                Icons.warning_amber_rounded,
+                size: ResponsiveHelper.iconSize(26),
+                color: Colors.orange.shade700,
               ),
             ),
           ),

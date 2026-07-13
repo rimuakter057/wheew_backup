@@ -24,11 +24,13 @@ import 'package:platchatapp/feature/scan/presentation/screens/scan_screen.dart';
 import 'package:platchatapp/feature/auth/view/otp_screen.dart';
 import 'package:platchatapp/feature/chat/view/block/block_list_screen.dart';
 import 'package:platchatapp/feature/chat/view/chat_list/presentation/screens/chat_list_screen.dart';
-import 'package:platchatapp/feature/chat/view/message/presentation/screens/message_screen.dart';
 import 'package:platchatapp/feature/search/presentation/screens/serach_screen.dart';
+import 'package:platchatapp/feature/chat/view/message/presentation/screens/message_screen.dart';
+import 'package:platchatapp/feature/chat/view/message/presentation/screens/message_requests_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_screen.dart';
 import '../../feature/chat/view/group/presentation/screens/group_member_screen.dart';
 import '../../feature/chat/view/group/presentation/screens/group_message_screen.dart';
+import '../../feature/chat/view/message/presentation/screens/send_message_request.dart';
 import '../../feature/splash/splash_screen.dart';
 import '../../feature/auth/view/welcome_screen.dart';
 import '../../feature/auth/repository/auth_controller.dart';
@@ -303,8 +305,22 @@ class AppRouter {
           return ParkingShowScreen();
         },
       ),
+      GoRoute(
+        path: RoutePath.messageRequests,
+        name: RouteName.messageRequests,
+        builder: (context, state) {
+          return const MessageRequestsScreen();
+        },
+      ),
 
 
+      GoRoute(
+        path: RoutePath.sendRequests,
+        name: RouteName.sendRequests,
+        builder: (context, state) {
+          return const SentMessageRequestsScreen();
+        },
+      ),
     ],
   );
 }

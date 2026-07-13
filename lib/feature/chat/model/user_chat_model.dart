@@ -151,7 +151,8 @@ class OtherUser {
   String? licenceId;
   String? avatar;
   double? rating;
-  int?totalRatings;
+  int? totalRating;
+  int? totalRatings;
   bool? isVehicleVerified;
 
   OtherUser({
@@ -160,6 +161,7 @@ class OtherUser {
     this.licenceId,
     this.avatar,
     this.rating,
+    this.totalRating,
     this.totalRatings,
     this.isVehicleVerified,
   });
@@ -170,8 +172,9 @@ class OtherUser {
     licenceId = json['licence_id'];
     avatar = json['avatar'];
     rating = json['rating'] != null ? (json['rating'] as num).toDouble() : null;
-
-    isVehicleVerified = json['is_vehicle_verified']; // ✅ '=' দিয়ে ঠিক করা
+    totalRating = json['totalRating'] != null ? (json['totalRating'] as num).toInt() : null;
+    totalRatings = json['totalRatings'] != null ? (json['totalRatings'] as num).toInt() : null;
+    isVehicleVerified = json['is_vehicle_verified'];
   }
 
   Map<String, dynamic> toJson() {
@@ -181,7 +184,9 @@ class OtherUser {
     data['licence_id'] = licenceId;
     data['avatar'] = avatar;
     data['rating'] = rating;
-    data['is_vehicle_verified'] = isVehicleVerified; // ✅ ঠিক করা — data['...'] = ... ফরম্যাটে
+    data['totalRating'] = totalRating;
+    data['totalRatings'] = totalRatings;
+    data['is_vehicle_verified'] = isVehicleVerified;
     return data;
   }
 }
@@ -207,6 +212,20 @@ class LatestMessage {
   String? createdAt;
   bool? isMine;
   Sender? sender;
+  Receiver? receiver;
+
+  // New Fields
+  String? encryptionType;
+  String? encryptionVersion;
+  String? senderKeyId;
+  String? receiverKeyId;
+  String? nonce;
+  String? fileUrl;
+  String? fileName;
+  int? fileSize;
+  String? fileMimeType;
+  num? durationSeconds;
+  dynamic waveform;
 
   LatestMessage({
     this.id,
@@ -222,6 +241,18 @@ class LatestMessage {
     this.updatedAt,
     this.isMine,
     this.sender,
+    this.receiver,
+    this.encryptionType,
+    this.encryptionVersion,
+    this.senderKeyId,
+    this.receiverKeyId,
+    this.nonce,
+    this.fileUrl,
+    this.fileName,
+    this.fileSize,
+    this.fileMimeType,
+    this.durationSeconds,
+    this.waveform,
   });
 
   LatestMessage.fromJson(Map<String, dynamic> json) {
@@ -245,6 +276,19 @@ class LatestMessage {
     isMine = json['is_mine'];
 
     sender = json['sender'] != null ? Sender.fromJson(json['sender']) : null;
+    receiver = json['receiver'] != null ? Receiver.fromJson(json['receiver']) : null;
+
+    encryptionType = json['encryptionType'];
+    encryptionVersion = json['encryptionVersion'];
+    senderKeyId = json['senderKeyId'];
+    receiverKeyId = json['receiverKeyId'];
+    nonce = json['nonce'];
+    fileUrl = json['file_url'];
+    fileName = json['file_name'];
+    fileSize = json['file_size'] != null ? (json['file_size'] as num).toInt() : null;
+    fileMimeType = json['file_mime_type'];
+    durationSeconds = json['durationSeconds'];
+    waveform = json['waveform'];
   }
 
   /// ✅ যেকোনো type এর room id
@@ -271,6 +315,18 @@ class LatestMessage {
     data['updatedAt'] = updatedAt;
     data['is_mine'] = isMine;
     if (sender != null) data['sender'] = sender!.toJson();
+    if (receiver != null) data['receiver'] = receiver!.toJson();
+    data['encryptionType'] = encryptionType;
+    data['encryptionVersion'] = encryptionVersion;
+    data['senderKeyId'] = senderKeyId;
+    data['receiverKeyId'] = receiverKeyId;
+    data['nonce'] = nonce;
+    data['file_url'] = fileUrl;
+    data['file_name'] = fileName;
+    data['file_size'] = fileSize;
+    data['file_mime_type'] = fileMimeType;
+    data['durationSeconds'] = durationSeconds;
+    data['waveform'] = waveform;
     return data;
   }
 }
@@ -284,6 +340,29 @@ class Sender {
   Sender({this.id, this.nickName, this.avatar});
 
   Sender.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    nickName = json['nick_name'];
+    avatar = json['avatar'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['nick_name'] = nickName;
+    data['avatar'] = avatar;
+    return data;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+class Receiver {
+  String? id;
+  String? nickName;
+  String? avatar;
+
+  Receiver({this.id, this.nickName, this.avatar});
+
+  Receiver.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     nickName = json['nick_name'];
     avatar = json['avatar'];

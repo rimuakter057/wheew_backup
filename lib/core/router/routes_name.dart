@@ -29,5 +29,8 @@ class RouteName {
   static const notification = 'notification';
   static const faq = 'faq';
   static const parkingShow = 'parkingShow';
+  static const messageRequests = 'messageRequests';
+  static const sendRequests = 'sendRequests';
+
 
 }

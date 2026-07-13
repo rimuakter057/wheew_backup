@@ -27,6 +27,9 @@ class RoutePath {
   static const ocrScanner = '/ocrScanner';
   static const vehicle = '/vehicle';
   static const notification = '/notification';
-  static const faq = '/faq';
-  static const parkingShow = '/parkingShowScreen';
+  static const String faq = '/faq';
+  static const String parkingShow = '/parkingShowScreen';
+  static const String messageRequests = '/messageRequests';
+  static const String sendRequests = '/sendRequests';
+
 }

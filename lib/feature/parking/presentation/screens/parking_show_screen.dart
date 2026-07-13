@@ -273,6 +273,267 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                 ),
               ),
             ),
+
+            /// ── ParkMode Status Pill (Top-Left) ──────────────────────────────────
+            Obx(() {
+              final isSearching = _parkingShowCtrl.isParkModeActive.value;
+              return Positioned(
+                top: MediaQuery.of(context).padding.top + ResponsiveHelper.padding(72),
+                left: ResponsiveHelper.padding(16),
+                child: GestureDetector(
+                  onTap: () => _parkingShowCtrl.toggleParkMode(),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: isSearching ? const Color(0xFF185FA5) : Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        )
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isSearching ? Icons.explore : Icons.explore_off_outlined,
+                          color: isSearching ? Colors.white : const Color(0xFF185FA5),
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          isSearching ? 'ParkMode: Searching' : 'ParkMode: Inactive',
+                          style: TextStyle(
+                            color: isSearching ? Colors.white : Colors.black87,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }),
+
+            /// ── ParkMode Detailed Sensor Info ────────────────────────────────────
+            Obx(() {
+              if (!_parkingShowCtrl.isParkModeActive.value) return const SizedBox.shrink();
+              return Positioned(
+                top: MediaQuery.of(context).padding.top + ResponsiveHelper.padding(125),
+                left: ResponsiveHelper.padding(16),
+                child: Container(
+                  width: ResponsiveHelper.padding(210),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.95),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: const Color(0xFF185FA5).withValues(alpha: 0.2)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      )
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Sensor-Fusion Tracking',
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF185FA5)),
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Icon(Icons.gps_fixed, size: 12, color: Colors.green.shade600),
+                          const SizedBox(width: 6),
+                          const Text('GPS Speed: < 3 km/h', style: TextStyle(fontSize: 10, color: Colors.black87)),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(Icons.vibration, size: 12, color: Colors.blue.shade600),
+                          const SizedBox(width: 6),
+                          const Text('Accel: Frequent Braking/Turns', style: TextStyle(fontSize: 10, color: Colors.black87)),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 22,
+                        child: ElevatedButton(
+                          onPressed: () => _parkingShowCtrl.simulateAutoParkDetection(),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF185FA5),
+                            padding: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                          ),
+                          child: const Text('Simulate Stop', style: TextStyle(fontSize: 9, color: Colors.white)),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            }),
+
+            /// ── SavePark Floating Controls (Bottom) ──────────────────────────────
+            Obx(() {
+              final isSaved = _parkingShowCtrl.savedParkingLocation.value != null;
+              final isTimerActive = _parkingShowCtrl.isTimerActive.value;
+              final timeLeft = _parkingShowCtrl.remainingTimeString.value;
+              final isPaid = _parkingShowCtrl.isPaidSpot.value;
+
+              return Positioned(
+                bottom: ResponsiveHelper.padding(24),
+                left: ResponsiveHelper.padding(16),
+                right: ResponsiveHelper.padding(16),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: !isSaved
+                      ? Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                key: const ValueKey('save_btn'),
+                                onPressed: () => _parkingShowCtrl.saveCurrentParkingLocation(),
+                                icon: const Icon(Icons.bookmark_outline, color: Colors.white),
+                                label: const Text(
+                                  'Save Parking Spot',
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF185FA5),
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  elevation: 5,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Container(
+                          key: const ValueKey('saved_card'),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.12),
+                                blurRadius: 16,
+                                offset: const Offset(0, 4),
+                              )
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: isPaid ? Colors.orange.shade50 : Colors.green.shade50,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      isPaid ? Icons.timer_outlined : Icons.check_circle_outline,
+                                      color: isPaid ? Colors.orange.shade700 : Colors.green.shade700,
+                                      size: 20,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Car Parked & Saved',
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          'Confidence Level: ${_parkingShowCtrl.confidenceLevel.value}% (High)',
+                                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  if (isPaid && isTimerActive)
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.orange.shade100,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        timeLeft,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13,
+                                          color: Colors.orange.shade900,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: OutlinedButton(
+                                      onPressed: () => _parkingShowCtrl.clearSavedParkingLocation(),
+                                      style: OutlinedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(vertical: 12),
+                                        side: BorderSide(color: Colors.grey.shade300),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'Clear Spot',
+                                        style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      onPressed: () => _parkingShowCtrl.launchSavedParkingRoute(),
+                                      icon: const Icon(Icons.directions_walk, color: Colors.white, size: 16),
+                                      label: const Text(
+                                        'Walk to Car',
+                                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(0xFF185FA5),
+                                        padding: const EdgeInsets.symmetric(vertical: 12),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                ),
+              );
+            }),
           ],
         ),
       ),

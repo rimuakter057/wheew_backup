@@ -174,5 +174,24 @@ class ApiUrl {
   static const String sendGroup = '/group/message/file';
   static const String sendUser = '/chat/message/file';
 
+  // ── Postman Messaging - Uploads ───────────────────────────────
+  static const String sendVoice = '/chat/message/voice';
 
+  // ── Postman Messaging - Message Requests ──────────────────────
+  static const String createMessageRequest = '/chat/message-requests';
+  static const String getMessageRequestInbox = '/chat/message-requests/inbox';
+  static String acceptMessageRequest(String requestId) => '/chat/message-requests/$requestId/accept';
+  static String declineMessageRequest(String requestId) => '/chat/message-requests/$requestId/decline';
+
+  // ── Postman Messaging - E2EE Device Keys ──────────────────────
+  static const String registerE2EEDeviceKey = '/chat/e2ee/keys';
+  static const String getE2EEDeviceKeys = '/chat/e2ee/keys';
+  static const String deactivateE2EEDeviceKey = '/chat/e2ee/keys';
+
+  // ── Postman Preset Messages CRUD ──────────────────────────────
+  static const String createPresetMessage = '/preset-message';
+  static const String listPresetMessages = '/preset-message';
+  static String getPresetMessageById({required String id}) => '/preset-message/$id';
+  static String updatePresetMessage({required String id}) => '/preset-message/$id';
+  static String deletePresetMessage({required String id}) => '/preset-message/$id';
 }

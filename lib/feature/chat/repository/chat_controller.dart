@@ -58,6 +58,7 @@ class ChatController extends GetxController {
 
       final statusCode = response.statusCode;
       if (statusCode == 200 || statusCode == 201) {
+
         CustomSnackbar.success(
           context: context,
           message: 'Member added successfully',
@@ -1584,6 +1585,120 @@ class ChatController extends GetxController {
     }
   }
 
+  // ── Message Request State & Variables ──────────────────────────────
+  final RxList<dynamic> messageRequests = <dynamic>[].obs;
+  final RxBool isLoadingRequests = false.obs;
 
+  Future<void> fetchMessageRequestInbox({bool refresh = false}) async {
+    if (refresh) {
+      messageRequests.clear();
+    }
+    isLoadingRequests.value = true;
+    try {
+      final response = await ApiClient.getData(uri: ApiUrl.getMessageRequestInbox);
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+        if (decoded is List) {
+          messageRequests.value = decoded;
+        } else if (decoded is Map && decoded['data'] is List) {
+          messageRequests.value = decoded['data'];
+        }
+      } else {
+        debugPrint('Failed to load message requests: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('fetchMessageRequestInbox error: $e');
+    } finally {
+      isLoadingRequests.value = false;
+    }
+  }
 
+  Future<bool> createMessageRequest({
+    required String receiverId,
+    required String firstMessage,
+    required BuildContext context,
+  }) async {
+    try {
+      final response = await ApiClient.postData(
+        uri: ApiUrl.createMessageRequest,
+        body: {'receiverId': receiverId, 'firstMessage': firstMessage},
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        CustomSnackbar.success(context: context, message: 'Message request sent successfully!');
+        return true;
+      } else {
+        String errMsg = 'Failed to send message request';
+        try {
+          final decoded = jsonDecode(response.body);
+          errMsg = decoded['message'] ?? decoded['error'] ?? errMsg;
+        } catch (_) {}
+        CustomSnackbar.error(context: context, message: errMsg);
+        return false;
+      }
+    } catch (e) {
+      debugPrint('createMessageRequest error: $e');
+      CustomSnackbar.error(context: context, message: 'Failed to connect. Please try again.');
+      return false;
+    }
+  }
+
+  Future<bool> acceptMessageRequest({
+    required String requestId,
+    required BuildContext context,
+  }) async {
+    try {
+      final response = await ApiClient.postData(
+        uri: ApiUrl.acceptMessageRequest(requestId),
+
+        body: {},
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        CustomSnackbar.success(context: context, message: 'Request accepted!');
+        fetchMessageRequestInbox(refresh: true);
+        fetchChatList(refresh: true);
+        return true;
+      } else {
+        String errMsg = 'Failed to accept message request';
+        try {
+          final decoded = jsonDecode(response.body);
+          errMsg = decoded['message'] ?? decoded['error'] ?? errMsg;
+        } catch (_) {}
+        CustomSnackbar.error(context: context, message: errMsg);
+        return false;
+      }
+    } catch (e) {
+      debugPrint('acceptMessageRequest error: $e');
+      CustomSnackbar.error(context: context, message: 'Failed to accept request.');
+      return false;
+    }
+  }
+
+  Future<bool> declineMessageRequest({
+    required String requestId,
+    required BuildContext context,
+  }) async {
+    try {
+      final response = await ApiClient.postData(
+        uri: ApiUrl.declineMessageRequest(requestId),
+        body: {},
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        CustomSnackbar.success(context: context, message: 'Request declined.');
+        fetchMessageRequestInbox(refresh: true);
+        return true;
+      } else {
+        String errMsg = 'Failed to decline message request';
+        try {
+          final decoded = jsonDecode(response.body);
+          errMsg = decoded['message'] ?? decoded['error'] ?? errMsg;
+        } catch (_) {}
+        CustomSnackbar.error(context: context, message: errMsg);
+        return false;
+      }
+    } catch (e) {
+      debugPrint('declineMessageRequest error: $e');
+      CustomSnackbar.error(context: context, message: 'Failed to decline request.');
+      return false;
+    }
+  }
 }
