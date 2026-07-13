@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison, invalid_use_of_protected_member
 
 import 'dart:async';
+import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 
 import 'dart:convert';
@@ -27,6 +28,60 @@ import 'chat_repository.dart';
 import 'package:http/http.dart' as http;
 
 
+
+import 'dart:collection';
+
+class MultipartFieldsMap extends MapBase<String, String> {
+  final List<MapEntry<String, String>> _entries = [];
+
+  @override
+  String? operator [](Object? key) {
+    for (final entry in _entries) {
+      if (entry.key == key) return entry.value;
+    }
+    return null;
+  }
+
+  @override
+  void operator []=(String key, String value) {
+    _entries.add(MapEntry(key, value));
+  }
+
+  @override
+  void clear() => _entries.clear();
+
+  @override
+  Iterable<String> get keys => _entries.map((e) => e.key).toSet();
+
+  @override
+  String? remove(Object? key) {
+    String? lastValue;
+    _entries.removeWhere((entry) {
+      if (entry.key == key) {
+        lastValue = entry.value;
+        return true;
+      }
+      return false;
+    });
+    return lastValue;
+  }
+
+  @override
+  void forEach(void Function(String key, String value) action) {
+    for (final entry in _entries) {
+      action(entry.key, entry.value);
+    }
+  }
+}
+
+class CustomMultipartRequest extends http.MultipartRequest {
+  final Map<String, String> _customFields = MultipartFieldsMap();
+
+  CustomMultipartRequest(String method, Uri url) : super(method, url);
+
+  @override
+  Map<String, String> get fields => _customFields;
+}
 
 class ChatController extends GetxController {
   final AudioPlayer _audioPlayer = AudioPlayer();
@@ -1113,15 +1168,51 @@ class ChatController extends GetxController {
   Future<bool> createGroup({
     required String groupName,
     List<String> memberIds = const [],
+    String? imagePath,
   }) async {
 
     isCreatingGroup.value = true;
     try {
       final uri = ApiUrl.createGroup;
-      Response response = await ApiClient.postData(
-        uri: uri,
-        body: {"name": groupName, "memberIds": memberIds},
-      );
+      Response response;
+
+      final String myId = await SharePrefsHelper.getString(AppConst.userID);
+      final List<String> finalMemberIds = List.from(memberIds);
+      if (finalMemberIds.isEmpty && myId.isNotEmpty) {
+        finalMemberIds.add(myId);
+      }
+
+      if (imagePath != null && imagePath.isNotEmpty) {
+        final url = Uri.parse(ApiUrl.baseUrl + uri);
+        final token = await SharePrefsHelper.getString(AppConst.token);
+        var request = CustomMultipartRequest('POST', url);
+
+        request.headers['Accept'] = 'application/json';
+        if (token != null && token.isNotEmpty) {
+          request.headers['Authorization'] = 'Bearer $token';
+        }
+
+        request.fields['name'] = groupName;
+        for (final memberId in finalMemberIds) {
+          request.fields['memberIds'] = memberId;
+        }
+
+        final file = File(imagePath);
+        if (await file.exists()) {
+          request.files.add(await http.MultipartFile.fromPath(
+            'image',
+            imagePath,
+          ));
+        }
+
+        final streamedResponse = await request.send();
+        response = await Response.fromStream(streamedResponse);
+      } else {
+        response = await ApiClient.postData(
+          uri: uri,
+          body: {"name": groupName, "memberIds": finalMemberIds},
+        );
+      }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         debugPrint('✅ Group created: $groupName');

@@ -30,6 +30,7 @@ class BlockByMeWidget extends StatelessWidget {
       ),
 
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           /*Text(
             "you've_blocked $name".tr,
