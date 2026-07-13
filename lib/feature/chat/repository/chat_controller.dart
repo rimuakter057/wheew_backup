@@ -27,6 +27,7 @@ import 'chat_repository.dart';
 import 'package:http/http.dart' as http;
 
 
+
 class ChatController extends GetxController {
   final AudioPlayer _audioPlayer = AudioPlayer();
 
@@ -37,6 +38,7 @@ class ChatController extends GetxController {
       debugPrint('Error playing message sound: $e');
     }
   }
+
 
   var isAddingMember = false.obs;
 
@@ -292,10 +294,7 @@ class ChatController extends GetxController {
         if (data is Map && data['messages'] != null) {
           final list = List<Map<String, dynamic>>.from(data['messages']);
           presetMessages.value = list
-              .map((e) => PresetMessage(
-            message: e['message'].toString(),
-            messageIt: e['message_it']?.toString() ?? '',
-          ))
+              .map((e) => PresetMessage.fromJson(e))
               .toList();
           print(
             '✅ [PRESET] Parsed from data["messages"]: ${presetMessages.value}',
@@ -304,10 +303,7 @@ class ChatController extends GetxController {
         // Case 2: [ { "message": "..." } ]  (direct array)
         else if (data is List) {
           presetMessages.value = data
-              .map((e) => PresetMessage(
-            message: e['message'].toString(),
-            messageIt: e['message_it']?.toString() ?? '',
-          ))
+              .map((e) => PresetMessage.fromJson(e))
               .toList();
           print('✅ [PRESET] Parsed from direct List: ${presetMessages.value}');
         }
@@ -315,10 +311,7 @@ class ChatController extends GetxController {
         else if (data is Map && data['data'] != null) {
           final list = List<Map<String, dynamic>>.from(data['data']);
           presetMessages.value = list
-              .map((e) => PresetMessage(
-            message: e['message'].toString(),
-            messageIt: e['message_it']?.toString() ?? '',
-          ))
+              .map((e) => PresetMessage.fromJson(e))
               .toList();
           print('✅ [PRESET] Parsed from data["data"]: ${presetMessages.value}');
         } else {
@@ -368,12 +361,18 @@ class ChatController extends GetxController {
     errorListenMessage();
     newMessage();
     listenMessageDelivered();
+    listenTypingEvents();
 
     debugPrint('✅ Socket listeners initialized');
   }
 
+  /// Typing indicators state
+  RxBool isTyping = false.obs;
+  RxMap<String, bool> inboxTypingMap = <String, bool>{}.obs;
+
   /// get all message list ================================================
   RxList<Messages> userMessageList = <Messages>[].obs;
+
 
   var isLoadingMessage = false.obs; // first page
   var isLoadingMoreMessage = false.obs; // pagination
@@ -619,6 +618,101 @@ class ChatController extends GetxController {
       debugPrint('✅ Local unread reset for room: $roomId');
     }
   }
+
+  void listenTypingEvents() {
+    final s = AppSocket.socket;
+    if (s == null) return;
+
+    s.off('user-typing');
+    s.off('user-stopped-typing');
+    s.off('group-user-typing');
+    s.off('group-user-stopped-typing');
+
+    s.on('user-typing', (data) {
+      debugPrint('⌨️ user-typing event received: $data');
+      if (data is Map) {
+        final rId = data['roomId']?.toString() ?? data['chatRoomId']?.toString();
+        if (rId != null) {
+          inboxTypingMap[rId] = true;
+          if (rId == roomID.value || rId == groupRoomID.value) {
+            isTyping.value = true;
+          }
+        }
+      }
+    });
+
+    s.on('user-stopped-typing', (data) {
+      debugPrint('⌨️ user-stopped-typing event received: $data');
+      if (data is Map) {
+        final rId = data['roomId']?.toString() ?? data['chatRoomId']?.toString();
+        if (rId != null) {
+          inboxTypingMap[rId] = false;
+          if (rId == roomID.value || rId == groupRoomID.value) {
+            isTyping.value = false;
+          }
+        }
+      }
+    });
+
+    s.on('group-user-typing', (data) {
+      debugPrint('⌨️ group-user-typing event received: $data');
+      if (data is Map) {
+        final rId = data['groupChatRoomId']?.toString() ?? data['roomId']?.toString();
+        if (rId != null) {
+          inboxTypingMap[rId] = true;
+          if (rId == roomID.value || rId == groupRoomID.value) {
+            isTyping.value = true;
+          }
+        }
+      }
+    });
+
+    s.on('group-user-stopped-typing', (data) {
+      debugPrint('⌨️ group-user-stopped-typing event received: $data');
+      if (data is Map) {
+        final rId = data['groupChatRoomId']?.toString() ?? data['roomId']?.toString();
+        if (rId != null) {
+          inboxTypingMap[rId] = false;
+          if (rId == roomID.value || rId == groupRoomID.value) {
+            isTyping.value = false;
+          }
+        }
+      }
+    });
+  }
+
+  void sendTyping({required String receiverId, required String roomId, required bool isGroup}) {
+    if (roomId.isEmpty) return;
+    if (isGroup) {
+      AppSocket.sendEvent('group-typing', {
+        'groupChatRoomId': roomId,
+      });
+      debugPrint('📤 Emitted group-typing for room: $roomId');
+    } else {
+      AppSocket.sendEvent('typing', {
+        'receiverId': receiverId,
+        'roomId': roomId,
+      });
+      debugPrint('📤 Emitted typing for receiver: $receiverId, room: $roomId');
+    }
+  }
+
+  void sendStopTyping({required String receiverId, required String roomId, required bool isGroup}) {
+    if (roomId.isEmpty) return;
+    if (isGroup) {
+      AppSocket.sendEvent('group-stop-typing', {
+        'groupChatRoomId': roomId,
+      });
+      debugPrint('📤 Emitted group-stop-typing for room: $roomId');
+    } else {
+      AppSocket.sendEvent('stop-typing', {
+        'receiverId': receiverId,
+        'roomId': roomId,
+      });
+      debugPrint('📤 Emitted stop-typing for receiver: $receiverId, room: $roomId');
+    }
+  }
+
 
   ///new message==========================
 
@@ -1473,7 +1567,74 @@ class ChatController extends GetxController {
 
 
 
+  // ── Voice message send ─────────────────────────────────────────
+  Future<void> sendVoiceMessage({
+    required String receiverId,
+    required String filePath,
+    required int durationSeconds,
+    String? roomId,
+  }) async {
+    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    debugPrint('🎤 sendVoiceMessage CALLED');
+    debugPrint('👤 receiverId: $receiverId');
+    debugPrint('📁 filePath: $filePath');
+    debugPrint('⏱️ durationSeconds: $durationSeconds');
+    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+    try {
+      // Determine MIME type based on extension so the server accepts it as audio
+      final ext = filePath.split('.').last.toLowerCase();
+      final mimeType = (ext == 'mp3') ? MediaType('audio', 'mpeg')
+          : (ext == 'ogg') ? MediaType('audio', 'ogg')
+          : (ext == 'aac') ? MediaType('audio', 'aac')
+          : MediaType('audio', 'mp4'); // default: .m4a → audio/mp4
+
+      final file = await http.MultipartFile.fromPath(
+        'file',
+        filePath,
+        contentType: mimeType,
+      );
+
+      final fields = <String, String>{
+        'receiver_id': receiverId,
+        'message': 'Voice note',
+        // NOTE: durationSeconds skipped — backend needs enableImplicitConversion
+        // to accept numeric strings from multipart form-data.
+        // Add back when backend is fixed: 'durationSeconds': durationSeconds.toString(),
+      };
+
+      final response = await ApiClient.multipartRequest(
+        uri: ApiUrl.sendVoice,
+        method: 'POST',
+        fields: fields,
+        files: [file],
+      );
+
+      debugPrint('📥 sendVoiceMessage RESPONSE: ${response.statusCode}');
+      debugPrint('Body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        final newMsg = Messages.fromJson(data);
+        newMsg.isMine = true;
+
+        if (roomID.value.isEmpty && data['chatRoom_id'] != null) {
+          roomID.value = data['chatRoom_id'].toString();
+        }
+
+        if (newMsg.chatRoomId == roomID.value) {
+          userMessageList.insert(0, newMsg);
+        }
+        updateChatRoomInListOptimistic(newMsg);
+      }
+    } catch (e, stackTrace) {
+      debugPrint('❌ sendVoiceMessage ERROR: $e');
+      debugPrint('StackTrace: $stackTrace');
+    }
+  }
+
   Future<void> sendMediaMessage({
+
     required String receiverId,
     required String filePath,
     String? roomId,

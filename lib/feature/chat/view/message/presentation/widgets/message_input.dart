@@ -1,437 +1,4 @@
 
-
-// import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-// import 'package:google_fonts/google_fonts.dart' hide Config;
-// import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
-// import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
-// import 'package:platchatapp/utils/color/app_colors.dart';
-// import 'package:platchatapp/utils/language/bad_words.dart';
-//
-// import 'attachment_bottom_sheet.dart';
-// import 'message_preset_chips.dart';
-//
-// class MessageInput extends StatefulWidget {
-//   final ChatController chatController;
-//   final String currentRoomId;
-//   final String receiverId;
-//   final ValueChanged<String> onRoomIdUpdate;
-//
-//   const MessageInput({
-//     super.key,
-//     required this.chatController,
-//     required this.currentRoomId,
-//     required this.receiverId,
-//     required this.onRoomIdUpdate,
-//   });
-//
-//   @override
-//   State<MessageInput> createState() => _MessageInputState();
-// }
-//
-// class _MessageInputState extends State<MessageInput> {
-//   bool _isEmojiVisible = false;
-//   final FocusNode _focusNode = FocusNode();
-//
-//   // ── Selected file state ──
-//   String? _selectedFilePath;
-//   String? _selectedFileType;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     _focusNode.addListener(() {
-//       if (_focusNode.hasFocus && _isEmojiVisible) {
-//         setState(() => _isEmojiVisible = false);
-//       }
-//     });
-//   }
-//
-//   @override
-//   void dispose() {
-//     _focusNode.dispose();
-//     super.dispose();
-//   }
-//
-//   void _onSend() {
-//     debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-//     debugPrint('📤 Send Button Tapped');
-//     debugPrint('📁 selectedFilePath: $_selectedFilePath');
-//     debugPrint('📌 selectedFileType: $_selectedFileType');
-//     debugPrint('💬 message: ${widget.chatController.messageController.text.trim()}');
-//     debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-//
-//     // ── File send ──
-//     if (_selectedFilePath != null) {
-//       debugPrint('📎 Sending file...');
-//       widget.chatController.sendMediaMessage(
-//         receiverId: widget.receiverId,
-//         filePath: _selectedFilePath!,
-//         caption: widget.chatController.messageController.text.trim(),
-//       );
-//       setState(() {
-//         _selectedFilePath = null;
-//         _selectedFileType = null;
-//       });
-//       widget.chatController.messageController.clear();
-//       return;
-//     }
-//
-//     // ── Text send ──
-//     final String message = widget.chatController.messageController.text.trim();
-//     if (message.isEmpty) {
-//       debugPrint('⚠️ Message is empty, skipping');
-//       return;
-//     }
-//
-//     final bool containsBadWord =
-//         BadWords.english.any(
-//               (word) => message.toLowerCase().contains(word.toLowerCase()),
-//         ) ||
-//             BadWords.italian.any(
-//                   (word) => message.toLowerCase().contains(word.toLowerCase()),
-//             );
-//
-//     if (containsBadWord) {
-//       debugPrint('⚠️ Bad word detected, blocking send');
-//       showTopSnackBar(context, "bad_word_error".tr);
-//       return;
-//     }
-//
-//     debugPrint('💬 Sending text message...');
-//     widget.chatController.sendNewEmitMessage(
-//       receiverId: widget.receiverId,
-//       message: message,
-//       roomId: widget.currentRoomId,
-//     );
-//
-//     Future.delayed(const Duration(milliseconds: 500), () {
-//       if (widget.currentRoomId.isEmpty &&
-//           widget.chatController.roomID.value.isNotEmpty) {
-//         widget.onRoomIdUpdate(widget.chatController.roomID.value);
-//       }
-//     });
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       mainAxisSize: MainAxisSize.min,
-//       children: [
-//         // ── Preset Messages ───────────────────────────────
-//         MessagePresetChips(chatController: widget.chatController),
-//
-//         SizedBox(height: ResponsiveHelper.height(6)),
-//
-//         // ── File Preview ──────────────────────────────────
-//         if (_selectedFilePath != null)
-//           Container(
-//             margin: EdgeInsets.symmetric(
-//               horizontal: ResponsiveHelper.padding(16),
-//               vertical: ResponsiveHelper.padding(4),
-//             ),
-//             padding: EdgeInsets.all(ResponsiveHelper.padding(10)),
-//             decoration: BoxDecoration(
-//               color: AppColors.greyShade,
-//               borderRadius: BorderRadius.circular(
-//                 ResponsiveHelper.borderRadius(12),
-//               ),
-//               border: Border.all(color: AppColors.blue.withOpacity(0.4)),
-//             ),
-//             child: Row(
-//               children: [
-//                 Icon(
-//                   _selectedFileType == 'IMAGE'
-//                       ? Icons.image
-//                       : _selectedFileType == 'VIDEO'
-//                       ? Icons.videocam
-//                       : Icons.insert_drive_file,
-//                   color: AppColors.blue,
-//                   size: ResponsiveHelper.iconSize(28),
-//                 ),
-//                 SizedBox(width: ResponsiveHelper.width(10)),
-//                 Expanded(
-//                   child: Text(
-//                     _selectedFilePath!.split('/').last,
-//                     maxLines: 1,
-//                     overflow: TextOverflow.ellipsis,
-//                     style: TextStyle(
-//                       fontSize: ResponsiveHelper.fontSize(13),
-//                       color: AppColors.black,
-//                     ),
-//                   ),
-//                 ),
-//                 GestureDetector(
-//                   onTap: () {
-//                     debugPrint('❌ File preview removed');
-//                     setState(() {
-//                       _selectedFilePath = null;
-//                       _selectedFileType = null;
-//                     });
-//                   },
-//                   child: Icon(
-//                     Icons.close,
-//                     size: ResponsiveHelper.iconSize(20),
-//                     color: Colors.red,
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//
-//         // ── Input Row ─────────────────────────────────────
-//         Padding(
-//           padding: EdgeInsets.fromLTRB(
-//             ResponsiveHelper.padding(16),
-//             ResponsiveHelper.padding(8),
-//             ResponsiveHelper.padding(16),
-//             ResponsiveHelper.padding(8),
-//           ),
-//           child: Row(
-//             crossAxisAlignment: CrossAxisAlignment.center,
-//             children: [
-//               // + icon
-//               GestureDetector(
-//                 onTap: () {
-//                   debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-//                   debugPrint('📎 Attachment Button Tapped');
-//                   debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-//                   AttachmentBottomSheet.show(
-//                     context: context,
-//                     onFileSelected: (filePath, type) {
-//                       debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-//                       debugPrint('✅ File Selected');
-//                       debugPrint('📁 filePath: $filePath');
-//                       debugPrint('📌 type: $type');
-//                       debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-//                       setState(() {
-//                         _selectedFilePath = filePath;
-//                         _selectedFileType = type;
-//                       });
-//                     },
-//                   );
-//                 },
-//                 child: Padding(
-//                   padding: EdgeInsets.only(
-//                     bottom: ResponsiveHelper.padding(4),
-//                     right: ResponsiveHelper.padding(8),
-//                   ),
-//                   child: Icon(
-//                     Icons.add,
-//                     size: ResponsiveHelper.iconSize(24),
-//                     color: AppColors.black,
-//                   ),
-//                 ),
-//               ),
-//
-//               // Input container
-//               Expanded(
-//                 child: Container(
-//                   padding: EdgeInsets.symmetric(
-//                     horizontal: ResponsiveHelper.padding(8),
-//                     vertical: ResponsiveHelper.padding(4),
-//                   ),
-//                   decoration: BoxDecoration(
-//                     color: AppColors.greyShade,
-//                     borderRadius: BorderRadius.circular(
-//                       ResponsiveHelper.borderRadius(16),
-//                     ),
-//                   ),
-//                   child: Row(
-//                     crossAxisAlignment: CrossAxisAlignment.end,
-//                     children: [
-//                       // Emoji toggle
-//                       IconButton(
-//                         padding: EdgeInsets.zero,
-//                         constraints: const BoxConstraints(),
-//                         icon: Icon(
-//                           Icons.emoji_emotions,
-//                           color: AppColors.black,
-//                           size: ResponsiveHelper.iconSize(22),
-//                         ),
-//                         onPressed: () {
-//                           _focusNode.unfocus();
-//                           setState(() => _isEmojiVisible = !_isEmojiVisible);
-//                         },
-//                       ),
-//
-//                       SizedBox(width: ResponsiveHelper.width(4)),
-//
-//                       // Text field
-//                       Expanded(
-//                         child: TextField(
-//                           focusNode: _focusNode,
-//                           controller: widget.chatController.messageController,
-//                           minLines: 1,
-//                           maxLines: 3,
-//                           onTap: () {
-//                             if (_isEmojiVisible) {
-//                               setState(() => _isEmojiVisible = false);
-//                             }
-//                           },
-//                           decoration: InputDecoration(
-//                             hintText: _selectedFilePath != null
-//                                 ? "add_caption".tr
-//                                 : "type_here".tr,
-//                             fillColor: AppColors.greyShade,
-//                             hintStyle: TextStyle(
-//                               color: AppColors.black,
-//                               fontSize: ResponsiveHelper.fontSize(16),
-//                             ),
-//                             border: InputBorder.none,
-//                             isDense: true,
-//                             contentPadding: EdgeInsets.symmetric(
-//                               vertical: ResponsiveHelper.padding(8),
-//                             ),
-//                           ),
-//                           style: TextStyle(
-//                             color: AppColors.black,
-//                             fontSize: ResponsiveHelper.fontSize(16),
-//                           ),
-//                         ),
-//                       ),
-//
-//                       // Send button
-//                       GestureDetector(
-//                         onTap: _onSend,
-//                         child: Padding(
-//                           padding: EdgeInsets.all(ResponsiveHelper.padding(8)),
-//                           child: Icon(
-//                             Icons.send_rounded,
-//                             size: ResponsiveHelper.iconSize(24),
-//                             color: AppColors.blue,
-//                           ),
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//
-//
-//               // + icon
-//               GestureDetector(
-//                 onTap: () {
-//
-//                   debugPrint('on tap mic');
-//
-//                 },
-//                 child: Padding(
-//                   padding: EdgeInsets.only(
-//                     bottom: ResponsiveHelper.padding(4),
-//                     right: ResponsiveHelper.padding(8),
-//                   ),
-//                   child: Icon(
-//                     Icons.mic,
-//                     size: ResponsiveHelper.iconSize(24),
-//                     color: AppColors.black,
-//                   ),
-//                 ),
-//               ),
-//
-//             ],
-//           ),
-//         ),
-//
-//         // ── Emoji Picker ──────────────────────────────────
-//         Offstage(
-//           offstage: !_isEmojiVisible,
-//           child: SizedBox(
-//             height: ResponsiveHelper.height(250),
-//             child: EmojiPicker(
-//               textEditingController: widget.chatController.messageController,
-//               config: Config(
-//                 height: ResponsiveHelper.height(250),
-//                 emojiViewConfig: EmojiViewConfig(
-//                   columns: 7,
-//                   emojiSizeMax: 28,
-//                   verticalSpacing: 0,
-//                   horizontalSpacing: 0,
-//                   backgroundColor: Colors.white,
-//                   noRecents: Text(
-//                     'no_recents_yet'.tr,
-//                     style: GoogleFonts.poppins(
-//                       fontSize: 20,
-//                       color: Colors.black26,
-//                     ),
-//                   ),
-//                 ),
-//                 categoryViewConfig: CategoryViewConfig(
-//                   initCategory: Category.SMILEYS,
-//                   indicatorColor: AppColors.blue,
-//                   iconColor: Colors.grey,
-//                   iconColorSelected: AppColors.blue,
-//                   backspaceColor: Colors.red,
-//                 ),
-//                 bottomActionBarConfig: BottomActionBarConfig(
-//                   showSearchViewButton: false,
-//                 ),
-//               ),
-//             ),
-//           ),
-//         ),
-//
-//         SizedBox(height: ResponsiveHelper.height(16)),
-//       ],
-//     );
-//   }
-// }
-//
-// // ── Top Snack Bar ──────────────────────────────────────────────
-// void showTopSnackBar(BuildContext context, String message) {
-//   final OverlayEntry overlayEntry = OverlayEntry(
-//     builder: (context) => Positioned(
-//       top: 50,
-//       left: 16,
-//       right: 16,
-//       child: Material(
-//         color: Colors.transparent,
-//         child: Container(
-//           padding: ResponsiveHelper.all(16),
-//           decoration: BoxDecoration(
-//             color: Colors.red.shade700,
-//             borderRadius: BorderRadius.circular(
-//               ResponsiveHelper.borderRadius(12),
-//             ),
-//             boxShadow: const [
-//               BoxShadow(
-//                 color: Colors.black26,
-//                 blurRadius: 6,
-//                 offset: Offset(0, 3),
-//               ),
-//             ],
-//           ),
-//           child: Row(
-//             children: [
-//               const Icon(Icons.error_outline, color: Colors.white),
-//               SizedBox(width: ResponsiveHelper.padding(12)),
-//               Expanded(
-//                 child: Text(
-//                   message,
-//                   style: GoogleFonts.poppins(
-//                     color: Colors.white,
-//                     fontWeight: FontWeight.bold,
-//                     fontSize: ResponsiveHelper.fontSize(16),
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     ),
-//   );
-//
-//   Overlay.of(context).insert(overlayEntry);
-//   Future.delayed(const Duration(seconds: 3)).then((_) => overlayEntry.remove());
-// }
-
-
-
-
-
-
 import 'dart:async';
 import 'dart:io';
 
@@ -482,6 +49,47 @@ class _MessageInputState extends State<MessageInput> {
   Duration _recordDuration = Duration.zero;
   Timer? _recordTimer;
 
+  // ── Typing state ──
+  Timer? _typingTimer;
+  bool _isTypingEmit = false;
+
+  void _onTextChanged(String text) {
+    if (widget.currentRoomId.isEmpty) return;
+
+    if (!_isTypingEmit && text.isNotEmpty) {
+      _isTypingEmit = true;
+      widget.chatController.sendTyping(
+        receiverId: widget.receiverId,
+        roomId: widget.currentRoomId,
+        isGroup: false,
+      );
+    }
+
+    _typingTimer?.cancel();
+    _typingTimer = Timer(const Duration(milliseconds: 1500), () {
+      if (_isTypingEmit) {
+        _isTypingEmit = false;
+        widget.chatController.sendStopTyping(
+          receiverId: widget.receiverId,
+          roomId: widget.currentRoomId,
+          isGroup: false,
+        );
+      }
+    });
+  }
+
+  void _resetTypingEmit() {
+    _typingTimer?.cancel();
+    if (_isTypingEmit) {
+      _isTypingEmit = false;
+      widget.chatController.sendStopTyping(
+        receiverId: widget.receiverId,
+        roomId: widget.currentRoomId,
+        isGroup: false,
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -496,11 +104,13 @@ class _MessageInputState extends State<MessageInput> {
   void dispose() {
     _focusNode.dispose();
     _recordTimer?.cancel();
+    _typingTimer?.cancel();
     _audioRecorder.dispose();
     super.dispose();
   }
 
   void _onSend() {
+    _resetTypingEmit();
     debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     debugPrint('📤 Send Button Tapped');
     debugPrint('📁 selectedFilePath: $_selectedFilePath');
@@ -633,6 +243,7 @@ class _MessageInputState extends State<MessageInput> {
 
   // ── Voice recording: send ──
   Future<void> _sendRecording() async {
+    _resetTypingEmit();
     _recordTimer?.cancel();
     String? finalPath;
     try {
@@ -661,98 +272,6 @@ class _MessageInputState extends State<MessageInput> {
     });
   }
 
-  // ── Show Alert Presets Bottom Sheet ──
-  void _showAlertPresetsBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (sheetContext) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[350],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.warning_amber_rounded, color: Colors.orange.shade800),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'Send Quick Alert Preset',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Alert messages are delivered instantly without requiring recipient confirmation.',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              ...[
-                'Warning! Please check your car immediately.',
-                'Alert: Your car alarm is active.',
-                'Alert: Your car is being towed or blocked.',
-                'Emergency: Please move your vehicle.'
-              ].map((msg) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 6),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(sheetContext);
-                      widget.chatController.sendNewEmitMessage(
-                        receiverId: widget.receiverId,
-                        message: msg,
-                        roomId: widget.currentRoomId,
-                      );
-                      final ctx = Get.overlayContext ?? Get.context;
-                      if (ctx != null) {
-                        ScaffoldMessenger.of(ctx).showSnackBar(
-                          SnackBar(
-                            content: Text('Alert message sent: "$msg"'),
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange.shade50,
-                      foregroundColor: Colors.orange.shade900,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(color: Colors.orange.shade300),
-                      ),
-                    ),
-                    child: Text(msg, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                );
-              }),
-              const SizedBox(height: 12),
-            ],
-          ),
-        );
-      }
-    );
-  }
 
 
   String _formatDuration(Duration d) {
@@ -766,8 +285,7 @@ class _MessageInputState extends State<MessageInput> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // ── Preset Messages ───────────────────────────────
-        MessagePresetChips(chatController: widget.chatController),
+
 
         SizedBox(height: ResponsiveHelper.height(6)),
 
@@ -885,73 +403,39 @@ class _MessageInputState extends State<MessageInput> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // + icon
-          GestureDetector(
-            onTap: () {
-              debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-              debugPrint('📎 Attachment Button Tapped');
-              debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-              AttachmentBottomSheet.show(
-                context: context,
-                onFileSelected: (filePath, type) {
-                  debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-                  debugPrint('✅ File Selected');
-                  debugPrint('📁 filePath: $filePath');
-                  debugPrint('📌 type: $type');
-                  debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-                  setState(() {
-                    _selectedFilePath = filePath;
-                    _selectedFileType = type;
-                  });
-                },
-              );
-            },
-            child: Padding(
-              padding: EdgeInsets.only(
-                bottom: ResponsiveHelper.padding(4),
-                right: ResponsiveHelper.padding(8),
-              ),
-              child: Icon(
-                Icons.add,
-                size: ResponsiveHelper.iconSize(24),
-                color: AppColors.black,
-              ),
-            ),
-          ),
-
-          // Input container
+          // Input pill
           Expanded(
             child: Container(
               padding: EdgeInsets.symmetric(
-                horizontal: ResponsiveHelper.padding(8),
+                horizontal: ResponsiveHelper.padding(12),
                 vertical: ResponsiveHelper.padding(4),
               ),
               decoration: BoxDecoration(
-                color: AppColors.greyShade,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(
-                  ResponsiveHelper.borderRadius(16),
+                  ResponsiveHelper.borderRadius(24),
+                ),
+                border: Border.all(
+                  color: Colors.grey.shade200,
+                  width: 1,
                 ),
               ),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Emoji toggle
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    icon: Icon(
-                      Icons.emoji_emotions,
-                      color: AppColors.black,
-                      size: ResponsiveHelper.iconSize(22),
-                    ),
-                    onPressed: () {
+                  // Emoji button
+                  GestureDetector(
+                    onTap: () {
                       _focusNode.unfocus();
                       setState(() => _isEmojiVisible = !_isEmojiVisible);
                     },
+                    child: Icon(
+                      Icons.sentiment_satisfied_alt_rounded,
+                      color: Colors.grey.shade600,
+                      size: ResponsiveHelper.iconSize(24),
+                    ),
                   ),
-
-                  SizedBox(width: ResponsiveHelper.width(4)),
-
+                  SizedBox(width: ResponsiveHelper.width(10)),
                   // Text field
                   Expanded(
                     child: TextField(
@@ -959,6 +443,7 @@ class _MessageInputState extends State<MessageInput> {
                       controller: widget.chatController.messageController,
                       minLines: 1,
                       maxLines: 3,
+                      onChanged: _onTextChanged,
                       onTap: () {
                         if (_isEmojiVisible) {
                           setState(() => _isEmojiVisible = false);
@@ -967,34 +452,43 @@ class _MessageInputState extends State<MessageInput> {
                       decoration: InputDecoration(
                         hintText: _selectedFilePath != null
                             ? "add_caption".tr
-                            : "type_here".tr,
-                        fillColor: AppColors.greyShade,
+                            : "Write here...",
                         hintStyle: TextStyle(
-                          color: AppColors.black,
-                          fontSize: ResponsiveHelper.fontSize(16),
+                          color: Colors.grey.shade400,
+                          fontSize: ResponsiveHelper.fontSize(15),
                         ),
                         border: InputBorder.none,
                         isDense: true,
                         contentPadding: EdgeInsets.symmetric(
-                          vertical: ResponsiveHelper.padding(8),
+                          vertical: ResponsiveHelper.padding(10),
                         ),
                       ),
                       style: TextStyle(
                         color: AppColors.black,
-                        fontSize: ResponsiveHelper.fontSize(16),
+                        fontSize: ResponsiveHelper.fontSize(15),
                       ),
                     ),
                   ),
-
-                  // Send button
+                  SizedBox(width: ResponsiveHelper.width(10)),
+                  // Attachment button
                   GestureDetector(
-                    onTap: _onSend,
-                    child: Padding(
-                      padding: EdgeInsets.all(ResponsiveHelper.padding(8)),
+                    onTap: () {
+                      AttachmentBottomSheet.show(
+                        context: context,
+                        onFileSelected: (filePath, type) {
+                          setState(() {
+                            _selectedFilePath = filePath;
+                            _selectedFileType = type;
+                          });
+                        },
+                      );
+                    },
+                    child: Transform.rotate(
+                      angle: 0.7,
                       child: Icon(
-                        Icons.send_rounded,
+                        Icons.attachment_rounded,
+                        color: Colors.grey.shade600,
                         size: ResponsiveHelper.iconSize(24),
-                        color: AppColors.blue,
                       ),
                     ),
                   ),
@@ -1003,34 +497,55 @@ class _MessageInputState extends State<MessageInput> {
             ),
           ),
 
-          // Warning/Alert Preset Icon
-          GestureDetector(
-            onTap: _showAlertPresetsBottomSheet,
-            child: Padding(
-              padding: EdgeInsets.only(
-                bottom: ResponsiveHelper.padding(4),
-                right: ResponsiveHelper.padding(8),
-              ),
-              child: Icon(
-                Icons.warning_amber_rounded,
-                size: ResponsiveHelper.iconSize(26),
-                color: Colors.orange.shade700,
-              ),
-            ),
-          ),
 
-          // mic icon
+          SizedBox(width: ResponsiveHelper.width(10)),
+          // Mic button
           GestureDetector(
             onTap: _startRecording,
-            child: Padding(
-              padding: EdgeInsets.only(
-                bottom: ResponsiveHelper.padding(4),
-                right: ResponsiveHelper.padding(8),
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.mic,
-                size: ResponsiveHelper.iconSize(24),
-                color: AppColors.black,
+                color: Colors.grey.shade700,
+                size: ResponsiveHelper.iconSize(22),
+              ),
+            ),
+          ),
+          SizedBox(width: ResponsiveHelper.width(10)),
+          // Circular Blue Send button
+          GestureDetector(
+            onTap: _onSend,
+            child: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.blue,
+                    AppColors.darBlue,
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.blue.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.send_rounded,
+                  color: Colors.white,
+                  size: 22,
+                ),
               ),
             ),
           ),

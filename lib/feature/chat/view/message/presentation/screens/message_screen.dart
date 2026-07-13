@@ -11,9 +11,11 @@ import 'package:platchatapp/feature/chat/view/widgets/block_by_me_widget.dart';
 import 'package:platchatapp/feature/chat/view/widgets/block_me_widget.dart';
 import 'package:platchatapp/feature/chat/view/widgets/message_screen_shimmer.dart';
 import 'package:platchatapp/feature/scan/presentation/widget/profile_card.dart';
+import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../group/controller/group_controller.dart';
+import '../widgets/message_preset_chips.dart';
 
 class MessageScreen extends StatefulWidget {
   final String? roomId;
@@ -124,176 +126,483 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      body: SafeArea(
-        top: true,
-        bottom: true,
-        child: RefreshIndicator(
-          onRefresh: () =>
-              chatController.fetchInboxMessage(roomId: widget.roomId),
-          child: Column(
-            children: [
-              SizedBox(height: ResponsiveHelper.height(20)),
+    // return Container(
+    //   decoration: const BoxDecoration(
+    //     gradient: AppColors.primaryBackgroundGradient,
+    //   ),
+    //   child: Scaffold(
+    //     backgroundColor: Colors.transparent,
+    //
+    //     appBar: MessageAppBar(                 // ✅ এখন এখানে বসবে
+    //       otherUserName: widget.otherUserName,
+    //       otherUserAvatar: widget.otherUserAvatar,
+    //       receiverId: widget.receiverId,
+    //       chatController: chatController,
+    //       onRateTap: () async {
+    //         await chatController.fetchMyRating(widget.receiverId);
+    //         if (!context.mounted) return;
+    //         showRatingDialog(
+    //           context: context,
+    //           status: chatController.myRatingForRatee.value?.status ?? '',
+    //           image: widget.otherUserAvatar ?? '',
+    //           name: widget.otherUserName,
+    //           receiverId: widget.receiverId,
+    //         );
+    //       },
+    //       onProfileTap: () async {
+    //         await _groupController.fetchUserProfile(widget.receiverId);
+    //         if (!context.mounted) return;
+    //         showDialog(
+    //           context: context,
+    //           builder: (dialogContext) => Obx(() {
+    //             // ← context আলাদা করো
+    //             final profile = _groupController.viewedProfile.value;
+    //             final isLoading = _groupController.isLoadingProfile.value;
+    //             return Dialog(
+    //               backgroundColor: Colors.transparent,
+    //               child: isLoading
+    //                   ? const Center(child: CircularProgressIndicator())
+    //                   : profile == null
+    //                   ? Center(child: Text('profile_not_found'.tr))
+    //                   : ProfileCard(
+    //                 profile: profile,
+    //                 name: profile.nickName ?? "",
+    //                 rating: profile.rating,
+    //                 image: widget.otherUserAvatar ?? '',
+    //                 showRating: true,
+    //                 onRatingTap: () async {
+    //                   Navigator.pop(
+    //                     dialogContext,
+    //                   );
+    //                   await chatController.fetchMyRating(
+    //                     widget.receiverId,
+    //                   );
+    //                   if (!context.mounted) return;
+    //                   showRatingDialog(
+    //                     context: context,
+    //                     status:
+    //                     chatController
+    //                         .myRatingForRatee
+    //                         .value
+    //                         ?.status ??
+    //                         '',
+    //                     image: widget.otherUserAvatar ?? '',
+    //                     name: widget.otherUserName,
+    //                     receiverId: widget.receiverId,
+    //                   );
+    //                 },
+    //               ),
+    //             );
+    //           }),
+    //         );
+    //       },
+    //     ),
+    //
+    //     body: SafeArea(
+    //       top: true,
+    //       bottom: false,
+    //       child: RefreshIndicator(
+    //         onRefresh: () =>
+    //             chatController.fetchInboxMessage(roomId: widget.roomId),
+    //         child: Column(
+    //           children: [
+    //
+    //             Expanded(
+    //               child: Obx(() {
+    //                 final messages = chatController.userMessageList;
+    //                 final bool showTyping = chatController.isTyping.value;
+    //
+    //                 if (chatController.isLoadingMessage.value &&
+    //                     messages.isEmpty) {
+    //                   return MessageScreenShimmer();
+    //                 }
+    //
+    //                 if (messages.isEmpty && !showTyping) {
+    //                   return Center(
+    //                     child: Text(
+    //                       'no_messages_yet'.tr,
+    //                       style: const TextStyle(color: Colors.grey),
+    //                     ),
+    //                   );
+    //                 }
+    //
+    //                 return ListView.builder(
+    //                   controller: _scrollController,
+    //                   reverse: true,
+    //                   padding: ResponsiveHelper.symmetric(
+    //                     horizontal: ResponsiveHelper.width(16),
+    //                     vertical: ResponsiveHelper.height(8),
+    //                   ),
+    //                   itemCount:
+    //                       messages.length +
+    //                       (chatController.hasMoreMessage ? 1 : 0) +
+    //                       (showTyping ? 1 : 0),
+    //                   itemBuilder: (context, index) {
+    //                     if (showTyping && index == 0) {
+    //                       return _buildTypingIndicatorBubble();
+    //                     }
+    //
+    //                     final msgIndex = showTyping ? index - 1 : index;
+    //
+    //                     // Pagination loader
+    //
+    //                     if (msgIndex == messages.length) {
+    //                       return Obx(
+    //                         () => chatController.isLoadingMoreMessage.value
+    //                             ? const Padding(
+    //                                 padding: EdgeInsets.all(12),
+    //                                 child: Center(
+    //                                   child: CircularProgressIndicator(),
+    //                                 ),
+    //                               )
+    //                             : const SizedBox.shrink(),
+    //                       );
+    //                     }
+    //
+    //                     final msg = messages[msgIndex];
+    //                     final bool isMine = msg.isMine == true;
+    //
+    //                     return MessageBubble(
+    //                       message: msg.message ?? '',
+    //                       isMine: isMine,
+    //                       type: msg.type,
+    //                       fileUrl: msg.fileUrl,
+    //                       isRead: msg.isRead,
+    //                       fileName: msg.fileName,
+    //                       fileSize: msg.fileSize,
+    //                       fileMimeType: msg.fileMimeType,
+    //                       durationSeconds: msg.durationSeconds,
+    //                       isDelivered: msg.isDelivered,
+    //                     );
+    //                   },
+    //                 );
+    //               }),
+    //             ),
+    //
+    //             // ── Input / Block Widgets ─────────────────────────
+    //             Obx(() {
+    //               if (chatController.isBlockedByMe.value) {
+    //                 return BlockByMeWidget(
+    //                   name: widget.otherUserName,
+    //                   onUnblock: () {
+    //                     chatController.unBlock(widget.receiverId, context);
+    //                     chatController.isBlockedByMe.value = false;
+    //                   },
+    //                 );
+    //               } else if (chatController.isBlockedMe.value) {
+    //                 return const BlockMeWidget();
+    //               } else {
+    //                 return MessageInput(
+    //                   chatController: chatController,
+    //                   currentRoomId: _currentRoomId,
+    //                   receiverId: widget.receiverId,
+    //                   onRoomIdUpdate: (newId) {
+    //                     setState(() => _currentRoomId = newId);
+    //                   },
+    //                 );
+    //               }
+    //             }),
+    //           ],
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
 
-              // ── App Bar ──────────────────────────────────────
-              MessageAppBar(
-                otherUserName: widget.otherUserName,
-                otherUserAvatar: widget.otherUserAvatar,
-                receiverId: widget.receiverId,
-                chatController: chatController,
-                onRateTap: () async {
-                  await chatController.fetchMyRating(widget.receiverId);
-                  if (!context.mounted) return;
-                  showRatingDialog(
-                    context: context,
-                    status: chatController.myRatingForRatee.value?.status ?? '',
+
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: AppColors.primaryBackgroundGradient,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+
+        appBar: MessageAppBar(
+          otherUserName: widget.otherUserName,
+          otherUserAvatar: widget.otherUserAvatar,
+          receiverId: widget.receiverId,
+          chatController: chatController,
+          onRateTap: () async {
+            await chatController.fetchMyRating(widget.receiverId);
+            if (!context.mounted) return;
+            showRatingDialog(
+              context: context,
+              status: chatController.myRatingForRatee.value?.status ?? '',
+              image: widget.otherUserAvatar ?? '',
+              name: widget.otherUserName,
+              receiverId: widget.receiverId,
+            );
+          },
+          onProfileTap: () async {
+            await _groupController.fetchUserProfile(widget.receiverId);
+            if (!context.mounted) return;
+            showDialog(
+              context: context,
+              builder: (dialogContext) => Obx(() {
+                final profile = _groupController.viewedProfile.value;
+                final isLoading = _groupController.isLoadingProfile.value;
+                return Dialog(
+                  backgroundColor: Colors.transparent,
+                  child: isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : profile == null
+                      ? Center(child: Text('profile_not_found'.tr))
+                      : ProfileCard(
+                    profile: profile,
+                    name: profile.nickName ?? "",
+                    rating: profile.rating,
                     image: widget.otherUserAvatar ?? '',
-                    name: widget.otherUserName,
-                    receiverId: widget.receiverId,
-                  );
-                },
-
-                onProfileTap: () async {
-                  await _groupController.fetchUserProfile(widget.receiverId);
-                  if (!context.mounted) return;
-                  showDialog(
-                    context: context,
-                    builder: (dialogContext) => Obx(() {
-                      // ← context আলাদা করো
-                      final profile = _groupController.viewedProfile.value;
-                      final isLoading = _groupController.isLoadingProfile.value;
-                      return Dialog(
-                        backgroundColor: Colors.transparent,
-                        child: isLoading
-                            ? const Center(child: CircularProgressIndicator())
-                            : profile == null
-                            ? Center(child: Text('profile_not_found'.tr))
-                            : ProfileCard(
-                                profile: profile,
-                                name: profile.nickName ?? "",
-                                rating: profile.rating,
-                                image: widget.otherUserAvatar ?? '',
-                                showRating: true,
-                                onRatingTap: () async {
-                                  Navigator.pop(
-                                    dialogContext,
-                                  );
-                                  await chatController.fetchMyRating(
-                                    widget.receiverId,
-                                  );
-                                  if (!context.mounted) return;
-                                  showRatingDialog(
-                                    context: context,
-                                    status:
-                                        chatController
-                                            .myRatingForRatee
-                                            .value
-                                            ?.status ??
-                                        '',
-                                    image: widget.otherUserAvatar ?? '',
-                                    name: widget.otherUserName,
-                                    receiverId: widget.receiverId,
-                                  );
-                                },
-                              ),
-                      );
-                    }),
-                  );
-                },
-              ),
-
-              // ── Messages List ────────────────────────────────
-              Expanded(
-                child: Obx(() {
-                  final messages = chatController.userMessageList;
-
-                  if (chatController.isLoadingMessage.value &&
-                      messages.isEmpty) {
-                    return MessageScreenShimmer();
-                  }
-
-                  if (messages.isEmpty) {
-                    return Center(
-                      child: Text(
-                        'no_messages_yet'.tr,
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    );
-                  }
-
-                  return ListView.builder(
-                    controller: _scrollController,
-                    reverse: true,
-                    padding: ResponsiveHelper.symmetric(
-                      horizontal: ResponsiveHelper.width(16),
-                      vertical: ResponsiveHelper.height(8),
-                    ),
-                    itemCount:
-                        messages.length +
-                        (chatController.hasMoreMessage ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      // Pagination loader
-                      if (index == messages.length) {
-                        return Obx(
-                          () => chatController.isLoadingMoreMessage.value
-                              ? const Padding(
-                                  padding: EdgeInsets.all(12),
-                                  child: Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                )
-                              : const SizedBox.shrink(),
-                        );
-                      }
-
-                      final msg = messages[index];
-                      final bool isMine = msg.isMine == true;
-
-                      return MessageBubble(
-                        message: msg.message ?? '',
-                        isMine: isMine,
-                        type: msg.type,
-                        fileUrl: msg.fileUrl,
-                        // ✅ read receipt ticks
-                        isRead: msg.isRead,
-                        fileName: msg.fileName, // file_name
-
-                        fileSize: msg.fileSize, // file_size
-                        isDelivered: msg.isDelivered,
+                    showRating: true,
+                    onRatingTap: () async {
+                      Navigator.pop(dialogContext);
+                      await chatController.fetchMyRating(widget.receiverId);
+                      if (!context.mounted) return;
+                      showRatingDialog(
+                        context: context,
+                        status:
+                        chatController.myRatingForRatee.value?.status ??
+                            '',
+                        image: widget.otherUserAvatar ?? '',
+                        name: widget.otherUserName,
+                        receiverId: widget.receiverId,
                       );
                     },
+                  ),
+                );
+              }),
+            );
+          },
+        ),
+
+        // ── Body: শুধু message list ────────────────────────────
+        body: SafeArea(
+          top: true,
+          bottom: false,
+          child: RefreshIndicator(
+            onRefresh: () =>
+                chatController.fetchInboxMessage(roomId: widget.roomId),
+            child: Column(
+              children: [
+                // ── Message list ────────────────────────────────
+                Expanded(
+                  child: Obx(() {
+                    final messages = chatController.userMessageList;
+                    final bool showTyping = chatController.isTyping.value;
+
+                    if (chatController.isLoadingMessage.value && messages.isEmpty) {
+                      return MessageScreenShimmer();
+                    }
+
+                    if (messages.isEmpty && !showTyping) {
+                      return Center(
+                        child: Text(
+                          'no_messages_yet'.tr,
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      );
+                    }
+
+                    return ListView.builder(
+                      controller: _scrollController,
+                      reverse: true,
+                      padding: ResponsiveHelper.symmetric(
+                        horizontal: ResponsiveHelper.width(16),
+                        vertical: ResponsiveHelper.height(8),
+                      ),
+                      itemCount: messages.length +
+                          (chatController.hasMoreMessage ? 1 : 0) +
+                          (showTyping ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (showTyping && index == 0) {
+                          return _buildTypingIndicatorBubble();
+                        }
+                        final msgIndex = showTyping ? index - 1 : index;
+
+                        if (msgIndex == messages.length) {
+                          return Obx(
+                                () => chatController.isLoadingMoreMessage.value
+                                ? const Padding(
+                              padding: EdgeInsets.all(12),
+                              child: Center(child: CircularProgressIndicator()),
+                            )
+                                : const SizedBox.shrink(),
+                          );
+                        }
+
+                        final msg = messages[msgIndex];
+                        final bool isMine = msg.isMine == true;
+
+                        return MessageBubble(
+                          message: msg.message ?? '',
+                          isMine: isMine,
+                          type: msg.type,
+                          fileUrl: msg.fileUrl,
+                          isRead: msg.isRead,
+                          fileName: msg.fileName,
+                          fileSize: msg.fileSize,
+                          fileMimeType: msg.fileMimeType,
+                          durationSeconds: msg.durationSeconds,
+                          isDelivered: msg.isDelivered,
+                        );
+                      },
+                    );
+                  }),
+                ),
+
+                Obx(() {
+                  if (chatController.isBlockedByMe.value ||
+                      chatController.isBlockedMe.value) {
+                    return const SizedBox.shrink();
+                  }
+                  return Padding(
+                    padding:  EdgeInsets.only(bottom: ResponsiveHelper.height(8)),
+
+                    child: MessagePresetChips(chatController: chatController),
                   );
                 }),
-              ),
+              ],
+            ),
+          ),
+        ),
 
-              // ── Input / Block Widgets ─────────────────────────
-              Obx(() {
-                if (chatController.isBlockedByMe.value) {
-                  return BlockByMeWidget(
-                    name: widget.otherUserName,
-                    onUnblock: () {
-                      chatController.unBlock(widget.receiverId, context);
-                      chatController.isBlockedByMe.value = false;
-                    },
-                  );
-                } else if (chatController.isBlockedMe.value) {
-                  return const BlockMeWidget();
-                } else {
-                  return MessageInput(
-                    chatController: chatController,
-                    currentRoomId: _currentRoomId,
-                    receiverId: widget.receiverId,
-                    onRoomIdUpdate: (newId) {
-                      setState(() => _currentRoomId = newId);
-                    },
-                  );
-                }
-              }),
-            ],
+        // ── Bottom: Input / Block Widgets ──────────────────────
+        bottomNavigationBar: Container(
+          color: const Color(0xFFF1F5F9),
+          child: SafeArea(
+            top: false,
+            child: Obx(() {
+              if (chatController.isBlockedByMe.value) {
+                return BlockByMeWidget(
+                  name: widget.otherUserName,
+                  onUnblock: () {
+                    chatController.unBlock(widget.receiverId, context);
+                    chatController.isBlockedByMe.value = false;
+                  },
+                );
+              } else if (chatController.isBlockedMe.value) {
+                return const BlockMeWidget();
+              } else {
+                return MessageInput(
+                  chatController: chatController,
+                  currentRoomId: _currentRoomId,
+                  receiverId: widget.receiverId,
+                  onRoomIdUpdate: (newId) {
+                    setState(() => _currentRoomId = newId);
+                  },
+                );
+              }
+            }),
+          ),
+        ),
+      ),
+    );
+
+
+  }
+
+  Widget _buildTypingIndicatorBubble() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            CircleAvatar(
+              radius: ResponsiveHelper.borderRadius(16),
+              backgroundImage: NetworkImage(
+                ImageHandler.imagesHandle(
+                  widget.otherUserAvatar,
+                  isProfile: true,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(15),
+                  topRight: Radius.circular(15),
+                  bottomRight: Radius.circular(15),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildDot(0),
+                  const SizedBox(width: 3),
+                  _buildDot(1),
+                  const SizedBox(width: 3),
+                  _buildDot(2),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDot(int index) {
+    return _AnimatedDot(delayMs: index * 150);
+  }
+}
+
+class _AnimatedDot extends StatefulWidget {
+  final int delayMs;
+  const _AnimatedDot({required this.delayMs});
+
+  @override
+  State<_AnimatedDot> createState() => _AnimatedDotState();
+}
+
+class _AnimatedDotState extends State<_AnimatedDot> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+    _animation = Tween<double>(begin: 0.4, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    Future.delayed(Duration(milliseconds: widget.delayMs), () {
+      if (mounted) {
+        _controller.repeat(reverse: true);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _animation,
+      child: ScaleTransition(
+        scale: _animation,
+        child: Container(
+          width: 6,
+          height: 6,
+          decoration: const BoxDecoration(
+            color: Color(0xFF6A6969),
+            shape: BoxShape.circle,
           ),
         ),
       ),
     );
   }
 }
+

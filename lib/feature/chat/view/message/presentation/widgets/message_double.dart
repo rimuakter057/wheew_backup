@@ -1,5 +1,6 @@
 
-
+import 'dart:async';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,6 +8,7 @@ import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/feature/chat/view/widgets/media_viewer_screen.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+
 
 
 
@@ -20,6 +22,7 @@ class MessageBubble extends StatelessWidget {
   final int? fileSize;         // ← API: file_size
   final bool? isRead;
   final bool? isDelivered;
+  final num? durationSeconds;  // ← API: durationSeconds (voice)
 
   const MessageBubble({
     super.key,
@@ -32,7 +35,9 @@ class MessageBubble extends StatelessWidget {
     this.fileSize,
     this.isRead,
     this.isDelivered,
+    this.durationSeconds,
   });
+
 
   // ── type detection ──────────────────────────────────────────────────────────
 
@@ -310,54 +315,16 @@ class MessageBubble extends StatelessWidget {
   // ── audio ───────────────────────────────────────────────────────────────────
 
   Widget _buildAudioBubble() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: isMine ? Colors.white24 : AppColors.blue.withOpacity(.15),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.play_arrow_rounded,
-            color: isMine ? Colors.white : AppColors.blue,
-            size: 22,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'voice_message'.tr,
-              style: GoogleFonts.inter(
-                color: isMine ? AppColors.white : AppColors.black,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            if (fileSize != null)
-              Text(
-                _formatSize(fileSize),
-                style: TextStyle(
-                  color: isMine ? Colors.white60 : Colors.black38,
-                  fontSize: 11,
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(width: 8),
-        Icon(
-          Icons.audiotrack_rounded,
-          color: isMine ? Colors.white54 : Colors.black38,
-          size: 16,
-        ),
-      ],
+    return _VoiceBubble(
+      audioUrl: _fullUrl,
+      isMine: isMine,
+      totalDurationSeconds: durationSeconds,
     );
   }
 
+
   // ── generic file ────────────────────────────────────────────────────────────
+
 
   Widget _buildFileBubble() {
     IconData icon = Icons.insert_drive_file_rounded;
@@ -425,3 +392,323 @@ class MessageBubble extends StatelessWidget {
     }
   }
 }
+
+// ── Voice Bubble ─────────────────────────────────────────────────────────────
+
+class _VoiceBubble extends StatefulWidget {
+  final String audioUrl;
+  final bool isMine;
+  final num? totalDurationSeconds;
+
+  const _VoiceBubble({
+    required this.audioUrl,
+    required this.isMine,
+    this.totalDurationSeconds,
+  });
+
+  @override
+  State<_VoiceBubble> createState() => _VoiceBubbleState();
+}
+
+class _VoiceBubbleState extends State<_VoiceBubble> {
+  final AudioPlayer _player = AudioPlayer();
+
+  bool _isPlaying = false;
+  bool _isLoading = false;
+  bool _hasError = false;
+  Duration _position = Duration.zero;
+  Duration _duration = Duration.zero;
+
+  // Timer-based position ticker (backup when onPositionChanged stream is unreliable)
+  Timer? _ticker;
+
+  static const List<double> _waveHeights = [
+    6, 16, 10, 22, 14, 8, 20, 13, 24, 9,
+    18, 21, 8, 16, 23, 12, 19, 9, 22, 14,
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Seed duration from API field while audio hasn't loaded yet
+    if (widget.totalDurationSeconds != null && widget.totalDurationSeconds! > 0) {
+      _duration = Duration(milliseconds: (widget.totalDurationSeconds! * 1000).toInt());
+    }
+
+    // Configure audio context — speaker output + media focus (Android)
+    _player.setAudioContext(AudioContext(
+      android: AudioContextAndroid(
+        isSpeakerphoneOn: false,
+        stayAwake: false,
+        contentType: AndroidContentType.music,
+        usageType: AndroidUsageType.media,
+        audioFocus: AndroidAudioFocus.gain,
+      ),
+      iOS: AudioContextIOS(
+        category: AVAudioSessionCategory.playback,
+        options: const {},
+      ),
+    ));
+
+    // Stop at end, don't loop
+    _player.setReleaseMode(ReleaseMode.stop);
+
+    // Duration — fired once when source is loaded/buffered
+    _player.onDurationChanged.listen((d) {
+      if (mounted && d.inMilliseconds > 0) {
+        setState(() => _duration = d);
+      }
+    });
+
+    // Position — fires ~every 200ms while playing
+    _player.onPositionChanged.listen((p) {
+      if (mounted) setState(() => _position = p);
+    });
+
+    // Completion — reset everything
+    _player.onPlayerComplete.listen((_) {
+      _stopTicker();
+      if (mounted) {
+        setState(() {
+          _isPlaying = false;
+          _position = Duration.zero;
+        });
+      }
+    });
+
+    // State changes
+    _player.onPlayerStateChanged.listen((s) {
+      if (!mounted) return;
+      if (s == PlayerState.playing) {
+        _startTicker();
+        if (mounted) setState(() { _isPlaying = true; _isLoading = false; });
+      } else {
+        _stopTicker();
+        if (mounted) setState(() => _isPlaying = false);
+      }
+    });
+  }
+
+  void _startTicker() {
+    _ticker?.cancel();
+    _ticker = Timer.periodic(const Duration(milliseconds: 100), (_) async {
+      if (!mounted) return;
+      try {
+        final pos = await _player.getCurrentPosition();
+        final dur = await _player.getDuration();
+        if (mounted) {
+          setState(() {
+            if (pos != null) _position = pos;
+            if (dur != null && dur.inMilliseconds > 0) _duration = dur;
+          });
+        }
+      } catch (_) {}
+    });
+  }
+
+  void _stopTicker() {
+    _ticker?.cancel();
+    _ticker = null;
+  }
+
+  @override
+  void dispose() {
+    _stopTicker();
+    _player.dispose();
+    super.dispose();
+  }
+
+  Future<void> _togglePlayPause() async {
+    if (_hasError) return;
+
+    if (_isPlaying) {
+      await _player.pause();
+      _stopTicker();
+      if (mounted) setState(() => _isPlaying = false);
+      return;
+    }
+
+    if (mounted) setState(() { _isLoading = true; _hasError = false; });
+
+    try {
+      if (_position > Duration.zero) {
+        // Resume from paused position
+        await _player.resume();
+      } else {
+        // Fresh play from URL
+        await _player.play(UrlSource(widget.audioUrl));
+      }
+    } catch (e) {
+      debugPrint('🎵 VoiceBubble play error: $e');
+      if (mounted) setState(() { _isLoading = false; _hasError = true; });
+    }
+  }
+
+  String _fmt(Duration d) {
+    final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$m:$s';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Color accent = widget.isMine ? Colors.white : AppColors.blue;
+    final Color muted = widget.isMine
+        ? Colors.white.withValues(alpha: 0.5)
+        : Colors.black.withValues(alpha: 0.35);
+    final Color btnBg = widget.isMine
+        ? Colors.white.withValues(alpha: 0.20)
+        : AppColors.blue.withValues(alpha: 0.12);
+
+    final double progress = (_duration.inMilliseconds > 0)
+        ? (_position.inMilliseconds / _duration.inMilliseconds).clamp(0.0, 1.0)
+        : 0.0;
+
+    return SizedBox(
+      width: ResponsiveHelper.width(230),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+
+          // ── Play / Pause / Loading button ──────────────────────
+          GestureDetector(
+            onTap: _togglePlayPause,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: btnBg,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: accent.withValues(alpha: 0.35),
+                  width: 1.5,
+                ),
+              ),
+              child: _isLoading
+                  ? Padding(
+                      padding: const EdgeInsets.all(11),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: accent,
+                      ),
+                    )
+                  : _hasError
+                      ? Icon(Icons.error_outline, color: Colors.red.shade300, size: 22)
+                      : Icon(
+                          _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                          color: accent,
+                          size: _isPlaying ? 22 : 26,
+                        ),
+            ),
+          ),
+
+          const SizedBox(width: 10),
+
+          // ── Waveform + time ────────────────────────────────────
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+
+                // Waveform bars with colour-split progress
+                SizedBox(
+                  height: 28,
+                  child: LayoutBuilder(builder: (_, constraints) {
+                    return GestureDetector(
+                      onHorizontalDragUpdate: (details) async {
+                        if (_duration == Duration.zero) return;
+                        final frac = (details.localPosition.dx / constraints.maxWidth).clamp(0.0, 1.0);
+                        final target = Duration(
+                          milliseconds: (frac * _duration.inMilliseconds).toInt(),
+                        );
+                        await _player.seek(target);
+                        if (mounted) setState(() => _position = target);
+                      },
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+
+                          // Unplayed bars (muted)
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: _waveHeights.map((h) => Expanded(
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 1.2),
+                                height: h,
+                                decoration: BoxDecoration(
+                                  color: muted.withValues(alpha: 0.45),
+                                  borderRadius: BorderRadius.circular(3),
+                                ),
+                              ),
+                            )).toList(),
+                          ),
+
+                          // Played bars overlay (accent)
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: ClipRect(
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                widthFactor: progress,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: _waveHeights.map((h) => Expanded(
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(horizontal: 1.2),
+                                      height: h,
+                                      decoration: BoxDecoration(
+                                        color: accent.withValues(alpha: 0.9),
+                                        borderRadius: BorderRadius.circular(3),
+                                      ),
+                                    ),
+                                  )).toList(),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                        ],
+                      ),
+                    );
+                  }),
+                ),
+
+                const SizedBox(height: 5),
+
+                // Time row
+                Row(
+                  children: [
+                    Icon(
+                      _isPlaying ? Icons.graphic_eq_rounded : Icons.mic,
+                      size: 11,
+                      color: muted,
+                    ),
+                    const SizedBox(width: 3),
+                    Text(
+                      _fmt(_position),
+                      style: TextStyle(
+                        color: accent,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    Text(
+                      ' / ${_fmt(_duration)}',
+                      style: TextStyle(color: muted, fontSize: 10),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+

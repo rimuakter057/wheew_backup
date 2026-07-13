@@ -282,6 +282,7 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                             ),
                           ),
                         ),
+
                         const SizedBox(width: 10),
                         Expanded(
                           child: ElevatedButton(

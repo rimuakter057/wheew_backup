@@ -1,5 +1,3 @@
-
-
 import 'dart:async';
 import 'dart:io';
 
@@ -33,6 +31,7 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
   bool _isEmojiVisible = false;
   final FocusNode _focusNode = FocusNode();
 
+
   // ── Selected file state ──
   String? _selectedFilePath;
   String? _selectedFileType;
@@ -43,6 +42,47 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
   String? _recordedFilePath;
   Duration _recordDuration = Duration.zero;
   Timer? _recordTimer;
+
+  // ── Typing state ──
+  Timer? _typingTimer;
+  bool _isTypingEmit = false;
+
+  void _onTextChanged(String text) {
+    if (widget.roomId.isEmpty) return;
+
+    if (!_isTypingEmit && text.isNotEmpty) {
+      _isTypingEmit = true;
+      widget.controller.sendTyping(
+        receiverId: '',
+        roomId: widget.roomId,
+        isGroup: true,
+      );
+    }
+
+    _typingTimer?.cancel();
+    _typingTimer = Timer(const Duration(milliseconds: 1500), () {
+      if (_isTypingEmit) {
+        _isTypingEmit = false;
+        widget.controller.sendStopTyping(
+          receiverId: '',
+          roomId: widget.roomId,
+          isGroup: true,
+        );
+      }
+    });
+  }
+
+  void _resetTypingEmit() {
+    _typingTimer?.cancel();
+    if (_isTypingEmit) {
+      _isTypingEmit = false;
+      widget.controller.sendStopTyping(
+        receiverId: '',
+        roomId: widget.roomId,
+        isGroup: true,
+      );
+    }
+  }
 
   @override
   void initState() {
@@ -58,11 +98,14 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
   void dispose() {
     _focusNode.dispose();
     _recordTimer?.cancel();
+    _typingTimer?.cancel();
     _audioRecorder.dispose();
     super.dispose();
   }
 
+
   void _onSend() {
+    _resetTypingEmit();
     debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     debugPrint('📤 Group Send Button Tapped');
     debugPrint('📁 selectedFilePath: $_selectedFilePath');
@@ -173,6 +216,7 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
 
   // ── Voice recording: send (DEBUG ONLY for now) ──
   Future<void> _sendRecording() async {
+    _resetTypingEmit();
     _recordTimer?.cancel();
     String? finalPath;
     try {
@@ -210,6 +254,7 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
       _recordDuration = Duration.zero;
     });
   }
+
 
   String _formatDuration(Duration d) {
     final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
@@ -341,75 +386,39 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // + icon
-          GestureDetector(
-            onTap: () {
-              debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-              debugPrint('📎 Group Attachment Button Tapped');
-              debugPrint('🏠 roomId: ${widget.roomId}');
-              debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-
-              AttachmentBottomSheet.show(
-                context: context,
-                onFileSelected: (filePath, type) {
-                  debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-                  debugPrint('✅ Group File Selected');
-                  debugPrint('📁 filePath: $filePath');
-                  debugPrint('📌 type: $type');
-                  debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-                  setState(() {
-                    _selectedFilePath = filePath;
-                    _selectedFileType = type;
-                  });
-                },
-              );
-            },
-            child: Padding(
-              padding: EdgeInsets.only(
-                bottom: ResponsiveHelper.padding(4),
-                right: ResponsiveHelper.padding(8),
-              ),
-              child: Icon(
-                Icons.add,
-                size: ResponsiveHelper.iconSize(24),
-                color: AppColors.black,
-              ),
-            ),
-          ),
-
-          // Input container
+          // Input pill
           Expanded(
             child: Container(
               padding: EdgeInsets.symmetric(
-                horizontal: ResponsiveHelper.padding(8),
+                horizontal: ResponsiveHelper.padding(12),
                 vertical: ResponsiveHelper.padding(4),
               ),
               decoration: BoxDecoration(
-                color: AppColors.greyShade,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(
-                  ResponsiveHelper.borderRadius(16),
+                  ResponsiveHelper.borderRadius(24),
+                ),
+                border: Border.all(
+                  color: Colors.grey.shade200,
+                  width: 1,
                 ),
               ),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Emoji toggle
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    icon: Icon(
-                      Icons.emoji_emotions,
-                      color: AppColors.black,
-                      size: ResponsiveHelper.iconSize(22),
-                    ),
-                    onPressed: () {
+                  // Emoji button
+                  GestureDetector(
+                    onTap: () {
                       _focusNode.unfocus();
                       setState(() => _isEmojiVisible = !_isEmojiVisible);
                     },
+                    child: Icon(
+                      Icons.sentiment_satisfied_alt_rounded,
+                      color: Colors.grey.shade600,
+                      size: ResponsiveHelper.iconSize(24),
+                    ),
                   ),
-
-                  SizedBox(width: ResponsiveHelper.width(4)),
-
+                  SizedBox(width: ResponsiveHelper.width(10)),
                   // Text field
                   Expanded(
                     child: TextField(
@@ -417,6 +426,7 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
                       controller: widget.controller.messageController,
                       minLines: 1,
                       maxLines: 3,
+                      onChanged: _onTextChanged,
                       onTap: () {
                         if (_isEmojiVisible) {
                           setState(() => _isEmojiVisible = false);
@@ -425,34 +435,53 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
                       decoration: InputDecoration(
                         hintText: _selectedFilePath != null
                             ? 'Add caption...'
-                            : "type_here".tr,
-                        fillColor: AppColors.greyShade,
+                            : "Write here...",
                         hintStyle: TextStyle(
-                          color: AppColors.black,
-                          fontSize: ResponsiveHelper.fontSize(16),
+                          color: Colors.grey.shade400,
+                          fontSize: ResponsiveHelper.fontSize(15),
                         ),
                         border: InputBorder.none,
                         isDense: true,
                         contentPadding: EdgeInsets.symmetric(
-                          vertical: ResponsiveHelper.padding(8),
+                          vertical: ResponsiveHelper.padding(10),
                         ),
                       ),
                       style: TextStyle(
                         color: AppColors.black,
-                        fontSize: ResponsiveHelper.fontSize(16),
+                        fontSize: ResponsiveHelper.fontSize(15),
                       ),
                     ),
                   ),
-
-                  // Send button
+                  SizedBox(width: ResponsiveHelper.width(10)),
+                  // Attachment button
                   GestureDetector(
-                    onTap: _onSend,
-                    child: Padding(
-                      padding: EdgeInsets.all(ResponsiveHelper.padding(8)),
+                    onTap: () {
+                      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+                      debugPrint('📎 Group Attachment Button Tapped');
+                      debugPrint('🏠 roomId: ${widget.roomId}');
+                      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+                      AttachmentBottomSheet.show(
+                        context: context,
+                        onFileSelected: (filePath, type) {
+                          debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+                          debugPrint('✅ Group File Selected');
+                          debugPrint('📁 filePath: $filePath');
+                          debugPrint('📌 type: $type');
+                          debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+                          setState(() {
+                            _selectedFilePath = filePath;
+                            _selectedFileType = type;
+                          });
+                        },
+                      );
+                    },
+                    child: Transform.rotate(
+                      angle: 0.7,
                       child: Icon(
-                        Icons.send_rounded,
+                        Icons.attachment_rounded,
+                        color: Colors.grey.shade600,
                         size: ResponsiveHelper.iconSize(24),
-                        color: AppColors.blue,
                       ),
                     ),
                   ),
@@ -460,19 +489,54 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
               ),
             ),
           ),
-
-          // mic icon
+          SizedBox(width: ResponsiveHelper.width(10)),
+          // Mic button
           GestureDetector(
             onTap: _startRecording,
-            child: Padding(
-              padding: EdgeInsets.only(
-                bottom: ResponsiveHelper.padding(4),
-                right: ResponsiveHelper.padding(8),
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.mic,
-                size: ResponsiveHelper.iconSize(24),
-                color: AppColors.black,
+                color: Colors.grey.shade700,
+                size: ResponsiveHelper.iconSize(22),
+              ),
+            ),
+          ),
+          SizedBox(width: ResponsiveHelper.width(10)),
+          // Circular Blue Send button
+          GestureDetector(
+            onTap: _onSend,
+            child: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.blue,
+                    AppColors.darBlue,
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.blue.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.send_rounded,
+                  color: Colors.white,
+                  size: 22,
+                ),
               ),
             ),
           ),

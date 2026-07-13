@@ -233,9 +233,14 @@ class ChatTile extends StatelessWidget {
                             style: GoogleFonts.questrial(
                               fontSize: ResponsiveHelper.fontSize(14),
                               fontWeight: fontWeight,
-                              color: hasUnread
-                                  ? AppColors.textBlack
-                                  : AppColors.textBlack.withValues(alpha: 0.65),
+                              fontStyle: (message == 'typing_'.tr || message == 'Typing...')
+                                  ? FontStyle.italic
+                                  : FontStyle.normal,
+                              color: (message == 'typing_'.tr || message == 'Typing...')
+                                  ? AppColors.blue
+                                  : (hasUnread
+                                      ? AppColors.textBlack
+                                      : AppColors.textBlack.withValues(alpha: 0.65)),
                             ),
                           ),
                         ),

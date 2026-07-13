@@ -56,26 +56,22 @@ class _MessagePresetChipsState extends State<MessagePresetChips> {
               SizedBox(width: ResponsiveHelper.spacing(8)),
           itemBuilder: (context, index) {
             final preset = widget.chatController.presetMessages[index];
-            debugPrint(
-                "englisg language===========================${preset.message}"
-            );
-            debugPrint(
-              "it language===========================${preset.messageIt}"
-            );
+            final isAlert = preset.type.toUpperCase() == 'ALERT';
+            final isItalian = Get.locale?.languageCode == 'it';
+            final text = isItalian ? preset.messageIt : preset.message;
+
+            final Color baseColor = isAlert ? Colors.red : AppColors.blue;
+            final IconData icon = isAlert ? Icons.warning_amber_rounded : Icons.message_outlined;
+
             return GestureDetector(
               onTap: () {
-                final isItalian = Get.locale?.languageCode == 'it';
-                widget.chatController.messageController.text =
-                isItalian ? preset.messageIt : preset.message;
-
+                widget.chatController.messageController.text = text;
                 widget.chatController.messageController.selection =
                     TextSelection.fromPosition(
                       TextPosition(
-                        offset: widget
-                            .chatController.messageController.text.length,
+                        offset: widget.chatController.messageController.text.length,
                       ),
                     );
-
               },
               child: Container(
                 padding: EdgeInsets.symmetric(
@@ -83,23 +79,34 @@ class _MessagePresetChipsState extends State<MessagePresetChips> {
                   vertical: ResponsiveHelper.padding(8),
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.blue.withOpacity(0.1),
+                  color: baseColor.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(
                     ResponsiveHelper.borderRadius(20),
                   ),
                   border: Border.all(
-                    color: AppColors.blue,
+                    color: baseColor.withValues(alpha: 0.6),
                     width: 1,
                   ),
                 ),
-                child: Text(
-                    Get.locale?.languageCode == 'it'
-                        ? preset.messageIt
-                        : preset.message,
-                  style: GoogleFonts.poppins(
-                    fontSize: ResponsiveHelper.fontSize(12),
-                    color: AppColors.blue,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      icon,
+                      size: 14,
+                      color: baseColor,
+                    ),
+                    const SizedBox(width: 6),
+
+                    Text(
+                      text,
+                      style: GoogleFonts.poppins(
+                        fontSize: ResponsiveHelper.fontSize(12),
+                        color: baseColor,
+                        fontWeight: isAlert ? FontWeight.w600 : FontWeight.normal,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );
@@ -128,7 +135,7 @@ class _ShimmerChip extends StatelessWidget {
           width: ResponsiveHelper.width(90),
           height: ResponsiveHelper.height(36),
           decoration: BoxDecoration(
-            color: AppColors.blue.withOpacity(0.15),
+            color: AppColors.blue.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(
               ResponsiveHelper.borderRadius(20),
             ),

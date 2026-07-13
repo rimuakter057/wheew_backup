@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
+import 'package:platchatapp/feature/chat/view/message/controller/message_controller.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/app_const/app_const.dart';
 
 class SentMessageRequestsScreen extends StatefulWidget {
   const SentMessageRequestsScreen({super.key});
@@ -13,38 +14,30 @@ class SentMessageRequestsScreen extends StatefulWidget {
 }
 
 class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
-  final ChatController chatController = Get.find<ChatController>();
+  final MessageController messageController = Get.find<MessageController>();
+  final ScrollController _scrollController = ScrollController();
 
   static const Color primaryBlue = Color(0xFF185FA5);
   static const Color bgColor = Color(0xFFF6F8FB);
   static const Color pendingColor = Color(0xFFB88A00);
 
-  // TEMP: static dummy data just to preview the "sent requests" UI.
-  final List<Map<String, dynamic>> _dummySentRequests = [
-    {
-      'id': '1',
-      'receiver': {'nickName': 'Farhan Kabir', 'avatar': ''},
-      'message': 'Hi Farhan, would love to connect and chat sometime!',
-      'status': 'pending',
-    },
-    {
-      'id': '2',
-      'receiver': {'nickName': 'Sadia Rahman', 'avatar': ''},
-      'message': 'Hey, I found your profile through mutual friends.',
-      'status': 'pending',
-    },
-    {
-      'id': '3',
-      'receiver': {'nickName': 'Imran Hossain', 'avatar': ''},
-      'message': 'Hello! Interested in discussing a project idea with you.',
-      'status': 'pending',
-    },
-  ];
-
   @override
   void initState() {
     super.initState();
-    // chatController.fetchSentMessageRequests(refresh: true);
+    messageController.fetchSentMessageRequests(refresh: true);
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      messageController.fetchSentMessageRequests(refresh: false);
+    }
   }
 
   @override
@@ -56,52 +49,103 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
         elevation: 0,
         surfaceTintColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.black87),
-        title: Text(
-          'Sent Requests',
-          style: GoogleFonts.poppins(
-            color: Colors.black87,
-            fontWeight: FontWeight.w700,
-            fontSize: ResponsiveHelper.fontSize(18),
-          ),
-        ),
+        title: Obx(() {
+          // ✅ শুধু PENDING request গুলো ফিল্টার করে count বের করা হচ্ছে
+          final pendingCount = messageController.sentRequests
+              .where((r) => (r['status'] ?? 'PENDING').toString().toUpperCase() == 'PENDING')
+              .length;
+
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Sent Requests',
+                style: GoogleFonts.poppins(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w700,
+                  fontSize: ResponsiveHelper.fontSize(18),
+                ),
+              ),
+              if (pendingCount > 0) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: primaryBlue.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '$pendingCount',
+                    style: GoogleFonts.poppins(
+                      color: primaryBlue,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          );
+        }),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(height: 1, color: Colors.grey.shade200),
         ),
       ),
-      body: Builder(builder: (context) {
-        if (_dummySentRequests.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: Obx(() {
+        if (messageController.isLoadingSentRequests.value && messageController.sentRequests.isEmpty) {
+          return const Center(
+            child: CircularProgressIndicator(color: primaryBlue),
+          );
+        }
+
+        // ✅ শুধু PENDING request গুলো ফিল্টার করা হচ্ছে
+        final pendingRequests = messageController.sentRequests
+            .where((r) => (r['status'] ?? 'PENDING').toString().toUpperCase() == 'PENDING')
+            .toList();
+
+        if (pendingRequests.isEmpty) {
+          return RefreshIndicator(
+            color: primaryBlue,
+            onRefresh: () => messageController.fetchSentMessageRequests(refresh: true),
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
               children: [
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: primaryBlue.withValues(alpha: 0.06),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.send_outlined,
-                    size: 64,
-                    color: primaryBlue.withValues(alpha: 0.5),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'No sent requests',
-                  style: GoogleFonts.poppins(
-                    color: Colors.black87,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  "Requests you send will show up here",
-                  style: GoogleFonts.poppins(
-                    color: Colors.grey.shade500,
-                    fontSize: 13,
+                SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: primaryBlue.withValues(alpha: 0.06),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.send_outlined,
+                          size: 64,
+                          color: primaryBlue.withValues(alpha: 0.5),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'No sent requests',
+                        style: GoogleFonts.poppins(
+                          color: Colors.black87,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        "Requests you send will show up here",
+                        style: GoogleFonts.poppins(
+                          color: Colors.grey.shade500,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -111,19 +155,31 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
 
         return RefreshIndicator(
           color: primaryBlue,
-          onRefresh: () async {},
+          onRefresh: () => messageController.fetchSentMessageRequests(refresh: true),
           child: ListView.separated(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-            itemCount: _dummySentRequests.length,
+            // ✅ pendingRequests.length ব্যবহার করা হচ্ছে, পুরো list না
+            itemCount: pendingRequests.length + (messageController.hasMoreSent.value ? 1 : 0),
             separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
-              final request = _dummySentRequests[index];
+              if (index == pendingRequests.length) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Center(
+                    child: CircularProgressIndicator(color: primaryBlue),
+                  ),
+                );
+              }
+
+              // ✅ filtered list থেকে item নেওয়া হচ্ছে
+              final request = pendingRequests[index];
               final receiver = request['receiver'] ?? {};
-              final name = receiver['nickName'] ?? 'Plate User';
+              final name = receiver['nick_name'] ?? 'Plate User';
               final avatar = receiver['avatar'] ?? '';
-              final message = request['message'] ?? '';
-              final requestId = request['id']?.toString() ?? '';
-              final status = request['status'] ?? 'pending';
+              final message = request['firstMessage'] ?? '';
+              final status = request['status'] ?? 'PENDING';
 
               return Container(
                 padding: const EdgeInsets.all(16),
@@ -209,33 +265,6 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 14),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          setState(() {
-                            _dummySentRequests.removeWhere((r) => r['id'] == requestId);
-                          });
-                        },
-                        icon: Icon(Icons.close, size: 16, color: Colors.grey.shade600),
-                        label: Text(
-                          'Cancel Request',
-                          style: GoogleFonts.poppins(
-                            color: Colors.grey.shade700,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                          ),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          side: BorderSide(color: Colors.grey.shade300),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               );
@@ -253,7 +282,7 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPending = status == 'pending';
+    final isPending = status.toUpperCase() == 'PENDING';
     final color = isPending
         ? _SentMessageRequestsScreenState.pendingColor
         : Colors.grey;

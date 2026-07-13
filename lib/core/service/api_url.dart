@@ -180,6 +180,7 @@ class ApiUrl {
   // ── Postman Messaging - Message Requests ──────────────────────
   static const String createMessageRequest = '/chat/message-requests';
   static const String getMessageRequestInbox = '/chat/message-requests/inbox';
+  static const String getSentMessageRequests = '/chat/message-requests/sent';
   static String acceptMessageRequest(String requestId) => '/chat/message-requests/$requestId/accept';
   static String declineMessageRequest(String requestId) => '/chat/message-requests/$requestId/decline';
 

@@ -413,6 +413,17 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                       color: AppColors.black,
                     ),
                   ),
+                  Obx(() {
+                    final bool isTyping = widget.controller.isTyping.value;
+                    return Text(
+                      isTyping ? "typing_".tr : "Group",
+                      style: GoogleFonts.poppins(
+                        fontSize: ResponsiveHelper.fontSize(12),
+                        fontWeight: FontWeight.w400,
+                        color: isTyping ? AppColors.blue : Colors.grey,
+                      ),
+                    );
+                  }),
                 ],
               ),
             ],

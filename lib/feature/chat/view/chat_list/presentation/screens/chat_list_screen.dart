@@ -166,6 +166,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   );
                 }
 
+
                 // Chat list দেখাও
                 return ListView.builder(
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -184,9 +185,12 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
                     final Rooms room = controller.userChatList[index];
                     final bool isGroup = room.isGroup;
+                    final bool isTyping = controller.inboxTypingMap[room.id] == true;
 
                     // Latest message text তৈরি করো
-                    final String lastMessage = _buildLastMessage(room, isGroup);
+                    final String lastMessage = isTyping
+                        ? 'typing_'.tr
+                        : _buildLastMessage(room, isGroup);
 
                     return GestureDetector(
                       onLongPress: () => _showDeleteDialog(context, room),

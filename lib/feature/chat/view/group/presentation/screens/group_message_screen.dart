@@ -724,6 +724,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
     super.initState();
 
     controller.groupRoomID.value = widget.roomId;
+    controller.isTyping.value = false;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // ✅ আগে join
@@ -754,6 +755,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
   @override
   void dispose() {
     controller.groupRoomID.value = '';
+    controller.isTyping.value = false;
     _scrollController.dispose();
     controller.messageController.clear();
     super.dispose();
@@ -761,88 +763,142 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      body: SafeArea(
-        top: true,
-        bottom: true,
-        child: Column(
-          children: [
-            SizedBox(height: ResponsiveHelper.height(20)),
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: AppColors.primaryBackgroundGradient,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          top: true,
+          bottom: true,
+          child: Column(
+            children: [
+              SizedBox(height: ResponsiveHelper.height(20)),
 
-            // ── App Bar ──────────────────────────────────────
-            GroupMessageAppBar(
-              roomId: widget.roomId,
-              groupName: widget.groupName,
-              groupImage: widget.groupImage,
-            //  groupMembers: widget.groupMembers,
-              controller: controller,
-            ),
+              // ── App Bar ──────────────────────────────────────
+              GroupMessageAppBar(
+                roomId: widget.roomId,
+                groupName: widget.groupName,
+                groupImage: widget.groupImage,
+              //  groupMembers: widget.groupMembers,
+                controller: controller,
+              ),
 
-            // ── Messages List ────────────────────────────────
-            Expanded(
-              child: Obx(() {
-                if (controller.isLoadingGroupMessage.value &&
-                    controller.groupMessageList.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+              // ── Messages List ────────────────────────────────
+              Expanded(
+                child: Obx(() {
+                  final bool showTyping = controller.isTyping.value;
 
-                if (controller.groupMessageList.isEmpty) {
-                  return Center(
-                    child: Text(
-                      'no_messages'.tr,
-                      style: GoogleFonts.poppins(
-                        fontSize: ResponsiveHelper.fontSize(16),
-                        color: Colors.grey,
-                      ),
-                    ),
-                  );
-                }
+                  if (controller.isLoadingGroupMessage.value &&
+                      controller.groupMessageList.isEmpty) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                return ListView.builder(
-                  controller: _scrollController,
-                  reverse: true,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: ResponsiveHelper.width(16),
-                    vertical: ResponsiveHelper.height(8),
-                  ),
-                  itemCount: controller.groupMessageList.length + 1,
-                  itemBuilder: (context, index) {
-                    // Pagination loader at the end
-                    if (index == controller.groupMessageList.length) {
-                      return controller.isLoadingMoreGroupMessage.value
-                          ?  Padding(
-                        padding: ResponsiveHelper.all(8),
-                        child: Center(child: CircularProgressIndicator()),
-                      )
-                          : const SizedBox.shrink();
-                    }
-
-                    final msg = controller.groupMessageList[index];
-                    final bool isMine = msg.isMine == true;
-
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        bottom: ResponsiveHelper.height(8),
-                      ),
-                      child: GroupMessageBubble(
-                        msg: msg,
-                        isMine: isMine,
-                        senderName: msg.sender?.nickName ?? '',
-                        senderAvatar: msg.sender?.avatar ?? '',
-                        text: msg.message ?? '',
-                        time: formatTime(msg.createdAt ?? ''),
+                  if (controller.groupMessageList.isEmpty && !showTyping) {
+                    return Center(
+                      child: Text(
+                        'no_messages'.tr,
+                        style: GoogleFonts.poppins(
+                          fontSize: ResponsiveHelper.fontSize(16),
+                          color: Colors.grey,
+                        ),
                       ),
                     );
-                  },
-                );
-              }),
-            ),
+                  }
 
-            // ── Message Input ────────────────────────────────
-            GroupMessageInput(
-              roomId: widget.roomId,
-              controller: controller,
+                  return ListView.builder(
+                    controller: _scrollController,
+                    reverse: true,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: ResponsiveHelper.width(16),
+                      vertical: ResponsiveHelper.height(8),
+                    ),
+                    itemCount: controller.groupMessageList.length + (showTyping ? 1 : 0) + 1,
+                    itemBuilder: (context, index) {
+                      if (showTyping && index == 0) {
+                        return _buildTypingIndicatorBubble();
+                      }
+
+                      final msgIndex = showTyping ? index - 1 : index;
+
+                      // Pagination loader at the end
+                      if (msgIndex == controller.groupMessageList.length) {
+                        return controller.isLoadingMoreGroupMessage.value
+                            ?  Padding(
+                          padding: ResponsiveHelper.all(8),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                            : const SizedBox.shrink();
+                      }
+
+                      final msg = controller.groupMessageList[msgIndex];
+                      final bool isMine = msg.isMine == true;
+
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          bottom: ResponsiveHelper.height(8),
+                        ),
+                        child: GroupMessageBubble(
+                          msg: msg,
+                          isMine: isMine,
+                          senderName: msg.sender?.nickName ?? '',
+                          senderAvatar: msg.sender?.avatar ?? '',
+                          text: msg.message ?? '',
+                          time: formatTime(msg.createdAt ?? ''),
+                        ),
+                      );
+                    },
+                  );
+                }),
+              ),
+
+              // ── Message Input ────────────────────────────────
+              GroupMessageInput(
+                roomId: widget.roomId,
+                controller: controller,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTypingIndicatorBubble() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            CircleAvatar(
+              radius: ResponsiveHelper.borderRadius(16),
+              backgroundColor: Colors.grey.shade300,
+              child: const Icon(Icons.group, size: 18, color: Colors.grey),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(15),
+                  topRight: Radius.circular(15),
+                  bottomRight: Radius.circular(15),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildDot(0),
+                  const SizedBox(width: 3),
+                  _buildDot(1),
+                  const SizedBox(width: 3),
+                  _buildDot(2),
+                ],
+              ),
             ),
           ],
         ),
@@ -850,4 +906,65 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
     );
   }
 
+  Widget _buildDot(int index) {
+    return _GroupAnimatedDot(delayMs: index * 150);
+  }
 }
+
+class _GroupAnimatedDot extends StatefulWidget {
+  final int delayMs;
+  const _GroupAnimatedDot({required this.delayMs});
+
+  @override
+  State<_GroupAnimatedDot> createState() => _GroupAnimatedDotState();
+}
+
+class _GroupAnimatedDotState extends State<_GroupAnimatedDot> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+    _animation = Tween<double>(begin: 0.4, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    Future.delayed(Duration(milliseconds: widget.delayMs), () {
+      if (mounted) {
+        _controller.repeat(reverse: true);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _animation,
+      child: ScaleTransition(
+        scale: _animation,
+        child: Container(
+          width: 6,
+          height: 6,
+          decoration: const BoxDecoration(
+            color: Color(0xFF6A6969),
+            shape: BoxShape.circle,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+

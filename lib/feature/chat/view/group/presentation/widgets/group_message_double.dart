@@ -167,6 +167,7 @@ class GroupMessageBubble extends StatelessWidget {
   final String time;
 
   const GroupMessageBubble({
+
     super.key,
     required this.msg,
     required this.isMine,
