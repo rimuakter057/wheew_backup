@@ -9,6 +9,7 @@ class MessageResponseModel {
       messages = <Messages>[];
       json['messages'].forEach((v) {
         messages!.add(Messages.fromJson(v));
+
       });
     }
     total = json['total'];
@@ -54,6 +55,9 @@ class Messages {
   String? fileMimeType;
   num? durationSeconds;
   dynamic waveform;
+  bool? isDeletedForEveryone;
+  String? deletedAt;
+  String? deletedById;
 
   Messages({
     this.id,
@@ -80,6 +84,9 @@ class Messages {
     this.fileMimeType,
     this.durationSeconds,
     this.waveform,
+    this.isDeletedForEveryone,
+    this.deletedAt,
+    this.deletedById,
   });
 
   Messages.fromJson(Map<String, dynamic> json) {
@@ -107,6 +114,9 @@ class Messages {
     fileMimeType = json['file_mime_type'];
     durationSeconds = json['durationSeconds'];
     waveform = json['waveform'];
+    isDeletedForEveryone = json['isDeletedForEveryone'] ?? false;
+    deletedAt = json['deletedAt'];
+    deletedById = json['deletedById'];
   }
 
   Map<String, dynamic> toJson() {
@@ -135,6 +145,9 @@ class Messages {
     data['file_mime_type'] = fileMimeType;
     data['durationSeconds'] = durationSeconds;
     data['waveform'] = waveform;
+    data['isDeletedForEveryone'] = isDeletedForEveryone;
+    data['deletedAt'] = deletedAt;
+    data['deletedById'] = deletedById;
     return data;
   }
 }

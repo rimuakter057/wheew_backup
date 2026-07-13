@@ -11,6 +11,7 @@ import 'package:platchatapp/feature/chat/view/widgets/block_by_me_widget.dart';
 import 'package:platchatapp/feature/chat/view/widgets/block_me_widget.dart';
 import 'package:platchatapp/feature/chat/view/widgets/message_screen_shimmer.dart';
 import 'package:platchatapp/feature/scan/presentation/widget/profile_card.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
@@ -432,17 +433,24 @@ class _MessageScreenState extends State<MessageScreen> {
                         final msg = messages[msgIndex];
                         final bool isMine = msg.isMine == true;
 
-                        return MessageBubble(
-                          message: msg.message ?? '',
-                          isMine: isMine,
-                          type: msg.type,
-                          fileUrl: msg.fileUrl,
-                          isRead: msg.isRead,
-                          fileName: msg.fileName,
-                          fileSize: msg.fileSize,
-                          fileMimeType: msg.fileMimeType,
-                          durationSeconds: msg.durationSeconds,
-                          isDelivered: msg.isDelivered,
+                        return GestureDetector(
+                          onLongPress: () {
+                            if (isMine && msg.id != null) {
+                              _showDeleteMessageDialog(context, msg.id!);
+                            }
+                          },
+                          child: MessageBubble(
+                            message: msg.message ?? '',
+                            isMine: isMine,
+                            type: msg.type,
+                            fileUrl: msg.fileUrl,
+                            isRead: msg.isRead,
+                            fileName: msg.fileName,
+                            fileSize: msg.fileSize,
+                            fileMimeType: msg.fileMimeType,
+                            durationSeconds: msg.durationSeconds,
+                            isDelivered: msg.isDelivered,
+                          ),
                         );
                       },
                     );
@@ -547,6 +555,71 @@ class _MessageScreenState extends State<MessageScreen> {
 
   Widget _buildDot(int index) {
     return _AnimatedDot(delayMs: index * 150);
+  }
+
+  void _showDeleteMessageDialog(BuildContext context, String messageId) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
+        ),
+        title: Text(
+          'Delete Message',
+          style: GoogleFonts.poppins(
+            fontSize: ResponsiveHelper.fontSize(16),
+            fontWeight: FontWeight.w600,
+            color: AppColors.black,
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to delete this message?',
+          style: GoogleFonts.poppins(
+            fontSize: ResponsiveHelper.fontSize(14),
+            color: Colors.grey.shade600,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.poppins(
+                fontSize: ResponsiveHelper.fontSize(14),
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          Obx(() => TextButton(
+            onPressed: chatController.isDeletingMessage.value
+                ? null
+                : () async {
+                    final success = await chatController.deleteMessageApi(
+                      messageId: messageId,
+                      context: context,
+                    );
+                    if (success) {
+                      Navigator.pop(ctx);
+                    }
+                  },
+            child: chatController.isDeletingMessage.value
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.red),
+                  )
+                : Text(
+                    'Delete',
+                    style: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(14),
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+          )),
+        ],
+      ),
+    );
   }
 }
 

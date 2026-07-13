@@ -34,6 +34,7 @@ class ApiUrl {
 
 
 
+
   static String getNotifications({required int page, required int limit}) =>
       '/notifications/events?page=$page&limit=$limit';
 
@@ -105,6 +106,7 @@ class ApiUrl {
 
   static  String leaveSpot  = "/parking-report/spot/leave";
   static  String verifyPlate  = "/chat/rooms/by-plate";
+  static String deleteMessage({required String messageId}) => "/chat/messages/$messageId";
 
 
 
@@ -151,6 +153,7 @@ class ApiUrl {
 
   // ✅ page, limit support সহ
   static String getGroupMessage({
+
     required String roomId,
     int page = 1,
     int limit = 20,

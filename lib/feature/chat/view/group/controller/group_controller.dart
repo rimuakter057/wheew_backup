@@ -36,6 +36,7 @@ class GroupController extends GetxController {
       debugPrint('pickGroupImage error: $e');
     }
   }
+
 ///update group==================================
   Future<Map<String, dynamic>?> updateGroup({
     required String roomId,

@@ -42,6 +42,7 @@ class ChatController extends GetxController {
 
   var isAddingMember = false.obs;
 
+
   Future<bool> addGroupMember({
     required String groupRoomId,
     required List<String> memberIds,
@@ -362,6 +363,7 @@ class ChatController extends GetxController {
     newMessage();
     listenMessageDelivered();
     listenTypingEvents();
+    listenDeleteMessageEvents();
 
     debugPrint('✅ Socket listeners initialized');
   }
@@ -434,10 +436,15 @@ class ChatController extends GetxController {
         totalCount = data.total ?? 0;
 
         if (data.messages != null && data.messages!.isNotEmpty) {
-          // ✅ addAll করো, clear করো না!
           for (final msg in data.messages!) {
+            if (msg.isDeletedForEveryone == true) {
+
+
+              continue;
+
+            }
             msg.isMine = msg.isMine == true;
-            userMessageList.add(msg); // ✅ শুধু add, clear নয়
+            userMessageList.add(msg);
           }
           pageCount++;
         }
@@ -710,6 +717,88 @@ class ChatController extends GetxController {
         'roomId': roomId,
       });
       debugPrint('📤 Emitted stop-typing for receiver: $receiverId, room: $roomId');
+    }
+  }
+
+  void listenDeleteMessageEvents() {
+    final s = AppSocket.socket;
+    if (s == null) return;
+
+    s.off('message-deleted');
+    s.off('group-message-deleted');
+
+    s.on('message-deleted', (data) {
+      debugPrint('🗑️ message-deleted event received: $data');
+      if (data is Map) {
+        final String? msgId = data['messageId']?.toString();
+        final String? rId = data['roomId']?.toString();
+        if (msgId != null) {
+          userMessageList.removeWhere((msg) => msg.id == msgId);
+          userMessageList.refresh();
+          _updateRoomLastMessageAfterDeletion(rId, msgId);
+        }
+      }
+    });
+
+    s.on('group-message-deleted', (data) {
+      debugPrint('🗑️ group-message-deleted event received: $data');
+      if (data is Map) {
+        final String? msgId = data['messageId']?.toString();
+        if (msgId != null) {
+          groupMessageList.removeWhere((msg) => msg.id == msgId);
+          groupMessageList.refresh();
+        }
+      }
+    });
+  }
+
+  void _updateRoomLastMessageAfterDeletion(String? roomId, String deletedMsgId) {
+    if (roomId == null || roomId.isEmpty) return;
+    final idx = userChatList.indexWhere((r) => r.id == roomId);
+    if (idx != -1) {
+      final room = userChatList[idx];
+      if (room.latestMessage?.id == deletedMsgId) {
+        room.latestMessage?.message = 'Message deleted';
+        userChatList[idx] = room;
+        userChatList.refresh();
+      }
+    }
+  }
+
+  var isDeletingMessage = false.obs;
+
+  Future<bool> deleteMessageApi({required String messageId, required BuildContext context}) async {
+    isDeletingMessage.value = true;
+    try {
+      final response = await ApiClient.deleteData(
+        uri: ApiUrl.deleteMessage(messageId: messageId),
+      );
+
+      if (response['statusCode'] == 200 || response['statusCode'] == 201) {
+        userMessageList.removeWhere((msg) => msg.id == messageId);
+        userMessageList.refresh();
+        groupMessageList.removeWhere((msg) => msg.id == messageId);
+        groupMessageList.refresh();
+
+        CustomSnackbar.success(
+          context: context,
+          message: 'Message deleted successfully',
+        );
+        return true;
+      } else {
+        String errMsg = 'Failed to delete message';
+        try {
+          errMsg = response['data']['message'] ?? errMsg;
+        } catch (_) {}
+        CustomSnackbar.error(context: context, message: errMsg);
+        return false;
+      }
+    } catch (e) {
+      debugPrint('deleteMessageApi error: $e');
+      CustomSnackbar.error(context: context, message: 'An error occurred while deleting the message');
+      return false;
+    } finally {
+      isDeletingMessage.value = false;
     }
   }
 
@@ -1292,6 +1381,10 @@ class ChatController extends GetxController {
 
         if (data.messages != null && data.messages!.isNotEmpty) {
           for (final msg in data.messages!) {
+
+            if (msg.isDeletedForEveryone == true) {
+              continue;
+            }
             groupMessageList.add(msg);
           }
           groupPageCount++;

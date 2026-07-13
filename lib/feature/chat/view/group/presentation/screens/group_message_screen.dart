@@ -727,6 +727,9 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
     controller.isTyping.value = false;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // ✅ Socket listeners initialize
+      controller.initSocketListeners();
+
       // ✅ আগে join
       controller.joinGroup(roomId: widget.roomId);
 
@@ -839,13 +842,20 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
                         padding: EdgeInsets.only(
                           bottom: ResponsiveHelper.height(8),
                         ),
-                        child: GroupMessageBubble(
-                          msg: msg,
-                          isMine: isMine,
-                          senderName: msg.sender?.nickName ?? '',
-                          senderAvatar: msg.sender?.avatar ?? '',
-                          text: msg.message ?? '',
-                          time: formatTime(msg.createdAt ?? ''),
+                        child: GestureDetector(
+                          onLongPress: () {
+                            if (isMine && msg.id != null) {
+                              _showDeleteMessageDialog(context, msg.id!);
+                            }
+                          },
+                          child: GroupMessageBubble(
+                            msg: msg,
+                            isMine: isMine,
+                            senderName: msg.sender?.nickName ?? '',
+                            senderAvatar: msg.sender?.avatar ?? '',
+                            text: msg.message ?? '',
+                            time: formatTime(msg.createdAt ?? ''),
+                          ),
                         ),
                       );
                     },
@@ -908,6 +918,72 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
 
   Widget _buildDot(int index) {
     return _GroupAnimatedDot(delayMs: index * 150);
+  }
+
+  void _showDeleteMessageDialog(BuildContext context, String messageId) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
+        ),
+        title: Text(
+          'Delete Message',
+          style: GoogleFonts.poppins(
+            fontSize: ResponsiveHelper.fontSize(16),
+            fontWeight: FontWeight.w600,
+            color: AppColors.black,
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to delete this message?',
+          style: GoogleFonts.poppins(
+            fontSize: ResponsiveHelper.fontSize(14),
+            color: Colors.grey.shade600,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.poppins(
+                fontSize: ResponsiveHelper.fontSize(14),
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          Obx(() => TextButton(
+            onPressed: controller.isDeletingMessage.value
+                ? null
+                : () async {
+                    final success = await controller.deleteMessageApi(
+                      messageId: messageId,
+                      context: context,
+                    );
+                    if (success) {
+                      Navigator.pop(ctx);
+                    }
+                  },
+            child: controller.isDeletingMessage.value
+
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.red),
+                  )
+                : Text(
+                    'Delete',
+                    style: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(14),
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+          )),
+        ],
+      ),
+    );
   }
 }
 

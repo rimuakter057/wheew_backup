@@ -13,6 +13,7 @@ class GroupMessageListResponse {
       });
     }
     total = json['total'];
+
   }
 }
 
@@ -86,6 +87,9 @@ class GroupMessageResponseModel {
   String? fileUrl;
   String? fileName;
   int? fileSize;
+  bool? isDeletedForEveryone;
+  String? deletedAt;
+  String? deletedById;
 
   GroupMessageResponseModel({
     this.id,
@@ -100,6 +104,9 @@ class GroupMessageResponseModel {
     this.fileUrl,
     this.fileName,
     this.fileSize,
+    this.isDeletedForEveryone,
+    this.deletedAt,
+    this.deletedById,
   });
 
   GroupMessageResponseModel.fromJson(Map<String, dynamic> json) {
@@ -118,6 +125,9 @@ class GroupMessageResponseModel {
     fileUrl = json['file_url'];
     fileName = json['file_name'];
     fileSize = json['file_size'];
+    isDeletedForEveryone = json['isDeletedForEveryone'] ?? false;
+    deletedAt = json['deletedAt'];
+    deletedById = json['deletedById'];
   }
 
   Map<String, dynamic> toJson() {
@@ -135,6 +145,9 @@ class GroupMessageResponseModel {
     data['file_url'] = fileUrl;
     data['file_name'] = fileName;
     data['file_size'] = fileSize;
+    data['isDeletedForEveryone'] = isDeletedForEveryone;
+    data['deletedAt'] = deletedAt;
+    data['deletedById'] = deletedById;
     return data;
   }
 }
