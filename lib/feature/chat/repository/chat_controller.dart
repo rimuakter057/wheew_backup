@@ -1878,6 +1878,18 @@ class ChatController extends GetxController {
         body: {'receiverId': receiverId, 'firstMessage': firstMessage},
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
+        final index = searchResults.indexWhere((u) => u.id == receiverId);
+        if (index != -1) {
+          final u = searchResults[index];
+          u.isMessageRequestSent = true;
+          u.messageRequest = {
+            'status': 'PENDING',
+            'receiverId': receiverId,
+            'firstMessage': firstMessage,
+          };
+          searchResults[index] = u;
+          searchResults.refresh();
+        }
         CustomSnackbar.success(context: context, message: 'Message request sent successfully!');
         return true;
       } else {

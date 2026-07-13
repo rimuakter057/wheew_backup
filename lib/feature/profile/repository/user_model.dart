@@ -93,6 +93,8 @@ class UserModel {
   final String? city;
 
   ExistingRoom2? existingRoom;
+  bool? isMessageRequestSent;
+  Map<String, dynamic>? messageRequest;
 
   UserModel({
     this.id,
@@ -114,6 +116,8 @@ class UserModel {
     this.country,
     this.city,
     this.existingRoom,
+    this.isMessageRequestSent,
+    this.messageRequest,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -143,6 +147,8 @@ class UserModel {
       existingRoom: json['existingRoom'] != null
           ? ExistingRoom2.fromJson(json['existingRoom'])
           : null,
+      isMessageRequestSent: json['isMessageRequestSent'] ?? false,
+      messageRequest: json['messageRequest'],
     );
   }
 

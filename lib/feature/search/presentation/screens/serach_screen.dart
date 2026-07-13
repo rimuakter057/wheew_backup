@@ -32,8 +32,14 @@ class _SearchListScreenState extends State<SearchListScreen> {
   @override
   void initState() {
     super.initState();
+    controller.searchResults.clear();
+    controller.hasSearched.value = false;
+    controller.isSearching.value = false;
+
     Future.delayed(const Duration(milliseconds: 200), () {
-      _focusNode.requestFocus();
+      if (mounted) {
+        _focusNode.requestFocus();
+      }
     });
   }
 
@@ -41,6 +47,9 @@ class _SearchListScreenState extends State<SearchListScreen> {
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
+    controller.searchResults.clear();
+    controller.hasSearched.value = false;
+    controller.isSearching.value = false;
     super.dispose();
   }
 
@@ -223,26 +232,74 @@ class _SearchListScreenState extends State<SearchListScreen> {
                                 ],
                               ),
                             )
+                                : (user.isMessageRequestSent == true
+                                ? Container(
+                              padding: ResponsiveHelper.symmetric(horizontal: 14, vertical: 6),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    AppColors.blue,
+                                    AppColors.darBlue,
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.blue.withValues(alpha: 0.3),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Text(
+                                (user.messageRequest?['status']?.toString() ?? 'Pending').tr,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: ResponsiveHelper.fontSize(12),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            )
                                 : GestureDetector(
                               // ✅ শুধু এই badge এ tap করলেই request dialog খুলবে
                               onTap: () => _showSendRequestDialog(context, user),
                               child: Container(
-                                padding: ResponsiveHelper.symmetric(horizontal: 10, vertical: 6),
+                                padding: ResponsiveHelper.symmetric(horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
                                   color: AppColors.white,
-                                  border: Border.all(color: AppColors.black),
+                                  border: Border.all(color: AppColors.blue, width: 1.2),
                                   borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.blue.withValues(alpha: 0.1),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
-                                child: Text(
-                                  "Send Request".tr,
-                                  style: TextStyle(
-                                    color: AppColors.black,
-                                    fontSize: ResponsiveHelper.fontSize(12),
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.send_rounded,
+                                      size: ResponsiveHelper.iconSize(12),
+                                      color: AppColors.blue,
+                                    ),
+                                    SizedBox(width: ResponsiveHelper.width(4)),
+                                    Text(
+                                      "Send Request".tr,
+                                      style: TextStyle(
+                                        color: AppColors.blue,
+                                        fontSize: ResponsiveHelper.fontSize(12),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
+                            )),
                           ],
                         ),
                       ),
