@@ -691,6 +691,7 @@ import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/feature/chat/view/group/presentation/widgets/group_message_app_bar.dart';
 import 'package:platchatapp/feature/chat/view/group/presentation/widgets/group_message_double.dart';
 import 'package:platchatapp/feature/chat/view/group/presentation/widgets/group_message_input.dart';
+import 'package:platchatapp/feature/chat/view/group/presentation/widgets/group_preset.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
@@ -725,6 +726,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
 
     controller.groupRoomID.value = widget.roomId;
     controller.isTyping.value = false;
+    controller.fetchPresetMessages();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // ✅ Socket listeners initialize
@@ -752,6 +754,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
         !controller.isLoadingMoreGroupMessage.value &&
         !controller.isLoadingGroupMessage.value) {
       controller.fetchGroupMessages(roomId: widget.roomId);
+      
     }
   }
 
@@ -772,22 +775,16 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        appBar: GroupMessageAppBar(
+          roomId: widget.roomId,
+          groupName: widget.groupName,
+          groupImage: widget.groupImage,
+          controller: controller,
+        ),
         body: SafeArea(
           top: true,
-          bottom: true,
           child: Column(
             children: [
-              SizedBox(height: ResponsiveHelper.height(20)),
-
-              // ── App Bar ──────────────────────────────────────
-              GroupMessageAppBar(
-                roomId: widget.roomId,
-                groupName: widget.groupName,
-                groupImage: widget.groupImage,
-              //  groupMembers: widget.groupMembers,
-                controller: controller,
-              ),
-
               // ── Messages List ────────────────────────────────
               Expanded(
                 child: Obx(() {
@@ -828,9 +825,9 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
                       // Pagination loader at the end
                       if (msgIndex == controller.groupMessageList.length) {
                         return controller.isLoadingMoreGroupMessage.value
-                            ?  Padding(
+                            ? Padding(
                           padding: ResponsiveHelper.all(8),
-                          child: Center(child: CircularProgressIndicator()),
+                          child: const Center(child: CircularProgressIndicator()),
                         )
                             : const SizedBox.shrink();
                       }
@@ -862,13 +859,21 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
                   );
                 }),
               ),
-
-              // ── Message Input ────────────────────────────────
-              GroupMessageInput(
-                roomId: widget.roomId,
-                controller: controller,
+              Padding(
+                padding: EdgeInsets.only(bottom: ResponsiveHelper.height(8)),
+                child: GroupPresetMessages(controller: controller),
               ),
             ],
+          ),
+        ),
+        bottomNavigationBar: Container(
+          color: const Color(0xFFF1F5F9),
+          child: SafeArea(
+            top: false,
+            child: GroupMessageInput(
+              roomId: widget.roomId,
+              controller: controller,
+            ),
           ),
         ),
       ),
@@ -966,6 +971,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
                     }
                   },
             child: controller.isDeletingMessage.value
+
 
                 ? const SizedBox(
                     width: 16,

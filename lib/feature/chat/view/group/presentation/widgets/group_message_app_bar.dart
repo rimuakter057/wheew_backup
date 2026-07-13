@@ -14,7 +14,7 @@ import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
-class GroupMessageAppBar extends StatefulWidget {
+class GroupMessageAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String roomId;
   final String groupName;
   final String groupImage;
@@ -27,6 +27,9 @@ class GroupMessageAppBar extends StatefulWidget {
     required this.groupImage,
     required this.controller,
   });
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight + 18);
 
   @override
   State<GroupMessageAppBar> createState() => _GroupMessageAppBarState();
@@ -52,8 +55,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
     return '${ApiUrl.baseUrl}/$cleanPath';
   }
 
-
-  ///leave group==============================
+  /// leave group==============================
 
   void _showLeaveGroupDialog(BuildContext context) {
     showDialog(
@@ -92,34 +94,34 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
             ),
           ),
           Obx(
-            () => TextButton(
+                () => TextButton(
               onPressed: widget.controller.isLeavingGroup.value
                   ? null
                   : () {
-                      Navigator.pop(ctx);
-                      widget.controller.leaveGroup(
-                        roomId: widget.roomId,
-                        context: context,
-                        navigateBack: true,
-                      );
-                    },
+                Navigator.pop(ctx);
+                widget.controller.leaveGroup(
+                  roomId: widget.roomId,
+                  context: context,
+                  navigateBack: true,
+                );
+              },
               child: widget.controller.isLeavingGroup.value
                   ? const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.red,
-                      ),
-                    )
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.red,
+                ),
+              )
                   : Text(
-                      'leave'.tr,
-                      style: GoogleFonts.poppins(
-                        fontSize: ResponsiveHelper.fontSize(14),
-                        color: Colors.red,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                'leave'.tr,
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(14),
+                  color: Colors.red,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
         ],
@@ -127,17 +129,14 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
     );
   }
 
-
-
-
-///edit group=======================================
+  /// edit group=======================================
   void _showEditGroupDialog(BuildContext context) {
     groupController.groupNameController.text = _currentGroupName;
     groupController.groupImageFile.value = null;
 
     showDialog(
       context: context,
-      barrierDismissible: true, // বাইরে ক্লিক করলে যাতে বন্ধ হয়
+      barrierDismissible: true, // বাইরে ক্লিক করলে যাতে বন্ধ হয়
       builder: (ctx) {
         return Dialog(
           backgroundColor: Colors.transparent,
@@ -199,7 +198,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                     child: Column(
                       children: [
                         Text(
-                    AppStrings.profilePicture.tr,
+                          AppStrings.profilePicture.tr,
                           style: GoogleFonts.poppins(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -229,7 +228,8 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                                         ? FileImage(imageFile)
                                         : (_currentGroupImage.isNotEmpty
                                         ? NetworkImage(_buildImageUrl(_currentGroupImage))
-                                        : null) as ImageProvider?,
+                                        : null)
+                                    as ImageProvider?,
                                     child: imageFile == null && _currentGroupImage.isEmpty
                                         ? Icon(
                                       Icons.group,
@@ -309,7 +309,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                       height: 54,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1565C0), // ছবির মতো রয়েল ব্লু কালার
+                          backgroundColor: const Color(0xFF1565C0), // ছবির মতো রয়েল ব্লু কালার
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(28), // রাউন্ডেড বাটন
@@ -368,175 +368,183 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomContainer(
-      margin: EdgeInsets.all(ResponsiveHelper.padding(16)),
-      vertical: ResponsiveHelper.padding(16),
-      horizontal: ResponsiveHelper.padding(0),
-      backgroundColor: AppColors.greyShade,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return AppBar(
+      backgroundColor: const Color(0xFFF1F5F9),
+      elevation: 0,
+      automaticallyImplyLeading: false,
+      titleSpacing: 0,
+      toolbarHeight: widget.preferredSize.height,
+      title: Row(
         children: [
-          // ── Back + Avatar + Name ──────────────────────────
-          Row(
-            children: [
-              IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(Icons.arrow_back, color: AppColors.black),
-              ),
-              CircleAvatar(
-                radius: ResponsiveHelper.borderRadius(22),
-                backgroundColor: AppColors.blue.withOpacity(0.2),
-                backgroundImage: _currentGroupImage.isNotEmpty
-                    ? NetworkImage(_buildImageUrl(_currentGroupImage))
-                    : null,
-                child: _currentGroupImage.isEmpty
-                    ? CircleAvatar(
-                  radius: ResponsiveHelper.borderRadius(22),
-                  backgroundColor: AppColors.greyBorder,
-                  child: SvgPicture.asset(
-                    'assets/icons/group_chat.svg',
-                    width: ResponsiveHelper.borderRadius(22),
-                    height: ResponsiveHelper.borderRadius(22),
-                  ),
-                )
-                    : null,
-              ),
-              SizedBox(width: ResponsiveHelper.spacing(12)),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _currentGroupName,
-                    style: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.fontSize(16),
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.black,
-                    ),
-                  ),
-                  Obx(() {
-                    final bool isTyping = widget.controller.isTyping.value;
-                    return Text(
-                      isTyping ? "typing_".tr : "Group",
-                      style: GoogleFonts.poppins(
-                        fontSize: ResponsiveHelper.fontSize(12),
-                        fontWeight: FontWeight.w400,
-                        color: isTyping ? AppColors.blue : Colors.grey,
-                      ),
-                    );
-                  }),
-                ],
-              ),
-            ],
-          ),
-
-          // ── Popup Menu ────────────────────────────────────
-          PopupMenuButton<String>(
-            icon: Icon(Icons.more_vert, color: AppColors.black),
-            onSelected: (value) {
-              if (value == "AddMembers") {
-                context.pushNamed(RouteName.addMemberScreen, extra: widget.roomId);
-              } else if (value == "SeeMembers") {
-                context.pushNamed(
-                  RouteName.groupMemberScreen,
-                  extra: {'roomId': widget.roomId, 'groupName': _currentGroupName},
-                );
-              } else if (value == "EditGroup") {
-                _showEditGroupDialog(context);
-              } else if (value == "LeaveGroup") {
-                _showLeaveGroupDialog(context);
-              }
+          IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            onPressed: () {
+              Navigator.pop(context);
             },
-            itemBuilder: (context) => [
-              // ── See Members ──────────────────────────────
-              PopupMenuItem<String>(
-                value: "SeeMembers",
-                child: Row(
-                  children: [
-                    Icon(Icons.group_outlined, color: AppColors.black),
-                    const SizedBox(width: 8),
-                    Text(
-                      'see_members'.tr,
-                      style: GoogleFonts.poppins(
-                        fontSize: ResponsiveHelper.fontSize(14),
-                        color: AppColors.black,
-                      ),
-                    ),
-                  ],
+            icon: Icon(
+              Icons.chevron_left,
+              size: ResponsiveHelper.fontSize(28),
+              color: AppColors.black,
+            ),
+          ),
+          CircleAvatar(
+            radius: ResponsiveHelper.borderRadius(20),
+            backgroundColor: AppColors.blue.withOpacity(0.2),
+            backgroundImage: _currentGroupImage.isNotEmpty
+                ? NetworkImage(_buildImageUrl(_currentGroupImage))
+                : null,
+            child: _currentGroupImage.isEmpty
+                ? CircleAvatar(
+              radius: ResponsiveHelper.borderRadius(20),
+              backgroundColor: AppColors.greyBorder,
+              child: SvgPicture.asset(
+                'assets/icons/group_chat.svg',
+                width: ResponsiveHelper.borderRadius(20),
+                height: ResponsiveHelper.borderRadius(20),
+              ),
+            )
+                : null,
+          ),
+          SizedBox(width: ResponsiveHelper.spacing(10)),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _currentGroupName,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(
+                    fontSize: ResponsiveHelper.fontSize(16),
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.black,
+                  ),
                 ),
-              ),
-              PopupMenuItem<String>(
-                enabled: false,
-                height: 1,
-                child: Divider(height: 1, color: Colors.grey.shade200),
-              ),
-
-              // ── Add Members ──────────────────────────────
-              PopupMenuItem<String>(
-                value: "AddMembers",
-                child: Row(
-                  children: [
-                    Icon(Icons.person_add_outlined, color: AppColors.black),
-                    const SizedBox(width: 8),
-                    Text(
-                      'add_members'.tr,
-                      style: GoogleFonts.poppins(
-                        fontSize: ResponsiveHelper.fontSize(14),
-                        color: AppColors.black,
-                      ),
+                Obx(() {
+                  final bool isTyping = widget.controller.isTyping.value;
+                  return Text(
+                    isTyping ? "typing_".tr : "Group".tr,
+                    style: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(13),
+                      fontWeight: FontWeight.w400,
+                      color: isTyping ? AppColors.blue : Colors.grey,
                     ),
-                  ],
-                ),
-              ),
-              PopupMenuItem<String>(
-                enabled: false,
-                height: 1,
-                child: Divider(height: 1, color: Colors.grey.shade200),
-              ),
-
-              // ── Edit Group ───────────────────────────────
-              PopupMenuItem<String>(
-                value: "EditGroup",
-                child: Row(
-                  children: [
-                    Icon(Icons.edit_outlined, color: AppColors.black),
-                    const SizedBox(width: 8),
-                    Text(
-                      'edit_group'.tr,
-                      style: GoogleFonts.poppins(
-                        fontSize: ResponsiveHelper.fontSize(14),
-                        color: AppColors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              PopupMenuItem<String>(
-                enabled: false,
-                height: 1,
-                child: Divider(height: 1, color: Colors.grey.shade200),
-              ),
-
-              // ── Leave Group ──────────────────────────────
-              PopupMenuItem<String>(
-                value: "LeaveGroup",
-                child: Row(
-                  children: [
-                    const Icon(Icons.exit_to_app_outlined, color: Colors.red),
-                    const SizedBox(width: 8),
-                    Text(
-                      'leave_group'.tr,
-                      style: GoogleFonts.poppins(
-                        fontSize: ResponsiveHelper.fontSize(14),
-                        color: Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+                  );
+                }),
+              ],
+            ),
           ),
         ],
       ),
+      actions: [
+        PopupMenuButton<String>(
+          padding: EdgeInsets.zero,
+          icon: Icon(Icons.more_vert, color: AppColors.black),
+          onSelected: (value) {
+            if (value == "AddMembers") {
+              context.pushNamed(RouteName.addMemberScreen, extra: widget.roomId);
+            } else if (value == "SeeMembers") {
+              context.pushNamed(
+                RouteName.groupMemberScreen,
+                extra: {'roomId': widget.roomId, 'groupName': _currentGroupName},
+              );
+            } else if (value == "EditGroup") {
+              _showEditGroupDialog(context);
+            } else if (value == "LeaveGroup") {
+              _showLeaveGroupDialog(context);
+            }
+          },
+          itemBuilder: (context) => [
+            // ── See Members ──────────────────────────────
+            PopupMenuItem<String>(
+              value: "SeeMembers",
+              child: Row(
+                children: [
+                  Icon(Icons.group_outlined, color: AppColors.black),
+                  const SizedBox(width: 8),
+                  Text(
+                    'see_members'.tr,
+                    style: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(14),
+                      color: AppColors.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            PopupMenuItem<String>(
+              enabled: false,
+              height: 1,
+              child: Divider(height: 1, color: Colors.grey.shade200),
+            ),
+
+            // ── Add Members ──────────────────────────────
+            PopupMenuItem<String>(
+              value: "AddMembers",
+              child: Row(
+                children: [
+                  Icon(Icons.person_add_outlined, color: AppColors.black),
+                  const SizedBox(width: 8),
+                  Text(
+                    'add_members'.tr,
+                    style: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(14),
+                      color: AppColors.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            PopupMenuItem<String>(
+              enabled: false,
+              height: 1,
+              child: Divider(height: 1, color: Colors.grey.shade200),
+            ),
+
+            // ── Edit Group ───────────────────────────────
+            PopupMenuItem<String>(
+              value: "EditGroup",
+              child: Row(
+                children: [
+                  Icon(Icons.edit_outlined, color: AppColors.black),
+                  const SizedBox(width: 8),
+                  Text(
+                    'edit_group'.tr,
+                    style: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(14),
+                      color: AppColors.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            PopupMenuItem<String>(
+              enabled: false,
+              height: 1,
+              child: Divider(height: 1, color: Colors.grey.shade200),
+            ),
+
+            // ── Leave Group ──────────────────────────────
+            PopupMenuItem<String>(
+              value: "LeaveGroup",
+              child: Row(
+                children: [
+                  const Icon(Icons.exit_to_app_outlined, color: Colors.red),
+                  const SizedBox(width: 8),
+                  Text(
+                    'leave_group'.tr,
+                    style: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(14),
+                      color: Colors.red,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

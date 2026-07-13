@@ -267,10 +267,6 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // ── Preset Messages ───────────────────────────────
-        GroupPresetMessages(controller: widget.controller),
-
-        SizedBox(height: ResponsiveHelper.height(6)),
 
         // ── File Preview ──────────────────────────────────
         if (_selectedFilePath != null)
