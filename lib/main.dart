@@ -24,6 +24,13 @@ import 'voice/voice_handler.dart';
 import 'voice/voice_action_router.dart';
 import 'voice/intent_parser.dart';
 
+
+//is read realtime
+//sender end 2 time show image
+//image not send with text
+//audio does not send
+
+
 late VoiceActionRouter _voiceRouter; // নতুন
 List<CameraDescription> cameras = []; // ── OCR Camera ──
 

@@ -36,16 +36,16 @@ class ChatListAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: AppColors.white,
       centerTitle: true,
-leading: GestureDetector(
-  onTap: onScanTap,
-  child: Center(
-          child: SvgPicture.asset(
-            AssetsPath.scanChat,
-                height: ResponsiveHelper.iconSize(24),
-                  width:  ResponsiveHelper.iconSize(24),
-          ),
-        ),
-),
+// leading: GestureDetector(
+//   onTap: onScanTap,
+//   child: Center(
+//           child: SvgPicture.asset(
+//             AssetsPath.scanChat,
+//                 height: ResponsiveHelper.iconSize(24),
+//                   width:  ResponsiveHelper.iconSize(24),
+//           ),
+//         ),
+// ),
 
 
       title: Image.asset(

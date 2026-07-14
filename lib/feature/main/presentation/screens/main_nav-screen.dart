@@ -28,6 +28,7 @@ class MainNavScreen extends StatefulWidget {
 }
 
 class _MainNavScreenState extends State<MainNavScreen> {
+
   Widget _bodyForIndex(int index) {
     switch (index) {
       case 0:
@@ -46,6 +47,44 @@ class _MainNavScreenState extends State<MainNavScreen> {
         return const SizedBox.shrink();
     }
   }
+
+  // Widget _bodyForIndex(int index) {
+  //   switch (index) {
+  //     case 0:
+  //     // return const MapScreen();
+  //       return Scaffold(
+  //         appBar: AppBar(title: const Text("Home")),
+  //         body: const Center(child: Text("Home Screen - Demo")),
+  //       );
+  //
+  //     case 1:
+  //     // return ParkingShowScreen();
+  //       return Scaffold(
+  //         appBar: AppBar(title: const Text("Parking (P)")),
+  //         body: const Center(child: Text("Parking Screen - Demo")),
+  //       );
+  //
+  //     case 2:
+  //       return const ChatListScreen(); // এইটা আগের মতোই থাকবে
+  //
+  //     case 3:
+  //     // return ProfileNavScreen();
+  //       return Scaffold(
+  //         appBar: AppBar(title: const Text("Profile")),
+  //         body: const Center(child: Text("Profile Screen - Demo")),
+  //       );
+  //
+  //     case 4:
+  //     // return ScanScreen();
+  //       return Scaffold(
+  //         appBar: AppBar(title: const Text("Scan")),
+  //         body: const Center(child: Text("Scan Screen - Demo")),
+  //       );
+  //
+  //     default:
+  //       return const SizedBox.shrink();
+  //   }
+  // }
 
   void _onTap(int index) {
     HapticFeedback.lightImpact();
@@ -201,7 +240,7 @@ class _NavItem extends StatelessWidget {
     final bool isActive = currentIndex == index;
 
     return Expanded(
-      flex: isActive ? 2 : 1, // একটিভ হলে ক্যাপসুলটি বড় হবে, বাকিরা সমান জায়গা নিবে
+      flex: isActive ? 2 : 1,
       child: GestureDetector(
         onTap: () => onTap(index),
         behavior: HitTestBehavior.opaque,

@@ -684,6 +684,7 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
@@ -730,6 +731,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // ✅ Socket listeners initialize
+      AppSocket.ensureConnected();
       controller.initSocketListeners();
 
       // ✅ আগে join

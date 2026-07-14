@@ -241,10 +241,15 @@ class _MessageInputState extends State<MessageInput> {
     });
   }
 
-  // ── Voice recording: send ──
   Future<void> _sendRecording() async {
+    if (!_isRecording) {
+      debugPrint('⚠️ Already processing recording send, skipping extra tap');
+      return;
+    }
+
     _resetTypingEmit();
     _recordTimer?.cancel();
+
     String? finalPath;
     try {
       finalPath = await _audioRecorder.stop();
@@ -253,23 +258,25 @@ class _MessageInputState extends State<MessageInput> {
     }
 
     finalPath ??= _recordedFilePath;
-
-    if (finalPath != null) {
-      final file = File(finalPath);
-      if (await file.exists()) {
-        await widget.chatController.sendMediaMessage(
-          receiverId: widget.receiverId,
-          filePath: finalPath,
-          roomId: widget.currentRoomId,
-        );
-      }
-    }
+    final int durationSecs = _recordDuration.inSeconds;
 
     setState(() {
       _isRecording = false;
       _recordedFilePath = null;
       _recordDuration = Duration.zero;
     });
+
+    if (finalPath != null) {
+      final file = File(finalPath);
+      if (await file.exists()) {
+        await widget.chatController.sendVoiceMessage(
+          receiverId: widget.receiverId,
+          filePath: finalPath,
+          durationSeconds: durationSecs,
+          roomId: widget.currentRoomId,
+        );
+      }
+    }
   }
 
 

@@ -214,10 +214,15 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
     });
   }
 
-  // ── Voice recording: send (DEBUG ONLY for now) ──
   Future<void> _sendRecording() async {
+    if (!_isRecording) {
+      debugPrint('⚠️ Already processing group recording send, skipping extra tap');
+      return;
+    }
+
     _resetTypingEmit();
     _recordTimer?.cancel();
+
     String? finalPath;
     try {
       finalPath = await _audioRecorder.stop();
@@ -226,33 +231,24 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
     }
 
     finalPath ??= _recordedFilePath;
+    final int durationSecs = _recordDuration.inSeconds;
 
-    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    debugPrint('🎤 Group Send Voice Button Tapped (DEBUG ONLY — not sent yet)');
-    debugPrint('📁 recordedFilePath: $finalPath');
-    debugPrint('⏱️ duration: ${_formatDuration(_recordDuration)}');
-    debugPrint('🏠 roomId: ${widget.roomId}');
-
-    if (finalPath != null) {
-      final file = File(finalPath);
-      if (await file.exists()) {
-        final int size = await file.length();
-        debugPrint('✅ File exists, size: $size bytes — recording looks good');
-      } else {
-        debugPrint('❌ File does NOT exist — recording failed');
-      }
-    } else {
-      debugPrint('❌ No recorded file path found — recording failed');
-    }
-    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-
-    // NOTE: actual sending to chat is intentionally NOT wired up yet.
-    // This just resets the recording UI after the debug check.
     setState(() {
       _isRecording = false;
       _recordedFilePath = null;
       _recordDuration = Duration.zero;
     });
+
+    if (finalPath != null) {
+      final file = File(finalPath);
+      if (await file.exists()) {
+        await widget.controller.sendGroupVoiceMessage(
+          roomId: widget.roomId,
+          filePath: finalPath,
+          durationSeconds: durationSecs,
+        );
+      }
+    }
   }
 
 

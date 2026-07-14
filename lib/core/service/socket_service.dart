@@ -13,6 +13,7 @@ class AppSocket {
   factory AppSocket() => _instance;
   AppSocket._internal();
 
+
   static final AppSocket _instance = AppSocket._internal();
   static io.Socket? socket;
   static bool _isInitialized = false;
@@ -50,7 +51,6 @@ class AppSocket {
           .setTransports(['websocket'])
           .enableForceNew()
           .enableReconnection()
-          .setReconnectionAttempts(5)
           .setReconnectionDelay(1000)
           .setReconnectionDelayMax(5000)
           .build(),
@@ -136,6 +136,16 @@ class AppSocket {
     _userId = null;
     _onSocketConnectCallback = null;
     debugPrint('🧹 Socket disposed');
+  }
+
+  static void ensureConnected() {
+    if (socket != null && !isConnected) {
+      debugPrint('🔌 Socket disconnected, forcing reconnect...');
+      socket!.connect();
+    } else if (socket == null && _userId != null && _userId!.isNotEmpty) {
+      debugPrint('🔌 Socket is null but userId exists, initializing socket...');
+      _connectToSocket(_userId!);
+    }
   }
 }
 

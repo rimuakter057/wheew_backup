@@ -402,10 +402,6 @@ class ChatController extends GetxController {
       debugPrint('🔌 AppSocket.socket is null, skipping listener initialization');
       return;
     }
-    if (_lastBoundSocket == s) {
-      debugPrint('🔌 Socket listeners already initialized for this socket instance');
-      return;
-    }
     _lastBoundSocket = s;
 
     // ✅ এই prints গুলো add করো
@@ -417,6 +413,7 @@ class ChatController extends GetxController {
     errorListenMessage();
     newMessage();
     listenMessageDelivered();
+    listenMessageRead();
     listenTypingEvents();
     listenDeleteMessageEvents();
 
@@ -428,6 +425,21 @@ class ChatController extends GetxController {
   RxMap<String, bool> inboxTypingMap = <String, bool>{}.obs;
 
   /// get all message list ================================================
+  final RxSet<String> readMessageIds = <String>{}.obs;
+  final RxSet<String> deliveredMessageIds = <String>{}.obs;
+
+  void _applyStoredStatus(Messages message) {
+    if (message.id != null) {
+      final idStr = message.id!.toString();
+      if (readMessageIds.contains(idStr)) {
+        message.isRead = true;
+      }
+      if (deliveredMessageIds.contains(idStr)) {
+        message.isDelivered = true;
+      }
+    }
+  }
+
   RxList<Messages> userMessageList = <Messages>[].obs;
 
 
@@ -502,6 +514,24 @@ class ChatController extends GetxController {
             userMessageList.add(msg);
           }
           pageCount++;
+        }
+
+        final List<String> fetchedIds = [];
+        if (data.messages != null) {
+          for (final msg in data.messages!) {
+            if (msg.isMine == false && msg.id != null) {
+              fetchedIds.add(msg.id!.toString());
+            }
+          }
+        }
+        if (fetchedIds.isNotEmpty) {
+          AppSocket.socket?.emit('message-read', {
+            'messageIds': fetchedIds,
+          });
+          AppSocket.socket?.emit('message-seen', {
+            'messageIds': fetchedIds,
+          });
+          debugPrint('📤 Emitted message-read/seen for all fetched incoming message IDs: $fetchedIds');
         }
 
         // ✅ Backend fetch হলে server automatically is_read = true করে দেয়
@@ -606,9 +636,11 @@ class ChatController extends GetxController {
           final tempIndex = userMessageList.indexWhere((m) => m.id == tempId);
           if (tempIndex != -1) {
             try {
-              final confirmed = Messages.fromJson(value);
-              confirmed.isMine = true;
-              userMessageList[tempIndex] = confirmed;
+               final confirmed = Messages.fromJson(value);
+               confirmed.isMine = true;
+               _applyStoredStatus(confirmed);
+               userMessageList[tempIndex] = confirmed;
+               userMessageList.refresh();
             } catch (e) {
               debugPrint("⚠️ ack parse failed: $e");
             }
@@ -667,6 +699,23 @@ class ChatController extends GetxController {
   void markMessagesAsRead({required String roomId}) {
     if (roomId.isEmpty) return;
     _resetUnreadLocally(roomId);
+
+    final List<String> currentIds = [];
+    for (final msg in userMessageList) {
+      if (msg.isMine == false && msg.id != null) {
+        currentIds.add(msg.id!.toString());
+      }
+    }
+
+    if (currentIds.isNotEmpty) {
+      AppSocket.socket?.emit('message-read', {
+        'messageIds': currentIds,
+      });
+      AppSocket.socket?.emit('message-seen', {
+        'messageIds': currentIds,
+      });
+      debugPrint('📤 Emitted message-read/seen for all local incoming message IDs: $currentIds');
+    }
   }
 
   // ┉┉ Internal helper ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉
@@ -894,6 +943,7 @@ class ChatController extends GetxController {
     AppSocket.socket?.on('new-message', (value) async {
       debugPrint('🔔 NEW MESSAGE RECEIVED: $value');
       Messages model = Messages.fromJson(value);
+      _applyStoredStatus(model);
 
       final String myId = await SharePrefsHelper.getString(AppConst.userID);
       model.isMine = model.senderId == myId;
@@ -914,6 +964,7 @@ class ChatController extends GetxController {
       );
       if (tempIndex != -1) {
         userMessageList[tempIndex] = model;
+        userMessageList.refresh();
         debugPrint('✅ Temp message replaced by broadcast');
         updateChatRoomInList(model);
         return;
@@ -926,14 +977,26 @@ class ChatController extends GetxController {
         return;
       }
 
-      if (model.chatRoomId == roomID.value) {
+      if (model.chatRoomId?.toString() == roomID.value.toString()) {
         userMessageList.insert(0, model);
         debugPrint('✅ Added to message list');
       }
 
       // ✅ Other user reply করলে = সে আমার message পড়েছে
       // তাই আমার সব sent message isRead = true করে দাও (নীল ✓✓)
-      if (model.isMine == false && model.chatRoomId == roomID.value) {
+      if (model.isMine == false && model.chatRoomId?.toString() == roomID.value.toString()) {
+        AppSocket.socket?.emit('message-read', {
+          'roomId': roomID.value,
+          'messageId': model.id,
+          'messageIds': [model.id],
+        });
+        AppSocket.socket?.emit('message-seen', {
+          'roomId': roomID.value,
+          'messageId': model.id,
+          'messageIds': [model.id],
+        });
+        debugPrint('📤 Emitted message-read/seen immediately for incoming message: ${model.id}');
+
         _markMySentMessagesAsRead();
         _playMessageSound();
       } else if (model.isMine == false) {
@@ -951,9 +1014,10 @@ class ChatController extends GetxController {
 
   void listenMessageDelivered() {
     AppSocket.socket?.off('message-delivered');
+    AppSocket.socket?.off('message-received');
 
-    AppSocket.socket?.on('message-delivered', (value) {
-      debugPrint('📦 message-delivered event received: $value');
+    final onDeliveredCallback = (value) {
+      debugPrint('📦 message-delivered/received event received: $value');
 
       List<String> deliveredIds = [];
       bool isDelivered = true; // default to true if the event fires
@@ -966,6 +1030,9 @@ class ChatController extends GetxController {
         if (value['messageId'] != null) {
           deliveredIds.add(value['messageId'].toString());
         }
+        if (value['message_id'] != null) {
+          deliveredIds.add(value['message_id'].toString());
+        }
         if (value['messageIds'] != null) {
           final ids = value['messageIds'];
           if (ids is List) {
@@ -975,7 +1042,7 @@ class ChatController extends GetxController {
       } else if (value is List) {
         for (final item in value) {
           if (item is Map) {
-            final id = item['id'] ?? item['messageId'];
+            final id = item['id'] ?? item['messageId'] ?? item['message_id'];
             if (id != null) deliveredIds.add(id.toString());
           } else if (item != null) {
             deliveredIds.add(item.toString());
@@ -997,7 +1064,7 @@ class ChatController extends GetxController {
 
       for (final messageId in deliveredIds) {
         // Update userMessageList (chat screen UI)
-        final index = userMessageList.indexWhere((m) => m.id == messageId);
+        final index = userMessageList.indexWhere((m) => m.id?.toString() == messageId.toString());
         if (index != -1) {
           userMessageList[index].isDelivered = isDelivered;
           messageListUpdated = true;
@@ -1005,7 +1072,7 @@ class ChatController extends GetxController {
         }
 
         // Update userChatList (chat list screen UI)
-        final roomIndex = userChatList.indexWhere((room) => room.latestMessage?.id == messageId);
+        final roomIndex = userChatList.indexWhere((room) => room.latestMessage?.id?.toString() == messageId.toString());
         if (roomIndex != -1) {
           userChatList[roomIndex].latestMessage?.isDelivered = isDelivered;
           chatListUpdated = true;
@@ -1020,7 +1087,118 @@ class ChatController extends GetxController {
       if (chatListUpdated) {
         userChatList.refresh(); // ✅ Chat list UI instantly update
       }
-    });
+    };
+
+    AppSocket.socket?.on('message-delivered', onDeliveredCallback);
+    AppSocket.socket?.on('message-received', onDeliveredCallback);
+  }
+
+  void listenMessageRead() {
+    AppSocket.socket?.off('message-read');
+    AppSocket.socket?.off('messages-read');
+    AppSocket.socket?.off('message-seen');
+    AppSocket.socket?.off('messages-seen');
+
+    final onReadCallback = (value) {
+      debugPrint('📦 message-read/seen event received: $value');
+
+      String? targetRoomId;
+      List<String> readIds = [];
+
+      if (value is Map) {
+        if (value['roomId'] != null ||
+            value['chatRoomId'] != null ||
+            value['chatRoom_id'] != null ||
+            value['room_id'] != null ||
+            value['roomID'] != null ||
+            value['groupChatRoomId'] != null) {
+          targetRoomId = (value['roomId'] ??
+                  value['chatRoomId'] ??
+                  value['chatRoom_id'] ??
+                  value['room_id'] ??
+                  value['roomID'] ??
+                  value['groupChatRoomId'])
+              .toString();
+        }
+        if (value['id'] != null) {
+          readIds.add(value['id'].toString());
+        }
+        if (value['messageId'] != null) {
+          readIds.add(value['messageId'].toString());
+        }
+        if (value['message_id'] != null) {
+          readIds.add(value['message_id'].toString());
+        }
+        if (value['messageIds'] != null) {
+          final ids = value['messageIds'];
+          if (ids is List) {
+            readIds.addAll(ids.map((e) => e.toString()));
+          }
+        }
+      } else if (value is List) {
+        for (final item in value) {
+          if (item is Map) {
+            final id = item['id'] ?? item['messageId'];
+            if (id != null) readIds.add(id.toString());
+          } else if (item != null) {
+            readIds.add(item.toString());
+          }
+        }
+      } else if (value is String) {
+        readIds.add(value);
+      }
+
+      bool messageListUpdated = false;
+      bool chatListUpdated = false;
+
+      if (readIds.isNotEmpty) {
+        for (final messageId in readIds) {
+          readMessageIds.add(messageId.toString());
+          final index = userMessageList.indexWhere((m) => m.id?.toString() == messageId.toString());
+          if (index != -1) {
+            userMessageList[index].isRead = true;
+            messageListUpdated = true;
+          }
+          final roomIndex = userChatList.indexWhere((room) => room.latestMessage?.id?.toString() == messageId.toString());
+          if (roomIndex != -1) {
+            userChatList[roomIndex].latestMessage?.isRead = true;
+            chatListUpdated = true;
+          }
+        }
+      }
+
+      if (targetRoomId != null && targetRoomId.toString() == roomID.value.toString()) {
+        for (int i = 0; i < userMessageList.length; i++) {
+          if (userMessageList[i].isMine == true && userMessageList[i].isRead != true) {
+            userMessageList[i].isRead = true;
+            messageListUpdated = true;
+          }
+        }
+      }
+
+      if (targetRoomId != null) {
+        final roomIndex = userChatList.indexWhere((room) => room.id?.toString() == targetRoomId.toString());
+        if (roomIndex != -1) {
+          userChatList[roomIndex].latestMessage?.isRead = true;
+          userChatList[roomIndex].unreadCount = 0;
+          chatListUpdated = true;
+        }
+      }
+
+      if (messageListUpdated) {
+        userMessageList.refresh();
+        debugPrint('✅ Chat screen messages marked as read via socket event');
+      }
+      if (chatListUpdated) {
+        userChatList.refresh();
+        debugPrint('✅ Chat list room marked as read via socket event');
+      }
+    };
+
+    AppSocket.socket?.on('message-read', onReadCallback);
+    AppSocket.socket?.on('messages-read', onReadCallback);
+    AppSocket.socket?.on('message-seen', onReadCallback);
+    AppSocket.socket?.on('messages-seen', onReadCallback);
   }
 
 
@@ -1061,6 +1239,7 @@ class ChatController extends GetxController {
         updatedAt: newMessage.updatedAt,
         isMine: newMessage.isMine,
       );
+
 
       if (newMessage.isMine == false && newMessage.chatRoomId != roomID.value) {
         userChatList[roomIndex].unreadCount =
@@ -1557,6 +1736,7 @@ class ChatController extends GetxController {
         debugPrint('🔍 Temp index found: $tempIndex');
         if (tempIndex != -1) {
           groupMessageList[tempIndex] = confirmed;
+          groupMessageList.refresh();
           debugPrint('✅ Temp message replaced with confirmed');
         }
       } catch (e) {
@@ -1574,7 +1754,7 @@ class ChatController extends GetxController {
         final bool isMyMessage = model.senderId == myId;
         model.isMine = isMyMessage; // ✅ Explicitly set isMine based on sender ID
 
-        if (model.groupChatRoomId == groupRoomID.value) {
+        if (model.groupChatRoomId?.toString() == groupRoomID.value.toString()) {
           debugPrint('👤 myId: $myId');
           debugPrint('📨 senderId: ${model.senderId}');
           debugPrint('🔍 isMyMessage: $isMyMessage');
@@ -1587,6 +1767,7 @@ class ChatController extends GetxController {
             );
             if (tempIndex != -1) {
               groupMessageList[tempIndex] = model;
+              groupMessageList.refresh();
               debugPrint('✅ Temp replaced');
             }
             return;
@@ -1782,9 +1963,6 @@ class ChatController extends GetxController {
       final fields = <String, String>{
         'receiver_id': receiverId,
         'message': 'Voice note',
-        // NOTE: durationSeconds skipped — backend needs enableImplicitConversion
-        // to accept numeric strings from multipart form-data.
-        // Add back when backend is fixed: 'durationSeconds': durationSeconds.toString(),
       };
 
       final response = await ApiClient.multipartRequest(
@@ -1801,12 +1979,14 @@ class ChatController extends GetxController {
         final data = jsonDecode(response.body);
         final newMsg = Messages.fromJson(data);
         newMsg.isMine = true;
+        _applyStoredStatus(newMsg);
 
         if (roomID.value.isEmpty && data['chatRoom_id'] != null) {
           roomID.value = data['chatRoom_id'].toString();
         }
 
-        if (newMsg.chatRoomId == roomID.value) {
+        final alreadyExists = userMessageList.any((m) => m.id == newMsg.id);
+        if (!alreadyExists && newMsg.chatRoomId?.toString() == roomID.value.toString()) {
           userMessageList.insert(0, newMsg);
         }
         updateChatRoomInListOptimistic(newMsg);
@@ -1867,12 +2047,14 @@ class ChatController extends GetxController {
         final data = jsonDecode(response.body);
         final newMsg = Messages.fromJson(data);
         newMsg.isMine = true; // server response এ is_mine আসছে না, manually সেট করো
+        _applyStoredStatus(newMsg);
 
         if (roomID.value.isEmpty && data['chatRoom_id'] != null) {
           roomID.value = data['chatRoom_id'].toString();
         }
 
-        if (newMsg.chatRoomId == roomID.value) {
+        final alreadyExists = userMessageList.any((m) => m.id == newMsg.id);
+        if (!alreadyExists && newMsg.chatRoomId?.toString() == roomID.value.toString()) {
           userMessageList.insert(0, newMsg);
         }
         updateChatRoomInListOptimistic(newMsg);
@@ -1927,6 +2109,62 @@ class ChatController extends GetxController {
       debugPrint('❌ sendGroupMediaMessage ERROR: $e');
       debugPrint('StackTrace: $stackTrace');
       debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    }
+  }
+
+  Future<void> sendGroupVoiceMessage({
+    required String roomId,
+    required String filePath,
+    required int durationSeconds,
+  }) async {
+    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    debugPrint('🎤 sendGroupVoiceMessage CALLED');
+    debugPrint('🏠 roomId: $roomId');
+    debugPrint('📁 filePath: $filePath');
+    debugPrint('⏱️ durationSeconds: $durationSeconds');
+    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+    try {
+      final ext = filePath.split('.').last.toLowerCase();
+      final mimeType = (ext == 'mp3') ? MediaType('audio', 'mpeg')
+          : (ext == 'ogg') ? MediaType('audio', 'ogg')
+          : (ext == 'aac') ? MediaType('audio', 'aac')
+          : MediaType('audio', 'mp4');
+
+      final file = await http.MultipartFile.fromPath(
+        'file',
+        filePath,
+        contentType: mimeType,
+      );
+
+      final fields = <String, String>{
+        'groupChatRoomId': roomId,
+        'message': 'Voice note',
+      };
+
+      final response = await ApiClient.multipartRequest(
+        uri: ApiUrl.sendGroup,
+        method: 'POST',
+        fields: fields,
+        files: [file],
+      );
+
+      debugPrint('📥 sendGroupVoiceMessage RESPONSE: ${response.statusCode}');
+      debugPrint('Body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        final newMsg = GroupMessageResponseModel.fromJson(data);
+        newMsg.isMine = true;
+
+        final alreadyExists = groupMessageList.any((m) => m.id == newMsg.id);
+        if (!alreadyExists && newMsg.groupChatRoomId?.toString() == groupRoomID.value.toString()) {
+          groupMessageList.insert(0, newMsg);
+        }
+      }
+    } catch (e, stackTrace) {
+      debugPrint('❌ sendGroupVoiceMessage ERROR: $e');
+      debugPrint('StackTrace: $stackTrace');
     }
   }
 

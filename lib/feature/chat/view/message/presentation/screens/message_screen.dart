@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 
@@ -73,6 +74,7 @@ class _MessageScreenState extends State<MessageScreen> {
     chatController.page.value = 1;
     chatController.roomID.value = widget.roomId ?? '';
 
+    AppSocket.ensureConnected();
     chatController.initSocketListeners();
 
     if (_currentRoomId.isNotEmpty) {
@@ -127,189 +129,6 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // return Container(
-    //   decoration: const BoxDecoration(
-    //     gradient: AppColors.primaryBackgroundGradient,
-    //   ),
-    //   child: Scaffold(
-    //     backgroundColor: Colors.transparent,
-    //
-    //     appBar: MessageAppBar(                 // ✅ এখন এখানে বসবে
-    //       otherUserName: widget.otherUserName,
-    //       otherUserAvatar: widget.otherUserAvatar,
-    //       receiverId: widget.receiverId,
-    //       chatController: chatController,
-    //       onRateTap: () async {
-    //         await chatController.fetchMyRating(widget.receiverId);
-    //         if (!context.mounted) return;
-    //         showRatingDialog(
-    //           context: context,
-    //           status: chatController.myRatingForRatee.value?.status ?? '',
-    //           image: widget.otherUserAvatar ?? '',
-    //           name: widget.otherUserName,
-    //           receiverId: widget.receiverId,
-    //         );
-    //       },
-    //       onProfileTap: () async {
-    //         await _groupController.fetchUserProfile(widget.receiverId);
-    //         if (!context.mounted) return;
-    //         showDialog(
-    //           context: context,
-    //           builder: (dialogContext) => Obx(() {
-    //             // ← context আলাদা করো
-    //             final profile = _groupController.viewedProfile.value;
-    //             final isLoading = _groupController.isLoadingProfile.value;
-    //             return Dialog(
-    //               backgroundColor: Colors.transparent,
-    //               child: isLoading
-    //                   ? const Center(child: CircularProgressIndicator())
-    //                   : profile == null
-    //                   ? Center(child: Text('profile_not_found'.tr))
-    //                   : ProfileCard(
-    //                 profile: profile,
-    //                 name: profile.nickName ?? "",
-    //                 rating: profile.rating,
-    //                 image: widget.otherUserAvatar ?? '',
-    //                 showRating: true,
-    //                 onRatingTap: () async {
-    //                   Navigator.pop(
-    //                     dialogContext,
-    //                   );
-    //                   await chatController.fetchMyRating(
-    //                     widget.receiverId,
-    //                   );
-    //                   if (!context.mounted) return;
-    //                   showRatingDialog(
-    //                     context: context,
-    //                     status:
-    //                     chatController
-    //                         .myRatingForRatee
-    //                         .value
-    //                         ?.status ??
-    //                         '',
-    //                     image: widget.otherUserAvatar ?? '',
-    //                     name: widget.otherUserName,
-    //                     receiverId: widget.receiverId,
-    //                   );
-    //                 },
-    //               ),
-    //             );
-    //           }),
-    //         );
-    //       },
-    //     ),
-    //
-    //     body: SafeArea(
-    //       top: true,
-    //       bottom: false,
-    //       child: RefreshIndicator(
-    //         onRefresh: () =>
-    //             chatController.fetchInboxMessage(roomId: widget.roomId),
-    //         child: Column(
-    //           children: [
-    //
-    //             Expanded(
-    //               child: Obx(() {
-    //                 final messages = chatController.userMessageList;
-    //                 final bool showTyping = chatController.isTyping.value;
-    //
-    //                 if (chatController.isLoadingMessage.value &&
-    //                     messages.isEmpty) {
-    //                   return MessageScreenShimmer();
-    //                 }
-    //
-    //                 if (messages.isEmpty && !showTyping) {
-    //                   return Center(
-    //                     child: Text(
-    //                       'no_messages_yet'.tr,
-    //                       style: const TextStyle(color: Colors.grey),
-    //                     ),
-    //                   );
-    //                 }
-    //
-    //                 return ListView.builder(
-    //                   controller: _scrollController,
-    //                   reverse: true,
-    //                   padding: ResponsiveHelper.symmetric(
-    //                     horizontal: ResponsiveHelper.width(16),
-    //                     vertical: ResponsiveHelper.height(8),
-    //                   ),
-    //                   itemCount:
-    //                       messages.length +
-    //                       (chatController.hasMoreMessage ? 1 : 0) +
-    //                       (showTyping ? 1 : 0),
-    //                   itemBuilder: (context, index) {
-    //                     if (showTyping && index == 0) {
-    //                       return _buildTypingIndicatorBubble();
-    //                     }
-    //
-    //                     final msgIndex = showTyping ? index - 1 : index;
-    //
-    //                     // Pagination loader
-    //
-    //                     if (msgIndex == messages.length) {
-    //                       return Obx(
-    //                         () => chatController.isLoadingMoreMessage.value
-    //                             ? const Padding(
-    //                                 padding: EdgeInsets.all(12),
-    //                                 child: Center(
-    //                                   child: CircularProgressIndicator(),
-    //                                 ),
-    //                               )
-    //                             : const SizedBox.shrink(),
-    //                       );
-    //                     }
-    //
-    //                     final msg = messages[msgIndex];
-    //                     final bool isMine = msg.isMine == true;
-    //
-    //                     return MessageBubble(
-    //                       message: msg.message ?? '',
-    //                       isMine: isMine,
-    //                       type: msg.type,
-    //                       fileUrl: msg.fileUrl,
-    //                       isRead: msg.isRead,
-    //                       fileName: msg.fileName,
-    //                       fileSize: msg.fileSize,
-    //                       fileMimeType: msg.fileMimeType,
-    //                       durationSeconds: msg.durationSeconds,
-    //                       isDelivered: msg.isDelivered,
-    //                     );
-    //                   },
-    //                 );
-    //               }),
-    //             ),
-    //
-    //             // ── Input / Block Widgets ─────────────────────────
-    //             Obx(() {
-    //               if (chatController.isBlockedByMe.value) {
-    //                 return BlockByMeWidget(
-    //                   name: widget.otherUserName,
-    //                   onUnblock: () {
-    //                     chatController.unBlock(widget.receiverId, context);
-    //                     chatController.isBlockedByMe.value = false;
-    //                   },
-    //                 );
-    //               } else if (chatController.isBlockedMe.value) {
-    //                 return const BlockMeWidget();
-    //               } else {
-    //                 return MessageInput(
-    //                   chatController: chatController,
-    //                   currentRoomId: _currentRoomId,
-    //                   receiverId: widget.receiverId,
-    //                   onRoomIdUpdate: (newId) {
-    //                     setState(() => _currentRoomId = newId);
-    //                   },
-    //                 );
-    //               }
-    //             }),
-    //           ],
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    // );
-
 
     return Container(
       decoration: const BoxDecoration(
@@ -470,6 +289,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 }),
               ],
             ),
+
           ),
         ),
 
