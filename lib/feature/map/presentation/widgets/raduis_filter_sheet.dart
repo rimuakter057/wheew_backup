@@ -467,7 +467,13 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
                   )
                 ],
               ),
-              child: CustomGradientButton(label: "Apply", onPressed: (){})
+              child: CustomGradientButton(
+                label: "Apply",
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  widget.onApply(_radius.round());
+                },
+              ),
             ),
           ],
         ),

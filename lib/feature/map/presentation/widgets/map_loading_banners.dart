@@ -84,7 +84,7 @@ class FetchingParkingBanner extends StatelessWidget {
               ),
               SizedBox(width: ResponsiveHelper.spacing(8)),
               Text(
-                AppStrings.mapDisabledParkingLocation.tr,
+                AppStrings.mapLoadingParkingSpots.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(12),
                   color: const Color(0xFF1A1A2E),

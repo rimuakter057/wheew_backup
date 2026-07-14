@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -8,11 +9,13 @@ import 'package:platchatapp/feature/map/utils/map_debug.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:platchatapp/feature/parking/controller/parking_show_controller.dart';
+import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
 
 class ParkingShowScreen extends StatefulWidget {
   const ParkingShowScreen({super.key});
 
-  static const LatLng kInitialMapTarget = LatLng(34.052235, -118.243683);
+  static const LatLng kInitialMapTarget =
+      ParkingShowController.kApproxDefaultLocation;
 
   @override
   State<ParkingShowScreen> createState() => _ParkingShowScreenState();
@@ -42,6 +45,8 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
       duration: const Duration(milliseconds: 1500),
     )..repeat();
 
+    // Runs the full flow (approx map -> /parking-mode/me -> branch)
+    // every time this screen is entered.
     _initializeMap();
   }
 
@@ -56,16 +61,25 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed &&
-        _parkingShowCtrl.gpsPosition.value == null) {
-      _initializeMap();
+    // On resume, just re-check status/branching without resetting the
+    // map back to the approximate default location.
+    if (state == AppLifecycleState.resumed) {
+      _parkingShowCtrl.refreshStatus(
+        onShowPopup: () {
+          if (mounted) {
+            _showParkingConfirmationPopup();
+          }
+        },
+      );
     }
   }
 
   Future<void> _initializeMap() async {
+    mapDebug('_initializeMap: running initializeFlow');
     await _parkingShowCtrl.initializeFlow(
       onShowPopup: () {
         if (mounted) {
+          mapDebug('_initializeMap: show popup callback triggered');
           _showParkingConfirmationPopup();
         }
       },
@@ -80,10 +94,8 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return true;
-      },
+    return PopScope(
+      canPop: true,
       child: Scaffold(
         backgroundColor: Colors.white,
         body: Stack(
@@ -120,7 +132,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       polygons: currentPolygons,
                       circles: currentCircles,
                       polylines: currentPolylines,
-                      myLocationEnabled: true,
+                      myLocationEnabled: _parkingShowCtrl.isRealLocationLoaded.value,
                       myLocationButtonEnabled: false,
                       zoomControlsEnabled: false,
                       mapToolbarEnabled: false,
@@ -155,17 +167,38 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                         ),
                         child: TextField(
                           controller: _searchController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             hintText: 'Search parking',
                             hintStyle:
-                                TextStyle(fontSize: 14, color: Colors.grey),
-                            prefixIcon: Icon(
+                            const TextStyle(fontSize: 14, color: Colors.grey),
+                            prefixIcon: const Icon(
                               Icons.search,
                               color: Color(0xFF185FA5),
                               size: 20,
                             ),
+                            suffixIcon: IconButton(
+                              icon: const Icon(
+                                Icons.tune,
+                                color: Color(0xFF185FA5),
+                                size: 20,
+                              ),
+                              onPressed: () {
+                                RadiusFilterSheet.show(
+                                  context,
+                                  initialRadiusMeter: _parkingShowCtrl.selectedRadiusMeter.value,
+                                  onApply: (radius) {
+                                    _parkingShowCtrl.selectedRadiusMeter.value = radius;
+                                    final lat = _parkingShowCtrl.gpsPosition.value?.latitude;
+                                    final lng = _parkingShowCtrl.gpsPosition.value?.longitude;
+                                    if (lat != null && lng != null) {
+                                      _parkingShowCtrl.fetchNearbyData(lat, lng);
+                                    }
+                                  },
+                                );
+                              },
+                            ),
                             border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(vertical: 12),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 12),
                           ),
                         ),
                       ),
@@ -209,331 +242,77 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
               );
             }),
 
-            Positioned(
-              top: MediaQuery.of(context).padding.top + ResponsiveHelper.padding(72),
-              right: ResponsiveHelper.padding(16),
-              child: Container(
-                height: ResponsiveHelper.padding(45),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<MapType>(
-                    value: _selectedMapType,
-                    icon: const Padding(
-                      padding: EdgeInsets.only(left: 6),
-                      child: Icon(
-                        Icons.layers_outlined,
-                        color: Color(0xFF185FA5),
-                        size: 20,
-                      ),
-                    ),
-                    elevation: 3,
-                    borderRadius: BorderRadius.circular(12),
-                    dropdownColor: Colors.white,
-                    alignment: Alignment.center,
-                    style: const TextStyle(
-                      color: Colors.black87,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    items: const [
-                      DropdownMenuItem(
-                        value: MapType.normal,
-                        child: Text('Normal'),
-                      ),
-                      DropdownMenuItem(
-                        value: MapType.hybrid,
-                        child: Text('Hybrid'),
-                      ),
-                      DropdownMenuItem(
-                        value: MapType.satellite,
-                        child: Text('Satellite'),
-                      ),
-                      DropdownMenuItem(
-                        value: MapType.terrain,
-                        child: Text('Terrain'),
-                      ),
-                    ],
-                    onChanged: (type) {
-                      if (type != null) {
-                        setState(() => _selectedMapType = type);
-                      }
-                    },
-                  ),
-                ),
-              ),
-            ),
-
-            /// ── ParkMode Status Pill (Top-Left) ──────────────────────────────────
             Obx(() {
-              final isSearching = _parkingShowCtrl.isParkModeActive.value;
+              if (!_parkingShowCtrl.showLocationPulse.value) {
+                return const SizedBox.shrink();
+              }
               return Positioned(
                 top: MediaQuery.of(context).padding.top + ResponsiveHelper.padding(72),
-                left: ResponsiveHelper.padding(16),
-                child: GestureDetector(
-                  onTap: () => _parkingShowCtrl.toggleParkMode(),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: isSearching ? const Color(0xFF185FA5) : Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        )
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          isSearching ? Icons.explore : Icons.explore_off_outlined,
-                          color: isSearching ? Colors.white : const Color(0xFF185FA5),
-                          size: 18,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          isSearching ? 'ParkMode: Searching' : 'ParkMode: Inactive',
-                          style: TextStyle(
-                            color: isSearching ? Colors.white : Colors.black87,
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }),
-
-            /// ── ParkMode Detailed Sensor Info ────────────────────────────────────
-            Obx(() {
-              if (!_parkingShowCtrl.isParkModeActive.value) return const SizedBox.shrink();
-              return Positioned(
-                top: MediaQuery.of(context).padding.top + ResponsiveHelper.padding(125),
-                left: ResponsiveHelper.padding(16),
+                right: ResponsiveHelper.padding(16),
                 child: Container(
-                  width: ResponsiveHelper.padding(210),
-                  padding: const EdgeInsets.all(12),
+                  height: ResponsiveHelper.padding(45),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.95),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: const Color(0xFF185FA5).withValues(alpha: 0.2)),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.08),
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
-                      )
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
                     ],
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Sensor-Fusion Tracking',
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF185FA5)),
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          Icon(Icons.gps_fixed, size: 12, color: Colors.green.shade600),
-                          const SizedBox(width: 6),
-                          const Text('GPS Speed: < 3 km/h', style: TextStyle(fontSize: 10, color: Colors.black87)),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(Icons.vibration, size: 12, color: Colors.blue.shade600),
-                          const SizedBox(width: 6),
-                          const Text('Accel: Frequent Braking/Turns', style: TextStyle(fontSize: 10, color: Colors.black87)),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 22,
-                        child: ElevatedButton(
-                          onPressed: () => _parkingShowCtrl.simulateAutoParkDetection(),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF185FA5),
-                            padding: EdgeInsets.zero,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                          ),
-                          child: const Text('Simulate Stop', style: TextStyle(fontSize: 9, color: Colors.white)),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<MapType>(
+                      value: _selectedMapType,
+                      icon: const Padding(
+                        padding: EdgeInsets.only(left: 6),
+                        child: Icon(
+                          Icons.layers_outlined,
+                          color: Color(0xFF185FA5),
+                          size: 20,
                         ),
-                      )
-                    ],
+                      ),
+                      elevation: 3,
+                      borderRadius: BorderRadius.circular(12),
+                      dropdownColor: Colors.white,
+                      alignment: Alignment.center,
+                      style: const TextStyle(
+                        color: Colors.black87,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      items: const [
+                        DropdownMenuItem(
+                          value: MapType.normal,
+                          child: Text('Normal'),
+                        ),
+                        DropdownMenuItem(
+                          value: MapType.hybrid,
+                          child: Text('Hybrid'),
+                        ),
+                        DropdownMenuItem(
+                          value: MapType.satellite,
+                          child: Text('Satellite'),
+                        ),
+                        DropdownMenuItem(
+                          value: MapType.terrain,
+                          child: Text('Terrain'),
+                        ),
+                      ],
+                      onChanged: (type) {
+                        if (type != null) {
+                          setState(() => _selectedMapType = type);
+                        }
+                      },
+                    ),
                   ),
                 ),
               );
             }),
 
-            /// ── SavePark Floating Controls (Bottom) ──────────────────────────────
-            Obx(() {
-              final isSaved = _parkingShowCtrl.savedParkingLocation.value != null;
-              final isTimerActive = _parkingShowCtrl.isTimerActive.value;
-              final timeLeft = _parkingShowCtrl.remainingTimeString.value;
-              final isPaid = _parkingShowCtrl.isPaidSpot.value;
 
-              return Positioned(
-                bottom: ResponsiveHelper.padding(24),
-                left: ResponsiveHelper.padding(16),
-                right: ResponsiveHelper.padding(16),
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: !isSaved
-                      ? Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                key: const ValueKey('save_btn'),
-                                onPressed: () => _parkingShowCtrl.saveCurrentParkingLocation(),
-                                icon: const Icon(Icons.bookmark_outline, color: Colors.white),
-                                label: const Text(
-                                  'Save Parking Spot',
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF185FA5),
-                                  padding: const EdgeInsets.symmetric(vertical: 14),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  elevation: 5,
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
-                      : Container(
-                          key: const ValueKey('saved_card'),
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.12),
-                                blurRadius: 16,
-                                offset: const Offset(0, 4),
-                              )
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: isPaid ? Colors.orange.shade50 : Colors.green.shade50,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      isPaid ? Icons.timer_outlined : Icons.check_circle_outline,
-                                      color: isPaid ? Colors.orange.shade700 : Colors.green.shade700,
-                                      size: 20,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          'Car Parked & Saved',
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87),
-                                        ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          'Confidence Level: ${_parkingShowCtrl.confidenceLevel.value}% (High)',
-                                          style: const TextStyle(fontSize: 12, color: Colors.grey),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  if (isPaid && isTimerActive)
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: Colors.orange.shade100,
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Text(
-                                        timeLeft,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 13,
-                                          color: Colors.orange.shade900,
-                                        ),
-                                      ),
-                                    ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: OutlinedButton(
-                                      onPressed: () => _parkingShowCtrl.clearSavedParkingLocation(),
-                                      style: OutlinedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(vertical: 12),
-                                        side: BorderSide(color: Colors.grey.shade300),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        'Clear Spot',
-                                        style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: ElevatedButton.icon(
-                                      onPressed: () => _parkingShowCtrl.launchSavedParkingRoute(),
-                                      icon: const Icon(Icons.directions_walk, color: Colors.white, size: 16),
-                                      label: const Text(
-                                        'Walk to Car',
-                                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xFF185FA5),
-                                        padding: const EdgeInsets.symmetric(vertical: 12),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        elevation: 0,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                ),
-              );
-            }),
           ],
         ),
       ),
@@ -612,6 +391,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
   }
 
   void _showParkingConfirmationPopup() {
+    mapDebug('Showing Parking Confirmation Dialog');
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -725,10 +505,12 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
   }
 
   void _onParkingNo() {
+    mapDebug('Parking Confirmation: User clicked NO');
     _parkingShowCtrl.onLeavingPopupNo();
   }
 
   void _onParkingYes() {
+    mapDebug('Parking Confirmation: User clicked YES');
     _parkingShowCtrl.onLeavingPopupYes();
   }
 }

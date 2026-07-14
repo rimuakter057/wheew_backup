@@ -13,6 +13,7 @@ class ParkingRepository {
   }) async {
     return await ApiClient.getData(
       uri: '/park-relay/handoffs/nearby',
+
       queryParams: {
         'latitude': latitude.toString(),
         'longitude': longitude.toString(),
@@ -42,6 +43,19 @@ class ParkingRepository {
   }) async {
     return await ApiClient.postData(
       uri: '/park-relay/handoffs',
+      body: {
+        'latitude': latitude,
+        'longitude': longitude,
+      },
+    );
+  }
+
+  Future<http.Response> setParkingModeSearching({
+    required double latitude,
+    required double longitude,
+  }) async {
+    return await ApiClient.postData(
+      uri: '/park-relay/parking-mode/searching',
       body: {
         'latitude': latitude,
         'longitude': longitude,

@@ -48,44 +48,6 @@ class _MainNavScreenState extends State<MainNavScreen> {
     }
   }
 
-  // Widget _bodyForIndex(int index) {
-  //   switch (index) {
-  //     case 0:
-  //     // return const MapScreen();
-  //       return Scaffold(
-  //         appBar: AppBar(title: const Text("Home")),
-  //         body: const Center(child: Text("Home Screen - Demo")),
-  //       );
-  //
-  //     case 1:
-  //     // return ParkingShowScreen();
-  //       return Scaffold(
-  //         appBar: AppBar(title: const Text("Parking (P)")),
-  //         body: const Center(child: Text("Parking Screen - Demo")),
-  //       );
-  //
-  //     case 2:
-  //       return const ChatListScreen(); // এইটা আগের মতোই থাকবে
-  //
-  //     case 3:
-  //     // return ProfileNavScreen();
-  //       return Scaffold(
-  //         appBar: AppBar(title: const Text("Profile")),
-  //         body: const Center(child: Text("Profile Screen - Demo")),
-  //       );
-  //
-  //     case 4:
-  //     // return ScanScreen();
-  //       return Scaffold(
-  //         appBar: AppBar(title: const Text("Scan")),
-  //         body: const Center(child: Text("Scan Screen - Demo")),
-  //       );
-  //
-  //     default:
-  //       return const SizedBox.shrink();
-  //   }
-  // }
-
   void _onTap(int index) {
     HapticFeedback.lightImpact();
     mainNavIndex.value = index;

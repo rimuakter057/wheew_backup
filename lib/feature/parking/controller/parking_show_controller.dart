@@ -1,12 +1,15 @@
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ui' as ui;
 
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:logger/logger.dart';
 import 'package:platchatapp/feature/parking/repository/parking_repository.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
@@ -14,6 +17,23 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ParkingShowController extends GetxController {
   final ParkingRepository _repository = ParkingRepository();
+  final Logger _logger = Logger(
+    printer: PrettyPrinter(
+      methodCount: 0,
+      errorMethodCount: 5,
+      lineLength: 100,
+      colors: true,
+      printEmojis: true,
+    ),
+  );
+
+  // Fallback map center shown instantly while the real flow resolves
+  // in the background (matches the "show map immediately" requirement).
+  static const LatLng kApproxDefaultLocation = LatLng(34.052235, -118.243683);
+
+  // Parking areas are queried with a fixed, wider radius; handoffs use
+  // the user-adjustable radius filter (default 300m).
+  static const int _parkingAreaRadiusMeters = 20000;
 
   final RxBool isLoading = false.obs;
   final RxBool isLocating = true.obs;
@@ -24,6 +44,8 @@ class ParkingShowController extends GetxController {
   final RxInt selectedRadiusMeter = 300.obs;
   final RxInt mapOverlayVersion = 0.obs;
 
+  final RxBool isRealLocationLoaded = false.obs;
+
   // ── SavePark, ParkMode, and Parktime States ──────────────────────
   final Rxn<LatLng> savedParkingLocation = Rxn<LatLng>();
   final RxInt confidenceLevel = 98.obs;
@@ -32,7 +54,6 @@ class ParkingShowController extends GetxController {
   final RxString remainingTimeString = ''.obs;
   final RxBool isTimerActive = false.obs;
   Timer? _parkingCountdownTimer;
-
 
   final RxSet<Circle> circles = <Circle>{}.obs;
   final RxSet<Polyline> polylines = <Polyline>{}.obs;
@@ -57,6 +78,7 @@ class ParkingShowController extends GetxController {
   @override
   void onClose() {
     _blinkTimer?.cancel();
+    _parkingCountdownTimer?.cancel();
     super.onClose();
   }
 
@@ -64,7 +86,7 @@ class ParkingShowController extends GetxController {
     _blinkTimer?.cancel();
     _blinkTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
       _blinkToggle.value = !_blinkToggle.value;
-      _updateBlinkingCirclesOnly();
+      _updateBlinkingOverlays();
     });
   }
 
@@ -87,23 +109,62 @@ class ParkingShowController extends GetxController {
     }
   }
 
+  /// Entry point every time the screen opens.
+  /// 1. Shows an approximate default location immediately so the map
+  ///    renders with no delay.
+  /// 2. In the background, checks /parking-mode/me and branches the flow.
   Future<void> initializeFlow({required VoidCallback onShowPopup}) async {
-    await getUserLocation();
-    if (gpsPosition.value == null) {
-      debugPrint('No GPS resolved. Skipping parking flow.');
-      return;
-    }
+    // Wipe any stale data from a previous visit to this screen before
+    // doing anything else — every navbar entry must start from a clean
+    // state and be driven purely by the fresh API response below.
+    _resetSearchState();
+
+    isLocating.value = false;
+    isRealLocationLoaded.value = false;
+    gpsPosition.value = kApproxDefaultLocation;
+    mapCenter.value = kApproxDefaultLocation;
+
     await checkParkingModeMe(onShowPopup: onShowPopup);
   }
 
-  Future<void> getUserLocation() async {
+  /// Clears everything that came from the last /parking-mode/me +
+  /// nearby-data cycle. Keeps `savedParkingLocation` and the paid-spot
+  /// timer intact since those represent a real, still-valid car
+  /// location and shouldn't disappear just from switching tabs.
+  void _resetSearchState() {
+    handoffList.clear();
+    parkingAreaList.clear();
+    polygons.clear();
+    polylines.clear();
+    circles.clear();
+    markers.removeWhere(
+          (m) => m.markerId.value != 'saved_car_location',
+    );
+    status.value = 'IDLE';
+    // Must be false until the flow actually confirms SEARCHING or the
+    // user answers the popup — otherwise the search bar / map-type
+    // dropdown (which are gated on this flag) can leak in from a
+    // previous visit and appear underneath the popup before Yes/No.
+    showLocationPulse.value = false;
+    mapOverlayVersion.value++;
+  }
+
+  /// Lightweight refresh used on app resume — re-checks status without
+  /// resetting the map back to the approximate default location.
+  Future<void> refreshStatus({required VoidCallback onShowPopup}) async {
+    await checkParkingModeMe(onShowPopup: onShowPopup);
+  }
+
+  /// Fetches the real device GPS position.
+  /// Returns true only if a real fix was obtained.
+  Future<bool> getUserLocation() async {
     isLocating.value = true;
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         isLocating.value = false;
         _showMessage('Please enable location service', isError: true);
-        return;
+        return false;
       }
 
       var permission = await Geolocator.checkPermission();
@@ -115,7 +176,7 @@ class ParkingShowController extends GetxController {
           permission == LocationPermission.deniedForever) {
         isLocating.value = false;
         _showMessage('Location permission denied', isError: true);
-        return;
+        return false;
       }
 
       final position = await Geolocator.getCurrentPosition(
@@ -128,49 +189,48 @@ class ParkingShowController extends GetxController {
       gpsPosition.value = latLng;
       mapCenter.value = latLng;
       isLocating.value = false;
+      isRealLocationLoaded.value = true;
 
       if (mapController != null) {
         await mapController!.animateCamera(
           CameraUpdate.newLatLngZoom(latLng, 15),
         );
       }
+      return true;
     } catch (e) {
       isLocating.value = false;
-      debugPrint('Error getting location: $e');
+      _logger.e('Error getting location', error: e);
+      return false;
     }
   }
 
+  /// GET /park-relay/parking-mode/me
+  /// SEARCHING  -> no popup, just load real location + nearby overlays.
+  /// IDLE/PARKED -> show the "are you leaving a spot" popup.
   Future<void> checkParkingModeMe({required VoidCallback onShowPopup}) async {
     isLoading.value = true;
+    _logger.i('=== checkParkingModeMe START ===');
     try {
       final response = await _repository.getParkingModeMe();
+      print("PARKING_MODE_ME_RESPONSE: status=${response.statusCode}, body=${response.body}");
+      _logger.d('checkParkingModeMe status: ${response.statusCode}\n'
+          'body: ${response.body}');
       if (response.statusCode == 200) {
         final data = _asMap(jsonDecode(response.body));
         final String modeStatus =
             data?['status']?.toString().toUpperCase() ?? 'IDLE';
         status.value = modeStatus;
 
-        if (gpsPosition.value == null &&
-            data?['latitude'] != null &&
-            data?['longitude'] != null) {
-          final lat = _toDouble(data!['latitude']);
-          final lng = _toDouble(data['longitude']);
-          if (lat != null && lng != null) {
-            final latLng = LatLng(lat, lng);
-            gpsPosition.value = latLng;
-            mapCenter.value = latLng;
-          }
-        }
-
-        final lat = gpsPosition.value?.latitude;
-        final lng = gpsPosition.value?.longitude;
-
         if (modeStatus == 'SEARCHING') {
+          await getUserLocation();
+          showLocationPulse.value = true;
+          final lat = gpsPosition.value?.latitude;
+          final lng = gpsPosition.value?.longitude;
           if (lat != null && lng != null) {
-            showLocationPulse.value = true;
             await fetchNearbyData(lat, lng);
           }
         } else {
+          // IDLE or PARKED
           onShowPopup();
         }
       } else {
@@ -193,9 +253,19 @@ class ParkingShowController extends GetxController {
     }
   }
 
+  /// GET /park-relay/handoffs/nearby (adjustable radius)
+  /// GET /park-relay/parking-areas/nearby (fixed 1000m radius)
   Future<void> fetchNearbyData(double? lat, double? lng) async {
-    if (lat == null || lng == null) return;
+    if (lat == null || lng == null) {
+      _logger.w('fetchNearbyData SKIPPED: lat/lng is null');
+      return;
+    }
     isLoading.value = true;
+
+    _logger.i('=== fetchNearbyData START ===\n'
+        'lat=$lat, lng=$lng, '
+        'handoffRadius=${selectedRadiusMeter.value}m, '
+        'parkingAreaRadius=${_parkingAreaRadiusMeters}m');
 
     try {
       final results = await Future.wait([
@@ -207,13 +277,20 @@ class ParkingShowController extends GetxController {
         _repository.getNearbyParkingAreas(
           latitude: lat,
           longitude: lng,
-          radiusMeters: 20000,
+          radiusMeters: _parkingAreaRadiusMeters,
         ),
       ]);
 
-
       final handoffsResponse = results[0];
       final areasResponse = results[1];
+
+      print("GET_NEARBY_HANDOFFS_RESPONSE: status=${handoffsResponse.statusCode}, body=${handoffsResponse.body}");
+      print("GET_NEARBY_PARKING_AREAS_RESPONSE: status=${areasResponse.statusCode}, body=${areasResponse.body}");
+
+      _logger.d('GET /handoffs/nearby -> status: ${handoffsResponse.statusCode}\n'
+          'body: ${handoffsResponse.body}');
+      _logger.d('GET /parking-areas/nearby -> status: ${areasResponse.statusCode}\n'
+          'body: ${areasResponse.body}');
 
       if (handoffsResponse.statusCode == 200) {
         handoffList.value = jsonDecode(handoffsResponse.body) as List<dynamic>;
@@ -227,24 +304,92 @@ class ParkingShowController extends GetxController {
         _showMessage('Failed to load nearby parking areas', isError: true);
       }
 
+      _logger.d('Parsed -> handoffList: ${handoffList.length} items, '
+          'parkingAreaList: ${parkingAreaList.length} items');
+
       await _buildMarkersAndPolygons();
-    } catch (e) {
+
+      // Adjust camera bounds to fit user location and all markers/polygons
+      if (mapController != null && gpsPosition.value != null) {
+        double minLat = gpsPosition.value!.latitude;
+        double maxLat = gpsPosition.value!.latitude;
+        double minLng = gpsPosition.value!.longitude;
+        double maxLng = gpsPosition.value!.longitude;
+
+        bool hasItems = false;
+        for (final m in markers) {
+          minLat = math.min(minLat, m.position.latitude);
+          maxLat = math.max(maxLat, m.position.latitude);
+          minLng = math.min(minLng, m.position.longitude);
+          maxLng = math.max(maxLng, m.position.longitude);
+          hasItems = true;
+        }
+        for (final p in polygons) {
+          for (final pt in p.points) {
+            minLat = math.min(minLat, pt.latitude);
+            maxLat = math.max(maxLat, pt.latitude);
+            minLng = math.min(minLng, pt.longitude);
+            maxLng = math.max(maxLng, pt.longitude);
+          }
+          hasItems = true;
+        }
+
+        if (hasItems) {
+          final bounds = LatLngBounds(
+            southwest: LatLng(minLat - 0.005, minLng - 0.005),
+            northeast: LatLng(maxLat + 0.005, maxLng + 0.005),
+          );
+          print("Map camera bounds adjusted to show spots: minLat=$minLat, maxLat=$maxLat");
+          await mapController!.animateCamera(
+            CameraUpdate.newLatLngBounds(bounds, 50),
+          );
+        }
+      }
+
+      _logger.i('=== fetchNearbyData END -> markers: ${markers.length}, '
+          'polygons: ${polygons.length}, circles: ${circles.length} ===');
+    } catch (e, st) {
+      _logger.e('fetchNearbyData ERROR', error: e, stackTrace: st);
       _showMessage('Failed to load nearby parking spots: $e', isError: true);
     } finally {
       isLoading.value = false;
     }
   }
 
+  /// Popup -> "No" (not leaving). Re-runs the same 2 GET calls used for
+  /// the SEARCHING flow and marks the backend mode as searching.
   Future<void> onLeavingPopupNo() async {
+    _logger.i('=== onLeavingPopupNo CLICKED ===');
+    await getUserLocation();
     showLocationPulse.value = true;
     final lat = gpsPosition.value?.latitude;
     final lng = gpsPosition.value?.longitude;
-    if (lat != null && lng != null) {
-      await fetchNearbyData(lat, lng);
+    _logger.d('onLeavingPopupNo coordinates: lat=$lat, lng=$lng');
+    if (lat == null || lng == null) {
+      _logger.w('onLeavingPopupNo SKIPPED: location is null');
+      return;
     }
+
+    try {
+      _logger.d('onLeavingPopupNo calling setParkingModeSearching');
+      final response = await _repository.setParkingModeSearching(latitude: lat, longitude: lng);
+      _logger.d('setParkingModeSearching response status: ${response.statusCode}\n'
+          'body: ${response.body}');
+    } catch (e, st) {
+      _logger.e('Error setting searching mode', error: e, stackTrace: st);
+    }
+    await fetchNearbyData(lat, lng);
   }
 
+  /// Popup -> "Yes" (leaving the spot).
+  /// POST /park-relay/handoffs {latitude, longitude}
+  /// This ONLY reports the handoff to the backend. The UI response is
+  /// just the plain Google Map centered on the user's real location —
+  /// no blinking, no markers/polygons, no search bar / pulse overlay.
   Future<void> onLeavingPopupYes() async {
+    await getUserLocation();
+    // Intentionally NOT setting showLocationPulse — Yes should show a
+    // clean map only, not the search bar / pulse UI.
     final lat = gpsPosition.value?.latitude;
     final lng = gpsPosition.value?.longitude;
     if (lat == null || lng == null) {
@@ -257,16 +402,20 @@ class ParkingShowController extends GetxController {
 
     isLoading.value = true;
     try {
+      _logger.i('=== YES CLICK -> POST /park-relay/handoffs ===\n'
+          'body: {"latitude": $lat, "longitude": $lng}');
       final response =
-          await _repository.createHandoff(latitude: lat, longitude: lng);
+      await _repository.createHandoff(latitude: lat, longitude: lng);
+      _logger.d('createHandoff status: ${response.statusCode}\n'
+          'body: ${response.body}');
       if (response.statusCode == 200 || response.statusCode == 201) {
-        _showMessage('Parking spot handoff reported successfully!', isError: false);
+        _showMessage(
+            'Parking spot handoff reported successfully!', isError: false);
         if (mapController != null) {
           await mapController!.animateCamera(
             CameraUpdate.newLatLngZoom(LatLng(lat, lng), 17),
           );
         }
-        await fetchNearbyData(lat, lng);
       } else {
         String msg = 'Failed to record spot handoff';
         try {
@@ -296,13 +445,14 @@ class ParkingShowController extends GetxController {
     final paidCarIcon = await _getCarIcon(AssetsPath.paidCar);
     bool needRefresh = false;
 
-    // Inject saved location marker
+    // Saved parking location marker
     if (savedParkingLocation.value != null) {
       newMarkers.add(
         Marker(
           markerId: const MarkerId('saved_car_location'),
           position: savedParkingLocation.value!,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueAzure),
           anchor: const Offset(0.5, 0.5),
           infoWindow: const InfoWindow(
             title: 'Your Saved Parking Spot',
@@ -313,7 +463,7 @@ class ParkingShowController extends GetxController {
       );
     }
 
-
+    // Handoff markers — blink while AVAILABLE and not yet expired
     for (final rawHandoff in handoffList) {
       final handoff = _asMap(rawHandoff);
       if (handoff == null) continue;
@@ -355,13 +505,20 @@ class ParkingShowController extends GetxController {
       }
     }
 
+    // Parking areas — red polygon outline
     for (var idx = 0; idx < parkingAreaList.length; idx++) {
       final area = _asMap(parkingAreaList[idx]);
-      if (area == null) continue;
+      if (area == null) {
+        _logger.w('parkingArea[$idx] SKIPPED: not a valid map -> ${parkingAreaList[idx]}');
+        continue;
+      }
 
       final areaId = area['id']?.toString() ?? 'area_$idx';
       final polyPoints = area['polygon'];
       final points = _parsePolygonPoints(polyPoints);
+
+      _logger.d('parkingArea[$idx] id=$areaId -> raw polygon: $polyPoints '
+          '-> parsed points: ${points.length}');
 
       if (points.length >= 3) {
         newPolygons.add(
@@ -369,8 +526,8 @@ class ParkingShowController extends GetxController {
             polygonId: PolygonId(areaId),
             points: points,
             strokeWidth: 3,
-            strokeColor: const Color(0xFF185FA5),
-            fillColor: const Color(0xFF185FA5).withValues(alpha: 0.25),
+            strokeColor: Colors.red,
+            fillColor: Colors.red.withValues(alpha: 0.15),
             consumeTapEvents: true,
             onTap: () => showParkingAreaDetails(area),
           ),
@@ -380,7 +537,7 @@ class ParkingShowController extends GetxController {
           Polyline(
             polylineId: PolylineId('outline_$areaId'),
             points: [...points, points.first],
-            color: const Color(0xFF185FA5),
+            color: Colors.red,
             width: 3,
             jointType: JointType.round,
             startCap: Cap.roundCap,
@@ -414,9 +571,11 @@ class ParkingShowController extends GetxController {
       newCircles: newCircles,
     );
 
-    debugPrint(
-      'Parking map overlays → markers: ${newMarkers.length}, '
-      'polygons: ${newPolygons.length}, polylines: ${newPolylines.length}',
+    _logger.i(
+      '_buildMarkersAndPolygons DONE -> markers: ${newMarkers.length}, '
+          'polygons: ${newPolygons.length}, polylines: ${newPolylines.length}, '
+          'circles: ${newCircles.length} (handoffList=${handoffList.length}, '
+          'parkingAreaList=${parkingAreaList.length})',
     );
 
     if (needRefresh) {
@@ -445,12 +604,16 @@ class ParkingShowController extends GetxController {
     mapOverlayVersion.value++;
   }
 
-  void _updateBlinkingCirclesOnly() {
+  void _updateBlinkingOverlays() {
     if (handoffList.isEmpty) return;
 
     final Set<Circle> newCircles = {};
+    final Set<Marker> updatedMarkers = Set<Marker>.from(markers);
     final now = DateTime.now();
     var needRefresh = false;
+
+    final freeCarIcon =
+        _carIconCache[AssetsPath.freeCar] ?? BitmapDescriptor.defaultMarker;
 
     for (final rawHandoff in handoffList) {
       final handoff = _asMap(rawHandoff);
@@ -464,22 +627,45 @@ class ParkingShowController extends GetxController {
       final handoffStatus =
           handoff['status']?.toString().toUpperCase() ?? '';
       final expiresAtStr = handoff['expiresAt']?.toString() ?? '';
+      var isBlinking = false;
 
       if (handoffStatus == 'AVAILABLE' && expiresAtStr.isNotEmpty) {
         try {
           final expiryTime = DateTime.parse(expiresAtStr).toLocal();
           if (expiryTime.isAfter(now)) {
-            newCircles.add(_buildBlinkCircle(id: id, lat: lat, lng: lng));
+            isBlinking = true;
           } else {
             needRefresh = true;
           }
         } catch (_) {}
+      }
+
+      if (isBlinking) {
+        newCircles.add(_buildBlinkCircle(id: id, lat: lat, lng: lng));
+
+        final markerId = MarkerId('handoff_$id');
+        updatedMarkers.removeWhere((m) => m.markerId == markerId);
+        updatedMarkers.add(
+          Marker(
+            markerId: markerId,
+            position: LatLng(lat, lng),
+            icon: freeCarIcon,
+            anchor: const Offset(0.5, 0.5),
+            infoWindow: InfoWindow.noText,
+            alpha: _blinkToggle.value ? 1.0 : 0.2,
+            onTap: () => showHandoffDetails(handoff),
+          ),
+        );
       }
     }
 
     circles
       ..clear()
       ..addAll(newCircles);
+    markers
+      ..clear()
+      ..addAll(updatedMarkers);
+    mapOverlayVersion.value++;
 
     if (needRefresh) {
       _refreshExpiredHandoffs();
@@ -561,7 +747,7 @@ class ParkingShowController extends GetxController {
       _carIconCache[assetPath] = icon;
       return icon;
     } catch (e) {
-      debugPrint('Error loading custom car icon: $e');
+      _logger.e('Error loading custom car icon: $assetPath', error: e);
       return BitmapDescriptor.defaultMarker;
     }
   }
@@ -575,9 +761,10 @@ class ParkingShowController extends GetxController {
 
   // ── SavePark, ParkMode, and Parktime Operations ──────────────────
   void toggleParkMode() {
-    isParkModeActive.value = !isParkModeActive.value;
-    if (isParkModeActive.value) {
-      _showMessage('ParkMode active: Fusing GPS and Accelerometer signals.', isError: false);
+    showLocationPulse.value = !showLocationPulse.value;
+    if (showLocationPulse.value) {
+      _showMessage('ParkMode active: Fusing GPS and Accelerometer signals.',
+          isError: false);
       final lat = gpsPosition.value?.latitude;
       final lng = gpsPosition.value?.longitude;
       if (lat != null && lng != null) {
@@ -599,11 +786,12 @@ class ParkingShowController extends GetxController {
       _showMessage('GPS Location not available to save spot.', isError: true);
       return;
     }
-    
-    confidenceLevel.value = 93 + (DateTime.now().second % 7); // simulated background signals 93-99%
+
+    confidenceLevel.value =
+        93 + (DateTime.now().second % 7); // simulated background signals
     savedParkingLocation.value = latLng;
     _buildMarkersAndPolygons();
-    
+
     showParkingTypeDialog();
   }
 
@@ -620,12 +808,12 @@ class ParkingShowController extends GetxController {
     final destination = savedParkingLocation.value;
     final origin = gpsPosition.value;
     if (destination == null || origin == null) return;
-    
+
     final url = 'https://www.google.com/maps/dir/?api=1'
         '&origin=${origin.latitude},${origin.longitude}'
         '&destination=${destination.latitude},${destination.longitude}'
         '&travelmode=walking';
-        
+
     _launchURL(url);
   }
 
@@ -633,36 +821,41 @@ class ParkingShowController extends GetxController {
     _parkingCountdownTimer?.cancel();
     final totalSeconds = minutes * 60;
     _startTimerUpdate(totalSeconds);
-    _showMessage('Paid spot timer started for $minutes minutes.', isError: false);
+    _showMessage(
+        'Paid spot timer started for $minutes minutes.', isError: false);
   }
 
   void _startTimerUpdate(int totalSeconds) {
     int remainingSeconds = totalSeconds;
-    
-    _parkingCountdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (remainingSeconds <= 0) {
-        timer.cancel();
-        isTimerActive.value = false;
-        remainingTimeString.value = '';
-        savedParkingLocation.value = null; // Spot is removed after expiration
-        _buildMarkersAndPolygons();
-        _showMessage('Parking spot duration has expired. Spot is now free.', isError: false);
-        return;
-      }
 
-      remainingSeconds--;
-      
-      final int mins = remainingSeconds ~/ 60;
-      final int secs = remainingSeconds % 60;
-      remainingTimeString.value = '${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
-      
-      // Expiring warning alert
-      final bool triggerAlert = (totalSeconds > 600 && remainingSeconds == 600) || 
-                               (totalSeconds <= 600 && remainingSeconds == 60);
-      if (triggerAlert) {
-        _showExpirationAlert();
-      }
-    });
+    _parkingCountdownTimer =
+        Timer.periodic(const Duration(seconds: 1), (timer) {
+          if (remainingSeconds <= 0) {
+            timer.cancel();
+            isTimerActive.value = false;
+            remainingTimeString.value = '';
+            savedParkingLocation.value = null; // spot removed after expiration
+            _buildMarkersAndPolygons();
+            _showMessage('Parking spot duration has expired. Spot is now free.',
+                isError: false);
+            return;
+          }
+
+          remainingSeconds--;
+
+          final int mins = remainingSeconds ~/ 60;
+          final int secs = remainingSeconds % 60;
+          remainingTimeString.value =
+          '${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+
+          // Expiring warning alert
+          final bool triggerAlert = (totalSeconds > 600 &&
+              remainingSeconds == 600) ||
+              (totalSeconds <= 600 && remainingSeconds == 60);
+          if (triggerAlert) {
+            _showExpirationAlert();
+          }
+        });
     isTimerActive.value = true;
   }
 
@@ -674,7 +867,8 @@ class ParkingShowController extends GetxController {
       barrierDismissible: false,
       builder: (dialogContext) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -686,7 +880,8 @@ class ParkingShowController extends GetxController {
                     color: Colors.blue.shade50,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.local_parking, size: 40, color: Colors.blue.shade700),
+                  child: Icon(Icons.local_parking,
+                      size: 40, color: Colors.blue.shade700),
                 ),
                 const SizedBox(height: 20),
                 const Text(
@@ -710,13 +905,16 @@ class ParkingShowController extends GetxController {
                           isPaidSpot.value = false;
                           isTimerActive.value = false;
                           remainingTimeString.value = '';
-                          _showMessage('Parking location saved as Free Spot.', isError: false);
+                          _showMessage('Parking location saved as Free Spot.',
+                              isError: false);
                         },
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
                         ),
-                        child: const Text('Free Spot', style: TextStyle(fontWeight: FontWeight.bold)),
+                        child: const Text('Free Spot',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -730,9 +928,13 @@ class ParkingShowController extends GetxController {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF185FA5),
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
                         ),
-                        child: const Text('Paid Spot', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        child: const Text('Paid Spot',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
                       ),
                     ),
                   ],
@@ -741,7 +943,7 @@ class ParkingShowController extends GetxController {
             ),
           ),
         );
-      }
+      },
     );
   }
 
@@ -753,7 +955,8 @@ class ParkingShowController extends GetxController {
       barrierDismissible: false,
       builder: (dialogContext) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -776,39 +979,42 @@ class ParkingShowController extends GetxController {
                     label = '${mins ~/ 60} Hour${mins == 60 ? "" : "s"}';
                   }
                   return Padding(
-                     padding: const EdgeInsets.symmetric(vertical: 6),
-                     child: SizedBox(
-                       width: double.infinity,
-                       child: ElevatedButton(
-                         onPressed: () {
-                           Navigator.of(dialogContext).pop();
-                           startParkingTimer(mins);
-                         },
-                         style: ElevatedButton.styleFrom(
-                           backgroundColor: Colors.grey.shade100,
-                           foregroundColor: Colors.black87,
-                           elevation: 0,
-                           padding: const EdgeInsets.symmetric(vertical: 12),
-                           shape: RoundedRectangleBorder(
-                             borderRadius: BorderRadius.circular(10),
-                             side: BorderSide(color: Colors.grey.shade300),
-                           ),
-                         ),
-                         child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-                       ),
-                     ),
-                   );
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                          startParkingTimer(mins);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey.shade100,
+                          foregroundColor: Colors.black87,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: BorderSide(color: Colors.grey.shade300),
+                          ),
+                        ),
+                        child: Text(label,
+                            style:
+                            const TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                  );
                 }),
                 const SizedBox(height: 12),
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(),
-                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                  child:
+                  const Text('Cancel', style: TextStyle(color: Colors.grey)),
                 ),
               ],
             ),
           ),
         );
-      }
+      },
     );
   }
 
@@ -820,7 +1026,8 @@ class ParkingShowController extends GetxController {
       barrierDismissible: false,
       builder: (dialogContext) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -832,7 +1039,8 @@ class ParkingShowController extends GetxController {
                     color: Colors.amber.shade50,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.warning_amber_rounded, size: 40, color: Colors.amber),
+                  child: const Icon(Icons.warning_amber_rounded,
+                      size: 40, color: Colors.amber),
                 ),
                 const SizedBox(height: 20),
                 const Text(
@@ -852,13 +1060,16 @@ class ParkingShowController extends GetxController {
                       child: OutlinedButton(
                         onPressed: () {
                           Navigator.of(dialogContext).pop();
-                          _showMessage('Acknowledged. Keeping spot active.', isError: false);
+                          _showMessage('Acknowledged. Keeping spot active.',
+                              isError: false);
                         },
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
                         ),
-                        child: const Text('No, Staying', style: TextStyle(fontWeight: FontWeight.bold)),
+                        child: const Text('No, Staying',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -867,14 +1078,20 @@ class ParkingShowController extends GetxController {
                         onPressed: () {
                           Navigator.of(dialogContext).pop();
                           clearSavedParkingLocation();
-                          _showMessage('Parking cleared. Released spot status.', isError: false);
+                          _showMessage(
+                              'Parking cleared. Released spot status.',
+                              isError: false);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.amber.shade700,
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
                         ),
-                        child: const Text('Yes, Leaving', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        child: const Text('Yes, Leaving',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
                       ),
                     ),
                   ],
@@ -883,7 +1100,7 @@ class ParkingShowController extends GetxController {
             ),
           ),
         );
-      }
+      },
     );
   }
 
@@ -918,12 +1135,17 @@ class ParkingShowController extends GetxController {
               const SizedBox(height: 16),
               const Text(
                 'Saved Parking Location',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              _buildDetailRow('Confidence Level', '${confidenceLevel.value}% (High Accuracy)'),
-              _buildDetailRow('Spot Type', isPaidSpot.value ? 'Paid Spot' : 'Free Spot'),
+              _buildDetailRow('Confidence Level',
+                  '${confidenceLevel.value}% (High Accuracy)'),
+              _buildDetailRow(
+                  'Spot Type', isPaidSpot.value ? 'Paid Spot' : 'Free Spot'),
               if (isTimerActive.value)
                 _buildDetailRow('Time Remaining', remainingTimeString.value),
               const SizedBox(height: 24),
@@ -933,11 +1155,13 @@ class ParkingShowController extends GetxController {
                   launchSavedParkingRoute();
                 },
                 icon: const Icon(Icons.directions_walk, color: Colors.white),
-                label: const Text('Walk Back to Car', style: TextStyle(color: Colors.white)),
+                label: const Text('Walk Back to Car',
+                    style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF185FA5),
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
               ),
               const SizedBox(height: 10),
@@ -947,37 +1171,38 @@ class ParkingShowController extends GetxController {
                   clearSavedParkingLocation();
                 },
                 icon: const Icon(Icons.delete_outline, color: Colors.red),
-                label: const Text('Remove Spot', style: TextStyle(color: Colors.red)),
+                label:
+                const Text('Remove Spot', style: TextStyle(color: Colors.red)),
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Colors.red),
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
               ),
               const SizedBox(height: 16),
             ],
           ),
         );
-      }
+      },
     );
   }
 
   void showHandoffDetails(Map<String, dynamic> handoff) {
-    showDetailsSheet(handoff, 'Handoff Details');
-  }
-
-   // showDetailsSheet(handoff, 'Handoff Details');
+    showDetailsDialog(handoff, 'Handoff Details');
   }
 
   void showParkingAreaDetails(Map<String, dynamic> area) {
     final name = area['name']?.toString();
-    showDetailsSheet(
+    showDetailsDialog(
       area,
       name != null && name.isNotEmpty ? name : 'Parking Area Details',
     );
   }
 
-  void showDetailsSheet(Map<String, dynamic> data, String title) {
+  void showDetailsDialog(Map<String, dynamic> data, String title) {
+    _logger.i('=== showDetailsDialog: title="$title" ===\n'
+        'data: ${jsonEncode(data)}');
     final ctx = Get.overlayContext ?? Get.context;
     if (ctx == null) return;
 
@@ -988,90 +1213,91 @@ class ParkingShowController extends GetxController {
       return entry.key != 'id' && entry.key != 'createdById';
     }).toList();
 
-    showModalBottomSheet(
+    showDialog(
       context: ctx,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (sheetContext) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      builder: (dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[350],
-                    borderRadius: BorderRadius.circular(10),
+          backgroundColor: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              Flexible(
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    children: visibleEntries.map((entry) {
-                      if (entry.value is List || entry.value is Map) {
-                        if (entry.key == 'polygon') {
-                          return _buildDetailRow(
-                            'Polygon Points',
-                            '${(entry.value as List).length} points',
+                const SizedBox(height: 16),
+                Flexible(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      children: visibleEntries.map((entry) {
+                        if (entry.value is List || entry.value is Map) {
+                          if (entry.key == 'polygon') {
+                            return _buildDetailRow(
+                              'Polygon Points',
+                              '${(entry.value as List).length} points',
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        }
+
+                        final valStr = entry.value?.toString() ?? '';
+                        if (valStr.isEmpty) return const SizedBox.shrink();
+
+                        final displayKey = _formatKey(entry.key);
+
+                        if (entry.key == 'googleMapsLink') {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: ElevatedButton.icon(
+                              onPressed: () => _launchURL(valStr),
+                              icon: const Icon(Icons.directions,
+                                  color: Colors.white),
+                              label: const Text(
+                                'Navigate',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF185FA5),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding:
+                                const EdgeInsets.symmetric(vertical: 12),
+                              ),
+                            ),
                           );
                         }
-                        return const SizedBox.shrink();
-                      }
 
-                      final valStr = entry.value?.toString() ?? '';
-                      if (valStr.isEmpty) return const SizedBox.shrink();
-
-                      final displayKey = _formatKey(entry.key);
-
-                      if (entry.key == 'googleMapsLink') {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: ElevatedButton.icon(
-                            onPressed: () => _launchURL(valStr),
-                            icon: const Icon(Icons.directions, color: Colors.white),
-                            label: const Text(
-                              'Navigate',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF185FA5),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                            ),
-                          ),
-                        );
-                      }
-
-                      return _buildDetailRow(displayKey, valStr);
-                    }).toList(),
+                        return _buildDetailRow(displayKey, valStr);
+                      }).toList(),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-            ],
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: const Text(
+                    'Close',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -1128,7 +1354,7 @@ class ParkingShowController extends GetxController {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       }
     } catch (e) {
-      debugPrint('Could not launch URL: $url ($e)');
+      _logger.e('Could not launch URL: $url', error: e);
     }
   }
-
+}
