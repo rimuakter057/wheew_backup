@@ -135,6 +135,7 @@ class _MessageScreenState extends State<MessageScreen> {
         gradient: AppColors.primaryBackgroundGradient,
       ),
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         backgroundColor: Colors.transparent,
 
         appBar: MessageAppBar(
@@ -194,35 +195,47 @@ class _MessageScreenState extends State<MessageScreen> {
           },
         ),
 
-        // ── Body: শুধু message list ────────────────────────────
+        // ── Body: Column with message list and bottom input ──────
         body: SafeArea(
           top: true,
           bottom: false,
-          child: RefreshIndicator(
-            onRefresh: () =>
-                chatController.fetchInboxMessage(roomId: widget.roomId),
-            child: Column(
-              children: [
-                // ── Message list ────────────────────────────────
-                Expanded(
-                  child: Obx(() {
-                    final messages = chatController.userMessageList;
-                    final bool showTyping = chatController.isTyping.value;
+          child: Column(
+            children: [
+              // ── Message list ────────────────────────────────
+              Expanded(
+                child: Obx(() {
+                  final messages = chatController.userMessageList;
+                  final bool showTyping = chatController.isTyping.value;
 
-                    if (chatController.isLoadingMessage.value && messages.isEmpty) {
-                      return MessageScreenShimmer();
-                    }
+                  if (chatController.isLoadingMessage.value && messages.isEmpty) {
+                    return MessageScreenShimmer();
+                  }
 
-                    if (messages.isEmpty && !showTyping) {
-                      return Center(
-                        child: Text(
-                          'no_messages_yet'.tr,
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                      );
-                    }
+                  if (messages.isEmpty && !showTyping) {
+                    return RefreshIndicator(
+                      onRefresh: () =>
+                          chatController.fetchInboxMessage(roomId: widget.roomId),
+                      child: ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            child: Center(
+                              child: Text(
+                                'no_messages_yet'.tr,
+                                style: const TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
 
-                    return ListView.builder(
+                  return RefreshIndicator(
+                    onRefresh: () =>
+                        chatController.fetchInboxMessage(roomId: widget.roomId),
+                    child: ListView.builder(
                       controller: _scrollController,
                       reverse: true,
                       padding: ResponsiveHelper.symmetric(
@@ -272,54 +285,54 @@ class _MessageScreenState extends State<MessageScreen> {
                           ),
                         );
                       },
-                    );
-                  }),
-                ),
-
-                Obx(() {
-                  if (chatController.isBlockedByMe.value ||
-                      chatController.isBlockedMe.value) {
-                    return const SizedBox.shrink();
-                  }
-                  return Padding(
-                    padding:  EdgeInsets.only(bottom: ResponsiveHelper.height(8)),
-
-                    child: MessagePresetChips(chatController: chatController),
+                    ),
                   );
                 }),
-              ],
-            ),
+              ),
 
-          ),
-        ),
+              Obx(() {
+                if (chatController.isBlockedByMe.value ||
+                    chatController.isBlockedMe.value) {
+                  return const SizedBox.shrink();
+                }
+                return Padding(
+                  padding:  EdgeInsets.only(bottom: ResponsiveHelper.height(8)),
 
-        // ── Bottom: Input / Block Widgets ──────────────────────
-        bottomNavigationBar: Container(
-          color: const Color(0xFFF1F5F9),
-          child: SafeArea(
-            top: false,
-            child: Obx(() {
-              if (chatController.isBlockedByMe.value) {
-                return BlockByMeWidget(
-                  name: widget.otherUserName,
-                  onUnblock: () {
-                    chatController.unBlock(widget.receiverId, context);
-                    chatController.isBlockedByMe.value = false;
-                  },
+                  child: MessagePresetChips(chatController: chatController),
                 );
-              } else if (chatController.isBlockedMe.value) {
-                return const BlockMeWidget();
-              } else {
-                return MessageInput(
-                  chatController: chatController,
-                  currentRoomId: _currentRoomId,
-                  receiverId: widget.receiverId,
-                  onRoomIdUpdate: (newId) {
-                    setState(() => _currentRoomId = newId);
-                  },
-                );
-              }
-            }),
+              }),
+
+              // ── Bottom: Input / Block Widgets ──────────────────────
+              Container(
+                color: const Color(0xFFF1F5F9),
+                child: SafeArea(
+                  top: false,
+                  bottom: true,
+                  child: Obx(() {
+                    if (chatController.isBlockedByMe.value) {
+                      return BlockByMeWidget(
+                        name: widget.otherUserName,
+                        onUnblock: () {
+                          chatController.unBlock(widget.receiverId, context);
+                          chatController.isBlockedByMe.value = false;
+                        },
+                      );
+                    } else if (chatController.isBlockedMe.value) {
+                      return const BlockMeWidget();
+                    } else {
+                      return MessageInput(
+                        chatController: chatController,
+                        currentRoomId: _currentRoomId,
+                        receiverId: widget.receiverId,
+                        onRoomIdUpdate: (newId) {
+                          setState(() => _currentRoomId = newId);
+                        },
+                      );
+                    }
+                  }),
+                ),
+              ),
+            ],
           ),
         ),
       ),

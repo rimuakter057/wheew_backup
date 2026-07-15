@@ -776,6 +776,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
         gradient: AppColors.primaryBackgroundGradient,
       ),
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         backgroundColor: Colors.transparent,
         appBar: GroupMessageAppBar(
           roomId: widget.roomId,
@@ -785,6 +786,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
         ),
         body: SafeArea(
           top: true,
+          bottom: false,
           child: Column(
             children: [
               // ── Messages List ────────────────────────────────
@@ -865,17 +867,20 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
                 padding: EdgeInsets.only(bottom: ResponsiveHelper.height(8)),
                 child: GroupPresetMessages(controller: controller),
               ),
+
+              // ── Bottom: Input / Preset Widgets ──────────────────────
+              Container(
+                color: const Color(0xFFF1F5F9),
+                child: SafeArea(
+                  top: false,
+                  bottom: true,
+                  child: GroupMessageInput(
+                    roomId: widget.roomId,
+                    controller: controller,
+                  ),
+                ),
+              ),
             ],
-          ),
-        ),
-        bottomNavigationBar: Container(
-          color: const Color(0xFFF1F5F9),
-          child: SafeArea(
-            top: false,
-            child: GroupMessageInput(
-              roomId: widget.roomId,
-              controller: controller,
-            ),
           ),
         ),
       ),
