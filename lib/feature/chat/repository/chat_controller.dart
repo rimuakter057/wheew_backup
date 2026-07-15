@@ -526,9 +526,11 @@ class ChatController extends GetxController {
         }
         if (fetchedIds.isNotEmpty) {
           AppSocket.socket?.emit('message-read', {
+            'roomId': roomID.value,
             'messageIds': fetchedIds,
           });
           AppSocket.socket?.emit('message-seen', {
+            'roomId': roomID.value,
             'messageIds': fetchedIds,
           });
           debugPrint('📤 Emitted message-read/seen for all fetched incoming message IDs: $fetchedIds');
@@ -709,12 +711,14 @@ class ChatController extends GetxController {
 
     if (currentIds.isNotEmpty) {
       AppSocket.socket?.emit('message-read', {
+        'roomId': roomId,
         'messageIds': currentIds,
       });
       AppSocket.socket?.emit('message-seen', {
+        'roomId': roomId,
         'messageIds': currentIds,
       });
-      debugPrint('📤 Emitted message-read/seen for all local incoming message IDs: $currentIds');
+      debugPrint('📤 Emitted message-read/seen with roomId for all local incoming message IDs: $currentIds');
     }
   }
 
@@ -950,10 +954,27 @@ class ChatController extends GetxController {
 
 
       if (model.isMine == false && model.id != null) {
+        // ✅ message-received: User 2 a deliver hoyeche — roomId sahore server User 1-ke delivered status pathabe
         AppSocket.socket?.emit('message-received', {
+          'roomId': model.chatRoomId ?? roomID.value,
+          'messageId': model.id,
           'messageIds': [model.id],
         });
-        debugPrint('📨 message-received emitted: ${model.id}');
+        debugPrint('📨 message-received emitted with roomId: ${model.chatRoomId}');
+        // ✅ Ager kono screen-e acha mane read korchi
+        if (model.chatRoomId?.toString() == roomID.value.toString()) {
+          AppSocket.socket?.emit('message-read', {
+            'roomId': roomID.value,
+            'messageId': model.id,
+            'messageIds': [model.id],
+          });
+          AppSocket.socket?.emit('message-seen', {
+            'roomId': roomID.value,
+            'messageId': model.id,
+            'messageIds': [model.id],
+          });
+          debugPrint('📤 Emitted message-read/seen (user is on screen): ${model.id}');
+        }
       }
 
 
@@ -982,21 +1003,10 @@ class ChatController extends GetxController {
         debugPrint('✅ Added to message list');
       }
 
-      // ✅ Other user reply করলে = সে আমার message পড়েছে
-      // তাই আমার সব sent message isRead = true করে দাও (নীল ✓✓)
+      // ✅ Other user-er message current room-e asle:
+      // - server-e message-read already emit hoyeche upore
+      // - local-e amar sent messages blue tick kore daw (_markMySentMessagesAsRead)
       if (model.isMine == false && model.chatRoomId?.toString() == roomID.value.toString()) {
-        AppSocket.socket?.emit('message-read', {
-          'roomId': roomID.value,
-          'messageId': model.id,
-          'messageIds': [model.id],
-        });
-        AppSocket.socket?.emit('message-seen', {
-          'roomId': roomID.value,
-          'messageId': model.id,
-          'messageIds': [model.id],
-        });
-        debugPrint('📤 Emitted message-read/seen immediately for incoming message: ${model.id}');
-
         _markMySentMessagesAsRead();
         _playMessageSound();
       } else if (model.isMine == false) {
@@ -1156,7 +1166,37 @@ class ChatController extends GetxController {
           readMessageIds.add(messageId.toString());
           final index = userMessageList.indexWhere((m) => m.id?.toString() == messageId.toString());
           if (index != -1) {
-            userMessageList[index].isRead = true;
+            // ✅ Replace the whole object so GetX RxList detects the change
+            final old = userMessageList[index];
+            userMessageList[index] = Messages(
+              id: old.id,
+              chatRoomId: old.chatRoomId,
+              senderId: old.senderId,
+              receiverId: old.receiverId,
+              message: old.message,
+              type: old.type,
+              isRead: true,
+              isDelivered: old.isDelivered,
+              createdAt: old.createdAt,
+              updatedAt: old.updatedAt,
+              sender: old.sender,
+              receiver: old.receiver,
+              isMine: old.isMine,
+              fileUrl: old.fileUrl,
+              fileName: old.fileName,
+              fileSize: old.fileSize,
+              encryptionType: old.encryptionType,
+              encryptionVersion: old.encryptionVersion,
+              senderKeyId: old.senderKeyId,
+              receiverKeyId: old.receiverKeyId,
+              nonce: old.nonce,
+              fileMimeType: old.fileMimeType,
+              durationSeconds: old.durationSeconds,
+              waveform: old.waveform,
+              isDeletedForEveryone: old.isDeletedForEveryone,
+              deletedAt: old.deletedAt,
+              deletedById: old.deletedById,
+            );
             messageListUpdated = true;
           }
           final roomIndex = userChatList.indexWhere((room) => room.latestMessage?.id?.toString() == messageId.toString());
@@ -1170,7 +1210,37 @@ class ChatController extends GetxController {
       if (targetRoomId != null && targetRoomId.toString() == roomID.value.toString()) {
         for (int i = 0; i < userMessageList.length; i++) {
           if (userMessageList[i].isMine == true && userMessageList[i].isRead != true) {
-            userMessageList[i].isRead = true;
+            // ✅ Replace the whole object so GetX RxList detects the change
+            final old = userMessageList[i];
+            userMessageList[i] = Messages(
+              id: old.id,
+              chatRoomId: old.chatRoomId,
+              senderId: old.senderId,
+              receiverId: old.receiverId,
+              message: old.message,
+              type: old.type,
+              isRead: true,
+              isDelivered: old.isDelivered,
+              createdAt: old.createdAt,
+              updatedAt: old.updatedAt,
+              sender: old.sender,
+              receiver: old.receiver,
+              isMine: old.isMine,
+              fileUrl: old.fileUrl,
+              fileName: old.fileName,
+              fileSize: old.fileSize,
+              encryptionType: old.encryptionType,
+              encryptionVersion: old.encryptionVersion,
+              senderKeyId: old.senderKeyId,
+              receiverKeyId: old.receiverKeyId,
+              nonce: old.nonce,
+              fileMimeType: old.fileMimeType,
+              durationSeconds: old.durationSeconds,
+              waveform: old.waveform,
+              isDeletedForEveryone: old.isDeletedForEveryone,
+              deletedAt: old.deletedAt,
+              deletedById: old.deletedById,
+            );
             messageListUpdated = true;
           }
         }
@@ -1199,6 +1269,38 @@ class ChatController extends GetxController {
     AppSocket.socket?.on('messages-read', onReadCallback);
     AppSocket.socket?.on('message-seen', onReadCallback);
     AppSocket.socket?.on('messages-seen', onReadCallback);
+    // Extra event name variations the server might use
+    AppSocket.socket?.on('read-receipt', onReadCallback);
+    AppSocket.socket?.on('read_receipt', onReadCallback);
+    AppSocket.socket?.on('message_read', onReadCallback);
+    AppSocket.socket?.on('messages_read', onReadCallback);
+    AppSocket.socket?.on('messageRead', onReadCallback);
+    AppSocket.socket?.on('messagesRead', onReadCallback);
+    AppSocket.socket?.on('message-status', onReadCallback);
+
+    // 🔍 onAny: server যে event-ই পাঠাক, read-related data থাকলে handle করো
+    AppSocket.socket?.offAny();
+    AppSocket.socket?.onAny((event, data) {
+      // এমন events যেগুলো read status নয় সেগুলো skip করো
+      const skipEvents = {
+        'new-message', 'message-sent', 'message-delivered',
+        'message-received', 'user-typing', 'user-stopped-typing',
+        'group-user-typing', 'group-user-stopped-typing',
+        'connect', 'disconnect', 'error', 'unauthorized',
+        'message-deleted', 'group-message-deleted',
+      };
+      if (skipEvents.contains(event)) return;
+
+      // read-related keyword আছে কিনা check করো
+      final eventLower = event.toString().toLowerCase();
+      final bool isReadEvent = eventLower.contains('read') ||
+          eventLower.contains('seen') ||
+          eventLower.contains('receipt');
+      if (!isReadEvent) return;
+
+      debugPrint('🔍 [onAny] Read-related event: "$event" → $data');
+      onReadCallback(data);
+    });
   }
 
 
@@ -1209,7 +1311,37 @@ class ChatController extends GetxController {
     for (int i = 0; i < userMessageList.length; i++) {
       if (userMessageList[i].isMine == true &&
           userMessageList[i].isRead != true) {
-        userMessageList[i].isRead = true;
+        // ✅ Replace the whole object so GetX RxList triggers UI rebuild
+        final old = userMessageList[i];
+        userMessageList[i] = Messages(
+          id: old.id,
+          chatRoomId: old.chatRoomId,
+          senderId: old.senderId,
+          receiverId: old.receiverId,
+          message: old.message,
+          type: old.type,
+          isRead: true,
+          isDelivered: old.isDelivered,
+          createdAt: old.createdAt,
+          updatedAt: old.updatedAt,
+          sender: old.sender,
+          receiver: old.receiver,
+          isMine: old.isMine,
+          fileUrl: old.fileUrl,
+          fileName: old.fileName,
+          fileSize: old.fileSize,
+          encryptionType: old.encryptionType,
+          encryptionVersion: old.encryptionVersion,
+          senderKeyId: old.senderKeyId,
+          receiverKeyId: old.receiverKeyId,
+          nonce: old.nonce,
+          fileMimeType: old.fileMimeType,
+          durationSeconds: old.durationSeconds,
+          waveform: old.waveform,
+          isDeletedForEveryone: old.isDeletedForEveryone,
+          deletedAt: old.deletedAt,
+          deletedById: old.deletedById,
+        );
         changed = true;
       }
     }

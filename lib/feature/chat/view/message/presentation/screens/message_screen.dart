@@ -78,9 +78,9 @@ class _MessageScreenState extends State<MessageScreen> {
     chatController.initSocketListeners();
 
     if (_currentRoomId.isNotEmpty) {
+      // fetchInboxMessage এর ভেতরেই message-read socket emit হয়
+      // messages load হওয়ার পরে — তাই এখানে আলাদা markMessagesAsRead() দরকার নেই
       chatController.fetchInboxMessage(roomId: _currentRoomId, refresh: true);
-      // ✅ screen খুললেই সব message পড়া হিসেবে mark করো
-      chatController.markMessagesAsRead(roomId: _currentRoomId);
     }
 
     // ── Voice auto-send ──

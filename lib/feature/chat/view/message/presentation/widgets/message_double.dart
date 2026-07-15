@@ -41,9 +41,15 @@ class MessageBubble extends StatelessWidget {
 
   // ── type detection ──────────────────────────────────────────────────────────
 
-  bool get _isFileMessage => type == 'FILE' || (fileUrl != null && fileUrl!.isNotEmpty);
+  // Server থেকে type: 'FILE', 'VOICE', 'AUDIO' যেকোনো আসতে পারে
+  bool get _isVoiceType => type == 'VOICE' || type == 'AUDIO';
+
+  bool get _isFileMessage =>
+      type == 'FILE' || type == 'VOICE' || type == 'AUDIO' ||
+      (fileUrl != null && fileUrl!.isNotEmpty);
 
   bool get _isImage {
+    if (_isVoiceType) return false; // voice কে কখনো image হিসেবে treat করো না
     if (fileMimeType != null && fileMimeType!.startsWith('image/')) return true;
     final url = (fileUrl ?? '').toLowerCase();
     return url.endsWith('.png') || url.endsWith('.jpg') ||
@@ -51,16 +57,19 @@ class MessageBubble extends StatelessWidget {
   }
 
   bool get _isVideo {
+    if (_isVoiceType) return false;
     if (fileMimeType != null && fileMimeType!.startsWith('video/')) return true;
     final url = (fileUrl ?? '').toLowerCase();
     return url.endsWith('.mp4') || url.endsWith('.mov') || url.endsWith('.avi');
   }
 
   bool get _isAudio {
+    // type field directly বলছে VOICE/AUDIO
+    if (_isVoiceType) return true;
     if (fileMimeType != null && fileMimeType!.startsWith('audio/')) return true;
     final url = (fileUrl ?? '').toLowerCase();
     return url.endsWith('.mp3') || url.endsWith('.aac') ||
-        url.endsWith('.ogg') || url.endsWith('.m4a');
+        url.endsWith('.ogg') || url.endsWith('.m4a') || url.endsWith('.wav');
   }
 
   String get _fullUrl => ApiUrl.baseUrl + (fileUrl ?? '');
