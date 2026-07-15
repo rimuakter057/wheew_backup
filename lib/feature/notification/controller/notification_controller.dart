@@ -164,6 +164,12 @@ class NotificationController extends GetxController {
   RxBool isDeleting = false.obs;
   RxInt unreadCount = 0.obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    fetchNotifications(refresh: true);
+  }
+
   int _page = 1;
   final int _limit = 20;
   int _total = 0;
