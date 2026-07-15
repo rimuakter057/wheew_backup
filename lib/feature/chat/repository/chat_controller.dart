@@ -413,7 +413,6 @@ class ChatController extends GetxController {
     errorListenMessage();
     newMessage();
     listenMessageDelivered();
-    listenMessageRead();
     listenTypingEvents();
     listenDeleteMessageEvents();
 
@@ -425,15 +424,11 @@ class ChatController extends GetxController {
   RxMap<String, bool> inboxTypingMap = <String, bool>{}.obs;
 
   /// get all message list ================================================
-  final RxSet<String> readMessageIds = <String>{}.obs;
   final RxSet<String> deliveredMessageIds = <String>{}.obs;
 
   void _applyStoredStatus(Messages message) {
     if (message.id != null) {
       final idStr = message.id!.toString();
-      if (readMessageIds.contains(idStr)) {
-        message.isRead = true;
-      }
       if (deliveredMessageIds.contains(idStr)) {
         message.isDelivered = true;
       }
@@ -516,28 +511,7 @@ class ChatController extends GetxController {
           pageCount++;
         }
 
-        final List<String> fetchedIds = [];
-        if (data.messages != null) {
-          for (final msg in data.messages!) {
-            if (msg.isMine == false && msg.id != null) {
-              fetchedIds.add(msg.id!.toString());
-            }
-          }
-        }
-        if (fetchedIds.isNotEmpty) {
-          AppSocket.socket?.emit('message-read', {
-            'roomId': roomID.value,
-            'messageIds': fetchedIds,
-          });
-          AppSocket.socket?.emit('message-seen', {
-            'roomId': roomID.value,
-            'messageIds': fetchedIds,
-          });
-          debugPrint('📤 Emitted message-read/seen for all fetched incoming message IDs: $fetchedIds');
-        }
-
-        // ✅ Backend fetch হলে server automatically is_read = true করে দেয়
-        // তাই local UI-তেও সাথে সাথে unread badge সরিয়ে দিচ্ছি
+        // ✅ Backend fetch হলে local UI-তেও unread badge সরিয়ে দিচ্ছি
         _resetUnreadLocally(roomID.value);
       }
     } catch (e) {
@@ -690,37 +664,47 @@ class ChatController extends GetxController {
   }
 
   Future<void> sendNewListenMessage() async {
+    AppSocket.socket?.off('message-sent');
     AppSocket.onEvent('message-sent', (value) {
-      debugPrint('📤 Message sent confirmation: $value');
-      // Optional: Server confirmation পেলে কিছু করতে চাইলে
+      debugPrint('📥 [SOCKET] EVENT RECEIVED: "message-sent": $value');
+
+      if (value != null) {
+        try {
+          final confirmed = Messages.fromJson(value);
+          confirmed.isMine = true;
+          _applyStoredStatus(confirmed);
+
+          // Find the temp message with the same message text
+          final tempIndex = userMessageList.indexWhere(
+            (m) => (m.id?.startsWith('temp_') ?? false) && m.message == confirmed.message,
+          );
+
+          if (tempIndex != -1) {
+            userMessageList[tempIndex] = confirmed;
+            userMessageList.refresh();
+            debugPrint('✅ Temp message replaced by "message-sent" event: ${confirmed.id}');
+          } else {
+            // If not found (maybe timing), let's check duplicate and insert it
+            final alreadyExists = userMessageList.any((m) => m.id == confirmed.id);
+            if (!alreadyExists && confirmed.chatRoomId?.toString() == roomID.value.toString()) {
+              userMessageList.insert(0, confirmed);
+              userMessageList.refresh();
+              debugPrint('✅ Message inserted by "message-sent" event: ${confirmed.id}');
+            }
+          }
+
+          if (value['chatRoom_id'] != null) {
+            roomID.value = value['chatRoom_id'].toString();
+          }
+        } catch (e) {
+          debugPrint("⚠️ message-sent event parse failed: $e");
+        }
+      }
     });
   }
 
   // ✅ Chat screen খুললে locally unread badge reset করো
   // (backend fetch-এই automatically is_read = true হয় — কোনো socket event দরকার নেই)
-  void markMessagesAsRead({required String roomId}) {
-    if (roomId.isEmpty) return;
-    _resetUnreadLocally(roomId);
-
-    final List<String> currentIds = [];
-    for (final msg in userMessageList) {
-      if (msg.isMine == false && msg.id != null) {
-        currentIds.add(msg.id!.toString());
-      }
-    }
-
-    if (currentIds.isNotEmpty) {
-      AppSocket.socket?.emit('message-read', {
-        'roomId': roomId,
-        'messageIds': currentIds,
-      });
-      AppSocket.socket?.emit('message-seen', {
-        'roomId': roomId,
-        'messageIds': currentIds,
-      });
-      debugPrint('📤 Emitted message-read/seen with roomId for all local incoming message IDs: $currentIds');
-    }
-  }
 
   // ┉┉ Internal helper ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉
   void _resetUnreadLocally(String roomId) {
@@ -941,114 +925,137 @@ class ChatController extends GetxController {
   // }
 
 
+  Future<void> _handleIncomingMessage(Messages model) async {
+    _applyStoredStatus(model);
+
+    final String myId = await SharePrefsHelper.getString(AppConst.userID);
+    model.isMine = model.senderId == myId;
+
+    if (model.isMine == false && model.id != null) {
+      // ✅ message-received: User 2 has received it — emit it to notify original sender
+      AppSocket.socket?.emit('message-received', {
+        'roomId': model.chatRoomId ?? roomID.value,
+        'messageId': model.id,
+        'messageIds': [model.id],
+      });
+      debugPrint('📨 message-received emitted with roomId: ${model.chatRoomId}');
+    }
+
+    // ✅ temp message replace check
+    final tempIndex = userMessageList.indexWhere(
+          (m) => (m.id?.startsWith('temp_') ?? false) && m.message == model.message,
+    );
+    if (tempIndex != -1) {
+      userMessageList[tempIndex] = model;
+      userMessageList.refresh();
+      debugPrint('✅ Temp message replaced by broadcast');
+      updateChatRoomInList(model);
+      return;
+    }
+
+    // ✅ duplicate check
+    final alreadyExists = userMessageList.any((m) => m.id == model.id);
+    if (alreadyExists) {
+      debugPrint('⚠️ Duplicate message ignored: ${model.id}');
+      return;
+    }
+
+    if (model.chatRoomId?.toString() == roomID.value.toString()) {
+      userMessageList.insert(0, model);
+      debugPrint('✅ Added to message list');
+    }
+
+    if (model.isMine == false) {
+      _playMessageSound();
+    }
+
+    updateChatRoomInList(model);
+  }
+
+  void _updateMessageDeliveryStatus(String messageId, bool isDelivered) {
+    debugPrint('ℹ️ [DEBUG] _updateMessageDeliveryStatus called for target ID: "$messageId"');
+    debugPrint('ℹ️ [DEBUG] Messages in userMessageList: ${userMessageList.map((m) => '"${m.id}"').toList()}');
+
+    if (isDelivered) {
+      deliveredMessageIds.add(messageId);
+    }
+
+    final index = userMessageList.indexWhere((m) => m.id?.toString() == messageId);
+    debugPrint('ℹ️ [DEBUG] Index found: $index');
+
+    if (index != -1) {
+      final old = userMessageList[index];
+      userMessageList[index] = Messages(
+        id: old.id,
+        chatRoomId: old.chatRoomId,
+        senderId: old.senderId,
+        receiverId: old.receiverId,
+        message: old.message,
+        type: old.type,
+        isRead: old.isRead,
+        isDelivered: isDelivered,
+        createdAt: old.createdAt,
+        updatedAt: old.updatedAt,
+        sender: old.sender,
+        receiver: old.receiver,
+        isMine: old.isMine,
+        fileUrl: old.fileUrl,
+        fileName: old.fileName,
+        fileSize: old.fileSize,
+        encryptionType: old.encryptionType,
+        encryptionVersion: old.encryptionVersion,
+        senderKeyId: old.senderKeyId,
+        receiverKeyId: old.receiverKeyId,
+        nonce: old.nonce,
+        fileMimeType: old.fileMimeType,
+        durationSeconds: old.durationSeconds,
+        waveform: old.waveform,
+        isDeletedForEveryone: old.isDeletedForEveryone,
+        deletedAt: old.deletedAt,
+        deletedById: old.deletedById,
+      );
+      userMessageList.refresh();
+      debugPrint('✅ Chat screen message delivered status updated: $messageId (delivered: $isDelivered)');
+    } else {
+      debugPrint('⚠️ Chat screen message with ID "$messageId" not found in userMessageList.');
+    }
+
+    final roomIndex = userChatList.indexWhere((room) => room.latestMessage?.id?.toString() == messageId);
+    if (roomIndex != -1) {
+      userChatList[roomIndex].latestMessage?.isDelivered = isDelivered;
+      userChatList.refresh();
+      debugPrint('✅ Chat list room latestMessage delivered status updated: $messageId');
+    }
+  }
+
   Future<void> newMessage() async {
     AppSocket.socket?.off('new-message');
 
     AppSocket.socket?.on('new-message', (value) async {
-      debugPrint('🔔 NEW MESSAGE RECEIVED: $value');
+      debugPrint('🔔 NEW-MESSAGE EVENT RECEIVED: $value');
       Messages model = Messages.fromJson(value);
-      _applyStoredStatus(model);
-
-      final String myId = await SharePrefsHelper.getString(AppConst.userID);
-      model.isMine = model.senderId == myId;
-
-
-      if (model.isMine == false && model.id != null) {
-        // ✅ message-received: User 2 a deliver hoyeche — roomId sahore server User 1-ke delivered status pathabe
-        AppSocket.socket?.emit('message-received', {
-          'roomId': model.chatRoomId ?? roomID.value,
-          'messageId': model.id,
-          'messageIds': [model.id],
-        });
-        debugPrint('📨 message-received emitted with roomId: ${model.chatRoomId}');
-        // ✅ Ager kono screen-e acha mane read korchi
-        if (model.chatRoomId?.toString() == roomID.value.toString()) {
-          AppSocket.socket?.emit('message-read', {
-            'roomId': roomID.value,
-            'messageId': model.id,
-            'messageIds': [model.id],
-          });
-          AppSocket.socket?.emit('message-seen', {
-            'roomId': roomID.value,
-            'messageId': model.id,
-            'messageIds': [model.id],
-          });
-          debugPrint('📤 Emitted message-read/seen (user is on screen): ${model.id}');
-        }
-      }
-
-
-
-      // ✅ আগে temp message থাকলে কিনা চেক করো (sender নিজে পেলে)
-      final tempIndex = userMessageList.indexWhere(
-            (m) => (m.id?.startsWith('temp_') ?? false) && m.message == model.message,
-      );
-      if (tempIndex != -1) {
-        userMessageList[tempIndex] = model;
-        userMessageList.refresh();
-        debugPrint('✅ Temp message replaced by broadcast');
-        updateChatRoomInList(model);
-        return;
-      }
-
-      // ✅ real ID দিয়ে duplicate চেক
-      final alreadyExists = userMessageList.any((m) => m.id == model.id);
-      if (alreadyExists) {
-        debugPrint('⚠️ Duplicate message ignored: ${model.id}');
-        return;
-      }
-
-      if (model.chatRoomId?.toString() == roomID.value.toString()) {
-        userMessageList.insert(0, model);
-        debugPrint('✅ Added to message list');
-      }
-
-      // ✅ Other user-er message current room-e asle:
-      // - server-e message-read already emit hoyeche upore
-      // - local-e amar sent messages blue tick kore daw (_markMySentMessagesAsRead)
-      if (model.isMine == false && model.chatRoomId?.toString() == roomID.value.toString()) {
-        _markMySentMessagesAsRead();
-        _playMessageSound();
-      } else if (model.isMine == false) {
-        _playMessageSound();
-      }
-
-      updateChatRoomInList(model);
+      await _handleIncomingMessage(model);
     });
   }
 
-
-
-
-
-
   void listenMessageDelivered() {
     AppSocket.socket?.off('message-delivered');
-    AppSocket.socket?.off('message-received');
 
-    final onDeliveredCallback = (value) {
-      debugPrint('📦 message-delivered/received event received: $value');
+    AppSocket.socket?.on('message-delivered', (value) async {
+      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      debugPrint('📥 [SOCKET] EVENT RECEIVED: "message-delivered"');
+      debugPrint('Payload: $value');
+      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
+      // Handle it as a delivery status update
       List<String> deliveredIds = [];
-      bool isDelivered = true; // default to true if the event fires
-      bool isRead = false;
-      bool hasReadField = false;
+      bool isDelivered = true;
 
       if (value is Map) {
         isDelivered = value['is_delivered'] ?? value['isDelivered'] ?? true;
-        if (value['is_read'] != null || value['isRead'] != null) {
-          isRead = value['is_read'] ?? value['isRead'] ?? false;
-          hasReadField = true;
-        }
-        if (value['id'] != null) {
-          deliveredIds.add(value['id'].toString());
-        }
-        if (value['messageId'] != null) {
-          deliveredIds.add(value['messageId'].toString());
-        }
-        if (value['message_id'] != null) {
-          deliveredIds.add(value['message_id'].toString());
-        }
+        if (value['id'] != null) deliveredIds.add(value['id'].toString());
+        if (value['messageId'] != null) deliveredIds.add(value['messageId'].toString());
+        if (value['message_id'] != null) deliveredIds.add(value['message_id'].toString());
         if (value['messageIds'] != null) {
           final ids = value['messageIds'];
           if (ids is List) {
@@ -1068,326 +1075,10 @@ class ChatController extends GetxController {
         deliveredIds.add(value);
       }
 
-      if (deliveredIds.isEmpty) {
-        debugPrint('⚠️ No message IDs resolved from message-delivered event: $value');
-        return;
-      }
-
-      debugPrint('✅ Resolved delivered message IDs: $deliveredIds');
-
-      bool messageListUpdated = false;
-      bool chatListUpdated = false;
-
       for (final messageId in deliveredIds) {
-        // Update userMessageList (chat screen UI)
-        final index = userMessageList.indexWhere((m) => m.id?.toString() == messageId.toString());
-        if (index != -1) {
-          // ✅ Replace the whole object so GetX RxList detects the change and updates UI
-          final old = userMessageList[index];
-          userMessageList[index] = Messages(
-            id: old.id,
-            chatRoomId: old.chatRoomId,
-            senderId: old.senderId,
-            receiverId: old.receiverId,
-            message: old.message,
-            type: old.type,
-            isRead: hasReadField ? isRead : old.isRead,
-            isDelivered: isDelivered,
-            createdAt: old.createdAt,
-            updatedAt: old.updatedAt,
-            sender: old.sender,
-            receiver: old.receiver,
-            isMine: old.isMine,
-            fileUrl: old.fileUrl,
-            fileName: old.fileName,
-            fileSize: old.fileSize,
-            encryptionType: old.encryptionType,
-            encryptionVersion: old.encryptionVersion,
-            senderKeyId: old.senderKeyId,
-            receiverKeyId: old.receiverKeyId,
-            nonce: old.nonce,
-            fileMimeType: old.fileMimeType,
-            durationSeconds: old.durationSeconds,
-            waveform: old.waveform,
-            isDeletedForEveryone: old.isDeletedForEveryone,
-            deletedAt: old.deletedAt,
-            deletedById: old.deletedById,
-          );
-          messageListUpdated = true;
-          debugPrint('✅ Chat screen message delivered/read status updated: $messageId (delivered: $isDelivered, read: ${userMessageList[index].isRead})');
-        }
-
-        // Update userChatList (chat list screen UI)
-        final roomIndex = userChatList.indexWhere((room) => room.latestMessage?.id?.toString() == messageId.toString());
-        if (roomIndex != -1) {
-          userChatList[roomIndex].latestMessage?.isDelivered = isDelivered;
-          if (hasReadField) {
-            userChatList[roomIndex].latestMessage?.isRead = isRead;
-          }
-          chatListUpdated = true;
-          debugPrint('✅ Chat list room latestMessage delivered status updated: $messageId');
-        }
+        _updateMessageDeliveryStatus(messageId, isDelivered);
       }
-
-      if (messageListUpdated) {
-        userMessageList.refresh(); // ✅ UI instantly update
-      }
-
-      if (chatListUpdated) {
-        userChatList.refresh(); // ✅ Chat list UI instantly update
-      }
-    };
-
-    AppSocket.socket?.on('message-delivered', onDeliveredCallback);
-    AppSocket.socket?.on('message-received', onDeliveredCallback);
-  }
-
-  void listenMessageRead() {
-    AppSocket.socket?.off('message-read');
-    AppSocket.socket?.off('messages-read');
-    AppSocket.socket?.off('message-seen');
-    AppSocket.socket?.off('messages-seen');
-
-    final onReadCallback = (value) {
-      debugPrint('📦 message-read/seen event received: $value');
-
-      String? targetRoomId;
-      List<String> readIds = [];
-
-      if (value is Map) {
-        if (value['roomId'] != null ||
-            value['chatRoomId'] != null ||
-            value['chatRoom_id'] != null ||
-            value['room_id'] != null ||
-            value['roomID'] != null ||
-            value['groupChatRoomId'] != null) {
-          targetRoomId = (value['roomId'] ??
-                  value['chatRoomId'] ??
-                  value['chatRoom_id'] ??
-                  value['room_id'] ??
-                  value['roomID'] ??
-                  value['groupChatRoomId'])
-              .toString();
-        }
-        if (value['id'] != null) {
-          readIds.add(value['id'].toString());
-        }
-        if (value['messageId'] != null) {
-          readIds.add(value['messageId'].toString());
-        }
-        if (value['message_id'] != null) {
-          readIds.add(value['message_id'].toString());
-        }
-        if (value['messageIds'] != null) {
-          final ids = value['messageIds'];
-          if (ids is List) {
-            readIds.addAll(ids.map((e) => e.toString()));
-          }
-        }
-      } else if (value is List) {
-        for (final item in value) {
-          if (item is Map) {
-            final id = item['id'] ?? item['messageId'];
-            if (id != null) readIds.add(id.toString());
-          } else if (item != null) {
-            readIds.add(item.toString());
-          }
-        }
-      } else if (value is String) {
-        readIds.add(value);
-      }
-
-      bool messageListUpdated = false;
-      bool chatListUpdated = false;
-
-      if (readIds.isNotEmpty) {
-        for (final messageId in readIds) {
-          readMessageIds.add(messageId.toString());
-          final index = userMessageList.indexWhere((m) => m.id?.toString() == messageId.toString());
-          if (index != -1) {
-            // ✅ Replace the whole object so GetX RxList detects the change
-            final old = userMessageList[index];
-            userMessageList[index] = Messages(
-              id: old.id,
-              chatRoomId: old.chatRoomId,
-              senderId: old.senderId,
-              receiverId: old.receiverId,
-              message: old.message,
-              type: old.type,
-              isRead: true,
-              isDelivered: old.isDelivered,
-              createdAt: old.createdAt,
-              updatedAt: old.updatedAt,
-              sender: old.sender,
-              receiver: old.receiver,
-              isMine: old.isMine,
-              fileUrl: old.fileUrl,
-              fileName: old.fileName,
-              fileSize: old.fileSize,
-              encryptionType: old.encryptionType,
-              encryptionVersion: old.encryptionVersion,
-              senderKeyId: old.senderKeyId,
-              receiverKeyId: old.receiverKeyId,
-              nonce: old.nonce,
-              fileMimeType: old.fileMimeType,
-              durationSeconds: old.durationSeconds,
-              waveform: old.waveform,
-              isDeletedForEveryone: old.isDeletedForEveryone,
-              deletedAt: old.deletedAt,
-              deletedById: old.deletedById,
-            );
-            messageListUpdated = true;
-          }
-          final roomIndex = userChatList.indexWhere((room) => room.latestMessage?.id?.toString() == messageId.toString());
-          if (roomIndex != -1) {
-            userChatList[roomIndex].latestMessage?.isRead = true;
-            chatListUpdated = true;
-          }
-        }
-      }
-
-      if (targetRoomId != null && targetRoomId.toString() == roomID.value.toString()) {
-        for (int i = 0; i < userMessageList.length; i++) {
-          if (userMessageList[i].isMine == true && userMessageList[i].isRead != true) {
-            // ✅ Replace the whole object so GetX RxList detects the change
-            final old = userMessageList[i];
-            userMessageList[i] = Messages(
-              id: old.id,
-              chatRoomId: old.chatRoomId,
-              senderId: old.senderId,
-              receiverId: old.receiverId,
-              message: old.message,
-              type: old.type,
-              isRead: true,
-              isDelivered: old.isDelivered,
-              createdAt: old.createdAt,
-              updatedAt: old.updatedAt,
-              sender: old.sender,
-              receiver: old.receiver,
-              isMine: old.isMine,
-              fileUrl: old.fileUrl,
-              fileName: old.fileName,
-              fileSize: old.fileSize,
-              encryptionType: old.encryptionType,
-              encryptionVersion: old.encryptionVersion,
-              senderKeyId: old.senderKeyId,
-              receiverKeyId: old.receiverKeyId,
-              nonce: old.nonce,
-              fileMimeType: old.fileMimeType,
-              durationSeconds: old.durationSeconds,
-              waveform: old.waveform,
-              isDeletedForEveryone: old.isDeletedForEveryone,
-              deletedAt: old.deletedAt,
-              deletedById: old.deletedById,
-            );
-            messageListUpdated = true;
-          }
-        }
-      }
-
-      if (targetRoomId != null) {
-        final roomIndex = userChatList.indexWhere((room) => room.id?.toString() == targetRoomId.toString());
-        if (roomIndex != -1) {
-          userChatList[roomIndex].latestMessage?.isRead = true;
-          userChatList[roomIndex].unreadCount = 0;
-          chatListUpdated = true;
-        }
-      }
-
-      if (messageListUpdated) {
-        userMessageList.refresh();
-        debugPrint('✅ Chat screen messages marked as read via socket event');
-      }
-      if (chatListUpdated) {
-        userChatList.refresh();
-        debugPrint('✅ Chat list room marked as read via socket event');
-      }
-    };
-
-    AppSocket.socket?.on('message-read', onReadCallback);
-    AppSocket.socket?.on('messages-read', onReadCallback);
-    AppSocket.socket?.on('message-seen', onReadCallback);
-    AppSocket.socket?.on('messages-seen', onReadCallback);
-    // Extra event name variations the server might use
-    AppSocket.socket?.on('read-receipt', onReadCallback);
-    AppSocket.socket?.on('read_receipt', onReadCallback);
-    AppSocket.socket?.on('message_read', onReadCallback);
-    AppSocket.socket?.on('messages_read', onReadCallback);
-    AppSocket.socket?.on('messageRead', onReadCallback);
-    AppSocket.socket?.on('messagesRead', onReadCallback);
-    AppSocket.socket?.on('message-status', onReadCallback);
-
-    // 🔍 onAny: server যে event-ই পাঠাক, read-related data থাকলে handle করো
-    AppSocket.socket?.offAny();
-    AppSocket.socket?.onAny((event, data) {
-      // এমন events যেগুলো read status নয় সেগুলো skip করো
-      const skipEvents = {
-        'new-message', 'message-sent', 'message-delivered',
-        'message-received', 'user-typing', 'user-stopped-typing',
-        'group-user-typing', 'group-user-stopped-typing',
-        'connect', 'disconnect', 'error', 'unauthorized',
-        'message-deleted', 'group-message-deleted',
-      };
-      if (skipEvents.contains(event)) return;
-
-      // read-related keyword আছে কিনা check করো
-      final eventLower = event.toString().toLowerCase();
-      final bool isReadEvent = eventLower.contains('read') ||
-          eventLower.contains('seen') ||
-          eventLower.contains('receipt');
-      if (!isReadEvent) return;
-
-      debugPrint('🔍 [onAny] Read-related event: "$event" → $data');
-      onReadCallback(data);
     });
-  }
-
-
-  // ✅ আমি যে room-এ আছি সেখানে other user reply করলে
-  // আমার সব sent message-এর isRead = true করো → নীল ✓✓
-  void _markMySentMessagesAsRead() {
-    bool changed = false;
-    for (int i = 0; i < userMessageList.length; i++) {
-      if (userMessageList[i].isMine == true &&
-          userMessageList[i].isRead != true) {
-        // ✅ Replace the whole object so GetX RxList triggers UI rebuild
-        final old = userMessageList[i];
-        userMessageList[i] = Messages(
-          id: old.id,
-          chatRoomId: old.chatRoomId,
-          senderId: old.senderId,
-          receiverId: old.receiverId,
-          message: old.message,
-          type: old.type,
-          isRead: true,
-          isDelivered: old.isDelivered,
-          createdAt: old.createdAt,
-          updatedAt: old.updatedAt,
-          sender: old.sender,
-          receiver: old.receiver,
-          isMine: old.isMine,
-          fileUrl: old.fileUrl,
-          fileName: old.fileName,
-          fileSize: old.fileSize,
-          encryptionType: old.encryptionType,
-          encryptionVersion: old.encryptionVersion,
-          senderKeyId: old.senderKeyId,
-          receiverKeyId: old.receiverKeyId,
-          nonce: old.nonce,
-          fileMimeType: old.fileMimeType,
-          durationSeconds: old.durationSeconds,
-          waveform: old.waveform,
-          isDeletedForEveryone: old.isDeletedForEveryone,
-          deletedAt: old.deletedAt,
-          deletedById: old.deletedById,
-        );
-        changed = true;
-      }
-    }
-    if (changed) {
-      userMessageList.refresh(); // GetX UI trigger → bubble তে নীল tick
-      debugPrint('✅ My sent messages marked as read (they replied)');
-    }
   }
 
 
