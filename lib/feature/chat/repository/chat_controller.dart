@@ -1031,9 +1031,15 @@ class ChatController extends GetxController {
 
       List<String> deliveredIds = [];
       bool isDelivered = true; // default to true if the event fires
+      bool isRead = false;
+      bool hasReadField = false;
 
       if (value is Map) {
         isDelivered = value['is_delivered'] ?? value['isDelivered'] ?? true;
+        if (value['is_read'] != null || value['isRead'] != null) {
+          isRead = value['is_read'] ?? value['isRead'] ?? false;
+          hasReadField = true;
+        }
         if (value['id'] != null) {
           deliveredIds.add(value['id'].toString());
         }
@@ -1076,15 +1082,48 @@ class ChatController extends GetxController {
         // Update userMessageList (chat screen UI)
         final index = userMessageList.indexWhere((m) => m.id?.toString() == messageId.toString());
         if (index != -1) {
-          userMessageList[index].isDelivered = isDelivered;
+          // ✅ Replace the whole object so GetX RxList detects the change and updates UI
+          final old = userMessageList[index];
+          userMessageList[index] = Messages(
+            id: old.id,
+            chatRoomId: old.chatRoomId,
+            senderId: old.senderId,
+            receiverId: old.receiverId,
+            message: old.message,
+            type: old.type,
+            isRead: hasReadField ? isRead : old.isRead,
+            isDelivered: isDelivered,
+            createdAt: old.createdAt,
+            updatedAt: old.updatedAt,
+            sender: old.sender,
+            receiver: old.receiver,
+            isMine: old.isMine,
+            fileUrl: old.fileUrl,
+            fileName: old.fileName,
+            fileSize: old.fileSize,
+            encryptionType: old.encryptionType,
+            encryptionVersion: old.encryptionVersion,
+            senderKeyId: old.senderKeyId,
+            receiverKeyId: old.receiverKeyId,
+            nonce: old.nonce,
+            fileMimeType: old.fileMimeType,
+            durationSeconds: old.durationSeconds,
+            waveform: old.waveform,
+            isDeletedForEveryone: old.isDeletedForEveryone,
+            deletedAt: old.deletedAt,
+            deletedById: old.deletedById,
+          );
           messageListUpdated = true;
-          debugPrint('✅ Chat screen message delivered status updated: $messageId');
+          debugPrint('✅ Chat screen message delivered/read status updated: $messageId (delivered: $isDelivered, read: ${userMessageList[index].isRead})');
         }
 
         // Update userChatList (chat list screen UI)
         final roomIndex = userChatList.indexWhere((room) => room.latestMessage?.id?.toString() == messageId.toString());
         if (roomIndex != -1) {
           userChatList[roomIndex].latestMessage?.isDelivered = isDelivered;
+          if (hasReadField) {
+            userChatList[roomIndex].latestMessage?.isRead = isRead;
+          }
           chatListUpdated = true;
           debugPrint('✅ Chat list room latestMessage delivered status updated: $messageId');
         }
