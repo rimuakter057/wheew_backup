@@ -62,4 +62,17 @@ class ParkingRepository {
       },
     );
   }
+
+  Future<http.Response> setParkingModeIdle({
+    required double latitude,
+    required double longitude,
+  }) async {
+    return await ApiClient.postData(
+      uri: '/park-relay/parking-mode/idle',
+      body: {
+        'latitude': latitude,
+        'longitude': longitude,
+      },
+    );
+  }
 }

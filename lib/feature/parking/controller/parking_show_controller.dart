@@ -402,13 +402,25 @@ class ParkingShowController extends GetxController {
 
     isLoading.value = true;
     try {
-      _logger.i('=== YES CLICK -> POST /park-relay/handoffs ===\n'
+      _logger.i('=== YES CLICK -> 2 API CALLS ===\n'
+          '1. POST /park-relay/handoffs\n'
+          '2. POST /park-relay/parking-mode/idle\n'
           'body: {"latitude": $lat, "longitude": $lng}');
-      final response =
+
+      // Call 1: Handoff
+      final responseHandoff =
       await _repository.createHandoff(latitude: lat, longitude: lng);
-      _logger.d('createHandoff status: ${response.statusCode}\n'
-          'body: ${response.body}');
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      _logger.d('createHandoff status: ${responseHandoff.statusCode}\n'
+          'body: ${responseHandoff.body}');
+
+      // Call 2: Idle mode
+      final responseIdle =
+      await _repository.setParkingModeIdle(latitude: lat, longitude: lng);
+      _logger.d('setParkingModeIdle status: ${responseIdle.statusCode}\n'
+          'body: ${responseIdle.body}');
+
+      if ((responseHandoff.statusCode == 200 || responseHandoff.statusCode == 201) &&
+          (responseIdle.statusCode == 200 || responseIdle.statusCode == 201)) {
         _showMessage(
             'Parking spot handoff reported successfully!', isError: false);
         if (mapController != null) {
@@ -417,15 +429,14 @@ class ParkingShowController extends GetxController {
           );
         }
       } else {
-        String msg = 'Failed to record spot handoff';
-        try {
-          final decoded = jsonDecode(response.body);
-          final map = _asMap(decoded);
-          if (map?['message'] != null) {
-            msg = map!['message'].toString();
-          }
-        } catch (_) {}
-        _showMessage(msg, isError: true);
+        String msg = '';
+        if (responseHandoff.statusCode != 200 && responseHandoff.statusCode != 201) {
+          msg += 'Failed to record spot handoff. ';
+        }
+        if (responseIdle.statusCode != 200 && responseIdle.statusCode != 201) {
+          msg += 'Failed to set parking mode to idle.';
+        }
+        _showMessage(msg.trim(), isError: true);
       }
     } catch (e) {
       _showMessage('Network error reporting spot handoff: $e', isError: true);

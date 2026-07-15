@@ -7,7 +7,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:platchatapp/feature/map/controller/map_controller.dart';
 import 'package:platchatapp/feature/map/model/saved_parking_model.dart';
-import 'package:platchatapp/feature/map/presentation/widgets/drop_pin_button.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_initial_shimmer.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_loading_banners.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_type_dropdown.dart';
@@ -21,7 +20,6 @@ import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:platchatapp/utils/toast_message/toast_message.dart';
 
 import '../widgets/location_of_promt.dart';
-import '../widgets/parking_location_card.dart';
 import '../widgets/picking-location_banner.dart';
 
 /// Which flow triggered "pick on map" mode, so we know which UI to
@@ -194,6 +192,11 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     }
   }
 
+  // ══════════════════════════════════════════════════════════════════════
+  // FLOW 1 — "Report a parking spot" (ParkingInfoDialog: free/paid/electric/
+  //          disabled facility) → GET fetchParkingReport / POST addParking
+  // ══════════════════════════════════════════════════════════════════════
+
   void _toggleParkingPin() {
     HapticFeedback.mediumImpact();
     _pickedLocation = null;
@@ -262,6 +265,10 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     );
   }
 
+  // ══════════════════════════════════════════════════════════════════════
+  // FLOW 2 — "Save my parking" (bottom sheet: FREE/PAID + duration) →
+  //          GET fetchMySavedParking / POST saveMyParking
+  // ══════════════════════════════════════════════════════════════════════
 
   void _showSavedParkingDetailsSheet(SavedParkingModel parking) {
     showModalBottomSheet(
@@ -312,9 +319,10 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                 ],
               ),
               const SizedBox(height: 20),
-              const Divider(),
-              const SizedBox(height: 16),
+              // const Divider(),
+              // const SizedBox(height: 16),
 
+              /*
               _buildDetailRow(Icons.gps_fixed, 'Accuracy',
                   '${parking.accuracy?.toStringAsFixed(1) ?? "10"} m'),
               const SizedBox(height: 12),
@@ -330,39 +338,35 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                     ? _formatDateTime(parking.createdAt!)
                     : 'N/A',
               ),
+              */
 
-              if (parking.parkingSession != null) ...[
-                const SizedBox(height: 12),
-                const Divider(),
-                const SizedBox(height: 12),
-                _buildDetailRow(
-                  Icons.attach_money_rounded,
-                  'Parking Type',
-                  parking.parkingSession!.costType ?? 'N/A',
-                ),
-                const SizedBox(height: 12),
-                _buildDetailRow(
-                  Icons.timer_rounded,
-                  'Duration',
-                  parking.parkingSession!.durationMin != null
-                      ? '${parking.parkingSession!.durationMin} mins'
-                      : 'N/A',
-                ),
-                const SizedBox(height: 12),
-                _buildDetailRow(
-                  Icons.info_outline_rounded,
-                  'Session Status',
-                  parking.parkingSession!.status ?? 'N/A',
-                ),
-                if (parking.parkingSession!.expiresAt != null) ...[
-                  const SizedBox(height: 12),
-                  _buildDetailRow(
-                    Icons.event_busy_rounded,
-                    'Expires At',
-                    _formatDateTime(parking.parkingSession!.expiresAt!),
-                  ),
-                ],
-              ],
+              _buildDetailRow(
+                Icons.attach_money_rounded,
+                'Parking Type',
+                parking.costType ?? parking.parkingSession?.costType ?? 'FREE',
+              ),
+              const SizedBox(height: 12),
+              _buildDetailRow(
+                Icons.timer_rounded,
+                'Duration',
+                (parking.durationMin ?? parking.parkingSession?.durationMin) != null
+                    ? '${parking.durationMin ?? parking.parkingSession!.durationMin} mins'
+                    : 'N/A',
+              ),
+              const SizedBox(height: 12),
+              _buildDetailRow(
+                Icons.info_outline_rounded,
+                'Session Status',
+                parking.parkingSession?.status ?? ((parking.costType ?? parking.parkingSession?.costType) == 'PAID' ? 'ACTIVE' : 'N/A'),
+              ),
+              const SizedBox(height: 12),
+              _buildDetailRow(
+                Icons.event_busy_rounded,
+                'Expires At',
+                (parking.expiresAt ?? parking.parkingSession?.expiresAt) != null
+                    ? _formatDateTime(parking.expiresAt ?? parking.parkingSession!.expiresAt!)
+                    : 'N/A',
+              ),
 
               const SizedBox(height: 24),
 
@@ -612,7 +616,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                             }
                           },
                           decoration: InputDecoration(
-                            hintText: 'Duration (minutes)',
+                            hintText: 'Duration (min. 15 minutes)',
                             filled: true,
                             fillColor: const Color(0xFFF4F6FB),
                             errorText:
