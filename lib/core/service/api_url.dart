@@ -99,6 +99,9 @@ class ApiUrl {
   static const String createPin = "/parking-report";
  // static const String createPin = "/parking-report";
   static const String addParking = '/parking-report/spot';
+  static const String saveParking = '/park-relay/saved-parking';
+  static const String getMySavedParking = '/park-relay/saved-parking/me';
+  static const String parkingModeParked = '/park-relay/parking-mode/parked';
   static const String verifyLicense= '/users/verify-license';
   static const String vehicle= '/users/vehicle';
  // static const String showDetails = "/parking-report";

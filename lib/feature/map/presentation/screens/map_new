@@ -1,0 +1,784 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:platchatapp/feature/map/controller/map_controller.dart';
+import 'package:platchatapp/feature/map/model/saved_parking_model.dart';
+import 'package:platchatapp/feature/map/presentation/widgets/drop_pin_button.dart';
+import 'package:platchatapp/feature/map/presentation/widgets/map_initial_shimmer.dart';
+import 'package:platchatapp/feature/map/presentation/widgets/map_loading_banners.dart';
+import 'package:platchatapp/feature/map/presentation/widgets/map_type_dropdown.dart';
+import 'package:platchatapp/feature/map/presentation/widgets/parking_report_dropdown.dart';
+import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
+import 'package:platchatapp/feature/map/presentation/widgets/radius_filter_button.dart';
+import 'package:platchatapp/feature/map/utils/map_debug.dart';
+import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
+import 'package:platchatapp/utils/toast_message/toast_message.dart';
+
+import '../widgets/location_of_promt.dart';
+import '../widgets/picking-location_banner.dart';
+
+class MapScreen extends StatefulWidget {
+  const MapScreen({super.key});
+
+  static const LatLng kInitialMapTarget = LatLng(34.052235, -118.243683);
+
+  @override
+  State<MapScreen> createState() => _MapScreenState();
+}
+
+class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
+  GoogleMapController? _mapController;
+  int _selectedRadiusMeter = 100;
+
+  LatLng _mapCenter = MapScreen.kInitialMapTarget;
+  LatLng? _gpsPosition;
+  bool _isLocating = true;
+  LatLng? _pickedLocation;
+  bool _isPickingLocation = false;
+  MapType _selectedMapType = MapType.hybrid;
+
+  final Set<Marker> _markers = {};
+
+  late final ParkingReportController _parkingCtrl;
+
+  // ── New Form State ────────────────────────────────────────────────────────
+  final TextEditingController _durationController = TextEditingController();
+  String _selectedParkingType = 'FREE';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _parkingCtrl = Get.isRegistered<ParkingReportController>()
+        ? Get.find<ParkingReportController>()
+        : Get.put(ParkingReportController());
+    mapDebug('screen init → resolve GPS and fetch parking');
+    _initializeMap();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _mapController?.dispose();
+    _durationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && _gpsPosition == null) {
+      _initializeMap();
+    }
+  }
+
+  Future<void> _initializeMap() async {
+    await _getUserLocation();
+
+    // Fetch my saved parking spot from /park-relay/saved-parking/me
+    await _parkingCtrl.fetchMySavedParking();
+
+    if (!mounted) return;
+
+    final location = _gpsPosition;
+
+    if (location == null) {
+      mapDebug('No GPS — skipping parking fetch');
+      return;
+    }
+
+    await _parkingCtrl.fetchParkingReport(
+      latitude: location.latitude,
+      longitude: location.longitude,
+      radius: _selectedRadiusMeter,
+    );
+  }
+
+  Future<void> _getUserLocation() async {
+    mapDebug('location: start');
+
+    try {
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
+      if (!mounted) return;
+
+      if (!serviceEnabled) {
+        setState(() => _isLocating = false);
+
+        showCustomSnackBar(
+          'Please enable location service',
+          isError: true,
+        );
+        return;
+      }
+
+      var permission = await Geolocator.checkPermission();
+
+      if (!mounted) return;
+
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+
+        if (!mounted) return;
+      }
+
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        setState(() => _isLocating = false);
+
+        showCustomSnackBar(
+          'Location permission denied',
+          isError: true,
+        );
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      if (!mounted) return;
+
+      final latLng = LatLng(
+        position.latitude,
+        position.longitude,
+      );
+
+      mapDebug(
+        'location: GPS ok '
+            'lat=${position.latitude.toStringAsFixed(6)} '
+            'lng=${position.longitude.toStringAsFixed(6)}',
+      );
+
+      setState(() {
+        _gpsPosition = latLng;
+        _mapCenter = latLng;
+        _isLocating = false;
+      });
+
+      if (_mapController != null) {
+        await _mapController!.animateCamera(
+          CameraUpdate.newLatLngZoom(
+            latLng,
+            15,
+          ),
+        );
+      }
+
+      mapDebug('location: camera animated');
+    } catch (e, st) {
+      mapDebug('location: error $e');
+      mapDebug('location: stack $st');
+
+      if (!mounted) return;
+
+      setState(() {
+        _isLocating = false;
+      });
+    }
+  }
+
+  void _showSavedParkingDetailsSheet(SavedParkingModel parking) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF3D72E8).withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.local_parking_rounded,
+                          color: Color(0xFF3D72E8),
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'My Saved Parking',
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF1A1A2E),
+                        ),
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              const Divider(),
+              const SizedBox(height: 16),
+
+              // Details rows
+              _buildDetailRow(Icons.gps_fixed, 'Accuracy', '${parking.accuracy?.toStringAsFixed(1) ?? "10"} m'),
+              const SizedBox(height: 12),
+              _buildDetailRow(Icons.speed, 'Confidence', '${((parking.confidence ?? 0.91) * 100).toStringAsFixed(0)}%'),
+              const SizedBox(height: 12),
+              _buildDetailRow(Icons.source, 'Source', parking.source ?? 'AUTO'),
+              const SizedBox(height: 12),
+              _buildDetailRow(
+                Icons.access_time,
+                'Saved Time',
+                parking.createdAt != null
+                    ? _formatDateTime(parking.createdAt!)
+                    : 'N/A'
+              ),
+
+              // ── Parking Session Details (New) ─────────────────────────────
+              if (parking.parkingSession != null) ...[
+                const SizedBox(height: 12),
+                const Divider(),
+                const SizedBox(height: 12),
+                _buildDetailRow(
+                  Icons.attach_money_rounded,
+                  'Parking Type',
+                  parking.parkingSession!.costType ?? 'N/A',
+                ),
+                const SizedBox(height: 12),
+
+                _buildDetailRow(
+                  Icons.timer_rounded,
+                  'Duration',
+                  parking.parkingSession!.durationMin != null
+                      ? '${parking.parkingSession!.durationMin} mins'
+                      : 'N/A',
+                ),
+                const SizedBox(height: 12),
+                _buildDetailRow(
+                  Icons.info_outline_rounded,
+                  'Session Status',
+                  parking.parkingSession!.status ?? 'N/A',
+                ),
+                if (parking.parkingSession!.expiresAt != null) ...[
+                  const SizedBox(height: 12),
+                  _buildDetailRow(
+                    Icons.event_busy_rounded,
+                    'Expires At',
+                    _formatDateTime(parking.parkingSession!.expiresAt!),
+                  ),
+                ],
+              ],
+
+              const SizedBox(height: 24),
+
+              // Start walking navigation button
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    final link = parking.googleMapsWalkingLink;
+                    if (link != null && link.isNotEmpty) {
+                      final uri = Uri.parse(link);
+                      if (await canLaunchUrl(uri)) {
+                        await launchUrl(uri, mode: LaunchMode.externalApplication);
+                      } else {
+                        showCustomSnackBar('Could not launch walking directions', isError: true);
+                      }
+                    } else {
+                      showCustomSnackBar('Navigation link not available', isError: true);
+                    }
+                  },
+                  icon: const Icon(Icons.directions_walk_rounded, color: Colors.white),
+                  label: Text(
+                    'Start Walking Navigation',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF3D72E8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 2,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDetailRow(IconData icon, String label, String value) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: Colors.grey.shade600),
+        const SizedBox(width: 12),
+        Text(
+          '$label:',
+          style: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey.shade600,
+          ),
+        ),
+        const Spacer(),
+        Text(
+          value,
+          style: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF1A1A2E),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatDateTime(String isoString) {
+    try {
+      final dateTime = DateTime.parse(isoString).toLocal();
+      return '${dateTime.hour.toString().padLeft(2, "0")}:${dateTime.minute.toString().padLeft(2, "0")} (${dateTime.day}/${dateTime.month}/${dateTime.year})';
+    } catch (_) {
+      return isoString;
+    }
+  }
+
+
+  void _showSaveParkingSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 20,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 30, // Bottom space increased
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Save Parking Location',
+                        style: GoogleFonts.poppins(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF1A1A2E),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          _pickedLocation != null ? Icons.location_on_rounded : Icons.add_location_alt_rounded,
+                          color: const Color(0xFF3D72E8),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _startPickingLocation();
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Toggle Button UI
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF4F6FB),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        _buildTypeButton('FREE', setSheetState),
+                        const SizedBox(width: 4),
+                        _buildTypeButton('PAID', setSheetState),
+                      ],
+                    ),
+                  ),
+
+                  // If PAID, show duration input
+                  if (_selectedParkingType == 'PAID') ...[
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: _durationController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: InputDecoration(
+                        hintText: 'Duration (Minutes)',
+                        filled: true,
+                        fillColor: const Color(0xFFF4F6FB),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ],
+
+                  const SizedBox(height: 24),
+
+                  // Save Button (Styled like the Apply button in your image)
+                  Obx(() {
+                    final isSaving = _parkingCtrl.isLoadingSaveParking.value;
+                    return SizedBox(
+                      width: double.infinity,
+                      height: 56, // Increased height
+                      child: ElevatedButton(
+                        onPressed: isSaving ? null : () => _submitParking(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF3D72E8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          _pickedLocation != null ? 'Save Picked Location' : 'Save My Location',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // Helper widget for the toggle buttons
+  Widget _buildTypeButton(String type, StateSetter setSheetState) {
+    bool isSelected = _selectedParkingType == type;
+    return Expanded(
+      child: InkWell(
+        onTap: () => setSheetState(() => _selectedParkingType = type),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(
+            color: isSelected ? const Color(0xFF3D72E8) : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Center(
+            child: Text(
+              type,
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                color: isSelected ? Colors.white : const Color(0xFF8F9BB3),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _submitParking(BuildContext sheetContext) async {
+    final location = _pickedLocation ?? _gpsPosition;
+    if (location == null) {
+      showCustomSnackBar('Location not available. Please wait for GPS or pick on map.', isError: true);
+      return;
+    }
+
+    int? durationMin;
+    if (_selectedParkingType == 'PAID') {
+      final input = _durationController.text.trim();
+      if (input.isEmpty) {
+        showCustomSnackBar('Please enter parking duration', isError: true);
+        return;
+      }
+      durationMin = int.tryParse(input);
+      if (durationMin == null || durationMin <= 0) {
+        showCustomSnackBar('Please enter a valid duration', isError: true);
+        return;
+      }
+    }
+
+    final success = await _parkingCtrl.saveMyParking(
+      latitude: location.latitude,
+      longitude: location.longitude,
+      parkingType: _selectedParkingType,
+      durationMin: durationMin,
+    );
+
+    if (success) {
+      if (mounted) {
+        Navigator.pop(context);
+      }
+      showCustomSnackBar('Parking location saved successfully!', isError: false);
+      _durationController.clear();
+      setState(() {
+        _pickedLocation = null;
+      });
+
+      // Move camera to the saved location
+      final mySaved = _parkingCtrl.mySavedParking.value;
+      if (mySaved != null && mySaved.latitude != null && mySaved.longitude != null && _mapController != null) {
+        _mapController!.animateCamera(
+          CameraUpdate.newLatLngZoom(LatLng(mySaved.latitude!, mySaved.longitude!), 16),
+        );
+      }
+    } else {
+      showCustomSnackBar(_parkingCtrl.submitMessage.value.isNotEmpty
+          ? _parkingCtrl.submitMessage.value
+          : 'Failed to save parking location', isError: true);
+    }
+  }
+
+  void _startPickingLocation() {
+    if (!mounted) return;
+
+    setState(() {
+      _isPickingLocation = true;
+    });
+
+    showCustomSnackBar(
+      'Tap on the map to select a location',
+      isError: false,
+    );
+  }
+
+  void _onMapTapped(LatLng position) {
+    if (!_isPickingLocation) {
+      _parkingCtrl.clearSelectedReport();
+      return;
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _pickedLocation = position;
+      _isPickingLocation = false;
+    });
+
+    HapticFeedback.selectionClick();
+
+    mapDebug(
+      'picked location '
+          'lat=${position.latitude.toStringAsFixed(6)} '
+          'lng=${position.longitude.toStringAsFixed(6)}',
+    );
+
+    // Reopen save parking sheet after location picking
+    _showSaveParkingSheet();
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    _mapController = controller;
+    _parkingCtrl.mapController.value = controller;
+    mapDebug('GoogleMap created');
+
+    if (_gpsPosition != null) {
+      controller.animateCamera(
+        CameraUpdate.newLatLngZoom(_gpsPosition!, 15),
+      );
+      mapDebug('onMapCreated: camera synced to GPS');
+    }
+  }
+
+  void _showRadiusFilterSheet() {
+    HapticFeedback.lightImpact();
+
+    RadiusFilterSheet.show(
+      context,
+      initialRadiusMeter: _selectedRadiusMeter,
+      onApply: (radiusMeter) {
+        if (!mounted) return;
+
+        setState(() {
+          _selectedRadiusMeter = radiusMeter;
+        });
+
+        _applyRadiusFilter();
+      },
+    );
+  }
+
+  Future<void> _applyRadiusFilter() async {
+    final location = _gpsPosition ?? _mapCenter;
+
+    await _parkingCtrl.fetchParkingReport(
+      latitude: location.latitude,
+      longitude: location.longitude,
+      radius: _selectedRadiusMeter,
+    );
+
+    if (!mounted) return;
+    showCustomSnackBar(
+      '${AppStrings.showingParking.tr} $_selectedRadiusMeter m',
+      isError: false,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        _parkingCtrl.clearSelectedReport();
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Stack(
+          children: [
+            /// ── Map ──────────────────────────────────────────────────────
+            if (!_isLocating && _gpsPosition == null)
+              LocationOffPrompt(
+                onEnableLocation: () async {
+                  await Geolocator.openLocationSettings();
+                },
+              )
+            else if (_isLocating && _gpsPosition == null)
+              const MapInitialShimmer()
+            else
+              Obx(() {
+                final mySaved = _parkingCtrl.mySavedParking.value;
+                final markers = {
+                  ..._markers,
+                  ..._parkingCtrl.markers,
+                  if (_pickedLocation != null)
+                    Marker(
+                      markerId: const MarkerId('picked_location'),
+                      position: _pickedLocation!,
+                      icon: BitmapDescriptor.defaultMarkerWithHue(
+                          BitmapDescriptor.hueGreen),
+                    ),
+                  if (mySaved != null && mySaved.latitude != null && mySaved.longitude != null)
+                    Marker(
+                      markerId: const MarkerId('my_saved_parking'),
+                      position: LatLng(mySaved.latitude!, mySaved.longitude!),
+                      icon: BitmapDescriptor.defaultMarkerWithHue(
+                          BitmapDescriptor.hueAzure),
+                      infoWindow: const InfoWindow(
+                        title: 'My Saved Parking',
+                        snippet: 'Tap to view details & route',
+                      ),
+                      onTap: () {
+                        _showSavedParkingDetailsSheet(mySaved);
+                      },
+                    ),
+                };
+
+                return GoogleMap(
+                  mapType: _selectedMapType,
+                  key: const ValueKey<Object>('wheew_google_map'),
+                  onMapCreated: _onMapCreated,
+                  initialCameraPosition: CameraPosition(
+                    target: MapScreen.kInitialMapTarget,
+                    zoom: 14,
+                  ),
+                  markers: markers,
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: false,
+                  zoomControlsEnabled: false,
+                  mapToolbarEnabled: false,
+                  compassEnabled: false,
+                  rotateGesturesEnabled: false,
+                  tiltGesturesEnabled: false,
+                  onTap: _onMapTapped,
+                );
+              }),
+
+            /// ── GPS locating banner ───────────────────────────────────────
+            if (_isLocating) const LocatingBanner(),
+
+            /// ── Pick location mode banner ─────────────────────────────────
+            if (_isPickingLocation) const PickingLocationBanner(),
+
+            /// ── Parking fetching indicator ────────────────────────────────
+            Obx(
+                  () => _parkingCtrl.isLoadingShowDetails.value
+                  ? const FetchingParkingBanner()
+                  : const SizedBox.shrink(),
+            ),
+
+            /// ── Selected parking info card ────────────────────────────────
+            Obx(() {
+              final selected = _parkingCtrl.selectedReport.value;
+              if (selected == null) return const SizedBox.shrink();
+              return Positioned(
+                left: 0,
+                right: 0,
+
+                top: MediaQuery.of(context).padding.top +
+                    ResponsiveHelper.padding(92),
+                child: ParkingReportDropdown(
+                  controller: _parkingCtrl,
+                  report: selected,
+                  onClose: _parkingCtrl.clearSelectedReport,
+                ),
+              );
+            }),
+
+            /// ── Map Type Dropdown ───────────────────────────────────────
+            MapTypeDropdown(
+              selectedType: _selectedMapType,
+              onChanged: (type) => setState(() => _selectedMapType = type),
+            ),
+
+            /// ── Radius filter button ──────────────────────────────────────
+            RadiusFilterButton(onPressed: _showRadiusFilterSheet),
+
+            /// ── Add parking button ────────────────────────────────────────
+            Positioned(
+              right: ResponsiveHelper.padding(24),
+              bottom: ResponsiveHelper.padding(130), // Positioned above navigation bar
+              child: AddParkingButton(
+                onPressed: _showSaveParkingSheet,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

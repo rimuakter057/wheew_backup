@@ -2,7 +2,6 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/feature/chat/view/widgets/media_viewer_screen.dart';
@@ -47,6 +46,9 @@ class MessageBubble extends StatelessWidget {
   bool get _isFileMessage =>
       type == 'FILE' || type == 'VOICE' || type == 'AUDIO' ||
       (fileUrl != null && fileUrl!.isNotEmpty);
+
+  bool get _canOpenViewer =>
+      _isFileMessage && !_isVoiceType && !_isAudio;
 
   bool get _isImage {
     if (_isVoiceType) return false; // voice কে কখনো image হিসেবে treat করো না
@@ -125,7 +127,7 @@ class MessageBubble extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           GestureDetector(
-            onTap: _isFileMessage
+            onTap: _canOpenViewer
                 ? () {
               _openViewer(context: context);
             }

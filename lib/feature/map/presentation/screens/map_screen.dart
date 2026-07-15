@@ -39,7 +39,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   bool _isLocating = true;
   LatLng? _pickedLocation;
   bool _isPickingLocation = false;
-  MapType _selectedMapType = MapType.hybrid;
+ // MapType _selectedMapType = MapType.hybrid;
 
   final Set<Marker> _markers = {};
 
@@ -176,6 +176,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   void _toggleParkingPin() {
     HapticFeedback.mediumImpact();
     _pickedLocation = null;
+    _stopPickingLocation();
     mapDebug('parking dialog open');
     _showParkingDialog();
   }
@@ -195,7 +196,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
         },
         onSubmit: () async {
           Navigator.of(context).pop();
-
+          _stopPickingLocation();
           if (_pickedLocation == null && _gpsPosition == null) {
             showCustomSnackBar('Location not available', isError: true);
             return;
@@ -233,6 +234,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
         onCancel: () {
           Navigator.of(context).pop();
           _pickedLocation = null;
+          _stopPickingLocation();
         },
       ),
     );
@@ -357,7 +359,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                 };
 
                 return GoogleMap(
-                  mapType: _selectedMapType,
+                  mapType: _parkingCtrl.selectedMapType.value,
                   key: const ValueKey<Object>('wheew_google_map'),
                   onMapCreated: _onMapCreated,
                   initialCameraPosition: CameraPosition(
@@ -408,15 +410,16 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
             }),
 
             /// ── Map Type Dropdown ───────────────────────────────────────
-            MapTypeDropdown(
-              selectedType: _selectedMapType,
-              onChanged: (type) => setState(() => _selectedMapType = type),
+            Obx(
+                  () => MapTypeDropdown(
+                selectedType: _parkingCtrl.selectedMapType.value,
+                onChanged: _parkingCtrl.changeMapType,
+              ),
             ),
-
             /// ── Radius filter button ──────────────────────────────────────
             RadiusFilterButton(onPressed: _showRadiusFilterSheet),
 
-              ///static design-======
+            ///static design-======
 
 
             /// ── Add parking button ────────────────────────────────────────
@@ -438,4 +441,18 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
       ),
     );
   }
+
+
+
+
+  void _stopPickingLocation() {
+    if (!mounted) return;
+    if (_isPickingLocation) {
+      setState(() {
+        _isPickingLocation = false;
+      });
+    }
+  }
 }
+
+

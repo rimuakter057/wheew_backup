@@ -55,6 +55,7 @@ class MapTypeDropdown extends StatelessWidget {
         ),
       ),
       builder: (_) {
+        MapType currentType = selectedType;
         return StatefulBuilder(
           builder: (context, setModalState) {
             return SafeArea(
@@ -106,9 +107,23 @@ class MapTypeDropdown extends StatelessWidget {
                           title: "Default",
                           icon: Icons.map_outlined,
                           value: MapType.normal,
-                          selectedType: selectedType,
+                          selectedType: currentType,
                           onTap: (v) {
-                            setModalState(() {});
+                            setModalState(() {
+                              currentType = v;
+                            });
+                            onChanged(v);
+                          },
+                        ),
+                        _mapTypeCard(
+                          title: "Hybrid",
+                          icon: Icons.map_outlined,
+                          value: MapType.hybrid,
+                          selectedType: currentType,
+                          onTap: (v) {
+                           setModalState(() {
+                              currentType = v;
+                            });
                             onChanged(v);
                           },
                         ),
@@ -116,9 +131,11 @@ class MapTypeDropdown extends StatelessWidget {
                           title: "Satellite",
                           icon: Icons.satellite_alt_outlined,
                           value: MapType.satellite,
-                          selectedType: selectedType,
+                          selectedType: currentType,
                           onTap: (v) {
-                            setModalState(() {});
+                            setModalState(() {
+                              currentType = v;
+                            });
                             onChanged(v);
                           },
                         ),
@@ -126,9 +143,12 @@ class MapTypeDropdown extends StatelessWidget {
                           title: "Terrain",
                           icon: Icons.terrain_outlined,
                           value: MapType.terrain,
-                          selectedType: selectedType,
+                          selectedType: currentType,
                           onTap: (v) {
-                            setModalState(() {});
+                            setModalState(() {
+                              currentType = v;
+
+                            });
                             onChanged(v);
                           },
                         ),
