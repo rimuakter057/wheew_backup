@@ -17,6 +17,7 @@ import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/router/routes.dart';
+import '../../../helper/data_converter/data_converter.dart';
 
 class ParkingShowController extends GetxController {
   final ParkingRepository _repository = ParkingRepository();
@@ -1126,6 +1127,162 @@ class ParkingShowController extends GetxController {
     );
   }
 
+
+  // ── Handoff Details Dialog: Status, Expires At, Navigate only ──
+  Future<void> showHandoffDetails(Map<String, dynamic> handoff) async {
+    final id = handoff['id']?.toString();
+    if (id == null || id.isEmpty) {
+      _showHandoffDialog(handoff);
+      return;
+    }
+
+    isLoading.value = true;
+    try {
+      _logger.i('=== showHandoffDetails: fetching /handoffs/$id ===');
+      final response = await _repository.getHandoffById(handoffId: id);
+      print("GET_HANDOFF_BY_ID_RESPONSE: status=${response.statusCode}, body=${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = _asMap(jsonDecode(response.body));
+        if (data != null) {
+          _showHandoffDialog(data);
+          return;
+        }
+      }
+      _showMessage('Failed to load handoff details', isError: true);
+      _showHandoffDialog(handoff); // fallback to cached data
+    } catch (e, st) {
+      _logger.e('showHandoffDetails ERROR', error: e, stackTrace: st);
+      _showMessage('Network error loading handoff details: $e', isError: true);
+      _showHandoffDialog(handoff);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void _showHandoffDialog(Map<String, dynamic> handoff) {
+    final status = handoff['status']?.toString() ?? '';
+    final expiresAtStr = handoff['expiresAt']?.toString() ?? '';
+    final expiresAt = DateTime.tryParse(expiresAtStr);
+    final expiresDisplay = expiresAt != null
+        ? DateConverter.formatDateTime(dateTime: expiresAt.toLocal())
+        : expiresAtStr;
+    final distanceMeters = handoff['distanceMeters'];
+    final distanceDisplay = distanceMeters != null
+        ? '$distanceMeters m (from your location)'
+        : '';
+    final googleMapsLink = handoff['googleMapsLink']?.toString();
+
+    _showFixedDetailsDialog(
+      title: 'Details',
+      rows: [
+        _DetailField('Status', status),
+        _DetailField('Expires At', expiresDisplay),
+        _DetailField('Distance', distanceDisplay),
+      ],
+      googleMapsLink: googleMapsLink,
+    );
+  }
+
+  // ── Parking Area Details Dialog: Name, Description, Parking Cost,
+  //    Is Active, Distance (with hint), Navigate only ──
+  void showParkingAreaDetails(Map<String, dynamic> area) {
+    final name = area['name']?.toString() ?? '';
+    final description = area['description']?.toString() ?? '';
+    final parkingCost = area['parkingCost']?.toString() ?? '';
+    final isActive = area['isActive'] == true ? 'Yes' : 'No';
+    final distanceMeters = area['distanceMeters'];
+    final distanceDisplay = distanceMeters != null
+        ? '$distanceMeters m (from your location)'
+        : '';
+    final googleMapsLink = area['googleMapsLink']?.toString();
+
+    _showFixedDetailsDialog(
+      title: name.isNotEmpty ? name : 'Details',
+      rows: [
+        _DetailField('Name', name),
+        _DetailField('Description', description),
+        _DetailField('Parking Cost', parkingCost),
+        _DetailField('Is Active', isActive),
+        _DetailField('Distance', distanceDisplay),
+      ],
+      googleMapsLink: googleMapsLink,
+    );
+  }
+
+  // ── Shared dialog shell used by both dialogs above ──
+  void _showFixedDetailsDialog({
+    required String title,
+    required List<_DetailField> rows,
+    String? googleMapsLink,
+  }) {
+    final ctx = _dialogContext;
+    if (ctx == null) return;
+
+    showDialog(
+      context: ctx,
+      builder: (dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          backgroundColor: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                ...rows
+                    .where((r) => r.value.isNotEmpty)
+                    .map((r) => _buildDetailRow(r.label, r.value)),
+                if (googleMapsLink != null && googleMapsLink.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  ElevatedButton.icon(
+                    onPressed: () => _launchURL(googleMapsLink),
+                    icon: const Icon(Icons.directions, color: Colors.white),
+                    label: const Text(
+                      'Navigate',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF185FA5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 12),
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: const Text(
+                    'Close',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void showSavedSpotDetails() {
     final ctx = _dialogContext;
 
@@ -1212,47 +1369,7 @@ class ParkingShowController extends GetxController {
     );
   }
 
-  /// Marker tap -> GET /park-relay/handoffs/{id} for single-item details.
-  /// Falls back to the cached list item if the call fails.
-  Future<void> showHandoffDetails(Map<String, dynamic> handoff) async {
-    final id = handoff['id']?.toString();
-    if (id == null || id.isEmpty) {
-      showDetailsDialog(handoff, 'Handoff Details');
-      return;
-    }
 
-    isLoading.value = true;
-    try {
-      _logger.i('=== showHandoffDetails: fetching /handoffs/$id ===');
-      final response = await _repository.getHandoffById(handoffId: id);
-      print("GET_HANDOFF_BY_ID_RESPONSE: status=${response.statusCode}, body=${response.body}");
-      _logger.d('getHandoffById status: ${response.statusCode}\nbody: ${response.body}');
-
-      if (response.statusCode == 200) {
-        final data = _asMap(jsonDecode(response.body));
-        if (data != null) {
-          showDetailsDialog(data, 'Handoff Details');
-          return;
-        }
-      }
-      _showMessage('Failed to load handoff details', isError: true);
-      showDetailsDialog(handoff, 'Handoff Details'); // fallback to cached data
-    } catch (e, st) {
-      _logger.e('showHandoffDetails ERROR', error: e, stackTrace: st);
-      _showMessage('Network error loading handoff details: $e', isError: true);
-      showDetailsDialog(handoff, 'Handoff Details'); // fallback to cached data
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  void showParkingAreaDetails(Map<String, dynamic> area) {
-    final name = area['name']?.toString();
-    showDetailsDialog(
-      area,
-      name != null && name.isNotEmpty ? name : 'Parking Area Details',
-    );
-  }
 
   void showDetailsDialog(Map<String, dynamic> data, String title) {
     _logger.i('=== showDetailsDialog: title="$title" ===\n'
@@ -1307,10 +1424,15 @@ class ParkingShowController extends GetxController {
                           return const SizedBox.shrink();
                         }
 
-                        final valStr = entry.value?.toString() ?? '';
-                        if (valStr.isEmpty) return const SizedBox.shrink();
+                        // final valStr = entry.value?.toString() ?? '';
+                        // if (valStr.isEmpty) return const SizedBox.shrink();
+                        //
+                        // final displayKey = _formatKey(entry.key);
+
 
                         final displayKey = _formatKey(entry.key);
+                        final valStr = _formatFieldValue(entry.key, entry.value);
+                        if (valStr.isEmpty) return const SizedBox.shrink();
 
                         if (entry.key == 'googleMapsLink') {
                           return Padding(
@@ -1402,6 +1524,29 @@ class ParkingShowController extends GetxController {
     }).join(' ');
   }
 
+
+  static const _dateFieldKeys = {
+    'expiresAt',
+    'acceptedAt',
+    'cancelledAt',
+    'occupiedAt',
+    'createdAt',
+    'updatedAt',
+  };
+
+  String _formatFieldValue(String key, dynamic value) {
+    final raw = value?.toString() ?? '';
+    if (raw.isEmpty) return '';
+
+    if (_dateFieldKeys.contains(key)) {
+      final parsed = DateTime.tryParse(raw);
+      if (parsed != null) {
+        return DateConverter.formatDateTime(dateTime: parsed.toLocal());
+      }
+    }
+    return raw;
+  }
+
   Future<void> _launchURL(String url) async {
     try {
       final uri = Uri.parse(url);
@@ -1412,4 +1557,10 @@ class ParkingShowController extends GetxController {
       _logger.e('Could not launch URL: $url', error: e);
     }
   }
+}
+
+class _DetailField {
+  final String label;
+  final String value;
+  const _DetailField(this.label, this.value);
 }
