@@ -1,4 +1,6 @@
 // import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 //
 // class RadiusFilterSheet extends StatefulWidget {
 //   final int initialRadiusMeter;
@@ -374,12 +376,13 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
 
             // ── title & subtitle ────────────────────────
              Text(
-              'Search Parking Spot Within',
+              AppStrings.searchParkingSpotWithin.tr,
               style: context.bodyMedium.copyWith(color: AppColors.black)
             ),
             const SizedBox(height: 6),
             Text(
-              'Choose the distance range around you',
+              AppStrings.chooseDistanceRange.tr,
+
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade600,
@@ -423,8 +426,8 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
             const SizedBox(height: 24),
 
             // ── Quick Select Section ────────────────────
-            const Text(
-              'Quick Select',
+             Text(
+              AppStrings.quickSelect.tr,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,

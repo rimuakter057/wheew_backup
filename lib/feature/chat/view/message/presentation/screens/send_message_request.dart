@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/chat/view/message/controller/message_controller.dart';
@@ -59,7 +60,7 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Sent Requests',
+                AppStrings.sentRequests.tr,
                 style: GoogleFonts.poppins(
                   color: Colors.black87,
                   fontWeight: FontWeight.w700,
@@ -130,7 +131,7 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        'No sent requests',
+                        AppStrings.noSentRequests.tr,
                         style: GoogleFonts.poppins(
                           color: Colors.black87,
                           fontSize: 16,
@@ -236,7 +237,7 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                'request sent',
+                                AppStrings.requestSent.tr,
                                 style: GoogleFonts.poppins(
                                   fontSize: 11.5,
                                   color: Colors.grey.shade500,

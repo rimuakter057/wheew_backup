@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 
@@ -51,7 +52,7 @@ class ParkingConfirmationOverlay extends StatelessWidget {
                   ),
                   SizedBox(height: ResponsiveHelper.spacing(24)),
                   Text(
-                    'Parking Confirmation',
+                    AppStrings.parkingConfirmation.tr,
                     style: TextStyle(
                       fontSize: ResponsiveHelper.fontSize(22),
                       fontWeight: FontWeight.bold,
@@ -62,7 +63,7 @@ class ParkingConfirmationOverlay extends StatelessWidget {
                   ),
                   SizedBox(height: ResponsiveHelper.spacing(12)),
                   Text(
-                    'Are you leaving a parking spot right now?',
+                    AppStrings.areYouLeavingAParkingSpotRightNow.tr,
                     style: TextStyle(
                       fontSize: ResponsiveHelper.fontSize(15),
                       color: Colors.grey.shade600,
@@ -92,7 +93,7 @@ class ParkingConfirmationOverlay extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            'No',
+                            AppStrings.no.tr,
                             style: TextStyle(
                               color: Colors.grey.shade800,
                               fontSize: ResponsiveHelper.fontSize(16),
@@ -120,7 +121,7 @@ class ParkingConfirmationOverlay extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            'Yes',
+                            AppStrings.yes.tr,
                             style: TextStyle(
                               fontSize: ResponsiveHelper.fontSize(16),
                               fontWeight: FontWeight.w600,

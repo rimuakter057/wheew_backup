@@ -113,7 +113,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //           TextButton(
 //             onPressed: () => Navigator.pop(ctx),
 //             child: Text(
-//               'Cancel',
+//               AppStrings.cancel.tr,
 //               style: GoogleFonts.poppins(
 //                 fontSize: ResponsiveHelper.fontSize(14),
 //                 color: Colors.grey,
@@ -941,7 +941,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
           borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
         ),
         title: Text(
-          'Delete Message',
+          AppStrings.deleteMessage.tr,
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(16),
             fontWeight: FontWeight.w600,
@@ -949,7 +949,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
           ),
         ),
         content: Text(
-          'Are you sure you want to delete this message?',
+          AppStrings.areYouSureDeleteMessage.tr,
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(14),
             color: Colors.grey.shade600,
@@ -959,7 +959,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
-              'Cancel',
+              AppStrings.cancel.tr,
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(14),
                 color: Colors.grey,
@@ -987,7 +987,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.red),
                   )
                 : Text(
-                    'Delete',
+                    AppStrings.delete.tr,
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(14),
                       color: Colors.red,

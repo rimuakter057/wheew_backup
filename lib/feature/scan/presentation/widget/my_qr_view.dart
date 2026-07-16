@@ -167,7 +167,7 @@ Text("My QR Code",style: context.bodyMedium.copyWith(color: AppColors.black),),
                     ),
                     SizedBox(height: ResponsiveHelper.spacing(8)),
                     Text(
-                      'Tap to retry',
+                      AppStrings.tapToRetry.tr,
                       style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(13),
                         color: Colors.grey.shade400,

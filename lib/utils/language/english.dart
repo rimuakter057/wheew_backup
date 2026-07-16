@@ -1,6 +1,8 @@
 import 'package:platchatapp/utils/language/app_string.dart';
 
 final Map<String, String> english = {
+  AppStrings.tapOnTheMapToSelectParkingLocation:
+  "Tap on the map to select a parking location.",
   AppStrings.addParkingSpot: "Add Parking Spot",
   AppStrings.normal: "Normal",
   AppStrings.hybrid: "Hybrid",
@@ -696,5 +698,36 @@ AppStrings.group:"Group",
   AppStrings.acknowledgedKeepingSpotActive: "Acknowledged. Keeping spot active.",
   AppStrings.parkingClearedReleasedSpotStatus: "Parking cleared. Released spot status.",
   AppStrings.confirm: "Confirm",
+
+
+  // -------- Added during localization --------
+  AppStrings.addYourVehicle: "Add Your Vehicle",
+  AppStrings.skip: "Skip",
+  AppStrings.vehicleModelAndColor: "Vehicle Model & Color",
+  AppStrings.messageRequests: "Message Requests",
+  AppStrings.receivedRequests: "Received Requests",
+  AppStrings.requestsOthersSentToYou: "Requests others sent to you",
+  AppStrings.requestsYouSentToOthers: "Requests you sent to others",
+  AppStrings.sentRequests: "Sent Requests",
+  AppStrings.areYouSureDeleteMessage: "Are you sure you want to delete this message?",
+  AppStrings.deleteMessage: "Delete Message",
+  AppStrings.accept: "Accept",
+  AppStrings.decline: "Decline",
+  AppStrings.newRequestsShowUpHere: "New requests will show up here",
+  AppStrings.noPendingMessageRequests: "No pending message requests",
+  AppStrings.wantsToSendYouAMessage: "wants to send you a message",
+  AppStrings.noSentRequests: "No sent requests",
+  AppStrings.requestsYouSendShowUpHere: "Requests you send will show up here",
+  AppStrings.requestSent: "Request sent",
+  AppStrings.mapType: "Map type",
+  AppStrings.twoSpots: "2 spots",
+  AppStrings.twoFiftyMAway: "250 m away",
+  AppStrings.electric: "Electric",
+  AppStrings.sideParking: "Side Parking",
+  AppStrings.twentyDollarsPerHour: "\$ 20/hr",
+  AppStrings.searchParkingSpotWithin: "Search Parking Spot Within",
+  AppStrings.chooseDistanceRange: "Choose the distance range around you",
+  AppStrings.quickSelect: "Quick Select",
+  AppStrings.vehicleModelLabel: "Vehicle Model: ",
 
 };

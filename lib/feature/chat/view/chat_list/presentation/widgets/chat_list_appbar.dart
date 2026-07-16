@@ -2,6 +2,7 @@
 // ── দায়িত্ব: AppBar — logo (Lottie + image) + create group circle button ──
 
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -136,7 +137,7 @@ void _showMessageRequestOptions(BuildContext context) {
                 ),
               ),
               Text(
-                'Message Requests',
+                AppStrings.messageRequests.tr,
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -150,14 +151,14 @@ void _showMessageRequestOptions(BuildContext context) {
                   child: const Icon(Icons.inbox_outlined, color: AppColors.blue),
                 ),
                 title: Text(
-                  'Received Requests',
+                  AppStrings.receivedRequests.tr,
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
                   ),
                 ),
                 subtitle: Text(
-                  'Requests others sent to you',
+                  AppStrings.requestsOthersSentToYou.tr,
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: Colors.grey.shade500,
@@ -174,14 +175,14 @@ void _showMessageRequestOptions(BuildContext context) {
                   child: const Icon(Icons.send_outlined, color: AppColors.blue),
                 ),
                 title: Text(
-                  'Sent Requests',
+                  AppStrings.sentRequests.tr,
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
                   ),
                 ),
                 subtitle: Text(
-                  'Requests you sent to others',
+                  AppStrings.requestsYouSentToOthers.tr,
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: Colors.grey.shade500,

@@ -1,7 +1,8 @@
 import 'app_string.dart';
 
 final Map<String, String> italian = {
-
+  AppStrings.tapOnTheMapToSelectParkingLocation:
+  "Tocca la mappa per selezionare un punto di parcheggio.",
   AppStrings.addParkingSpot: "Aggiungi posto auto",
 
   AppStrings.normal: "Normale",
@@ -724,5 +725,36 @@ final Map<String, String> italian = {
   AppStrings.acknowledgedKeepingSpotActive: "Confermato. Parcheggio attivo.",
   AppStrings.parkingClearedReleasedSpotStatus: "Parcheggio liberato.",
   AppStrings.confirm: "Conferma",
+
+
+  // -------- Added during localization --------
+  AppStrings.addYourVehicle: "Aggiungi il tuo veicolo",
+  AppStrings.skip: "Salta",
+  AppStrings.vehicleModelAndColor: "Modello e colore del veicolo",
+  AppStrings.messageRequests: "Richieste di messaggi",
+  AppStrings.receivedRequests: "Richieste ricevute",
+  AppStrings.requestsOthersSentToYou: "Richieste che altri ti hanno inviato",
+  AppStrings.requestsYouSentToOthers: "Richieste che hai inviato ad altri",
+  AppStrings.sentRequests: "Richieste inviate",
+  AppStrings.areYouSureDeleteMessage: "Sei sicuro di voler eliminare questo messaggio?",
+  AppStrings.deleteMessage: "Elimina messaggio",
+  AppStrings.accept: "Accetta",
+  AppStrings.decline: "Rifiuta",
+  AppStrings.newRequestsShowUpHere: "Le nuove richieste appariranno qui",
+  AppStrings.noPendingMessageRequests: "Nessuna richiesta di messaggio in attesa",
+  AppStrings.wantsToSendYouAMessage: "vuole inviarti un messaggio",
+  AppStrings.noSentRequests: "Nessuna richiesta inviata",
+  AppStrings.requestsYouSendShowUpHere: "Le richieste che invii appariranno qui",
+  AppStrings.requestSent: "Richiesta inviata",
+  AppStrings.mapType: "Tipo di mappa",
+  AppStrings.twoSpots: "2 posti",
+  AppStrings.twoFiftyMAway: "A 250 m",
+  AppStrings.electric: "Elettrico",
+  AppStrings.sideParking: "Parcheggio laterale",
+  AppStrings.twentyDollarsPerHour: "\$ 20/ora",
+  AppStrings.searchParkingSpotWithin: "Cerca parcheggio entro",
+  AppStrings.chooseDistanceRange: "Scegli il raggio di distanza intorno a te",
+  AppStrings.quickSelect: "Selezione rapida",
+  AppStrings.vehicleModelLabel: "Modello veicolo: ",
 
 };

@@ -101,7 +101,7 @@ void showRatingDialog({
                             Icon(Icons.info_outline, color: AppColors.blue),
                             SizedBox(width: ResponsiveHelper.spacing(8)),
                             Text(
-                              'Status Info',
+                              AppStrings.statusInfo.tr,
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(16),
                                 fontWeight: FontWeight.w600,
@@ -123,7 +123,7 @@ void showRatingDialog({
                           TextButton(
                             onPressed: () => Navigator.pop(context),
                             child: Text(
-                              'Got it',
+                              AppStrings.gotIt.tr,
                               style: GoogleFonts.poppins(
                                 color: AppColors.blue,
                                 fontWeight: FontWeight.w600,

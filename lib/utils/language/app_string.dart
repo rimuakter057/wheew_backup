@@ -1,4 +1,7 @@
 class AppStrings {
+
+  static const String tapOnTheMapToSelectParkingLocation =
+      'tap_on_the_map_to_select_parking_location';
   static const String addParkingSpot = 'addParkingSpot';
   static const String normal = 'normal';
   static const String hybrid = 'hybrid';
@@ -21,6 +24,7 @@ class AppStrings {
   static const String welcomeMessage1 = 'welcome_message1';
   static const String welcomeMessage2 = 'welcome_message2';
   static const String welcomeMessage3 = 'welcome_message3';
+
 
   static const String signIn = 'sign_in';
   static const String signUp = 'sign_up';
@@ -747,5 +751,38 @@ class AppStrings {
   static const String acknowledgedKeepingSpotActive = 'acknowledged_keeping_spot_active';
   static const String parkingClearedReleasedSpotStatus = 'parking_cleared_released_spot_status';
   static const String confirm = 'confirm';
+
+
+  // -------- Added during localization --------
+  static const String addYourVehicle = 'add_your_vehicle';
+  static const String skip = 'skip';
+  static const String vehicleModelAndColor = 'vehicle_model_and_color';
+  static const String messageRequests = 'message_requests';
+  static const String receivedRequests = 'received_requests';
+  static const String requestsOthersSentToYou = 'requests_others_sent_to_you';
+  static const String requestsYouSentToOthers = 'requests_you_sent_to_others';
+  static const String sentRequests = 'sent_requests';
+  static const String areYouSureDeleteMessage = 'are_you_sure_delete_message';
+  static const String deleteMessage = 'delete_message';
+  static const String accept = 'accept';
+  static const String decline = 'decline';
+  static const String newRequestsShowUpHere = 'new_requests_show_up_here';
+  static const String noPendingMessageRequests = 'no_pending_message_requests';
+  static const String wantsToSendYouAMessage = 'wants_to_send_you_a_message';
+  static const String noSentRequests = 'no_sent_requests';
+  static const String requestsYouSendShowUpHere = 'requests_you_send_show_up_here';
+  static const String requestSent = 'request_sent';
+  static const String mapType = 'map_type';
+  static const String twoSpots = 'two_spots';
+  static const String twoFiftyMAway = 'two_fifty_m_away';
+  static const String electric = 'electric';
+  static const String sideParking = 'side_parking';
+  static const String twentyDollarsPerHour = 'twenty_dollars_per_hour';
+  static const String searchParkingSpotWithin = 'search_parking_spot_within';
+  static const String chooseDistanceRange = 'choose_distance_range';
+  static const String quickSelect = 'quick_select';
+  static const String vehicleModelLabel = 'vehicle_model_label';
+  static const String theCarHasBeenParked = 'the_car_has_been_parked';
+  static const String isItAFreeSpotOrIsItAPaidSpot = 'is_it_a_free_spot_or_is_it_a_paid_spot';
 
 }

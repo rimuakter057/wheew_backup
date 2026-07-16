@@ -126,6 +126,7 @@ class SavedParkingDetailsBottomSheet extends StatelessWidget {
             'Expires At',
             (parking.expiresAt ?? parking.parkingSession?.expiresAt) != null
                 ? _formatDateTime(parking.expiresAt ?? parking.parkingSession!.expiresAt!)
+
                 : 'N/A',
           ),
 

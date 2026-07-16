@@ -1,5 +1,7 @@
 
 import 'dart:async';
+import 'package:get/get.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -248,12 +250,14 @@ class MessageBubble extends StatelessWidget {
               color: Colors.black45,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Row(
+            child:  Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.zoom_out_map_rounded, color: Colors.white, size: 12),
                 SizedBox(width: 3),
-                Text('View',
+                Text(AppStrings.viewDocument.tr,
+
+
                     style: TextStyle(color: Colors.white, fontSize: 10)),
               ],
             ),
@@ -722,4 +726,4 @@ class _VoiceBubbleState extends State<_VoiceBubble> {
   }
 }
 
-
+

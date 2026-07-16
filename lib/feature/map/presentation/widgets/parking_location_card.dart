@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:flutter/material.dart';
 
 class ParkingLocationCard extends StatelessWidget {
@@ -50,7 +51,7 @@ class ParkingLocationCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Side Parking',
+                            AppStrings.sideParking.tr,
                             style: TextStyle(
                               fontSize: 15,
                               color: const Color(0xFF1E293B).withOpacity(0.6),
@@ -81,7 +82,7 @@ class ParkingLocationCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           const Text(
-                            'Electric',
+                            AppStrings.electric.tr,
                             style: TextStyle(
                               color: Color(0xFF22C55E),
                               fontSize: 13,
@@ -105,7 +106,7 @@ class ParkingLocationCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     const Text(
-                      '250 m away',
+                      AppStrings.twoFiftyMAway.tr,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -151,7 +152,7 @@ class ParkingLocationCard extends StatelessWidget {
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              '2 spots',
+                              AppStrings.twoSpots.tr,
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -178,7 +179,7 @@ class ParkingLocationCard extends StatelessWidget {
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              '\$ 20/hr',
+                              AppStrings.twentyDollarsPerHour.tr,
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,

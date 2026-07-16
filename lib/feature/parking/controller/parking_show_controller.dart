@@ -905,14 +905,14 @@ class ParkingShowController extends GetxController {
                       size: 40, color: Colors.blue.shade700),
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  'The car has been parked.',
+                 Text(
+                  AppStrings.theCarHasBeenParked.tr,
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Is it a free spot or is it a paid spot?',
+                 Text(
+                  AppStrings.isItAFreeSpotOrIsItAPaidSpot.tr,
                   style: TextStyle(fontSize: 14, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
@@ -1066,13 +1066,13 @@ class ParkingShowController extends GetxController {
                       size: 40, color: Colors.amber),
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  'Parking Expiring',
+                 Text(
+                  AppStrings.parkingExpiring.tr,
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Are you leaving the paid spot? Your paid spot is expiring in 10 minutes.',
+                 Text(
+                  AppStrings.areYouLeavingThePaidSpotYourPaidSpotIsExpiringIn10Minutes.tr,
                   style: TextStyle(fontSize: 14, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
@@ -1251,8 +1251,8 @@ class ParkingShowController extends GetxController {
                   ElevatedButton.icon(
                     onPressed: () => _launchURL(googleMapsLink),
                     icon: const Icon(Icons.directions, color: Colors.white),
-                    label: const Text(
-                      'Navigate',
+                    label:  Text(
+                      AppStrings.navigate.tr,
                       style: TextStyle(color: Colors.white),
                     ),
                     style: ElevatedButton.styleFrom(
@@ -1267,8 +1267,8 @@ class ParkingShowController extends GetxController {
                 const SizedBox(height: 12),
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(),
-                  child: const Text(
-                    'Close',
+                  child:  Text(
+                    AppStrings.close.tr,
                     style: TextStyle(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,
@@ -1441,8 +1441,8 @@ class ParkingShowController extends GetxController {
                               onPressed: () => _launchURL(valStr),
                               icon: const Icon(Icons.directions,
                                   color: Colors.white),
-                              label: const Text(
-                                'Navigate',
+                              label:  Text(
+                                AppStrings.navigate.tr,
                                 style: TextStyle(color: Colors.white),
                               ),
                               style: ElevatedButton.styleFrom(
@@ -1465,8 +1465,8 @@ class ParkingShowController extends GetxController {
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(),
-                  child: const Text(
-                    'Close',
+                  child:  Text(
+                    AppStrings.close.tr,
                     style: TextStyle(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,
