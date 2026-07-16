@@ -68,7 +68,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
           ),
         ),
         title: Text(
-          'leave_group'.tr,
+          AppStrings.leaveGroup.tr,
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(16),
             fontWeight: FontWeight.w600,
@@ -76,7 +76,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
           ),
         ),
         content: Text(
-          '${'leave_group_confirmation'.tr} "$_currentGroupName"?',
+          '${AppStrings.leaveGroupConfirmation.tr} "$_currentGroupName"?',
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(14),
             color: Colors.grey.shade600,
@@ -86,7 +86,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
-              'cancel'.tr,
+              AppStrings.cancel.tr,
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(14),
                 color: Colors.grey,
@@ -115,7 +115,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                 ),
               )
                   : Text(
-                'leave'.tr,
+                AppStrings.leave.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(14),
                   color: Colors.red,
@@ -424,7 +424,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                 Obx(() {
                   final bool isTyping = widget.controller.isTyping.value;
                   return Text(
-                    isTyping ? "typing_".tr : "Group".tr,
+                    isTyping ? AppStrings.typing.tr : AppStrings.group.tr,
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(13),
                       fontWeight: FontWeight.w400,
@@ -464,7 +464,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                   Icon(Icons.group_outlined, color: AppColors.black),
                   const SizedBox(width: 8),
                   Text(
-                    'see_members'.tr,
+                    AppStrings.seeMembers.tr,
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(14),
                       color: AppColors.black,
@@ -487,7 +487,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                   Icon(Icons.person_add_outlined, color: AppColors.black),
                   const SizedBox(width: 8),
                   Text(
-                    'add_members'.tr,
+                    AppStrings.addMembers.tr,
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(14),
                       color: AppColors.black,
@@ -510,7 +510,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                   Icon(Icons.edit_outlined, color: AppColors.black),
                   const SizedBox(width: 8),
                   Text(
-                    'edit_group'.tr,
+                    AppStrings.editGroup.tr,
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(14),
                       color: AppColors.black,
@@ -533,7 +533,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                   const Icon(Icons.exit_to_app_outlined, color: Colors.red),
                   const SizedBox(width: 8),
                   Text(
-                    'leave_group'.tr,
+                    AppStrings.leaveGroup.tr,
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(14),
                       color: Colors.red,

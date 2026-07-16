@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'dart:io';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -151,7 +152,7 @@ class _MessageInputState extends State<MessageInput> {
 
     if (containsBadWord) {
       debugPrint('⚠️ Bad word detected, blocking send');
-      showTopSnackBar(context, "bad_word_error".tr);
+      showTopSnackBar(context, AppStrings.badWordError.tr);
       return;
     }
 
@@ -179,7 +180,7 @@ class _MessageInputState extends State<MessageInput> {
       final bool hasPermission = await _audioRecorder.hasPermission();
       if (!hasPermission) {
         debugPrint('⚠️ Mic permission denied');
-        showTopSnackBar(context, "mic_permission_error".tr);
+        showTopSnackBar(context, AppStrings.micPermissionError.tr);
         return;
       }
 
@@ -371,7 +372,7 @@ class _MessageInputState extends State<MessageInput> {
                   horizontalSpacing: 0,
                   backgroundColor: Colors.white,
                   noRecents: Text(
-                    'no_recents_yet'.tr,
+                    AppStrings.noRecentsYet.tr,
                     style: GoogleFonts.poppins(
                       fontSize: 20,
                       color: Colors.black26,
@@ -458,7 +459,7 @@ class _MessageInputState extends State<MessageInput> {
                       },
                       decoration: InputDecoration(
                         hintText: _selectedFilePath != null
-                            ? "add_caption".tr
+                            ? AppStrings.addCaption.tr
                             : "Write here...",
                         hintStyle: TextStyle(
                           color: Colors.grey.shade400,
@@ -618,7 +619,7 @@ class _MessageInputState extends State<MessageInput> {
                   SizedBox(width: ResponsiveHelper.width(8)),
                   Expanded(
                     child: Text(
-                      "recording".tr,
+                      AppStrings.recording.tr,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: AppColors.black.withOpacity(0.6),

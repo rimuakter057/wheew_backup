@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
@@ -167,7 +168,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   child: isLoading
                       ? const Center(child: CircularProgressIndicator())
                       : profile == null
-                      ? Center(child: Text('profile_not_found'.tr))
+                      ? Center(child: Text(AppStrings.profileNotFound.tr))
                       : ProfileCard(
                     profile: profile,
                     name: profile.nickName ?? "",
@@ -222,7 +223,7 @@ class _MessageScreenState extends State<MessageScreen> {
                             height: MediaQuery.of(context).size.height * 0.4,
                             child: Center(
                               child: Text(
-                                'no_messages_yet'.tr,
+                                AppStrings.noMessagesYet.tr,
                                 style: const TextStyle(color: Colors.grey),
                               ),
                             ),

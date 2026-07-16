@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/feature/chat/model/view_user_profile_model.dart';
@@ -230,7 +231,7 @@ class ProfileCard extends StatelessWidget {
                         ),
                         SizedBox(width: ResponsiveHelper.width(6)),
                         Text(
-                          'vehicle_details'.tr,
+                          AppStrings.vehicleDetails.tr,
                           style: context.bodySmall.copyWith(
                             fontWeight: FontWeight.w600,
                             color: AppColors.black,
@@ -247,7 +248,7 @@ class ProfileCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 2),
                               Text(
-                                'verified'.tr,
+                                AppStrings.verified.tr,
                                 style: context.bodySmall.copyWith(
                                   color: Colors.green,
                                   fontSize: ResponsiveHelper.fontSize(11),
@@ -301,7 +302,7 @@ class ProfileCard extends StatelessWidget {
                   size: ResponsiveHelper.iconSize(20),
                 ),
                 label: Text(
-                  showRating ? 'give_rating'.tr : 'start_chat'.tr,
+                  showRating ? AppStrings.giveRating.tr : AppStrings.startChat.tr,
                   style: TextStyle(
                     fontSize: ResponsiveHelper.fontSize(18),
                     fontWeight: FontWeight.w600,

@@ -101,11 +101,11 @@ class _SignInScreenState extends State<SignInScreen> {
                     /// Email or License ID
                     CustomTextField(
                       controller: authController.licenseController,
-                      title: 'license_plate_or_nick_name'.tr,
-                      hintText: 'enter_license_plate_or_nick_name'.tr,
+                      title: AppStrings.licensePlateOrNickName.tr,
+                      hintText: AppStrings.enterLicensePlateOrNickName.tr,
                       validator: (value) =>
                           (value == null || value.trim().isEmpty)
-                          ? 'license_plate_or_nickname_required'.tr
+                          ? AppStrings.licensePlateOrNicknameRequired.tr
                           : null,
                     ),
 
@@ -114,15 +114,15 @@ class _SignInScreenState extends State<SignInScreen> {
                     /// Password
                     CustomTextField(
                       controller: authController.passwordController,
-                      title: 'password'.tr,
-                      hintText: 'enter_your_password'.tr,
+                      title: AppStrings.password.tr,
+                      hintText: AppStrings.enterYourPassword.tr,
                       isPassword: true,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'password_is_required'.tr;
+                          return AppStrings.passwordIsRequired.tr;
                         }
                         if (value.length < 6) {
-                          return 'password_must_6_character'.tr;
+                          return AppStrings.passwordMust6Character.tr;
                         }
                         return null;
                       },
@@ -140,7 +140,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     //       context.pushNamed(RouteName.forgotPassword);
                     //     },
                     //     child: Text(
-                    //       'forgot_password'.tr,
+                    //       AppStrings.forgotPassword.tr,
                     //       style: GoogleFonts.poppins(
                     //         color: AppColors.blue,
                     //         fontSize: ResponsiveHelper.fontSize(14),
@@ -191,7 +191,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             context.pushNamed(RouteName.forgotPassword);
                           },
                           child: Text(
-                            "forgot_password".tr,
+                            AppStrings.forgotPassword.tr,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.poppins(
@@ -211,7 +211,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     controller.isLoading
                         ? const CircularProgressIndicator()
                         : PrimaryButton(
-                            title: 'sign_in'.tr,
+                            title: AppStrings.signIn.tr,
                             onTap: _handleLogin,
                           ),
                     SizedBox(height: ResponsiveHelper.spacing(18)),
@@ -250,14 +250,14 @@ class _SignInScreenState extends State<SignInScreen> {
                             //fontStyle: FontStyle.italic,
                           ),
                           children: [
-                            TextSpan(text: 'do_not_account'.tr),
+                            TextSpan(text: AppStrings.doNotAccount.tr),
                             WidgetSpan(
                               child: GestureDetector(
                                 onTap: () {
                                   context.pushNamed(RouteName.signUp);
                                 },
                                 child: Text(
-                                  "sign_up".tr,
+                                  AppStrings.signUp.tr,
                                   style: TextStyle(
                                     color: AppColors.blue,
                                     //decoration: TextDecoration.underline,

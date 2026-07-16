@@ -1,6 +1,7 @@
 // ignore_for_file: unused_local_variable
 
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
@@ -68,7 +69,7 @@ class _BlockListScreenState extends State<BlockListScreen> {
             ),
           ),
           title: Text(
-            "blocked_user5".tr,
+            AppStrings.blockedUser5.tr,
             style: GoogleFonts.poppins(
               color: AppColors.black,
               fontSize: ResponsiveHelper.fontSize(20),
@@ -87,7 +88,7 @@ class _BlockListScreenState extends State<BlockListScreen> {
           if (controller.userBlockList.isEmpty) {
             return Center(
               child: Text(
-                'empty_block_list'.tr,
+                AppStrings.emptyBlockList.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(16),
                   color: Colors.grey.shade500,
@@ -166,7 +167,7 @@ class _BlockListScreenState extends State<BlockListScreen> {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                "${"blocked_user1".tr} ${formatTime(block.createdAt ?? "")}",
+                                "${AppStrings.blockedUser1.tr} ${formatTime(block.createdAt ?? "")}",
                                 style: GoogleFonts.poppins(
                                   fontSize: ResponsiveHelper.fontSize(13),
                                   color: Colors.grey.shade500,
@@ -204,7 +205,7 @@ class _BlockListScreenState extends State<BlockListScreen> {
                               ],
                             ),
                             child: Text(
-                              "unblock".tr,
+                              AppStrings.unblock.tr,
                               style: GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontSize: ResponsiveHelper.fontSize(12),

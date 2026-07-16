@@ -118,7 +118,7 @@ class ChatTile extends StatelessWidget {
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Text(
-                            "blocked_user1".tr,
+                            AppStrings.blockedUser1.tr,
                             style: GoogleFonts.poppins(
                               fontSize: ResponsiveHelper.fontSize(12),
                               fontWeight: FontWeight.w500,
@@ -233,10 +233,10 @@ class ChatTile extends StatelessWidget {
                             style: GoogleFonts.questrial(
                               fontSize: ResponsiveHelper.fontSize(14),
                               fontWeight: fontWeight,
-                              fontStyle: (message == 'typing_'.tr || message == 'Typing...')
+                              fontStyle: (message == AppStrings.typing.tr || message == 'Typing...')
                                   ? FontStyle.italic
                                   : FontStyle.normal,
-                              color: (message == 'typing_'.tr || message == 'Typing...')
+                              color: (message == AppStrings.typing.tr || message == 'Typing...')
                                   ? AppColors.blue
                                   : (hasUnread
                                       ? AppColors.textBlack

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'dart:io';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -339,7 +340,7 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
                   horizontalSpacing: 0,
                   backgroundColor: Colors.white,
                   noRecents: Text(
-                    'no_recents_yet'.tr,
+                    AppStrings.noRecentsYet.tr,
                     style: GoogleFonts.poppins(
                       fontSize: 20,
                       color: Colors.black26,
@@ -594,7 +595,7 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
                   SizedBox(width: ResponsiveHelper.width(8)),
                   Expanded(
                     child: Text(
-                      "recording".tr,
+                      AppStrings.recording.tr,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: AppColors.black.withOpacity(0.6),

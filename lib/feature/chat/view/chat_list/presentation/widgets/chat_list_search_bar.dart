@@ -3,6 +3,7 @@
 //              AbsorbPointer দিয়ে keyboard open হওয়া বন্ধ রাখে
 
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/router/route_path.dart';
@@ -30,7 +31,7 @@ class ChatListSearchBar extends StatelessWidget {
               fontSize: ResponsiveHelper.fontSize(16),
             ),
             decoration: InputDecoration(
-              hintText: 'search_here'.tr,
+              hintText: AppStrings.searchHere.tr,
               hintStyle: TextStyle(
                 fontSize: ResponsiveHelper.fontSize(16),
               ),

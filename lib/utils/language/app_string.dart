@@ -1,4 +1,18 @@
 class AppStrings {
+  static const String addParkingSpot = 'addParkingSpot';
+  static const String normal = 'normal';
+  static const String hybrid = 'hybrid';
+  static const String satellite = 'satellite';
+  static const String terrain = 'terrain';
+
+  static const String confidenceLevel = 'confidenceLevel';
+
+  static const String spotType = 'spotType';
+
+  static const String timeRemaining = 'timeRemaining';
+  static const String parkMyCar = 'parkMyCar';
+  static const String durationMin15Minutes = 'durationMin15Minutes';
+  static const String parkingType = 'parkingType';
   // -------- Welcome Screen --------
   static const String splash = 'splash';
   static const String clientEmail = 'client_email';
@@ -11,6 +25,7 @@ class AppStrings {
   static const String signIn = 'sign_in';
   static const String signUp = 'sign_up';
   static const String logIn = 'log_in';
+
 
   static const String doNotAccount = 'do_not_account';
   static const String alreadyAccount1 = 'already_account1';
@@ -640,5 +655,97 @@ class AppStrings {
   static const String blockedUsersSubtitle = "blocked_users_subtitle";
   static const String deleteAccountSubtitle = "delete_account_subtitle";
   static const String changeAppLanguage = "change_language";
+
+
+  // -------- Added during localization --------
+  static const String timeout = 'timeout';
+  static const String notificationSetupFailed = 'notification_setup_failed';
+  static const String loginConnectionTimeout = 'login_connection_timeout';
+  static const String loginUnavailableTryAgain = 'login_unavailable_try_again';
+  static const String loginFailedCheckConnection = 'login_failed_check_connection';
+  static const String passwordChanged = 'password_changed';
+  static const String country = 'country';
+  static const String countryIsRequired = 'country_is_required';
+  static const String city = 'city';
+  static const String optional = 'optional';
+  static const String typing = 'typing';
+  static const String recording = 'recording';
+  static const String online = 'online';
+  static const String micPermissionError = 'mic_permission_error';
+  static const String addCaption = 'add_caption';
+  static const String youveBlockedName = 'youve_blocked_name';
+  static const String storagePermissionRequired = 'storage_permission_required';
+  static const String downloadFailed = 'download_failed';
+  static const String savedTo = 'saved_to';
+  static const String saveToGallery = 'save_to_gallery';
+  static const String tapDownloadToOpen = 'tap_download_to_open';
+  static const String downloadAndOpen = 'download_and_open';
+  static const String licenseVerifiedSuccessfully = 'license_verified_successfully';
+  static const String licenseVerificationFailed = 'license_verification_failed';
+  static const String connectionTimeout = 'connection_timeout';
+  static const String licenseAlreadyVerified = 'license_already_verified';
+  static const String verified = 'verified';
+  static const String verify = 'verify';
+  static const String freeSpot = 'free_spot';
+  static const String paidSpot = 'paid_spot';
+  static const String stayingDuration = 'staying_duration';
+  static const String forHowLongIsTheUserStayingInThatSpot = 'for_how_long_is_the_user_staying_in_that_spot';
+  static const String parkingExpiring = 'parking_expiring';
+  static const String areYouLeavingThePaidSpotYourPaidSpotIsExpiringIn10Minutes = 'are_you_leaving_the_paid_spot_your_paid_spot_is_expiring_in_10_minutes';
+  static const String noStaying = 'no_staying';
+  static const String yesLeaving = 'yes_leaving';
+  static const String savedParkingLocation = 'saved_parking_location';
+  static const String walkBackToCar = 'walk_back_to_car';
+  static const String removeSpot = 'remove_spot';
+  static const String navigate = 'navigate';
+  static const String yourSavedParkingSpot = 'your_saved_parking_spot';
+
+  static const String searchParking = 'search_parking';
+  static const String parkingConfirmation = 'parking_confirmation';
+  static const String areYouLeavingAParkingSpotRightNow = 'are_you_leaving_a_parking_spot_right_now';
+  static const String contactUsAt = 'contact_us_at';
+  static const String cropImage = 'crop_image';
+  static const String failedToLoadDocuments = 'failed_to_load_documents';
+  static const String documentUploadedSuccessfully = 'document_uploaded_successfully';
+  static const String documentUpdatedSuccessfully = 'document_updated_successfully';
+  static const String updateFailed = 'update_failed';
+  static const String accountSetting = 'account_setting';
+  static const String takePhoto = 'take_photo';
+  static const String chooseFromGallery = 'choose_from_gallery';
+  static const String browseFiles = 'browse_files';
+  static const String couldNotOpenCamera = 'could_not_open_camera';
+  static const String couldNotOpenGallery = 'could_not_open_gallery';
+  static const String pleaseAllowGalleryAccessToDownload = 'please_allow_gallery_access_to_download';
+  static const String qrCardIsNotReadyYetPleaseTryAgain = 'qr_card_is_not_ready_yet_please_try_again';
+  static const String downloadSuccessfullyComplete = 'download_successfully_complete';
+  static const String failedToDownloadQrCard = 'failed_to_download_qr_card';
+  static const String myQrCode = 'my_qr_code';
+  static const String vehicleDetails = 'vehicle_details';
+  static const String searchDrivers = 'search_drivers';
+  static const String searchByNameOrVehicleCode = 'search_by_name_or_vehicle_code';
+  static const String message = 'message';
+  static const String sendRequest = 'send_request';
+  static const String sendMessageRequest = 'send_message_request';
+  static const String writeAShortMessageToIntroduceYourself = 'write_a_short_message_to_introduce_yourself';
+  static const String hiCanIMessageYou = 'hi_can_i_message_you';
+  static const String messageIsRequired = 'message_is_required';
+  static const String noUsersFound = 'no_users_found';
+  static const String failedToChangeLanguage = 'failed_to_change_language';
+  static const String locationNotAvailableWait = 'location_not_available_wait';
+  static const String timeIsRequired = 'time_is_required';
+  static const String enterValidNumber = 'enter_valid_number';
+  static const String minimum15MinutesRequired = 'minimum_15_minutes_required';
+  static const String parkingLocationSavedSuccessfully = 'parking_location_saved_successfully';
+  static const String failedToSaveParkingLocation = 'failed_to_save_parking_location';
+  static const String usingPickedLocation = 'using_picked_location';
+  static const String pickedLocationSet = 'picked_location_set';
+  static const String savePickedLocation = 'save_picked_location';
+  static const String saveMyLocation = 'save_my_location';
+  static const String free = 'free';
+  static const String paid = 'paid';
+  static const String highAccuracy = 'high_accuracy';
+  static const String acknowledgedKeepingSpotActive = 'acknowledged_keeping_spot_active';
+  static const String parkingClearedReleasedSpotStatus = 'parking_cleared_released_spot_status';
+  static const String confirm = 'confirm';
 
 }

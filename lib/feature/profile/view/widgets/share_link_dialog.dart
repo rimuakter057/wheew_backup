@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/core/service/api_url.dart';
@@ -46,7 +47,7 @@ class ShareLinkDialog extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'share_link'.tr,
+                    AppStrings.shareLink.tr,
                     style: context.bodyLarge?.copyWith(
                       color: AppColors.primaryText,
                     ),
@@ -83,7 +84,7 @@ class ShareLinkDialog extends StatelessWidget {
           
               /// Title
               Text(
-                'share_with_friends'.tr,
+                AppStrings.shareWithFriends.tr,
                 style: context.bodyLarge?.copyWith(
                   color: AppColors.primaryText,
                   fontWeight: FontWeight.bold,
@@ -94,7 +95,7 @@ class ShareLinkDialog extends StatelessWidget {
           
               /// Subtitle
               Text(
-                'share_this_link_invite_friends'.tr,
+                AppStrings.shareThisLinkInviteFriends.tr,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: ResponsiveHelper.fontSize(13),
@@ -145,7 +146,7 @@ class ShareLinkDialog extends StatelessWidget {
                            SnackBar(
                             backgroundColor: AppColors.blue, // স্ন্যাকবার কালার ব্লু করা হলো
                             content: Text(
-                              'link_copied'.tr,
+                              AppStrings.linkCopied.tr,
                               style: TextStyle(color: AppColors.white),
                             ),
                             duration: Duration(seconds: 2),
@@ -179,7 +180,7 @@ class ShareLinkDialog extends StatelessWidget {
                     color: AppColors.white,
                   ),
                   label: Text(
-                    'share'.tr,
+                    AppStrings.share.tr,
                     style: TextStyle(
                       fontSize: ResponsiveHelper.fontSize(15),
                       color: AppColors.white,
@@ -205,7 +206,7 @@ class ShareLinkDialog extends StatelessWidget {
   void _shareLink() {
     Share.share(
       '$shareMessage\n\n$shareUrl',
-      subject: 'app_invitation'.tr,
+      subject: AppStrings.appInvitation.tr,
     );
   }
 }

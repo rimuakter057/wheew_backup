@@ -81,7 +81,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       final dt = DateTime.parse(sentAt).toLocal();
       final now = DateTime.now();
       final diff = now.difference(dt);
-      if (diff.inMinutes < 1) return 'just now'.tr;
+      if (diff.inMinutes < 1) return AppStrings.justNow.tr;
       if (diff.inMinutes < 60) return '${diff.inMinutes}m';
       if (diff.inHours < 24) return '${diff.inHours}h';
       if (diff.inDays < 7) return '${diff.inDays}d';
@@ -100,7 +100,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
         ),
         title: Text(
-        //  'delete all notifications'.tr,
+        //  AppStrings.deleteAllNotifications.tr,
           AppStrings.delete.tr,
 
           style: GoogleFonts.inter(
@@ -135,7 +135,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
               child: CircularProgressIndicator(strokeWidth: 2, color: Colors.red),
             )
                 : Text(
-              'delete'.tr,
+              AppStrings.delete.tr,
               style: const TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
             ),
           )),
@@ -145,57 +145,144 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   @override
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.white,
+      //   elevation: 0,
+      //   leading: IconButton(onPressed: (){
+      //     context.pop();
+      //
+      //   }, icon: Icon(Icons.arrow_back_ios,color: AppColors.black,)),
+      //   title: Obx(() => Row(
+      //     children: [
+      //       Text(
+      //      AppStrings.notification.tr,
+      //         style: TextStyle(
+      //           color: Colors.black87,
+      //           fontWeight: FontWeight.w600,
+      //           fontSize: ResponsiveHelper.titleFontSize(18),
+      //         ),
+      //       ),
+      //       if (controller.unreadCount.value > 0) ...[
+      //         SizedBox(width: ResponsiveHelper.spacing(8)),
+      //         Container(
+      //           padding: EdgeInsets.symmetric(
+      //             horizontal: ResponsiveHelper.spacing(8),
+      //             vertical: ResponsiveHelper.spacing(2),
+      //           ),
+      //           decoration: BoxDecoration(
+      //             color: AppColors.blue,
+      //             borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+      //           ),
+      //           child: Text(
+      //             '${controller.unreadCount.value}',
+      //             style: GoogleFonts.inter(
+      //               color: Colors.white,
+      //               fontSize: ResponsiveHelper.fontSize(11),
+      //               fontWeight: FontWeight.w600,
+      //             ),
+      //           ),
+      //         ),
+      //       ],
+      //     ],
+      //   )),
+      //   actions: [
+      //     // Mark all read
+      //     Obx(() {
+      //       if (controller.unreadCount.value == 0) return const SizedBox.shrink();
+      //       return TextButton(
+      //         onPressed: controller.markAllAsRead,
+      //         child: Text(
+      //         AppStrings.markAllRead.tr,
+      //           style: TextStyle(
+      //             color: AppColors.blue,
+      //             fontSize: ResponsiveHelper.fontSize(13),
+      //           ),
+      //         ),
+      //       );
+      //     }),
+      //     // Delete all
+      //     Obx(() {
+      //       if (controller.notifications.isEmpty) return const SizedBox.shrink();
+      //       return IconButton(
+      //         onPressed: _showDeleteAllDialog,
+      //         icon: Icon(Icons.delete_sweep_outlined, color: Colors.red.shade400),
+      //       );
+      //     }),
+      //   ],
+      // ),
+
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(onPressed: (){
-          context.pop();
-
-        }, icon: Icon(Icons.arrow_back_ios,color: AppColors.black,)),
-        title: Obx(() => Row(
-          children: [
-            Text(
-           AppStrings.notification.tr,
-              style: TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.w600,
-                fontSize: ResponsiveHelper.titleFontSize(18),
-              ),
-            ),
-            if (controller.unreadCount.value > 0) ...[
-              SizedBox(width: ResponsiveHelper.spacing(8)),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: ResponsiveHelper.spacing(8),
-                  vertical: ResponsiveHelper.spacing(2),
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.blue,
-                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-                ),
+        titleSpacing: 0,
+        leading: IconButton(
+          onPressed: () {
+            context.pop();
+          },
+          icon: Icon(Icons.arrow_back_ios, color: AppColors.black),
+        ),
+        title: Obx(
+              () => Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
                 child: Text(
-                  '${controller.unreadCount.value}',
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: ResponsiveHelper.fontSize(11),
+                  AppStrings.notification.tr,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.black87,
                     fontWeight: FontWeight.w600,
+                    fontSize: ResponsiveHelper.titleFontSize(18),
                   ),
                 ),
               ),
+              if (controller.unreadCount.value > 0) ...[
+                SizedBox(width: ResponsiveHelper.spacing(8)),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveHelper.spacing(8),
+                    vertical: ResponsiveHelper.spacing(2),
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.blue,
+                    borderRadius:
+                    BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+                  ),
+                  child: Text(
+                    '${controller.unreadCount.value}',
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: ResponsiveHelper.fontSize(11),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ],
-          ],
-        )),
+          ),
+        ),
         actions: [
           // Mark all read
           Obx(() {
             if (controller.unreadCount.value == 0) return const SizedBox.shrink();
             return TextButton(
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveHelper.spacing(8),
+                ),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
               onPressed: controller.markAllAsRead,
               child: Text(
-              AppStrings.markAllRead.tr,
+                AppStrings.markAllRead.tr,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: AppColors.blue,
                   fontSize: ResponsiveHelper.fontSize(13),
@@ -211,6 +298,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
               icon: Icon(Icons.delete_sweep_outlined, color: Colors.red.shade400),
             );
           }),
+          SizedBox(width: ResponsiveHelper.spacing(4)),
         ],
       ),
       body: Obx(() {
@@ -275,7 +363,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
           SizedBox(height: ResponsiveHelper.spacing(16)),
           Text(
-            'Notification Not Yet'.tr,
+            AppStrings.notificationNotYet.tr,
             style: GoogleFonts.inter(
               fontSize: ResponsiveHelper.fontSize(16),
               color: Colors.grey.shade400,
@@ -435,7 +523,7 @@ class _NotificationCard extends StatelessWidget {
                       ),
                       SizedBox(width: ResponsiveHelper.spacing(8)),
                       Text(
-                        unread ? 'mark as read'.tr : 'read'.tr,
+                        unread ? AppStrings.markAsRead.tr : AppStrings.read.tr,
                         style: GoogleFonts.inter(
                           fontSize: ResponsiveHelper.fontSize(12.5),
                           fontWeight: FontWeight.w500,
@@ -459,7 +547,7 @@ class _NotificationCard extends StatelessWidget {
                       ),
                       SizedBox(width: ResponsiveHelper.spacing(4)),
                       // Text(
-                      //   'delete'.tr,
+                      //   AppStrings.delete.tr,
                       //   style: GoogleFonts.inter(
                       //     fontSize: ResponsiveHelper.fontSize(12.5),
                       //     fontWeight: FontWeight.w500,

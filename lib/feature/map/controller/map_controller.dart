@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -75,7 +76,7 @@ class ParkingReportController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         submitSuccess.value = true;
-        submitMessage.value = 'map_parking_report_submitted'.tr;
+        submitMessage.value = AppStrings.mapParkingReportSubmitted.tr;
         mapDebug('parking POST: success');
         return true;
       } else {
@@ -83,7 +84,7 @@ class ParkingReportController extends GetxController {
         final msg =
         (decoded is Map<String, dynamic> && decoded['message'] != null)
             ? decoded['message'].toString()
-            : 'something_went_wrong'.tr;
+            : AppStrings.somethingWentWrong.tr;
         submitMessage.value = msg;
         mapDebug('parking POST: failed ${response.statusCode} message=$msg');
         return false;
@@ -534,15 +535,15 @@ class ParkingReportController extends GetxController {
 
 
   String parkingInfoText(Map<String, dynamic> parking) {
-    return '${'map_cost'.tr}: ${parking['parking_cost']}  |  '
-        '${'map_ev'.tr}: ${parking['electric_charging']}  |  '
-        '${'map_disabled'.tr}: ${parking['disabled_facility']}';
+    return '${AppStrings.mapCost.tr}: ${parking['parking_cost']}  |  '
+        '${AppStrings.mapEv.tr}: ${parking['electric_charging']}  |  '
+        '${AppStrings.mapDisabled.tr}: ${parking['disabled_facility']}';
   }
 
   String parkingCostText(Map<String, dynamic> parking) =>
       (parking['parking_cost'] ?? '-').toString();
 
-  String boolFlag(dynamic value) => value == true ? 'yes'.tr : 'no'.tr;
+  String boolFlag(dynamic value) => value == true ? AppStrings.yes.tr : AppStrings.no.tr;
 
   void clearSelectedReport() => selectedReport.value = null;
 
@@ -613,11 +614,11 @@ class ParkingReportController extends GetxController {
         await _buildMarkers();
       } else {
         errorMessage.value =
-        '${'map_failed_to_load_parking_data'.tr} (${response.statusCode})';
+        '${AppStrings.mapFailedToLoadParkingData.tr} (${response.statusCode})';
         mapDebug('parking API: HTTP ${response.statusCode}');
       }
     } catch (e) {
-      errorMessage.value = '${'error'.tr}: $e';
+      errorMessage.value = '${AppStrings.error.tr}: $e';
       mapDebug('parking API: exception $e');
     } finally {
       isLoadingShowDetails.value = false;

@@ -179,7 +179,7 @@ Widget _buildLanguageDropdown({
           color: AppColors.blue,
         ),
         title: Text(
-          'language'.tr,
+          AppStrings.language.tr,
           style: context.titleSmall.copyWith(
             fontSize: ResponsiveHelper.fontSize(16),
             fontWeight: FontWeight.w600,
@@ -233,7 +233,7 @@ void _showLanguageBottomSheet(BuildContext context) {
             children: [
               SizedBox(height: ResponsiveHelper.spacing(8)),
               Text(
-                'language'.tr,
+                AppStrings.language.tr,
                 style: context.titleSmall.copyWith(
                   fontSize: ResponsiveHelper.fontSize(16),
                   fontWeight: FontWeight.w600,

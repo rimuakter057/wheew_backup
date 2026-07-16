@@ -64,9 +64,13 @@ class Wheew extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final languageController = Get.find<LanguageController>();
+
+
     ResponsiveHelper.init(context);
     return Obx(
       () => MaterialApp.router(
+
+
         debugShowCheckedModeBanner: false,
         title: 'Wheew',
         theme: lightTheme,

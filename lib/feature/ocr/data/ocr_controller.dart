@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:camera/camera.dart';
@@ -176,20 +177,20 @@ class OcrController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         debugPrint('✅ success verify');
-        showSuccessToast(data?['message'] ?? 'license_verified_successfully'.tr);
+        showSuccessToast(data?['message'] ?? AppStrings.licenseVerifiedSuccessfully.tr);
         return true;
       } else {
         debugPrint('❌ verify failed | status: ${response.statusCode} | body: ${response.body}');
-        showErrorToast(data?['message'] ?? 'license_verification_failed'.tr);
+        showErrorToast(data?['message'] ?? AppStrings.licenseVerificationFailed.tr);
         return false;
       }
     } on TimeoutException catch (e) {
       debugPrint('⏰ verify timeout: $e');
-      showErrorToast('connection_timeout'.tr);
+      showErrorToast(AppStrings.connectionTimeout.tr);
       return false;
     } catch (e) {
       debugPrint('❌ verify error: $e');
-      showErrorToast('something_wrong'.tr);
+      showErrorToast(AppStrings.someThingWrong.tr);
       return false;
     } finally {
       isVerify.value = false;
@@ -230,7 +231,7 @@ class OcrController {
         return null;
       }
     } catch (e) {
-      showErrorToast('something_wrong'.tr);
+      showErrorToast(AppStrings.someThingWrong.tr);
       return null;
     }
   }

@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -182,7 +183,7 @@ Text("My QR Code",style: context.bodyMedium.copyWith(color: AppColors.black),),
 
           // ── Caption ────────────────────────────────
           Text(
-            'let_others_scan'.tr,
+            AppStrings.letOthersScan.tr,
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               fontSize: ResponsiveHelper.fontSize(13),

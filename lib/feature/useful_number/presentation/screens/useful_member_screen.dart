@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/feature/useful_number/controller/useful_number_controller.dart';
@@ -65,7 +66,7 @@ class _UsefulMemberScreenState extends State<UsefulMemberScreen> {
           onPressed: () => context.pop(),
         ),
         title: Text(
-          'useful_number'.tr,
+          AppStrings.usefulNumber.tr,
           style: TextStyle(
             color: Colors.black,
             fontSize: ResponsiveHelper.titleFontSize(18),
@@ -99,7 +100,7 @@ class _UsefulMemberScreenState extends State<UsefulMemberScreen> {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: controller.refresh,
-                  child:   Text('retry'.tr),
+                  child:   Text(AppStrings.retry.tr),
                 ),
               ],
             ),
@@ -110,7 +111,7 @@ class _UsefulMemberScreenState extends State<UsefulMemberScreen> {
         if (controller.numbers.isEmpty) {
           return  Center(
             child: Text(
-              'no_useful_numbers_found'.tr,
+              AppStrings.noUsefulNumbersFound.tr,
               style: TextStyle(color: Colors.grey),
             ),
           );

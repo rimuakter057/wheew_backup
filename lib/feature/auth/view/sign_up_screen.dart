@@ -204,7 +204,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       DropdownMenuItem(
                         value: 'owner',
                         child: Text(
-                          'owner'.tr,
+                          AppStrings.owner.tr,
                           style: TextStyle(
                             fontSize: ResponsiveHelper.fontSize(16),
                           ),
@@ -213,7 +213,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       DropdownMenuItem(
                         value: 'occasional_driver',
                         child: Text(
-                          'occasional_driver'.tr,
+                          AppStrings.occasionalDriver.tr,
                           style: TextStyle(
                             fontSize: ResponsiveHelper.fontSize(16),
                           ),
@@ -223,7 +223,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onChanged: (value) =>
                         setState(() => selectedDesignation = value),
                     validator: (value) =>
-                        value == null ? 'please_select_designation'.tr : null,
+                        value == null ? AppStrings.pleaseSelectDesignation.tr : null,
                     dropdownStyleData: DropdownStyleData(
                       maxHeight: ResponsiveHelper.height(160),
                       decoration: BoxDecoration(
@@ -262,20 +262,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 //   if (value == null || value.trim().isEmpty) {
                 //     return 'License number is required';
                 //   } else if (value.trim().length < 7) {
-                //     return 'license_number_must_be'.tr;
+                //     return AppStrings.licenseNumberMustBe.tr;
                 //   }
                 //   return null;
                 // },
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'license_number_required'.tr;
+                    return AppStrings.licenseNumberRequired.tr;
                   }
 
                   final text = value.trim();
 
                   // Check total length
                   if (text.length < 6 || text.length > 7) {
-                    return 'license_number_must_be'.tr;
+                    return AppStrings.licenseNumberMustBe.tr;
                   }
 
                   // Count letters and numbers
@@ -286,7 +286,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   final numberCount = RegExp(r'[0-9]').allMatches(text).length;
 
                   if (letterCount < 3 || numberCount < 3) {
-                    return 'licence_validator'.tr;
+                    return AppStrings.licenceValidator.tr;
                   }
 
                   return null;
@@ -295,20 +295,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
               SizedBox(height: ResponsiveHelper.spacing(16)),
               /*CustomTextField(
-                title: 'email'.tr,
-                hintText: 'email_only_for_recover_password'.tr,
+                title: AppStrings.email.tr,
+                hintText: AppStrings.emailOnlyForRecoverPassword.tr,
               )*/
               CustomTextField(
                 controller: emailController,
-                title: 'email'.tr + " (" + 'only_for_recovery'.tr + ")",
-                hintText: 'type_here1'.tr,
+                title: AppStrings.email.tr + " (" + AppStrings.onlyForRecovery.tr + ")",
+                hintText: AppStrings.typeHere1.tr,
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "email_is_required".tr;
+                    return AppStrings.emailIsRequired.tr;
                   }
                   if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
-                    return "enter_valid_email".tr;
+                    return AppStrings.enterValidEmail.tr;
                   }
                   return null;
                 },
@@ -319,17 +319,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
               /// Country
               // CustomTextField(
               //   controller: countryController,
-              //   title: 'country'.tr,
+              //   title: AppStrings.country.tr,
               //   hintText: AppStrings.typeHere.tr,
               //   validator: (value) => (value == null || value.trim().isEmpty)
-              //       ? 'country_is_required'.tr
+              //       ? AppStrings.countryIsRequired.tr
               //       : null,
               // ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'country'.tr,
+                    AppStrings.country.tr,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       color: AppColors.secondaryText,
@@ -341,7 +341,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     value: selectedCountry,
                     isExpanded: true,
                     hint: Text(
-                      'select'.tr,
+                      AppStrings.select.tr,
                       style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
                     ),
                     decoration: InputDecoration(
@@ -385,7 +385,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       });
                     },
                     validator: (value) =>
-                        value == null ? 'country_is_required'.tr : null,
+                        value == null ? AppStrings.countryIsRequired.tr : null,
                     dropdownStyleData: DropdownStyleData(
                       maxHeight: 250,
                       decoration: BoxDecoration(
@@ -402,7 +402,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               /// City
               CustomTextField(
                 controller: cityController,
-                title: "${'city'.tr} (${'optional'.tr})",
+                title: "${AppStrings.city.tr} (${AppStrings.optional.tr})",
                 hintText: AppStrings.typeHere.tr,
 
               ),
@@ -411,46 +411,46 @@ class _SignUpScreenState extends State<SignUpScreen> {
               /// Password
               CustomTextField(
                 controller: passwordController,
-                title: 'password'.tr,
-                hintText: 'password'.tr,
+                title: AppStrings.password.tr,
+                hintText: AppStrings.password.tr,
                 isPassword: true,
 
                 // validator: (value) {
                 //   if (value == null || value.trim().isEmpty) {
-                //     return 'password_is_required'.tr;
+                //     return AppStrings.passwordIsRequired.tr;
                 //   } else if (value.trim().length < 6) {
-                //     return 'password_must_be_6_characters'.tr;
+                //     return AppStrings.passwordMustBe6Characters.tr;
                 //   }
                 //
                 //   return null;
                 // },
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'password_is_required'.tr;
+                    return AppStrings.passwordIsRequired.tr;
                   }
 
                   final password = value.trim();
 
                   if (password.length < 8) {
-                    return 'password_must_be_at_least_8_characters'.tr;
+                    return AppStrings.passwordMustBeAtLeast8Characters.tr;
                   }
 
                   if (!RegExp(r'[A-Z]').hasMatch(password)) {
-                    return 'password_must_contain_uppercase'.tr;
+                    return AppStrings.passwordMustContainUppercase.tr;
                   }
 
                   if (!RegExp(r'[a-z]').hasMatch(password)) {
-                    return 'password_must_contain_lowercase'.tr;
+                    return AppStrings.passwordMustContainLowercase.tr;
                   }
 
                   if (!RegExp(r'[0-9]').hasMatch(password)) {
-                    return 'password_must_contain_number'.tr;
+                    return AppStrings.passwordMustContainNumber.tr;
                   }
 
                   if (!RegExp(
                     r'[!@#$%^&*(),.?":{}|<>_\-+=/\\[\]~`]',
                   ).hasMatch(password)) {
-                    return 'password_must_contain_special_character'.tr;
+                    return AppStrings.passwordMustContainSpecialCharacter.tr;
                   }
 
                   return null;
@@ -462,17 +462,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
               /// Confirm Password
               CustomTextField(
                 controller: confirmPasswordController,
-                title: 'confirm_password'.tr,
-                hintText: 'confirm_password'.tr,
+                title: AppStrings.confirmPassword.tr,
+                hintText: AppStrings.confirmPassword.tr,
                 isPassword: true,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'confirm_your_password'.tr;
+                    return AppStrings.confirmYourPassword.tr;
                   } else if (value.trim().length < 6) {
-                    return 'password_must_be_6_characters'.tr;
+                    return AppStrings.passwordMustBe6Characters.tr;
                   }
                   if (value != passwordController.text) {
-                    return 'password_do_not_match'.tr;
+                    return AppStrings.passwordDoNotMatch.tr;
                   }
                   return null;
                 },
@@ -502,7 +502,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         style: TextStyle(fontSize: 14, color: Colors.black),
                         children: [
                           TextSpan(
-                            text: 'i_agree_to'.tr + ' ',
+                            text: AppStrings.iAgreeTo.tr + ' ',
                             style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w400,
                               fontSize: 14,
@@ -569,25 +569,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
               PrimaryButton(
-                title: 'continue'.tr,
+                title: AppStrings.continueText.tr,
                 onTap: () async {
                   if (!_formKey.currentState!.validate()) {
-                    showErrorSnackBar('please_fill_all_fields'.tr);
+                    showErrorSnackBar(AppStrings.pleaseFillAllFields.tr);
                     return;
                   }
 
                   if (selectedDesignation == null) {
-                    showErrorSnackBar('please_select_designation'.tr);
+                    showErrorSnackBar(AppStrings.pleaseSelectDesignation.tr);
                     return;
                   }
 
                   if (!agree) {
-                    showWarningSnackBar('please accept terms'.tr);
+                    showWarningSnackBar(AppStrings.pleaseAcceptTerms.tr);
                     return;
                   }
 
                   showLoadingDialog(
-                    message: 'creating_account'.tr,
+                    message: AppStrings.creatingAccount.tr,
                     context: context,
                   );
 
@@ -762,14 +762,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       fontWeight: FontWeight.w400,
                     ),
                     children: [
-                      TextSpan(text: 'already_account1'.tr),
+                      TextSpan(text: AppStrings.alreadyAccount1.tr),
                       WidgetSpan(
                         child: GestureDetector(
                           onTap: () {
                             context.pushNamed(RouteName.signIn);
                           },
                           child: Text(
-                            "sign_in".tr,
+                            AppStrings.signIn.tr,
                             style: GoogleFonts.poppins(
                               fontSize: ResponsiveHelper.fontSize(14),
                               color: AppColors.blue,

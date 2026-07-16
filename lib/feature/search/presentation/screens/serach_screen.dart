@@ -1,6 +1,7 @@
 // ignore_for_file: unused_local_variable
 
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -75,7 +76,7 @@ class _SearchListScreenState extends State<SearchListScreen> {
           icon: Icon(Icons.arrow_back_ios, color: AppColors.black),
         ),
         title: Text(
-          'Search Drivers'.tr,
+          AppStrings.searchDrivers.tr,
           style: TextStyle(
             color: AppColors.black,
             fontSize: ResponsiveHelper.fontSize(18),
@@ -98,7 +99,7 @@ class _SearchListScreenState extends State<SearchListScreen> {
                   onChanged: (value) => controller.searchUsers(value),
                   style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
                   decoration: InputDecoration(
-                    hintText: 'Search by name or vehicle code...'.tr,
+                    hintText: AppStrings.searchByNameOrVehicleCode.tr,
                     hintStyle: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
                     prefixIcon: Icon(Icons.search, size: ResponsiveHelper.iconSize(24)),
                     border: OutlineInputBorder(
@@ -222,7 +223,7 @@ class _SearchListScreenState extends State<SearchListScreen> {
                                       size: ResponsiveHelper.iconSize(14), color: AppColors.white),
                                   SizedBox(width: ResponsiveHelper.width(4)),
                                   Text(
-                                    "Message".tr,
+                                    AppStrings.message.tr,
                                     style: TextStyle(
                                       color: AppColors.white,
                                       fontSize: ResponsiveHelper.fontSize(12),
@@ -289,7 +290,7 @@ class _SearchListScreenState extends State<SearchListScreen> {
                                     ),
                                     SizedBox(width: ResponsiveHelper.width(4)),
                                     Text(
-                                      "Send Request".tr,
+                                      AppStrings.sendRequest.tr,
                                       style: TextStyle(
                                         color: AppColors.blue,
                                         fontSize: ResponsiveHelper.fontSize(12),
@@ -397,7 +398,7 @@ class _SendRequestDialogState extends State<_SendRequestDialog> {
                     SizedBox(width: ResponsiveHelper.width(12)),
                     Expanded(
                       child: Text(
-                        "Send Message Request".tr,
+                        AppStrings.sendMessageRequest.tr,
                         style: TextStyle(
                           fontSize: ResponsiveHelper.fontSize(17),
                           fontWeight: FontWeight.w700,
@@ -419,7 +420,7 @@ class _SendRequestDialogState extends State<_SendRequestDialog> {
                 SizedBox(height: ResponsiveHelper.height(6)),
 
                 Text(
-                  "Write a short message to introduce yourself".tr,
+                  AppStrings.writeAShortMessageToIntroduceYourself.tr,
                   style: TextStyle(
                     fontSize: ResponsiveHelper.fontSize(13),
                     color: Colors.grey[500],
@@ -434,7 +435,7 @@ class _SendRequestDialogState extends State<_SendRequestDialog> {
                   maxLines: 3,
                   style: TextStyle(fontSize: ResponsiveHelper.fontSize(14)),
                   decoration: InputDecoration(
-                    hintText: "Hi, can I message you?".tr,
+                    hintText: AppStrings.hiCanIMessageYou.tr,
                     hintStyle: TextStyle(
                       fontSize: ResponsiveHelper.fontSize(14),
                       color: Colors.grey[400],
@@ -461,7 +462,7 @@ class _SendRequestDialogState extends State<_SendRequestDialog> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return "Message is required".tr;
+                      return AppStrings.messageIsRequired.tr;
                     }
                     return null;
                   },
@@ -485,7 +486,7 @@ class _SendRequestDialogState extends State<_SendRequestDialog> {
                           ),
                         ),
                         child: Text(
-                          "Cancel".tr,
+                          AppStrings.cancel.tr,
                           style: TextStyle(
                             color: Colors.grey[700],
                             fontWeight: FontWeight.w600,
@@ -524,7 +525,7 @@ class _SendRequestDialogState extends State<_SendRequestDialog> {
                           ),
                         ),
                         child: Text(
-                          "Send".tr,
+                          AppStrings.send.tr,
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,

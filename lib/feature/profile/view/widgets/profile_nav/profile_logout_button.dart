@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 
@@ -46,7 +47,7 @@ Widget buildLogoutButton( {required BuildContext context}) {
           ),
           SizedBox(width: ResponsiveHelper.spacing(10)),
           Text(
-            'log_out'.tr,
+            AppStrings.logOut.tr,
             style: TextStyle(
               color: Colors.redAccent,
               fontSize: ResponsiveHelper.fontSize(16),

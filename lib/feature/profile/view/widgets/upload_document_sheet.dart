@@ -434,7 +434,7 @@
 // //             //         ),
 // //             //       )
 // //             //           : Text(
-// //             //         _isEdit ? 'update'.tr : 'upload'.tr,
+// //             //         _isEdit ? AppStrings.update.tr : AppStrings.upload.tr,
 // //             //         style: GoogleFonts.poppins(
 // //             //           fontSize: ResponsiveHelper.fontSize(16),
 // //             //           fontWeight: FontWeight.w600,
@@ -749,17 +749,17 @@
 //             SizedBox(height: ResponsiveHelper.spacing(8)),
 //             ListTile(
 //               leading: const Icon(Icons.camera_alt_outlined, color: Color(0xFF2563EB)),
-//               title: const Text('Take Photo'),
+//               title: Text(AppStrings.takePhoto.tr),
 //               onTap: () => Navigator.pop(ctx, 0),
 //             ),
 //             ListTile(
 //               leading: const Icon(Icons.photo_library_outlined, color: Color(0xFF2563EB)),
-//               title: const Text('Choose from Gallery'),
+//               title: Text(AppStrings.chooseFromGallery.tr),
 //               onTap: () => Navigator.pop(ctx, 1),
 //             ),
 //             ListTile(
 //               leading: const Icon(Icons.insert_drive_file_outlined, color: Color(0xFF2563EB)),
-//               title: const Text('Browse Files'),
+//               title: Text(AppStrings.browseFiles.tr),
 //               onTap: () => Navigator.pop(ctx, 2),
 //             ),
 //             SizedBox(height: ResponsiveHelper.spacing(8)),
@@ -1437,17 +1437,17 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
             SizedBox(height: ResponsiveHelper.spacing(8)),
             ListTile(
               leading: const Icon(Icons.camera_alt_outlined, color: Color(0xFF2563EB)),
-              title: const Text('Take Photo'),
+              title: Text(AppStrings.takePhoto.tr),
               onTap: () => Navigator.pop(ctx, 0),
             ),
             ListTile(
               leading: const Icon(Icons.photo_library_outlined, color: Color(0xFF2563EB)),
-              title: const Text('Choose from Gallery'),
+              title: Text(AppStrings.chooseFromGallery.tr),
               onTap: () => Navigator.pop(ctx, 1),
             ),
             ListTile(
               leading: const Icon(Icons.insert_drive_file_outlined, color: Color(0xFF2563EB)),
-              title: const Text('Browse Files'),
+              title: Text(AppStrings.browseFiles.tr),
               onTap: () => Navigator.pop(ctx, 2),
             ),
             SizedBox(height: ResponsiveHelper.spacing(8)),

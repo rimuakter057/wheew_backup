@@ -233,7 +233,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
             showCustomSnackBar(
               _parkingCtrl.submitMessage.value.isNotEmpty
                   ? _parkingCtrl.submitMessage.value
-                  : 'map_parking_report_submitted'.tr,
+                  : AppStrings.mapParkingReportSubmitted.tr,
               isError: false,
             );
             await _parkingCtrl.fetchParkingReport(
@@ -246,7 +246,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
             showCustomSnackBar(
               _parkingCtrl.submitMessage.value.isNotEmpty
                   ? _parkingCtrl.submitMessage.value
-                  : 'map_failed_to_submit_parking_report'.tr,
+                  : AppStrings.mapFailedToSubmitParkingReport.tr,
               isError: true,
             );
           }
@@ -548,7 +548,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _ActionPillButton(
-                    label: 'Add Parking Spot',
+                    label: AppStrings.addParkingSpot.tr,
                     icon: Icons.add_location_alt_rounded,
                     gradientColors: const [
                       Color(0xFFFF8A3D),
@@ -558,7 +558,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                   ),
                   SizedBox(height: ResponsiveHelper.spacing(14)),
                   _ActionPillButton(
-                    label: 'Park My Car',
+                    label: AppStrings.parkMyCar.tr,
                     icon: Icons.local_parking_rounded,
                     gradientColors: const [
                       Color(0xFF4E8CFF),
@@ -618,6 +618,7 @@ class _ActionPillButton extends StatelessWidget {
           ),
           child: Padding(
             padding: ResponsiveHelper.symmetric(
+
               horizontal: 16,
               vertical: 10,
             ),

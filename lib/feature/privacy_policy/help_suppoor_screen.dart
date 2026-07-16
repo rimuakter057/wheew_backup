@@ -160,7 +160,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                     SizedBox(
                       width: ResponsiveHelper.width(250),
                       child: Text(
-                        "support_text2".tr,
+                        AppStrings.supportText2.tr,
                         textAlign: TextAlign.center,
                         style: context.bodyMedium.copyWith(
                           color: Colors.black54,
@@ -183,7 +183,7 @@ Future<void> _launchEmail(String email) async {
   final trimmed = email.trim();
   if (trimmed.isEmpty) return;
 
-  final subject = Uri.encodeComponent('support_request'.tr);
+  final subject = Uri.encodeComponent(AppStrings.supportRequest.tr);
   final emailUri = Uri.parse(
     'mailto:${Uri.encodeComponent(trimmed)}?subject=$subject',
   );
@@ -205,7 +205,7 @@ Future<void> _launchEmail(String email) async {
     );
 
     Get.snackbar(
-      'email_copied'.tr,
+      AppStrings.emailCopied.tr,
       trimmed,
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: AppColors.blue,

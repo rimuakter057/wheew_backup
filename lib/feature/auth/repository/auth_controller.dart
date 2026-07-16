@@ -1,5 +1,6 @@
 // ignore_for_file: dead_code, unnecessary_null_comparison
 import 'dart:async';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:convert';
@@ -134,7 +135,7 @@ class AuthController extends GetxController {
       debugPrint('🔥 FCM Token: $fcmToken');
 
       if (fcmToken == null) {
-        showErrorToast('notification_setup_failed'.tr);
+        showErrorToast(AppStrings.notificationSetupFailed.tr);
         // মেসেজ: "নোটিফিকেশন সেটআপ করা যাচ্ছে না, ইন্টারনেট কানেকশন চেক করে আবার চেষ্টা করুন।"
         return false;
       }
@@ -210,21 +211,21 @@ class AuthController extends GetxController {
       }
     } on TimeoutException catch (e) {
       debugPrint('⏰ Login timeout: $e');
-    //  showErrorToast('login_connection_timeout'.tr);
-      CustomSnackbar.error(message:'login_connection_timeout'.tr, context: context);
+    //  showErrorToast(AppStrings.loginConnectionTimeout.tr);
+      CustomSnackbar.error(message:AppStrings.loginConnectionTimeout.tr, context: context);
 
       // মেসেজ: "সার্ভারের সাথে কানেক্ট হতে সময় বেশি লাগছে। ইন্টারনেট চেক করে আবার চেষ্টা করুন।"
       return false;
     } on FormatException catch (e) {
       debugPrint('❌ Login format/URL error: $e');
-    //  showErrorToast('login_unavailable_try_again'.tr);
-      CustomSnackbar.error(message:'login_unavailable_try_again'.tr, context: context);
+    //  showErrorToast(AppStrings.loginUnavailableTryAgain.tr);
+      CustomSnackbar.error(message:AppStrings.loginUnavailableTryAgain.tr, context: context);
       // মেসেজ: "এই মুহূর্তে লগইন করা যাচ্ছে না। কিছুক্ষণ পর আবার চেষ্টা করুন।"
       return false;
     } catch (e) {
       debugPrint('❌ Login exception: $e');
-      // showErrorToast('login_failed_check_connection'.tr);
-      CustomSnackbar.error(message:'login_failed_check_connection'.tr, context: context);
+      // showErrorToast(AppStrings.loginFailedCheckConnection.tr);
+      CustomSnackbar.error(message:AppStrings.loginFailedCheckConnection.tr, context: context);
       // মেসেজ: "লগইন সম্পন্ন করা যাচ্ছে না। আপনার ইন্টারনেট কানেকশন চেক করুন।"
       return false;
     } finally {
@@ -322,10 +323,10 @@ class AuthController extends GetxController {
     isLoadingEmail.value = false;
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      showSuccessToast(data['message'] ?? 'otp_send_success'.tr);
+      showSuccessToast(data['message'] ?? AppStrings.otpSendSuccess.tr);
       return true;
     } else {
-      showErrorToast(data['message'] ?? 'something_wrong'.tr);
+      showErrorToast(data['message'] ?? AppStrings.someThingWrong.tr);
       return false;
     }
   }
@@ -350,11 +351,11 @@ class AuthController extends GetxController {
     isLoadingVerify.value = false;
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      showSuccessToast(data['message'] ?? 'otp_verify_success'.tr);
+      showSuccessToast(data['message'] ?? AppStrings.otpVerifySuccess.tr);
       return data["otp_verification_token"];
     }
 
-    showErrorToast(data['message'] ?? 'something_wrong'.tr);
+    showErrorToast(data['message'] ?? AppStrings.someThingWrong.tr);
     return null;
   }
 
@@ -379,10 +380,10 @@ class AuthController extends GetxController {
     isLoadingReset.value = false;
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      showSuccessToast(data['message'] ?? 'password_changed'.tr);
+      showSuccessToast(data['message'] ?? AppStrings.passwordChanged.tr);
       return true;
     } else {
-      showErrorToast(data['message'] ?? 'something_wrong'.tr);
+      showErrorToast(data['message'] ?? AppStrings.someThingWrong.tr);
       return false;
     }
   }
@@ -404,7 +405,7 @@ class AuthController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         message.value = body['message'] ?? '';
       } else {
-        errorMessage.value = body['message'] ?? 'something_wrong'.tr;
+        errorMessage.value = body['message'] ?? AppStrings.someThingWrong.tr;
       }
     } catch (e) {
       errorMessage.value = e.toString();
@@ -434,10 +435,10 @@ class AuthController extends GetxController {
 
     if (response["statusCode"] == 200 || response["statusCode"] == 201) {
       await clearUserData();
-      showSuccessToast(data['message'] ?? 'deleted'.tr);
+      showSuccessToast(data['message'] ?? AppStrings.deleted.tr);
       context.goNamed(RouteName.signIn);
     } else {
-      showErrorToast(data['message'] ?? 'something_wrong'.tr);
+      showErrorToast(data['message'] ?? AppStrings.someThingWrong.tr);
     }
   }
 

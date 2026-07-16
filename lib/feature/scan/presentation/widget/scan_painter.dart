@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -98,11 +99,11 @@ class CameraErrorWidget extends StatelessWidget {
   String get _message {
     switch (error.errorCode) {
       case MobileScannerErrorCode.permissionDenied:
-        return 'camera_permission_denied'.tr;
+        return AppStrings.cameraPermissionDenied.tr;
       case MobileScannerErrorCode.unsupported:
-        return 'camera_unsupported'.tr;
+        return AppStrings.cameraUnsupported.tr;
       default:
-        return 'camera_error'.tr;
+        return AppStrings.cameraError.tr;
     }
   }
 

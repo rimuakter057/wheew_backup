@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -73,7 +74,7 @@ class LanguageController extends GetxController {
       //
       // CustomSnackbar.error(
       //   context: context,
-      //   message:'Failed to change language'.tr,
+      //   message:AppStrings.failedToChangeLanguage.tr,
       // );
 
     }

@@ -49,7 +49,9 @@ class ParkingRepository {
       },
     );
   }
-
+  Future<http.Response> getHandoffById({required String handoffId}) async {
+    return await ApiClient.getData(uri: '/park-relay/handoffs/$handoffId');
+  }
   Future<http.Response> setParkingModeSearching({
     required double latitude,
     required double longitude,

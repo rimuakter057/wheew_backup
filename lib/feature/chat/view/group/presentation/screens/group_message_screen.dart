@@ -1,4 +1,5 @@
 // import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 // import 'package:google_fonts/google_fonts.dart' hide Config;
@@ -201,7 +202,7 @@
 //                           ),
 //                         ),
 //                         Text(
-//                           '${widget.groupMembers.length} ${'members'.tr}',
+//                           '${widget.groupMembers.length} ${AppStrings.members.tr}',
 //                           style: GoogleFonts.poppins(
 //                             fontSize: ResponsiveHelper.fontSize(12),
 //                             color: Colors.grey,
@@ -284,7 +285,7 @@
 //               if (controller.groupMessageList.isEmpty) {
 //                 return Center(
 //                   child: Text(
-//                     'no_messages'.tr,
+//                     AppStrings.noMessages.tr,
 //                     style: GoogleFonts.poppins(
 //                       fontSize: ResponsiveHelper.fontSize(16),
 //                       color: Colors.grey,
@@ -802,7 +803,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
                   if (controller.groupMessageList.isEmpty && !showTyping) {
                     return Center(
                       child: Text(
-                        'no_messages'.tr,
+                        AppStrings.noMessages.tr,
                         style: GoogleFonts.poppins(
                           fontSize: ResponsiveHelper.fontSize(16),
                           color: Colors.grey,

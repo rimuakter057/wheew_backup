@@ -1,6 +1,7 @@
 // // widgets/message_app_bar.dart
 //
 // import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 // import 'package:get/get.dart';
 // import 'package:go_router/go_router.dart';
 // import 'package:google_fonts/google_fonts.dart' hide Config;
@@ -84,7 +85,7 @@
 //                   Obx(() {
 //                     final bool isTyping = chatController.isTyping.value;
 //                     return Text(
-//                       isTyping ? "typing_".tr : "online".tr,
+//                       isTyping ? AppStrings.typing.tr : AppStrings.online.tr,
 //                       style: GoogleFonts.poppins(
 //                         fontSize: ResponsiveHelper.fontSize(12),
 //                         fontWeight: FontWeight.w400,
@@ -122,7 +123,7 @@
 //                     Icon(Icons.person_outline_rounded,
 //                         color: AppColors.black),
 //                     SizedBox(width: ResponsiveHelper.spacing(8)),
-//                     Text('view_profile'.tr),
+//                     Text(AppStrings.viewProfile.tr),
 //                   ],
 //                 ),
 //               ),
@@ -133,7 +134,7 @@
 //                   children: [
 //                     Icon(Icons.star_rate_outlined, color: Colors.black),
 //                     SizedBox(width: ResponsiveHelper.spacing(8)),
-//                     Text('rate_user'.tr),
+//                     Text(AppStrings.rateUser.tr),
 //                   ],
 //                 ),
 //               ),
@@ -153,8 +154,8 @@
 //                       SizedBox(width: ResponsiveHelper.spacing(8)),
 //                       Text(
 //                         chatController.isBlockedByMe.value
-//                             ? "unblock".tr
-//                             : "block_".tr,
+//                             ? AppStrings.unblock.tr
+//                             : AppStrings.blocked.tr,
 //                       ),
 //                     ],
 //                   ),
@@ -261,7 +262,7 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Obx(() {
                   final bool isTyping = chatController.isTyping.value;
                   return Text(
-                    isTyping ? "typing_".tr : "online".tr,
+                    isTyping ? AppStrings.typing.tr : AppStrings.online.tr,
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(13),
                       fontWeight: FontWeight.w400,
@@ -298,7 +299,7 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                 children: [
                   Icon(Icons.person_outline_rounded, color: AppColors.black),
                   SizedBox(width: ResponsiveHelper.spacing(8)),
-                  Text('view_profile'.tr),
+                  Text(AppStrings.viewProfile.tr),
                 ],
               ),
             ),
@@ -308,7 +309,7 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                 children: [
                   Icon(Icons.star_rate_outlined, color: Colors.black),
                   SizedBox(width: ResponsiveHelper.spacing(8)),
-                  Text('rate_user'.tr),
+                  Text(AppStrings.rateUser.tr),
                 ],
               ),
             ),
@@ -325,8 +326,8 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                     SizedBox(width: ResponsiveHelper.spacing(8)),
                     Text(
                       chatController.isBlockedByMe.value
-                          ? "unblock".tr
-                          : "block_".tr,
+                          ? AppStrings.unblock.tr
+                          : AppStrings.blocked.tr,
                     ),
                   ],
                 ),

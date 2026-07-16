@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -28,7 +29,7 @@ class BlockMeWidget extends StatelessWidget {
 
           Expanded(
             child: Text(
-              "you_can't_send".tr,
+              AppStrings.youCantSend.tr,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.poppins(

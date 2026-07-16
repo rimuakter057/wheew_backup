@@ -1,6 +1,7 @@
 // widgets/rating_dialog.dart
 
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -201,8 +202,8 @@ void showRatingDialog({
 
               Text(
                 isUpdate
-                    ? 'update_rating'.tr
-                    : 'add_rating'.tr,
+                    ? AppStrings.updateRating.tr
+                    : AppStrings.addRating.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(10),
                   color: Colors.grey.shade400,
@@ -293,8 +294,8 @@ void showRatingDialog({
                   )
                       : Text(
                     isUpdate
-                        ? 'update_rating'.tr
-                        : 'submit_rating'.tr,
+                        ? AppStrings.updateRating.tr
+                        : AppStrings.submitRating.tr,
                     style: GoogleFonts.inter(
                       color: Colors.white,
                       fontWeight: FontWeight.w500,
@@ -340,11 +341,11 @@ Widget _buildStarIcon(int starIndex, double rating) {
 // ── Rating label ──────────────────────────────────────────────
 String _ratingLabel(double rating) {
   if (rating == 0) return '';
-  if (rating <= 1.0) return 'rating_poor'.tr;
-  if (rating <= 2.0) return 'rating_fair'.tr;
-  if (rating <= 3.0) return 'rating_good'.tr;
-  if (rating <= 4.0) return 'rating_great'.tr;
-  return 'rating_excellent'.tr;
+  if (rating <= 1.0) return AppStrings.ratingPoor.tr;
+  if (rating <= 2.0) return AppStrings.ratingFair.tr;
+  if (rating <= 3.0) return AppStrings.ratingGood.tr;
+  if (rating <= 4.0) return AppStrings.ratingGreat.tr;
+  return AppStrings.ratingExcellent.tr;
 }
 
 

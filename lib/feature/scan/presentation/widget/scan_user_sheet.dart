@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -143,7 +144,7 @@ class ScannedUserSheet extends StatelessWidget {
             // ── Buttons ───────────────────────────────
             if (isExistingChat)
               _SheetButton(
-                label: 'open_chat'.tr,
+                label: AppStrings.openChat.tr,
                 icon: Icons.chat_bubble_outline_rounded,
                 color: AppColors.blue,
                 onTap: () {
@@ -164,7 +165,7 @@ class ScannedUserSheet extends StatelessWidget {
               )
             else
               _SheetButton(
-                label: 'start_chat'.tr,
+                label: AppStrings.startChat.tr,
                 icon: Icons.chat_bubble_outline_rounded,
                 color: AppColors.blue,
                 onTap: () {

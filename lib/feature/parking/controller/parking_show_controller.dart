@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'dart:convert';
 import 'dart:ui' as ui;
 
@@ -15,8 +16,14 @@ import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/router/routes.dart';
+
 class ParkingShowController extends GetxController {
   final ParkingRepository _repository = ParkingRepository();
+  BuildContext? get _dialogContext =>
+      AppRouter.navigatorKey.currentState?.overlay?.context ??
+          AppRouter.navigatorKey.currentContext;
+
   final Logger _logger = Logger(
     printer: PrettyPrinter(
       methodCount: 0,
@@ -91,7 +98,8 @@ class ParkingShowController extends GetxController {
   }
 
   void _showMessage(String message, {required bool isError}) {
-    final ctx = Get.overlayContext ?? Get.context;
+    final ctx = _dialogContext;
+
     if (ctx == null) return;
     if (isError) {
       CustomSnackbar.error(context: ctx, message: message);
@@ -871,7 +879,8 @@ class ParkingShowController extends GetxController {
   }
 
   void showParkingTypeDialog() {
-    final ctx = Get.overlayContext ?? Get.context;
+    final ctx = _dialogContext;
+
     if (ctx == null) return;
     showDialog(
       context: ctx,
@@ -924,7 +933,7 @@ class ParkingShowController extends GetxController {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12)),
                         ),
-                        child: const Text('Free Spot',
+                        child: Text(AppStrings.freeSpot.tr,
                             style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ),
@@ -942,7 +951,7 @@ class ParkingShowController extends GetxController {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12)),
                         ),
-                        child: const Text('Paid Spot',
+                        child: Text(AppStrings.paidSpot.tr,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold)),
@@ -959,7 +968,8 @@ class ParkingShowController extends GetxController {
   }
 
   void showDurationPickerDialog() {
-    final ctx = Get.overlayContext ?? Get.context;
+    final ctx = _dialogContext;
+
     if (ctx == null) return;
     showDialog(
       context: ctx,
@@ -978,8 +988,8 @@ class ParkingShowController extends GetxController {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'For how long is the user staying in that spot?',
+                 Text(
+                  AppStrings.forHowLongIsTheUserStayingInThatSpot.tr,
                   style: TextStyle(fontSize: 14, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
@@ -1019,7 +1029,7 @@ class ParkingShowController extends GetxController {
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(),
                   child:
-                  const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                  Text(AppStrings.cancel.tr, style: TextStyle(color: Colors.grey)),
                 ),
               ],
             ),
@@ -1030,7 +1040,8 @@ class ParkingShowController extends GetxController {
   }
 
   void _showExpirationAlert() {
-    final ctx = Get.overlayContext ?? Get.context;
+    final ctx = _dialogContext;
+
     if (ctx == null) return;
     showDialog(
       context: ctx,
@@ -1071,7 +1082,7 @@ class ParkingShowController extends GetxController {
                       child: OutlinedButton(
                         onPressed: () {
                           Navigator.of(dialogContext).pop();
-                          _showMessage('Acknowledged. Keeping spot active.',
+                          _showMessage(AppStrings.acknowledgedKeepingSpotActive.tr,
                               isError: false);
                         },
                         style: OutlinedButton.styleFrom(
@@ -1079,7 +1090,7 @@ class ParkingShowController extends GetxController {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12)),
                         ),
-                        child: const Text('No, Staying',
+                        child: Text(AppStrings.noStaying.tr,
                             style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ),
@@ -1090,7 +1101,7 @@ class ParkingShowController extends GetxController {
                           Navigator.of(dialogContext).pop();
                           clearSavedParkingLocation();
                           _showMessage(
-                              'Parking cleared. Released spot status.',
+                              AppStrings.parkingClearedReleasedSpotStatus.tr,
                               isError: false);
                         },
                         style: ElevatedButton.styleFrom(
@@ -1099,7 +1110,7 @@ class ParkingShowController extends GetxController {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12)),
                         ),
-                        child: const Text('Yes, Leaving',
+                        child: Text(AppStrings.yesLeaving.tr,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold)),
@@ -1116,7 +1127,8 @@ class ParkingShowController extends GetxController {
   }
 
   void showSavedSpotDetails() {
-    final ctx = Get.overlayContext ?? Get.context;
+    final ctx = _dialogContext;
+
     if (ctx == null) return;
     showModalBottomSheet(
       context: ctx,
@@ -1144,8 +1156,9 @@ class ParkingShowController extends GetxController {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Saved Parking Location',
+               Text(
+
+                AppStrings.savedParkingLocation.tr,
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -1153,12 +1166,12 @@ class ParkingShowController extends GetxController {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              _buildDetailRow('Confidence Level',
+              _buildDetailRow(AppStrings.confidenceLevel.tr,
                   '${confidenceLevel.value}% (High Accuracy)'),
               _buildDetailRow(
-                  'Spot Type', isPaidSpot.value ? 'Paid Spot' : 'Free Spot'),
+                  AppStrings.spotType.tr, isPaidSpot.value ? AppStrings.paidSpot.tr : AppStrings.freeSpot.tr),
               if (isTimerActive.value)
-                _buildDetailRow('Time Remaining', remainingTimeString.value),
+                _buildDetailRow(AppStrings.timeRemaining.tr, remainingTimeString.value),
               const SizedBox(height: 24),
               ElevatedButton.icon(
                 onPressed: () {
@@ -1166,7 +1179,7 @@ class ParkingShowController extends GetxController {
                   launchSavedParkingRoute();
                 },
                 icon: const Icon(Icons.directions_walk, color: Colors.white),
-                label: const Text('Walk Back to Car',
+                label: Text(AppStrings.walkBackToCar.tr,
                     style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF185FA5),
@@ -1183,7 +1196,7 @@ class ParkingShowController extends GetxController {
                 },
                 icon: const Icon(Icons.delete_outline, color: Colors.red),
                 label:
-                const Text('Remove Spot', style: TextStyle(color: Colors.red)),
+                Text(AppStrings.removeSpot.tr, style: TextStyle(color: Colors.red)),
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Colors.red),
                   padding: const EdgeInsets.symmetric(vertical: 14),
@@ -1199,8 +1212,38 @@ class ParkingShowController extends GetxController {
     );
   }
 
-  void showHandoffDetails(Map<String, dynamic> handoff) {
-    showDetailsDialog(handoff, 'Handoff Details');
+  /// Marker tap -> GET /park-relay/handoffs/{id} for single-item details.
+  /// Falls back to the cached list item if the call fails.
+  Future<void> showHandoffDetails(Map<String, dynamic> handoff) async {
+    final id = handoff['id']?.toString();
+    if (id == null || id.isEmpty) {
+      showDetailsDialog(handoff, 'Handoff Details');
+      return;
+    }
+
+    isLoading.value = true;
+    try {
+      _logger.i('=== showHandoffDetails: fetching /handoffs/$id ===');
+      final response = await _repository.getHandoffById(handoffId: id);
+      print("GET_HANDOFF_BY_ID_RESPONSE: status=${response.statusCode}, body=${response.body}");
+      _logger.d('getHandoffById status: ${response.statusCode}\nbody: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = _asMap(jsonDecode(response.body));
+        if (data != null) {
+          showDetailsDialog(data, 'Handoff Details');
+          return;
+        }
+      }
+      _showMessage('Failed to load handoff details', isError: true);
+      showDetailsDialog(handoff, 'Handoff Details'); // fallback to cached data
+    } catch (e, st) {
+      _logger.e('showHandoffDetails ERROR', error: e, stackTrace: st);
+      _showMessage('Network error loading handoff details: $e', isError: true);
+      showDetailsDialog(handoff, 'Handoff Details'); // fallback to cached data
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void showParkingAreaDetails(Map<String, dynamic> area) {
@@ -1214,7 +1257,8 @@ class ParkingShowController extends GetxController {
   void showDetailsDialog(Map<String, dynamic> data, String title) {
     _logger.i('=== showDetailsDialog: title="$title" ===\n'
         'data: ${jsonEncode(data)}');
-    final ctx = Get.overlayContext ?? Get.context;
+    final ctx = _dialogContext;
+
     if (ctx == null) return;
 
     final visibleEntries = data.entries.where((entry) {

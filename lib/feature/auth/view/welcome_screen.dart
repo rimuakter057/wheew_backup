@@ -49,7 +49,7 @@
 //                   child: Column(
 //                     children: [
 //                       Text(
-//                         'welcome_message'.tr,
+//                         AppStrings.welcomeMessage.tr,
 //                         textAlign: TextAlign.center,
 //                         style: context.titleLarge.copyWith(
 //                           fontSize: 40,
@@ -60,7 +60,7 @@
 //                       SizedBox(height: ResponsiveHelper.spacing(4)),
 //
 //                       Text(
-//                         'welcome_message1'.tr,
+//                         AppStrings.welcomeMessage1.tr,
 //                         textAlign: TextAlign.center,
 //                         style: context.titleLarge.copyWith(
 //                           fontSize: ResponsiveHelper.fontSize(16),
@@ -68,7 +68,7 @@
 //                         ),
 //                       ),
 //                       Text(
-//                         'welcome_message2'.tr,
+//                         AppStrings.welcomeMessage2.tr,
 //                         textAlign: TextAlign.center,
 //                         style: context.titleLarge.copyWith(
 //                           fontSize: ResponsiveHelper.fontSize(16),
@@ -76,7 +76,7 @@
 //                         ),
 //                       ),
 //                       Text(
-//                         'welcome_message3'.tr,
+//                         AppStrings.welcomeMessage3.tr,
 //                         textAlign: TextAlign.center,
 //                         style: context.titleLarge.copyWith(
 //                           fontSize: ResponsiveHelper.fontSize(16),
@@ -125,7 +125,7 @@
 //                 horizontal: ResponsiveHelper.padding(24),
 //               ),
 //               child: OutlineButton(
-//                 title: 'sign_in'.tr,
+//                 title: AppStrings.signIn.tr,
 //                 onTap: () {
 //                   context.pushNamed(RouteName.signIn);
 //                 },
@@ -142,7 +142,7 @@
 //                 horizontal: ResponsiveHelper.padding(24),
 //               ),
 //               child: PrimaryButton(
-//                 title: 'sign_up'.tr,
+//                 title: AppStrings.signUp.tr,
 //                 onTap: () {
 //                   context.pushNamed(RouteName.signUp);
 //                 },
@@ -155,7 +155,7 @@
 //                 horizontal: ResponsiveHelper.padding(24),
 //               ),
 //               child: PrimaryButton(
-//                 title: 'sign_up'.tr,
+//                 title: AppStrings.signUp.tr,
 //                 onTap: () {
 //                   _showAgeConfirmationDialog(context);
 //                 },
@@ -182,11 +182,11 @@
 //           borderRadius: BorderRadius.circular(16),
 //         ),
 //         title: Text(
-//           'age_confirmation'.tr,
+//           AppStrings.ageConfirmation.tr,
 //           textAlign: TextAlign.center,
 //         ),
 //         content: Text(
-//           '16_or_not'.tr,
+//           AppStrings.sixteenOrNot.tr,
 //           style: context.titleSmall,
 //           textAlign: TextAlign.center,
 //         ),
@@ -211,13 +211,13 @@
 //                   onPressed: () {
 //                     Navigator.pop(context);
 //                     Get.snackbar(
-//                       'access_denied'.tr,
-//                       'age_restriction_message'.tr,
+//                       AppStrings.accessDenied.tr,
+//                       AppStrings.ageRestrictionMessage.tr,
 //                       snackPosition: SnackPosition.BOTTOM,
 //                     );
 //                   },
 //                   child: Text(
-//                     'no'.tr,
+//                     AppStrings.no.tr,
 //                     style: context.titleMedium.copyWith(
 //                       fontSize: 16,
 //                       fontWeight: FontWeight.w600,
@@ -246,7 +246,7 @@
 //                     context.pushNamed(RouteName.signUp);
 //                   },
 //                   child: Text(
-//                     'yes'.tr,
+//                     AppStrings.yes.tr,
 //                     style: context.titleMedium.copyWith(
 //                       fontSize: 16,
 //                       fontWeight: FontWeight.w600,
@@ -425,7 +425,7 @@
 //             //     Column(
 //             //       children: [
 //             //         Text(
-//             //           'welcome_message'.tr,
+//             //           AppStrings.welcomeMessage.tr,
 //             //           textAlign: TextAlign.start,
 //             //           style: context.titleLarge.copyWith(
 //             //             fontSize: 40,
@@ -436,7 +436,7 @@
 //             //         SizedBox(height: ResponsiveHelper.spacing(4)),
 //             //
 //             //         Text(
-//             //           'welcome_message1'.tr,
+//             //           AppStrings.welcomeMessage1.tr,
 //             //           //textAlign: TextAlign.center,
 //             //           style: context.titleLarge.copyWith(
 //             //             fontSize: ResponsiveHelper.fontSize(16),
@@ -444,7 +444,7 @@
 //             //           ),
 //             //         ),
 //             //         Text(
-//             //           'welcome_message2'.tr,
+//             //           AppStrings.welcomeMessage2.tr,
 //             //           //textAlign: TextAlign.center,
 //             //           style: context.titleLarge.copyWith(
 //             //             fontSize: ResponsiveHelper.fontSize(16),
@@ -452,7 +452,7 @@
 //             //           ),
 //             //         ),
 //             //         Text(
-//             //           'welcome_message3'.tr,
+//             //           AppStrings.welcomeMessage3.tr,
 //             //           textAlign: TextAlign.center,
 //             //           style: context.titleLarge.copyWith(
 //             //             fontSize: ResponsiveHelper.fontSize(16),
@@ -492,7 +492,7 @@
 //                     // ✅ align all text to left
 //                     children: [
 //                       Text(
-//                         'welcome_message'.tr,
+//                         AppStrings.welcomeMessage.tr,
 //                         style: context.titleLarge.copyWith(
 //                           fontSize: ResponsiveHelper.fontSize(32),
 //                           fontWeight: FontWeight.w400,
@@ -502,21 +502,21 @@
 //                       SizedBox(height: ResponsiveHelper.spacing(4)),
 //
 //                       Text(
-//                         'welcome_message1'.tr,
+//                         AppStrings.welcomeMessage1.tr,
 //                         style: context.titleLarge.copyWith(
 //                           fontSize: ResponsiveHelper.fontSize(16),
 //                           fontWeight: FontWeight.w400,
 //                         ),
 //                       ),
 //                       Text(
-//                         'welcome_message2'.tr,
+//                         AppStrings.welcomeMessage2.tr,
 //                         style: context.titleLarge.copyWith(
 //                           fontSize: ResponsiveHelper.fontSize(16),
 //                           fontWeight: FontWeight.w400,
 //                         ),
 //                       ),
 //                       Text(
-//                         'welcome_message3'.tr,
+//                         AppStrings.welcomeMessage3.tr,
 //                         style: context.titleLarge.copyWith(
 //                           fontSize: ResponsiveHelper.fontSize(16),
 //                           fontWeight: FontWeight.w400,
@@ -539,7 +539,7 @@
 //                     crossAxisAlignment: CrossAxisAlignment.start,
 //                     children: [
 //                       AutoSizeText(
-//                         'welcome_message'.tr,
+//                         AppStrings.welcomeMessage.tr,
 //                         maxLines: 1,
 //                         minFontSize: 18,
 //                         style: context.titleLarge.copyWith(
@@ -551,7 +551,7 @@
 //                       SizedBox(height: ResponsiveHelper.spacing(4)),
 //
 //                       AutoSizeText(
-//                         'welcome_message1'.tr,
+//                         AppStrings.welcomeMessage1.tr,
 //                         maxLines: 1,
 //                         minFontSize: 10,
 //                         overflow: TextOverflow.ellipsis,
@@ -562,7 +562,7 @@
 //                       ),
 //
 //                       AutoSizeText(
-//                         'welcome_message2'.tr,
+//                         AppStrings.welcomeMessage2.tr,
 //                         maxLines: 1,
 //                         minFontSize: 10,
 //                         overflow: TextOverflow.ellipsis,
@@ -573,7 +573,7 @@
 //                       ),
 //
 //                       AutoSizeText(
-//                         'welcome_message3'.tr,
+//                         AppStrings.welcomeMessage3.tr,
 //                         maxLines: 1,
 //                         minFontSize: 10,
 //                         overflow: TextOverflow.ellipsis,
@@ -606,7 +606,7 @@
 //                 horizontal: ResponsiveHelper.padding(24),
 //               ),
 //               child: OutlineButton(
-//                 title: 'sign_in'.tr,
+//                 title: AppStrings.signIn.tr,
 //                 onTap: () {
 //                   context.pushNamed(RouteName.signIn);
 //                 },
@@ -623,7 +623,7 @@
 //                 horizontal: ResponsiveHelper.padding(24),
 //               ),
 //               child: PrimaryButton(
-//                 title: 'sign_up'.tr,
+//                 title: AppStrings.signUp.tr,
 //                 onTap: () {
 //                   context.pushNamed(RouteName.signUp);
 //                 },
@@ -636,7 +636,7 @@
 //                 horizontal: ResponsiveHelper.padding(24),
 //               ),
 //               child: PrimaryButton(
-//                 title: 'sign_up'.tr,
+//                 title: AppStrings.signUp.tr,
 //                 onTap: () {
 //                   _showAgeConfirmationDialog(context);
 //                 },
@@ -678,7 +678,7 @@
 //       return AlertDialog(
 //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
 //         title: Text(
-//           'age_confirmation'.tr,
+//           AppStrings.ageConfirmation.tr,
 //           style: context.titleSmall.copyWith(
 //             fontSize: 16,
 //             fontWeight: FontWeight.w600,
@@ -686,7 +686,7 @@
 //           textAlign: TextAlign.center,
 //         ),
 //         content: Text(
-//           '16_or_not'.tr,
+//           AppStrings.sixteenOrNot.tr,
 //           style: context.titleSmall,
 //           textAlign: TextAlign.center,
 //         ),
@@ -712,13 +712,13 @@
 //         //           onPressed: () {
 //         //             Navigator.pop(context);
 //         //             Get.snackbar(
-//         //               'access_denied'.tr,
-//         //               'age_restriction_message'.tr,
+//         //               AppStrings.accessDenied.tr,
+//         //               AppStrings.ageRestrictionMessage.tr,
 //         //               snackPosition: SnackPosition.BOTTOM,
 //         //             );
 //         //           },
 //         //           child: Text(
-//         //             'no'.tr,
+//         //             AppStrings.no.tr,
 //         //             style: context.titleMedium.copyWith(
 //         //               fontSize: 16,
 //         //               fontWeight: FontWeight.w600,
@@ -747,7 +747,7 @@
 //         //             context.pushNamed(RouteName.signUp);
 //         //           },
 //         //           child: Text(
-//         //             'yes'.tr,
+//         //             AppStrings.yes.tr,
 //         //             style: context.titleMedium.copyWith(
 //         //               fontSize: 16,
 //         //               fontWeight: FontWeight.w600,
@@ -781,7 +781,7 @@
 //                     ),
 //                   ),
 //
-//                   child: Text('no'.tr, style: context.bodySmall),
+//                   child: Text(AppStrings.no.tr, style: context.bodySmall),
 //                 ),
 //               ),
 //
@@ -806,7 +806,7 @@
 //                     ),
 //                   ),
 //                   child: Text(
-//                     'yes'.tr,
+//                     AppStrings.yes.tr,
 //                     style: context.titleSmall.copyWith(color: AppColors.white),
 //                   ),
 //                 ),
@@ -892,7 +892,7 @@ class WelcomeScreen extends StatelessWidget {
 
                     // Welcome Text
                     AutoSizeText(
-                     // 'welcome_message'.tr,
+                     // AppStrings.welcomeMessage.tr,
                       AppStrings.welcomeTitle.tr,
                       maxLines: 1,
                       minFontSize: 18,
@@ -919,7 +919,7 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                     // SizedBox(height: ResponsiveHelper.spacing(6)),
                     // AutoSizeText(
-                    //   'welcome_message2'.tr,
+                    //   AppStrings.welcomeMessage2.tr,
                     //   maxLines: 1,
                     //   minFontSize: 10,
                     //   textAlign: TextAlign.center,
@@ -931,7 +931,7 @@ class WelcomeScreen extends StatelessWidget {
                     // ),
                     // SizedBox(height: ResponsiveHelper.spacing(6)),
                     // AutoSizeText(
-                    //   'welcome_message3'.tr,
+                    //   AppStrings.welcomeMessage3.tr,
                     //   maxLines: 1,
                     //   minFontSize: 10,
                     //   textAlign: TextAlign.center,
@@ -946,7 +946,7 @@ class WelcomeScreen extends StatelessWidget {
 
                     // Sign In
                     OutlineButton(
-                      title: 'sign_in'.tr,
+                      title: AppStrings.signIn.tr,
                       onTap: () => context.pushNamed(RouteName.signIn),
                       borderColor: AppColors.blue,
                       textColor: AppColors.blue,
@@ -956,7 +956,7 @@ class WelcomeScreen extends StatelessWidget {
 
                     // Sign Up
                     PrimaryButton(
-                      title: 'sign_up'.tr,
+                      title: AppStrings.signUp.tr,
                       onTap: () => _showAgeConfirmationDialog(context),
                       backgroundColor: AppColors.blue,
                       textColor: Colors.white,
@@ -986,7 +986,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
           borderRadius: BorderRadius.circular(16),
         ),
         title: Text(
-          'age_confirmation'.tr,
+          AppStrings.ageConfirmation.tr,
           textAlign: TextAlign.center,
           style: context.titleSmall.copyWith(
             fontSize: 16,
@@ -994,7 +994,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
           ),
         ),
         content: Text(
-          '16_or_not'.tr,
+          AppStrings.sixteenOrNot.tr,
           textAlign: TextAlign.center,
           style: context.titleSmall,
         ),
@@ -1016,7 +1016,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
                       ResponsiveHelper.borderRadius(24),
                     ),
                   ),
-                  child: Text('no'.tr, style: context.bodySmall),
+                  child: Text(AppStrings.no.tr, style: context.bodySmall),
                 ),
               ),
 
@@ -1041,7 +1041,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
                     ),
                   ),
                   child: Text(
-                    'yes'.tr,
+                    AppStrings.yes.tr,
                     style: context.titleSmall.copyWith(color: AppColors.white),
                   ),
                 ),
@@ -1115,7 +1115,7 @@ class WelcomeScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AutoSizeText(
-                  'welcome_message'.tr,
+                  AppStrings.welcomeMessage.tr,
                   maxLines: 1,
                   minFontSize: 18,
                   style: context.titleLarge.copyWith(
@@ -1127,7 +1127,7 @@ class WelcomeScreen extends StatelessWidget {
                 SizedBox(height: ResponsiveHelper.spacing(4)),
 
                 AutoSizeText(
-                  'welcome_message1'.tr,
+                  AppStrings.welcomeMessage1.tr,
                   maxLines: 1,
                   minFontSize: 10,
                   overflow: TextOverflow.ellipsis,
@@ -1138,7 +1138,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
 
                 AutoSizeText(
-                  'welcome_message2'.tr,
+                  AppStrings.welcomeMessage2.tr,
                   maxLines: 1,
                   minFontSize: 10,
                   overflow: TextOverflow.ellipsis,
@@ -1149,7 +1149,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
 
                 AutoSizeText(
-                  'welcome_message3'.tr,
+                  AppStrings.welcomeMessage3.tr,
                   maxLines: 1,
                   minFontSize: 10,
                   overflow: TextOverflow.ellipsis,
@@ -1170,7 +1170,7 @@ class WelcomeScreen extends StatelessWidget {
               horizontal: ResponsiveHelper.padding(24),
             ),
             child: OutlineButton(
-              title: 'sign_in'.tr,
+              title: AppStrings.signIn.tr,
               onTap: () => context.pushNamed(RouteName.signIn),
               borderColor: AppColors.blue,
               textColor: AppColors.blue,
@@ -1185,7 +1185,7 @@ class WelcomeScreen extends StatelessWidget {
               horizontal: ResponsiveHelper.padding(24),
             ),
             child: PrimaryButton(
-              title: 'sign_up'.tr,
+              title: AppStrings.signUp.tr,
               onTap: () => _showAgeConfirmationDialog(context),
               backgroundColor: AppColors.blue,
               textColor: Colors.white,
@@ -1209,7 +1209,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
           borderRadius: BorderRadius.circular(16),
         ),
         title: Text(
-          'age_confirmation'.tr,
+          AppStrings.ageConfirmation.tr,
           style: context.titleSmall.copyWith(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -1217,7 +1217,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
           textAlign: TextAlign.center,
         ),
         content: Text(
-          '16_or_not'.tr,
+          AppStrings.sixteenOrNot.tr,
           style: context.titleSmall,
           textAlign: TextAlign.center,
         ),
@@ -1239,7 +1239,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
                       ResponsiveHelper.borderRadius(24),
                     ),
                   ),
-                  child: Text('no'.tr, style: context.bodySmall),
+                  child: Text(AppStrings.no.tr, style: context.bodySmall),
                 ),
               ),
 
@@ -1264,7 +1264,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
                     ),
                   ),
                   child: Text(
-                    'yes'.tr,
+                    AppStrings.yes.tr,
                     style: context.titleSmall.copyWith(
                       color: AppColors.white,
                     ),
@@ -1331,7 +1331,7 @@ class WelcomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AutoSizeText(
-                    'welcome_message'.tr,
+                    AppStrings.welcomeMessage.tr,
                     maxLines: 1,
                     minFontSize: 18,
                     style: context.titleLarge.copyWith(
@@ -1343,7 +1343,7 @@ class WelcomeScreen extends StatelessWidget {
                   SizedBox(height: ResponsiveHelper.spacing(4)),
 
                   AutoSizeText(
-                    'welcome_message1'.tr,
+                    AppStrings.welcomeMessage1.tr,
                     maxLines: 1,
                     minFontSize: 10,
                     overflow: TextOverflow.ellipsis,
@@ -1354,7 +1354,7 @@ class WelcomeScreen extends StatelessWidget {
                   ),
 
                   AutoSizeText(
-                    'welcome_message2'.tr,
+                    AppStrings.welcomeMessage2.tr,
                     maxLines: 1,
                     minFontSize: 10,
                     overflow: TextOverflow.ellipsis,
@@ -1365,7 +1365,7 @@ class WelcomeScreen extends StatelessWidget {
                   ),
 
                   AutoSizeText(
-                    'welcome_message3'.tr,
+                    AppStrings.welcomeMessage3.tr,
                     maxLines: 1,
                     minFontSize: 10,
                     overflow: TextOverflow.ellipsis,
@@ -1386,7 +1386,7 @@ class WelcomeScreen extends StatelessWidget {
                 horizontal: ResponsiveHelper.padding(24),
               ),
               child: OutlineButton(
-                title: 'sign_in'.tr,
+                title: AppStrings.signIn.tr,
                 onTap: () => context.pushNamed(RouteName.signIn),
                 borderColor: AppColors.blue,
                 textColor: AppColors.blue,
@@ -1401,7 +1401,7 @@ class WelcomeScreen extends StatelessWidget {
                 horizontal: ResponsiveHelper.padding(24),
               ),
               child: PrimaryButton(
-                title: 'sign_up'.tr,
+                title: AppStrings.signUp.tr,
                 onTap: () => _showAgeConfirmationDialog(context),
                 backgroundColor: AppColors.blue,
                 textColor: Colors.white,
@@ -1426,7 +1426,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
           borderRadius: BorderRadius.circular(16),
         ),
         title: Text(
-          'age_confirmation'.tr,
+          AppStrings.ageConfirmation.tr,
           style: context.titleSmall.copyWith(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -1434,7 +1434,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
           textAlign: TextAlign.center,
         ),
         content: Text(
-          '16_or_not'.tr,
+          AppStrings.sixteenOrNot.tr,
           style: context.titleSmall,
           textAlign: TextAlign.center,
         ),
@@ -1456,7 +1456,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
                       ResponsiveHelper.borderRadius(24),
                     ),
                   ),
-                  child: Text('no'.tr, style: context.bodySmall),
+                  child: Text(AppStrings.no.tr, style: context.bodySmall),
                 ),
               ),
 
@@ -1481,7 +1481,7 @@ void _showAgeConfirmationDialog(BuildContext context) {
                     ),
                   ),
                   child: Text(
-                    'yes'.tr,
+                    AppStrings.yes.tr,
                     style: context.titleSmall.copyWith(
                       color: AppColors.white,
                     ),

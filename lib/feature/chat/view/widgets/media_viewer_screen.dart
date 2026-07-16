@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +51,7 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
     if (!hasAccess) {
       final granted = await Gal.requestAccess(toAlbum: false);
       if (!granted) {
-        _showSnackError('storage_permission_required'.tr);
+        _showSnackError(AppStrings.storagePermissionRequired.tr);
         return;
       }
     }
@@ -81,12 +82,12 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
 
 
 
-      CustomSnackbar.success(context: context, message: 'image_saved_to_gallery'.tr);
+      CustomSnackbar.success(context: context, message: AppStrings.imageSaveToGallery.tr);
 
     } catch (e) {
       if (!mounted) return;
       setState(() => _isDownloading = false);
-      _showSnackError('download_failed'.tr);
+      _showSnackError(AppStrings.downloadFailed.tr);
     }
   }
 
@@ -95,7 +96,7 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
     if (Platform.isAndroid) {
       final status = await Permission.storage.request();
       if (!status.isGranted && !await Permission.manageExternalStorage.isGranted) {
-        _showSnackError('storage_permission_required'.tr);
+        _showSnackError(AppStrings.storagePermissionRequired.tr);
         return;
       }
     }
@@ -142,8 +143,8 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
       }
 
       Get.snackbar(
-        'saved'.tr,
-        '${'saved_to'.tr} Downloads',
+        AppStrings.saved.tr,
+        '${AppStrings.savedTo.tr} Downloads',
         backgroundColor: Colors.green.shade600,
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
@@ -151,13 +152,13 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _isDownloading = false);
-      _showSnackError('download_failed'.tr);
+      _showSnackError(AppStrings.downloadFailed.tr);
     }
   }
 
   void _showSnackError(String msg) {
     Get.snackbar(
-      'error'.tr,
+      AppStrings.error.tr,
       msg,
       backgroundColor: Colors.red.shade400,
       colorText: Colors.white,
@@ -206,7 +207,7 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
                     : Icons.download_rounded,
                 color: Colors.white,
               ),
-              tooltip: _isImage ? 'save_to_gallery'.tr : 'download'.tr,
+              tooltip: _isImage ? AppStrings.saveToGallery.tr : AppStrings.download.tr,
               onPressed:
               _isImage ? _saveImage : _downloadAndOpenPdf,
             ),
@@ -274,7 +275,7 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'tap_download_to_open'.tr,
+              AppStrings.tapDownloadToOpen.tr,
               style:
               const TextStyle(color: Colors.white38, fontSize: 12),
             ),
@@ -289,7 +290,7 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
                     borderRadius: BorderRadius.circular(30)),
               ),
               icon: const Icon(Icons.download_rounded),
-              label: Text('download_and_open'.tr),
+              label: Text(AppStrings.downloadAndOpen.tr),
               onPressed: _isDownloading ? null : _downloadAndOpenPdf,
             ),
             if (_isDownloading) ...[

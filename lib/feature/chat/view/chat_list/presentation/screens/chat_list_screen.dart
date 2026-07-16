@@ -151,7 +151,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         child: Padding(
                           padding:  ResponsiveHelper.symmetric(horizontal: 8.0),
                           child: Text(
-                            'no_chats'.tr,
+                            AppStrings.noChats.tr,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w500,
@@ -189,7 +189,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
                     // Latest message text তৈরি করো
                     final String lastMessage = isTyping
-                        ? 'typing_'.tr
+                        ? AppStrings.typing.tr
                         : _buildLastMessage(room, isGroup);
 
                     return GestureDetector(
@@ -251,7 +251,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
   /// Group হলে sender name prefix যোগ করে, না হলে plain message দেখায়
   String _buildLastMessage(Rooms room, bool isGroup) {
     if (room.latestMessage?.message == null) {
-      return isGroup ? 'no_messages_yet'.tr : '';
+      return isGroup ? AppStrings.noMessagesYet.tr : '';
     }
 
     if (isGroup) {
@@ -316,7 +316,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
             ListTile(
               leading: const Icon(Icons.delete_outline, color: Colors.red),
               title: Text(
-                'delete_chat'.tr,
+                AppStrings.deleteChat.tr,
                 style: GoogleFonts.poppins(
                   color: Colors.red,
                   fontWeight: FontWeight.w500,
@@ -333,7 +333,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
             ListTile(
               leading: const Icon(Icons.close),
               title: Text(
-                'cancel'.tr,
+                AppStrings.cancel.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(16),
                 ),
@@ -354,17 +354,17 @@ class _ChatListScreenState extends State<ChatListScreen> {
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         title: Text(
-          'delete_chat'.tr,
+          AppStrings.deleteChat.tr,
           style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
         ),
         content: Text(
-          'delete_chat_confirm'.tr, // "Are you sure you want to delete this chat?"
+          AppStrings.deleteChatConfirm.tr, // "Are you sure you want to delete this chat?"
           style: GoogleFonts.poppins(),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('cancel'.tr, style: GoogleFonts.poppins()),
+            child: Text(AppStrings.cancel.tr, style: GoogleFonts.poppins()),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -378,7 +378,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
              // controller.deleteChat(room.id); // আপনার controller এ এই method থাকতে হবে
             },
             child: Text(
-              'delete'.tr,
+              AppStrings.delete.tr,
               style: GoogleFonts.poppins(color: Colors.white),
             ),
           ),

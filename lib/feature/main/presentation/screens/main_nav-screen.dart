@@ -145,14 +145,14 @@ class _AppBottomNav extends StatelessWidget {
 
                           _NavItem(
                             icon: AssetsPath.chatNav,
-                            label: 'chat'.tr,
+                            label: AppStrings.chat.tr,
                             index: 2,
                             currentIndex: currentIndex,
                             onTap: onTap,
                           ),
                           _NavItem(
                             icon: AssetsPath.profileNav,
-                            label: 'profile'.tr,
+                            label: AppStrings.profile.tr,
                             index: 3,
                             currentIndex: currentIndex,
                             onTap: onTap,
@@ -202,6 +202,8 @@ class _NavItem extends StatelessWidget {
     final bool isActive = currentIndex == index;
 
     return Expanded(
+      // active item একটু বেশি জায়গা নেবে, কিন্তু নিচে ConstrainedBox
+      // দিয়ে overflow আটকানো হয়েছে
       flex: isActive ? 2 : 1,
       child: GestureDetector(
         onTap: () => onTap(index),
@@ -218,8 +220,8 @@ class _NavItem extends StatelessWidget {
                 borderRadius: BorderRadius.circular(
                   ResponsiveHelper.borderRadius(25),
                 ),
-                side:  BorderSide(
-                  color:isActive? AppColors.darBlue:AppColors.blueShadeConBg,
+                side: BorderSide(
+                  color: isActive ? AppColors.darBlue : AppColors.blueShadeConBg,
                   width: 1,
                 ),
               ),
@@ -229,9 +231,9 @@ class _NavItem extends StatelessWidget {
                     ResponsiveHelper.borderRadius(27),
                   ),
                   gradient: isActive
-                      ?  LinearGradient(
+                      ? LinearGradient(
                     colors: [
-                AppColors.gradientOne,
+                      AppColors.gradientOne,
                       AppColors.gradientTwo,
                       AppColors.gradientOne,
                     ],
@@ -245,46 +247,60 @@ class _NavItem extends StatelessWidget {
                     ResponsiveHelper.borderRadius(27),
                   ),
                   onTap: () => onTap(index),
-                  child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-               // color: Color(0xFFBDC9D7)
-              ),
-                    padding: ResponsiveHelper.symmetric(
-                      horizontal: 12,
-                      vertical: 12
+                  child: ConstrainedBox(
+                    // ── overflow fix: active/inactive অনুযায়ী max width বেঁধে দেওয়া ──
+                    constraints: BoxConstraints(
+                      maxWidth: isActive
+                          ? ResponsiveHelper.width(120)
+                          : ResponsiveHelper.width(48),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SvgPicture.asset(
-                          icon,
-                          width: ResponsiveHelper.iconSize(15),
-                          height: ResponsiveHelper.iconSize(15),
-                          colorFilter: ColorFilter.mode(
-                            isActive ? Colors.white : Color(0xFF1E252E),
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                        if (isActive) ...[
-                          SizedBox(width: ResponsiveHelper.spacing(8)),
-                          Text(
-                            label,
-                            style: GoogleFonts.poppins(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w400,
-                              fontSize: ResponsiveHelper.fontSize(12),
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        // color: Color(0xFFBDC9D7)
+                      ),
+                      padding: ResponsiveHelper.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SvgPicture.asset(
+                            icon,
+                            width: ResponsiveHelper.iconSize(15),
+                            height: ResponsiveHelper.iconSize(15),
+                            colorFilter: ColorFilter.mode(
+                              isActive ? Colors.white : Color(0xFF1E252E),
+                              BlendMode.srcIn,
                             ),
                           ),
+                          if (isActive) ...[
+                            SizedBox(width: ResponsiveHelper.spacing(8)),
+                            // ── overflow fix: Flexible + ellipsis ──
+                            Flexible(
+                              child: Text(
+                                label,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                softWrap: false,
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: ResponsiveHelper.fontSize(12),
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
           ),
-        )
+        ),
       ),
     );
   }
@@ -319,12 +335,11 @@ class ScanNavItem extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
 
-          gradient:  LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-             Color(0xff3F4142),
-
+              Color(0xff3F4142),
               Color(0xff1F1F1F),
             ],
           ),
@@ -350,7 +365,7 @@ class ScanNavItem extends StatelessWidget {
         ),
         child: Center(
           child: SvgPicture.asset(
-           AssetsPath.scanCommon, // আপনার QR/Scan আইকন পাথটি এখানে নিশ্চিত করুন
+            AssetsPath.scanCommon, // আপনার QR/Scan আইকন পাথটি এখানে নিশ্চিত করুন
             width: ResponsiveHelper.iconSize(26),
             height: ResponsiveHelper.iconSize(26),
             colorFilter: const ColorFilter.mode(

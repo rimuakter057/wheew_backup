@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -155,7 +156,7 @@ class ScanView extends StatelessWidget {
               horizontal: ResponsiveHelper.padding(40),
             ),
             child: Text(
-              'point_camera_hint'.tr,
+              AppStrings.pointCameraHint.tr,
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(13),

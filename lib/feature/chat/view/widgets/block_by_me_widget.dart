@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -33,7 +34,7 @@ class BlockByMeWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           /*Text(
-            "you've_blocked $name".tr,
+            AppStrings.youveBlockedName.tr,
             style: GoogleFonts.poppins(
               fontSize: ResponsiveHelper.fontSize(16),
               fontWeight: FontWeight.w400,
@@ -41,7 +42,7 @@ class BlockByMeWidget extends StatelessWidget {
             ),
           ),*/
           Text(
-            "${"you've_blocked".tr} $name",
+            "${AppStrings.youveBlocked.tr} $name",
             style: GoogleFonts.poppins(
               fontSize: ResponsiveHelper.fontSize(16),
               fontWeight: FontWeight.w400,
@@ -50,7 +51,7 @@ class BlockByMeWidget extends StatelessWidget {
           ),
           SizedBox(height: ResponsiveHelper.spacing(4)),
           Text(
-            "this_user_won't_be_able".tr,
+            AppStrings.thisUserWontBeAble.tr,
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               fontSize: ResponsiveHelper.fontSize(14),
@@ -66,7 +67,7 @@ class BlockByMeWidget extends StatelessWidget {
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.blue),
 
             child: Text(
-              "unblock".tr,
+              AppStrings.unblock.tr,
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(16),
                 fontWeight: FontWeight.w500,

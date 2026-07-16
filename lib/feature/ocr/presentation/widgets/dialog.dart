@@ -1,5 +1,6 @@
 //
 // import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 // import 'package:get/get.dart';
 // import 'package:google_fonts/google_fonts.dart'; // নিশ্চিত করুন এই প্যাকেজটি pubspec.yaml এ আছে
 // import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart'; // আপনার প্রজেক্ট পাথ অনুযায়ী পরিবর্তন করুন
@@ -165,7 +166,7 @@
 //               //
 //               //       if (isAlreadyVerified) {
 //               //         // ✅ true হলে — ইউজারকে জানিয়ে দেওয়া, কোনো API কল হবে না
-//               //         showSuccessToast('license_already_verified'.tr);
+//               //         showSuccessToast(AppStrings.licenseAlreadyVerified.tr);
 //               //         // মেসেজ: "আপনার লাইসেন্স প্লেট আগে থেকেই ভেরিফাইড করা আছে।"
 //               //
 //               //         if (context.mounted) {
@@ -265,7 +266,7 @@
 //                             const SizedBox(width: 6),
 //                           ],
 //                           Text(
-//                             isVerified ? 'verified'.tr : 'verify'.tr,
+//                             isVerified ? AppStrings.verified.tr : AppStrings.verify.tr,
 //                             style: GoogleFonts.poppins(
 //                               fontSize: ResponsiveHelper.fontSize(16),
 //                               color: AppColors.white,

@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison, invalid_use_of_protected_member
 
 import 'dart:async';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 
@@ -234,10 +235,10 @@ class ChatController extends GetxController {
 
         CustomSnackbar.success(
           context: context,
-          message: update ? 'rating_updated'.tr : 'rating_submitted'.tr,
+          message: update ? AppStrings.ratingUpdated.tr : AppStrings.ratingSubmitted.tr,
         );
       } else {
-        String msg = 'rating_failed'.tr;
+        String msg = AppStrings.ratingFailed.tr;
         try {
           final m = jsonDecode(response.body);
           if (m is Map && m['message'] != null) msg = '${m['message']}';
@@ -1383,12 +1384,12 @@ class ChatController extends GetxController {
       print("User blocked successfully");
       showSnackBar(
         context,
-        "user_blocked_successfully".tr,
+        AppStrings.userBlockedSuccessfully.tr,
         bgColor: Colors.green,
       );
     } else {
       print("Block failed: ${response.statusCode}");
-      showSnackBar(context, "failed_to_block_user".tr, bgColor: Colors.red);
+      showSnackBar(context, AppStrings.failedToBlockUser.tr, bgColor: Colors.red);
     }
   }
 
@@ -1425,12 +1426,12 @@ class ChatController extends GetxController {
 
       showSnackBar(
         context,
-        "user_unblocked_successfully".tr,
+        AppStrings.userUnblockedSuccessfully.tr,
         bgColor: Colors.green,
       );
     } else {
       debugPrint("Unblock failed: ${response.statusCode}");
-      showSnackBar(context, "failed_to_unblock_user".tr, bgColor: Colors.red);
+      showSnackBar(context, AppStrings.failedToUnblockUser.tr, bgColor: Colors.red);
     }
   }
 

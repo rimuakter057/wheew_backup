@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
@@ -175,10 +176,12 @@ void hideLoadingDialog([BuildContext? context]) {
 Future<bool> showConfirmationDialog({
   required String title,
   required String message,
-  String confirmText = 'Confirm',
-  String cancelText = 'Cancel',
+  String? confirmText,
+  String? cancelText,
   BuildContext? context,
 }) async {
+  final effectiveConfirmText = confirmText ?? AppStrings.confirm.tr;
+  final effectiveCancelText = cancelText ?? AppStrings.cancel.tr;
   // Try provided context first, then Get.context
   final dialogContext = context ?? Get.context;
 
@@ -198,11 +201,11 @@ Future<bool> showConfirmationDialog({
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
-          child: Text(cancelText),
+          child: Text(effectiveCancelText),
         ),
         ElevatedButton(
           onPressed: () => Navigator.pop(context, true),
-          child: Text(confirmText),
+          child: Text(effectiveConfirmText),
         ),
       ],
     ),

@@ -95,7 +95,7 @@ class AppMenuDrawer extends StatelessWidget {
             _drawerItem(
               context,
               icon: Icons.privacy_tip_outlined,
-              title: 'privacy_policy'.tr,
+              title: AppStrings.privacyPolicy.tr,
               onTap: () {
                 Navigator.push(
                   context,
@@ -109,7 +109,7 @@ class AppMenuDrawer extends StatelessWidget {
             _drawerItem(
               context,
               icon: Icons.help_outline,
-              title: 'help_support'.tr,
+              title: AppStrings.helpSupport.tr,
               onTap: () {
                 Navigator.push(
                   context,
@@ -121,7 +121,7 @@ class AppMenuDrawer extends StatelessWidget {
             _drawerItem(
               context,
               icon: Icons.block,
-              title: 'blocked_user5'.tr,
+              title: AppStrings.blockedUser5.tr,
               onTap: () {
                 Navigator.pop(context);
                 context.pushNamed(RouteName.block);
@@ -131,7 +131,7 @@ class AppMenuDrawer extends StatelessWidget {
               context,
               icon: Icons.delete_outline,
               iconColor: AppColors.deleteButton,
-              title: 'delete'.tr,
+              title: AppStrings.delete.tr,
               onTap: () {
                 context.pushNamed(RouteName.delete);
               },
@@ -144,7 +144,7 @@ class AppMenuDrawer extends StatelessWidget {
                 size: ResponsiveHelper.iconSize(24),
               ),
               title: Text(
-                'language'.tr,
+                AppStrings.language.tr,
                 style: context.titleSmall.copyWith(
                   fontSize: ResponsiveHelper.fontSize(16),
                   fontWeight: FontWeight.w600,
@@ -169,7 +169,7 @@ class AppMenuDrawer extends StatelessWidget {
                 size: ResponsiveHelper.iconSize(24),
               ),
               title: Text(
-                'logout'.tr,
+                AppStrings.logOut.tr,
                 style: context.titleSmall.copyWith(
                   fontSize: ResponsiveHelper.fontSize(16),
                   fontWeight: FontWeight.w600,
@@ -236,7 +236,7 @@ void _showLanguageBottomSheet(BuildContext context) {
             children: [
               SizedBox(height: ResponsiveHelper.spacing(8)),
               Text(
-                'language'.tr,
+                AppStrings.language.tr,
                 style: context.titleSmall.copyWith(
                   fontSize: ResponsiveHelper.fontSize(16),
                   fontWeight: FontWeight.w600,
@@ -330,7 +330,7 @@ class AppMenuDrawer extends StatelessWidget {
                 size: ResponsiveHelper.iconSize(24),
               ),
               title: Text(
-                'profile'.tr,
+                AppStrings.profile.tr,
                 style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
               ),
               onTap: () {
@@ -346,7 +346,7 @@ class AppMenuDrawer extends StatelessWidget {
                 size: ResponsiveHelper.iconSize(24),
               ),
               title: Text(
-                'terms_and_conditions'.tr,
+                AppStrings.termsAndConditions.tr,
                 style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
               ),
               onTap: () {
@@ -358,7 +358,7 @@ class AppMenuDrawer extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.block, size: ResponsiveHelper.iconSize(24)),
               title: Text(
-                'block_'.tr,
+                AppStrings.blocked.tr,
                 style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
               ),
               onTap: () {
@@ -373,7 +373,7 @@ class AppMenuDrawer extends StatelessWidget {
                 size: ResponsiveHelper.iconSize(24),
               ),
               title: Text(
-                'language'.tr,
+                AppStrings.language.tr,
                 style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
               ),
               subtitle: Obx(() {
@@ -397,7 +397,7 @@ class AppMenuDrawer extends StatelessWidget {
                 size: ResponsiveHelper.iconSize(24),
               ),
               title: Text(
-                'logout'.tr,
+                AppStrings.logOut.tr,
                 style: TextStyle(
                   color: AppColors.errorColor,
                   fontSize: ResponsiveHelper.fontSize(16),

@@ -291,22 +291,22 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                         fontSize: ResponsiveHelper.fontSize(14),
                         fontWeight: FontWeight.w500,
                       ),
-                      items: const [
+                      items:  [
                         DropdownMenuItem(
                           value: MapType.normal,
-                          child: Text('Normal'),
+                          child: Text(AppStrings.normal.tr),
                         ),
                         DropdownMenuItem(
                           value: MapType.hybrid,
-                          child: Text('Hybrid'),
+                          child: Text(AppStrings.hybrid.tr),
                         ),
                         DropdownMenuItem(
                           value: MapType.satellite,
-                          child: Text('Satellite'),
+                          child: Text(AppStrings.satellite.tr),
                         ),
                         DropdownMenuItem(
                           value: MapType.terrain,
-                          child: Text('Terrain'),
+                          child: Text(AppStrings.terrain.tr),
                         ),
                       ],
                       onChanged: (type) {

@@ -161,7 +161,7 @@ class ParkingReportDropdown extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'map_selected_report'.tr,
+                      AppStrings.mapSelectedReport.tr,
                       style: TextStyle(
                         color: titleColor,
                         fontWeight: FontWeight.w600,

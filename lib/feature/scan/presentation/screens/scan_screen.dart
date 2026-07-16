@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -197,12 +198,12 @@ Row(children: [
       child: Row(
         children: [
           ScanTabButton(
-            label: 'scan_qr'.tr,
+            label: AppStrings.scanQr.tr,
             isActive: _tabIndex == 0,
             onTap: () => _switchTab(0),
           ),
           ScanTabButton(
-            label: 'my_qr'.tr,
+            label: AppStrings.myQr.tr,
             isActive: _tabIndex == 1,
             onTap: () => _switchTab(1),
           ),

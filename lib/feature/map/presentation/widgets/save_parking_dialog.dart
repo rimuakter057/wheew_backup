@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -56,7 +57,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
           ),
           child: Center(
             child: Text(
-              type,
+              type == 'FREE' ? AppStrings.free.tr : AppStrings.paid.tr,
               style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w600,
                 fontSize: ResponsiveHelper.fontSize(14),
@@ -73,7 +74,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
     final location = widget.pickedLocation ?? widget.gpsPosition;
     if (location == null) {
       widget.showCustomSnackBar(
-        'Location not available. Please wait for GPS or pick on map.',
+        AppStrings.locationNotAvailableWait.tr,
         isError: true,
       );
       return;
@@ -83,16 +84,16 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
     if (_selectedParkingType == 'PAID') {
       final input = _durationController.text.trim();
       if (input.isEmpty) {
-        widget.showCustomSnackBar('Time is required', isError: true);
+        widget.showCustomSnackBar(AppStrings.timeIsRequired.tr, isError: true);
         return;
       }
       durationMin = int.tryParse(input);
       if (durationMin == null || durationMin <= 0) {
-        widget.showCustomSnackBar('Enter a valid number', isError: true);
+        widget.showCustomSnackBar(AppStrings.enterValidNumber.tr, isError: true);
         return;
       }
       if (durationMin < 15) {
-        widget.showCustomSnackBar('Minimum 15 minutes required', isError: true);
+        widget.showCustomSnackBar(AppStrings.minimum15MinutesRequired.tr, isError: true);
         return;
       }
     }
@@ -108,14 +109,14 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
       if (mounted) {
         Navigator.of(context).pop();
       }
-      widget.showCustomSnackBar('Parking location saved successfully!', isError: false);
+      widget.showCustomSnackBar(AppStrings.parkingLocationSavedSuccessfully.tr, isError: false);
       _durationController.clear();
       widget.onSaveSuccess(location);
     } else {
       widget.showCustomSnackBar(
         widget.parkingCtrl.submitMessage.value.isNotEmpty
             ? widget.parkingCtrl.submitMessage.value
-            : 'Failed to save parking location',
+            : AppStrings.failedToSaveParkingLocation.tr,
         isError: true,
       );
     }
@@ -150,7 +151,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
                 children: [
                   Expanded(
                     child: Text(
-                      'Park My Car',
+                      AppStrings.parkMyCar.tr,
                       style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(20),
                         fontWeight: FontWeight.bold,
@@ -225,7 +226,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
                     GestureDetector(
                       onTap: widget.onPickOnMap,
                       child: Text(
-                        'Pick on map',
+                        AppStrings.pickOnMap.tr,
                         style: GoogleFonts.poppins(
                           fontSize: ResponsiveHelper.fontSize(13),
                           fontWeight: FontWeight.w700,
@@ -240,7 +241,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
               Text(
-                'Parking Type',
+                AppStrings.parkingType.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(13),
                   fontWeight: FontWeight.w600,
@@ -280,7 +281,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
                     fontSize: ResponsiveHelper.fontSize(14),
                   ),
                   decoration: InputDecoration(
-                    hintText: 'Duration (min. 15 minutes)',
+                    hintText: AppStrings.durationMin15Minutes.tr,
                     hintStyle: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(14),
                     ),
@@ -333,7 +334,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
                         ),
                       ),
                       child: Text(
-                        'Cancel',
+                        AppStrings.cancel.tr,
                         style: GoogleFonts.poppins(
                           fontSize: ResponsiveHelper.fontSize(14),
                           fontWeight: FontWeight.w600,
@@ -360,10 +361,10 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
                               setState(() {
                                 _durationHasError = true;
                                 _durationErrorText =
-                                'Time is required';
+                                AppStrings.timeIsRequired.tr;
                               });
                               widget.showCustomSnackBar(
-                                'Time is required',
+                                AppStrings.timeIsRequired.tr,
                                 isError: true,
                               );
                               return;
@@ -372,10 +373,10 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
                               setState(() {
                                 _durationHasError = true;
                                 _durationErrorText =
-                                'Enter a valid number';
+                                AppStrings.enterValidNumber.tr;
                               });
                               widget.showCustomSnackBar(
-                                'Enter a valid number',
+                                AppStrings.enterValidNumber.tr,
                                 isError: true,
                               );
                               return;
@@ -384,10 +385,10 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
                               setState(() {
                                 _durationHasError = true;
                                 _durationErrorText =
-                                'Minimum 15 minutes required';
+                                AppStrings.minimum15MinutesRequired.tr;
                               });
                               widget.showCustomSnackBar(
-                                'Minimum 15 minutes required',
+                                AppStrings.minimum15MinutesRequired.tr,
                                 isError: true,
                               );
                               return;
@@ -416,8 +417,8 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
                         )
                             : Text(
                           widget.pickedLocation != null
-                              ? 'Save Picked Location'
-                              : 'Save My Location',
+                              ? AppStrings.savePickedLocation.tr
+                              : AppStrings.saveMyLocation.tr,
                           style: GoogleFonts.poppins(
                             fontSize: ResponsiveHelper.fontSize(14),
                             fontWeight: FontWeight.w600,

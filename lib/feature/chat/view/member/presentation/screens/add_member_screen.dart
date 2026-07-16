@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/chat/repository/add_member_repo.dart';
@@ -88,7 +89,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
           Expanded(
             child: Center(
               child: Text(
-                'add_member'.tr,
+                AppStrings.addMember.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(18),
                   fontWeight: FontWeight.w600,
@@ -121,8 +122,8 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
             Center(
               child: Text(
                 _controller.searchQuery.value.isNotEmpty
-                    ? '${'no_results_for'.tr} "${_controller.searchQuery.value}"'
-                    : 'no_contacts_found'.tr,
+                    ? '${AppStrings.noResultsFor.tr} "${_controller.searchQuery.value}"'
+                    : AppStrings.noContactsFound.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(14),
                   color: Colors.grey,
@@ -198,8 +199,8 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
             )
                 : Text(
               selectedCount == 0
-                  ? 'add_member'.tr
-                  : '${'add_member'.tr} ($selectedCount)',
+                  ? AppStrings.addMember.tr
+                  : '${AppStrings.addMember.tr} ($selectedCount)',
               style: GoogleFonts.inter(
                 fontSize: ResponsiveHelper.fontSize(16),
                 fontWeight: FontWeight.w500,

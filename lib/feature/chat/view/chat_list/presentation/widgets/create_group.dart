@@ -93,7 +93,7 @@ void showCreateGroupDialog({
 
                   // Title
                   Text(
-                    'create_group_chat'.tr,
+                    AppStrings.createGroupChat.tr,
                     style: ctx.bodyMedium.copyWith(
                       color: AppColors.black,
                       fontWeight: FontWeight.w600,
@@ -103,7 +103,7 @@ void showCreateGroupDialog({
 
                   // Subtitle
                   Text(
-                    'group_chat_subtitle'.tr,
+                    AppStrings.groupChatSubtitle.tr,
                     style: ctx.bodySmall.copyWith(
                       color: Colors.grey.shade500,
                     ),
@@ -113,7 +113,7 @@ void showCreateGroupDialog({
 
                   // Profile Picture Section
                   Text(
-                    'Profile Picture'.tr,
+                    AppStrings.profilePicture.tr,
                     style: ctx.bodySmall.copyWith(
                       fontWeight: FontWeight.w600,
                       color: Colors.grey.shade600,
@@ -180,7 +180,7 @@ void showCreateGroupDialog({
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'group_name'.tr,
+                      AppStrings.groupName.tr,
                       style: ctx.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: Colors.grey.shade600,
@@ -197,10 +197,10 @@ void showCreateGroupDialog({
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'please_enter_group_name'.tr;
+                        return AppStrings.pleaseEnterGroupName.tr;
                       }
                       if (value.trim().length < 3) {
-                        return 'group_name_min_chars'.tr;
+                        return AppStrings.groupNameMinChars.tr;
                       }
                       return null;
                     },
@@ -257,7 +257,7 @@ void showCreateGroupDialog({
                         ),
                       ),
                       child: Text(
-                        'create_group'.tr,
+                        AppStrings.createGroup.tr,
                         style: ctx.bodySmall.copyWith(
                           color: AppColors.white,
                           fontWeight: FontWeight.w600,
