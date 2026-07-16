@@ -52,6 +52,7 @@ class ChatListAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Image.asset(
 
         AssetsPath.wheew,
+
         width:ResponsiveHelper.iconSize(200),
         height: ResponsiveHelper.iconSize(50),
 
