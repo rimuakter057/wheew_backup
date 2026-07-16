@@ -254,9 +254,9 @@ class _MessageScreenState extends State<MessageScreen> {
                         if (msgIndex == messages.length) {
                           return Obx(
                                 () => chatController.isLoadingMoreMessage.value
-                                ? const Padding(
-                              padding: EdgeInsets.all(12),
-                              child: Center(child: CircularProgressIndicator()),
+                                ? Padding(
+                              padding: ResponsiveHelper.all(12),
+                              child: const Center(child: CircularProgressIndicator()),
                             )
                                 : const SizedBox.shrink(),
                           );
@@ -296,8 +296,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   return const SizedBox.shrink();
                 }
                 return Padding(
-                  padding:  EdgeInsets.only(bottom: ResponsiveHelper.height(8)),
-
+                  padding: EdgeInsets.only(bottom: ResponsiveHelper.padding(8)),
                   child: MessagePresetChips(chatController: chatController),
                 );
               }),
@@ -345,7 +344,7 @@ class _MessageScreenState extends State<MessageScreen> {
     return Align(
       alignment: Alignment.centerLeft,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6.0),
+        padding: ResponsiveHelper.symmetric(vertical: 6.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -358,24 +357,24 @@ class _MessageScreenState extends State<MessageScreen> {
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: ResponsiveHelper.spacing(8)),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: const BoxDecoration(
+              padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(15),
-                  topRight: Radius.circular(15),
-                  bottomRight: Radius.circular(15),
+                  topLeft: Radius.circular(ResponsiveHelper.borderRadius(15)),
+                  topRight: Radius.circular(ResponsiveHelper.borderRadius(15)),
+                  bottomRight: Radius.circular(ResponsiveHelper.borderRadius(15)),
                 ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildDot(0),
-                  const SizedBox(width: 3),
+                  SizedBox(width: ResponsiveHelper.spacing(3)),
                   _buildDot(1),
-                  const SizedBox(width: 3),
+                  SizedBox(width: ResponsiveHelper.spacing(3)),
                   _buildDot(2),
                 ],
               ),

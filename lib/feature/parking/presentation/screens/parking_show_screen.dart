@@ -10,6 +10,8 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:platchatapp/feature/parking/controller/parking_show_controller.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
+import 'package:platchatapp/feature/parking/presentation/widgets/parking_location_off_prompt.dart';
+import 'package:platchatapp/feature/parking/presentation/widgets/parking_confirmation_overlay.dart';
 
 class ParkingShowScreen extends StatefulWidget {
   const ParkingShowScreen({super.key});
@@ -108,7 +110,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
               final isLoading = _parkingShowCtrl.isLoading.value;
 
               if (!isLocating && gpsPosition == null) {
-                return _buildLocationOffPrompt();
+                return const ParkingLocationOffPrompt();
               } else if (isLocating && gpsPosition == null) {
                 return const MapInitialShimmer();
               }
@@ -168,20 +170,25 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                         ),
                         child: TextField(
                           controller: _searchController,
+                          style: TextStyle(
+                            fontSize: ResponsiveHelper.fontSize(14),
+                          ),
                           decoration: InputDecoration(
                             hintText: 'Search parking',
-                            hintStyle:
-                            const TextStyle(fontSize: 14, color: Colors.grey),
-                            prefixIcon: const Icon(
+                            hintStyle: TextStyle(
+                              fontSize: ResponsiveHelper.fontSize(14),
+                              color: Colors.grey,
+                            ),
+                            prefixIcon: Icon(
                               Icons.search,
-                              color: Color(0xFF185FA5),
-                              size: 20,
+                              color: const Color(0xFF185FA5),
+                              size: ResponsiveHelper.iconSize(20),
                             ),
                             suffixIcon: IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.tune,
-                                color: Color(0xFF185FA5),
-                                size: 20,
+                                color: const Color(0xFF185FA5),
+                                size: ResponsiveHelper.iconSize(20),
                               ),
                               onPressed: () {
                                 RadiusFilterSheet.show(
@@ -199,7 +206,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                               },
                             ),
                             border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                            contentPadding: ResponsiveHelper.symmetric(vertical: 12),
                           ),
                         ),
                       ),
@@ -251,10 +258,10 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                 top: MediaQuery.of(context).padding.top + ResponsiveHelper.padding(72),
                 right: ResponsiveHelper.padding(16),
                 child: Container(
-                  height: ResponsiveHelper.padding(45),
+                  height: ResponsiveHelper.height(45),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.08),
@@ -263,25 +270,25 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       ),
                     ],
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  padding: ResponsiveHelper.symmetric(horizontal: 12),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<MapType>(
                       value: _selectedMapType,
-                      icon: const Padding(
-                        padding: EdgeInsets.only(left: 6),
+                      icon: Padding(
+                        padding: EdgeInsets.only(left: ResponsiveHelper.spacing(6)),
                         child: Icon(
                           Icons.layers_outlined,
-                          color: Color(0xFF185FA5),
-                          size: 20,
+                          color: const Color(0xFF185FA5),
+                          size: ResponsiveHelper.iconSize(20),
                         ),
                       ),
                       elevation: 3,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
                       dropdownColor: Colors.white,
                       alignment: Alignment.center,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.black87,
-                        fontSize: 14,
+                        fontSize: ResponsiveHelper.fontSize(14),
                         fontWeight: FontWeight.w500,
                       ),
                       items: const [
@@ -313,121 +320,11 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
               );
             }),
 
-            // Confirmation Dialog Overlay
-            Obx(() {
-              if (!_showConfirmationPopup.value) {
-                return const SizedBox.shrink();
-              }
-              return Container(
-                color: Colors.black.withOpacity(0.4),
-                child: Center(
-                  child: Dialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    elevation: 10,
-                    backgroundColor: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(18),
-                            decoration: BoxDecoration(
-                              color: Colors.blue.shade50,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.local_parking_rounded,
-                              size: 44,
-                              color: Colors.blue.shade700,
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          const Text(
-                            'Parking Confirmation',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF1A1A1A),
-                              letterSpacing: -0.5,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            'Are you leaving a parking spot right now?',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.grey.shade600,
-                              height: 1.4,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 32),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: OutlinedButton(
-                                  onPressed: () {
-                                    _showConfirmationPopup.value = false;
-                                    _onParkingNo();
-                                  },
-                                  style: OutlinedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(vertical: 15),
-                                    side: BorderSide(
-                                      color: Colors.grey.shade300,
-                                      width: 1.5,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(14),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'No',
-                                    style: TextStyle(
-                                      color: Colors.grey.shade800,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 14),
-                              Expanded(
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    _showConfirmationPopup.value = false;
-                                    _onParkingYes();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue.shade600,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(vertical: 15),
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(14),
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    'Yes',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }),
+            ParkingConfirmationOverlay(
+              visible: _showConfirmationPopup,
+              onYes: _onParkingYes,
+              onNo: _onParkingNo,
+            ),
 
           ],
         ),
@@ -435,76 +332,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
     );
   }
 
-  Widget _buildLocationOffPrompt() {
-    return Container(
-      color: const Color(0xFF1a1a2e),
-      child: Center(
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 32),
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 52,
-                height: 52,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFE6F1FB),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.location_off,
-                  color: Color(0xFF185FA5),
-                  size: 26,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                AppStrings.locationTurnedOff.tr,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                AppStrings.locationOffDesc.tr,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey,
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF185FA5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed: () async {
-                    await Geolocator.openLocationSettings();
-                  },
-                  child: Text(
-                    AppStrings.enableLocation.tr,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+
 
   void _showParkingConfirmationPopup() {
     mapDebug('Showing Parking Confirmation Dialog Overlay');

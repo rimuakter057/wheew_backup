@@ -176,9 +176,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
                     // List এর শেষে pagination loader
                     if (index == controller.userChatList.length) {
                       return controller.isLoadingMore.value
-                          ? const Padding(
-                              padding: EdgeInsets.all(8),
-                              child: Center(child: CircularProgressIndicator()),
+                          ? Padding(
+                              padding: ResponsiveHelper.all(8),
+                              child: const Center(child: CircularProgressIndicator()),
                             )
                           : const SizedBox.shrink();
                     }
@@ -272,8 +272,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
   void _showDeleteDialog(BuildContext context, Rooms room) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(ResponsiveHelper.borderRadius(16)),
+        ),
       ),
       builder: (ctx) => SafeArea(
         child: Column(
@@ -281,27 +283,27 @@ class _ChatListScreenState extends State<ChatListScreen> {
           children: [
             // Handle bar
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              width: 40,
-              height: 4,
+              margin: ResponsiveHelper.symmetric(vertical: 8),
+              width: ResponsiveHelper.width(40),
+              height: ResponsiveHelper.height(4),
               decoration: BoxDecoration(
                 color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(2),
+                borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(2)),
               ),
             ),
 
             // Chat name preview
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 children: [
                   const Icon(Icons.chat_bubble_outline, color: Colors.grey),
-                  const SizedBox(width: 12),
+                  SizedBox(width: ResponsiveHelper.spacing(12)),
                   Text(
                     room.displayName,
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w600,
-                      fontSize: 16,
+                      fontSize: ResponsiveHelper.fontSize(16),
                     ),
                   ),
                 ],
@@ -318,6 +320,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 style: GoogleFonts.poppins(
                   color: Colors.red,
                   fontWeight: FontWeight.w500,
+                  fontSize: ResponsiveHelper.fontSize(16),
                 ),
               ),
               onTap: () {
@@ -331,12 +334,14 @@ class _ChatListScreenState extends State<ChatListScreen> {
               leading: const Icon(Icons.close),
               title: Text(
                 'cancel'.tr,
-                style: GoogleFonts.poppins(),
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(16),
+                ),
               ),
               onTap: () => Navigator.pop(ctx),
             ),
 
-            const SizedBox(height: 8),
+            SizedBox(height: ResponsiveHelper.spacing(8)),
           ],
         ),
       ),

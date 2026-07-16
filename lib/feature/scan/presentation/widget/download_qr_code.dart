@@ -56,15 +56,6 @@ Future<void> downloadQrCard(BuildContext context) async {
     ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-    // ✅ সরাসরি Gallery তে সেভ হবে
-    // await Gal.putImageBytes(
-    //   pngBytes,
-    //   name: 'qr_card_${DateTime.now().millisecondsSinceEpoch}',
-    // );
-    //
-    //
-    // CustomSnackbar.success(context: context, message: ' QR Card saved to gallery');
-    // debugPrint("success================================");
     await Gal.putImageBytes(
       pngBytes,
       name: 'qr_card_${DateTime.now().millisecondsSinceEpoch}',
@@ -83,91 +74,3 @@ Future<void> downloadQrCard(BuildContext context) async {
     Logger().e("❌ Download QR Card Error: $e");
   }
 }
-
-
-// Future<void> downloadQrCard(BuildContext context) async {
-//   try {
-//     CustomSnackbar.success(
-//       context: context,
-//       message: 'Preparing QR Card...',
-//     );
-//
-//     final hasAccess = await Gal.hasAccess();
-//
-//     if (!hasAccess) {
-//       final granted = await Gal.requestAccess();
-//
-//       if (!granted) {
-//         CustomSnackbar.error(
-//           context: context,
-//           message: 'Gallery permission denied',
-//         );
-//         return;
-//       }
-//     }
-//
-//     RenderRepaintBoundary? boundary;
-//
-//     for (int i = 0; i < 10; i++) {
-//       final renderObject = qrCardKey.currentContext?.findRenderObject();
-//
-//       if (renderObject is RenderRepaintBoundary) {
-//         boundary = renderObject;
-//         break;
-//       }
-//
-//       await Future.delayed(const Duration(milliseconds: 100));
-//     }
-//
-//     if (boundary == null) {
-//       CustomSnackbar.error(
-//         context: context,
-//         message: 'QR card not ready. Please try again.',
-//       );
-//       return;
-//     }
-//
-//     if (boundary.debugNeedsPaint) {
-//       await Future.delayed(const Duration(milliseconds: 300));
-//     }
-//
-//     final image = await boundary.toImage(pixelRatio: 4);
-//
-//     final byteData = await image.toByteData(
-//       format: ui.ImageByteFormat.png,
-//     );
-//
-//     if (byteData == null) {
-//       CustomSnackbar.error(
-//         context: context,
-//         message: 'Failed to generate image',
-//       );
-//       return;
-//     }
-//
-//     final pngBytes = byteData.buffer.asUint8List();
-//
-//     await Gal.putImageBytes(
-//       pngBytes,
-//       name: 'qr_card_${DateTime.now().millisecondsSinceEpoch}',
-//     );
-//
-//     CustomSnackbar.success(
-//       context: context,
-//       message: 'QR Card saved successfully',
-//     );
-//
-//     Logger().i("✅ QR Card Saved");
-//   } catch (e, s) {
-//     Logger().e(
-//       "❌ Download QR Error",
-//       error: e,
-//       stackTrace: s,
-//     );
-//
-//     CustomSnackbar.error(
-//       context: context,
-//       message: 'Download failed: ${e.toString()}',
-//     );
-//   }
-// }

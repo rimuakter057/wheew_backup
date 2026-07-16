@@ -216,25 +216,6 @@ class AppMenuDrawer extends StatelessWidget {
     );
   }
 }
-/* Widget _drawerItem(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: ResponsiveHelper.spacing(8)),
-      child: ListTile(
-        leading: Icon(icon, size: ResponsiveHelper.iconSize(24)),
-        title: Text(
-          title,
-          style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
-        ),
-        onTap: onTap,
-      ),
-    );
-  }
-}*/
 
 void _showLanguageBottomSheet(BuildContext context) {
   final controller = Get.find<LanguageController>();
