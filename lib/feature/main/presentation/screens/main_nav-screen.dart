@@ -263,23 +263,23 @@ class _NavItem extends StatelessWidget {
                         horizontal: 12,
                         vertical: 12,
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SvgPicture.asset(
-                            icon,
-                            width: ResponsiveHelper.iconSize(15),
-                            height: ResponsiveHelper.iconSize(15),
-                            colorFilter: ColorFilter.mode(
-                              isActive ? Colors.white : Color(0xFF1E252E),
-                              BlendMode.srcIn,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SvgPicture.asset(
+                              icon,
+                              width: ResponsiveHelper.iconSize(15),
+                              height: ResponsiveHelper.iconSize(15),
+                              colorFilter: ColorFilter.mode(
+                                isActive ? Colors.white : Color(0xFF1E252E),
+                                BlendMode.srcIn,
+                              ),
                             ),
-                          ),
-                          if (isActive) ...[
-                            SizedBox(width: ResponsiveHelper.spacing(8)),
-                            // ── overflow fix: Flexible + ellipsis ──
-                            Flexible(
-                              child: Text(
+                            if (isActive) ...[
+                              SizedBox(width: ResponsiveHelper.spacing(8)),
+                              Text(
                                 label,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -290,9 +290,9 @@ class _NavItem extends StatelessWidget {
                                   fontSize: ResponsiveHelper.fontSize(12),
                                 ),
                               ),
-                            ),
+                            ],
                           ],
-                        ],
+                        ),
                       ),
                     ),
                   ),

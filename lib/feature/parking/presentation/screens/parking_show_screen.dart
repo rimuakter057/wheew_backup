@@ -11,6 +11,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:platchatapp/feature/parking/controller/parking_show_controller.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_location_off_prompt.dart';
+import 'package:platchatapp/feature/map/presentation/widgets/map_type_dropdown.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_confirmation_overlay.dart';
 
 class ParkingShowScreen extends StatefulWidget {
@@ -115,6 +116,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                 return const MapInitialShimmer();
               }
 
+
               return Stack(
                 children: [
                   Obx(() {
@@ -153,8 +155,8 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                     Positioned(
                       top: MediaQuery.of(context).padding.top +
                           ResponsiveHelper.padding(16),
-                      left: ResponsiveHelper.padding(16),
-                      right: ResponsiveHelper.padding(80),
+                      left: ResponsiveHelper.padding(42),
+                      right: ResponsiveHelper.padding(42),
                       child: Container(
                         height: ResponsiveHelper.padding(45),
                         decoration: BoxDecoration(
@@ -254,69 +256,11 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
               if (!_parkingShowCtrl.showLocationPulse.value) {
                 return const SizedBox.shrink();
               }
-              return Positioned(
-                top: MediaQuery.of(context).padding.top + ResponsiveHelper.padding(72),
-                right: ResponsiveHelper.padding(16),
-                child: Container(
-                  height: ResponsiveHelper.height(45),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.08),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  padding: ResponsiveHelper.symmetric(horizontal: 12),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<MapType>(
-                      value: _selectedMapType,
-                      icon: Padding(
-                        padding: EdgeInsets.only(left: ResponsiveHelper.spacing(6)),
-                        child: Icon(
-                          Icons.layers_outlined,
-                          color: const Color(0xFF185FA5),
-                          size: ResponsiveHelper.iconSize(20),
-                        ),
-                      ),
-                      elevation: 3,
-                      borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
-                      dropdownColor: Colors.white,
-                      alignment: Alignment.center,
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: ResponsiveHelper.fontSize(14),
-                        fontWeight: FontWeight.w500,
-                      ),
-                      items:  [
-                        DropdownMenuItem(
-                          value: MapType.normal,
-                          child: Text(AppStrings.normal.tr),
-                        ),
-                        DropdownMenuItem(
-                          value: MapType.hybrid,
-                          child: Text(AppStrings.hybrid.tr),
-                        ),
-                        DropdownMenuItem(
-                          value: MapType.satellite,
-                          child: Text(AppStrings.satellite.tr),
-                        ),
-                        DropdownMenuItem(
-                          value: MapType.terrain,
-                          child: Text(AppStrings.terrain.tr),
-                        ),
-                      ],
-                      onChanged: (type) {
-                        if (type != null) {
-                          setState(() => _selectedMapType = type);
-                        }
-                      },
-                    ),
-                  ),
-                ),
+              return MapTypeDropdown(
+                selectedType: _selectedMapType,
+                onChanged: (type) {
+                  setState(() => _selectedMapType = type);
+                },
               );
             }),
 

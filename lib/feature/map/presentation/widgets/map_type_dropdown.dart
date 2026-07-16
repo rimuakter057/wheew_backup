@@ -18,7 +18,7 @@ class MapTypeDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return Positioned(
       right: ResponsiveHelper.padding(20),
-      top: ResponsiveHelper.padding(80),
+      top: ResponsiveHelper.padding(120),
       child: GestureDetector(
         onTap: () => _showMapTypeBottomSheet(context),
         child: Container(
