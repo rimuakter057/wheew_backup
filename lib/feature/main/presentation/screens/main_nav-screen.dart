@@ -365,7 +365,7 @@ class ScanNavItem extends StatelessWidget {
         ),
         child: Center(
           child: SvgPicture.asset(
-            AssetsPath.scanCommon, // আপনার QR/Scan আইকন পাথটি এখানে নিশ্চিত করুন
+            AssetsPath.scanCommon,
             width: ResponsiveHelper.iconSize(26),
             height: ResponsiveHelper.iconSize(26),
             colorFilter: const ColorFilter.mode(

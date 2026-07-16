@@ -216,28 +216,28 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                     SizedBox(height: ResponsiveHelper.spacing(18)),
 
-                    CustomDividerOr(),
-
-                    SizedBox(height: ResponsiveHelper.spacing(28)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SocialButton(icon: AssetsPath.apple, onTap: () {}),
-
-                        SizedBox(width: ResponsiveHelper.width(36)),
-                        SocialButton(
-                          icon: AssetsPath.google,
-                          onTap: () async {
-                            final account = await GoogleSignInService()
-                                .signIn();
-
-                            if (account != null) {
-                              print("Login Success");
-                            }
-                          },
-                        ),
-                      ],
-                    ),
+                    // CustomDividerOr(),
+                    //
+                    // SizedBox(height: ResponsiveHelper.spacing(28)),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     SocialButton(icon: AssetsPath.apple, onTap: () {}),
+                    //
+                    //     SizedBox(width: ResponsiveHelper.width(36)),
+                    //     SocialButton(
+                    //       icon: AssetsPath.google,
+                    //       onTap: () async {
+                    //         final account = await GoogleSignInService()
+                    //             .signIn();
+                    //
+                    //         if (account != null) {
+                    //           print("Login Success");
+                    //         }
+                    //       },
+                    //     ),
+                    //   ],
+                    // ),
 
                     SizedBox(height: ResponsiveHelper.spacing(28)),
 
