@@ -503,6 +503,14 @@ class _VoiceBubbleState extends State<_VoiceBubble> {
         if (mounted) setState(() => _isPlaying = false);
       }
     });
+
+    // Prepare source to load metadata/duration
+    if ((widget.totalDurationSeconds == null || widget.totalDurationSeconds! <= 0) &&
+        widget.audioUrl.isNotEmpty) {
+      _player.setSource(UrlSource(widget.audioUrl)).catchError((e) {
+        debugPrint('🎵 VoiceBubble setSource error: $e');
+      });
+    }
   }
 
   void _startTicker() {

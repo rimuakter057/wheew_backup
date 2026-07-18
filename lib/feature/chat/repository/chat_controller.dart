@@ -973,18 +973,20 @@ class ChatController extends GetxController {
     updateChatRoomInList(model);
   }
 
-  void _updateMessageDeliveryStatus(String messageId, bool isDelivered) {
-    debugPrint('ℹ️ [DEBUG] _updateMessageDeliveryStatus called for target ID: "$messageId"');
+  void _updateMessageDeliveryStatus(String messageId, bool isDelivered, {bool? isRead}) {
+    debugPrint('ℹ️ [DEBUG] _updateMessageDeliveryStatus called for target ID: "$messageId" isDelivered=$isDelivered isRead=$isRead');
     debugPrint('ℹ️ [DEBUG] Messages in userMessageList: ${userMessageList.map((m) => '"${m.id}"').toList()}');
 
     if (isDelivered) {
       deliveredMessageIds.add(messageId);
     }
 
+    bool updated = false;
     final index = userMessageList.indexWhere((m) => m.id?.toString() == messageId);
     debugPrint('ℹ️ [DEBUG] Index found: $index');
 
     if (index != -1) {
+      // Found by real server ID — update directly
       final old = userMessageList[index];
       userMessageList[index] = Messages(
         id: old.id,
@@ -993,7 +995,8 @@ class ChatController extends GetxController {
         receiverId: old.receiverId,
         message: old.message,
         type: old.type,
-        isRead: old.isRead,
+        // Use incoming isRead if provided, otherwise keep old value (don't downgrade)
+        isRead: (isRead == true) ? true : old.isRead,
         isDelivered: isDelivered,
         createdAt: old.createdAt,
         updatedAt: old.updatedAt,
@@ -1016,16 +1019,61 @@ class ChatController extends GetxController {
         deletedById: old.deletedById,
       );
       userMessageList.refresh();
-      debugPrint('✅ Chat screen message delivered status updated: $messageId (delivered: $isDelivered)');
+      updated = true;
+      debugPrint('✅ Chat screen message status updated: $messageId (delivered: $isDelivered, read: $isRead)');
     } else {
-      debugPrint('⚠️ Chat screen message with ID "$messageId" not found in userMessageList.');
+      // Race condition: message-delivered arrived before temp message was replaced with real ID.
+      // Find the latest pending outgoing temp/sent message and mark it delivered.
+      debugPrint('⚠️ Chat screen message with ID "$messageId" not found — applying to latest pending outgoing message.');
+      final tempIndex = userMessageList.indexWhere(
+        (m) => m.isMine == true && (m.id?.startsWith('temp_') ?? false),
+      );
+      if (tempIndex != -1) {
+        final old = userMessageList[tempIndex];
+        userMessageList[tempIndex] = Messages(
+          id: old.id,
+          chatRoomId: old.chatRoomId,
+          senderId: old.senderId,
+          receiverId: old.receiverId,
+          message: old.message,
+          type: old.type,
+          isRead: (isRead == true) ? true : old.isRead,
+          isDelivered: isDelivered,
+          createdAt: old.createdAt,
+          updatedAt: old.updatedAt,
+          sender: old.sender,
+          receiver: old.receiver,
+          isMine: old.isMine,
+          fileUrl: old.fileUrl,
+          fileName: old.fileName,
+          fileSize: old.fileSize,
+          encryptionType: old.encryptionType,
+          encryptionVersion: old.encryptionVersion,
+          senderKeyId: old.senderKeyId,
+          receiverKeyId: old.receiverKeyId,
+          nonce: old.nonce,
+          fileMimeType: old.fileMimeType,
+          durationSeconds: old.durationSeconds,
+          waveform: old.waveform,
+          isDeletedForEveryone: old.isDeletedForEveryone,
+          deletedAt: old.deletedAt,
+          deletedById: old.deletedById,
+        );
+        userMessageList.refresh();
+        updated = true;
+        debugPrint('✅ Applied to temp message fallback: ${old.id}');
+      }
     }
 
-    final roomIndex = userChatList.indexWhere((room) => room.latestMessage?.id?.toString() == messageId);
-    if (roomIndex != -1) {
-      userChatList[roomIndex].latestMessage?.isDelivered = isDelivered;
-      userChatList.refresh();
-      debugPrint('✅ Chat list room latestMessage delivered status updated: $messageId');
+    if (updated) {
+      // Also update chat list if the delivered message is the latest one
+      final roomIndex = userChatList.indexWhere((room) => room.latestMessage?.id?.toString() == messageId);
+      if (roomIndex != -1) {
+        userChatList[roomIndex].latestMessage?.isDelivered = isDelivered;
+        if (isRead == true) userChatList[roomIndex].latestMessage?.isRead = true;
+        userChatList.refresh();
+        debugPrint('✅ Chat list room latestMessage status updated: $messageId');
+      }
     }
   }
 
@@ -1048,12 +1096,16 @@ class ChatController extends GetxController {
       debugPrint('Payload: $value');
       debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
-      // Handle it as a delivery status update
       List<String> deliveredIds = [];
       bool isDelivered = true;
+      bool? isRead;
 
       if (value is Map) {
         isDelivered = value['is_delivered'] ?? value['isDelivered'] ?? true;
+        // Also capture isRead — server sends is_read:true when receiver was in chat screen
+        final rawRead = value['is_read'] ?? value['isRead'];
+        if (rawRead != null) isRead = rawRead as bool?;
+
         if (value['id'] != null) deliveredIds.add(value['id'].toString());
         if (value['messageId'] != null) deliveredIds.add(value['messageId'].toString());
         if (value['message_id'] != null) deliveredIds.add(value['message_id'].toString());
@@ -1076,8 +1128,10 @@ class ChatController extends GetxController {
         deliveredIds.add(value);
       }
 
-      for (final messageId in deliveredIds) {
-        _updateMessageDeliveryStatus(messageId, isDelivered);
+      // Deduplicate IDs (same ID can appear via both 'id' and 'messageId' fields)
+      final uniqueIds = deliveredIds.toSet();
+      for (final messageId in uniqueIds) {
+        _updateMessageDeliveryStatus(messageId, isDelivered, isRead: isRead);
       }
     });
   }
