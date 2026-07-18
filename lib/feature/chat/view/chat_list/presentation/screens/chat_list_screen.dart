@@ -84,7 +84,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
         //   context.pushNamed(RouteName.ocrScanner);
         //   context.pushNamed(RouteName.scanScreen);
         // },
-        //
+
         onScanTap: () async {
           final result = await showModalBottomSheet<String>(
             context: context,
