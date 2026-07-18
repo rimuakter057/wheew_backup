@@ -11,6 +11,7 @@ import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_location_off_prompt.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_type_dropdown.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_confirmation_overlay.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 class ParkingShowScreen extends StatefulWidget {
   const ParkingShowScreen({super.key});
@@ -174,7 +175,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                             fontSize: ResponsiveHelper.fontSize(14),
                           ),
                           decoration: InputDecoration(
-                            hintText: 'Search parking',
+                            hintText:AppStrings.searchHere.tr,
                             hintStyle: TextStyle(
                               fontSize: ResponsiveHelper.fontSize(14),
                               color: Colors.grey,
