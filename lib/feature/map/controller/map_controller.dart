@@ -325,13 +325,17 @@ class ParkingReportController extends GetxController {
       String iconPath;
 
       if (isDisabled) {
-        iconPath = AssetsPath.disableCar;
+      //  iconPath = AssetsPath.disableCar;
+        iconPath = AssetsPath.bluePin;
       } else if (hasCharging) {
-        iconPath = AssetsPath.electricCar;
+       // iconPath = AssetsPath.electricCar;
+        iconPath = AssetsPath.bluePin;
       } else if (isPaid) {
-        iconPath = AssetsPath.paidCar;
+       // iconPath = AssetsPath.paidCar;
+        iconPath = AssetsPath.bluePin;
       } else {
-        iconPath = AssetsPath.freeCar;
+       // iconPath = AssetsPath.freeCar;
+        iconPath = AssetsPath.bluePin;
       }
 
       final BitmapDescriptor icon =

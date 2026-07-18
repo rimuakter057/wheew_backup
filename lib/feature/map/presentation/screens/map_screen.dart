@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:platchatapp/feature/map/controller/map_controller.dart';
 import 'package:platchatapp/feature/map/model/saved_parking_model.dart';
@@ -73,7 +74,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _loadCustomMarkerIcon() async {
-    final ByteData data = await rootBundle.load('assets/icons/paid_car.png');
+    final ByteData data = await rootBundle.load(AssetsPath.bluePin);
 
     final BitmapDescriptor icon = BitmapDescriptor.bytes(
       data.buffer.asUint8List(),

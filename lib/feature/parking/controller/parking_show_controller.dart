@@ -461,8 +461,12 @@ class ParkingShowController extends GetxController {
     final Set<Circle> newCircles = {};
     final now = DateTime.now();
 
-    final freeCarIcon = await _getCarIcon(AssetsPath.freeCar);
-    final paidCarIcon = await _getCarIcon(AssetsPath.paidCar);
+    // final freeCarIcon = await _getCarIcon(AssetsPath.freeCar);
+    // final paidCarIcon = await _getCarIcon(AssetsPath.paidCar);
+
+    final freeCarIcon = await _getCarIcon(AssetsPath.bluePin);
+    final paidCarIcon = await _getCarIcon(AssetsPath.bluePin);
+
     bool needRefresh = false;
 
     // Saved parking location marker
@@ -633,7 +637,7 @@ class ParkingShowController extends GetxController {
     var needRefresh = false;
 
     final freeCarIcon =
-        _carIconCache[AssetsPath.freeCar] ?? BitmapDescriptor.defaultMarker;
+        _carIconCache[AssetsPath.bluePin] ?? BitmapDescriptor.defaultMarker;
 
     for (final rawHandoff in handoffList) {
       final handoff = _asMap(rawHandoff);

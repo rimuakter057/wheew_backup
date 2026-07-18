@@ -114,6 +114,7 @@ class AssetsPath {
   static const String profileTwoIcon="assets/icons/profile_two_icon.svg";
   static const String profileThreeIcon="assets/icons/profile_three_icon.svg";
   static const String profileFourIcon="assets/icons/profile_four_icon.svg";
+  static const String bluePin="assets/icons/blue_pin.png";
 
 
 
