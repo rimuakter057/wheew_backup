@@ -56,16 +56,6 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
 
   late final ParkingReportController _parkingCtrl;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   WidgetsBinding.instance.addObserver(this);
-  //   _parkingCtrl = Get.isRegistered<ParkingReportController>()
-  //       ? Get.find<ParkingReportController>()
-  //       : Get.put(ParkingReportController());
-  //   mapDebug('screen init → resolve GPS and fetch parking');
-  //   _initializeMap();
-  // }
 
 
 

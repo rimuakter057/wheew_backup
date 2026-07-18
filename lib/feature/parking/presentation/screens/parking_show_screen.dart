@@ -224,7 +224,8 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                                 ? _pulseController.value * 2
                                 : (1.0 - _pulseController.value) * 2;
 
-                            final glowWidth = 6.0 + (t * 14.0);
+
+                            final glowWidth = 8.0 + (t * 10.0);
                             final glowOpacity = 0.4 + (t * 0.6);
 
                             return Container(
@@ -234,14 +235,14 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                                       .withValues(alpha: glowOpacity),
                                   width: glowWidth,
                                 ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0xFF185FA5)
-                                        .withValues(alpha: glowOpacity * 0.5),
-                                    blurRadius: 24,
-                                    spreadRadius: 4,
-                                  ),
-                                ],
+                                // boxShadow: [
+                                //   BoxShadow(
+                                //     color: const Color(0xFF185FA5)
+                                //         .withValues(alpha: glowOpacity * 0.5),
+                                //     blurRadius: 24,
+                                //     spreadRadius: 4,
+                                //   ),
+                                // ],
                               ),
                             );
                           },

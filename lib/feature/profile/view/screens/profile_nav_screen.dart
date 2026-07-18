@@ -247,7 +247,7 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
                     SizedBox(height: ResponsiveHelper.spacing(30)),
                     ///build logout button==============
                     _buildLogoutButton(context),
-                    SizedBox(height: ResponsiveHelper.spacing(30)),
+                    SizedBox(height: ResponsiveHelper.spacing(180)),
                   ],
                 ),
               ),
@@ -715,13 +715,6 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
 //       ),
 //     );
 //   }
-
-
-
-
-
-
-
 
   ///profile card=====================================================================
   Widget _buildProfileCard(BuildContext context, ProfileController controller) {
