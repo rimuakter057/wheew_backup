@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
@@ -86,7 +87,7 @@ class _FaqScreenState extends State<FaqScreen> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: GestureDetector(
-                        onTap: () => Get.back(),
+                        onTap: () => context.pop(),
                         child: Container(
                           width: ResponsiveHelper.width(40),
                           height: ResponsiveHelper.width(40),

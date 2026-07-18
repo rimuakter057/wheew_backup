@@ -123,9 +123,7 @@ class ParkingShowController extends GetxController {
   ///    renders with no delay.
   /// 2. In the background, checks /parking-mode/me and branches the flow.
   Future<void> initializeFlow({required VoidCallback onShowPopup}) async {
-    // Wipe any stale data from a previous visit to this screen before
-    // doing anything else — every navbar entry must start from a clean
-    // state and be driven purely by the fresh API response below.
+
     _resetSearchState();
 
     isLocating.value = false;
@@ -136,10 +134,7 @@ class ParkingShowController extends GetxController {
     await checkParkingModeMe(onShowPopup: onShowPopup);
   }
 
-  /// Clears everything that came from the last /parking-mode/me +
-  /// nearby-data cycle. Keeps `savedParkingLocation` and the paid-spot
-  /// timer intact since those represent a real, still-valid car
-  /// location and shouldn't disappear just from switching tabs.
+
   void _resetSearchState() {
     handoffList.clear();
     parkingAreaList.clear();
@@ -150,22 +145,15 @@ class ParkingShowController extends GetxController {
           (m) => m.markerId.value != 'saved_car_location',
     );
     status.value = 'IDLE';
-    // Must be false until the flow actually confirms SEARCHING or the
-    // user answers the popup — otherwise the search bar / map-type
-    // dropdown (which are gated on this flag) can leak in from a
-    // previous visit and appear underneath the popup before Yes/No.
+
     showLocationPulse.value = false;
     mapOverlayVersion.value++;
   }
 
-  /// Lightweight refresh used on app resume — re-checks status without
-  /// resetting the map back to the approximate default location.
   Future<void> refreshStatus({required VoidCallback onShowPopup}) async {
     await checkParkingModeMe(onShowPopup: onShowPopup);
   }
 
-  /// Fetches the real device GPS position.
-  /// Returns true only if a real fix was obtained.
   Future<bool> getUserLocation() async {
     isLocating.value = true;
     try {
@@ -213,9 +201,7 @@ class ParkingShowController extends GetxController {
     }
   }
 
-  /// GET /park-relay/parking-mode/me
-  /// SEARCHING  -> no popup, just load real location + nearby overlays.
-  /// IDLE/PARKED -> show the "are you leaving a spot" popup.
+
   Future<void> checkParkingModeMe({required VoidCallback onShowPopup}) async {
     isLoading.value = true;
     _logger.i('=== checkParkingModeMe START ===');
@@ -262,8 +248,7 @@ class ParkingShowController extends GetxController {
     }
   }
 
-  /// GET /park-relay/handoffs/nearby (adjustable radius)
-  /// GET /park-relay/parking-areas/nearby (fixed 1000m radius)
+
   Future<void> fetchNearbyData(double? lat, double? lng) async {
     if (lat == null || lng == null) {
       _logger.w('fetchNearbyData SKIPPED: lat/lng is null');
@@ -365,8 +350,7 @@ class ParkingShowController extends GetxController {
     }
   }
 
-  /// Popup -> "No" (not leaving). Re-runs the same 2 GET calls used for
-  /// the SEARCHING flow and marks the backend mode as searching.
+
   Future<void> onLeavingPopupNo() async {
     _logger.i('=== onLeavingPopupNo CLICKED ===');
     await getUserLocation();
@@ -390,15 +374,10 @@ class ParkingShowController extends GetxController {
     await fetchNearbyData(lat, lng);
   }
 
-  /// Popup -> "Yes" (leaving the spot).
-  /// POST /park-relay/handoffs {latitude, longitude}
-  /// This ONLY reports the handoff to the backend. The UI response is
-  /// just the plain Google Map centered on the user's real location —
-  /// no blinking, no markers/polygons, no search bar / pulse overlay.
+
   Future<void> onLeavingPopupYes() async {
     await getUserLocation();
-    // Intentionally NOT setting showLocationPulse — Yes should show a
-    // clean map only, not the search bar / pulse UI.
+
     final lat = gpsPosition.value?.latitude;
     final lng = gpsPosition.value?.longitude;
     if (lat == null || lng == null) {
