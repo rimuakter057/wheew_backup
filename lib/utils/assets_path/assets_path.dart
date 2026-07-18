@@ -9,6 +9,8 @@ class AssetsPath {
   static const String plateIcon = '${_logoBase}platechat_icon.svg';
   static const String plateLogo = '${_logoBase}platechat_logo.svg';
   static const String logoPng = '${_logoBase}logo.png';
+  static const String updatedLogo = '${_logoBase}app_logo_update.png';
+  static const String wheew = '${_logoBase}wheew.png';
 
   //icons====================================
   static const String send = '${_iconsBase}send.svg';
@@ -18,6 +20,7 @@ class AssetsPath {
   static const String iconJson = '${_animationBase}icon_animated.json';
   static const String logoJson = '${_animationBase}logo_animated.json';
   static const String logo2Json = '${_animationBase}logo2_animated.json';
+  static const String wheewAnimationTwo = '${_animationBase}wheew_animation_two.json';
 
   // Images
   static const String person0 = '${_imagesBase}person0.png';

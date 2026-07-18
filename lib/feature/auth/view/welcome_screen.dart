@@ -824,6 +824,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
@@ -864,7 +865,8 @@ class WelcomeScreen extends StatelessWidget {
                 width: double.infinity,
                 alignment: Alignment.center,
                 child: Lottie.asset(
-                  'assets/animations/logo2_animated.json',
+                 // 'assets/animations/logo2_animated.json',
+                  AssetsPath.wheewAnimationTwo,
                   width: ResponsiveHelper.iconSize(320),
                   height: ResponsiveHelper.iconSize(340),
                   fit: BoxFit.contain,

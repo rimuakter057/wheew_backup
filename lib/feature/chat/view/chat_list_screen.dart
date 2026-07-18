@@ -149,24 +149,29 @@ class _ChatListScreenState extends State<ChatListScreen> {
         title: Stack(
           alignment: Alignment.center,
           children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Lottie.asset(
-                  'assets/animations/icon_animated.json',
-                  width: ResponsiveHelper.iconSize(28),
-                  height: ResponsiveHelper.iconSize(28),
-                  fit: BoxFit.cover,
-                  repeat: true,
-                ),
-                SizedBox(width: ResponsiveHelper.spacing(6)),
                 CustomImage(
-                  imageSrc: AssetsPath.chatList,
+                  imageSrc: AssetsPath.wheew,
                   height: ResponsiveHelper.height(28),
                   fit: BoxFit.contain,
                 ),
-              ],
-            ),
+            // Row(
+            //   mainAxisSize: MainAxisSize.min,
+            //   children: [
+            //     Lottie.asset(
+            //       'assets/animations/icon_animated.json',
+            //       width: ResponsiveHelper.iconSize(28),
+            //       height: ResponsiveHelper.iconSize(28),
+            //       fit: BoxFit.cover,
+            //       repeat: true,
+            //     ),
+            //     SizedBox(width: ResponsiveHelper.spacing(6)),
+            //     CustomImage(
+            //       imageSrc: AssetsPath.chatList,
+            //       height: ResponsiveHelper.height(28),
+            //       fit: BoxFit.contain,
+            //     ),
+            //   ],
+            // ),
           ],
         ),
         actions: [

@@ -6,7 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
+import 'package:platchatapp/feature/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../repository/auth_controller.dart';
@@ -72,12 +74,14 @@ class _SignInScreenState extends State<SignInScreen> {
                       AssetsPath.signLogo,
                       width: ResponsiveHelper.width(120),
                     ),*/
-                    Lottie.asset(
-                      'assets/animations/icon_animated.json',
-                      width: ResponsiveHelper.iconSize(120),
-                      fit: BoxFit.cover,
-                      repeat: true,
-                    ),
+                    // Lottie.asset(
+                    //   'assets/animations/icon_animated.json',
+                    //   width: ResponsiveHelper.iconSize(120),
+                    //   fit: BoxFit.cover,
+                    //   repeat: true,
+                    // ),
+
+                    CustomImage(imageSrc: AssetsPath.updatedLogo,height: ResponsiveHelper.height(220),),
 
                     SizedBox(height: ResponsiveHelper.spacing(18)),
 
