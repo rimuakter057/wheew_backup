@@ -780,4 +780,10 @@ AppStrings.group:"Group",
   AppStrings.paidSpotTimerStartedForMinutes:
   "Paid spot timer started for @minutes minutes.",
 
+  AppStrings.failedToConnectToParkingService: "Failed to connect to parking service: @error",
+  AppStrings.failedToLoadNearbyParkingSpotsWithError: "Failed to load nearby parking spots: @error",
+  AppStrings.networkErrorReportingSpotHandoffWithError: "Network error reporting spot handoff: @error",
+  AppStrings.parkingLocationSavedAsFreeSpot: "Parking location saved as Free Spot.",
+  AppStrings.failedToLoadHandoffDetails: "Failed to load handoff details",
+  AppStrings.networkErrorLoadingHandoffDetails: "Network error loading handoff details: @error",
 };

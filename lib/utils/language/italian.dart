@@ -805,4 +805,10 @@ final Map<String, String> italian = {
   AppStrings.paidSpotTimerStartedForMinutes:
   "Il timer del parcheggio a pagamento è iniziato per @minutes minuti.",
 
+  AppStrings.failedToConnectToParkingService: "Impossibile connettersi al servizio di parcheggio: @error",
+  AppStrings.failedToLoadNearbyParkingSpotsWithError: "Impossibile caricare i parcheggi vicini: @error",
+  AppStrings.networkErrorReportingSpotHandoffWithError: "Errore di rete durante la segnalazione del passaggio del parcheggio: @error",
+  AppStrings.parkingLocationSavedAsFreeSpot: "Posizione di parcheggio salvata come posto gratuito.",
+  AppStrings.failedToLoadHandoffDetails: "Impossibile caricare i dettagli del passaggio",
+  AppStrings.networkErrorLoadingHandoffDetails: "Errore di rete durante il caricamento dei dettagli del passaggio: @error",
 };

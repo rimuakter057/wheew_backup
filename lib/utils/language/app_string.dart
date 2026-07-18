@@ -831,10 +831,10 @@ class AppStrings {
   static const String paidSpotTimerStartedForMinutes =
       'paid_spot_timer_started_for_minutes';
 
-
-
-
-
-
-
+  static const String failedToConnectToParkingService = 'failed_to_connect_to_parking_service';
+  static const String failedToLoadNearbyParkingSpotsWithError = 'failed_to_load_nearby_parking_spots_with_error';
+  static const String networkErrorReportingSpotHandoffWithError = 'network_error_reporting_spot_handoff_with_error';
+  static const String parkingLocationSavedAsFreeSpot = 'parking_location_saved_as_free_spot';
+  static const String failedToLoadHandoffDetails = 'failed_to_load_handoff_details';
+  static const String networkErrorLoadingHandoffDetails = 'network_error_loading_handoff_details';
 }

@@ -160,7 +160,7 @@ class ParkingShowController extends GetxController {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         isLocating.value = false;
-        _showMessage('Please enable location service', isError: true);
+        _showMessage(AppStrings.pleaseEnableLocationService.tr, isError: true);
         return false;
       }
 
@@ -172,7 +172,7 @@ class ParkingShowController extends GetxController {
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
         isLocating.value = false;
-        _showMessage('Location permission denied', isError: true);
+        _showMessage(AppStrings.locationPermissionDenied.tr, isError: true);
         return false;
       }
 
@@ -229,7 +229,7 @@ class ParkingShowController extends GetxController {
           onShowPopup();
         }
       } else {
-        String errorMsg = 'Failed to retrieve parking status';
+        String errorMsg = AppStrings.failedToRetrieveParkingStatus.tr;
         try {
           final decoded = jsonDecode(response.body);
           final map = _asMap(decoded);
@@ -241,7 +241,7 @@ class ParkingShowController extends GetxController {
         onShowPopup();
       }
     } catch (e) {
-      _showMessage('Failed to connect to parking service: $e', isError: true);
+      _showMessage(AppStrings.failedToConnectToParkingService.tr.replaceFirst('@error', e.toString()), isError: true);
       onShowPopup();
     } finally {
       isLoading.value = false;
@@ -289,13 +289,13 @@ class ParkingShowController extends GetxController {
       if (handoffsResponse.statusCode == 200) {
         handoffList.value = jsonDecode(handoffsResponse.body) as List<dynamic>;
       } else {
-        _showMessage('Failed to load nearby handoff spots', isError: true);
+        _showMessage(AppStrings.failedToLoadNearbyHandoffSpots.tr, isError: true);
       }
 
       if (areasResponse.statusCode == 200) {
         parkingAreaList.value = jsonDecode(areasResponse.body) as List<dynamic>;
       } else {
-        _showMessage('Failed to load nearby parking areas', isError: true);
+        _showMessage(AppStrings.failedToLoadNearbyParkingAreas.tr, isError: true);
       }
 
       _logger.d('Parsed -> handoffList: ${handoffList.length} items, '
@@ -344,7 +344,7 @@ class ParkingShowController extends GetxController {
           'polygons: ${polygons.length}, circles: ${circles.length} ===');
     } catch (e, st) {
       _logger.e('fetchNearbyData ERROR', error: e, stackTrace: st);
-      _showMessage('Failed to load nearby parking spots: $e', isError: true);
+      _showMessage(AppStrings.failedToLoadNearbyParkingSpotsWithError.tr.replaceFirst('@error', e.toString()), isError: true);
     } finally {
       isLoading.value = false;
     }
@@ -382,7 +382,7 @@ class ParkingShowController extends GetxController {
     final lng = gpsPosition.value?.longitude;
     if (lat == null || lng == null) {
       _showMessage(
-        'Location is not active or available to report handoff',
+        AppStrings.locationNotActiveOrAvailable.tr,
         isError: true,
       );
       return;
@@ -410,7 +410,7 @@ class ParkingShowController extends GetxController {
       if ((responseHandoff.statusCode == 200 || responseHandoff.statusCode == 201) &&
           (responseIdle.statusCode == 200 || responseIdle.statusCode == 201)) {
         _showMessage(
-            'Parking spot handoff reported successfully!', isError: false);
+            AppStrings.parkingSpotHandoffReportedSuccessfully.tr, isError: false);
         if (mapController != null) {
           await mapController!.animateCamera(
             CameraUpdate.newLatLngZoom(LatLng(lat, lng), 17),
@@ -419,15 +419,15 @@ class ParkingShowController extends GetxController {
       } else {
         String msg = '';
         if (responseHandoff.statusCode != 200 && responseHandoff.statusCode != 201) {
-          msg += 'Failed to record spot handoff. ';
+          msg += '${AppStrings.failedToRecordSpotHandoff.tr} ';
         }
         if (responseIdle.statusCode != 200 && responseIdle.statusCode != 201) {
-          msg += 'Failed to set parking mode to idle.';
+          msg += AppStrings.failedToSetParkingModeIdle.tr;
         }
         _showMessage(msg.trim(), isError: true);
       }
     } catch (e) {
-      _showMessage('Network error reporting spot handoff: $e', isError: true);
+      _showMessage(AppStrings.networkErrorReportingSpotHandoffWithError.tr.replaceFirst('@error', e.toString()), isError: true);
     } finally {
       isLoading.value = false;
     }
@@ -766,7 +766,7 @@ class ParkingShowController extends GetxController {
   void toggleParkMode() {
     showLocationPulse.value = !showLocationPulse.value;
     if (showLocationPulse.value) {
-      _showMessage('ParkMode active: Fusing GPS and Accelerometer signals.',
+      _showMessage(AppStrings.parkModeActive.tr,
           isError: false);
       final lat = gpsPosition.value?.latitude;
       final lng = gpsPosition.value?.longitude;
@@ -774,19 +774,19 @@ class ParkingShowController extends GetxController {
         fetchNearbyData(lat, lng);
       }
     } else {
-      _showMessage('ParkMode deactivated.', isError: false);
+      _showMessage(AppStrings.parkModeDeactivated.tr, isError: false);
     }
   }
 
   void simulateAutoParkDetection() {
-    _showMessage('Auto-Park Detected by Confidence Engine!', isError: false);
+    _showMessage(AppStrings.autoParkDetected.tr, isError: false);
     saveCurrentParkingLocation();
   }
 
   void saveCurrentParkingLocation() {
     final latLng = gpsPosition.value;
     if (latLng == null) {
-      _showMessage('GPS Location not available to save spot.', isError: true);
+      _showMessage(AppStrings.gpsLocationNotAvailable.tr, isError: true);
       return;
     }
 
@@ -804,7 +804,7 @@ class ParkingShowController extends GetxController {
     remainingTimeString.value = '';
     savedParkingLocation.value = null;
     _buildMarkersAndPolygons();
-    _showMessage('Saved parking spot removed.', isError: false);
+    _showMessage(AppStrings.savedParkingSpotRemoved.tr, isError: false);
   }
 
   void launchSavedParkingRoute() {
@@ -841,7 +841,7 @@ class ParkingShowController extends GetxController {
             remainingTimeString.value = '';
             savedParkingLocation.value = null; // spot removed after expiration
             _buildMarkersAndPolygons();
-            _showMessage('Parking spot duration has expired. Spot is now free.',
+            _showMessage(AppStrings.parkingSpotDurationExpired.tr,
                 isError: false);
             return;
           }
@@ -911,7 +911,7 @@ class ParkingShowController extends GetxController {
                           isPaidSpot.value = false;
                           isTimerActive.value = false;
                           remainingTimeString.value = '';
-                          _showMessage('Parking location saved as Free Spot.',
+                          _showMessage(AppStrings.parkingLocationSavedAsFreeSpot.tr,
                               isError: false);
                         },
                         style: OutlinedButton.styleFrom(
@@ -1134,11 +1134,11 @@ class ParkingShowController extends GetxController {
           return;
         }
       }
-      _showMessage('Failed to load handoff details', isError: true);
+      _showMessage(AppStrings.failedToLoadHandoffDetails.tr, isError: true);
       _showHandoffDialog(handoff); // fallback to cached data
     } catch (e, st) {
       _logger.e('showHandoffDetails ERROR', error: e, stackTrace: st);
-      _showMessage('Network error loading handoff details: $e', isError: true);
+      _showMessage(AppStrings.networkErrorLoadingHandoffDetails.tr.replaceFirst('@error', e.toString()), isError: true);
       _showHandoffDialog(handoff);
     } finally {
       isLoading.value = false;
