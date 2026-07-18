@@ -7,6 +7,7 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/language/language_controller.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
+import '../../../../utils/language/app_string.dart';
 import '../widgets/profile_nav/profile_header.dart';
 import '../widgets/profile_nav/profile_logout_button.dart';
 import '../widgets/profile_nav/profile_menu_item_card.dart';
@@ -69,7 +70,7 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
                       SizedBox(height: ResponsiveHelper.spacing(12)),
                       ///profile menu item==========================
                       Text(
-                        "Account & Setting",
+                          AppStrings.accountAndSettings.tr,
                         style: context.bodyLarge.copyWith(
                           color: AppColors.black,
                           fontWeight: FontWeight.w600

@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:get/get.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:flutter/material.dart';
 
@@ -63,6 +64,7 @@ class ParkingLocationCard extends StatelessWidget {
                     ),
                     // "Electric" Pill Badge
                     Container(
+
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.6),
@@ -81,7 +83,7 @@ class ParkingLocationCard extends StatelessWidget {
                             color: const Color(0xFF22C55E),
                           ),
                           const SizedBox(width: 4),
-                          const Text(
+                           Text(
                             AppStrings.electric.tr,
                             style: TextStyle(
                               color: Color(0xFF22C55E),
@@ -105,7 +107,7 @@ class ParkingLocationCard extends StatelessWidget {
                       color: Color(0xFF2563EB),
                     ),
                     const SizedBox(width: 4),
-                    const Text(
+                     Text(
                       AppStrings.twoFiftyMAway.tr,
                       style: TextStyle(
                         fontSize: 14,

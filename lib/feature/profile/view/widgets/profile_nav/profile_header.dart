@@ -61,7 +61,7 @@ class ProfileHeaderCard extends StatelessWidget {
                   Text(
                       user?.nickName.isNotEmpty == true
                           ? user!.nickName
-                          : "Unknown",
+                          : AppStrings.unknown.tr,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: context.bodyMedium.copyWith(
@@ -102,7 +102,7 @@ class ProfileHeaderCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Vehicle Model: ",
+    AppStrings.vehicleModel.tr,
                     style: GoogleFonts.poppins(
                       fontSize:
                       ResponsiveHelper.fontSize(13),

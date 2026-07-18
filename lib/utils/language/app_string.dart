@@ -1,5 +1,15 @@
 class AppStrings {
 
+  static const String home = 'home';
+  static const String parking = 'parking';
+  static const String chatNav = 'chat_nav';
+
+
+
+  static const String accountAndSettings = 'account_and_settings';
+  static const String unknown = 'unknown';
+  static const String vehicleModel = 'vehicle_model';
+
   static const String tapOnTheMapToSelectParkingLocation =
       'tap_on_the_map_to_select_parking_location';
   static const String addParkingSpot = 'addParkingSpot';
@@ -487,7 +497,7 @@ class AppStrings {
 
   static const String vehicleInfo = 'vehicle_info';
   static const String vehicleType = 'vehicle_type';
-  static const String vehicleModel = 'vehicle_model';
+
   static const String vehicleColor = 'vehicle_color';
   static const String submit = 'submit';
 

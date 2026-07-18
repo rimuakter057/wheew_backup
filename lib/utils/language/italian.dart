@@ -1,6 +1,16 @@
 import 'app_string.dart';
 
 final Map<String, String> italian = {
+
+  AppStrings.home: "Home",
+  AppStrings.parking: "Parcheggio",
+  AppStrings.chatNav: "Chat",
+
+
+  AppStrings.accountAndSettings: "Account e Impostazioni",
+  AppStrings.unknown: "Sconosciuto",
+  AppStrings.vehicleModel: "Modello di veicolo: ",
+
   AppStrings.tapOnTheMapToSelectParkingLocation:
   "Tocca la mappa per selezionare un punto di parcheggio.",
   AppStrings.addParkingSpot: "Aggiungi posto auto",
@@ -21,7 +31,7 @@ final Map<String, String> italian = {
   AppStrings.parkMyCar: "Parcheggia la mia auto",
   AppStrings.durationMin15Minutes: "Durata (minuti)",
   AppStrings.parkingType: "Tipo di parcheggio",
-  AppStrings.splash: 'COLLEGAMENTO DEI PILOTI UNA PIASTRA ALLA VOLTA',
+  AppStrings.splash: 'COLLEGHIAMO I CONDUCENTI, UNA TARGA ALLA VOLTA',
 
   AppStrings.welcomeMessage: 'La tua Targa, la tua chat',
   AppStrings.welcomeMessage1: "Vedi una targa, inizi a chattare:",
@@ -37,7 +47,7 @@ final Map<String, String> italian = {
 
   // -------- Sign In --------
   AppStrings.nickName: 'Soprannome',
-  AppStrings.licenseNumberTitle: "Numero di Targa",
+  AppStrings.licenseNumberTitle: "Targa",
   AppStrings.licenseNumber1: "Targa",
   AppStrings.licensePlateOrNickName: 'Targa o Nickname',
   AppStrings.enterLicensePlateOrNickName: 'Inserisci la targa o il nickname',
@@ -55,16 +65,16 @@ final Map<String, String> italian = {
   AppStrings.selectDesignation: 'Scegli Ruolo',
   AppStrings.select: 'Seleziona',
   AppStrings.owner: 'Proprietario',
-  AppStrings.occasionalDriver: 'Guidatore occasionale',
+  AppStrings.occasionalDriver: 'Conducente occasionale',
   AppStrings.pleaseSelectDesignation: 'Seleziona un ruolo',
 
   AppStrings.nickNameHint: 'Nome',
   AppStrings.licenseNumber: 'Numero di targa',
   AppStrings.typeHere: 'Scrivi qui',
 
-  AppStrings.licenseNumberIsRequired: 'Il numero di licenza è obbligatorio',
+  AppStrings.licenseNumberIsRequired: 'La targa è obbligatoria',
   AppStrings.licenseNumberMustBe: 'La targa non è corretta',
-  AppStrings.licenseNumberRequired: 'È richiesta la Targa',
+  AppStrings.licenseNumberRequired: 'La targa è obbligatoria',
 
   AppStrings.confirmPassword: 'Conferma password',
   AppStrings.confirmYourPassword: 'Conferma la tua password',
@@ -113,7 +123,7 @@ final Map<String, String> italian = {
   AppStrings.or: 'OPPURE',
   AppStrings.alreadyAccount: 'Hai già un account?',
   AppStrings.termsAndConditions: 'Termini e Condizioni',
-  AppStrings.privacyPolicy: 'Politiche sulla riservatezza',
+  AppStrings.privacyPolicy: 'Informativa sulla privacy',
 
   AppStrings.logOut: 'Disconnetti',
   AppStrings.logout: "Esci",
@@ -136,7 +146,7 @@ final Map<String, String> italian = {
   AppStrings.ratingGreat: 'Ottimo',
   AppStrings.ratingExcellent: 'Eccellente',
 
-  AppStrings.addComment: 'Aggiungi un commento (opzionale)...',
+  AppStrings.addComment: 'Aggiungi un commento (facoltativo)...',
   AppStrings.submitRating: 'Invia valutazione',
   AppStrings.updateRating: 'Aggiorna valutazione',
   AppStrings.tapToRate: 'Tocca una stella per valutare',
@@ -163,14 +173,14 @@ final Map<String, String> italian = {
   AppStrings.unblock: "Sblocca",
 
   AppStrings.profile: "Profilo",
-  AppStrings.edit: "Modificare",
+  AppStrings.edit: "Modifica",
 
   AppStrings.youCantSend: "Non puoi inviare un messaggio a questo utente",
-  AppStrings.youveBlocked: "Hai bloccato",
+  AppStrings.youveBlocked: "Hai bloccato questo utente",
   AppStrings.thisUserWontBeAble: "Questo utente non potrà inviarti messaggi finché non lo sbloccherai.",
 
   AppStrings.language: "Lingua",
-  AppStrings.nickname: "Soprannome",
+  AppStrings.nickname: "Nickname",
 
   AppStrings.emailRequired: "L'e-mail è obbligatoria",
 
@@ -179,13 +189,13 @@ final Map<String, String> italian = {
   AppStrings.confirmedPassRequired: "È richiesta la conferma della password",
   AppStrings.passNotMatch: "La password non corrisponde",
   AppStrings.passSixChar: "La password deve contenere almeno 6 caratteri",
-  AppStrings.otpRequired: "L'OTP è obbligatorio",
+  AppStrings.otpRequired: "L'OTP è obbligatoria",
 
   AppStrings.emptyBlockList: "Elenco utenti bloccati vuoto",
   AppStrings.rememberMe: "Ricordami",
-  AppStrings.badWordError: "Questi messaggio contiene parole inappropriate.",
+  AppStrings.badWordError: "Questo messaggio contiene parole inappropriate..",
 
-  AppStrings.onlyForRecovery: "recupero account",
+  AppStrings.onlyForRecovery: "Solo per il recupero dell'account",
   AppStrings.pleaseEnterValidEmail: "Inserisci una mail valida",
 
   AppStrings.otpVerifySuccess: "OTP verificata con successo",
@@ -223,7 +233,7 @@ final Map<String, String> italian = {
   AppStrings.frequentlyAskedQuestions:'Domande frequenti',
   AppStrings.findAnswersBelow:'Trova le risposte qui sotto',
   AppStrings.supportText1: "Per qualsiasi aiuto e supporto, contattaci a ",
-  AppStrings.supportText2: "Il nostro team di supporto è disponibile per assisterti con qualsiasi problema o richiesta.",
+  AppStrings.supportText2: "Il nostro team di supporto è disponibile per aiutarti in qualsiasi momento.",
 
   AppStrings.emailCopied: "E-mail copiata",
 
@@ -237,9 +247,9 @@ final Map<String, String> italian = {
   AppStrings.usefulNumber: "Numero utile",
 
   AppStrings.scan: "Scansiona",
-  AppStrings.chat: "chiacchierata",
+  AppStrings.chat: "Chat",
   AppStrings.map: "mappa",
-  AppStrings.you: "Voi",
+  AppStrings.you: "Tu",
 
   AppStrings.addRating: "Aggiungi valutazione",
 
@@ -250,7 +260,7 @@ final Map<String, String> italian = {
 
 // -------- Toast message --------
   AppStrings.invalidCredentials: 'Credenziali non valide!',
-  AppStrings.somethingWrong: 'Qualcosa è andato storto!',
+  AppStrings.somethingWrong: 'Qualcosa è andato storto',
   AppStrings.success1: 'Operazione riuscita!',
   AppStrings.error2: 'Si è verificato un errore!',
   AppStrings.unauthorized: 'Non autorizzato!',
@@ -268,7 +278,7 @@ final Map<String, String> italian = {
   AppStrings.loginSuccess: 'Bentornato!',
   AppStrings.logoutSuccess: 'Disconnesso!',
   AppStrings.noData: 'Nessun dato!',
-  AppStrings.dismiss: 'Annulla',
+  AppStrings.dismiss: 'Ignora',
 
 // ------------------ Profile Screen ------------------
   AppStrings.uploadDocuments: 'Carica documenti',
@@ -276,7 +286,7 @@ final Map<String, String> italian = {
   AppStrings.carInsurance: 'Assicurazione auto',
   AppStrings.carTax: 'Bollo auto',
   AppStrings.tapToUpload: 'Tocca per caricare',
-  AppStrings.viewDocument: 'Vedi file attuale',
+  AppStrings.viewDocument: 'Visualizza documento',
   AppStrings.update: 'Aggiorna',
   AppStrings.renew: 'Rinnova',
   AppStrings.expires: 'Scadenza',
@@ -297,8 +307,8 @@ final Map<String, String> italian = {
   AppStrings.cameraError: "Errore fotocamera.\nRiavvia l'app.",
 
 // ------------------ Map / Parking ------------------
-  AppStrings.dropParkingPin: "Rilascia il contrassegno di parcheggio",
-  AppStrings.removePin: "Rimuovere il perno di parcheggio",
+  AppStrings.dropParkingPin: "Posiziona il pin di parcheggio",
+  AppStrings.removePin: "Rimuovi il pin di parcheggio",
 
   AppStrings.mapGettingLocation: "Recupero posizione...",
   AppStrings.mapLoadingParkingSpots: "Caricamento parcheggi...",
@@ -341,7 +351,7 @@ final Map<String, String> italian = {
   AppStrings.addMembers: 'Aggiungi membri',
 
   AppStrings.removeMember: 'Rimuovi membro',
-  AppStrings.removeMemberConfirmation: 'Rimuovere dal gruppo',
+  AppStrings.removeMemberConfirmation: 'Rimuovi dal gruppo',
   AppStrings.remove: 'Rimuovi',
 
   AppStrings.noMembersFound: 'Nessun membro trovato',
@@ -369,6 +379,7 @@ final Map<String, String> italian = {
   AppStrings.updateDocument: 'Aggiorna Documento',
   AppStrings.uniqueNumber: 'Numero Univoco',
   AppStrings.expireDate: 'Data di Scadenza',
+  AppStrings.admin:"Amministratore",
 
   AppStrings.uploadFile: 'Carica File',
   AppStrings.replaceFile: 'Sostituisci File',
@@ -401,7 +412,7 @@ final Map<String, String> italian = {
   'Condividi questo link per invitare i tuoi amici',
 
   AppStrings.linkCopied: 'Collegamento copiato!',
-  AppStrings.share: 'Condividere',
+  AppStrings.share: 'Condividi',
 
   AppStrings.appInvitation: 'Invito all\'app',
   AppStrings.useAppWithMe: "Usa questa app con me",
@@ -509,16 +520,16 @@ final Map<String, String> italian = {
   AppStrings.other: 'Altro',
   AppStrings.vehicleInfo: 'Informazioni sul veicolo',
   AppStrings.vehicleType: 'Tipo di veicolo',
-  AppStrings.vehicleModel: 'Modello di veicolo',
+
   AppStrings.vehicleColor: 'Colore del veicolo',
   AppStrings.submit: 'Invia',
   AppStrings.editGroup: 'Modifica gruppo',
 
   // Vehicle types
-  'CAR': 'Auto',
-  'MOTORCYCLE': 'Moto',
-  'VAN': 'Furgone',
-  'OTHER': 'Altro',
+  'CAR': 'Auto', //Car
+  'MOTORCYCLE': 'Moto',//Motorcycle
+  'VAN': 'Furgone',//Van
+  'OTHER': 'Altro',//Other
 
 
   AppStrings.imageSaveToGallery: 'Salva immagine nella galleria',
@@ -700,7 +711,7 @@ final Map<String, String> italian = {
   AppStrings.failedToDownloadQrCard: "Download della scheda QR fallito",
   AppStrings.myQrCode: "Il Mio Codice QR",
   AppStrings.vehicleDetails: "Dettagli Veicolo",
-  AppStrings.searchDrivers: "Cerca Piloti",
+  AppStrings.searchDrivers: "Cerca Conducenti",
   AppStrings.searchByNameOrVehicleCode: "Cerca per nome o codice veicolo...",
   AppStrings.message: "Messaggio",
   AppStrings.sendRequest: "Invia Richiesta",

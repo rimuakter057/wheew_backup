@@ -129,7 +129,7 @@ class _AppBottomNav extends StatelessWidget {
                           //home-p-chat-profile-scan
                           _NavItem(
                             icon: AssetsPath.homeNav,
-                            label: "home",
+                            label: AppStrings.home.tr,
                             index: 0,
                             currentIndex: currentIndex,
                             onTap: onTap,
@@ -137,7 +137,7 @@ class _AppBottomNav extends StatelessWidget {
 
                           _NavItem(
                             icon: AssetsPath.pNav,
-                            label: "P",
+                            label: AppStrings.parking.tr,
                             index: 1,
                             currentIndex: currentIndex,
                             onTap: onTap,

@@ -46,6 +46,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   bool _isLocating = true;
   LatLng? _pickedLocation;
   bool _isPickingLocation = false;
+  BitmapDescriptor? _parkedCarIcon;
 
   /// Tracks which flow (report-a-spot vs save-my-parking) started the
   /// "pick on map" mode, so _onMapTapped knows which UI to reopen.
@@ -55,6 +56,20 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
 
   late final ParkingReportController _parkingCtrl;
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   WidgetsBinding.instance.addObserver(this);
+  //   _parkingCtrl = Get.isRegistered<ParkingReportController>()
+  //       ? Get.find<ParkingReportController>()
+  //       : Get.put(ParkingReportController());
+  //   mapDebug('screen init → resolve GPS and fetch parking');
+  //   _initializeMap();
+  // }
+
+
+
+
   @override
   void initState() {
     super.initState();
@@ -63,7 +78,23 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
         ? Get.find<ParkingReportController>()
         : Get.put(ParkingReportController());
     mapDebug('screen init → resolve GPS and fetch parking');
+    _loadCustomMarkerIcon();   // 👈 নতুন
     _initializeMap();
+  }
+
+  Future<void> _loadCustomMarkerIcon() async {
+    final ByteData data = await rootBundle.load('assets/icons/paid_car.png');
+
+    final BitmapDescriptor icon = BitmapDescriptor.bytes(
+      data.buffer.asUint8List(),
+      width: 32,   // 👈 logical pixels — এখান থেকে size control করো
+      height: 32,
+    );
+
+    if (!mounted) return;
+    setState(() {
+      _parkedCarIcon = icon;
+    });
   }
 
   @override
@@ -466,8 +497,9 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                     Marker(
                       markerId: const MarkerId('my_saved_parking'),
                       position: LatLng(mySaved.latitude!, mySaved.longitude!),
-                      icon: BitmapDescriptor.defaultMarkerWithHue(
-                          BitmapDescriptor.hueAzure),
+                      icon: _parkedCarIcon ??
+                          BitmapDescriptor.defaultMarkerWithHue(
+                              BitmapDescriptor.hueAzure),
                       infoWindow: const InfoWindow(
                         title: 'My Saved Parking',
                         snippet: 'Tap to view details & route',
@@ -576,10 +608,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   }
 }
 
-/// A compact, professional pill-shaped action button with a soft gradient,
-/// circular icon badge and elevated shadow. Used for the floating map
-/// actions (Report Spot / Save My Parking) so each action has a distinct,
-/// unmistakable visual identity while staying consistent in shape/spacing.
+
 class _ActionPillButton extends StatelessWidget {
   final String label;
   final IconData icon;

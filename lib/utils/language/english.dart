@@ -1,6 +1,15 @@
 import 'package:platchatapp/utils/language/app_string.dart';
 
 final Map<String, String> english = {
+
+  AppStrings.home: "Home",
+  AppStrings.parking: "Parking",
+  AppStrings.chatNav: "Chat",
+
+  AppStrings.accountAndSettings: "Account & Settings",
+  AppStrings.unknown: "Unknown",
+  AppStrings.vehicleModel: "Vehicle Model:",
+
   AppStrings.tapOnTheMapToSelectParkingLocation:
   "Tap on the map to select a parking location.",
   AppStrings.addParkingSpot: "Add Parking Spot",
@@ -481,7 +490,7 @@ AppStrings.findAnswersBelow:'Find Answers Below',
   AppStrings.other: 'Other',
   AppStrings.vehicleInfo: 'Vehicle Info',
   AppStrings.vehicleType: 'Vehicle Type',
-  AppStrings.vehicleModel: 'Vehicle Model',
+
   AppStrings.vehicleColor: 'Vehicle Color',
   AppStrings.submit: 'Submit',
   AppStrings.editGroup: 'Edit Group',

@@ -49,7 +49,7 @@ Widget buildLogoutButton( {required BuildContext context}) {
           Text(
             AppStrings.logOut.tr,
             style: TextStyle(
-              color: Colors.redAccent,
+              color: Colors.red,
               fontSize: ResponsiveHelper.fontSize(16),
               fontWeight: FontWeight.bold,
             ),
