@@ -87,6 +87,8 @@ class GroupMessageResponseModel {
   String? fileUrl;
   String? fileName;
   int? fileSize;
+  String? fileMimeType;   // ← audio/video/image detection
+  num? durationSeconds;   // ← voice message duration
   bool? isDeletedForEveryone;
   String? deletedAt;
   String? deletedById;
@@ -104,6 +106,8 @@ class GroupMessageResponseModel {
     this.fileUrl,
     this.fileName,
     this.fileSize,
+    this.fileMimeType,
+    this.durationSeconds,
     this.isDeletedForEveryone,
     this.deletedAt,
     this.deletedById,
@@ -124,7 +128,9 @@ class GroupMessageResponseModel {
     // ✅ নতুন fields parse
     fileUrl = json['file_url'];
     fileName = json['file_name'];
-    fileSize = json['file_size'];
+    fileSize = json['file_size'] != null ? (json['file_size'] as num).toInt() : null;
+    fileMimeType = json['file_mime_type'];
+    durationSeconds = json['durationSeconds'];
     isDeletedForEveryone = json['isDeletedForEveryone'] ?? false;
     deletedAt = json['deletedAt'];
     deletedById = json['deletedById'];
@@ -145,6 +151,8 @@ class GroupMessageResponseModel {
     data['file_url'] = fileUrl;
     data['file_name'] = fileName;
     data['file_size'] = fileSize;
+    data['file_mime_type'] = fileMimeType;
+    data['durationSeconds'] = durationSeconds;
     data['isDeletedForEveryone'] = isDeletedForEveryone;
     data['deletedAt'] = deletedAt;
     data['deletedById'] = deletedById;
