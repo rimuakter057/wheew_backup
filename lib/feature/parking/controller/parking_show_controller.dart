@@ -825,7 +825,9 @@ class ParkingShowController extends GetxController {
     final totalSeconds = minutes * 60;
     _startTimerUpdate(totalSeconds);
     _showMessage(
-        'Paid spot timer started for $minutes minutes.', isError: false);
+        AppStrings.paidSpotTimerStartedForMinutes
+            .tr
+            .replaceFirst('@minutes', minutes.toString()), isError: false);
   }
 
   void _startTimerUpdate(int totalSeconds) {

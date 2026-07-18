@@ -795,4 +795,46 @@ class AppStrings {
   static const String theCarHasBeenParked = 'the_car_has_been_parked';
   static const String isItAFreeSpotOrIsItAPaidSpot = 'is_it_a_free_spot_or_is_it_a_paid_spot';
 
+
+  static const String pleaseEnableLocationService = 'please_enable_location_service';
+  static const String locationPermissionDenied = 'location_permission_denied';
+  static const String failedToRetrieveParkingStatus = 'failed_to_retrieve_parking_status';
+  static const String failedToLoadNearbyHandoffSpots = 'failed_to_load_nearby_handoff_spots';
+  static const String failedToLoadNearbyParkingAreas = 'failed_to_load_nearby_parking_areas';
+  static const String failedToLoadNearbyParkingSpots = 'failed_to_load_nearby_parking_spots';
+  static const String locationNotActiveOrAvailable = 'location_not_active_or_available';
+  static const String parkingSpotHandoffReportedSuccessfully = 'parking_spot_handoff_reported_successfully';
+  static const String failedToRecordSpotHandoff = 'failed_to_record_spot_handoff';
+  static const String failedToSetParkingModeIdle = 'failed_to_set_parking_mode_idle';
+  static const String networkErrorReportingSpotHandoff = 'network_error_reporting_spot_handoff';
+  static const String parkModeActive = 'park_mode_active';
+  static const String parkModeDeactivated = 'park_mode_deactivated';
+  static const String autoParkDetected = 'auto_park_detected';
+  static const String gpsLocationNotAvailable = 'gps_location_not_available';
+  static const String savedParkingSpotRemoved = 'saved_parking_spot_removed';
+  static const String paidSpotTimerStarted = 'paid_spot_timer_started';
+  static const String parkingSpotDurationExpired = 'parking_spot_duration_expired';
+
+  static const String areYouLeavingThePaidSpot = 'are_you_leaving_the_paid_spot';
+  static const String details = 'details';
+  static const String status = 'status';
+  static const String expiresAt = 'expires_at';
+  static const String distance = 'distance';
+  static const String fromYourLocation = 'from_your_location';
+  static const String name = 'name';
+  static const String description = 'description';
+  static const String parkingCost = 'parking_cost';
+  static const String isActive = 'is_active';
+  static const String tapToSeeWalkingRoute = 'tap_to_see_walking_route';
+  static const String polygonPoints = 'polygon_points';
+  static const String points = 'points';
+  static const String paidSpotTimerStartedForMinutes =
+      'paid_spot_timer_started_for_minutes';
+
+
+
+
+
+
+
 }

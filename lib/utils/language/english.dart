@@ -739,4 +739,45 @@ AppStrings.group:"Group",
   AppStrings.quickSelect: "Quick Select",
   AppStrings.vehicleModelLabel: "Vehicle Model: ",
 
+
+
+
+  AppStrings.pleaseEnableLocationService: "Please enable location service",
+  AppStrings.locationPermissionDenied: "Location permission denied",
+  AppStrings.failedToRetrieveParkingStatus: "Failed to retrieve parking status",
+  AppStrings.failedToLoadNearbyHandoffSpots: "Failed to load nearby handoff spots",
+  AppStrings.failedToLoadNearbyParkingAreas: "Failed to load nearby parking areas",
+  AppStrings.failedToLoadNearbyParkingSpots: "Failed to load nearby parking spots",
+  AppStrings.locationNotActiveOrAvailable: "Location is not active or available to report handoff",
+  AppStrings.parkingSpotHandoffReportedSuccessfully: "Parking spot handoff reported successfully!",
+  AppStrings.failedToRecordSpotHandoff: "Failed to record spot handoff.",
+  AppStrings.failedToSetParkingModeIdle: "Failed to set parking mode to idle.",
+  AppStrings.networkErrorReportingSpotHandoff: "Network error reporting spot handoff",
+  AppStrings.parkModeActive: "ParkMode active: Fusing GPS and Accelerometer signals.",
+  AppStrings.parkModeDeactivated: "ParkMode deactivated.",
+  AppStrings.autoParkDetected: "Auto-Park Detected by Confidence Engine!",
+  AppStrings.gpsLocationNotAvailable: "GPS Location not available to save spot.",
+  AppStrings.savedParkingSpotRemoved: "Saved parking spot removed.",
+  AppStrings.paidSpotTimerStarted: "Paid spot timer started for {minutes} minutes.",
+  AppStrings.parkingSpotDurationExpired: "Parking spot duration has expired. Spot is now free.",
+  AppStrings.theCarHasBeenParked: "The car has been parked.",
+  AppStrings.isItAFreeSpotOrIsItAPaidSpot: "Is it a free spot or is it a paid spot?",
+
+  AppStrings.areYouLeavingThePaidSpot: "Are you leaving the paid spot? Your paid spot is expiring in 10 minutes.",
+  AppStrings.details: "Details",
+  AppStrings.status: "Status",
+  AppStrings.expiresAt: "Expires At",
+  AppStrings.distance: "Distance",
+  AppStrings.fromYourLocation: "from your location",
+  AppStrings.name: "Name",
+  AppStrings.description: "Description",
+  AppStrings.parkingCost: "Parking Cost",
+  AppStrings.isActive: "Is Active",
+
+  AppStrings.tapToSeeWalkingRoute: "Tap to see walking route",
+  AppStrings.polygonPoints: "Polygon Points",
+  AppStrings.points: "points",
+  AppStrings.paidSpotTimerStartedForMinutes:
+  "Paid spot timer started for @minutes minutes.",
+
 };
