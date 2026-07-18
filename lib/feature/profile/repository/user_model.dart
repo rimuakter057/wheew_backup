@@ -92,6 +92,9 @@ class UserModel {
   final String? country;
   final String? city;
 
+  /// Documents expiry list from API — [{document_type, daysUntilExpiry}, ...]
+  final List<Map<String, dynamic>> documents;
+
   ExistingRoom2? existingRoom;
   bool? isMessageRequestSent;
   Map<String, dynamic>? messageRequest;
@@ -115,6 +118,7 @@ class UserModel {
     this.isVehicleOwnershipDocumentSubmitted,
     this.country,
     this.city,
+    this.documents = const [],
     this.existingRoom,
     this.isMessageRequestSent,
     this.messageRequest,
@@ -144,6 +148,26 @@ class UserModel {
       country: json['country'],
       city: json['city'],
 
+      documents: () {
+        final raw = json['documents'];
+        if (raw is List) {
+          return raw
+              .map<Map<String, dynamic>>((e) {
+                if (e is Map) {
+                  return <String, dynamic>{
+                    'document_type': (e['document_type'] ?? e['documentType'] ?? '').toString(),
+                    'daysUntilExpiry': (e['daysUntilExpiry'] ?? e['days_until_expiry'] ?? 0) is num
+                        ? (e['daysUntilExpiry'] ?? e['days_until_expiry'] ?? 0).toInt()
+                        : 0,
+                  };
+                }
+                return <String, dynamic>{};
+              })
+              .toList();
+        }
+        return <Map<String, dynamic>>[];
+      }(),
+
       existingRoom: json['existingRoom'] != null
           ? ExistingRoom2.fromJson(json['existingRoom'])
           : null,
@@ -172,6 +196,7 @@ class UserModel {
     bool? isVehicleOwnershipDocumentSubmitted,
     String? country,
     String? city,
+    List<Map<String, dynamic>>? documents,
     ExistingRoom2? existingRoom,
   }) {
     return UserModel(
@@ -196,6 +221,7 @@ class UserModel {
           this.isVehicleOwnershipDocumentSubmitted,
       country: country ?? this.country,
       city: city ?? this.city,
+      documents: documents ?? this.documents,
       existingRoom: existingRoom ?? this.existingRoom,
     );
   }
@@ -221,6 +247,7 @@ class UserModel {
     isVehicleOwnershipDocumentSubmitted,
     'country': country,
     'city': city,
+    'documents': documents,
     'existingRoom': existingRoom?.toJson(),
   };
 }

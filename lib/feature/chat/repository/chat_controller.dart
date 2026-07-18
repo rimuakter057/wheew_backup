@@ -1326,6 +1326,7 @@ class ChatController extends GetxController {
     }
   }
 
+
   ///get block list==============================================================
 
   RxList<BlockModel> userBlockList = <BlockModel>[].obs;

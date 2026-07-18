@@ -1157,17 +1157,25 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      //_buildRightIndicatorRow("${user?.daysLeftOne ?? 65} days left", AssetsPath.profileOneIcon),
-                      _buildRightIndicatorRow("65 \n days left", AssetsPath.profileOneIcon),
+                      _buildRightIndicatorRow(
+                        _getDaysLabel(_getDaysForDoc(user, 'LICENSE')),
+                        AssetsPath.profileOneIcon,
+                      ),
                       SizedBox(height: ResponsiveHelper.height(8)),
-                      //_buildRightIndicatorRow("${user?.daysLeftTwo ?? 65} days left", AssetsPath.profileTwoIcon),
-                      _buildRightIndicatorRow("65 \n days left", AssetsPath.profileTwoIcon),
+                      _buildRightIndicatorRow(
+                        _getDaysLabel(_getDaysForDoc(user, 'TAX')),
+                        AssetsPath.profileTwoIcon,
+                      ),
                       SizedBox(height: ResponsiveHelper.height(8)),
-                      // _buildRightIndicatorRow("${user?.daysLeftThree ?? 65} days left", AssetsPath.profileThreeIcon),
-                      _buildRightIndicatorRow("65 \n days left", AssetsPath.profileThreeIcon),
+                      _buildRightIndicatorRow(
+                        _getDaysLabel(_getDaysForDoc(user, 'CAR_INSPECTION')),
+                        AssetsPath.profileThreeIcon,
+                      ),
                       SizedBox(height: ResponsiveHelper.height(8)),
-                      // _buildRightIndicatorRow("${user?.daysLeftFour ?? 65} days left", AssetsPath.profileFourIcon),
-                      _buildRightIndicatorRow("65 \n days left", AssetsPath.profileFourIcon),
+                      _buildRightIndicatorRow(
+                        _getDaysLabel(_getDaysForDoc(user, 'INSURANCE')),
+                        AssetsPath.profileFourIcon,
+                      ),
                     ],
                   ),
 
@@ -1178,6 +1186,35 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
         ),
       ),
     );
+  }
+
+  /// Returns daysUntilExpiry for the given document type, or null if not found.
+  int? _getDaysForDoc(dynamic user, String docType) {
+    if (user == null) return null;
+    try {
+      final docs = (user as dynamic).documents;
+      debugPrint('ℹ️ [DEBUG] _getDaysForDoc: docType="$docType", docs=$docs (type: ${docs?.runtimeType})');
+      if (docs is List) {
+        for (final d in docs) {
+          if (d is Map) {
+            final type = (d['document_type'] ?? d['documentType'] ?? '').toString().toUpperCase();
+            if (type == docType) {
+              final days = d['daysUntilExpiry'] ?? d['days_until_expiry'];
+              if (days is num) return days.toInt();
+            }
+          }
+        }
+      }
+    } catch (e, stack) {
+      debugPrint('❌ Error in _getDaysForDoc: $e\n$stack');
+    }
+    return null;
+  }
+
+  /// Formats days into a 2-line label for the indicator row.
+  String _getDaysLabel(int? days) {
+    if (days == null) return '--\n days left';
+    return '$days\n days left';
   }
 
   /// Helper widget to build the right-side dynamic indicator rows

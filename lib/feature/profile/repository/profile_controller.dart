@@ -122,6 +122,8 @@ class ProfileController extends GetxController {
 
   /// API response বা local data দিয়ে controller ও userProfile update করো
   void _applyUserData(Map<String, dynamic> data) {
+    debugPrint('ℹ️ [DEBUG] ProfileController._applyUserData called. Keys in data: ${data.keys.toList()}');
+    debugPrint('ℹ️ [DEBUG] raw documents in data: ${data['documents']}');
     final avatarUrl = _buildAvatarUrl(data['avatar']);
 
     userProfile.value = UserModel(
@@ -147,6 +149,25 @@ class ProfileController extends GetxController {
       licenseNoVerified: data['license_no_verified'] ?? false,
       country: data['country'], // ✅ NEW
       city: data['city'],       // ✅ NEW
+      documents: () {
+        final raw = data['documents'];
+        if (raw is List) {
+          return raw
+              .map<Map<String, dynamic>>((e) {
+                if (e is Map) {
+                  return <String, dynamic>{
+                    'document_type': (e['document_type'] ?? e['documentType'] ?? '').toString(),
+                    'daysUntilExpiry': (e['daysUntilExpiry'] ?? e['days_until_expiry'] ?? 0) is num
+                        ? (e['daysUntilExpiry'] ?? e['days_until_expiry'] ?? 0).toInt()
+                        : 0,
+                  };
+                }
+                return <String, dynamic>{};
+              })
+              .toList();
+        }
+        return <Map<String, dynamic>>[];
+      }(),
     );
 
     // Read-only fields সবসময় update করো

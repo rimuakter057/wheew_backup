@@ -4,49 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
-
+import 'package:platchatapp/feature/faq/controller/faq_controller.dart';
 import '../../../../utils/color/app_colors.dart';
 
-class FaqScreen extends StatefulWidget {
+class FaqScreen extends StatelessWidget {
   const FaqScreen({super.key});
-
-  @override
-  State<FaqScreen> createState() => _FaqScreenState();
-}
-
-class _FaqScreenState extends State<FaqScreen> {
-  final List<Map<String, String>> _faqs = [
-    {
-      'question': 'How do I create an account?',
-      'answer':
-      'Download the app, tap "Sign Up", enter your details and verify your email to get started.',
-    },
-    {
-      'question': 'How do I reset my password?',
-      'answer':
-      'Go to the login screen and tap "Forgot Password". Enter your email and follow the instructions sent to you.',
-    },
-    {
-      'question': 'How can I update my profile?',
-      'answer':
-      'Navigate to your profile page and tap the edit icon to update your name, photo, and other details.',
-    },
-    {
-      'question': 'How do I verify my vehicle ownership?',
-      'answer':
-      'Go to your profile, tap "Vehicle Ownership", upload the required document and wait for verification.',
-    },
-    {
-      'question': 'How do I block someone?',
-      'answer':
-      'Open the chat with that user, tap the menu icon on the top right and select "Block User".',
-    },
-    {
-      'question': 'Is my data secure?',
-      'answer':
-      'Yes, all your data is encrypted and stored securely. We never share your personal information with third parties.',
-    },
-  ];
 
   // Reference palette (matches the provided design)
   static const Color bgTop = Color(0xFFEDF0F8);
@@ -58,11 +20,13 @@ class _FaqScreenState extends State<FaqScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(FaqController());
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: Container(
-        decoration:  BoxDecoration(
-          gradient: AppColors.primaryBackgroundGradient
+        decoration: BoxDecoration(
+          gradient: AppColors.primaryBackgroundGradient,
         ),
         child: SafeArea(
           child: Column(
@@ -77,7 +41,7 @@ class _FaqScreenState extends State<FaqScreen> {
                   alignment: Alignment.center,
                   children: [
                     Text(
-                     "FAQ",
+                      "FAQ",
                       style: GoogleFonts.inter(
                         color: titleColor,
                         fontWeight: FontWeight.w400,
@@ -116,28 +80,63 @@ class _FaqScreenState extends State<FaqScreen> {
               SizedBox(height: ResponsiveHelper.spacing(8)),
               // FAQ List
               Expanded(
-                child: ListView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: ResponsiveHelper.spacing(16),
-                    vertical: ResponsiveHelper.spacing(8),
-                  ),
-                  children: _faqs.asMap().entries.map((entry) {
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        bottom: ResponsiveHelper.spacing(14),
-                      ),
-                      child: _FaqTile(
-                        question: entry.value['question']!,
-                        answer: entry.value['answer']!,
-                        index: entry.key,
-                        cardTop: cardTop,
-                        cardBottom: cardBottom,
-                        titleColor: titleColor,
-                        subtitleColor: subtitleColor,
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.blue,
+                        strokeWidth: 2.5,
                       ),
                     );
-                  }).toList(),
-                ),
+                  }
+
+                  if (controller.error.value != null) {
+                    return Center(
+                      child: Text(
+                        controller.error.value!,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(color: Colors.red),
+                      ),
+                    );
+                  }
+
+                  if (controller.faqs.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'No FAQs found',
+                        style: GoogleFonts.poppins(color: subtitleColor),
+                      ),
+                    );
+                  }
+
+                  return RefreshIndicator(
+                    onRefresh: controller.fetchFaqs,
+                    color: AppColors.blue,
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveHelper.spacing(16),
+                        vertical: ResponsiveHelper.spacing(8),
+                      ),
+                      children: controller.faqs.asMap().entries.map((entry) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            bottom: ResponsiveHelper.spacing(14),
+                          ),
+                          child: _FaqTile(
+                            question: entry.value.question,
+                            answer: entry.value.answer,
+                            index: entry.key,
+                            cardTop: cardTop,
+                            cardBottom: cardBottom,
+                            titleColor: titleColor,
+                            subtitleColor: subtitleColor,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  );
+                }),
               ),
             ],
           ),

@@ -2,12 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_initial_shimmer.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_loading_banners.dart';
 import 'package:platchatapp/feature/map/utils/map_debug.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
-import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:platchatapp/feature/parking/controller/parking_show_controller.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_location_off_prompt.dart';
@@ -127,11 +125,11 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
 
                     return GoogleMap(
                       mapType: _selectedMapType,
-                      key: const ValueKey<Object>('platechat_google_map'),
+                      key: const ValueKey<Object>('wheew_google_map'),
                       onMapCreated: _onMapCreated,
                       initialCameraPosition: CameraPosition(
                         target: gpsPosition ?? ParkingShowScreen.kInitialMapTarget,
-                        zoom: 14,
+                        zoom: 18,
                       ),
                       markers: currentMarkers,
                       polygons: currentPolygons,
@@ -235,14 +233,6 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                                       .withValues(alpha: glowOpacity),
                                   width: glowWidth,
                                 ),
-                                // boxShadow: [
-                                //   BoxShadow(
-                                //     color: const Color(0xFF185FA5)
-                                //         .withValues(alpha: glowOpacity * 0.5),
-                                //     blurRadius: 24,
-                                //     spreadRadius: 4,
-                                //   ),
-                                // ],
                               ),
                             );
                           },
