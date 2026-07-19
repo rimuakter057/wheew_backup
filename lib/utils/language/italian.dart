@@ -812,9 +812,15 @@ final Map<String, String> italian = {
   AppStrings.failedToLoadHandoffDetails: "Impossibile caricare i dettagli del passaggio",
   AppStrings.networkErrorLoadingHandoffDetails: "Errore di rete durante il caricamento dei dettagli del passaggio: @error",
 
-  AppStrings.backgroundLocationRationaleTitle: "Continua a monitorare il tuo posto auto",
-  AppStrings.backgroundLocationRationaleDesc:
-  "Consenti l'accesso alla posizione Sempre così possiamo mantenere aggiornato il tuo posto auto e avvisare i guidatori vicini, anche ad app chiusa.",
-  AppStrings.allow: "Consenti",
-  AppStrings.notNow: "Non ora",
+  AppStrings.sendMessageTab: "Invia Messaggio",
+  AppStrings.receiveRequestTab: "Richieste Ricevute",
+
+  AppStrings.inAppNavigation: "Navigazione",
+  AppStrings.loadingRoute: "Caricamento percorso...",
+  AppStrings.couldNotLoadRoute: "Impossibile caricare il percorso. Riprova.",
+  AppStrings.locationPermissionRequiredForNavigation: "È necessario il permesso di localizzazione per la navigazione.",
+  AppStrings.openSettings: "Apri Impostazioni",
+
+  AppStrings.navModeWalking: "A piedi",
+  AppStrings.navModeDriving: "In auto",
 };

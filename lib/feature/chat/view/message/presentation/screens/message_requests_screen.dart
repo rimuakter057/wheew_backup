@@ -9,7 +9,9 @@ import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 
 class MessageRequestsScreen extends StatefulWidget {
-  const MessageRequestsScreen({super.key});
+  final bool showAppBar;
+
+  const MessageRequestsScreen({super.key, this.showAppBar = true});
 
   @override
   State<MessageRequestsScreen> createState() => _MessageRequestsScreenState();
@@ -46,7 +48,8 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
-      appBar: AppBar(
+      appBar: widget.showAppBar
+          ? AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         surfaceTintColor: Colors.white,
@@ -89,7 +92,8 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
           preferredSize: const Size.fromHeight(1),
           child: Container(height: 1, color: Colors.grey.shade200),
         ),
-      ),
+      )
+          : null,
       body: Obx(() {
         if (messageController.isLoadingRequests.value && messageController.messageRequests.isEmpty) {
           return const Center(

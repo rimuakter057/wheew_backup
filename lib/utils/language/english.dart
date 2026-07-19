@@ -787,9 +787,15 @@ AppStrings.group:"Group",
   AppStrings.failedToLoadHandoffDetails: "Failed to load handoff details",
   AppStrings.networkErrorLoadingHandoffDetails: "Network error loading handoff details: @error",
 
-  AppStrings.backgroundLocationRationaleTitle: "Keep tracking your parking spot",
-  AppStrings.backgroundLocationRationaleDesc:
-  "Allow location access Always so we can keep your parked spot accurate and notify nearby drivers, even when the app is closed.",
-  AppStrings.allow: "Allow",
-  AppStrings.notNow: "Not Now",
+  AppStrings.sendMessageTab: "Send Message",
+  AppStrings.receiveRequestTab: "Receive Request",
+
+  AppStrings.inAppNavigation: "Navigation",
+  AppStrings.loadingRoute: "Loading route...",
+  AppStrings.couldNotLoadRoute: "Couldn't load the route. Please try again.",
+  AppStrings.locationPermissionRequiredForNavigation: "Location permission is required for navigation.",
+  AppStrings.openSettings: "Open Settings",
+
+  AppStrings.navModeWalking: "Walking",
+  AppStrings.navModeDriving: "Driving",
 };

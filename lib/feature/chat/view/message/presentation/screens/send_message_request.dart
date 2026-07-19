@@ -8,7 +8,9 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 
 class SentMessageRequestsScreen extends StatefulWidget {
-  const SentMessageRequestsScreen({super.key});
+  final bool showAppBar;
+
+  const SentMessageRequestsScreen({super.key, this.showAppBar = true});
 
   @override
   State<SentMessageRequestsScreen> createState() => _SentMessageRequestsScreenState();
@@ -45,7 +47,8 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
-      appBar: AppBar(
+      appBar: widget.showAppBar
+          ? AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         surfaceTintColor: Colors.white,
@@ -92,7 +95,8 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
           preferredSize: const Size.fromHeight(1),
           child: Container(height: 1, color: Colors.grey.shade200),
         ),
-      ),
+      )
+          : null,
       body: Obx(() {
         if (messageController.isLoadingSentRequests.value && messageController.sentRequests.isEmpty) {
           return const Center(

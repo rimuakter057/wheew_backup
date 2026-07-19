@@ -210,64 +210,69 @@ class NotificationService {
   );
 
   // ── init ──────────────────────────────────────────────────────
-  // Called after login success (not at app launch), and once more on
-  // relaunch for an already-logged-in session — guarded so listeners
-  // are only ever registered once.
+  // Called every time the Chat List screen is entered — guarded so
+  // listeners/permission are only ever requested/registered once.
   Future<void> init() async {
     if (_initialized) return;
     _initialized = true;
 
-    // 1. Create channel on Android
-    await _plugin
-        .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(_channel);
+    try {
+      // 1. Create channel on Android
+      await _plugin
+          .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+          ?.createNotificationChannel(_channel);
 
-    // 2. Initialise plugin
-    const AndroidInitializationSettings androidSettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+      // 2. Initialise plugin
+      const AndroidInitializationSettings androidSettings =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    const DarwinInitializationSettings iosSettings =
-    DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+      const DarwinInitializationSettings iosSettings =
+      DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+      );
 
-    const InitializationSettings initSettings = InitializationSettings(
-      android: androidSettings,
-      iOS: iosSettings,
-    );
+      const InitializationSettings initSettings = InitializationSettings(
+        android: androidSettings,
+        iOS: iosSettings,
+      );
 
-    await _plugin.initialize(
-      initSettings,
-      onDidReceiveNotificationResponse: _onTap,
-    );
+      await _plugin.initialize(
+        initSettings,
+        onDidReceiveNotificationResponse: _onTap,
+      );
 
-    // 3. Request permission
-    await _requestPermission();
+      // 3. Request permission
+      await _requestPermission();
 
-    // 4. FCM foreground presentation (iOS)
-    await FirebaseMessaging.instance
-        .setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+      // 4. FCM foreground presentation (iOS)
+      await FirebaseMessaging.instance
+          .setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
 
-    // 5. Listen for foreground messages
-    FirebaseMessaging.onMessage.listen(_onForegroundMessage);
+      // 5. Listen for foreground messages
+      FirebaseMessaging.onMessage.listen(_onForegroundMessage);
 
-    // 6. App opened from a notification (background → foreground)
-    FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
+      // 6. App opened from a notification (background → foreground)
+      FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
 
-    // 7. Auto-upload FCM token on token refreshes and app launch
-    FirebaseMessaging.instance.onTokenRefresh.listen((token) {
-      _uploadToken(token);
-    });
-    _uploadCurrentToken();
+      // 7. Auto-upload FCM token on token refreshes and app launch
+      FirebaseMessaging.instance.onTokenRefresh.listen((token) {
+        _uploadToken(token);
+      });
+      _uploadCurrentToken();
 
-    debugPrint('✅ NotificationService initialized');
+      debugPrint('✅ NotificationService initialized');
+    } catch (e, st) {
+      // Denied/unavailable notifications must never take the rest of the
+      // app down with them — just log and continue without push.
+      debugPrint('❌ NotificationService init failed: $e\n$st');
+    }
   }
 
   Future<void> _uploadCurrentToken() async {

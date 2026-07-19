@@ -11,7 +11,6 @@ import 'package:http/http.dart' as http;
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
-import 'package:platchatapp/core/service/notification_service.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import '../../../core/service/api_checker.dart';
@@ -174,10 +173,9 @@ class AuthController extends GetxController {
 
         await _saveUserData(data);
 
-        // Background location is requested just-in-time, the first time a
-        // parking function is used — not eagerly here at login.
-
-        await NotificationService.instance.init();
+        // Location permission is requested when the user enters the Home
+        // screen; notification permission when entering the Chat List
+        // screen — not eagerly here at login.
 
         AppSocket.init(
           onSocketConnect: () {

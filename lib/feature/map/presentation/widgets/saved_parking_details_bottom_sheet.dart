@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/map/model/saved_parking_model.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 
@@ -136,19 +138,17 @@ class SavedParkingDetailsBottomSheet extends StatelessWidget {
             width: double.infinity,
             height: ResponsiveHelper.height(50),
             child: ElevatedButton.icon(
-              onPressed: () async {
-                final link = parking.googleMapsWalkingLink;
-                if (link != null && link.isNotEmpty) {
-                  final uri = Uri.parse(link);
-                  if (await canLaunchUrl(uri)) {
-                    await launchUrl(uri,
-                        mode: LaunchMode.externalApplication);
-                  } else {
-                    showCustomSnackBar('Could not launch walking directions',
-                        isError: true);
-                  }
+              onPressed: () {
+                final lat = parking.latitude ?? parking.parkingSession?.latitude;
+                final lng = parking.longitude ?? parking.parkingSession?.longitude;
+                if (lat != null && lng != null) {
+                  Navigator.pop(context);
+                  context.pushNamed(
+                    RouteName.inAppNavigation,
+                    extra: {'destination': LatLng(lat, lng)},
+                  );
                 } else {
-                  showCustomSnackBar('Navigation link not available',
+                  showCustomSnackBar('Navigation location not available',
                       isError: true);
                 }
               },

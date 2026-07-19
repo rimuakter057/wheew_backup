@@ -26,7 +26,7 @@ class ParkingShowScreen extends StatefulWidget {
 class _ParkingShowScreenState extends State<ParkingShowScreen>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   GoogleMapController? _mapController;
-  MapType _selectedMapType = MapType.hybrid;
+  MapType _selectedMapType = MapType.normal;
 
   late final ParkingShowController _parkingShowCtrl;
   final RxBool _showConfirmationPopup = false.obs;

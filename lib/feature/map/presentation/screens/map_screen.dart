@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:platchatapp/feature/auth/repository/user_location_controller.dart';
 import 'package:platchatapp/feature/map/controller/map_controller.dart';
 import 'package:platchatapp/feature/map/model/saved_parking_model.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_initial_shimmer.dart';
@@ -71,6 +72,15 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     mapDebug('screen init → resolve GPS and fetch parking');
     _loadCustomMarkerIcon();   // 👈 নতুন
     _initializeMap();
+
+    // Home screen is where location/Maps permission is requested — also
+    // bootstraps the background location tracking used for parking handoff
+    // matching. Denial here only disables location-based features; it
+    // can't crash the app (see UserLocationController.initLocationTracking).
+    final locationController = Get.isRegistered<UserLocationController>()
+        ? Get.find<UserLocationController>()
+        : Get.put(UserLocationController());
+    locationController.initLocationTracking();
   }
 
   Future<void> _loadCustomMarkerIcon() async {
@@ -401,6 +411,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
       _showParkingDialog();
     }
   }
+
 
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;

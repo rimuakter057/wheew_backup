@@ -7,6 +7,7 @@ class RoutePath {
   static const searchList = '/search-list';
   static const inbox = '/inbox';
   static const message = '/message';
+
   static const terms = '/terms';
   static const block = '/block';
   static const profile = '/profile';
@@ -31,5 +32,7 @@ class RoutePath {
   static const String parkingShow = '/parkingShowScreen';
   static const String messageRequests = '/messageRequests';
   static const String sendRequests = '/sendRequests';
+  static const String messageCenter = '/messageCenter';
+  static const String inAppNavigation = '/inAppNavigation';
 
 }

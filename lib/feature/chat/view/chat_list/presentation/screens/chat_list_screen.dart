@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
+import 'package:platchatapp/core/service/notification_service.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
@@ -35,6 +36,11 @@ class _ChatListScreenState extends State<ChatListScreen> {
   @override
   void initState() {
     super.initState();
+
+    // Chat List screen is where notification permission is requested —
+    // denial only disables push notifications; the rest of the app keeps
+    // working (see NotificationService.init's internal try/catch).
+    NotificationService.instance.init();
 
     // Socket connect করো যদি এখনো connected না থাকে
     if (!AppSocket.isConnected) {
@@ -126,6 +132,41 @@ class _ChatListScreenState extends State<ChatListScreen> {
           children: [
             // ── Search Bar: tap করলে search screen এ যায় ────
             const ChatListSearchBar(),
+
+            // ── Message Center: Send Message / Receive Request tabs ──
+            InkWell(
+              onTap: () => context.pushNamed(RouteName.messageCenter),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveHelper.width(16),
+                  vertical: ResponsiveHelper.height(10),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.mark_email_unread_outlined,
+                      color: AppColors.blue,
+                      size: ResponsiveHelper.iconSize(20),
+                    ),
+                    SizedBox(width: ResponsiveHelper.width(8)),
+                    Text(
+                      AppStrings.messageRequests.tr,
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600,
+                        fontSize: ResponsiveHelper.fontSize(14),
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const Spacer(),
+                    Icon(
+                      Icons.chevron_right,
+                      color: Colors.grey.shade400,
+                      size: ResponsiveHelper.iconSize(20),
+                    ),
+                  ],
+                ),
+              ),
+            ),
 
             // ── Chat List ────────────────────────────────────
             Expanded(

@@ -52,7 +52,6 @@ void main() async {
     onIntent: (ParsedIntent intent) => _voiceRouter.route(intent),
   );
 
-
   runApp(const Wheew());
 }
 

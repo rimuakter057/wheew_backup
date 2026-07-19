@@ -838,8 +838,15 @@ class AppStrings {
   static const String failedToLoadHandoffDetails = 'failed_to_load_handoff_details';
   static const String networkErrorLoadingHandoffDetails = 'network_error_loading_handoff_details';
 
-  static const String backgroundLocationRationaleTitle = 'background_location_rationale_title';
-  static const String backgroundLocationRationaleDesc = 'background_location_rationale_desc';
-  static const String allow = 'allow';
-  static const String notNow = 'not_now';
+  static const String sendMessageTab = 'send_message_tab';
+  static const String receiveRequestTab = 'receive_request_tab';
+
+  static const String inAppNavigation = 'in_app_navigation';
+  static const String loadingRoute = 'loading_route';
+  static const String couldNotLoadRoute = 'could_not_load_route';
+  static const String locationPermissionRequiredForNavigation = 'location_permission_required_for_navigation';
+  static const String openSettings = 'open_settings';
+
+  static const String navModeWalking = 'nav_mode_walking';
+  static const String navModeDriving = 'nav_mode_driving';
 }

@@ -1,7 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/map/controller/map_controller.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -46,13 +48,8 @@ class ParkingReportDropdown extends StatelessWidget {
     return cost == null || cost == '' || cost == '0' || cost == 'FREE';
   }
 
-  /// ── Open real Google Maps app with turn-by-turn navigation ──
-  /// origin দেওয়া হচ্ছে না, তাই Google Maps নিজে থেকেই user এর current
-  /// (real-time) location কে origin ধরে নেয়।
-  Future<void> _openNavigation(BuildContext context) async {
-    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    debugPrint('🧭 Navigate Button Tapped');
-
+  /// ── Open in-app navigation (real route drawn on our own map) ──
+  void _openNavigation(BuildContext context) {
     final dynamic rawLat = report['latitude'];
     final dynamic rawLng = report['longitude'];
 
@@ -63,9 +60,6 @@ class ParkingReportDropdown extends StatelessWidget {
         ? rawLng.toDouble()
         : double.tryParse(rawLng?.toString() ?? '');
 
-    debugPrint('📍 destLat: $destLat, destLng: $destLng');
-    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-
     if (destLat == null || destLng == null) {
       CustomSnackbar.error(
         context: context,
@@ -74,23 +68,10 @@ class ParkingReportDropdown extends StatelessWidget {
       return;
     }
 
-    final Uri uri = Uri.parse(
-      'https://www.google.com/maps/dir/?api=1'
-          '&destination=$destLat,$destLng'
-          '&travelmode=driving',
+    context.pushNamed(
+      RouteName.inAppNavigation,
+      extra: {'destination': LatLng(destLat, destLng)},
     );
-
-    try {
-      final bool launched = await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
-      if (!launched) {
-        debugPrint('❌ Could not launch Google Maps');
-      }
-    } catch (e) {
-      debugPrint('❌ Error launching Google Maps: $e');
-    }
   }
 
   @override

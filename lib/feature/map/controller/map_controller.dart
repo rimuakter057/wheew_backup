@@ -23,7 +23,7 @@ extension DisabledLocationX on DisabledLocation {
 
 class ParkingReportController extends GetxController {
 
-  final selectedMapType = MapType.hybrid.obs;
+  final selectedMapType = MapType.normal.obs;
 
   void changeMapType(MapType type) {
     selectedMapType.value = type;

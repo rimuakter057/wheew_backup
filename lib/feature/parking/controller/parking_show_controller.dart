@@ -10,13 +10,13 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
-import 'package:platchatapp/feature/auth/repository/user_location_controller.dart';
 import 'package:platchatapp/feature/parking/repository/parking_repository.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/router/routes.dart';
+import '../../../core/router/routes_name.dart';
 import '../../../helper/data_converter/data_converter.dart';
 
 class ParkingShowController extends GetxController {
@@ -136,13 +136,6 @@ class ParkingShowController extends GetxController {
     mapCenter.value = kApproxDefaultLocation;
 
     await checkParkingModeMe(onShowPopup: onShowPopup);
-
-    // First time a parking function is actually used — bootstrap background
-    // location here (permission requested just-in-time, not eagerly at login).
-    final locationController = Get.isRegistered<UserLocationController>()
-        ? Get.find<UserLocationController>()
-        : Get.put(UserLocationController());
-    unawaited(locationController.initLocationTracking());
   }
 
 
@@ -771,15 +764,12 @@ class ParkingShowController extends GetxController {
 
   void launchSavedParkingRoute() {
     final destination = savedParkingLocation.value;
-    final origin = gpsPosition.value;
-    if (destination == null || origin == null) return;
+    if (destination == null) return;
 
-    final url = 'https://www.google.com/maps/dir/?api=1'
-        '&origin=${origin.latitude},${origin.longitude}'
-        '&destination=${destination.latitude},${destination.longitude}'
-        '&travelmode=walking';
-
-    _launchURL(url);
+    AppRouter.router.pushNamed(
+      RouteName.inAppNavigation,
+      extra: {'destination': destination},
+    );
   }
 
   void startParkingTimer(int minutes) {
@@ -1118,7 +1108,8 @@ class ParkingShowController extends GetxController {
     final distanceDisplay = distanceMeters != null
         ? '$distanceMeters m (from your location)'
         : '';
-    final googleMapsLink = handoff['googleMapsLink']?.toString();
+    final lat = _toDouble(handoff['latitude']);
+    final lng = _toDouble(handoff['longitude']);
 
     _showFixedDetailsDialog(
       title: 'Details',
@@ -1127,7 +1118,7 @@ class ParkingShowController extends GetxController {
         _DetailField('Expires At', expiresDisplay),
         _DetailField('Distance', distanceDisplay),
       ],
-      googleMapsLink: googleMapsLink,
+      destination: (lat != null && lng != null) ? LatLng(lat, lng) : null,
     );
   }
 
@@ -1142,7 +1133,8 @@ class ParkingShowController extends GetxController {
     final distanceDisplay = distanceMeters != null
         ? '$distanceMeters m (from your location)'
         : '';
-    final googleMapsLink = area['googleMapsLink']?.toString();
+    final lat = _toDouble(area['centerLat']);
+    final lng = _toDouble(area['centerLng']);
 
     _showFixedDetailsDialog(
       title: name.isNotEmpty ? name : 'Details',
@@ -1153,7 +1145,7 @@ class ParkingShowController extends GetxController {
         _DetailField('Is Active', isActive),
         _DetailField('Distance', distanceDisplay),
       ],
-      googleMapsLink: googleMapsLink,
+      destination: (lat != null && lng != null) ? LatLng(lat, lng) : null,
     );
   }
 
@@ -1161,7 +1153,7 @@ class ParkingShowController extends GetxController {
   void _showFixedDetailsDialog({
     required String title,
     required List<_DetailField> rows,
-    String? googleMapsLink,
+    LatLng? destination,
   }) {
     final ctx = _dialogContext;
     if (ctx == null) return;
@@ -1193,10 +1185,16 @@ class ParkingShowController extends GetxController {
                 ...rows
                     .where((r) => r.value.isNotEmpty)
                     .map((r) => _buildDetailRow(r.label, r.value)),
-                if (googleMapsLink != null && googleMapsLink.isNotEmpty) ...[
+                if (destination != null) ...[
                   const SizedBox(height: 8),
                   ElevatedButton.icon(
-                    onPressed: () => _launchURL(googleMapsLink),
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                      AppRouter.router.pushNamed(
+                        RouteName.inAppNavigation,
+                        extra: {'destination': destination},
+                      );
+                    },
                     icon: const Icon(Icons.directions, color: Colors.white),
                     label:  Text(
                       AppStrings.navigate.tr,

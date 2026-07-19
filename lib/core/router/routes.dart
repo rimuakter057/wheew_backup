@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:platchatapp/core/router/route_path.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
+import 'package:platchatapp/feature/chat/view/message/presentation/screens/message_center_screen.dart';
+import 'package:platchatapp/feature/navigation/presentation/screens/in_app_navigation_screen.dart';
 import 'package:platchatapp/feature/auth/view/delete_account_screen.dart';
 import 'package:platchatapp/feature/auth/view/reset_password_screen.dart';
 import 'package:platchatapp/feature/auth/view/forgot_password_screen.dart';
@@ -45,6 +48,7 @@ class AppRouter {
    // initialLocation: RoutePath.vehicle,
     debugLogDiagnostics: true,
     routes: [
+
       ///----------Auth-------
       GoRoute(
         path: RoutePath.splash,
@@ -319,6 +323,24 @@ class AppRouter {
         name: RouteName.sendRequests,
         builder: (context, state) {
           return const SentMessageRequestsScreen();
+        },
+      ),
+      GoRoute(
+        path: RoutePath.messageCenter,
+        name: RouteName.messageCenter,
+        builder: (context, state) {
+          return const MessageCenterScreen();
+        },
+      ),
+      GoRoute(
+        path: RoutePath.inAppNavigation,
+        name: RouteName.inAppNavigation,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          return InAppNavigationScreen(
+            destination: extra['destination'] as LatLng,
+            destinationLabel: extra['destinationLabel'] as String?,
+          );
         },
       ),
     ],

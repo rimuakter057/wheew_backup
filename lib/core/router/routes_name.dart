@@ -7,6 +7,7 @@ class RouteName {
   static const searchList = 'searchList';
   static const inbox = 'inbox';
   static const message = 'message';
+
   static const terms = 'terms';
   static const block = 'block';
   static const profile = 'profile';
@@ -31,6 +32,8 @@ class RouteName {
   static const parkingShow = 'parkingShow';
   static const messageRequests = 'messageRequests';
   static const sendRequests = 'sendRequests';
+  static const messageCenter = 'messageCenter';
+  static const inAppNavigation = 'inAppNavigation';
 
 
 }
