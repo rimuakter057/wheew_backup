@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:platchatapp/feature/auth/view/widgets/vehicle_model_field.dart';
 import 'package:platchatapp/feature/profile/repository/upload_controller.dart';
 import 'package:platchatapp/feature/profile/view/widgets/color_picker.dart';
 import 'package:platchatapp/feature/profile/view/widgets/custom_upload_card.dart';
@@ -153,19 +154,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: ResponsiveHelper.spacing(4)),
                 GetBuilder<ProfileController>(
                   id: 'vehicle_fields',
-                  builder: (controller) => ProfileTextField(
-                    controller: controller.vehicleModelController,
-                    hintText: controller.vehicleModelController.text.isEmpty
-                        ? AppStrings.noVehicleModelTapEdit.tr
-                        : AppStrings.vehicleModel.tr,
-                    enabled:
-                        false, // ✅ সবসময় read-only, isEditing দিয়ে control হচ্ছে না
+                  builder: (ctrl) => VehicleModelDropdown(
+                    selectedModel: ctrl.vehicleModelController.text,
+                    onSelected: (value) => ctrl.setVehicleModel(value),
+                    // Locked once already set; otherwise editable while in edit mode.
+                    enabled: ctrl.isEditing && !ctrl.isVehicleModelLocked,
                   ),
                 ),
 
                 SizedBox(height: ResponsiveHelper.spacing(20)),
 
-                // 👁️ Vehicle Color — READ ONLY (client request অনুযায়ী edit বন্ধ)
                 _label(AppStrings.vehicleColor.tr),
                 SizedBox(height: ResponsiveHelper.spacing(4)),
                 GetBuilder<ProfileController>(
@@ -175,7 +173,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     hintText: controller.vehicleColorController.text.isEmpty
                         ? AppStrings.noVehicleColorTapEdit.tr
                         : AppStrings.vehicleColor.tr,
-                    enabled: false, // ✅ সবসময় read-only
+                    // Locked once already set; otherwise editable while in edit mode.
+                    enabled: controller.isEditing && !controller.isVehicleColorLocked,
                   ),
                 ),
 

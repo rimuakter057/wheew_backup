@@ -30,8 +30,11 @@ class VehicleTypeDropdown extends StatelessWidget {
       }
     }
 
+    // Locked once already set; otherwise editable while in edit mode.
+    final bool isFieldEnabled = controller.isEditing && !controller.isVehicleTypeLocked;
+
     return PopupMenuButton<VehicleType>(
-      enabled: controller.isEditing,
+      enabled: isFieldEnabled,
       constraints: const BoxConstraints(minWidth: 220, maxWidth: 220),
       color: Colors.white,
       shape: RoundedRectangleBorder(
@@ -72,7 +75,7 @@ class VehicleTypeDropdown extends StatelessWidget {
           hintText: AppStrings.vehicleType.tr,
           hintStyle: const TextStyle(fontSize: 13.0),
           filled: true,
-          fillColor: controller.isEditing
+          fillColor: isFieldEnabled
               ? AppColors.white
               : AppColors.greyShade.withOpacity(0.3),
           contentPadding: EdgeInsets.symmetric(
@@ -122,7 +125,7 @@ class VehicleTypeDropdown extends StatelessWidget {
                 ],
               ),
             ),
-            if (controller.isEditing)
+            if (isFieldEnabled)
               const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.grey),
           ],
         ),

@@ -8,11 +8,13 @@ import 'package:platchatapp/utils/language/app_string.dart';
 class VehicleModelDropdown extends StatelessWidget {
   final String selectedModel;
   final ValueChanged<String> onSelected;
+  final bool enabled;
 
   const VehicleModelDropdown({
     super.key,
     required this.selectedModel,
     required this.onSelected,
+    this.enabled = true,
   });
 
   InputDecoration _decoration() {
@@ -25,7 +27,7 @@ class VehicleModelDropdown extends StatelessWidget {
 
       prefixIcon: const Icon(Icons.directions_car_filled_rounded, color: Colors.grey, size: 22),
       filled: true,
-      fillColor: Color(0xFFDDE2ED),
+      fillColor: enabled ? const Color(0xFFDDE2ED) : AppColors.greyShade.withOpacity(0.3),
       contentPadding: EdgeInsets.symmetric(
         horizontal: ResponsiveHelper.padding(20),
         vertical: ResponsiveHelper.padding(16),
@@ -49,6 +51,7 @@ class VehicleModelDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
+      enabled: enabled,
       offset: const Offset(150, 0),
       constraints: BoxConstraints(
         minWidth: ResponsiveHelper.height(200),

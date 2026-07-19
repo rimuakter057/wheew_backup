@@ -118,6 +118,8 @@ class VehicleColorPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedColor = controller.vehicleColorController.text;
+    // Locked once already set; otherwise editable while in edit mode.
+    final bool isFieldEnabled = controller.isEditing && !controller.isVehicleColorLocked;
 
     return Container(
       width: double.infinity,
@@ -126,7 +128,7 @@ class VehicleColorPicker extends StatelessWidget {
         vertical: ResponsiveHelper.padding(14),
       ),
       decoration: BoxDecoration(
-        color: controller.isEditing
+        color: isFieldEnabled
             ? AppColors.white
             : AppColors.greyShade.withOpacity(0.3),
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
@@ -144,7 +146,7 @@ class VehicleColorPicker extends StatelessWidget {
           final Color selectionColor = _getDarkerShade(c['color']);
 
           return GestureDetector(
-            onTap: controller.isEditing
+            onTap: isFieldEnabled
                 ? () {
               controller.vehicleColorController.text = c['name'];
               controller.update(['vehicle_fields']);

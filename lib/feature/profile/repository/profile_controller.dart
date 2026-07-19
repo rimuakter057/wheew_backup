@@ -29,6 +29,20 @@ class ProfileController extends GetxController {
   bool isEditing = false;
   bool isLoading = false;
 
+  // Snapshot of what's actually saved on the server — NOT the live text
+  // controllers, which change the instant the user picks a value in edit
+  // mode. Locking must only kick in after a save + reload, not the moment
+  // a still-unsaved selection is made.
+  String _savedVehicleType = '';
+  String _savedVehicleModel = '';
+  String _savedVehicleColor = '';
+
+  // Each vehicle field locks independently once it already has a saved
+  // value — it can only be set once, then stays read-only on every later load.
+  bool get isVehicleTypeLocked => _savedVehicleType.isNotEmpty;
+  bool get isVehicleModelLocked => _savedVehicleModel.isNotEmpty;
+  bool get isVehicleColorLocked => _savedVehicleColor.isNotEmpty;
+
   Future<void> _initProfile() async {
     await loadUserData();
     final prefs = await SharedPreferences.getInstance();
@@ -176,9 +190,12 @@ class ProfileController extends GetxController {
 
     // Vehicle fields — edit mode এ user type করছে, তাই reset করো না
     if (!isEditing) {
-      vehicleTypeController.text = userProfile.value!.vehicleType ?? '';
-      vehicleModelController.text = userProfile.value!.vehicleModel ?? '';
-      vehicleColorController.text = userProfile.value!.vehicleColor ?? '';
+      _savedVehicleType = userProfile.value!.vehicleType ?? '';
+      _savedVehicleModel = userProfile.value!.vehicleModel ?? '';
+      _savedVehicleColor = userProfile.value!.vehicleColor ?? '';
+      vehicleTypeController.text = _savedVehicleType;
+      vehicleModelController.text = _savedVehicleModel;
+      vehicleColorController.text = _savedVehicleColor;
       update(['vehicle_fields']); // ✅ vehicle fields আলাদা rebuild
     }
 
@@ -236,16 +253,12 @@ class ProfileController extends GetxController {
   Future<void> updateProfile() async {
     final hasImage = tempCroppedImage.value != null;
 
-    // ✅ FIX: Model আর Color আপাতত edit করা যাবে না (client request অনুযায়ী)
-    // শুধু vehicle type change হলেই hasVehicleData true হবে
-    final hasVehicleData = vehicleTypeController.text.isNotEmpty;
-
-    // ⏸️ আগে সব field (type + model + color) দিয়ে চেক হতো — পরে সব field আবার
-    // editable করতে চাইলে নিচেরটা uncomment করে উপরেরটা comment করে দাও:
-    // final hasVehicleData =
-    //     vehicleTypeController.text.isNotEmpty ||
-    //         vehicleModelController.text.isNotEmpty ||
-    //         vehicleColorController.text.isNotEmpty;
+    // Each field locks independently once set — but any of the three
+    // having a value (or just being filled in this session) still counts
+    // as "something to save".
+    final hasVehicleData = vehicleTypeController.text.isNotEmpty ||
+        vehicleModelController.text.isNotEmpty ||
+        vehicleColorController.text.isNotEmpty;
 
     debugPrint('🔄 updateProfile called');
     debugPrint('📸 hasImage: $hasImage');
@@ -265,8 +278,8 @@ class ProfileController extends GetxController {
       final res = await profileRepository.updateAvatar(
         imageFile: tempCroppedImage.value,
         vehicleType: vehicleTypeController.text,
-        vehicleModel: vehicleModelController.text, // backend-এ পুরনো value-ই যাবে, change হবে না
-        vehicleColor: vehicleColorController.text, // backend-এ পুরনো value-ই যাবে, change হবে না
+        vehicleModel: vehicleModelController.text,
+        vehicleColor: vehicleColorController.text,
       );
 
       debugPrint('📡 updateProfile statusCode: ${res.statusCode}');
@@ -296,6 +309,11 @@ class ProfileController extends GetxController {
   void setVehicleType(String? value) {
     vehicleTypeController.text = value ?? '';
     update(['vehicle_fields']); // ✅ এইটা মিসিং ছিল, এই কারণেই UI-তে selection দেখা যাচ্ছিল না
+  }
+
+  void setVehicleModel(String? value) {
+    vehicleModelController.text = value ?? '';
+    update(['vehicle_fields']);
   }
 
   /// Edit mode toggle — off হলে temp image clear করো

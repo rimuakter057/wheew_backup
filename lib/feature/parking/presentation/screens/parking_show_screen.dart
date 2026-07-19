@@ -156,58 +156,63 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                           ResponsiveHelper.padding(16),
                       left: ResponsiveHelper.padding(42),
                       right: ResponsiveHelper.padding(42),
-                      child: Container(
-                        height: ResponsiveHelper.padding(45),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.08),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: TextField(
-                          controller: _searchController,
-                          style: TextStyle(
-                            fontSize: ResponsiveHelper.fontSize(14),
-                          ),
-                          decoration: InputDecoration(
-                            hintText:AppStrings.searchHere.tr,
-                            hintStyle: TextStyle(
-                              fontSize: ResponsiveHelper.fontSize(14),
-                              color: Colors.grey,
-                            ),
-                            prefixIcon: Icon(
-                              Icons.search,
-                              color: const Color(0xFF185FA5),
-                              size: ResponsiveHelper.iconSize(20),
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                Icons.tune,
-                                color: const Color(0xFF185FA5),
-                                size: ResponsiveHelper.iconSize(20),
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          RadiusFilterSheet.show(
+                            context,
+                            initialRadiusMeter: _parkingShowCtrl.selectedRadiusMeter.value,
+                            onApply: (radius) {
+                              _parkingShowCtrl.selectedRadiusMeter.value = radius;
+                              final lat = _parkingShowCtrl.gpsPosition.value?.latitude;
+                              final lng = _parkingShowCtrl.gpsPosition.value?.longitude;
+                              if (lat != null && lng != null) {
+                                _parkingShowCtrl.fetchNearbyData(lat, lng);
+                              }
+                            },
+                          );
+                        },
+                        child: Container(
+                          height: ResponsiveHelper.padding(45),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.08),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
                               ),
-                              onPressed: () {
-                                RadiusFilterSheet.show(
-                                  context,
-                                  initialRadiusMeter: _parkingShowCtrl.selectedRadiusMeter.value,
-                                  onApply: (radius) {
-                                    _parkingShowCtrl.selectedRadiusMeter.value = radius;
-                                    final lat = _parkingShowCtrl.gpsPosition.value?.latitude;
-                                    final lng = _parkingShowCtrl.gpsPosition.value?.longitude;
-                                    if (lat != null && lng != null) {
-                                      _parkingShowCtrl.fetchNearbyData(lat, lng);
-                                    }
-                                  },
-                                );
-                              },
+                            ],
+                          ),
+                          child: AbsorbPointer(
+                            absorbing: true,
+                            child: TextField(
+                              readOnly: true,
+                              controller: _searchController,
+                              style: TextStyle(
+                                fontSize: ResponsiveHelper.fontSize(14),
+                              ),
+                              decoration: InputDecoration(
+                                hintText: AppStrings.searchHere.tr,
+                                hintStyle: TextStyle(
+                                  fontSize: ResponsiveHelper.fontSize(14),
+                                  color: Colors.grey,
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.search,
+                                  color: const Color(0xFF185FA5),
+                                  size: ResponsiveHelper.iconSize(20),
+                                ),
+                                suffixIcon: Icon(
+                                  Icons.tune,
+                                  color: const Color(0xFF185FA5),
+                                  size: ResponsiveHelper.iconSize(20),
+                                ),
+                                border: InputBorder.none,
+                                contentPadding: ResponsiveHelper.symmetric(vertical: 12),
+                              ),
                             ),
-                            border: InputBorder.none,
-                            contentPadding: ResponsiveHelper.symmetric(vertical: 12),
                           ),
                         ),
                       ),
