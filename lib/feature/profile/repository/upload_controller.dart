@@ -725,14 +725,17 @@ class UploadDocumentController extends GetxController {
 
           documents[doc.typeKey.toUpperCase()] = doc;
         }
-      } else {
+      } else if (context.mounted) {
         _showError(context, response.statusCode, response.body);
       }
-    } catch (e) {
-      CustomSnackbar.error(
-        context: context,
-        message: 'Failed to load documents',
-      );
+    } catch (e, st) {
+      debugPrint('❌ fetchDocuments error: $e\n$st');
+      if (context.mounted) {
+        CustomSnackbar.error(
+          context: context,
+          message: 'Failed to load documents: $e',
+        );
+      }
     } finally {
       isFetching.value = false;
     }
@@ -780,22 +783,29 @@ class UploadDocumentController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        await fetchDocuments(context: context);
+        if (context.mounted) {
+          await fetchDocuments(context: context);
+        }
 
+        if (!context.mounted) return;
         CustomSnackbar.success(
+
           context: context,
           message: 'Document uploaded successfully',
         );
 
         context.pop();
-      } else {
+      } else if (context.mounted) {
         _showError(context, response.statusCode, response.body);
       }
-    } catch (e) {
-      CustomSnackbar.error(
-        context: context,
-        message: 'Upload failed',
-      );
+    } catch (e, st) {
+      debugPrint('❌ uploadDocument error: $e\n$st');
+      if (context.mounted) {
+        CustomSnackbar.error(
+          context: context,
+          message: 'Upload failed: $e',
+        );
+      }
     } finally {
       loadingMap[type] = false;
     }
@@ -842,22 +852,28 @@ class UploadDocumentController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        await fetchDocuments(context: context);
+        if (context.mounted) {
+          await fetchDocuments(context: context);
+        }
 
+        if (!context.mounted) return;
         CustomSnackbar.success(
           context: context,
           message: 'Document updated successfully',
         );
 
         context.pop();
-      } else {
+      } else if (context.mounted) {
         _showError(context, response.statusCode, response.body);
       }
-    } catch (e) {
-      CustomSnackbar.error(
-        context: context,
-        message: 'Update failed',
-      );
+    } catch (e, st) {
+      debugPrint('❌ updateDocument error: $e\n$st');
+      if (context.mounted) {
+        CustomSnackbar.error(
+          context: context,
+          message: 'Update failed: $e',
+        );
+      }
     } finally {
       loadingMap[type] = false;
     }

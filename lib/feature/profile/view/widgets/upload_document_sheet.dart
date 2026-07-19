@@ -1368,10 +1368,18 @@ Future<void> showUploadDocumentSheet(
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
-    builder: (_) => UploadDocumentSheet(
-      documentType: documentType,
-      existingDoc: existingDoc,
-      isOwner: isOwner,
+    builder: (_) => ScaffoldMessenger(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Align(
+          alignment: Alignment.bottomCenter,   // ✅ এটা যোগ করুন
+          child: UploadDocumentSheet(
+            documentType: documentType,
+            existingDoc: existingDoc,
+            isOwner: isOwner,
+          ),
+        ),
+      ),
     ),
   );
 }
@@ -1615,23 +1623,32 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
   //   }
   // }
 
-
   Future<void> _handleSubmit() async {
-    final uniqueId = _uniqueNumberCtrl.text.trim();
+    debugPrint('🟢 [SUBMIT] _handleSubmit() started');
 
+    final uniqueId = _uniqueNumberCtrl.text.trim();
     final expiryDate = _expireDateCtrl.text.trim();
 
-    // Unique Number and Upload File are optional — only Expire Date is
-    // required (owner/VEHICLE_OWNERSHIP flow doesn't show or need it at all).
+    debugPrint('🟢 [SUBMIT] isOwner=${widget.isOwner}');
+    debugPrint('🟢 [SUBMIT] isEdit=$_isEdit');
+    debugPrint('🟢 [SUBMIT] uniqueId="$uniqueId"');
+    debugPrint('🟢 [SUBMIT] expiryDate="$expiryDate"');
+    debugPrint('🟢 [SUBMIT] selectedFile=${_selectedFile?.path}');
+
     if (!widget.isOwner && expiryDate.isEmpty) {
+      debugPrint('🔴 [SUBMIT] BLOCKED: expiryDate empty and not owner → showing snackbar');
       CustomSnackbar.error(
         context: context,
         message: AppStrings.pleaseEnterExpireDate.tr,
       );
+      debugPrint('🔴 [SUBMIT] CustomSnackbar.error() call finished (check if it appeared)');
       return;
     }
 
+    debugPrint('🟢 [SUBMIT] Validation passed, calling controller...');
+
     if (_isEdit) {
+      debugPrint('🟢 [SUBMIT] → calling updateDocument()');
       await controller.updateDocument(
         documentId: widget.existingDoc!.id,
         documentType: widget.documentType,
@@ -1643,6 +1660,7 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
         isOwner: widget.isOwner,
       );
     } else {
+      debugPrint('🟢 [SUBMIT] → calling uploadDocument()');
       await controller.uploadDocument(
         documentType: widget.documentType,
         uniqueId: uniqueId,
@@ -1653,6 +1671,8 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
         isOwner: widget.isOwner,
       );
     }
+
+    debugPrint('🟢 [SUBMIT] _handleSubmit() finished');
   }
 
   DateTime? _parseDdMmYyyy(String s) {
@@ -1736,12 +1756,16 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  _isEdit ? AppStrings.updateDocument.tr : AppStrings.uploadDocument.tr,
-                  style: GoogleFonts.poppins(
-                    fontSize: ResponsiveHelper.titleFontSize(18),
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF111827),
+                Expanded(
+                  child: Text(
+                    _isEdit ? AppStrings.updateDocument.tr : AppStrings.uploadDocument.tr,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.titleFontSize(18),
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF111827),
+                    ),
                   ),
                 ),
                 GestureDetector(

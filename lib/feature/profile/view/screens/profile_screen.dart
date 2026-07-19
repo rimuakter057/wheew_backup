@@ -225,6 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 ///owner ship document==========================================================
                 const VehicleOwnershipStatusWidget(),
+                SizedBox(height: ResponsiveHelper.spacing(8)),
                 CustomUploadCard(
                   title: AppStrings.vehicleOwnershipStatus.tr,
                   documentType: 'VEHICLE_OWNERSHIP',
