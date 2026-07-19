@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../../core/router/routes_name.dart';
 import '../../../../../core/service/storage_service.dart';
+import '../../../../chat/view/message/controller/message_controller.dart';
+import '../../../../notification/controller/notification_controller.dart';
 import '../../../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../../../utils/app_const/app_const.dart';
 
@@ -34,6 +36,20 @@ Widget buildLogoutButton( {required BuildContext context}) {
         await SharePrefsHelper.remove(AppConst.loginPass);
         await SharePrefsHelper.remove(AppConst.licenseNoVerified);
         await SharePrefsHelper.setBool(AppConst.isLoggedIn, false);
+
+        // Clear the previous account's notification/message-request badges
+        // so the next login doesn't briefly show stale data before its own
+        // fetch lands.
+        if (Get.isRegistered<NotificationController>()) {
+          final notificationController = Get.find<NotificationController>();
+          notificationController.notifications.clear();
+          notificationController.unreadCount.value = 0;
+        }
+        if (Get.isRegistered<MessageController>()) {
+          final messageController = Get.find<MessageController>();
+          messageController.messageRequests.clear();
+          messageController.totalRequestsCount.value = 0;
+        }
 
         context.goNamed(RouteName.welcome);
       },

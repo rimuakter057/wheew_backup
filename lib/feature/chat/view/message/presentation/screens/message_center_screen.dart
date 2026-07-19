@@ -1,0 +1,71 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:platchatapp/feature/chat/view/message/presentation/screens/message_requests_screen.dart';
+import 'package:platchatapp/feature/chat/view/message/presentation/screens/send_message_request.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
+
+class MessageCenterScreen extends StatefulWidget {
+  const MessageCenterScreen({super.key});
+
+  @override
+  State<MessageCenterScreen> createState() => _MessageCenterScreenState();
+}
+
+class _MessageCenterScreenState extends State<MessageCenterScreen>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF6F8FB),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        surfaceTintColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.black87),
+        title: Text(
+          AppStrings.messageRequests.tr,
+          style: GoogleFonts.poppins(
+            color: Colors.black87,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+          ),
+        ),
+        bottom: TabBar(
+          controller: _tabController,
+          labelColor: AppColors.blue,
+          unselectedLabelColor: Colors.grey.shade500,
+          indicatorColor: AppColors.blue,
+          labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14),
+          unselectedLabelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 14),
+          tabs: [
+            Tab(text: AppStrings.sendMessageTab.tr),
+            Tab(text: AppStrings.receiveRequestTab.tr),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: const [
+          SentMessageRequestsScreen(showAppBar: false),
+          MessageRequestsScreen(showAppBar: false),
+        ],
+      ),
+    );
+  }
+}

@@ -11,6 +11,7 @@ import 'package:platchatapp/feature/chat/view/chat_list/presentation/widgets/cha
 import 'package:platchatapp/feature/chat/view/chat_list/presentation/widgets/chat_list_search_bar.dart';
 import 'package:platchatapp/feature/chat/view/chat_list/presentation/widgets/chat_navigator.dart';
 import 'package:platchatapp/feature/chat/view/chat_list/presentation/widgets/create_group.dart';
+import 'package:platchatapp/feature/chat/view/message/controller/message_controller.dart';
 import 'package:platchatapp/feature/chat/view/widgets/chat_list_screen_shimmer.dart';
 import 'package:platchatapp/feature/chat/view/widgets/chat_tile.dart';
 import 'package:platchatapp/feature/main/data/main_nav_.dart';
@@ -56,6 +57,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
       controller.fetchChatList(refresh: true);
       controller.newMessage();
       Get.find<ProfileController>().reloadProfile();
+      // Real-time-ish received-request count badge, same idea as the
+      // notification bell's unread count.
+      Get.find<MessageController>().fetchMessageRequestInbox(refresh: true);
     });
 
     scrollController.addListener(_onScroll);
@@ -157,6 +161,26 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         color: Colors.black87,
                       ),
                     ),
+                    SizedBox(width: ResponsiveHelper.width(8)),
+                    Obx(() {
+                      final count = Get.find<MessageController>().totalRequestsCount.value;
+                      if (count <= 0) return const SizedBox.shrink();
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF2F80ED),
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                        ),
+                        child: Text(
+                          '$count',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      );
+                    }),
                     const Spacer(),
                     Icon(
                       Icons.chevron_right,

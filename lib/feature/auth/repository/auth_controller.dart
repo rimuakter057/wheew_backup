@@ -12,6 +12,7 @@ import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
+import 'package:platchatapp/feature/notification/controller/notification_controller.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import '../../../core/service/api_checker.dart';
 import '../../../core/service/storage_service.dart';
@@ -176,6 +177,13 @@ class AuthController extends GetxController {
         // Location permission is requested when the user enters the Home
         // screen; notification permission when entering the Chat List
         // screen — not eagerly here at login.
+
+        // Force a fresh notification fetch for this account — otherwise the
+        // globally-registered NotificationController keeps showing the
+        // previous user's unread count/list until something refetches it.
+        if (Get.isRegistered<NotificationController>()) {
+          Get.find<NotificationController>().fetchNotifications(refresh: true);
+        }
 
         AppSocket.init(
           onSocketConnect: () {
