@@ -4,7 +4,6 @@ import 'package:platchatapp/utils/language/app_string.dart';
 import 'dart:convert';
 import 'dart:ui' as ui;
 
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
@@ -42,6 +41,10 @@ class ParkingShowController extends GetxController {
   // Parking areas are queried with a fixed, wider radius; handoffs use
   // the user-adjustable radius filter (default 300m).
   static const int _parkingAreaRadiusMeters = 20000;
+
+  // Zoom level the map rests at once nearby spots load — kept close so the
+  // markers/red areas are visible immediately without any manual zoom.
+  static const double _initialSpotsZoom = 17;
 
   final RxBool isLoading = false.obs;
   final RxBool isLocating = true.obs;
@@ -303,41 +306,13 @@ class ParkingShowController extends GetxController {
 
       await _buildMarkersAndPolygons();
 
-      // Adjust camera bounds to fit user location and all markers/polygons
+      // Settle the camera at a fixed close zoom centered on the user's
+      // location so the map opens already zoomed-in (matching the manual
+      // zoom-in look) instead of fitting every far-away parking area.
       if (mapController != null && gpsPosition.value != null) {
-        double minLat = gpsPosition.value!.latitude;
-        double maxLat = gpsPosition.value!.latitude;
-        double minLng = gpsPosition.value!.longitude;
-        double maxLng = gpsPosition.value!.longitude;
-
-        bool hasItems = false;
-        for (final m in markers) {
-          minLat = math.min(minLat, m.position.latitude);
-          maxLat = math.max(maxLat, m.position.latitude);
-          minLng = math.min(minLng, m.position.longitude);
-          maxLng = math.max(maxLng, m.position.longitude);
-          hasItems = true;
-        }
-        for (final p in polygons) {
-          for (final pt in p.points) {
-            minLat = math.min(minLat, pt.latitude);
-            maxLat = math.max(maxLat, pt.latitude);
-            minLng = math.min(minLng, pt.longitude);
-            maxLng = math.max(maxLng, pt.longitude);
-          }
-          hasItems = true;
-        }
-
-        if (hasItems) {
-          final bounds = LatLngBounds(
-            southwest: LatLng(minLat - 0.005, minLng - 0.005),
-            northeast: LatLng(maxLat + 0.005, maxLng + 0.005),
-          );
-          print("Map camera bounds adjusted to show spots: minLat=$minLat, maxLat=$maxLat");
-          await mapController!.animateCamera(
-            CameraUpdate.newLatLngBounds(bounds, 50),
-          );
-        }
+        await mapController!.animateCamera(
+          CameraUpdate.newLatLngZoom(gpsPosition.value!, _initialSpotsZoom),
+        );
       }
 
       _logger.i('=== fetchNearbyData END -> markers: ${markers.length}, '
