@@ -1835,8 +1835,7 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
               _textField(
                 controller: _uniqueNumberCtrl,
                 hint: '123456789',
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                keyboardType: TextInputType.text,
               ),
               SizedBox(height: ResponsiveHelper.spacing(16)),
             ],

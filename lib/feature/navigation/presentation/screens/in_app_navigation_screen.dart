@@ -140,7 +140,7 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
               Positioned(
                 left: ResponsiveHelper.width(16),
                 right: ResponsiveHelper.width(16),
-                bottom: ResponsiveHelper.height(16),
+                bottom: ResponsiveHelper.height(86),
                 child: Container(
                   padding: EdgeInsets.all(ResponsiveHelper.padding(16)),
                   decoration: BoxDecoration(
