@@ -53,8 +53,6 @@ void main() async {
   );
 
 
-  await NotificationService.instance.init();
-
   runApp(const Wheew());
 }
 

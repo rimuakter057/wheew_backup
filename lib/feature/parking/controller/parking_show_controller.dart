@@ -10,6 +10,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
+import 'package:platchatapp/feature/auth/repository/user_location_controller.dart';
 import 'package:platchatapp/feature/parking/repository/parking_repository.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
@@ -135,6 +136,13 @@ class ParkingShowController extends GetxController {
     mapCenter.value = kApproxDefaultLocation;
 
     await checkParkingModeMe(onShowPopup: onShowPopup);
+
+    // First time a parking function is actually used — bootstrap background
+    // location here (permission requested just-in-time, not eagerly at login).
+    final locationController = Get.isRegistered<UserLocationController>()
+        ? Get.find<UserLocationController>()
+        : Get.put(UserLocationController());
+    unawaited(locationController.initLocationTracking());
   }
 
 
@@ -586,12 +594,8 @@ class ParkingShowController extends GetxController {
     if (handoffList.isEmpty) return;
 
     final Set<Circle> newCircles = {};
-    final Set<Marker> updatedMarkers = Set<Marker>.from(markers);
     final now = DateTime.now();
     var needRefresh = false;
-
-    final freeCarIcon =
-        _carIconCache[AssetsPath.bluePin] ?? BitmapDescriptor.defaultMarker;
 
     for (final rawHandoff in handoffList) {
       final handoff = _asMap(rawHandoff);
@@ -620,29 +624,12 @@ class ParkingShowController extends GetxController {
 
       if (isBlinking) {
         newCircles.add(_buildBlinkCircle(id: id, lat: lat, lng: lng));
-
-        final markerId = MarkerId('handoff_$id');
-        updatedMarkers.removeWhere((m) => m.markerId == markerId);
-        updatedMarkers.add(
-          Marker(
-            markerId: markerId,
-            position: LatLng(lat, lng),
-            icon: freeCarIcon,
-            anchor: const Offset(0.5, 0.5),
-            infoWindow: InfoWindow.noText,
-            alpha: _blinkToggle.value ? 1.0 : 0.2,
-            onTap: () => showHandoffDetails(handoff),
-          ),
-        );
       }
     }
 
     circles
       ..clear()
       ..addAll(newCircles);
-    markers
-      ..clear()
-      ..addAll(updatedMarkers);
     mapOverlayVersion.value++;
 
     if (needRefresh) {
