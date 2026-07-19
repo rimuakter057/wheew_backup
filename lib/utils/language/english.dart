@@ -798,4 +798,6 @@ AppStrings.group:"Group",
 
   AppStrings.navModeWalking: "Walking",
   AppStrings.navModeDriving: "Driving",
+
+  AppStrings.verifyAccountBecomeWheewer: "Verify your account to become a verified Wheewer user.",
 };

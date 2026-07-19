@@ -21,6 +21,7 @@ class ProfileController extends GetxController {
   final Rx<UserModel?> userProfile = Rx<UserModel?>(null);
 
   final nickNameController = TextEditingController();
+
   final licenseController = TextEditingController();
   final vehicleTypeController = TextEditingController();
   final vehicleModelController = TextEditingController();

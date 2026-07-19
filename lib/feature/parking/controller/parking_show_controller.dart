@@ -53,7 +53,7 @@ class ParkingShowController extends GetxController {
   final Rxn<LatLng> gpsPosition = Rxn<LatLng>();
   final Rxn<LatLng> mapCenter = Rxn<LatLng>();
   final RxBool showLocationPulse = false.obs;
-  final RxInt selectedRadiusMeter = 300.obs;
+  final RxInt selectedRadiusMeter = 100.obs;
   final RxInt mapOverlayVersion = 0.obs;
 
   final RxBool isRealLocationLoaded = false.obs;

@@ -823,4 +823,6 @@ final Map<String, String> italian = {
 
   AppStrings.navModeWalking: "A piedi",
   AppStrings.navModeDriving: "In auto",
+
+  AppStrings.verifyAccountBecomeWheewer: "Verifica il tuo account e diventa utente Wheewer verificato.",
 };

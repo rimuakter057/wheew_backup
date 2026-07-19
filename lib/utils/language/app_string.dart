@@ -13,6 +13,7 @@ class AppStrings {
   static const String tapOnTheMapToSelectParkingLocation =
       'tap_on_the_map_to_select_parking_location';
   static const String addParkingSpot = 'addParkingSpot';
+
   static const String normal = 'normal';
   static const String hybrid = 'hybrid';
   static const String satellite = 'satellite';
@@ -849,4 +850,6 @@ class AppStrings {
 
   static const String navModeWalking = 'nav_mode_walking';
   static const String navModeDriving = 'nav_mode_driving';
+
+  static const String verifyAccountBecomeWheewer = 'verify_account_become_wheewer';
 }

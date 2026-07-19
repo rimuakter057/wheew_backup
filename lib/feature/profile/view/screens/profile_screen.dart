@@ -135,6 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   );
                 }),
 
+
                 SizedBox(height: ResponsiveHelper.spacing(20)),
 
                 _label(AppStrings.vehicleType.tr),
@@ -154,11 +155,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: ResponsiveHelper.spacing(4)),
                 GetBuilder<ProfileController>(
                   id: 'vehicle_fields',
-                  builder: (ctrl) => VehicleModelDropdown(
-                    selectedModel: ctrl.vehicleModelController.text,
-                    onSelected: (value) => ctrl.setVehicleModel(value),
+                  builder: (controler) => VehicleModelDropdown(
+                    selectedModel: controler.vehicleModelController.text,
+                    onSelected: (value) => controler.setVehicleModel(value),
                     // Locked once already set; otherwise editable while in edit mode.
-                    enabled: ctrl.isEditing && !ctrl.isVehicleModelLocked,
+                    enabled: controler.isEditing && !controler.isVehicleModelLocked,
                   ),
                 ),
 
@@ -205,7 +206,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Row(
                   children: [
                     Text(
-                      AppStrings.vehicleOwnershipStatus.tr,
+                      AppStrings.verifyAccountBecomeWheewer.tr,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(16),
                         fontWeight: FontWeight.w400,
