@@ -786,4 +786,10 @@ AppStrings.group:"Group",
   AppStrings.parkingLocationSavedAsFreeSpot: "Parking location saved as Free Spot.",
   AppStrings.failedToLoadHandoffDetails: "Failed to load handoff details",
   AppStrings.networkErrorLoadingHandoffDetails: "Network error loading handoff details: @error",
+
+  AppStrings.backgroundLocationRationaleTitle: "Keep tracking your parking spot",
+  AppStrings.backgroundLocationRationaleDesc:
+  "Allow location access Always so we can keep your parked spot accurate and notify nearby drivers, even when the app is closed.",
+  AppStrings.allow: "Allow",
+  AppStrings.notNow: "Not Now",
 };

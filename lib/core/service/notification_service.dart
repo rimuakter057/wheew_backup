@@ -197,6 +197,8 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _plugin =
   FlutterLocalNotificationsPlugin();
 
+  bool _initialized = false;
+
   // Android notification channel (sound = message_chime.wav in res/raw)
   static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
     'messages_channel',        // id
@@ -208,7 +210,13 @@ class NotificationService {
   );
 
   // ── init ──────────────────────────────────────────────────────
+  // Called after login success (not at app launch), and once more on
+  // relaunch for an already-logged-in session — guarded so listeners
+  // are only ever registered once.
   Future<void> init() async {
+    if (_initialized) return;
+    _initialized = true;
+
     // 1. Create channel on Android
     await _plugin
         .resolvePlatformSpecificImplementation<
