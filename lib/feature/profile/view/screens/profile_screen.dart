@@ -258,10 +258,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   iconText: "📋",
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(12)),
-                // CustomUploadCard(title: AppStrings.driversLicense.tr, documentType: 'LICENSE',
-                //   iconText: "🪪",
-                // ),
-                // SizedBox(height: ResponsiveHelper.spacing(12)),
+
                 CustomUploadCard(
                   title: AppStrings.carInsurance.tr,
                   documentType: 'INSURANCE',

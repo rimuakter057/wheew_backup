@@ -737,7 +737,7 @@ class ParkingShowController extends GetxController {
       final ByteData data = await rootBundle.load(assetPath);
       final ui.Codec codec = await ui.instantiateImageCodec(
         data.buffer.asUint8List(),
-        targetWidth: 18,
+        targetWidth: 88,
       );
       final ui.FrameInfo frame = await codec.getNextFrame();
       final ByteData? byteData = await frame.image.toByteData(

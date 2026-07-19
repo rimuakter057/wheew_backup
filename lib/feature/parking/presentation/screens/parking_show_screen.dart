@@ -130,7 +130,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       onMapCreated: _onMapCreated,
                       initialCameraPosition: CameraPosition(
                         target: gpsPosition ?? ParkingShowScreen.kInitialMapTarget,
-                        zoom: 22,
+                        zoom: 18,
                       ),
                       markers: currentMarkers,
                       polygons: currentPolygons,
