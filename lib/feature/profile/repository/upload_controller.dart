@@ -746,8 +746,8 @@ class UploadDocumentController extends GetxController {
     required String documentType,
     required String uniqueId,
     required String expiryDate,
-    required String filePath,
-    required String fileName,
+    String? filePath,
+    String? fileName,
     required BuildContext context,
     bool isOwner = false,
   }) async {
@@ -756,11 +756,10 @@ class UploadDocumentController extends GetxController {
     try {
       loadingMap[type] = true;
 
-      final multipartFile = await http.MultipartFile.fromPath(
-        'file',
-        filePath,
-        filename: fileName,
-      );
+      // Upload File is optional — only attach it if the user actually picked one.
+      final files = (filePath != null && fileName != null)
+          ? [await http.MultipartFile.fromPath('file', filePath, filename: fileName)]
+          : <http.MultipartFile>[];
 
       // ✅ POST + owner হলে শুধু document_type + file — unique_id/expiry_date লাগবে না
       final fields = isOwner
@@ -777,7 +776,7 @@ class UploadDocumentController extends GetxController {
         uri: ApiUrl.uploadDocument,
         method: 'POST',
         fields: fields,
-        files: [multipartFile],
+        files: files,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -811,8 +810,8 @@ class UploadDocumentController extends GetxController {
     required String documentType,
     required String uniqueId,
     required String expiryDate,
-    required String filePath,
-    required String fileName,
+    String? filePath,
+    String? fileName,
     required BuildContext context,
     bool isOwner = false,
   }) async {
@@ -821,11 +820,10 @@ class UploadDocumentController extends GetxController {
     try {
       loadingMap[type] = true;
 
-      final multipartFile = await http.MultipartFile.fromPath(
-        'file',
-        filePath,
-        filename: fileName,
-      );
+      // Upload File is optional — only attach it if the user actually picked one.
+      final files = (filePath != null && fileName != null)
+          ? [await http.MultipartFile.fromPath('file', filePath, filename: fileName)]
+          : <http.MultipartFile>[];
 
       // ✅ PATCH + owner হলে কোনো field লাগবে না, শুধু file
       final fields = isOwner
@@ -840,7 +838,7 @@ class UploadDocumentController extends GetxController {
         uri: ApiUrl.updateDocument(documentId: documentId),
         method: 'PATCH',
         fields: fields,
-        files: [multipartFile],
+        files: files,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

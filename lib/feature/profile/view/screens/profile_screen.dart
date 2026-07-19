@@ -205,14 +205,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // SizedBox(height: ResponsiveHelper.spacing(18)),
                 Row(
                   children: [
-                    Text(
-                      AppStrings.verifyAccountBecomeWheewer.tr,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.poppins(
-                        fontSize: ResponsiveHelper.fontSize(16),
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textBlack,
+                    Expanded(
+                      child: Text(
+                        AppStrings.verifyAccountBecomeWheewer.tr,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.poppins(
+                          fontSize: ResponsiveHelper.fontSize(16),
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textBlack,
+                        ),
                       ),
                     ),
                     SizedBox(width: ResponsiveHelper.spacing(8)),

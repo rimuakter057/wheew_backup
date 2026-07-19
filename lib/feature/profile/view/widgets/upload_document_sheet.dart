@@ -1618,30 +1618,15 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
 
   Future<void> _handleSubmit() async {
     final uniqueId = _uniqueNumberCtrl.text.trim();
+
     final expiryDate = _expireDateCtrl.text.trim();
 
-    // ✅ owner (VEHICLE_OWNERSHIP) হলে uniqueId/expiryDate কোনোটাই validate লাগবে না
-    if (!widget.isOwner) {
-      if (uniqueId.isEmpty) {
-        CustomSnackbar.error(
-          context: context,
-          message: AppStrings.pleaseEnterUniqueNumber.tr,
-        );
-        return;
-      }
-      if (expiryDate.isEmpty) {
-        CustomSnackbar.error(
-          context: context,
-          message: AppStrings.pleaseEnterExpireDate.tr,
-        );
-        return;
-      }
-    }
-
-    if (_selectedFile == null || _selectedFile!.path == null) {
+    // Unique Number and Upload File are optional — only Expire Date is
+    // required (owner/VEHICLE_OWNERSHIP flow doesn't show or need it at all).
+    if (!widget.isOwner && expiryDate.isEmpty) {
       CustomSnackbar.error(
         context: context,
-        message: _isEdit ? AppStrings.pleaseSelectNewFile.tr : AppStrings.pleaseSelectFile.tr,
+        message: AppStrings.pleaseEnterExpireDate.tr,
       );
       return;
     }
@@ -1652,8 +1637,8 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
         documentType: widget.documentType,
         uniqueId: uniqueId,
         expiryDate: expiryDate,
-        filePath: _selectedFile!.path!,
-        fileName: _selectedFile!.name,
+        filePath: _selectedFile?.path,
+        fileName: _selectedFile?.name,
         context: context,
         isOwner: widget.isOwner,
       );
@@ -1662,8 +1647,8 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
         documentType: widget.documentType,
         uniqueId: uniqueId,
         expiryDate: expiryDate,
-        filePath: _selectedFile!.path!,
-        fileName: _selectedFile!.name,
+        filePath: _selectedFile?.path,
+        fileName: _selectedFile?.name,
         context: context,
         isOwner: widget.isOwner,
       );
