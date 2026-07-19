@@ -837,4 +837,9 @@ class AppStrings {
   static const String parkingLocationSavedAsFreeSpot = 'parking_location_saved_as_free_spot';
   static const String failedToLoadHandoffDetails = 'failed_to_load_handoff_details';
   static const String networkErrorLoadingHandoffDetails = 'network_error_loading_handoff_details';
+
+  static const String backgroundLocationRationaleTitle = 'background_location_rationale_title';
+  static const String backgroundLocationRationaleDesc = 'background_location_rationale_desc';
+  static const String allow = 'allow';
+  static const String notNow = 'not_now';
 }

@@ -47,6 +47,11 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>We need your location to show the map.</string>
 
+	<!-- Enables the iOS "When In Use" -> "Always" upgrade prompt, requested
+	     as a second step after foreground location is already granted. -->
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Wheew uses your location in the background to keep your parked spot accurate and notify nearby drivers, even when the app is closed.</string>
+
 	<!-- ══ Siri / App Intents ══ -->
 	<key>NSUserActivityTypes</key>
 	<array>

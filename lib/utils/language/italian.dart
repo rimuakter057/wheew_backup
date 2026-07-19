@@ -811,4 +811,10 @@ final Map<String, String> italian = {
   AppStrings.parkingLocationSavedAsFreeSpot: "Posizione di parcheggio salvata come posto gratuito.",
   AppStrings.failedToLoadHandoffDetails: "Impossibile caricare i dettagli del passaggio",
   AppStrings.networkErrorLoadingHandoffDetails: "Errore di rete durante il caricamento dei dettagli del passaggio: @error",
+
+  AppStrings.backgroundLocationRationaleTitle: "Continua a monitorare il tuo posto auto",
+  AppStrings.backgroundLocationRationaleDesc:
+  "Consenti l'accesso alla posizione Sempre così possiamo mantenere aggiornato il tuo posto auto e avvisare i guidatori vicini, anche ad app chiusa.",
+  AppStrings.allow: "Consenti",
+  AppStrings.notNow: "Non ora",
 };
