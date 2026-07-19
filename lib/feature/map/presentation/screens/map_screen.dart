@@ -102,6 +102,10 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _mapController?.dispose();
+    // Close the "Selected Report" dropdown when leaving this tab — otherwise
+    // it reappears next time Home is reopened, since selectedReport lives on
+    // the (find-or-put) controller past this widget's own lifecycle.
+    _parkingCtrl.clearSelectedReport();
     super.dispose();
   }
 
