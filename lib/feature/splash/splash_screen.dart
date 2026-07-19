@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
+import 'package:platchatapp/core/service/notification_service.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import '../../core/router/routes_name.dart';
@@ -34,6 +35,11 @@ class _SplashScreenState extends State<SplashScreen> {
         await SharePrefsHelper.getBool(AppConst.isLoggedIn) ?? false;
 
     if (isLoggedIn) {
+      // Returning session (already logged in before) — notifications were
+      // already granted/declined on a prior login, so this just re-registers
+      // the FCM listeners for this app run.
+      await NotificationService.instance.init();
+
       // Timeout fallback — socket 10s এর মধ্যে connect না হলে signin এ যাবে
       Future.delayed(const Duration(seconds: 10), () {
         if (!_isNavigated && mounted) {

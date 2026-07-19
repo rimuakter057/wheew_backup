@@ -12,6 +12,7 @@ import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/core/service/storage_service.dart';
 import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
 import 'package:platchatapp/feature/faq/presentation/screens/faq_screen.dart';
+import 'package:platchatapp/feature/notification/presentation/screens/notification_screen.dart';
 import 'package:platchatapp/feature/privacy_policy/help_suppoor_screen.dart';
 import 'package:platchatapp/feature/privacy_policy/privacy_policy_screen.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
@@ -1304,6 +1305,19 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
           );
         },
       },
+      {
+        'icon': AssetsPath.notificationNav,
+        'title': "Notification",
+        'onTap': () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => NotificationScreen(
+
+            )),
+          );
+        },
+      },
+
       {
         'icon': AssetsPath.share,
         'title': AppStrings.shareLink.tr,
