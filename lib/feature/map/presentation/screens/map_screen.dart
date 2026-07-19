@@ -191,7 +191,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
         await _mapController!.animateCamera(
           CameraUpdate.newLatLngZoom(
             latLng,
-            15,
+            20,
           ),
         );
       }
@@ -330,7 +330,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
               _mapController!.animateCamera(
                 CameraUpdate.newLatLngZoom(
                   LatLng(mySaved.latitude!, mySaved.longitude!),
-                  16,
+                  20,
                 ),
               );
             }
@@ -409,7 +409,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
 
     if (_gpsPosition != null) {
       controller.animateCamera(
-        CameraUpdate.newLatLngZoom(_gpsPosition!, 15),
+        CameraUpdate.newLatLngZoom(_gpsPosition!, 20),
       );
       mapDebug('onMapCreated: camera synced to GPS');
     }
@@ -507,7 +507,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                   onMapCreated: _onMapCreated,
                   initialCameraPosition: CameraPosition(
                     target: MapScreen.kInitialMapTarget,
-                    zoom: 14,
+                    zoom: 20,
                   ),
                   markers: markers,
                   myLocationEnabled: true,
