@@ -80,7 +80,7 @@ class ParkingInfoDialog extends StatelessWidget {
                 ],
               ),
               SizedBox(height: ResponsiveHelper.spacing(20)),
-              const Divider(height: 1),
+              Divider(height: ResponsiveHelper.height(1)),
               SizedBox(height: ResponsiveHelper.spacing(16)),
 
               // ── Location source row (নতুন) ──────────────────────────

@@ -176,7 +176,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                           height: ResponsiveHelper.padding(45),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withValues(alpha: 0.08),

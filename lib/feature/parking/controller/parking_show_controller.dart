@@ -12,6 +12,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
 import 'package:platchatapp/feature/parking/repository/parking_repository.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
+import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -504,7 +505,7 @@ class ParkingShowController extends GetxController {
           Polygon(
             polygonId: PolygonId(areaId),
             points: points,
-            strokeWidth: 3,
+            strokeWidth: ResponsiveHelper.borderWidth(3).round(),
             strokeColor: Colors.red,
             fillColor: Colors.red.withValues(alpha: 0.15),
             consumeTapEvents: true,
@@ -517,7 +518,7 @@ class ParkingShowController extends GetxController {
             polylineId: PolylineId('outline_$areaId'),
             points: [...points, points.first],
             color: Colors.red,
-            width: 3,
+            width: ResponsiveHelper.borderWidth(3).round(),
             jointType: JointType.round,
             startCap: Cap.roundCap,
             endCap: Cap.roundCap,
@@ -643,7 +644,7 @@ class ParkingShowController extends GetxController {
         alpha: _blinkToggle.value ? 0.30 : 0.12,
       ),
       strokeColor: Colors.red.withValues(alpha: 0.7),
-      strokeWidth: 2,
+      strokeWidth: ResponsiveHelper.borderWidth(2).round(),
       consumeTapEvents: false,
     );
   }
@@ -825,35 +826,35 @@ class ParkingShowController extends GetxController {
       barrierDismissible: false,
       builder: (dialogContext) {
         return Dialog(
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20))),
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: ResponsiveHelper.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: ResponsiveHelper.all(16),
                   decoration: BoxDecoration(
                     color: Colors.blue.shade50,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(Icons.local_parking,
-                      size: 40, color: Colors.blue.shade700),
+                      size: ResponsiveHelper.iconSize(40), color: Colors.blue.shade700),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: ResponsiveHelper.spacing(20)),
                  Text(
                   AppStrings.theCarHasBeenParked.tr,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: ResponsiveHelper.fontSize(18), fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: ResponsiveHelper.spacing(8)),
                  Text(
                   AppStrings.isItAFreeSpotOrIsItAPaidSpot.tr,
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  style: TextStyle(fontSize: ResponsiveHelper.fontSize(14), color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: ResponsiveHelper.spacing(24)),
                 Row(
                   children: [
                     Expanded(
@@ -867,15 +868,15 @@ class ParkingShowController extends GetxController {
                               isError: false);
                         },
                         style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          padding: ResponsiveHelper.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12))),
                         ),
                         child: Text(AppStrings.freeSpot.tr,
                             style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: ResponsiveHelper.spacing(12)),
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
@@ -885,9 +886,9 @@ class ParkingShowController extends GetxController {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF185FA5),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          padding: ResponsiveHelper.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12))),
                         ),
                         child: Text(AppStrings.paidSpot.tr,
                             style: TextStyle(
@@ -914,31 +915,31 @@ class ParkingShowController extends GetxController {
       barrierDismissible: false,
       builder: (dialogContext) {
         return Dialog(
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20))),
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: ResponsiveHelper.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
+                Text(
                   'Staying Duration',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: ResponsiveHelper.fontSize(18), fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: ResponsiveHelper.spacing(8)),
                  Text(
                   AppStrings.forHowLongIsTheUserStayingInThatSpot.tr,
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  style: TextStyle(fontSize: ResponsiveHelper.fontSize(14), color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: ResponsiveHelper.spacing(20)),
                 ...[15, 30, 45, 60, 120].map((mins) {
                   String label = '$mins Minutes';
                   if (mins >= 60) {
                     label = '${mins ~/ 60} Hour${mins == 60 ? "" : "s"}';
                   }
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    padding: ResponsiveHelper.symmetric(vertical: 6),
                     child: SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -950,9 +951,9 @@ class ParkingShowController extends GetxController {
                           backgroundColor: Colors.grey.shade100,
                           foregroundColor: Colors.black87,
                           elevation: 0,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          padding: ResponsiveHelper.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
                             side: BorderSide(color: Colors.grey.shade300),
                           ),
                         ),
@@ -963,7 +964,7 @@ class ParkingShowController extends GetxController {
                     ),
                   );
                 }),
-                const SizedBox(height: 12),
+                SizedBox(height: ResponsiveHelper.spacing(12)),
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(),
                   child:
@@ -986,34 +987,34 @@ class ParkingShowController extends GetxController {
       barrierDismissible: false,
       builder: (dialogContext) {
         return Dialog(
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20))),
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: ResponsiveHelper.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: ResponsiveHelper.all(16),
                   decoration: BoxDecoration(
                     color: Colors.amber.shade50,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.warning_amber_rounded,
-                      size: 40, color: Colors.amber),
+                  child: Icon(Icons.warning_amber_rounded,
+                      size: ResponsiveHelper.iconSize(40), color: Colors.amber),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: ResponsiveHelper.spacing(20)),
                  Text(
                   AppStrings.parkingExpiring.tr,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: ResponsiveHelper.fontSize(18), fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: ResponsiveHelper.spacing(8)),
                  Text(
                   AppStrings.areYouLeavingThePaidSpotYourPaidSpotIsExpiringIn10Minutes.tr,
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  style: TextStyle(fontSize: ResponsiveHelper.fontSize(14), color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: ResponsiveHelper.spacing(24)),
                 Row(
                   children: [
                     Expanded(
@@ -1024,15 +1025,15 @@ class ParkingShowController extends GetxController {
                               isError: false);
                         },
                         style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          padding: ResponsiveHelper.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12))),
                         ),
                         child: Text(AppStrings.noStaying.tr,
                             style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: ResponsiveHelper.spacing(12)),
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
@@ -1044,9 +1045,9 @@ class ParkingShowController extends GetxController {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.amber.shade700,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          padding: ResponsiveHelper.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12))),
                         ),
                         child: Text(AppStrings.yesLeaving.tr,
                             style: TextStyle(
@@ -1163,30 +1164,30 @@ class ParkingShowController extends GetxController {
       builder: (dialogContext) {
         return Dialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
           ),
           backgroundColor: Colors.white,
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: ResponsiveHelper.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 20,
+                  style: TextStyle(
+                    fontSize: ResponsiveHelper.fontSize(20),
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: ResponsiveHelper.spacing(16)),
                 ...rows
                     .where((r) => r.value.isNotEmpty)
                     .map((r) => _buildDetailRow(r.label, r.value)),
                 if (destination != null) ...[
-                  const SizedBox(height: 8),
+                  SizedBox(height: ResponsiveHelper.spacing(8)),
                   ElevatedButton.icon(
                     onPressed: () {
                       Navigator.of(dialogContext).pop();
@@ -1203,13 +1204,13 @@ class ParkingShowController extends GetxController {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF185FA5),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding: ResponsiveHelper.symmetric(vertical: 12),
                     ),
                   ),
                 ],
-                const SizedBox(height: 12),
+                SizedBox(height: ResponsiveHelper.spacing(12)),
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(),
                   child:  Text(
@@ -1238,43 +1239,43 @@ class ParkingShowController extends GetxController {
       backgroundColor: Colors.transparent,
       builder: (context) {
         return Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(ResponsiveHelper.borderRadius(24))),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: ResponsiveHelper.symmetric(horizontal: 20, vertical: 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Center(
                 child: Container(
-                  width: 40,
-                  height: 5,
+                  width: ResponsiveHelper.width(40),
+                  height: ResponsiveHelper.height(5),
                   decoration: BoxDecoration(
                     color: Colors.grey[350],
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: ResponsiveHelper.spacing(16)),
                Text(
 
                 AppStrings.savedParkingLocation.tr,
                 style: TextStyle(
-                    fontSize: 20,
+                    fontSize: ResponsiveHelper.fontSize(20),
                     fontWeight: FontWeight.bold,
                     color: Colors.black87),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: ResponsiveHelper.spacing(16)),
               _buildDetailRow(AppStrings.confidenceLevel.tr,
                   '${confidenceLevel.value}% (High Accuracy)'),
               _buildDetailRow(
                   AppStrings.spotType.tr, isPaidSpot.value ? AppStrings.paidSpot.tr : AppStrings.freeSpot.tr),
               if (isTimerActive.value)
                 _buildDetailRow(AppStrings.timeRemaining.tr, remainingTimeString.value),
-              const SizedBox(height: 24),
+              SizedBox(height: ResponsiveHelper.spacing(24)),
               ElevatedButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
@@ -1285,12 +1286,12 @@ class ParkingShowController extends GetxController {
                     style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF185FA5),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  padding: ResponsiveHelper.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12))),
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: ResponsiveHelper.spacing(10)),
               OutlinedButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
@@ -1300,13 +1301,13 @@ class ParkingShowController extends GetxController {
                 label:
                 Text(AppStrings.removeSpot.tr, style: TextStyle(color: Colors.red)),
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Colors.red),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  side: BorderSide(color: Colors.red, width: ResponsiveHelper.borderWidth(1)),
+                  padding: ResponsiveHelper.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12))),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: ResponsiveHelper.spacing(16)),
             ],
           ),
         );
@@ -1335,25 +1336,25 @@ class ParkingShowController extends GetxController {
       builder: (dialogContext) {
         return Dialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
           ),
           backgroundColor: Colors.white,
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: ResponsiveHelper.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 20,
+                  style: TextStyle(
+                    fontSize: ResponsiveHelper.fontSize(20),
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: ResponsiveHelper.spacing(16)),
                 Flexible(
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
@@ -1381,7 +1382,7 @@ class ParkingShowController extends GetxController {
 
                         if (entry.key == 'googleMapsLink') {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            padding: ResponsiveHelper.symmetric(vertical: 8),
                             child: ElevatedButton.icon(
                               onPressed: () => _launchURL(valStr),
                               icon: const Icon(Icons.directions,
@@ -1393,10 +1394,9 @@ class ParkingShowController extends GetxController {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF185FA5),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
                                 ),
-                                padding:
-                                const EdgeInsets.symmetric(vertical: 12),
+                                padding: ResponsiveHelper.symmetric(vertical: 12),
                               ),
                             ),
                           );
@@ -1407,7 +1407,7 @@ class ParkingShowController extends GetxController {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: ResponsiveHelper.spacing(16)),
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(),
                   child:  Text(
@@ -1428,7 +1428,7 @@ class ParkingShowController extends GetxController {
 
   Widget _buildDetailRow(String key, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: ResponsiveHelper.symmetric(vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1437,19 +1437,19 @@ class ParkingShowController extends GetxController {
             child: Text(
               key,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: ResponsiveHelper.fontSize(14),
                 color: Colors.grey[600],
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: ResponsiveHelper.spacing(8)),
           Expanded(
             flex: 3,
             child: Text(
               value,
-              style: const TextStyle(
-                fontSize: 14,
+              style: TextStyle(
+                fontSize: ResponsiveHelper.fontSize(14),
                 color: Colors.black87,
                 fontWeight: FontWeight.w600,
               ),

@@ -54,16 +54,18 @@ class _MessageCenterScreenState extends State<MessageCenterScreen>
           labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14),
           unselectedLabelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 14),
           tabs: [
-            Tab(text: AppStrings.sendMessageTab.tr),
+
             Tab(text: AppStrings.receiveRequestTab.tr),
+            Tab(text: AppStrings.sendMessageTab.tr),
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
         children: const [
-          SentMessageRequestsScreen(showAppBar: false),
           MessageRequestsScreen(showAppBar: false),
+          SentMessageRequestsScreen(showAppBar: false),
+
         ],
       ),
     );

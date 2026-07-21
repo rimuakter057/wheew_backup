@@ -129,10 +129,10 @@ class ParkingReportDropdown extends StatelessWidget {
                     color: Color(0xFFF1F5F9),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.close_rounded,
-                    color: Color(0xFF475569),
-                    size: 16,
+                    color: const Color(0xFF475569),
+                    size: ResponsiveHelper.iconSize(16),
                   ),
                 ),
               ),
@@ -152,13 +152,13 @@ class ParkingReportDropdown extends StatelessWidget {
                     ),
                     SizedBox(height: ResponsiveHelper.spacing(2)),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: ResponsiveHelper.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
 
                         color: _isFree
                             ? const Color(0xFFF1F5F9)
                             : statusColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(6)),
                         // Free হলে border দিলে badge আলাদা বোঝা যায়
                         border: _isFree
                             ? Border.all(color: const Color(0xFFE2E8F0))
@@ -206,13 +206,14 @@ class ParkingReportDropdown extends StatelessWidget {
                         color: _isFree
                             ? const Color(0xFFF1F5F9)
                             : statusColor.withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(8)),
                         border: Border.all(color: statusColor.withOpacity(0.3)),
                       ),
                       child: controller.isLeaving.value
                           ? SizedBox(
-                        width: 14, height: 14,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        width: ResponsiveHelper.width(14),
+                        height: ResponsiveHelper.height(14),
+                        child: CircularProgressIndicator(strokeWidth: ResponsiveHelper.borderWidth(2)),
                       )
                           : Row(
                         mainAxisSize: MainAxisSize.min,
@@ -239,7 +240,7 @@ class ParkingReportDropdown extends StatelessWidget {
                   //   ),
                   // ),
 
-                  SizedBox(height: 12,),
+                  SizedBox(height: ResponsiveHelper.spacing(12)),
 
                   GestureDetector(
                     onTap: () => _openNavigation(context),
@@ -247,7 +248,7 @@ class ParkingReportDropdown extends StatelessWidget {
                       padding: EdgeInsets.all(ResponsiveHelper.spacing(4)),
                       decoration: BoxDecoration(
                         color: AppColors.paidBlue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(8)),
                         border: Border.all(color: AppColors.paidBlue.withOpacity(0.3)),
 
                       ),
@@ -258,7 +259,7 @@ class ParkingReportDropdown extends StatelessWidget {
                             style: TextStyle(
                               color: AppColors.paidBlue,
                               fontWeight: FontWeight.w600,
-                              fontSize: 13,
+                              fontSize: ResponsiveHelper.fontSize(13),
                             ),
                           ),
 
@@ -304,7 +305,7 @@ class ParkingReportDropdown extends StatelessWidget {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.spacing(10)),
-                  child: const Divider(color: Color(0xFFE2E8F0), height: 1),
+                  child: Divider(color: const Color(0xFFE2E8F0), height: ResponsiveHelper.height(1)),
                 ),
                 _buildInfoRow(
                   icon: Icons.electric_car_rounded,
@@ -316,7 +317,7 @@ class ParkingReportDropdown extends StatelessWidget {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.spacing(10)),
-                  child: const Divider(color: Color(0xFFE2E8F0), height: 1),
+                  child: Divider(color: const Color(0xFFE2E8F0), height: ResponsiveHelper.height(1)),
                 ),
                 _buildInfoRow(
                   icon: Icons.accessible_rounded,

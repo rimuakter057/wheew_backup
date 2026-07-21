@@ -68,19 +68,19 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                 ),
               ),
               if (count > 0) ...[
-                const SizedBox(width: 8),
+                SizedBox(width: ResponsiveHelper.spacing(8)),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: ResponsiveHelper.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: primaryBlue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
                   ),
                   child: Text(
                     '$count',
                     style: GoogleFonts.poppins(
                       color: primaryBlue,
                       fontWeight: FontWeight.w700,
-                      fontSize: 12,
+                      fontSize: ResponsiveHelper.fontSize(12),
                     ),
                   ),
                 ),
@@ -89,8 +89,8 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
           );
         }),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: Colors.grey.shade200),
+          preferredSize: Size.fromHeight(ResponsiveHelper.height(1)),
+          child: Container(height: ResponsiveHelper.height(1), color: Colors.grey.shade200),
         ),
       )
           : null,
@@ -114,32 +114,32 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(24),
+                        padding: ResponsiveHelper.all(24),
                         decoration: BoxDecoration(
                           color: primaryBlue.withValues(alpha: 0.06),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.mark_email_unread_outlined,
-                          size: 64,
+                          size: ResponsiveHelper.iconSize(64),
                           color: primaryBlue.withValues(alpha: 0.5),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: ResponsiveHelper.spacing(20)),
                       Text(
                         AppStrings.noPendingMessageRequests.tr,
                         style: GoogleFonts.poppins(
                           color: Colors.black87,
-                          fontSize: 16,
+                          fontSize: ResponsiveHelper.fontSize(16),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: 6),
+                      SizedBox(height: ResponsiveHelper.spacing(6)),
                       Text(
                         "New requests will show up here",
                         style: GoogleFonts.poppins(
                           color: Colors.grey.shade500,
-                          fontSize: 13,
+                          fontSize: ResponsiveHelper.fontSize(13),
                         ),
                       ),
                     ],
@@ -156,13 +156,18 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
           child: ListView.separated(
             controller: _scrollController,
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            padding: EdgeInsets.fromLTRB(
+              ResponsiveHelper.padding(16),
+              ResponsiveHelper.padding(16),
+              ResponsiveHelper.padding(16),
+              ResponsiveHelper.padding(24),
+            ),
             itemCount: messageController.messageRequests.length + (messageController.hasMore.value ? 1 : 0),
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            separatorBuilder: (_, __) => SizedBox(height: ResponsiveHelper.spacing(12)),
             itemBuilder: (context, index) {
               if (index == messageController.messageRequests.length) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                return Padding(
+                  padding: ResponsiveHelper.symmetric(vertical: 16),
                   child: Center(
                     child: CircularProgressIndicator(color: primaryBlue),
                   ),
@@ -177,10 +182,10 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
               final requestId = request['id']?.toString() ?? '';
 
               return Container(
-                padding: const EdgeInsets.all(16),
+                padding: ResponsiveHelper.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(18)),
                   border: Border.all(color: Colors.grey.shade100),
                   boxShadow: [
                     BoxShadow(
@@ -196,7 +201,7 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(2),
+                          padding: ResponsiveHelper.all(2),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             gradient: LinearGradient(
@@ -206,17 +211,17 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                             ),
                           ),
                           child: CircleAvatar(
-                            radius: 22,
+                            radius: ResponsiveHelper.width(22),
                             backgroundColor: Colors.white,
                             child: CircleAvatar(
-                              radius: 20,
+                              radius: ResponsiveHelper.width(20),
                               backgroundImage: NetworkImage(
                                 ImageHandler.imagesHandle(avatar, isProfile: true),
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: ResponsiveHelper.spacing(12)),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,15 +230,15 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                                 name,
                                 style: GoogleFonts.poppins(
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 14,
+                                  fontSize: ResponsiveHelper.fontSize(14),
                                   color: Colors.black87,
                                 ),
                               ),
-                              const SizedBox(height: 2),
+                              SizedBox(height: ResponsiveHelper.spacing(2)),
                               Text(
                                 AppStrings.wantsToSendYouAMessage.tr,
                                 style: GoogleFonts.poppins(
-                                  fontSize: 11.5,
+                                  fontSize: ResponsiveHelper.fontSize(11.5),
                                   color: Colors.grey.shade500,
                                 ),
                               ),
@@ -242,24 +247,24 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 14),
+                    SizedBox(height: ResponsiveHelper.spacing(14)),
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(12),
+                      padding: ResponsiveHelper.all(12),
                       decoration: BoxDecoration(
                         color: bgColor,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
                       ),
                       child: Text(
                         message,
                         style: GoogleFonts.poppins(
-                          fontSize: 13,
+                          fontSize: ResponsiveHelper.fontSize(13),
                           color: Colors.black87,
                           height: 1.4,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 14),
+                    SizedBox(height: ResponsiveHelper.spacing(14)),
                     Row(
                       children: [
                         Expanded(
@@ -271,10 +276,10 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                               );
                             },
                             style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              padding: ResponsiveHelper.symmetric(vertical: 12),
                               side: BorderSide(color: Colors.red.shade200),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
                               ),
                             ),
                             child: Text(
@@ -282,13 +287,13 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                               style: GoogleFonts.poppins(
                                 color: Colors.red.shade400,
                                 fontWeight: FontWeight.w600,
-                                fontSize: 13,
+                                fontSize: ResponsiveHelper.fontSize(13),
                               ),
                             ),
                           ),
                         ),
 
-                        const SizedBox(width: 10),
+                        SizedBox(width: ResponsiveHelper.spacing(10)),
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
@@ -300,9 +305,9 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: primaryBlue,
                               elevation: 0,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              padding: ResponsiveHelper.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
                               ),
                             ),
                             child: Text(
@@ -310,7 +315,7 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                               style: GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
-                                fontSize: 13,
+                                fontSize: ResponsiveHelper.fontSize(13),
                               ),
                             ),
                           ),

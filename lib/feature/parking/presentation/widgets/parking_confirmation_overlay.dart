@@ -86,7 +86,7 @@ class ParkingConfirmationOverlay extends StatelessWidget {
                             ),
                             side: BorderSide(
                               color: Colors.grey.shade300,
-                              width: 1.5,
+                              width: ResponsiveHelper.borderWidth(1.5),
                             ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(14)),

@@ -220,7 +220,7 @@ class _Bubble extends StatelessWidget {
           text,
           style: GoogleFonts.inter(
             color: isMine ? AppColors.white : AppColors.black,
-            fontSize: 15,
+            fontSize: ResponsiveHelper.fontSize(15),
             fontWeight: FontWeight.w400,
           ),
         ),
@@ -229,7 +229,7 @@ class _Bubble extends StatelessWidget {
           time,
           style: GoogleFonts.inter(
             color: isMine ? AppColors.white : AppColors.black,
-            fontSize: 10,
+            fontSize: ResponsiveHelper.fontSize(10),
             fontWeight: FontWeight.w400,
           ),
         ),
@@ -288,30 +288,30 @@ class _Bubble extends StatelessWidget {
             ),
           ),
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: ResponsiveHelper.all(12),
             decoration: const BoxDecoration(
               color: Colors.white24,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 36),
+            child: Icon(Icons.play_arrow_rounded, color: Colors.white, size: ResponsiveHelper.iconSize(36)),
           ),
           Positioned(
-            bottom: 8,
-            left: 8,
+            bottom: ResponsiveHelper.padding(8),
+            left: ResponsiveHelper.padding(8),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: ResponsiveHelper.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: Colors.black54,
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(4)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.videocam_rounded, color: Colors.white70, size: 12),
-                  const SizedBox(width: 4),
+                  Icon(Icons.videocam_rounded, color: Colors.white70, size: ResponsiveHelper.iconSize(12)),
+                  SizedBox(width: ResponsiveHelper.spacing(4)),
                   Text(
                     _formatSize(msg.fileSize),
-                    style: const TextStyle(color: Colors.white70, fontSize: 10),
+                    style: TextStyle(color: Colors.white70, fontSize: ResponsiveHelper.fontSize(10)),
                   ),
                 ],
               ),
@@ -372,7 +372,7 @@ class _Bubble extends StatelessWidget {
                   _formatSize(msg.fileSize),
                   style: TextStyle(
                     color: isMine ? Colors.white60 : Colors.black38,
-                    fontSize: 11,
+                    fontSize: ResponsiveHelper.fontSize(11),
                   ),
                 ),
             ],
@@ -382,7 +382,7 @@ class _Bubble extends StatelessWidget {
         Icon(
           Icons.arrow_forward_ios_rounded,
           color: isMine ? Colors.white54 : Colors.black26,
-          size: 13,
+          size: ResponsiveHelper.iconSize(13),
         ),
       ],
     );
@@ -572,32 +572,32 @@ class _GroupVoiceBubbleState extends State<_GroupVoiceBubble> {
             onTap: _togglePlayPause,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 180),
-              width: 42,
-              height: 42,
+              width: ResponsiveHelper.width(42),
+              height: ResponsiveHelper.height(42),
               decoration: BoxDecoration(
                 color: btnBg,
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: accent.withValues(alpha: 0.35),
-                  width: 1.5,
+                  width: ResponsiveHelper.borderWidth(1.5),
                 ),
               ),
               child: _isLoading
                   ? Padding(
-                      padding: const EdgeInsets.all(11),
-                      child: CircularProgressIndicator(strokeWidth: 2, color: accent),
+                      padding: ResponsiveHelper.all(11),
+                      child: CircularProgressIndicator(strokeWidth: ResponsiveHelper.borderWidth(2), color: accent),
                     )
                   : _hasError
-                      ? Icon(Icons.error_outline, color: Colors.red.shade300, size: 22)
+                      ? Icon(Icons.error_outline, color: Colors.red.shade300, size: ResponsiveHelper.iconSize(22))
                       : Icon(
                           _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
                           color: accent,
-                          size: _isPlaying ? 22 : 26,
+                          size: ResponsiveHelper.iconSize(_isPlaying ? 22 : 26),
                         ),
             ),
           ),
 
-          const SizedBox(width: 10),
+          SizedBox(width: ResponsiveHelper.spacing(10)),
 
           // ── Waveform + time ────────────────────────────────────
           Expanded(
@@ -608,7 +608,7 @@ class _GroupVoiceBubbleState extends State<_GroupVoiceBubble> {
 
                 // Waveform with colour-split progress
                 SizedBox(
-                  height: 28,
+                  height: ResponsiveHelper.height(28),
                   child: LayoutBuilder(builder: (_, constraints) {
                     return GestureDetector(
                       onHorizontalDragUpdate: (details) async {
@@ -631,11 +631,11 @@ class _GroupVoiceBubbleState extends State<_GroupVoiceBubble> {
                             children: _waveHeights
                                 .map((h) => Expanded(
                                       child: Container(
-                                        margin: const EdgeInsets.symmetric(horizontal: 1.2),
-                                        height: h,
+                                        margin: ResponsiveHelper.symmetric(horizontal: 1.2),
+                                        height: ResponsiveHelper.height(h),
                                         decoration: BoxDecoration(
                                           color: muted.withValues(alpha: 0.45),
-                                          borderRadius: BorderRadius.circular(3),
+                                          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(3)),
                                         ),
                                       ),
                                     ))
@@ -654,11 +654,11 @@ class _GroupVoiceBubbleState extends State<_GroupVoiceBubble> {
                                   children: _waveHeights
                                       .map((h) => Expanded(
                                             child: Container(
-                                              margin: const EdgeInsets.symmetric(horizontal: 1.2),
-                                              height: h,
+                                              margin: ResponsiveHelper.symmetric(horizontal: 1.2),
+                                              height: ResponsiveHelper.height(h),
                                               decoration: BoxDecoration(
                                                 color: accent.withValues(alpha: 0.9),
-                                                borderRadius: BorderRadius.circular(3),
+                                                borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(3)),
                                               ),
                                             ),
                                           ))
@@ -674,29 +674,29 @@ class _GroupVoiceBubbleState extends State<_GroupVoiceBubble> {
                   }),
                 ),
 
-                const SizedBox(height: 5),
+                SizedBox(height: ResponsiveHelper.spacing(5)),
 
                 // Time row
                 Row(
                   children: [
                     Icon(
                       _isPlaying ? Icons.graphic_eq_rounded : Icons.mic,
-                      size: 11,
+                      size: ResponsiveHelper.iconSize(11),
                       color: muted,
                     ),
-                    const SizedBox(width: 3),
+                    SizedBox(width: ResponsiveHelper.spacing(3)),
                     Text(
                       _fmt(_position),
                       style: TextStyle(
                         color: accent,
-                        fontSize: 10,
+                        fontSize: ResponsiveHelper.fontSize(10),
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.5,
                       ),
                     ),
                     Text(
                       ' / ${_fmt(_duration)}',
-                      style: TextStyle(color: muted, fontSize: 10),
+                      style: TextStyle(color: muted, fontSize: ResponsiveHelper.fontSize(10)),
                     ),
                   ],
                 ),

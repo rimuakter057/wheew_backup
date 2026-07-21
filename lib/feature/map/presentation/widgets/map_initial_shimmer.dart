@@ -26,22 +26,22 @@ class MapInitialShimmer extends StatelessWidget {
             ),
             Positioned(
               left: ResponsiveHelper.padding(16),
-              right: 16,
-              bottom: 30,
+              right: ResponsiveHelper.padding(16),
+              bottom: ResponsiveHelper.padding(30),
               child: Container(
-                height: 52,
+                height: ResponsiveHelper.height(52),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(28)),
                 ),
               ),
             ),
             Positioned(
-              right: 16,
-              bottom: 104,
+              right: ResponsiveHelper.padding(16),
+              bottom: ResponsiveHelper.padding(104),
               child: Container(
-                width: 48,
-                height: 48,
+                width: ResponsiveHelper.width(48),
+                height: ResponsiveHelper.height(48),
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
@@ -49,11 +49,11 @@ class MapInitialShimmer extends StatelessWidget {
               ),
             ),
             Positioned(
-              right: 16,
-              bottom: 168,
+              right: ResponsiveHelper.padding(16),
+              bottom: ResponsiveHelper.padding(168),
               child: Container(
-                width: 48,
-                height: 48,
+                width: ResponsiveHelper.width(48),
+                height: ResponsiveHelper.height(48),
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,

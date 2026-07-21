@@ -22,11 +22,11 @@ class MapTypeDropdown extends StatelessWidget {
       child: GestureDetector(
         onTap: () => _showMapTypeBottomSheet(context),
         child: Container(
-          height: 48,
-          width: 48,
+          height: ResponsiveHelper.height(48),
+          width: ResponsiveHelper.width(48),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(14)),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(.12),
@@ -49,9 +49,9 @@ class MapTypeDropdown extends StatelessWidget {
       context: context,
       backgroundColor: Colors.white,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(24),
+          top: Radius.circular(ResponsiveHelper.borderRadius(24)),
         ),
       ),
       builder: (_) {
@@ -60,7 +60,7 @@ class MapTypeDropdown extends StatelessWidget {
           builder: (context, setModalState) {
             return SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
+                padding: ResponsiveHelper.symmetric(
                   horizontal: 20,
                   vertical: 20,
                 ),
@@ -70,24 +70,24 @@ class MapTypeDropdown extends StatelessWidget {
                   children: [
                     Center(
                       child: Container(
-                        width: 50,
-                        height: 5,
+                        width: ResponsiveHelper.width(50),
+                        height: ResponsiveHelper.height(5),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade300,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
                         ),
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    SizedBox(height: ResponsiveHelper.spacing(20)),
 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
+                        Text(
                           "Map type",
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: ResponsiveHelper.fontSize(20),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -98,7 +98,7 @@ class MapTypeDropdown extends StatelessWidget {
                       ],
                     ),
 
-                    const SizedBox(height: 24),
+                    SizedBox(height: ResponsiveHelper.spacing(24)),
 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -155,7 +155,7 @@ class MapTypeDropdown extends StatelessWidget {
                       ],
                     ),
 
-                    const SizedBox(height: 10),
+                    SizedBox(height: ResponsiveHelper.spacing(10)),
                   ],
                 ),
               ),
@@ -180,16 +180,16 @@ class MapTypeDropdown extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: 80,
-            width: 80,
+            height: ResponsiveHelper.height(80),
+            width: ResponsiveHelper.width(80),
             decoration: BoxDecoration(
               color: const Color(0xFFF3F5F7),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
               border: Border.all(
                 color: selected
                     ? const Color(0xFF185FA5)
                     : Colors.transparent,
-                width: 2.5,
+                width: ResponsiveHelper.borderWidth(2.5),
               ),
             ),
             // 👇 পরে এখানে image upload করলে এটা দিয়ে replace করবেন:
@@ -199,17 +199,17 @@ class MapTypeDropdown extends StatelessWidget {
             // ),
             child: Icon(
               icon,
-              size: 32,
+              size: ResponsiveHelper.iconSize(32),
               color: selected
                   ? const Color(0xFF185FA5)
                   : Colors.grey.shade500,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: ResponsiveHelper.spacing(8)),
           Text(
             title,
             style: TextStyle(
-              fontSize: 13,
+              fontSize: ResponsiveHelper.fontSize(13),
               fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
               color: selected ? const Color(0xFF185FA5) : Colors.grey.shade700,
             ),

@@ -296,8 +296,8 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
                       borderSide: _durationHasError
-                          ? const BorderSide(
-                          color: Color(0xFFEF4444), width: 1)
+                          ? BorderSide(
+                          color: const Color(0xFFEF4444), width: ResponsiveHelper.borderWidth(1))
                           : BorderSide.none,
                     ),
                     focusedBorder: OutlineInputBorder(
@@ -306,7 +306,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
                         color: _durationHasError
                             ? const Color(0xFFEF4444)
                             : const Color(0xFF3D72E8),
-                        width: 1.4,
+                        width: ResponsiveHelper.borderWidth(1.4),
                       ),
                     ),
                   ),
@@ -410,8 +410,8 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
                             ? SizedBox(
                           width: ResponsiveHelper.iconSize(18),
                           height: ResponsiveHelper.iconSize(18),
-                          child: const CircularProgressIndicator(
-                            strokeWidth: 2,
+                          child: CircularProgressIndicator(
+                            strokeWidth: ResponsiveHelper.borderWidth(2),
                             color: Colors.white,
                           ),
                         )

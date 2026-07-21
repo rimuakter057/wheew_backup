@@ -71,7 +71,7 @@ leading: GestureDetector(
                 clipBehavior: Clip.none,
                 children: [
                   CircleAvatar(
-                    radius: ResponsiveHelper.iconSize(25),
+                    radius: ResponsiveHelper.iconSize(18),
                     backgroundColor: AppColors.greyShade,
                     child: const Icon(
                       Icons.notifications_none_rounded,

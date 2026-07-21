@@ -30,9 +30,9 @@ class LocatingBanner extends StatelessWidget {
               SizedBox(
                 width: ResponsiveHelper.width(16),
                 height: ResponsiveHelper.height(16),
-                child: const CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Color(0xFF3D72E8),
+                child: CircularProgressIndicator(
+                  strokeWidth: ResponsiveHelper.borderWidth(2),
+                  color: const Color(0xFF3D72E8),
                 ),
               ),
               SizedBox(width: ResponsiveHelper.spacing(8)),
@@ -77,9 +77,9 @@ class FetchingParkingBanner extends StatelessWidget {
               SizedBox(
                 width: ResponsiveHelper.width(16),
                 height: ResponsiveHelper.height(16),
-                child: const CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Color(0xFF3D72E8),
+                child: CircularProgressIndicator(
+                  strokeWidth: ResponsiveHelper.borderWidth(2),
+                  color: const Color(0xFF3D72E8),
                 ),
               ),
               SizedBox(width: ResponsiveHelper.spacing(8)),

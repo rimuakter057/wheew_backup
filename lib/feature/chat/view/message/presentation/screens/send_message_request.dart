@@ -71,19 +71,19 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                 ),
               ),
               if (pendingCount > 0) ...[
-                const SizedBox(width: 8),
+                SizedBox(width: ResponsiveHelper.spacing(8)),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: ResponsiveHelper.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: primaryBlue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
                   ),
                   child: Text(
                     '$pendingCount',
                     style: GoogleFonts.poppins(
                       color: primaryBlue,
                       fontWeight: FontWeight.w700,
-                      fontSize: 12,
+                      fontSize: ResponsiveHelper.fontSize(12),
                     ),
                   ),
                 ),
@@ -92,8 +92,8 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
           );
         }),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: Colors.grey.shade200),
+          preferredSize: Size.fromHeight(ResponsiveHelper.height(1)),
+          child: Container(height: ResponsiveHelper.height(1), color: Colors.grey.shade200),
         ),
       )
           : null,
@@ -122,32 +122,32 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(24),
+                        padding: ResponsiveHelper.all(24),
                         decoration: BoxDecoration(
                           color: primaryBlue.withValues(alpha: 0.06),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.send_outlined,
-                          size: 64,
+                          size: ResponsiveHelper.iconSize(64),
                           color: primaryBlue.withValues(alpha: 0.5),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: ResponsiveHelper.spacing(20)),
                       Text(
                         AppStrings.noSentRequests.tr,
                         style: GoogleFonts.poppins(
                           color: Colors.black87,
-                          fontSize: 16,
+                          fontSize: ResponsiveHelper.fontSize(16),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: 6),
+                      SizedBox(height: ResponsiveHelper.spacing(6)),
                       Text(
                         "Requests you send will show up here",
                         style: GoogleFonts.poppins(
                           color: Colors.grey.shade500,
-                          fontSize: 13,
+                          fontSize: ResponsiveHelper.fontSize(13),
                         ),
                       ),
                     ],
@@ -164,14 +164,19 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
           child: ListView.separated(
             controller: _scrollController,
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            padding: EdgeInsets.fromLTRB(
+              ResponsiveHelper.padding(16),
+              ResponsiveHelper.padding(16),
+              ResponsiveHelper.padding(16),
+              ResponsiveHelper.padding(24),
+            ),
             // ✅ pendingRequests.length ব্যবহার করা হচ্ছে, পুরো list না
             itemCount: pendingRequests.length + (messageController.hasMoreSent.value ? 1 : 0),
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            separatorBuilder: (_, __) => SizedBox(height: ResponsiveHelper.spacing(12)),
             itemBuilder: (context, index) {
               if (index == pendingRequests.length) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                return Padding(
+                  padding: ResponsiveHelper.symmetric(vertical: 16),
                   child: Center(
                     child: CircularProgressIndicator(color: primaryBlue),
                   ),
@@ -187,10 +192,10 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
               final status = request['status'] ?? 'PENDING';
 
               return Container(
-                padding: const EdgeInsets.all(16),
+                padding: ResponsiveHelper.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(18)),
                   border: Border.all(color: Colors.grey.shade100),
                   boxShadow: [
                     BoxShadow(
@@ -206,7 +211,7 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(2),
+                          padding: ResponsiveHelper.all(2),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             gradient: LinearGradient(
@@ -216,17 +221,17 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                             ),
                           ),
                           child: CircleAvatar(
-                            radius: 22,
+                            radius: ResponsiveHelper.width(22),
                             backgroundColor: Colors.white,
                             child: CircleAvatar(
-                              radius: 20,
+                              radius: ResponsiveHelper.width(20),
                               backgroundImage: NetworkImage(
                                 ImageHandler.imagesHandle(avatar, isProfile: true),
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: ResponsiveHelper.spacing(12)),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -235,15 +240,15 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                                 name,
                                 style: GoogleFonts.poppins(
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 14,
+                                  fontSize: ResponsiveHelper.fontSize(14),
                                   color: Colors.black87,
                                 ),
                               ),
-                              const SizedBox(height: 2),
+                              SizedBox(height: ResponsiveHelper.spacing(2)),
                               Text(
                                 AppStrings.requestSent.tr,
                                 style: GoogleFonts.poppins(
-                                  fontSize: 11.5,
+                                  fontSize: ResponsiveHelper.fontSize(11.5),
                                   color: Colors.grey.shade500,
                                 ),
                               ),
@@ -253,18 +258,18 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                         _StatusBadge(status: status),
                       ],
                     ),
-                    const SizedBox(height: 14),
+                    SizedBox(height: ResponsiveHelper.spacing(14)),
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(12),
+                      padding: ResponsiveHelper.all(12),
                       decoration: BoxDecoration(
                         color: bgColor,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
                       ),
                       child: Text(
                         message,
                         style: GoogleFonts.poppins(
-                          fontSize: 13,
+                          fontSize: ResponsiveHelper.fontSize(13),
                           color: Colors.black87,
                           height: 1.4,
                         ),
@@ -293,22 +298,22 @@ class _StatusBadge extends StatelessWidget {
         : Colors.grey;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: ResponsiveHelper.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.schedule, size: 12, color: color),
-          const SizedBox(width: 4),
+          Icon(Icons.schedule, size: ResponsiveHelper.iconSize(12), color: color),
+          SizedBox(width: ResponsiveHelper.spacing(4)),
           Text(
             isPending ? 'Pending' : status,
             style: GoogleFonts.poppins(
               color: color,
               fontWeight: FontWeight.w600,
-              fontSize: 11,
+              fontSize: ResponsiveHelper.fontSize(11),
             ),
           ),
         ],

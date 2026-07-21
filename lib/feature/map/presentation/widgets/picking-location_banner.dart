@@ -14,16 +14,15 @@ class PickingLocationBanner extends StatelessWidget {
       left: ResponsiveHelper.padding(16),
       right: ResponsiveHelper.padding(16),
       child: Container(
-        padding:
-        const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        padding: ResponsiveHelper.symmetric(vertical: 10, horizontal: 16),
         decoration: BoxDecoration(
           color: Colors.black87,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(8)),
         ),
         child:  Text(
           AppStrings.tapOnTheMapToSelectParkingLocation.tr,
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white, fontSize: 13),
+          style: TextStyle(color: Colors.white, fontSize: ResponsiveHelper.fontSize(13)),
         ),
       ),
     );

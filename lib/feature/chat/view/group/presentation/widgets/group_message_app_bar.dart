@@ -29,7 +29,7 @@ class GroupMessageAppBar extends StatefulWidget implements PreferredSizeWidget {
   });
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight + 18);
+  Size get preferredSize => Size.fromHeight(kToolbarHeight + ResponsiveHelper.height(18));
 
   @override
   State<GroupMessageAppBar> createState() => _GroupMessageAppBarState();
@@ -106,11 +106,11 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                 );
               },
               child: widget.controller.isLeavingGroup.value
-                  ? const SizedBox(
-                width: 16,
-                height: 16,
+                  ? SizedBox(
+                width: ResponsiveHelper.width(16),
+                height: ResponsiveHelper.height(16),
                 child: CircularProgressIndicator(
-                  strokeWidth: 2,
+                  strokeWidth: ResponsiveHelper.borderWidth(2),
                   color: Colors.red,
                 ),
               )
@@ -140,13 +140,13 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
       builder: (ctx) {
         return Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          insetPadding: ResponsiveHelper.symmetric(horizontal: 20, vertical: 24),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(28), // ছবির মতো রাউন্ডেড কর্নার
+              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(28)), // ছবির মতো রাউন্ডেড কর্নার
             ),
-            padding: const EdgeInsets.all(24),
+            padding: ResponsiveHelper.all(24),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -156,42 +156,42 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const SizedBox(width: 32), // ব্যালেন্স করার জন্য খালি স্পেস
+                      SizedBox(width: ResponsiveHelper.width(32)), // ব্যালেন্স করার জন্য খালি স্পেস
                       // টপ গ্রে লাইন
                       Container(
-                        width: 40,
-                        height: 4,
+                        width: ResponsiveHelper.width(40),
+                        height: ResponsiveHelper.height(4),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(2),
+                          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(2)),
                         ),
                       ),
                       // ক্লোজ (X) বাটন
                       GestureDetector(
                         onTap: () => Navigator.pop(ctx),
                         child: Container(
-                          padding: const EdgeInsets.all(6),
+                          padding: ResponsiveHelper.all(6),
                           decoration: BoxDecoration(
                             color: Colors.grey.shade100,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.close, size: 18, color: Colors.black54),
+                          child: Icon(Icons.close, size: ResponsiveHelper.iconSize(18), color: Colors.black54),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: ResponsiveHelper.spacing(16)),
 
                   // Title
                   Text(
                     AppStrings.editGroupChat.tr,
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.bold,
-                      fontSize: 22,
+                      fontSize: ResponsiveHelper.fontSize(22),
                       color: Colors.black,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: ResponsiveHelper.spacing(24)),
 
                   // Profile Picture Label & Image Picker
                   Center(
@@ -200,12 +200,12 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                         Text(
                           AppStrings.profilePicture.tr,
                           style: GoogleFonts.poppins(
-                            fontSize: 14,
+                            fontSize: ResponsiveHelper.fontSize(14),
                             fontWeight: FontWeight.w600,
                             color: Colors.grey.shade600,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: ResponsiveHelper.spacing(12)),
                         GestureDetector(
                           onTap: () async {
                             await groupController.pickGroupImage();
@@ -219,10 +219,10 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                                 Container(
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    border: Border.all(color: const Color(0xFF1976D2), width: 2),
+                                    border: Border.all(color: const Color(0xFF1976D2), width: ResponsiveHelper.borderWidth(2)),
                                   ),
                                   child: CircleAvatar(
-                                    radius: 45,
+                                    radius: ResponsiveHelper.width(45),
                                     backgroundColor: Colors.grey.shade200,
                                     backgroundImage: imageFile != null
                                         ? FileImage(imageFile)
@@ -233,7 +233,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                                     child: imageFile == null && _currentGroupImage.isEmpty
                                         ? Icon(
                                       Icons.group,
-                                      size: 45,
+                                      size: ResponsiveHelper.iconSize(45),
                                       color: Colors.grey.shade400,
                                     )
                                         : null,
@@ -241,11 +241,11 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                                 ),
                                 // ছোট ক্যামেরা/ছবি আইকন (সাদা ব্যাকগ্রাউন্ড ও গ্রে বর্ডার)
                                 Container(
-                                  padding: const EdgeInsets.all(4),
+                                  padding: ResponsiveHelper.all(4),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.grey.shade300, width: 1),
+                                    border: Border.all(color: Colors.grey.shade300, width: ResponsiveHelper.borderWidth(1)),
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.black.withOpacity(0.1),
@@ -254,9 +254,9 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                                       )
                                     ],
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.camera_alt_outlined,
-                                    size: 14,
+                                    size: ResponsiveHelper.iconSize(14),
                                     color: Colors.grey,
                                   ),
                                 ),
@@ -267,52 +267,52 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: ResponsiveHelper.spacing(24)),
 
                   // Group Name Label
                   Text(
                     AppStrings.groupName.tr,
                     style: GoogleFonts.poppins(
-                      fontSize: 14,
+                      fontSize: ResponsiveHelper.fontSize(14),
                       fontWeight: FontWeight.w600,
                       color: Colors.grey.shade600,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: ResponsiveHelper.spacing(8)),
 
                   // Group Name Text Field (ছবির মতো লাইট গ্রে ব্যাকগ্রাউন্ড)
                   TextField(
                     controller: groupController.groupNameController,
-                    style: GoogleFonts.poppins(fontSize: 15),
+                    style: GoogleFonts.poppins(fontSize: ResponsiveHelper.fontSize(15)),
                     decoration: InputDecoration(
                       hintText: AppStrings.groupNameHint.tr,
                       hintStyle: GoogleFonts.poppins(color: Colors.grey.shade400),
                       filled: true,
                       fillColor: const Color(0xFFF5F6F8), // ছবির ভেতরের লাইট গ্রে কালার
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
                         borderSide: BorderSide.none, // কোনো বর্ডার আউটলাইন থাকবে না
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
+                      contentPadding: ResponsiveHelper.symmetric(
                         horizontal: 16,
                         vertical: 16,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: ResponsiveHelper.spacing(32)),
 
                   // Save & Change Button (ছবির ব্লু বাটন)
                   Obx(() {
                     final isUpdating = groupController.isUpdatingGroup.value;
                     return SizedBox(
                       width: double.infinity, // ফুল উইডথ বাটন
-                      height: 54,
+                      height: ResponsiveHelper.height(54),
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF1565C0), // ছবির মতো রয়েল ব্লু কালার
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(28), // রাউন্ডেড বাটন
+                            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(28)), // রাউন্ডেড বাটন
                           ),
                         ),
                         onPressed: isUpdating
@@ -338,12 +338,12 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                           }
                         },
                         child: isUpdating
-                            ? const SizedBox(
-                          width: 24,
-                          height: 24,
+                            ? SizedBox(
+                          width: ResponsiveHelper.width(24),
+                          height: ResponsiveHelper.height(24),
                           child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            strokeWidth: ResponsiveHelper.borderWidth(2.5),
+                            valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
                             : Text(
@@ -351,7 +351,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                           style: GoogleFonts.poppins(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                            fontSize: ResponsiveHelper.fontSize(16),
                           ),
                         ),
                       ),
@@ -462,7 +462,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
               child: Row(
                 children: [
                   Icon(Icons.group_outlined, color: AppColors.black),
-                  const SizedBox(width: 8),
+                  SizedBox(width: ResponsiveHelper.spacing(8)),
                   Text(
                     AppStrings.seeMembers.tr,
                     style: GoogleFonts.poppins(
@@ -475,8 +475,8 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
             ),
             PopupMenuItem<String>(
               enabled: false,
-              height: 1,
-              child: Divider(height: 1, color: Colors.grey.shade200),
+              height: ResponsiveHelper.height(1),
+              child: Divider(height: ResponsiveHelper.height(1), color: Colors.grey.shade200),
             ),
 
             // ── Add Members ──────────────────────────────
@@ -485,7 +485,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
               child: Row(
                 children: [
                   Icon(Icons.person_add_outlined, color: AppColors.black),
-                  const SizedBox(width: 8),
+                  SizedBox(width: ResponsiveHelper.spacing(8)),
                   Text(
                     AppStrings.addMembers.tr,
                     style: GoogleFonts.poppins(
@@ -498,8 +498,8 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
             ),
             PopupMenuItem<String>(
               enabled: false,
-              height: 1,
-              child: Divider(height: 1, color: Colors.grey.shade200),
+              height: ResponsiveHelper.height(1),
+              child: Divider(height: ResponsiveHelper.height(1), color: Colors.grey.shade200),
             ),
 
             // ── Edit Group ───────────────────────────────
@@ -508,7 +508,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
               child: Row(
                 children: [
                   Icon(Icons.edit_outlined, color: AppColors.black),
-                  const SizedBox(width: 8),
+                  SizedBox(width: ResponsiveHelper.spacing(8)),
                   Text(
                     AppStrings.editGroup.tr,
                     style: GoogleFonts.poppins(
@@ -521,8 +521,8 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
             ),
             PopupMenuItem<String>(
               enabled: false,
-              height: 1,
-              child: Divider(height: 1, color: Colors.grey.shade200),
+              height: ResponsiveHelper.height(1),
+              child: Divider(height: ResponsiveHelper.height(1), color: Colors.grey.shade200),
             ),
 
             // ── Leave Group ──────────────────────────────
@@ -531,7 +531,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
               child: Row(
                 children: [
                   const Icon(Icons.exit_to_app_outlined, color: Colors.red),
-                  const SizedBox(width: 8),
+                  SizedBox(width: ResponsiveHelper.spacing(8)),
                   Text(
                     AppStrings.leaveGroup.tr,
                     style: GoogleFonts.poppins(

@@ -254,6 +254,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 
 import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
+import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
 
@@ -347,7 +348,7 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(ResponsiveHelper.borderRadius(32))),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -356,7 +357,12 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
             )
           ],
         ),
-        padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+        padding: EdgeInsets.fromLTRB(
+          ResponsiveHelper.padding(24),
+          ResponsiveHelper.padding(16),
+          ResponsiveHelper.padding(24),
+          ResponsiveHelper.padding(32),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -364,12 +370,12 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
             // ── drag handle ─────────────────────────────
             Center(
               child: Container(
-                width: 48,
-                height: 5,
-                margin: const EdgeInsets.only(bottom: 24),
+                width: ResponsiveHelper.width(48),
+                height: ResponsiveHelper.height(5),
+                margin: EdgeInsets.only(bottom: ResponsiveHelper.padding(24)),
                 decoration: BoxDecoration(
                   color: Colors.grey.shade400,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
                 ),
               ),
             ),
@@ -379,28 +385,28 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
               AppStrings.searchParkingSpotWithin.tr,
               style: context.bodyMedium.copyWith(color: AppColors.black)
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: ResponsiveHelper.spacing(6)),
             Text(
               AppStrings.chooseDistanceRange.tr,
 
               style: TextStyle(
-                fontSize: 14,
+                fontSize: ResponsiveHelper.fontSize(14),
                 color: Colors.grey.shade600,
                 fontWeight: FontWeight.w400,
               ),
             ),
-            const SizedBox(height: 48), // স্লাইডার টুলটিপের জন্য একটু বেশি স্পেস রাখা হয়েছে
+            SizedBox(height: ResponsiveHelper.spacing(48)), // স্লাইডার টুলটিপের জন্য একটু বেশি স্পেস রাখা হয়েছে
 
             // ── slider with custom thumb & tooltip ──────
             SliderTheme(
               data: SliderTheme.of(context).copyWith(
-                trackHeight: 6,
+                trackHeight: ResponsiveHelper.height(6),
                 activeTrackColor: const Color(0xFF0066C4),
                 inactiveTrackColor: Colors.grey.shade200,
                 // কাস্টম থাম্ব শেপ যা ইমেজের মতো ভ্যালু দেখাবে
                 thumbShape: CustomSliderThumbShape(
                   value: _formatRadius(_radius),
-                  thumbRadius: 10,
+                  thumbRadius: ResponsiveHelper.width(10),
                 ),
                 overlayColor: const Color(0xFF0066C4).withOpacity(0.1),
               ),
@@ -414,32 +420,32 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
 
             // ── min & max labels ────────────────────────
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 4),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('100 m', style: TextStyle(fontSize: 13, color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
-                  Text('20 km', style: TextStyle(fontSize: 13, color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
+                  Text('100 m', style: TextStyle(fontSize: ResponsiveHelper.fontSize(13), color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
+                  Text('20 km', style: TextStyle(fontSize: ResponsiveHelper.fontSize(13), color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: ResponsiveHelper.spacing(24)),
 
             // ── Quick Select Section ────────────────────
              Text(
               AppStrings.quickSelect.tr,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: ResponsiveHelper.fontSize(16),
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF1E293B),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: ResponsiveHelper.spacing(16)),
 
             // ইমেজের মতো ২ লাইনের গ্রিড লুক তৈরি করতে Wrap ব্যবহার করা হয়েছে
             Wrap(
-              spacing: 12,
-              runSpacing: 12,
+              spacing: ResponsiveHelper.spacing(12),
+              runSpacing: ResponsiveHelper.spacing(12),
               children: [
                 _quickChip(100),
                 _quickChip(250),
@@ -449,14 +455,14 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
                 _quickChip(10000),
               ],
             ),
-            const SizedBox(height: 36),
+            SizedBox(height: ResponsiveHelper.spacing(36)),
 
             // ── apply button ────────────────────────────
             Container(
               width: double.infinity,
-              height: 54,
+              height: ResponsiveHelper.height(54),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(28),
+                borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(28)),
                 gradient: const LinearGradient(
                   colors: [Color(0xFF0074E4), Color(0xFF0052A3)],
                   begin: Alignment.topCenter,
@@ -493,13 +499,13 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
       onTap: () => _updateRadius(meterValue.toDouble()),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+        padding: ResponsiveHelper.symmetric(horizontal: 22, vertical: 12),
         decoration: BoxDecoration(
           color: selected ? const Color(0xFF005DB3) : Colors.white.withOpacity(0.6),
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
           border: Border.all(
             color: selected ? Colors.transparent : Colors.grey.shade300,
-            width: 1,
+            width: ResponsiveHelper.borderWidth(1),
           ),
           boxShadow: selected ? [
             BoxShadow(
@@ -512,7 +518,7 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
         child: Text(
           label,
           style: TextStyle(
-            fontSize: 14,
+            fontSize: ResponsiveHelper.fontSize(14),
             fontWeight: selected ? FontWeight.bold : FontWeight.w500,
             color: selected ? Colors.white : Colors.grey.shade700,
           ),
