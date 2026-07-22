@@ -58,7 +58,7 @@ class ChatTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            UserAvatar(imagePath: imagePath),
+            UserAvatar(imagePath: imagePath, isGroup: isGroup),
 
             SizedBox(width: ResponsiveHelper.padding(12)),
 

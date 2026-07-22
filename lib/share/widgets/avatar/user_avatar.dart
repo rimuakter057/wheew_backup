@@ -5,14 +5,21 @@ import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/share/widgets/loading/loading_widget.dart';
 import 'package:platchatapp/share/widgets/network_image/custom_network_image.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../core/service/api_url.dart';
 
 class UserAvatar extends StatelessWidget {
   final String? imagePath;
   final double radius;
+  final bool isGroup;
 
-  const UserAvatar({super.key, this.imagePath, this.radius = 20});
+  const UserAvatar({
+    super.key,
+    this.imagePath,
+    this.radius = 20,
+    this.isGroup = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,38 +42,33 @@ class UserAvatar extends StatelessWidget {
             placeholder: (context, url) => const LoadingWidget(
               color: AppColors.greyBg,
             ), // CircularProgressIndicator(),
-            errorWidget: (context, url, error) =>
-                CustomNetworkImage(imageUrl: AppConst.unknown),
+            errorWidget: (context, url, error) => isGroup
+                ? _groupIcon()
+                : CustomNetworkImage(imageUrl: AppConst.unknown),
           ),
         ),
       );
     }
 
     // Local asset or default
-    // return CircleAvatar(
-    //   radius: radius,
-    //   backgroundImage: imagePath != null ? AssetImage(imagePath!) : null,
-    //   child: imagePath == null ? CustomImage(imageSrc: AppConst.unknown) : null,
-    // );
-
-
-    // Local asset or default
     return CircleAvatar(
       radius: radius,
-      backgroundColor: AppColors.greyBorder,
+      backgroundColor: isGroup ? AppColors.softBrandColor : AppColors.greyBorder,
       child: imagePath != null && imagePath!.endsWith('.svg')
           ? SvgPicture.asset(
         imagePath!,
         width: radius,
         height: radius,
-        // colorFilter:  ColorFilter.mode(
-        //   AppColors.greyBg,
-        //   BlendMode.srcIn,
-        // ),
       )
-          : CustomImage(imageSrc: AppConst.unknown),
+          : (isGroup ? _groupIcon() : CustomImage(imageSrc: AppConst.unknown)),
     );
+  }
 
-
+  Widget _groupIcon() {
+    return SvgPicture.asset(
+      AssetsPath.groupChat,
+      width: radius * 0.4,
+      height: radius * 0.4,
+    );
   }
 }

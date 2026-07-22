@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
@@ -16,50 +15,43 @@ class AddMemberSearchBar extends StatelessWidget {
       padding: EdgeInsets.symmetric(
         horizontal: ResponsiveHelper.padding(20),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppStrings.searchMember.tr,
-            style: GoogleFonts.poppins(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.borderRadius(30),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: TextField(
+          controller: controller,
+          style: TextStyle(
+            fontSize: ResponsiveHelper.fontSize(14),
+            color: AppColors.black,
+          ),
+          decoration: InputDecoration(
+            hintText: AppStrings.searchByName.tr,
+            hintStyle: TextStyle(
               fontSize: ResponsiveHelper.fontSize(14),
-              fontWeight: FontWeight.w500,
-              color: AppColors.black,
+              color: Colors.grey,
+            ),
+            prefixIcon: Icon(
+              Icons.search,
+              color: Colors.grey,
+              size: ResponsiveHelper.iconSize(20),
+            ),
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.symmetric(
+              vertical: ResponsiveHelper.padding(14),
             ),
           ),
-          SizedBox(height: ResponsiveHelper.height(8)),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(
-                ResponsiveHelper.borderRadius(30),
-              ),
-            ),
-            child: TextField(
-              controller: controller,
-              style: TextStyle(
-                fontSize: ResponsiveHelper.fontSize(14),
-                color: AppColors.black,
-              ),
-              decoration: InputDecoration(
-                hintText: AppStrings.searchByName.tr,
-                hintStyle: TextStyle(
-                  fontSize: ResponsiveHelper.fontSize(14),
-                  color: Colors.grey,
-                ),
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: Colors.grey,
-                  size: ResponsiveHelper.iconSize(20),
-                ),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: ResponsiveHelper.padding(14),
-                ),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -58,20 +59,24 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: ResponsiveHelper.height(8)),
-            _buildHeader(),
-            SizedBox(height: ResponsiveHelper.height(16)),
-            AddMemberSearchBar(controller: _searchController),
-            SizedBox(height: ResponsiveHelper.height(20)),
-            Expanded(child: _buildList()),
-            _buildAddButton(),
-          ],
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.primaryBackgroundGradient),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: ResponsiveHelper.height(8)),
+              _buildHeader(),
+              SizedBox(height: ResponsiveHelper.height(16)),
+              AddMemberSearchBar(controller: _searchController),
+              SizedBox(height: ResponsiveHelper.height(20)),
+              Expanded(child: _buildList()),
+
+              _buildAddButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -79,12 +84,19 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
 
   Widget _buildHeader() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(8)),
+      padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(16)),
       child: Row(
         children: [
-          IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: Icon(Icons.arrow_back, color: AppColors.black),
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(Icons.arrow_back, color: AppColors.black),
+            ),
           ),
           Expanded(
             child: Center(
@@ -98,7 +110,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
               ),
             ),
           ),
-          SizedBox(width: ResponsiveHelper.width(48)),
+          SizedBox(width: ResponsiveHelper.width(40)),
         ],
       ),
     );
@@ -134,29 +146,61 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
         );
       }
 
-      return ListView.separated(
-        physics: const AlwaysScrollableScrollPhysics(),
+      return Padding(
         padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(20)),
-        itemCount: list.length,
-        separatorBuilder: (_, __) =>
-            SizedBox(height: ResponsiveHelper.height(12)),
-        itemBuilder: (context, index) {
-          final SearchMemberModel member = list[index];
-
-          return Obx(() => AddMemberTile(       // ✅ এই Obx টা নতুন
-            name: member.nickName,
-            avatarUrl: ImageHandler.imagesHandle(
-              member.avatar?.isNotEmpty == true
-                  ? member.avatar!
-                  : AppConst.unknown,
-              isProfile: true,
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFFE8EEF5),
+                Color(0xFFD3DEE9),
+              ],
             ),
-            rating: null,
-            isSelected: _controller.isSelected(member.id),  // এখন reactive
-            onTap: () => _controller.toggleSelect(member.id),
-            onCheckChanged: (_) => _controller.toggleSelect(member.id),
-          ));
-        },
+            borderRadius: BorderRadius.circular(
+              ResponsiveHelper.borderRadius(20),
+            ),
+            border: Border.all(color: Colors.white.withOpacity(0.6)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 16,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: ListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveHelper.padding(16),
+              vertical: ResponsiveHelper.padding(8),
+            ),
+            itemCount: list.length,
+            separatorBuilder: (_, __) => Divider(
+              color: Colors.grey.shade200,
+              height: 1,
+              indent: ResponsiveHelper.width(60),
+            ),
+            itemBuilder: (context, index) {
+              final SearchMemberModel member = list[index];
+
+              return Obx(() => AddMemberTile(       // ✅ এই Obx টা নতুন
+                name: member.nickName,
+                avatarUrl: ImageHandler.imagesHandle(
+                  member.avatar?.isNotEmpty == true
+                      ? member.avatar!
+                      : AppConst.unknown,
+                  isProfile: true,
+                ),
+                rating: null,
+                isSelected: _controller.isSelected(member.id),  // এখন reactive
+                onTap: () => _controller.toggleSelect(member.id),
+                onCheckChanged: (_) => _controller.toggleSelect(member.id),
+              ));
+            },
+          ),
+        ),
       );
     });
   }
@@ -176,38 +220,18 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
           final bool isBusy = chatController.isAddingMember.value;
           final int selectedCount = _controller.selectedIds.length;
 
-          return ElevatedButton(
-            onPressed: (selectedCount == 0 || isBusy) ? null : _onAddMember,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.blue,
-              disabledBackgroundColor: AppColors.blue,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                  ResponsiveHelper.borderRadius(30),
-                ),
-              ),
-            ),
-            child: isBusy
-                ? const SizedBox(
-              width: 22,
-              height: 22,
-              child: CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 2.5,
-              ),
-            )
-                : Text(
-              selectedCount == 0
-                  ? AppStrings.addMember.tr
-                  : '${AppStrings.addMember.tr} ($selectedCount)',
-              style: GoogleFonts.inter(
-                fontSize: ResponsiveHelper.fontSize(16),
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-              ),
-            ),
-          );
+
+          return CustomGradientButton(
+
+
+            label:        selectedCount == 0
+                    ? AppStrings.addMember.tr
+                    : '${AppStrings.addMember.tr} ($selectedCount)',
+
+
+            onPressed:_onAddMember);
+
+
 
 
 

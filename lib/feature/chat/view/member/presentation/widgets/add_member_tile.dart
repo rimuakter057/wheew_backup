@@ -25,24 +25,10 @@ class AddMemberTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
         padding: EdgeInsets.symmetric(
-          horizontal: ResponsiveHelper.padding(16),
-          vertical: ResponsiveHelper.padding(12),
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(
-            ResponsiveHelper.borderRadius(12),
-          ),
-          border: Border.all(color: Colors.grey.shade200, width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          vertical: ResponsiveHelper.padding(6),
         ),
         child: Row(
           children: [
@@ -95,14 +81,45 @@ class AddMemberTile extends StatelessWidget {
                 ],
               ),
             ),
-            Checkbox(
-              value: isSelected,
-              activeColor: AppColors.blue,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4),
+            GestureDetector(
+              onTap: () => onCheckChanged(!isSelected),
+              child: Container(
+                width: ResponsiveHelper.width(22),
+                height: ResponsiveHelper.width(22),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: isSelected
+                      ? LinearGradient(
+                          colors: [AppColors.blue, AppColors.darBlue],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        )
+                      : null,
+                  color: isSelected ? null : Colors.transparent,
+                  border: Border.all(
+                    color: isSelected
+                        ? AppColors.blue
+                        : Colors.grey.shade400,
+                    width: 1.5,
+                  ),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: AppColors.blue.withOpacity(0.3),
+                            blurRadius: 6,
+                            offset: const Offset(0, 3),
+                          ),
+                        ]
+                      : null,
+                ),
+                child: isSelected
+                    ? Icon(
+                        Icons.check,
+                        size: ResponsiveHelper.iconSize(14),
+                        color: Colors.white,
+                      )
+                    : null,
               ),
-              side: BorderSide(color: Colors.grey.shade400, width: 1.5),
-              onChanged: onCheckChanged,
             ),
           ],
         ),
