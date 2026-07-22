@@ -34,8 +34,9 @@ import 'package:platchatapp/feature/profile/view/screens/profile_screen.dart';
 import '../../feature/chat/view/group/presentation/screens/group_member_screen.dart';
 import '../../feature/chat/view/group/presentation/screens/group_message_screen.dart';
 import '../../feature/chat/view/message/presentation/screens/send_message_request.dart';
+
 import '../../feature/splash/splash_screen.dart';
-import '../../feature/auth/view/welcome_screen.dart';
+import '../../feature/welcome/presentation/screens/welcome_screen.dart';
 import '../../feature/auth/repository/auth_controller.dart';
 import '../../main.dart';
 

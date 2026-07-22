@@ -5,19 +5,24 @@ import 'package:go_router/go_router.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
 import '../../../../../core/router/routes_name.dart';
 import '../../../../../core/service/api_url.dart';
+import '../../../../../core/service/storage_service.dart';
 import '../../../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../../../language/language_controller.dart';
+import '../../../../../utils/app_const/app_const.dart';
 import '../../../../../utils/assets_path/assets_path.dart';
 import '../../../../../utils/color/app_colors.dart';
 import '../../../../../utils/language/app_string.dart';
+import '../../../../chat/view/message/controller/message_controller.dart';
 import '../../../../faq/presentation/screens/faq_screen.dart';
+import '../../../../notification/controller/notification_controller.dart';
 import '../../../../privacy_policy/help_suppoor_screen.dart';
 import '../../../../privacy_policy/privacy_policy_screen.dart';
 import '../../../../terms_condition/web_view_screen.dart';
 import '../../../repository/profile_controller.dart';
 import '../share_link_dialog.dart';
 
-Widget buildMenuItems({
+/// ── Account & Settings ──────────────────────────────────────────────────
+Widget buildAccountSettingsItems({
   required BuildContext context,
   required ProfileController profileController,
   required LanguageController languageController,
@@ -38,6 +43,41 @@ Widget buildMenuItems({
       'subtitle': AppStrings.usefulNumbersSubtitle.tr,
       'onTap': () {
         context.pushNamed(RouteName.usefulMemberScreen);
+      },
+    },
+  ];
+
+  return Column(
+    children: [
+      ..._buildItemTiles(items),
+      _buildLanguageDropdown(
+        context: context,
+        languageController: languageController,
+      ),
+    ],
+  );
+}
+
+/// ── Support & Legal ─────────────────────────────────────────────────────
+Widget buildSupportLegalItems({required BuildContext context}) {
+  final List<Map<String, dynamic>> items = [
+    {
+      'icon': AssetsPath.help,
+      'title': AppStrings.helpSupport.tr,
+      'subtitle': AppStrings.helpSupportSubtitle.tr,
+      'onTap': () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => HelpSupportScreen()),
+        );
+      },
+    },
+    {
+      'icon': AssetsPath.faq,
+      'title': AppStrings.faq.tr,
+      'subtitle': AppStrings.faqSubtitle.tr,
+      'onTap': () {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => FaqScreen()));
       },
     },
     {
@@ -65,25 +105,6 @@ Widget buildMenuItems({
       },
     },
     {
-      'icon': AssetsPath.help,
-      'title': AppStrings.helpSupport.tr,
-      'subtitle': AppStrings.helpSupportSubtitle.tr,
-      'onTap': () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => HelpSupportScreen()),
-        );
-      },
-    },
-    {
-      'icon': AssetsPath.faq,
-      'title': AppStrings.faq.tr,
-      'subtitle': AppStrings.faqSubtitle.tr,
-      'onTap': () {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => FaqScreen()));
-      },
-    },
-    {
       'icon': AssetsPath.share,
       'title': AppStrings.shareLink.tr,
       'subtitle': AppStrings.shareLinkSubtitle.tr,
@@ -106,111 +127,163 @@ Widget buildMenuItems({
         context.pushNamed(RouteName.block);
       },
     },
+  ];
+
+  return Column(children: _buildItemTiles(items, showLastDivider: false));
+}
+
+/// ── Account Actions ─────────────────────────────────────────────────────
+Widget buildAccountActionsItems({required BuildContext context}) {
+  final List<Map<String, dynamic>> items = [
     {
       'icon': AssetsPath.remove,
       'title': AppStrings.delete.tr,
       'subtitle': AppStrings.deleteAccountSubtitle.tr,
+      'iconColor': AppColors.errorColor,
+      'titleColor': AppColors.errorColor,
       'onTap': () {
         context.pushNamed(RouteName.delete);
       },
     },
+    {
+      'icon': null,
+      'materialIcon': Icons.logout,
+      'title': AppStrings.logOut.tr,
+      'subtitle': AppStrings.logOutSubtitle.tr,
+      'iconColor': AppColors.errorColor,
+      'titleColor': AppColors.black,
+      'onTap': () => _handleLogout(context),
+    },
   ];
 
-  return Column(
-    children: [
-      ...items.map(
-        (item) => Column(
-          children: [
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: SvgPicture.asset(
-                item['icon'],
-                width: ResponsiveHelper.iconSize(24),
-                height: ResponsiveHelper.iconSize(24),
-                colorFilter: const ColorFilter.mode(
-                  // Color(0xFF445C92),
-                  Color(0xFF005CB1),
-                  BlendMode.srcIn,
+  return Column(children: _buildItemTiles(items, showLastDivider: false));
+}
+
+Future<void> _handleLogout(BuildContext context) async {
+  await SharePrefsHelper.remove(AppConst.token);
+  await SharePrefsHelper.remove(AppConst.userID);
+  await SharePrefsHelper.remove(AppConst.userData);
+  await SharePrefsHelper.remove(AppConst.licenceId);
+  await SharePrefsHelper.remove(AppConst.nickName);
+  await SharePrefsHelper.remove(AppConst.avatar);
+  await SharePrefsHelper.remove(AppConst.loginUser);
+  await SharePrefsHelper.remove(AppConst.loginPass);
+  await SharePrefsHelper.remove(AppConst.licenseNoVerified);
+  await SharePrefsHelper.setBool(AppConst.isLoggedIn, false);
+
+  // Clear the previous account's notification/message-request badges so
+  // the next login doesn't briefly show stale data before its own fetch lands.
+  if (Get.isRegistered<NotificationController>()) {
+    final notificationController = Get.find<NotificationController>();
+    notificationController.notifications.clear();
+    notificationController.unreadCount.value = 0;
+  }
+  if (Get.isRegistered<MessageController>()) {
+    final messageController = Get.find<MessageController>();
+    messageController.messageRequests.clear();
+    messageController.totalRequestsCount.value = 0;
+  }
+
+  if (context.mounted) {
+    context.goNamed(RouteName.welcome);
+  }
+}
+
+List<Widget> _buildItemTiles(
+  List<Map<String, dynamic>> items, {
+  bool showLastDivider = true,
+}) {
+  return List.generate(items.length, (index) {
+    final item = items[index];
+    final bool isLast = index == items.length - 1;
+    final Color iconColor = item['iconColor'] ?? const Color(0xFF005CB1);
+    final Color titleColor = item['titleColor'] ?? Colors.black87;
+
+    return Column(
+      children: [
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: item['icon'] != null
+              ? SvgPicture.asset(
+                  item['icon'],
+                  width: ResponsiveHelper.iconSize(24),
+                  height: ResponsiveHelper.iconSize(24),
+                  colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+                )
+              : Icon(
+                  item['materialIcon'] as IconData,
+                  color: iconColor,
+                  size: ResponsiveHelper.iconSize(24),
                 ),
-              ),
-              title: Text(
-                item['title'],
-                style: TextStyle(
-                  fontSize: ResponsiveHelper.fontSize(16),
-                  color: Colors.black87,
-                ),
-              ),
-              subtitle: Text(
-                item['subtitle'],
-                style: context.bodyLarge.copyWith(
-                  fontSize: ResponsiveHelper.fontSize(12),
-                  color: AppColors.black.withOpacity(0.6),
-                ),
-              ),
-              trailing: Icon(
-                Icons.chevron_right,
-                color: AppColors.black.withOpacity(0.6),
-              ),
-              onTap: item['onTap'],
+          title: Text(
+            item['title'],
+            style: TextStyle(
+              fontSize: ResponsiveHelper.fontSize(16),
+              color: titleColor,
             ),
-            Divider(height: 1, color: AppColors.divider),
-          ],
+          ),
+          subtitle: Text(
+            item['subtitle'],
+            style: TextStyle(
+              fontSize: ResponsiveHelper.fontSize(12),
+              color: AppColors.black.withOpacity(0.6),
+            ),
+          ),
+          trailing: Icon(
+            Icons.chevron_right,
+            color: AppColors.black.withOpacity(0.6),
+          ),
+          onTap: item['onTap'],
         ),
-      ),
-      _buildLanguageDropdown(
-        context: context,
-        languageController: languageController,
-      ),
-    ],
-  );
+        if (!isLast || showLastDivider)
+          Divider(height: 1, color: AppColors.divider),
+      ],
+    );
+  });
 }
 
 Widget _buildLanguageDropdown({
   required BuildContext context,
   required LanguageController languageController,
 }) {
-  return Column(
-    children: [
-      ListTile(
-        contentPadding: EdgeInsets.zero,
-        leading: Icon(
-          Icons.translate,
-          size: ResponsiveHelper.iconSize(24),
-          color: AppColors.blue,
-        ),
-        title: Text(
-          AppStrings.language.tr,
-          style: context.titleSmall.copyWith(
-            fontSize: ResponsiveHelper.fontSize(16),
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        subtitle: Text(
-          AppStrings.changeAppLanguage.tr,
-          style: context.bodyLarge.copyWith(
-            fontSize: ResponsiveHelper.fontSize(12),
-            color: AppColors.black.withOpacity(0.6),
-          ),
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Obx(
-              () => Text(
-                languageController.currentLanguageDisplay,
-                style: TextStyle(
-                  fontSize: ResponsiveHelper.fontSize(12),
-                  color: Color(0xFF005CB1),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            Icon(Icons.chevron_right, size: ResponsiveHelper.iconSize(20)),
-          ],
-        ),
-        onTap: () => _showLanguageBottomSheet(context),
+  return ListTile(
+    contentPadding: EdgeInsets.zero,
+    leading: Icon(
+      Icons.translate,
+      size: ResponsiveHelper.iconSize(24),
+      color: AppColors.blue,
+    ),
+    title: Text(
+      AppStrings.language.tr,
+      style: context.titleSmall.copyWith(
+        fontSize: ResponsiveHelper.fontSize(16),
+        fontWeight: FontWeight.w600,
       ),
-    ],
+    ),
+    subtitle: Text(
+      AppStrings.changeAppLanguage.tr,
+      style: context.bodyLarge.copyWith(
+        fontSize: ResponsiveHelper.fontSize(12),
+        color: AppColors.black.withOpacity(0.6),
+      ),
+    ),
+    trailing: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Obx(
+          () => Text(
+            languageController.currentLanguageDisplay,
+            style: TextStyle(
+              fontSize: ResponsiveHelper.fontSize(12),
+              color: const Color(0xFF005CB1),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        Icon(Icons.chevron_right, size: ResponsiveHelper.iconSize(20)),
+      ],
+    ),
+    onTap: () => _showLanguageBottomSheet(context),
   );
 }
 

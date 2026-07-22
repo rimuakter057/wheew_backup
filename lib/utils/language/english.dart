@@ -5,11 +5,13 @@ final Map<String, String> english = {
   AppStrings.home: "Home",
   AppStrings.parking: "Parking",
   AppStrings.chatNav: "Chat",
-
+  AppStrings.getStarted: "Get Started",
+  AppStrings.alreadyHaveAccount: "Already have an account?",
   AppStrings.accountAndSettings: "Account & Settings",
   AppStrings.unknown: "Unknown",
   AppStrings.vehicleModel: "Vehicle Model:",
-
+  AppStrings.welcomeTitle1: "DRIVE.\nCHAT.\nPARK.\nBREATHE.",
+  AppStrings.welcomeSubtitle1: "Connect with nearby drivers using just a license plate.",
   AppStrings.tapOnTheMapToSelectParkingLocation:
   "Tap on the map to select a parking location.",
   AppStrings.addParkingSpot: "Add Parking Spot",
@@ -31,6 +33,7 @@ final Map<String, String> english = {
   AppStrings.signIn: 'Sign In',
   AppStrings.signUp: 'Sign Up',
   AppStrings.logIn: 'Log In',
+  AppStrings.startYourJourney: "Let's Start Your Journey",
 
   AppStrings.doNotAccount: "Don't have an account?",
   AppStrings.alreadyAccount1: "Already have account?",
@@ -608,6 +611,11 @@ AppStrings.group:"Group",
 
   AppStrings.deleteAccountSubtitle:
   "Permanently delete your account.",
+
+  AppStrings.supportAndLegal: "Support & Legal",
+  AppStrings.accountActions: "Account Actions",
+  AppStrings.logOutSubtitle: "Sign out of your account.",
+  AppStrings.personalInfoTitle: "Personal Info",
 
   AppStrings.changeAppLanguage:"Change app language.",
 

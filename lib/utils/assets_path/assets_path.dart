@@ -25,7 +25,19 @@ class AssetsPath {
   static const String insurance = '${_iconsBase}insurance.png';
   static const String license = '${_iconsBase}license.png';
   static const String scanCommon = '${_iconsBase}scan_common.svg';
+  static const String scannerNav = '${_iconsBase}scanner_nav.svg';
   static const String scanOcr = '${_iconsBase}scan_ocr.png';
+  static const String global = '${_iconsBase}global.svg';
+  static const String profileLogin = '${_iconsBase}profile_login.svg';
+  static const String passwordLogin = '${_iconsBase}password_login.svg';
+  static const String emailSignUp = '${_iconsBase}email_sign_up.svg';
+  static const String licenseNumberSignUp =
+      '${_iconsBase}license_number_sign_up.svg';
+  static const String ownerIcon = '${_iconsBase}owner_icon.svg';
+  static const String driverIcon = '${_iconsBase}driver_icon.svg';
+  static const String carInspectionIcon = '${_iconsBase}car_inspection_icon.svg';
+  static const String carInsuranceIcon = '${_iconsBase}car_insurance_icon.svg';
+  static const String carTaxIcon = '${_iconsBase}car_text_icon.svg';
 
 
   ///==============================================
@@ -56,6 +68,7 @@ class AssetsPath {
 
   // Images
   static const String person0 = '${_imagesBase}person0.png';
+  static const String onboardingScreen = '${_imagesBase}onboarding_screen.png';
   static const String person1 = '${_imagesBase}person1.png';
   static const String person2 = '${_imagesBase}person2.png';
   static const String person3 = '${_imagesBase}person3.png';

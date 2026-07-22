@@ -5,6 +5,8 @@ class AppStrings {
   static const String chatNav = 'chat_nav';
 
 
+  static const String getStarted = "get_started";
+  static const String alreadyHaveAccount = "already_have_account";
 
   static const String accountAndSettings = 'account_and_settings';
   static const String unknown = 'unknown';
@@ -40,6 +42,7 @@ class AppStrings {
   static const String signIn = 'sign_in';
   static const String signUp = 'sign_up';
   static const String logIn = 'log_in';
+  static const String startYourJourney = 'start_your_journey';
 
 
   static const String doNotAccount = 'do_not_account';
@@ -623,7 +626,8 @@ class AppStrings {
   static const String welcomeTitle = 'your_license_plate_your_chat';
   static const String welcomeSubtitle= 'welcome_subtitle';
 
-
+  static const String welcomeTitle1 = 'welcome_title';
+  static const String welcomeSubtitle1= 'welcome_subtitle_one';
   // -------- Password Validation --------
 
   static const String passwordMustBeAtLeast8Characters =
@@ -670,6 +674,10 @@ class AppStrings {
   static const String blockedUsersSubtitle = "blocked_users_subtitle";
   static const String deleteAccountSubtitle = "delete_account_subtitle";
   static const String changeAppLanguage = "change_language";
+  static const String supportAndLegal = "support_and_legal";
+  static const String accountActions = "account_actions";
+  static const String logOutSubtitle = "log_out_subtitle";
+  static const String personalInfoTitle = "personal_info_title";
 
 
   // -------- Added during localization --------

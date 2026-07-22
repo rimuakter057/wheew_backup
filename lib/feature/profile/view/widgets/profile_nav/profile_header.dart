@@ -17,7 +17,6 @@ import 'package:platchatapp/feature/scan/controller/qr_card_webview.dart';
 import 'package:platchatapp/feature/scan/presentation/widget/download_qr_code.dart';
 import 'package:platchatapp/main.dart';
 
-import '../../../../../helper/common_container/common_container.dart';
 import '../../../../../helper/custom_image/custom_image.dart';
 import '../../../../../utils/assets_path/assets_path.dart';
 
@@ -43,6 +42,140 @@ class ProfileHeaderCard extends StatelessWidget {
       user?.country,
     ].where((e) => e != null && e.isNotEmpty).join(", ");
 
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildTopRow(context, user, avatarUrl, isVerified, location),
+        SizedBox(height: ResponsiveHelper.height(16)),
+        SizedBox(
+          height: ResponsiveHelper.height(44),
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              _buildDocumentChip(
+                icon: AssetsPath.profileOneIcon,
+                label: AppStrings.driversLicense.tr,
+                days: _daysUntilExpiry(user, 'LICENSE'),
+              ),
+              SizedBox(width: ResponsiveHelper.width(10)),
+              _buildDocumentChip(
+                icon: AssetsPath.profileTwoIcon,
+                label: AppStrings.carTax.tr,
+                days: _daysUntilExpiry(user, 'TAX'),
+              ),
+              SizedBox(width: ResponsiveHelper.width(10)),
+              _buildDocumentChip(
+                icon: AssetsPath.profileThreeIcon,
+                label: AppStrings.carInspection.tr,
+                days: _daysUntilExpiry(user, 'CAR_INSPECTION'),
+              ),
+              SizedBox(width: ResponsiveHelper.width(10)),
+              _buildDocumentChip(
+                icon: AssetsPath.profileFourIcon,
+                label: AppStrings.carInsurance.tr,
+                days: _daysUntilExpiry(user, 'INSURANCE'),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDocumentChip({
+    required String icon,
+    required String label,
+    required int? days,
+  }) {
+    return Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: ResponsiveHelper.padding(12),
+          vertical: ResponsiveHelper.padding(10),
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.6),
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.borderRadius(14),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CustomImage(
+              imageSrc: icon,
+              width: ResponsiveHelper.iconSize(18),
+              height: ResponsiveHelper.iconSize(18),
+            ),
+            SizedBox(width: ResponsiveHelper.width(6)),
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(11),
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.black,
+                ),
+              ),
+            ),
+            if (days != null) ...[
+              SizedBox(width: ResponsiveHelper.width(6)),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveHelper.padding(6),
+                  vertical: ResponsiveHelper.padding(2),
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.blue.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '$days',
+                  style: GoogleFonts.poppins(
+                    fontSize: ResponsiveHelper.fontSize(11),
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.blue,
+                  ),
+                ),
+              ),
+              SizedBox(width: ResponsiveHelper.width(4)),
+              Text(
+                AppStrings.daysLeft.tr,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(10),
+                  color: const Color(0xFF555555),
+                ),
+              ),
+            ],
+          ],
+        ),
+    );
+  }
+
+  /// Reads daysUntilExpiry for the given document type from the user's
+  /// normalized `documents` list (ported from the legacy profile screen).
+  int? _daysUntilExpiry(UserModel? user, String docType) {
+    if (user == null) return null;
+    for (final doc in user.documents) {
+      final type = (doc['document_type'] ?? '').toString().toUpperCase();
+      if (type == docType) {
+        final days = doc['daysUntilExpiry'];
+        if (days is num) return days.toInt();
+      }
+    }
+    return null;
+  }
+
+  Widget _buildTopRow(
+    BuildContext context,
+    UserModel? user,
+    String? avatarUrl,
+    bool? isVerified,
+    String location,
+  ) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
 
@@ -96,9 +229,7 @@ class ProfileHeaderCard extends StatelessWidget {
                   height: ResponsiveHelper.height(14)),
 
               /// Vehicle Model
-              CommonContainer(child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+              Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
@@ -106,7 +237,7 @@ class ProfileHeaderCard extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       fontSize:
                       ResponsiveHelper.fontSize(13),
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                       color: const Color(0xFF555555),
                     ),
                   ),
@@ -121,7 +252,7 @@ class ProfileHeaderCard extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),),
+              ),
 
               SizedBox(
                   height: ResponsiveHelper.height(18)),

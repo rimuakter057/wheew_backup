@@ -27,10 +27,12 @@ import 'package:platchatapp/utils/language/app_string.dart';
 import '../../../core/router/route_path.dart';
 import '../../../core/router/routes_name.dart';
 import '../../../core/service/api_checker.dart';
+import '../../../helper/custom_gradient_button/custom_gradient_button.dart';
+import '../../../helper/custom_image/custom_image.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
+import '../../../utils/assets_path/assets_path.dart';
 import '../repository/auth_controller.dart';
 import '../../../share/widgets/text_field/custom_text_field.dart';
-import '../../../share/widgets/button/primary_button.dart';
 import '../../../utils/toast_message/toast_message.dart';
 import '../repository/auth_repository.dart';
 import '../repository/country_list.dart';
@@ -99,53 +101,131 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
+  OutlineInputBorder _fieldBorder(Color color, double width) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(28)),
+      borderSide: BorderSide(color: color, width: width),
+    );
+  }
+
+  Widget _fieldIcon(String asset) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: ResponsiveHelper.padding(14),
+        right: ResponsiveHelper.padding(8),
+      ),
+      child: CustomImage(
+        imageSrc: asset,
+        width: ResponsiveHelper.iconSize(16),
+        height: ResponsiveHelper.iconSize(16),
+      ),
+    );
+  }
+
+  BoxConstraints get _fieldIconConstraints => BoxConstraints(
+    minWidth: ResponsiveHelper.width(40),
+    minHeight: ResponsiveHelper.height(16),
+  );
+
+  InputDecoration _dropdownDecoration() {
+    return InputDecoration(
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: ResponsiveHelper.padding(16),
+        vertical: ResponsiveHelper.padding(16),
+      ),
+      filled: true,
+      fillColor: Colors.white.withOpacity(0.55),
+      border: _fieldBorder(Colors.transparent, 1),
+      enabledBorder: _fieldBorder(Colors.transparent, 1),
+      focusedBorder: _fieldBorder(AppColors.blue, 1.5),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () {
-            context.pop();
-          },
-          icon: Icon(Icons.arrow_back, size: ResponsiveHelper.iconSize(24)),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: AppColors.primaryBackgroundGradient,
         ),
-        title: Text(
-          AppStrings.signUp.tr,
-          style: GoogleFonts.poppins(
-            color: Colors.black,
-            fontSize: ResponsiveHelper.fontSize(18),
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(ResponsiveHelper.padding(16)),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // SizedBox(height: ResponsiveHelper.spacing(30)),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveHelper.padding(24),
+              vertical: ResponsiveHelper.padding(12),
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Back button + title
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: GestureDetector(
+                          onTap: () {
+                            context.pop();
+                          },
+                          child: Container(
+                            width: ResponsiveHelper.width(40),
+                            height: ResponsiveHelper.height(40),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              size: ResponsiveHelper.iconSize(20),
+                              color: AppColors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Text(
+                        AppStrings.signUp.tr,
+                        style: GoogleFonts.poppins(
+                          color: AppColors.primaryText,
+                          fontSize: ResponsiveHelper.fontSize(18),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
 
-              /// Nickname
-              CustomTextField(
-                controller: nicknameController,
-                title: AppStrings.nickName.tr,
-                hintText: AppStrings.typeHere1.tr,
-                inputFormatters: [
-                  TextInputFormatter.withFunction((oldValue, newValue) {
-                    return newValue.copyWith(text: newValue.text.toLowerCase());
-                  }),
-                ],
+                  SizedBox(height: ResponsiveHelper.spacing(24)),
 
-                validator: (value) => (value == null || value.trim().isEmpty)
-                    ? AppStrings.nicknameIsRequired.tr
-                    : null,
-              ),
+                  /// Nickname
+                  CustomTextField(
+                    controller: nicknameController,
+                    title: AppStrings.nickName.tr,
+                    hintText: AppStrings.typeHere1.tr,
+                    fillColor: Colors.white.withOpacity(0.55),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: ResponsiveHelper.padding(16),
+                      vertical: ResponsiveHelper.padding(16),
+                    ),
+                    prefixIconConstraints: _fieldIconConstraints,
+                    prefixIcon: _fieldIcon(AssetsPath.profileLogin),
+                    border: _fieldBorder(Colors.transparent, 1),
+                    enabledBorder: _fieldBorder(Colors.transparent, 1),
+                    focusedBorder: _fieldBorder(AppColors.blue, 1.5),
+                    inputFormatters: [
+                      TextInputFormatter.withFunction((oldValue, newValue) {
+                        return newValue.copyWith(text: newValue.text.toLowerCase());
+                      }),
+                    ],
 
-              SizedBox(height: ResponsiveHelper.spacing(16)),
+                    validator: (value) => (value == null || value.trim().isEmpty)
+                        ? AppStrings.nicknameIsRequired.tr
+                        : null,
+                  ),
+
+                  SizedBox(height: ResponsiveHelper.spacing(16)),
 
               /// Designation
               Column(
@@ -167,39 +247,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
                     ),
                     isExpanded: true,
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: ResponsiveHelper.padding(12),
-                        vertical: ResponsiveHelper.padding(16),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          ResponsiveHelper.borderRadius(12),
-                        ),
-                        borderSide: BorderSide(
-                          color: Colors.blue,
-                          width: ResponsiveHelper.borderWidth(1.5),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          ResponsiveHelper.borderRadius(12),
-                        ),
-                        borderSide: BorderSide(
-                          color: Colors.blue,
-                          width: ResponsiveHelper.borderWidth(2),
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          ResponsiveHelper.borderRadius(12),
-                        ),
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                          width: ResponsiveHelper.borderWidth(1.5),
-                        ),
-                      ),
-                    ),
+                    decoration: _dropdownDecoration(),
                     items: [
                       DropdownMenuItem(
                         value: 'owner',
@@ -257,6 +305,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: licenseController,
                 title: AppStrings.licenseNumber.tr,
                 hintText: AppStrings.typeHere.tr,
+                fillColor: Colors.white.withOpacity(0.55),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveHelper.padding(16),
+                  vertical: ResponsiveHelper.padding(16),
+                ),
+                prefixIconConstraints: _fieldIconConstraints,
+                prefixIcon: _fieldIcon(AssetsPath.licenseNumberSignUp),
+                border: _fieldBorder(Colors.transparent, 1),
+                enabledBorder: _fieldBorder(Colors.transparent, 1),
+                focusedBorder: _fieldBorder(AppColors.blue, 1.5),
 
                 // validator: (value) {
                 //   if (value == null || value.trim().isEmpty) {
@@ -303,6 +361,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 title: AppStrings.email.tr + " (" + AppStrings.onlyForRecovery.tr + ")",
                 hintText: AppStrings.typeHere1.tr,
                 keyboardType: TextInputType.emailAddress,
+                fillColor: Colors.white.withOpacity(0.55),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveHelper.padding(16),
+                  vertical: ResponsiveHelper.padding(16),
+                ),
+                prefixIconConstraints: _fieldIconConstraints,
+                prefixIcon: _fieldIcon(AssetsPath.emailSignUp),
+                border: _fieldBorder(Colors.transparent, 1),
+                enabledBorder: _fieldBorder(Colors.transparent, 1),
+                focusedBorder: _fieldBorder(AppColors.blue, 1.5),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return AppStrings.emailIsRequired.tr;
@@ -316,96 +384,84 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
               SizedBox(height: ResponsiveHelper.spacing(16)),
 
-              /// Country
-              // CustomTextField(
-              //   controller: countryController,
-              //   title: AppStrings.country.tr,
-              //   hintText: AppStrings.typeHere.tr,
-              //   validator: (value) => (value == null || value.trim().isEmpty)
-              //       ? AppStrings.countryIsRequired.tr
-              //       : null,
-              // ),
-              Column(
+              /// Country + City
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    AppStrings.country.tr,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.secondaryText,
-                      fontSize: ResponsiveHelper.fontSize(14),
+                  /// Country
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppStrings.country.tr,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.secondaryText,
+                            fontSize: ResponsiveHelper.fontSize(14),
+                          ),
+                        ),
+                        SizedBox(height: ResponsiveHelper.spacing(8)),
+                        DropdownButtonFormField2<String>(
+                          value: selectedCountry,
+                          isExpanded: true,
+                          hint: Text(
+                            AppStrings.select.tr,
+                            style: TextStyle(
+                              fontSize: ResponsiveHelper.fontSize(16),
+                            ),
+                          ),
+                          decoration: _dropdownDecoration(),
+                          items: countries
+                              .map(
+                                (country) => DropdownMenuItem(
+                                  value: country,
+                                  child: Text(country, style: context.bodySmall),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedCountry = value;
+                              countryController.text = value ?? '';
+                            });
+                          },
+                          validator: (value) => value == null
+                              ? AppStrings.countryIsRequired.tr
+                              : null,
+                          dropdownStyleData: DropdownStyleData(
+                            maxHeight: 250,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(height: ResponsiveHelper.spacing(8)),
-                  DropdownButtonFormField2<String>(
-                    value: selectedCountry,
-                    isExpanded: true,
-                    hint: Text(
-                      AppStrings.select.tr,
-                      style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
-                    ),
-                    decoration: InputDecoration(
+
+                  SizedBox(width: ResponsiveHelper.width(12)),
+
+                  /// City
+                  Expanded(
+                    child: CustomTextField(
+                      controller: cityController,
+                      title: "${AppStrings.city.tr} (${AppStrings.optional.tr})",
+                      hintText: AppStrings.typeHere.tr,
+                      fillColor: Colors.white.withOpacity(0.55),
                       contentPadding: EdgeInsets.symmetric(
-                        horizontal: ResponsiveHelper.padding(12),
+                        horizontal: ResponsiveHelper.padding(16),
                         vertical: ResponsiveHelper.padding(16),
                       ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          ResponsiveHelper.borderRadius(12),
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          ResponsiveHelper.borderRadius(12),
-                        ),
-                        borderSide: const BorderSide(color: Colors.grey),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          ResponsiveHelper.borderRadius(12),
-                        ),
-                        borderSide: const BorderSide(
-                          color: Colors.blue,
-                          width: 2,
-                        ),
-                      ),
-                    ),
-                    items: countries
-                        .map(
-                          (country) => DropdownMenuItem(
-                            value: country,
-                            child: Text(country, style: context.bodySmall),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedCountry = value;
-                        countryController.text = value ?? '';
-                      });
-                    },
-                    validator: (value) =>
-                        value == null ? AppStrings.countryIsRequired.tr : null,
-                    dropdownStyleData: DropdownStyleData(
-                      maxHeight: 250,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                      border: _fieldBorder(Colors.transparent, 1),
+                      enabledBorder: _fieldBorder(Colors.transparent, 1),
+                      focusedBorder: _fieldBorder(AppColors.blue, 1.5),
                     ),
                   ),
                 ],
               ),
 
-              SizedBox(height: ResponsiveHelper.spacing(16)),
-
-              /// City
-              CustomTextField(
-                controller: cityController,
-                title: "${AppStrings.city.tr} (${AppStrings.optional.tr})",
-                hintText: AppStrings.typeHere.tr,
-
-              ),
               SizedBox(height: ResponsiveHelper.spacing(16)),
 
               /// Password
@@ -414,6 +470,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 title: AppStrings.password.tr,
                 hintText: AppStrings.password.tr,
                 isPassword: true,
+                fillColor: Colors.white.withOpacity(0.55),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveHelper.padding(16),
+                  vertical: ResponsiveHelper.padding(16),
+                ),
+                prefixIconConstraints: _fieldIconConstraints,
+                prefixIcon: _fieldIcon(AssetsPath.passwordLogin),
+                border: _fieldBorder(Colors.transparent, 1),
+                enabledBorder: _fieldBorder(Colors.transparent, 1),
+                focusedBorder: _fieldBorder(AppColors.blue, 1.5),
 
                 // validator: (value) {
                 //   if (value == null || value.trim().isEmpty) {
@@ -465,6 +531,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 title: AppStrings.confirmPassword.tr,
                 hintText: AppStrings.confirmPassword.tr,
                 isPassword: true,
+                fillColor: Colors.white.withOpacity(0.55),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveHelper.padding(16),
+                  vertical: ResponsiveHelper.padding(16),
+                ),
+                prefixIconConstraints: _fieldIconConstraints,
+                prefixIcon: _fieldIcon(AssetsPath.passwordLogin),
+                border: _fieldBorder(Colors.transparent, 1),
+                enabledBorder: _fieldBorder(Colors.transparent, 1),
+                focusedBorder: _fieldBorder(AppColors.blue, 1.5),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return AppStrings.confirmYourPassword.tr;
@@ -490,7 +566,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     height: ResponsiveHelper.height(24),
                     child: Checkbox(
                       value: agree,
-                      activeColor: Colors.green,
+                      activeColor: AppColors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveHelper.borderRadius(5),
+                        ),
+                      ),
                       onChanged: (value) =>
                           setState(() => agree = value ?? false),
                     ),
@@ -568,9 +649,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
-              PrimaryButton(
-                title: AppStrings.continueText.tr,
-                onTap: () async {
+              CustomGradientButton(
+                label: AppStrings.continueText.tr,
+                onPressed: () async {
                   if (!_formKey.currentState!.validate()) {
                     showErrorSnackBar(AppStrings.pleaseFillAllFields.tr);
                     return;
@@ -782,7 +863,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
               ),
-            ],
+                ],
+              ),
+            ),
           ),
         ),
       ),

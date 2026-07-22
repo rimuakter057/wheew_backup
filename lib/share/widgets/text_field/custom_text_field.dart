@@ -44,7 +44,9 @@ class CustomTextField extends StatefulWidget {
     this.fillColor,
     this.contentPadding,
     this.title,
+    this.prefixIconConstraints,
   });
+
 
   final TextEditingController? controller;
   final FocusNode? focusNode;
@@ -69,6 +71,7 @@ class CustomTextField extends StatefulWidget {
 
   final Widget? suffixIcon;
   final Widget? prefixIcon;
+  final BoxConstraints? prefixIconConstraints;
   final Widget? prefix;
   final OutlineInputBorder? border;
 
@@ -154,6 +157,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 ),
                 filled: widget.fillColor != null,
                 prefixIcon: widget.prefixIcon,
+                prefixIconConstraints: widget.prefixIconConstraints,
                 prefix: widget.prefix,
                 suffix: widget.suffix,
                 suffixIcon: shouldObscure

@@ -88,8 +88,8 @@ class CustomGradientButton extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: ResponsiveHelper.fontSize(16),
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.5,
+                      fontWeight: FontWeight.w400,
+                      //letterSpacing: 0.5,
                     ),
                   ),
                   if (suffixIcon != null) ...[

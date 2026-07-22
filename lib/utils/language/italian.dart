@@ -5,8 +5,10 @@ final Map<String, String> italian = {
   AppStrings.home: "Home",
   AppStrings.parking: "Parcheggio",
   AppStrings.chatNav: "Chat",
-
-
+  AppStrings.welcomeTitle1: "GUIDA. CHATTA. PARCHEGGIA. RESPIRA.",
+  AppStrings.welcomeSubtitle1: "Connettiti con i conducenti vicini usando solo una targa.",
+  AppStrings.getStarted: "Inizia",
+  AppStrings.alreadyHaveAccount: "Hai già un account?",
   AppStrings.accountAndSettings: "Account e Impostazioni",
   AppStrings.unknown: "Sconosciuto",
   AppStrings.vehicleModel: "Modello di veicolo: ",
@@ -41,6 +43,7 @@ final Map<String, String> italian = {
   AppStrings.signUp: 'Registrati',
   AppStrings.logIn: 'Accedi',
   AppStrings.signIn: 'Accedi',
+  AppStrings.startYourJourney: "Inizia Il Tuo Viaggio",
 
   AppStrings.doNotAccount: "Non hai un account? ",
   AppStrings.alreadyAccount1: "Hai già un account? ",
@@ -646,6 +649,11 @@ final Map<String, String> italian = {
 
   AppStrings.deleteAccountSubtitle:
   "Elimina definitivamente il tuo account.",
+
+  AppStrings.supportAndLegal: "Supporto e Legale",
+  AppStrings.accountActions: "Azioni Account",
+  AppStrings.logOutSubtitle: "Esci dal tuo account.",
+  AppStrings.personalInfoTitle: "Informazioni Personali",
 
   AppStrings.changeAppLanguage:"Cambia la lingua dell'app.",
 

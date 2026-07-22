@@ -8,12 +8,16 @@ class ProfileTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final bool enabled;
+  final Widget? prefixIcon;
+  final BoxConstraints? prefixIconConstraints;
 
   const ProfileTextField({
     super.key,
     required this.controller,
     required this.hintText,
     this.enabled = true,
+    this.prefixIcon,
+    this.prefixIconConstraints,
   });
 
   @override
@@ -25,6 +29,8 @@ class ProfileTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
+        prefixIcon: prefixIcon,
+        prefixIconConstraints: prefixIconConstraints,
         filled: true,
         // enabled হলে white, disabled হলে grey
         fillColor: enabled ? AppColors.white : AppColors.greyShade.withOpacity(0.3),

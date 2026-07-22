@@ -20,13 +20,15 @@ class CustomUploadCard extends StatelessWidget {
   final String title;
   final String documentType; // 'LICENSE' | 'INSURANCE' | 'TAX'
   final String iconText;
+  final String? iconPath;
   final bool isOwner;
 
   const  CustomUploadCard({
     super.key,
     required this.title,
     required this.documentType,
-    required this.iconText,
+    this.iconText = '',
+    this.iconPath,
     this.isOwner = false,
   });
 
@@ -52,6 +54,7 @@ class CustomUploadCard extends StatelessWidget {
         documentType: documentType,
         ctrl:         controller,
         iconText: iconText,
+        iconPath: iconPath,
         isOwner:      isOwner,
       );
     });
@@ -68,6 +71,7 @@ class _CardShell extends StatelessWidget {
   final String       documentType;
   final UploadDocumentController ctrl;
   final String iconText;
+  final String? iconPath;
   final bool isOwner;
 
   const _CardShell({
@@ -77,7 +81,8 @@ class _CardShell extends StatelessWidget {
     required this.loading,
     required this.documentType,
     required this.ctrl,
-    required this.iconText,
+    this.iconText = '',
+    this.iconPath,
     this.isOwner = false,
   });
 
@@ -139,8 +144,13 @@ class _CardShell extends StatelessWidget {
         child: Row(
           children: [
 
-
-            Text(iconText,style: TextStyle(
+            iconPath != null
+                ? CustomImage(
+                    imageSrc: iconPath!,
+                    width: ResponsiveHelper.iconSize(24),
+                    height: ResponsiveHelper.iconSize(24),
+                  )
+                : Text(iconText,style: TextStyle(
               fontSize: ResponsiveHelper.fontSize(18),
 
             ),),
@@ -269,89 +279,76 @@ class _CardShell extends StatelessWidget {
   Widget _buildTrailing(BuildContext context) {
     switch (state) {
       case _CardState.empty:
-        return Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: ResponsiveHelper.padding(12),
-            vertical:   ResponsiveHelper.padding(6),
-          ),
-          decoration: BoxDecoration(
-            color:        const Color(0xFF2563EB),
-            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(6)),
-          ),
-          child: Row(
-            children: [
-CustomImage(imageSrc: AssetsPath.upload),
-           SizedBox(width: ResponsiveHelper.width(8),),
-              Text(
-                AppStrings.upload.tr,
-                style: GoogleFonts.poppins(
-                  fontSize:   ResponsiveHelper.fontSize(12),
-                  fontWeight: FontWeight.w500,
-                  color:      Colors.white,
-                ),
-              ),
-            ],
-          ),
+        return _gradientPillButton(
+          label: AppStrings.upload.tr,
+          colors: const [AppColors.blue, AppColors.darBlue],
+          onTap: () => _openSheet(context),
         );
 
       case _CardState.uploaded:
-        return GestureDetector(
+        return _gradientPillButton(
+          label: AppStrings.update.tr,
+          colors: const [AppColors.blue, AppColors.darBlue],
           onTap: () => _openSheet(context),
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: ResponsiveHelper.padding(12),
-              vertical:   ResponsiveHelper.padding(6),
-            ),
-            decoration: BoxDecoration(
-              color:        const Color(0xFFDBEAFE),
-              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(6)),
-            ),
-            child: Row(
-              children: [
-                CustomImage(imageSrc: AssetsPath.upload),
-                SizedBox(width: ResponsiveHelper.width(8),),
-
-                Text(
-                  AppStrings.update.tr,
-                  style: GoogleFonts.poppins(
-                    fontSize:   ResponsiveHelper.fontSize(12),
-                    fontWeight: FontWeight.w500,
-                    color:      const Color(0xFF2563EB),
-                  ),
-                ),
-              ],
-            ),
-          ),
         );
 
       case _CardState.expired:
-        return GestureDetector(
+        return _gradientPillButton(
+          label: AppStrings.renew.tr,
+          colors: const [Color(0xFFEF4444), Color(0xFFB91C1C)],
           onTap: () => _openSheet(context),
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: ResponsiveHelper.padding(12),
-              vertical:   ResponsiveHelper.padding(6),
-            ),
-            decoration: BoxDecoration(
-              color:        const Color(0xFFFEE2E2),
-              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(6)),
-            ),
-            child: Row(
-              children: [
-                CustomImage(imageSrc: AssetsPath.upload,imageColor: AppColors.red,),
-                SizedBox(width: ResponsiveHelper.width(8),),
-                Text(
-                  AppStrings.renew.tr,
-                  style: GoogleFonts.poppins(
-                    fontSize:   ResponsiveHelper.fontSize(12),
-                    fontWeight: FontWeight.w500,
-                    color:      const Color(0xFFEF4444),
-                  ),
-                ),
-              ],
-            ),
-          ),
         );
     }
+  }
+
+  Widget _gradientPillButton({
+    required String label,
+    required List<Color> colors,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: ResponsiveHelper.padding(16),
+          vertical:   ResponsiveHelper.padding(8),
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+          gradient: LinearGradient(
+            colors: colors,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: colors.first.withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CustomImage(
+              imageSrc: AssetsPath.upload,
+              imageColor: Colors.white,
+              width: ResponsiveHelper.iconSize(14),
+              height: ResponsiveHelper.iconSize(14),
+            ),
+            SizedBox(width: ResponsiveHelper.width(8)),
+            Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize:   ResponsiveHelper.fontSize(12),
+                fontWeight: FontWeight.w600,
+                color:      Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

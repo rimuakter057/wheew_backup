@@ -97,6 +97,16 @@ class _AppBottomNav extends StatelessWidget {
         child: Row(
           children: [
 
+            /// Parking — floating standalone circle (leftmost)
+            ScanNavItem(
+              icon: AssetsPath.pNav,
+              index: 1,
+              currentIndex: currentIndex,
+              onTap: onTap,
+            ),
+
+            SizedBox(width: ResponsiveHelper.spacing(12)),
+
             Expanded(
               child: Card(
                 margin: EdgeInsets.zero,
@@ -126,7 +136,7 @@ class _AppBottomNav extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          //home-p-chat-profile-scan
+                          //home-scan-chat-profile
                           _NavItem(
                             icon: AssetsPath.homeNav,
                             label: AppStrings.home.tr,
@@ -136,9 +146,9 @@ class _AppBottomNav extends StatelessWidget {
                           ),
 
                           _NavItem(
-                            icon: AssetsPath.pNav,
-                            label: AppStrings.parking.tr,
-                            index: 1,
+                            icon: AssetsPath.scannerNav,
+                            label: AppStrings.scan.tr,
+                            index: 4,
                             currentIndex: currentIndex,
                             onTap: onTap,
                           ),
@@ -163,14 +173,6 @@ class _AppBottomNav extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
-
-            SizedBox(width: ResponsiveHelper.spacing(12)),
-
-            ScanNavItem(
-              index: 4,
-              currentIndex: currentIndex,
-              onTap: onTap,
             ),
 
           ],
@@ -309,12 +311,14 @@ class _NavItem extends StatelessWidget {
 // ─── Scan Nav Item (Standalone Floating Black Button) ─────────────────────────
 
 class ScanNavItem extends StatelessWidget {
+  final String icon;
   final int index;
   final int currentIndex;
   final ValueChanged<int> onTap;
 
   const ScanNavItem({
     super.key,
+    required this.icon,
     required this.index,
     required this.currentIndex,
     required this.onTap,
@@ -365,7 +369,7 @@ class ScanNavItem extends StatelessWidget {
         ),
         child: Center(
           child: SvgPicture.asset(
-            AssetsPath.scanCommon,
+            icon,
             width: ResponsiveHelper.iconSize(26),
             height: ResponsiveHelper.iconSize(26),
             colorFilter: const ColorFilter.mode(

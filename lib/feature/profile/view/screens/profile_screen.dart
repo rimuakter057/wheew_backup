@@ -9,6 +9,9 @@ import 'package:platchatapp/feature/profile/view/widgets/profile_owner/profile_a
 import 'package:platchatapp/feature/profile/view/widgets/profile_owner/profile_textfield.dart';
 import 'package:platchatapp/feature/profile/view/widgets/profile_owner/vehicle-owner.dart';
 import 'package:platchatapp/feature/profile/view/widgets/profile_owner/vehicle_type_dropdown.dart';
+import 'package:platchatapp/helper/common_container/common_container.dart';
+import 'package:platchatapp/helper/custom_image/custom_image.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
 import '../../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../../utils/color/app_colors.dart';
@@ -49,11 +52,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: Text(
-          AppStrings.profile.tr,
+          AppStrings.personalInfoTitle.tr,
           style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
             fontSize: ResponsiveHelper.fontSize(18),
+            color: AppColors.primaryText,
           ),
         ),
         actions: [
@@ -69,264 +75,330 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   controller.isEditing
                       ? AppStrings.save.tr
                       : AppStrings.edit.tr,
-                  style: TextStyle(fontSize: ResponsiveHelper.fontSize(16)),
+                  style: GoogleFonts.poppins(
+                    fontSize: ResponsiveHelper.fontSize(16),
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.blue,
+                  ),
                 ),
               );
             },
           ),
         ],
       ),
-      body: GetBuilder<ProfileController>(
-        builder: (ctrl) {
-          // Profile load হওয়া পর্যন্ত loading দেখাও
-          if (ctrl.isLoading && ctrl.userProfile.value == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: AppColors.primaryBackgroundGradient,
+        ),
+        child: GetBuilder<ProfileController>(
+          builder: (ctrl) {
+            // Profile load হওয়া পর্যন্ত loading দেখাও
+            if (ctrl.isLoading && ctrl.userProfile.value == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          return SingleChildScrollView(
-            padding: EdgeInsets.symmetric(
-              horizontal: ResponsiveHelper.padding(24),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: ResponsiveHelper.spacing(24)),
+            return SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveHelper.padding(24),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: ResponsiveHelper.spacing(16)),
 
-                // ─── Profile Avatar ───────────────────────────────────────
-                ProfileAvatarWidget(controller: ctrl),
+                  // ─── Profile Avatar ───────────────────────────────────────
+                  ProfileAvatarWidget(controller: ctrl),
 
-                SizedBox(height: ResponsiveHelper.spacing(32)),
+                  SizedBox(height: ResponsiveHelper.spacing(28)),
 
-                // ─── Read-only fields ─────────────────────────────────────
-                _label(AppStrings.nickName.tr),
-                SizedBox(height: ResponsiveHelper.spacing(4)),
-                ProfileTextField(
-                  controller: ctrl.nickNameController,
-                  hintText: AppStrings.nickName.tr,
-                  enabled: false, // Nickname কখনো edit হয় না
-                ),
-
-                SizedBox(height: ResponsiveHelper.spacing(20)),
-
-                _label(AppStrings.licenseNumberTitle.tr),
-                SizedBox(height: ResponsiveHelper.spacing(4)),
-                ProfileTextField(
-                  controller: ctrl.licenseController,
-                  hintText: AppStrings.licenseNumber1.tr,
-                  enabled: false, // License কখনো edit হয় না
-                ),
-
-                SizedBox(height: ResponsiveHelper.spacing(20)),
-
-                // Email — Obx দিয়ে কারণ userProfile reactive
-                Obx(() {
-                  final email = ctrl.userProfile.value?.email ?? '';
-                  return Column(
+                  // ─── Nickname + License Number ────────────────────────────
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _label(AppStrings.email.tr),
-                      SizedBox(height: ResponsiveHelper.spacing(4)),
-                      ProfileTextField(
-                        controller: TextEditingController(text: email),
-                        hintText: AppStrings.email.tr,
-                        enabled: false, // Email কখনো edit হয় না
-                      ),
-                    ],
-                  );
-                }),
-
-
-                SizedBox(height: ResponsiveHelper.spacing(20)),
-
-                _label(AppStrings.vehicleType.tr),
-                SizedBox(height: ResponsiveHelper.spacing(4)),
-                GetBuilder<ProfileController>(
-                  id: 'vehicle_fields', // শুধু এই widget rebuild হবে
-                  builder: (ctrl) => VehicleTypeDropdown(
-                    controller: ctrl,
-                    onSelected: (value) =>
-                        ctrl.setVehicleType(value.backendKey),
-                  ),
-                ),
-
-                SizedBox(height: ResponsiveHelper.spacing(20)),
-
-                _label(AppStrings.vehicleModel.tr),
-                SizedBox(height: ResponsiveHelper.spacing(4)),
-                GetBuilder<ProfileController>(
-                  id: 'vehicle_fields',
-                  builder: (controler) => VehicleModelDropdown(
-                    selectedModel: controler.vehicleModelController.text,
-                    onSelected: (value) => controler.setVehicleModel(value),
-                    // Locked once already set; otherwise editable while in edit mode.
-                    enabled: controler.isEditing && !controler.isVehicleModelLocked,
-                  ),
-                ),
-
-                SizedBox(height: ResponsiveHelper.spacing(20)),
-
-                _label(AppStrings.vehicleColor.tr),
-                SizedBox(height: ResponsiveHelper.spacing(4)),
-                GetBuilder<ProfileController>(
-                  id: 'vehicle_fields',
-                  builder: (controller) => ProfileTextField(
-                    controller: controller.vehicleColorController,
-                    hintText: controller.vehicleColorController.text.isEmpty
-                        ? AppStrings.noVehicleColorTapEdit.tr
-                        : AppStrings.vehicleColor.tr,
-                    // Locked once already set; otherwise editable while in edit mode.
-                    enabled: controller.isEditing && !controller.isVehicleColorLocked,
-                  ),
-                ),
-
-                _label(AppStrings.vehicleColor.tr),
-                SizedBox(height: ResponsiveHelper.spacing(8)),
-                GetBuilder<ProfileController>(
-                  id: 'vehicle_fields',
-                  builder: (controller) =>
-                      VehicleColorPicker(controller: controller),
-                ),
-
-                SizedBox(height: ResponsiveHelper.spacing(20)),
-
-                Obx(() {
-                  final uploadCtrl = Get.find<UploadDocumentController>();
-                  if (!uploadCtrl.isFetching.value)
-                    return const SizedBox.shrink();
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      top: ResponsiveHelper.spacing(12),
-                      bottom: ResponsiveHelper.spacing(8),
-                    ),
-                    child: const LinearProgressIndicator(minHeight: 3),
-                  );
-                }),
-
-                // SizedBox(height: ResponsiveHelper.spacing(18)),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        AppStrings.verifyAccountBecomeWheewer.tr,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.poppins(
-                          fontSize: ResponsiveHelper.fontSize(16),
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.textBlack,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _label(AppStrings.nickName.tr),
+                            SizedBox(height: ResponsiveHelper.spacing(4)),
+                            ProfileTextField(
+                              controller: ctrl.nickNameController,
+                              hintText: AppStrings.nickName.tr,
+                              enabled: false, // Nickname কখনো edit হয় না
+                              prefixIcon: _fieldIcon(AssetsPath.profileLogin),
+                              prefixIconConstraints: _fieldIconConstraints,
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    SizedBox(width: ResponsiveHelper.spacing(8)),
-                  ],
-                ),
-
-                SizedBox(height: ResponsiveHelper.spacing(18)),
-
-                ///owner ship document==========================================================
-                const VehicleOwnershipStatusWidget(),
-                SizedBox(height: ResponsiveHelper.spacing(8)),
-                CustomUploadCard(
-                  title: AppStrings.vehicleOwnershipStatus.tr,
-                  documentType: 'VEHICLE_OWNERSHIP',
-                  iconText: "📋",
-                  isOwner: true,
-
-                  //  iconPath: AssetsPath.otherUpload,
-                ),
-
-                SizedBox(height: ResponsiveHelper.spacing(32)),
-
-                ///  Document Upload Section===========================================================
-                Text(
-                  AppStrings.uploadDocuments.tr,
-                  style: GoogleFonts.poppins(
-                    fontSize: ResponsiveHelper.fontSize(16),
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textBlack,
-                  ),
-                ),
-
-                SizedBox(height: ResponsiveHelper.spacing(12)),
-
-                CustomUploadCard(
-                  title: AppStrings.driversLicense.tr,
-                  documentType: 'LICENSE',
-                  iconText: "🪪",
-                ),
-
-                SizedBox(height: ResponsiveHelper.spacing(12)),
-                CustomUploadCard(
-                  title: AppStrings.carInspection.tr,
-                  documentType: 'CAR_INSPECTION',
-
-                  iconText: "📋",
-                ),
-                SizedBox(height: ResponsiveHelper.spacing(12)),
-
-                CustomUploadCard(
-                  title: AppStrings.carInsurance.tr,
-                  documentType: 'INSURANCE',
-                  iconText: "📋",
-                ),
-                SizedBox(height: ResponsiveHelper.spacing(12)),
-                CustomUploadCard(
-                  title: AppStrings.carTax.tr,
-                  documentType: 'TAX',
-                  iconText: "📋",
-                ),
-
-                SizedBox(height: ResponsiveHelper.spacing(12)),
-
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 12.0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(
-                      0xFFE6EFF9,
-                    ), // হালকা নীল ব্যাকগ্রাউন্ড কালার
-                    borderRadius: BorderRadius.circular(
-                      12.0,
-                    ), // রাউন্ডেড কর্নার
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment
-                        .start,
-                    children: [
-                      // ওয়ার্নিং বা অ্যালার্ট আইকন
-                      const Icon(
-                        Icons.warning_rounded,
-                        color: Color(
-                          0xFF1E6BBB,
-                        ), // টেক্সটের সাথে মিলানো নীল কালার
-                        size: 20.0,
-                      ),
-                      SizedBox(
-                        height: ResponsiveHelper.height(24),
-                      ),
-                      // টেক্সট সেকশন
+                      SizedBox(width: ResponsiveHelper.width(12)),
                       Expanded(
-                        child: Text(
-                          AppStrings.makeSureAllDocuments.tr,
-                          style: context.bodySmall.copyWith(
-                            color: AppColors.blue,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _label(AppStrings.licenseNumberTitle.tr),
+                            SizedBox(height: ResponsiveHelper.spacing(4)),
+                            ProfileTextField(
+                              controller: ctrl.licenseController,
+                              hintText: AppStrings.licenseNumber1.tr,
+                              enabled: false, // License কখনো edit হয় না
+                              prefixIcon: _fieldIcon(
+                                AssetsPath.licenseNumberSignUp,
+                              ),
+                              prefixIconConstraints: _fieldIconConstraints,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: ResponsiveHelper.spacing(20)),
+
+                  // Email — Obx দিয়ে কারণ userProfile reactive
+                  Obx(() {
+                    final email = ctrl.userProfile.value?.email ?? '';
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _label(AppStrings.email.tr),
+                        SizedBox(height: ResponsiveHelper.spacing(4)),
+                        ProfileTextField(
+                          controller: TextEditingController(text: email),
+                          hintText: AppStrings.email.tr,
+                          enabled: false, // Email কখনো edit হয় না
+                          prefixIcon: _fieldIcon(AssetsPath.emailSignUp),
+                          prefixIconConstraints: _fieldIconConstraints,
+                        ),
+                      ],
+                    );
+                  }),
+
+                  SizedBox(height: ResponsiveHelper.spacing(28)),
+
+                  // ─── Vehicle Details ──────────────────────────────────────
+                  _sectionTitle(AppStrings.vehicleDetails.tr),
+                  SizedBox(height: ResponsiveHelper.spacing(12)),
+                  CommonContainer(
+                    bgColor: const Color(0xFFD8E0EB),
+                    borderRadius: 16,
+                    horizontalPadding: 16,
+                    verticalPadding: 16,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _label(AppStrings.vehicleType.tr),
+                        SizedBox(height: ResponsiveHelper.spacing(4)),
+                        GetBuilder<ProfileController>(
+                          id: 'vehicle_fields', // শুধু এই widget rebuild হবে
+                          builder: (ctrl) => VehicleTypeDropdown(
+                            controller: ctrl,
+                            onSelected: (value) =>
+                                ctrl.setVehicleType(value.backendKey),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
 
-                SizedBox(height: ResponsiveHelper.spacing(78)),
-              ],
-            ),
-          );
-        },
+                        SizedBox(height: ResponsiveHelper.spacing(16)),
+                        Divider(color: AppColors.divider, height: 1),
+                        SizedBox(height: ResponsiveHelper.spacing(16)),
+
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _label(AppStrings.vehicleModel.tr),
+                                  SizedBox(
+                                    height: ResponsiveHelper.spacing(4),
+                                  ),
+                                  GetBuilder<ProfileController>(
+                                    id: 'vehicle_fields',
+                                    builder: (controler) =>
+                                        VehicleModelDropdown(
+                                          selectedModel:
+                                              controler
+                                                  .vehicleModelController
+                                                  .text,
+                                          onSelected: (value) =>
+                                              controler.setVehicleModel(value),
+                                          // Locked once already set; otherwise editable while in edit mode.
+                                          enabled:
+                                              controler.isEditing &&
+                                              !controler.isVehicleModelLocked,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(width: ResponsiveHelper.width(12)),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _label(AppStrings.vehicleColor.tr),
+                                  SizedBox(
+                                    height: ResponsiveHelper.spacing(4),
+                                  ),
+                                  GetBuilder<ProfileController>(
+                                    id: 'vehicle_fields',
+                                    builder: (controller) =>
+                                        controller.isEditing
+                                        ? VehicleColorPicker(
+                                            controller: controller,
+                                          )
+                                        : _VehicleColorSummary(
+                                            colorName: controller
+                                                .vehicleColorController
+                                                .text,
+                                          ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: ResponsiveHelper.spacing(28)),
+
+                  Obx(() {
+                    final uploadCtrl = Get.find<UploadDocumentController>();
+                    if (!uploadCtrl.isFetching.value) {
+                      return const SizedBox.shrink();
+                    }
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        bottom: ResponsiveHelper.spacing(8),
+                      ),
+                      child: const LinearProgressIndicator(minHeight: 3),
+                    );
+                  }),
+
+                  Text(
+                    AppStrings.verifyAccountBecomeWheewer.tr,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(14),
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.secondaryText,
+                    ),
+                  ),
+
+                  SizedBox(height: ResponsiveHelper.spacing(16)),
+
+                  ///owner ship document==========================================================
+                  _sectionTitle(AppStrings.vehicleOwnershipStatus.tr),
+                  SizedBox(height: ResponsiveHelper.spacing(12)),
+                  const VehicleOwnershipStatusWidget(),
+                  SizedBox(height: ResponsiveHelper.spacing(8)),
+                  CustomUploadCard(
+                    title: AppStrings.vehicleOwnershipStatus.tr,
+                    documentType: 'VEHICLE_OWNERSHIP',
+                    iconPath: AssetsPath.ownerIcon,
+                    isOwner: true,
+                  ),
+
+                  SizedBox(height: ResponsiveHelper.spacing(28)),
+
+                  ///  Document Upload Section===========================================================
+                  _sectionTitle(AppStrings.uploadDocuments.tr),
+
+                  SizedBox(height: ResponsiveHelper.spacing(12)),
+
+                  CustomUploadCard(
+                    title: AppStrings.driversLicense.tr,
+                    documentType: 'LICENSE',
+                    iconPath: AssetsPath.driverIcon,
+                  ),
+
+                  SizedBox(height: ResponsiveHelper.spacing(12)),
+                  CustomUploadCard(
+                    title: AppStrings.carInspection.tr,
+                    documentType: 'CAR_INSPECTION',
+
+                    iconPath: AssetsPath.carInspectionIcon,
+                  ),
+                  SizedBox(height: ResponsiveHelper.spacing(12)),
+
+                  CustomUploadCard(
+                    title: AppStrings.carInsurance.tr,
+                    documentType: 'INSURANCE',
+                    iconPath: AssetsPath.carInsuranceIcon,
+                  ),
+                  SizedBox(height: ResponsiveHelper.spacing(12)),
+                  CustomUploadCard(
+                    title: AppStrings.carTax.tr,
+                    documentType: 'TAX',
+                    iconPath: AssetsPath.carTaxIcon,
+                  ),
+
+                  SizedBox(height: ResponsiveHelper.spacing(16)),
+
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 12.0,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE6EFF9), // হালকা নীল ব্যাকগ্রাউন্ড কালার
+                      borderRadius: BorderRadius.circular(12.0), // রাউন্ডেড কর্নার
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // ওয়ার্নিং বা অ্যালার্ট আইকন
+                        const Icon(
+                          Icons.warning_rounded,
+                          color: Color(0xFF1E6BBB), // টেক্সটের সাথে মিলানো নীল কালার
+                          size: 20.0,
+                        ),
+                        SizedBox(width: ResponsiveHelper.width(10)),
+                        // টেক্সট সেকশন
+                        Expanded(
+                          child: Text(
+                            AppStrings.makeSureAllDocuments.tr,
+                            style: context.bodySmall.copyWith(
+                              color: AppColors.blue,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: ResponsiveHelper.spacing(78)),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
+
+  Widget _fieldIcon(String asset) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: ResponsiveHelper.padding(14),
+        right: ResponsiveHelper.padding(8),
+      ),
+      child: CustomImage(
+        imageSrc: asset,
+        width: ResponsiveHelper.iconSize(14),
+        height: ResponsiveHelper.iconSize(14),
+      ),
+    );
+  }
+
+  BoxConstraints get _fieldIconConstraints => BoxConstraints(
+    minWidth: ResponsiveHelper.width(40),
+    minHeight: ResponsiveHelper.height(16),
+  );
 
   // Section label
   Widget _label(String text) => Align(
@@ -334,10 +406,81 @@ class _ProfileScreenState extends State<ProfileScreen> {
     child: Text(
       text,
       style: GoogleFonts.poppins(
-        fontSize: ResponsiveHelper.fontSize(16),
-        fontWeight: FontWeight.w400,
-        color: AppColors.textBlack,
+        fontSize: ResponsiveHelper.fontSize(13),
+        fontWeight: FontWeight.w500,
+        color: AppColors.secondaryText,
       ),
     ),
   );
+
+  Widget _sectionTitle(String text) => Text(
+    text,
+    style: GoogleFonts.poppins(
+      fontSize: ResponsiveHelper.fontSize(16),
+      fontWeight: FontWeight.w600,
+      color: AppColors.primaryText,
+    ),
+  );
+}
+
+/// Compact "● Color Name" summary shown while not editing — the full swatch
+/// grid (VehicleColorPicker) only appears in edit mode.
+class _VehicleColorSummary extends StatelessWidget {
+  final String colorName;
+
+  const _VehicleColorSummary({required this.colorName});
+
+  static const Map<String, Color> _swatches = {
+    'Bianco': AppColors.bianco,
+    'Nero': AppColors.nero,
+    'Grigio / Argento': AppColors.grigioArgento,
+    'Blu': AppColors.blu,
+    'Rosso': AppColors.rosso,
+    'Verde': AppColors.verde,
+    'Marrone / Bronzo': AppColors.marroneBronzo,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final bool hasColor = colorName.isNotEmpty;
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: ResponsiveHelper.padding(14),
+        vertical: ResponsiveHelper.padding(14),
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.greyShade.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+        border: Border.all(color: AppColors.greyShade),
+      ),
+      child: Row(
+        children: [
+          if (hasColor) ...[
+            Container(
+              width: ResponsiveHelper.iconSize(16),
+              height: ResponsiveHelper.iconSize(16),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _swatches[colorName] ?? Colors.grey,
+                border: Border.all(color: Colors.white, width: 1),
+              ),
+            ),
+            SizedBox(width: ResponsiveHelper.width(8)),
+          ],
+          Expanded(
+            child: Text(
+              hasColor ? colorName : AppStrings.noVehicleColorTapEdit.tr,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: ResponsiveHelper.fontSize(14),
+                color: hasColor ? Colors.black87 : Colors.grey,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
