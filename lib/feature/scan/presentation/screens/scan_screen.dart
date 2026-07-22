@@ -4,15 +4,13 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/scan/controller/scan_controller.dart';
-import 'package:platchatapp/feature/scan/presentation/widget/my_qr_view.dart';
-import 'package:platchatapp/feature/scan/presentation/widget/scan_painter.dart';
 import 'package:platchatapp/feature/scan/presentation/widget/scan_user_sheet.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/toast_message/toast_message.dart';
 
-import '../../../profile/repository/profile_controller.dart';
 import '../widget/scan_view_widget.dart';
 
 class ScanScreen extends StatefulWidget {
@@ -25,12 +23,7 @@ class ScanScreen extends StatefulWidget {
 class _ScanScreenState extends State<ScanScreen>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   final ScanController scanController = Get.put(ScanController());
-  final ProfileController profileController = Get.put(
-    ProfileController(),
-    permanent: false,
-  );
 
-  int _tabIndex = 0;
   bool _scanned = false;
   bool _isLoading = false;
 
@@ -68,7 +61,7 @@ class _ScanScreenState extends State<ScanScreen>
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
       _scannerController.stop();
-    } else if (state == AppLifecycleState.resumed && _tabIndex == 0) {
+    } else if (state == AppLifecycleState.resumed) {
       _scannerController.start();
     }
   }
@@ -81,23 +74,10 @@ class _ScanScreenState extends State<ScanScreen>
     super.dispose();
   }
 
-  // ── Tab switch ───────────────────────────────────────────────────────────────
-
-  void _switchTab(int index) {
-    setState(() => _tabIndex = index);
-    if (index == 0) {
-      _scanned = false;
-      _scannerController.start();
-    } else {
-      _scannerController.stop();
-      scanController.getQrCode();
-    }
-  }
-
   // ── QR detected ──────────────────────────────────────────────────────────────
 
   void _onDetect(BarcodeCapture capture) async {
-    if (_scanned || _tabIndex != 0) return;
+    if (_scanned) return;
     final String? code = capture.barcodes.firstOrNull?.rawValue;
     if (code == null || code.isEmpty) return;
     if (scanController.isScanning.value) return;
@@ -123,6 +103,19 @@ class _ScanScreenState extends State<ScanScreen>
     setState(() => _isLoading = false);
   }
 
+  // ── Back navigation ─────────────────────────────────────────────────────────
+  // Reached either via a pushed GoRouter route (chat list's scan icon) or via
+  // the bottom nav's Scan tab, which just swaps mainNavIndex without pushing
+  // a route — so there may be nothing for GoRouter to pop back to.
+
+  void _goBack() {
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      mainNavIndex.value = previousMainNavIndex.value;
+    }
+  }
+
   // ── Bottom sheet ─────────────────────────────────────────────────────────────
 
   Future<void> _showScannedUserSheet(Map<String, dynamic> data) async {
@@ -143,41 +136,31 @@ class _ScanScreenState extends State<ScanScreen>
 
   @override
   Widget build(BuildContext context) {
-        return Scaffold(
-      backgroundColor: const Color(0xFF121212),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: const BoxDecoration(gradient: AppColors.primaryBackgroundGradient),
+        child: Stack(
+          fit: StackFit.expand,
           children: [
-            SizedBox(height: ResponsiveHelper.spacing(8)),
-Row(children: [
-  IconButton(onPressed: (){
-    context.pop();
-  }, icon: Icon(Icons.arrow_back_ios,color: AppColors.white,)),
-],),
-            _buildTabToggle(),
-            Expanded(
-              child: _tabIndex == 0
-                  ? ScanView(
-                      scannerController: _scannerController,
-                      lineAnimation: _lineAnimation,
-                      isScanned: _scanned,
-                      isLoading: _isLoading,
-                      onDetect: _onDetect,
-                    )
-                  : GetBuilder<ProfileController>(
-                builder: (controller) {
-                  final user = controller.userProfile.value;
-                  return MyQrView(
-                    scanController: scanController,
-                    avatarUrl: user?.avatar,
-                    name: user?.nickName,
-                    rating: user?.rating,
-                    margin: ResponsiveHelper.symmetric(horizontal: 16,vertical: 0),
-                  );
-                },
-              ),
-
+            ScanView(
+              scannerController: _scannerController,
+              lineAnimation: _lineAnimation,
+              isScanned: _scanned,
+              isLoading: _isLoading,
+              onDetect: _onDetect,
+            ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: SafeArea(bottom: false, child: _buildHeader()),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: SafeArea(top: false, child: _buildBottomControls()),
             ),
           ],
         ),
@@ -185,29 +168,128 @@ Row(children: [
     );
   }
 
-  // ── Tab Toggle ───────────────────────────────────────────────────────────────
+  // ── Header: circular back button + centered title ────────────────────────
 
-  Widget _buildTabToggle() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(24)),
-      height: ResponsiveHelper.height(44),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
-        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(30)),
+  Widget _buildHeader() {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: ResponsiveHelper.padding(16),
+        vertical: ResponsiveHelper.padding(8),
       ),
       child: Row(
         children: [
-          ScanTabButton(
-            label: AppStrings.scanQr.tr,
-            isActive: _tabIndex == 0,
-            onTap: () => _switchTab(0),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.7),
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: _goBack,
+              icon: Icon(Icons.arrow_back_ios_new, color: AppColors.black, size: 18),
+            ),
           ),
-          ScanTabButton(
-            label: AppStrings.myQr.tr,
-            isActive: _tabIndex == 1,
-            onTap: () => _switchTab(1),
+          Expanded(
+            child: Center(
+              child: Text(
+                AppStrings.scanQrCode.tr,
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(16),
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.black,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: ResponsiveHelper.width(40)),
+        ],
+      ),
+    );
+  }
+
+  // ── Bottom controls: torch / rescan / flip camera ─────────────────────────
+
+  Widget _buildBottomControls() {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: ResponsiveHelper.padding(40),
+        vertical: ResponsiveHelper.padding(20),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          ValueListenableBuilder<MobileScannerState>(
+            valueListenable: _scannerController,
+            builder: (context, state, _) {
+              final bool torchOn = state.torchState == TorchState.on;
+              return _CircleIconButton(
+                icon: torchOn ? Icons.flash_on_rounded : Icons.flash_off_rounded,
+                onTap: () => _scannerController.toggleTorch(),
+              );
+            },
+          ),
+          GestureDetector(
+            onTap: () {
+              setState(() => _scanned = false);
+              _scannerController.start();
+            },
+            child: Container(
+              width: ResponsiveHelper.width(64),
+              height: ResponsiveHelper.width(64),
+              padding: EdgeInsets.all(ResponsiveHelper.width(4)),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.35),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.white, Color(0xFFDCE2E9)],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          _CircleIconButton(
+            icon: Icons.cameraswitch_outlined,
+            onTap: () => _scannerController.switchCamera(),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ─── Small circular icon button used in the bottom control bar ───────────────
+
+class _CircleIconButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _CircleIconButton({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: ResponsiveHelper.width(48),
+        height: ResponsiveHelper.width(48),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.7),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: AppColors.black, size: ResponsiveHelper.iconSize(22)),
       ),
     );
   }

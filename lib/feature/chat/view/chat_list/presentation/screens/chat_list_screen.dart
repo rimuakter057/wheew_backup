@@ -16,6 +16,7 @@ import 'package:platchatapp/feature/chat/view/widgets/chat_list_screen_shimmer.d
 import 'package:platchatapp/feature/chat/view/widgets/chat_tile.dart';
 import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
+import 'package:platchatapp/feature/scan/presentation/widget/scan_options_card.dart';
 import 'package:platchatapp/helper/data_converter/data_converter.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -98,22 +99,20 @@ class _ChatListScreenState extends State<ChatListScreen> {
         onScanTap: () async {
           final result = await showModalBottomSheet<String>(
             context: context,
+            backgroundColor: Colors.transparent,
+            barrierColor: Colors.black.withOpacity(0.35),
+            isScrollControlled: true,
             builder: (context) {
               return SafeArea(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.document_scanner),
-                      title: Text(AppStrings.ocrScanner.tr),
-                      onTap: () => Navigator.pop(context, 'ocr'),
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.qr_code_scanner),
-                      title: Text(AppStrings.scanQrCode.tr),
-                      onTap: () => Navigator.pop(context, 'scan'),
-                    ),
-                  ],
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveHelper.padding(20),
+                    vertical: ResponsiveHelper.padding(12),
+                  ),
+                  child: ScanOptionsCard(
+                    onOcrTap: () => Navigator.pop(context, 'ocr'),
+                    onQrTap: () => Navigator.pop(context, 'scan'),
+                  ),
                 ),
               );
             },

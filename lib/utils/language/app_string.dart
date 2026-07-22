@@ -579,9 +579,12 @@ class AppStrings {
   // -------- Notification Screen --------
   static const String notifications = 'notifications';
   static const String markAllRead = 'mark all read';
+  static const String deleteNotifications = 'delete notifications';
   static const String deleteAllNotifications = 'delete all notifications confirm';
 
   static const String justNow = 'just now';
+  static const String today = 'today';
+  static const String yesterday = 'yesterday';
   static const String notificationNotYet = 'Notification Not Yet';
   static const String markAsRead = 'mark as read';
   static const String read = 'read';
@@ -615,6 +618,8 @@ class AppStrings {
 
   static const String ocrScanner = 'ocr_scanner';
   static const String scanQrCode = 'scan_qr_code';
+  static const String ocrScannerSubtitle = 'ocr_scanner_subtitle';
+  static const String scanQrCodeSubtitle = 'scan_qr_code_subtitle';
 
 
 

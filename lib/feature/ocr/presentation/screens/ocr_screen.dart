@@ -262,19 +262,28 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
               ),
               child: Row(
                 children: [
-                  const SizedBox(width: 8),
-                  Row(
-                    children: [
-                      IconButton(onPressed: (){
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
                         context.pop();
-                      }, icon: Icon(Icons.arrow_back_ios,color: AppColors.white,)),
-                      SizedBox(width: ResponsiveHelper.width(12),),
-                      Text(
+                      },
+                      icon: Icon(Icons.arrow_back_ios_new, color: AppColors.white, size: 18),
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Text(
                           AppStrings.plateScanner.tr,
                           style: context.titleMedium.copyWith(color: AppColors.white)
                       ),
-                    ],
+                    ),
                   ),
+                  SizedBox(width: ResponsiveHelper.width(40)),
                 ],
               ),
             ),
@@ -345,41 +354,47 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
                   // Manual capture/scan button
                   GestureDetector(
                     onTap: _autoScan ? null : _manualScan,
-                    child: AnimatedOpacity(
+                    child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
-                      opacity: _autoScan ? 0.3 : 1.0,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        decoration: BoxDecoration(
-                          gradient:  LinearGradient(
-                            colors: [
-                              AppColors.blue, AppColors.blue],
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.greenAccent.withOpacity(0.2),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child:  Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.camera_alt, color: Colors.white),
-                            SizedBox(width: 8),
-                            Text(
-                              AppStrings.scanNow.tr,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1.1,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      decoration: BoxDecoration(
+                        gradient: _autoScan
+                            ? null
+                            : LinearGradient(
+                                colors: [AppColors.blue, AppColors.darBlue],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ),
+                        color: _autoScan ? Colors.grey.shade700 : null,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: _autoScan
+                            ? null
+                            : [
+                                BoxShadow(
+                                  color: AppColors.blue.withOpacity(0.3),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.camera_alt,
+                            color: _autoScan ? Colors.grey.shade400 : Colors.white,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            AppStrings.scanNow.tr,
+                            style: TextStyle(
+                              color: _autoScan ? Colors.grey.shade400 : Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.1,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -426,7 +441,7 @@ class ScannerOverlayPainter extends CustomPainter {
 
     // Glowing border for scanner cutout
     final borderPaint = Paint()
-      ..color = Colors.greenAccent
+      ..color = AppColors.blue
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3;
 
@@ -493,7 +508,7 @@ class _ScanLineState extends State<ScanLine> with SingleTickerProviderStateMixin
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: Colors.greenAccent.withOpacity(0.8),
+                  color: AppColors.blue.withOpacity(0.8),
                   blurRadius: 10,
                   spreadRadius: 3,
                 ),
@@ -501,7 +516,7 @@ class _ScanLineState extends State<ScanLine> with SingleTickerProviderStateMixin
               gradient: const LinearGradient(
                 colors: [
                   Colors.transparent,
-                  Colors.greenAccent,
+                  AppColors.blue,
                   Colors.transparent,
                 ],
               ),

@@ -3,7 +3,6 @@ import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 
 /// ─── Corner Painter ───────────────────────────────────────────────────────────
 
@@ -135,61 +134,6 @@ class CameraErrorWidget extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// ─── Tab Button ───────────────────────────────────────────────────────────────
-
-class ScanTabButton extends StatelessWidget {
-  final String label;
-  final bool isActive;
-  final VoidCallback onTap;
-
-  const ScanTabButton({
-    super.key,
-    required this.label,
-    required this.isActive,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          margin: const EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            color: isActive ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.circular(
-              ResponsiveHelper.borderRadius(26),
-            ),
-            boxShadow: isActive
-                ? [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ]
-                : [],
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: GoogleFonts.poppins(
-                fontSize: ResponsiveHelper.fontSize(13),
-                fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-                color: isActive
-                    ? const Color(0xFF1A1A2E)
-                    : Colors.white.withOpacity(0.5),
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

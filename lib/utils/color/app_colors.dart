@@ -18,6 +18,19 @@ class AppColors {
     ],
   );
 
+  static const Color notificationBg = Color(0xFFE5EBF2);
+  static const Color notificationBoxBorder = Color(0xFFC8D3E3);
+  static const Color notificationBoxColor = Color(0xFFECF1F6);
+
+  static const LinearGradient notificationBoxGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Colors.white,
+      notificationBoxColor,
+    ],
+  );
+
   static const Color blue = Color(0xFF1070B7);
   static const Color darBlue = Color(0xFF014495);
   static const Color blueShadeConBg = Color(0xFFBDC9D7);

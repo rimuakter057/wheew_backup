@@ -545,9 +545,12 @@ final Map<String, String> italian = {
   // -------- Notification Screen --------
   AppStrings.notifications: "Notifiche",
   AppStrings.markAllRead: "Segna tutto come letto",
+  AppStrings.deleteNotifications: "Elimina notifiche",
   AppStrings.deleteAllNotifications: "Sei sicuro di voler eliminare tutte le notifiche?",
 
   AppStrings.justNow: "proprio ora",
+  AppStrings.today: "Oggi",
+  AppStrings.yesterday: "Ieri",
   AppStrings.notificationNotYet: "Nessuna Notifica Ancora",
   AppStrings.markAsRead: "Segna come letto",
   AppStrings.read: "Letto",
@@ -582,6 +585,8 @@ final Map<String, String> italian = {
 
   AppStrings.ocrScanner: "Scanner OCR",
   AppStrings.scanQrCode: "Scansiona Codice QR",
+  AppStrings.ocrScannerSubtitle: "Estrai testo dalle immagini all'istante",
+  AppStrings.scanQrCodeSubtitle: "Scansiona qualsiasi codice QR con la fotocamera",
 
   AppStrings.downloading: "Download in corso...",
   AppStrings.download: "Scarica",

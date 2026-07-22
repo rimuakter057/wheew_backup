@@ -45,50 +45,44 @@ class _NotificationScreenState extends State<NotificationScreen> {
     super.dispose();
   }
 
-  // ── Icon per eventType ────────────────────────────────────────
-  IconData _getIcon(String type) {
-    switch (type.toUpperCase()) {
-      case 'CHAT_MESSAGE':
-        return Icons.chat_bubble_outline_rounded;
-      case 'RATING':
-        return Icons.star_outline_rounded;
-      case 'GROUP':
-        return Icons.group_outlined;
-      case 'SYSTEM':
-        return Icons.info_outline_rounded;
-      default:
-        return Icons.notifications_none_rounded;
-    }
-  }
-
-  Color _getIconColor(String type) {
-    switch (type.toUpperCase()) {
-      case 'CHAT_MESSAGE':
-        return AppColors.blue;
-      case 'RATING':
-        return Colors.amber;
-      case 'GROUP':
-        return Colors.green;
-      case 'SYSTEM':
-        return Colors.orange;
-      default:
-        return Colors.grey.shade500;
-    }
-  }
-
   String _formatTime(String sentAt) {
     try {
       final dt = DateTime.parse(sentAt).toLocal();
       final now = DateTime.now();
       final diff = now.difference(dt);
       if (diff.inMinutes < 1) return AppStrings.justNow.tr;
-      if (diff.inMinutes < 60) return '${diff.inMinutes}m';
-      if (diff.inHours < 24) return '${diff.inHours}h';
+      if (diff.inMinutes < 60) return '${diff.inMinutes} min ago';
+      if (diff.inHours < 24) return '${diff.inHours} hour ago';
       if (diff.inDays < 7) return '${diff.inDays}d';
       return '${dt.day}/${dt.month}/${dt.year}';
     } catch (_) {
       return '';
     }
+  }
+
+  // ── Group notifications by date (Today / Yesterday / d-M-yyyy) ─
+  String _sectionLabel(String sentAt) {
+    try {
+      final dt = DateTime.parse(sentAt).toLocal();
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final date = DateTime(dt.year, dt.month, dt.day);
+      final diff = today.difference(date).inDays;
+      if (diff <= 0) return AppStrings.today.tr;
+      if (diff == 1) return AppStrings.yesterday.tr;
+      return '${dt.day}/${dt.month}/${dt.year}';
+    } catch (_) {
+      return AppStrings.today.tr;
+    }
+  }
+
+  List<MapEntry<String, List<NotificationEvent>>> _groupByDate(
+      List<NotificationEvent> items) {
+    final Map<String, List<NotificationEvent>> map = {};
+    for (final n in items) {
+      map.putIfAbsent(_sectionLabel(n.sentAt), () => []).add(n);
+    }
+    return map.entries.toList();
   }
 
   // ── Delete all confirmation ───────────────────────────────────
@@ -100,16 +94,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
           borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
         ),
         title: Text(
-        //  AppStrings.deleteAllNotifications.tr,
-          AppStrings.delete.tr,
-
+          AppStrings.deleteNotifications.tr,
           style: GoogleFonts.inter(
             fontSize: ResponsiveHelper.fontSize(16),
             fontWeight: FontWeight.w600,
           ),
         ),
         content: Text(
-         AppStrings.deleteAllNotifications.tr,
+          AppStrings.deleteAllNotifications.tr,
           style: GoogleFonts.inter(
             fontSize: ResponsiveHelper.fontSize(14),
             color: Colors.grey.shade600,
@@ -135,7 +127,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
               child: CircularProgressIndicator(strokeWidth: 2, color: Colors.red),
             )
                 : Text(
-              AppStrings.delete.tr,
+              AppStrings.deleteNotifications.tr,
               style: const TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
             ),
           )),
@@ -145,209 +137,189 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   @override
-
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
-      // appBar: AppBar(
-      //   backgroundColor: Colors.white,
-      //   elevation: 0,
-      //   leading: IconButton(onPressed: (){
-      //     context.pop();
-      //
-      //   }, icon: Icon(Icons.arrow_back_ios,color: AppColors.black,)),
-      //   title: Obx(() => Row(
-      //     children: [
-      //       Text(
-      //      AppStrings.notification.tr,
-      //         style: TextStyle(
-      //           color: Colors.black87,
-      //           fontWeight: FontWeight.w600,
-      //           fontSize: ResponsiveHelper.titleFontSize(18),
-      //         ),
-      //       ),
-      //       if (controller.unreadCount.value > 0) ...[
-      //         SizedBox(width: ResponsiveHelper.spacing(8)),
-      //         Container(
-      //           padding: EdgeInsets.symmetric(
-      //             horizontal: ResponsiveHelper.spacing(8),
-      //             vertical: ResponsiveHelper.spacing(2),
-      //           ),
-      //           decoration: BoxDecoration(
-      //             color: AppColors.blue,
-      //             borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-      //           ),
-      //           child: Text(
-      //             '${controller.unreadCount.value}',
-      //             style: GoogleFonts.inter(
-      //               color: Colors.white,
-      //               fontSize: ResponsiveHelper.fontSize(11),
-      //               fontWeight: FontWeight.w600,
-      //             ),
-      //           ),
-      //         ),
-      //       ],
-      //     ],
-      //   )),
-      //   actions: [
-      //     // Mark all read
-      //     Obx(() {
-      //       if (controller.unreadCount.value == 0) return const SizedBox.shrink();
-      //       return TextButton(
-      //         onPressed: controller.markAllAsRead,
-      //         child: Text(
-      //         AppStrings.markAllRead.tr,
-      //           style: TextStyle(
-      //             color: AppColors.blue,
-      //             fontSize: ResponsiveHelper.fontSize(13),
-      //           ),
-      //         ),
-      //       );
-      //     }),
-      //     // Delete all
-      //     Obx(() {
-      //       if (controller.notifications.isEmpty) return const SizedBox.shrink();
-      //       return IconButton(
-      //         onPressed: _showDeleteAllDialog,
-      //         icon: Icon(Icons.delete_sweep_outlined, color: Colors.red.shade400),
-      //       );
-      //     }),
-      //   ],
-      // ),
-
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        titleSpacing: 0,
-        leading: IconButton(
-          onPressed: () {
-            context.pop();
-          },
-          icon: Icon(Icons.arrow_back_ios, color: AppColors.black),
-        ),
-        title: Obx(
-              () => Row(
-            mainAxisSize: MainAxisSize.min,
+    return Container(
+      decoration: const BoxDecoration(color: AppColors.notificationBg),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
             children: [
-              Flexible(
-                child: Text(
-                  AppStrings.notification.tr,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w600,
-                    fontSize: ResponsiveHelper.titleFontSize(18),
-                  ),
-                ),
-              ),
-              if (controller.unreadCount.value > 0) ...[
-                SizedBox(width: ResponsiveHelper.spacing(8)),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: ResponsiveHelper.spacing(8),
-                    vertical: ResponsiveHelper.spacing(2),
-                  ),
-                  decoration: BoxDecoration(
+              SizedBox(height: ResponsiveHelper.height(8)),
+              _buildHeader(),
+              SizedBox(height: ResponsiveHelper.height(12)),
+              Expanded(
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(
+                        child: CircularProgressIndicator(color: AppColors.blue));
+                  }
+
+                  if (controller.notifications.isEmpty) {
+                    return _buildEmpty();
+                  }
+
+                  final grouped = _groupByDate(controller.notifications);
+
+                  return RefreshIndicator(
                     color: AppColors.blue,
-                    borderRadius:
-                    BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-                  ),
-                  child: Text(
-                    '${controller.unreadCount.value}',
-                    style: GoogleFonts.inter(
-                      color: Colors.white,
-                      fontSize: ResponsiveHelper.fontSize(11),
-                      fontWeight: FontWeight.w600,
+                    onRefresh: () => controller.fetchNotifications(refresh: true),
+                    child: ListView(
+                      controller: _scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveHelper.padding(16),
+                      ),
+                      children: [
+                        for (final group in grouped) ...[
+                          Padding(
+                            padding: EdgeInsets.only(
+                              bottom: ResponsiveHelper.spacing(10),
+                              top: ResponsiveHelper.spacing(4),
+                            ),
+                            child: Text(
+                              group.key,
+                              style: GoogleFonts.poppins(
+                                fontSize: ResponsiveHelper.fontSize(16),
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.black,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: AppColors.notificationBoxGradient,
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveHelper.borderRadius(20),
+                              ),
+                              border: Border.all(color: AppColors.notificationBoxBorder),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.04),
+                                  blurRadius: 16,
+                                  offset: const Offset(0, 8),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                for (int i = 0; i < group.value.length; i++) ...[
+                                  _NotificationCard(
+                                    notification: group.value[i],
+                                    formattedTime: _formatTime(group.value[i].sentAt),
+                                    onMarkRead: () =>
+                                        controller.markOneAsRead(group.value[i].id),
+                                    onDelete: () async {
+                                      await controller.deleteOne(group.value[i].id);
+                                      CustomSnackbar.success(
+                                        context: context,
+                                        message: AppStrings.deleteSuccess.tr,
+                                      );
+                                    },
+                                  ),
+                                  if (i != group.value.length - 1)
+                                    Divider(
+                                      height: 1,
+                                      color: Colors.grey.shade200,
+                                      indent: ResponsiveHelper.width(16),
+                                      endIndent: ResponsiveHelper.width(16),
+                                    ),
+                                ],
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: ResponsiveHelper.spacing(20)),
+                        ],
+                        Obx(() => controller.isLoadingMore.value
+                            ? const Padding(
+                          padding: EdgeInsets.all(12),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                            : const SizedBox.shrink()),
+                      ],
                     ),
-                  ),
-                ),
-              ],
+                  );
+                }),
+              ),
             ],
           ),
         ),
-        actions: [
-          // Mark all read
-          Obx(() {
-            if (controller.unreadCount.value == 0) return const SizedBox.shrink();
-            return TextButton(
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.symmetric(
-                  horizontal: ResponsiveHelper.spacing(8),
-                ),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              onPressed: controller.markAllAsRead,
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(16)),
+      child: Row(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () => context.pop(),
+              icon: Icon(Icons.arrow_back, color: AppColors.black),
+            ),
+          ),
+          Expanded(
+            child: Center(
               child: Text(
-                AppStrings.markAllRead.tr,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: AppColors.blue,
-                  fontSize: ResponsiveHelper.fontSize(13),
+                AppStrings.notification.tr,
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(18),
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.black,
                 ),
+              ),
+            ),
+          ),
+          Obx(() {
+            final bool canMarkAllRead = controller.unreadCount.value > 0;
+            final bool canDeleteAll = controller.notifications.isNotEmpty;
+            if (!canMarkAllRead && !canDeleteAll) {
+              return SizedBox(width: ResponsiveHelper.width(40));
+            }
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: PopupMenuButton<String>(
+                padding: EdgeInsets.zero,
+                icon: Icon(Icons.more_vert, color: AppColors.black),
+                onSelected: (value) {
+                  if (value == 'markAll') {
+                    controller.markAllAsRead();
+                  } else if (value == 'deleteAll') {
+                    _showDeleteAllDialog();
+                  }
+                },
+                itemBuilder: (_) => [
+                  if (canMarkAllRead)
+                    PopupMenuItem(
+                      value: 'markAll',
+                      child: Text(
+                        AppStrings.markAllRead.tr,
+                        style: GoogleFonts.inter(color: AppColors.blue),
+                      ),
+                    ),
+                  if (canDeleteAll)
+                    PopupMenuItem(
+                      value: 'deleteAll',
+                      child: Text(
+                        AppStrings.deleteNotifications.tr,
+                        style: GoogleFonts.inter(color: Colors.red),
+                      ),
+                    ),
+                ],
               ),
             );
           }),
-          // Delete all
-          Obx(() {
-            if (controller.notifications.isEmpty) return const SizedBox.shrink();
-            return IconButton(
-              onPressed: _showDeleteAllDialog,
-              icon: Icon(Icons.delete_sweep_outlined, color: Colors.red.shade400),
-            );
-          }),
-          SizedBox(width: ResponsiveHelper.spacing(4)),
         ],
       ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator(color: AppColors.blue));
-        }
-
-        if (controller.notifications.isEmpty) {
-          return _buildEmpty();
-        }
-
-        return RefreshIndicator(
-          color: AppColors.blue,
-          onRefresh: () => controller.fetchNotifications(refresh: true),
-          child: ListView.separated(
-            controller: _scrollController,
-            padding: EdgeInsets.symmetric(
-              vertical: ResponsiveHelper.spacing(12),
-              horizontal: ResponsiveHelper.spacing(16),
-            ),
-            itemCount: controller.notifications.length + (controller.hasMore ? 1 : 0),
-            separatorBuilder: (_, __) => SizedBox(height: ResponsiveHelper.spacing(8)),
-            itemBuilder: (context, index) {
-              // Pagination loader
-              if (index == controller.notifications.length) {
-                return Obx(() => controller.isLoadingMore.value
-                    ? const Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Center(child: CircularProgressIndicator()),
-                )
-                    : const SizedBox.shrink());
-              }
-
-              final notification = controller.notifications[index];
-              return _NotificationCard(
-                notification: notification,
-                icon: _getIcon(notification.eventType),
-                iconColor: _getIconColor(notification.eventType),
-                formattedTime: _formatTime(notification.sentAt),
-                onMarkRead: () => controller.markOneAsRead(notification.id),
-                onDelete: () async {
-                  await controller.deleteOne(notification.id);
-                  CustomSnackbar.success(context: context, message: AppStrings.deleteSuccess.tr);
-                },
-              );
-            },
-          ),
-        );
-      }),
     );
   }
 
@@ -359,14 +331,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
           Icon(
             Icons.notifications_none_rounded,
             size: ResponsiveHelper.iconSize(64),
-            color: Colors.grey.shade300,
+            color: Colors.grey.shade400,
           ),
           SizedBox(height: ResponsiveHelper.spacing(16)),
           Text(
             AppStrings.notificationNotYet.tr,
             style: GoogleFonts.inter(
               fontSize: ResponsiveHelper.fontSize(16),
-              color: Colors.grey.shade400,
+              color: Colors.grey.shade500,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -379,16 +351,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
 // ── Notification Card ─────────────────────────────────────────
 class _NotificationCard extends StatelessWidget {
   final NotificationEvent notification;
-  final IconData icon;
-  final Color iconColor;
   final String formattedTime;
   final VoidCallback onMarkRead;
   final VoidCallback onDelete;
 
   const _NotificationCard({
     required this.notification,
-    required this.icon,
-    required this.iconColor,
     required this.formattedTime,
     required this.onMarkRead,
     required this.onDelete,
@@ -405,161 +373,73 @@ class _NotificationCard extends StatelessWidget {
       background: Container(
         alignment: Alignment.centerRight,
         padding: EdgeInsets.only(right: ResponsiveHelper.spacing(20)),
-        decoration: BoxDecoration(
-          color: Colors.red.shade400,
-          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(14)),
-        ),
+        color: Colors.red.shade400,
         child: const Icon(Icons.delete_outline_rounded, color: Colors.white, size: 24),
       ),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.all(ResponsiveHelper.padding(14)),
-        decoration: BoxDecoration(
-          color: unread ? const Color(0xFFEEF4FF) : Colors.white,
-          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(14)),
-          border: Border.all(
-            color: unread ? AppColors.blue.withOpacity(0.2) : Colors.grey.shade100,
+      child: GestureDetector(
+        onTap: unread ? onMarkRead : null,
+        behavior: HitTestBehavior.opaque,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: ResponsiveHelper.padding(16),
+            vertical: ResponsiveHelper.padding(14),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Icon
-                Container(
-                  width: ResponsiveHelper.width(44),
-                  height: ResponsiveHelper.width(44),
-                  decoration: BoxDecoration(
-                    color: iconColor.withOpacity(0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(icon, color: iconColor, size: ResponsiveHelper.iconSize(22)),
-                ),
-                SizedBox(width: ResponsiveHelper.spacing(12)),
-
-                // Content
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              notification.title,
-                              style: GoogleFonts.inter(
-                                fontSize: ResponsiveHelper.fontSize(14),
-                                fontWeight: unread ? FontWeight.w600 : FontWeight.w500,
-                                color: Colors.black87,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          SizedBox(width: ResponsiveHelper.spacing(8)),
-                          Text(
-                            formattedTime,
-                            style: GoogleFonts.inter(
-                              fontSize: ResponsiveHelper.fontSize(11),
-                              color: Colors.grey.shade400,
-                            ),
-                          ),
-                        ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      notification.title,
+                      style: GoogleFonts.inter(
+                        fontSize: ResponsiveHelper.fontSize(14),
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
                       ),
-                      SizedBox(height: ResponsiveHelper.spacing(4)),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  SizedBox(width: ResponsiveHelper.spacing(8)),
+                  Row(
+                    children: [
+                      if (unread) ...[
+                        Container(
+                          width: ResponsiveHelper.width(6),
+                          height: ResponsiveHelper.width(6),
+                          decoration: const BoxDecoration(
+                            color: AppColors.blue,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        SizedBox(width: ResponsiveHelper.spacing(6)),
+                      ],
                       Text(
-                        notification.message,
+                        formattedTime,
                         style: GoogleFonts.inter(
-                          fontSize: ResponsiveHelper.fontSize(13),
-                          color: Colors.grey.shade600,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: ResponsiveHelper.spacing(10)),
-            Divider(height: 1, color: Colors.grey.shade200),
-            SizedBox(height: ResponsiveHelper.spacing(6)),
-
-            // Bottom row: mark-as-read checkbox + label, and delete button
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Checkbox + "Mark as read" text
-                GestureDetector(
-                  onTap: unread ? onMarkRead : null,
-                  behavior: HitTestBehavior.opaque,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: unread ? Colors.transparent : AppColors.blue,
-                          border: Border.all(
-                            color: unread ? Colors.grey.shade400 : AppColors.blue,
-                            width: 1.6,
-                          ),
-                        ),
-                        child: unread
-                            ? null
-                            : const Icon(Icons.check, size: 13, color: Colors.white),
-                      ),
-                      SizedBox(width: ResponsiveHelper.spacing(8)),
-                      Text(
-                        unread ? AppStrings.markAsRead.tr : AppStrings.read.tr,
-                        style: GoogleFonts.inter(
-                          fontSize: ResponsiveHelper.fontSize(12.5),
-                          fontWeight: FontWeight.w500,
-                          color: unread ? Colors.grey.shade600 : AppColors.blue,
+                          fontSize: ResponsiveHelper.fontSize(11),
+                          color: Colors.grey.shade500,
                         ),
                       ),
                     ],
                   ),
+                ],
+              ),
+              SizedBox(height: ResponsiveHelper.spacing(4)),
+              Text(
+                notification.message,
+                style: GoogleFonts.inter(
+                  fontSize: ResponsiveHelper.fontSize(13),
+                  color: Colors.grey.shade600,
                 ),
-
-                // Delete button
-                GestureDetector(
-                  onTap: onDelete,
-                  behavior: HitTestBehavior.opaque,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.delete_outline_rounded,
-                        size: ResponsiveHelper.iconSize(18),
-                        color: Colors.red.shade400,
-                      ),
-                      SizedBox(width: ResponsiveHelper.spacing(4)),
-                      // Text(
-                      //   AppStrings.delete.tr,
-                      //   style: GoogleFonts.inter(
-                      //     fontSize: ResponsiveHelper.fontSize(12.5),
-                      //     fontWeight: FontWeight.w500,
-                      //     color: Colors.red.shade400,
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -3,12 +3,15 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
 import 'package:platchatapp/feature/notification/presentation/screens/notification_screen.dart';
 import 'package:platchatapp/feature/parking/presentation/screens/parking_show_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_nav_screen.dart';
+import 'package:platchatapp/feature/scan/presentation/widget/scan_options_card.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/main.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
@@ -28,6 +31,7 @@ class MainNavScreen extends StatefulWidget {
 }
 
 class _MainNavScreenState extends State<MainNavScreen> {
+  bool _showScanOptions = false;
 
   Widget _bodyForIndex(int index) {
     switch (index) {
@@ -50,7 +54,26 @@ class _MainNavScreenState extends State<MainNavScreen> {
 
   void _onTap(int index) {
     HapticFeedback.lightImpact();
+    if (index == 4) {
+      setState(() => _showScanOptions = true);
+      return;
+    }
     mainNavIndex.value = index;
+  }
+
+  void _closeScanOptions() {
+    setState(() => _showScanOptions = false);
+  }
+
+  void _openOcrScanner() {
+    _closeScanOptions();
+    context.pushNamed(RouteName.ocrScanner);
+  }
+
+  void _openQrScanner() {
+    _closeScanOptions();
+    previousMainNavIndex.value = mainNavIndex.value;
+    mainNavIndex.value = 4;
   }
 
   @override
@@ -63,13 +86,67 @@ class _MainNavScreenState extends State<MainNavScreen> {
         return Scaffold(
           extendBody: true,
           backgroundColor: const Color(0xFFD2DCF0),
-          body: _bodyForIndex(currentIndex),
-          bottomNavigationBar: _AppBottomNav(
-            currentIndex: currentIndex,
-            onTap: _onTap,
+          body: Stack(
+            children: [
+              _bodyForIndex(currentIndex),
+              if (_showScanOptions)
+                _ScanOptionsOverlay(
+                  onClose: _closeScanOptions,
+                  onOcrTap: _openOcrScanner,
+                  onQrTap: _openQrScanner,
+                ),
+            ],
           ),
+          bottomNavigationBar: currentIndex == 4
+              ? null
+              : _AppBottomNav(
+                  currentIndex: currentIndex,
+                  onTap: _onTap,
+                ),
         );
       },
+    );
+  }
+}
+
+// ─── Scan chooser overlay (OCR Scanner / Scan QR Code) ────────────────────────
+// Lives inside the body Stack (not a modal route) so the floating bottom nav
+// stays crisp on top while the current tab dims/blurs behind the card.
+
+class _ScanOptionsOverlay extends StatelessWidget {
+  final VoidCallback onClose;
+  final VoidCallback onOcrTap;
+  final VoidCallback onQrTap;
+
+  const _ScanOptionsOverlay({
+    required this.onClose,
+    required this.onOcrTap,
+    required this.onQrTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned.fill(
+      child: Stack(
+        children: [
+          GestureDetector(
+            onTap: onClose,
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+              child: Container(color: Colors.black.withOpacity(0.35)),
+            ),
+          ),
+          Positioned(
+            left: ResponsiveHelper.width(20),
+            right: ResponsiveHelper.width(20),
+            bottom: ResponsiveHelper.height(110),
+            child: ScanOptionsCard(
+              onOcrTap: onOcrTap,
+              onQrTap: onQrTap,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
