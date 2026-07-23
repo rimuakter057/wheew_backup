@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
-import 'package:platchatapp/core/service/notification_service.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
@@ -38,10 +37,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
   void initState() {
     super.initState();
 
-    // Chat List screen is where notification permission is requested —
-    // denial only disables push notifications; the rest of the app keeps
-    // working (see NotificationService.init's internal try/catch).
-    NotificationService.instance.init();
+    // Notification permission is requested at app startup (see main()) —
+    // NotificationService.init() is idempotent, so no need to call it here.
 
     // Socket connect করো যদি এখনো connected না থাকে
     if (!AppSocket.isConnected) {

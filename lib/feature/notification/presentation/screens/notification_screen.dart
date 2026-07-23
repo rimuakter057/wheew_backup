@@ -105,6 +105,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
           style: GoogleFonts.inter(
             fontSize: ResponsiveHelper.fontSize(16),
+
             fontWeight: FontWeight.w600,
           ),
         ),
