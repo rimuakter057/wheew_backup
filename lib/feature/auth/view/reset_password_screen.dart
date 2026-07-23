@@ -6,6 +6,7 @@ import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
 import 'package:platchatapp/share/widgets/button/primary_button.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
 import 'package:platchatapp/share/widgets/text_field/custom_text_field.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 
@@ -39,8 +40,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: AppStrings.resetCode.tr),
-      body: Padding(
+      appBar: CustomAppBar(
+        title: AppStrings.resetCode.tr,
+        bgColor: Colors.transparent,
+      ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: AppColors.primaryBackgroundGradient,
+        ),
+        child: Padding(
         padding: EdgeInsets.all(ResponsiveHelper.padding(20)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,6 +118,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               },
             ),
           ],
+        ),
         ),
       ),
     );

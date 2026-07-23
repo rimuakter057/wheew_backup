@@ -26,9 +26,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: AppStrings.forgotPassword.tr),
+      appBar: CustomAppBar(
+        title: AppStrings.forgotPassword.tr,
+        bgColor: Colors.transparent,
+      ),
 
-      body: Padding(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: AppColors.primaryBackgroundGradient,
+        ),
+        child: Padding(
         padding: EdgeInsets.all(ResponsiveHelper.padding(20)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -98,6 +107,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
             SizedBox(height: ResponsiveHelper.spacing(20)),
           ],
+        ),
         ),
       ),
     );
