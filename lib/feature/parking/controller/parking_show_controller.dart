@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:platchatapp/feature/parking/repository/parking_repository.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
@@ -349,6 +350,7 @@ class ParkingShowController extends GetxController {
       _logger.e('Error setting searching mode', error: e, stackTrace: st);
     }
     await fetchNearbyData(lat, lng);
+
   }
 
 
@@ -393,13 +395,19 @@ class ParkingShowController extends GetxController {
             CameraUpdate.newLatLngZoom(LatLng(lat, lng), 17),
           );
         }
-      } else {
+      }
+
+      else if(responseHandoff.statusCode == 400){
+
+        _showMessage("You already have an active parking handoff. Please wait until it expires before creating another one.", isError: true);
+      }
+      else {
         String msg = '';
         if (responseHandoff.statusCode != 200 && responseHandoff.statusCode != 201) {
-          msg += '${AppStrings.failedToRecordSpotHandoff.tr} ';
+          msg += '${_extractErrorMessage(responseHandoff, AppStrings.failedToRecordSpotHandoff.tr)} ';
         }
         if (responseIdle.statusCode != 200 && responseIdle.statusCode != 201) {
-          msg += AppStrings.failedToSetParkingModeIdle.tr;
+          msg += _extractErrorMessage(responseIdle, AppStrings.failedToSetParkingModeIdle.tr);
         }
         _showMessage(msg.trim(), isError: true);
       }
@@ -682,6 +690,18 @@ class ParkingShowController extends GetxController {
       return value.map((key, val) => MapEntry(key.toString(), val));
     }
     return null;
+  }
+
+  /// Surfaces the backend's own `message` (e.g. "You already have an active
+  /// parking handoff...") instead of a generic static string, when present.
+  String _extractErrorMessage(http.Response response, String fallback) {
+    try {
+      final map = _asMap(jsonDecode(response.body));
+      if (map?['message'] != null) {
+        return map!['message'].toString();
+      }
+    } catch (_) {}
+    return fallback;
   }
 
   Future<BitmapDescriptor> _getCarIcon(String assetPath) async {
