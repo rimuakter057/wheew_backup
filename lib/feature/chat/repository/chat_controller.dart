@@ -416,6 +416,7 @@ class ChatController extends GetxController {
     listenMessageDelivered();
     listenTypingEvents();
     listenDeleteMessageEvents();
+    listenOnlineStatusEvents();
 
     debugPrint('✅ Socket listeners initialized');
   }
@@ -423,6 +424,9 @@ class ChatController extends GetxController {
   /// Typing indicators state
   RxBool isTyping = false.obs;
   RxMap<String, bool> inboxTypingMap = <String, bool>{}.obs;
+
+  /// Online/offline presence state, keyed by userId
+  RxMap<String, bool> onlineUsersMap = <String, bool>{}.obs;
 
   /// get all message list ================================================
   final RxSet<String> deliveredMessageIds = <String>{}.obs;
@@ -776,6 +780,73 @@ class ChatController extends GetxController {
           if (rId == roomID.value || rId == groupRoomID.value) {
             isTyping.value = false;
           }
+        }
+      }
+    });
+  }
+
+  // Not used — chat list API already returns each contact's isOnline status
+  // (seeded into onlineUsersMap in fetchChatList), and 'user-online'/
+  // 'user-offline' socket events (listenOnlineStatusEvents below) keep it
+  // updated in realtime. No separate presence snapshot API needed.
+  // Future<void> fetchPresence(List<String> userIds) async {
+  //   if (userIds.isEmpty) return;
+  //   debugPrint('📡 [PRESENCE] fetchPresence REQUEST userIds: $userIds');
+  //   try {
+  //     final response = await ApiClient.getData(
+  //       uri: ApiUrl.presence(userIds: userIds.join(',')),
+  //     );
+  //     debugPrint('📡 [PRESENCE] fetchPresence RESPONSE ${response.statusCode}: ${response.body}');
+  //     if (response.statusCode == 200) {
+  //       final decoded = jsonDecode(response.body);
+  //       final List list = decoded is List
+  //           ? decoded
+  //           : (decoded is Map && decoded['data'] is List ? decoded['data'] : []);
+  //       for (final item in list) {
+  //         if (item is Map) {
+  //           final uId = item['userId']?.toString();
+  //           if (uId != null) {
+  //             onlineUsersMap[uId] = item['isOnline'] == true;
+  //             debugPrint('📡 [PRESENCE] onlineUsersMap[$uId] = ${onlineUsersMap[uId]} (from snapshot)');
+  //           }
+  //         }
+  //       }
+  //     }
+  //   } catch (e) {
+  //     debugPrint('❌ fetchPresence error: $e');
+  //   }
+  // }
+
+  void listenOnlineStatusEvents() {
+    final s = AppSocket.socket;
+    if (s == null) {
+      debugPrint('🔌 [PRESENCE] socket is null — cannot register user-online/user-offline listeners');
+      return;
+    }
+
+    s.off('user-online');
+    s.off('user-offline');
+
+    debugPrint('🔊 [PRESENCE] Listening for "user-online" / "user-offline" events now (socket id: ${s.id})');
+
+    s.on('user-online', (data) {
+      debugPrint('🟢 [PRESENCE] user-online event received: $data');
+      if (data is Map) {
+        final uId = data['userId']?.toString();
+        if (uId != null) {
+          onlineUsersMap[uId] = data['isOnline'] == true;
+          debugPrint('🟢 [PRESENCE] onlineUsersMap[$uId] = ${onlineUsersMap[uId]} (from user-online event)');
+        }
+      }
+    });
+
+    s.on('user-offline', (data) {
+      debugPrint('⚪ [PRESENCE] user-offline event received: $data');
+      if (data is Map) {
+        final uId = data['userId']?.toString();
+        if (uId != null) {
+          onlineUsersMap[uId] = data['isOnline'] == true;
+          debugPrint('⚪ [PRESENCE] onlineUsersMap[$uId] = ${onlineUsersMap[uId]} (from user-offline event)');
         }
       }
     });
@@ -1243,6 +1314,16 @@ class ChatController extends GetxController {
             userChatList.addAll(data.rooms!);
           }
           page.value++; // ✅ page.value++ করো, page++ নয়
+
+          // Chat list API already returns each contact's current online
+          // status — seed onlineUsersMap with it so the message screen has
+          // a correct initial value before any socket event arrives.
+          for (final room in data.rooms!) {
+            final otherUserId = room.otherUser?.id;
+            if (otherUserId != null) {
+              onlineUsersMap[otherUserId] = room.otherUser?.isOnline == true;
+            }
+          }
         }
       } else {
         if (refresh) userChatList.clear();
