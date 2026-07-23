@@ -33,6 +33,10 @@ void main() async {
 
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
+  // Request notification permission as soon as the app launches, so push
+  // notifications work regardless of which screen the user visits first.
+  NotificationService.instance.init();
+
   cameras = await availableCameras(); // ── OCR Camera init ──
 
   final languageController = Get.put(LanguageController());

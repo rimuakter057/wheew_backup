@@ -154,6 +154,7 @@ class OtherUser {
   int? totalRating;
   int? totalRatings;
   bool? isVehicleVerified;
+  bool? isOnline;
 
   OtherUser({
     this.id,
@@ -164,6 +165,7 @@ class OtherUser {
     this.totalRating,
     this.totalRatings,
     this.isVehicleVerified,
+    this.isOnline,
   });
 
   OtherUser.fromJson(Map<String, dynamic> json) {
@@ -175,6 +177,7 @@ class OtherUser {
     totalRating = json['totalRating'] != null ? (json['totalRating'] as num).toInt() : null;
     totalRatings = json['totalRatings'] != null ? (json['totalRatings'] as num).toInt() : null;
     isVehicleVerified = json['is_vehicle_verified'];
+    isOnline = json['isOnline'];
   }
 
   Map<String, dynamic> toJson() {
@@ -187,6 +190,7 @@ class OtherUser {
     data['totalRating'] = totalRating;
     data['totalRatings'] = totalRatings;
     data['is_vehicle_verified'] = isVehicleVerified;
+    data['isOnline'] = isOnline;
     return data;
   }
 }

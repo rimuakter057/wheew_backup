@@ -73,6 +73,12 @@ class ApiUrl {
  // static const String updateProfile = '/users/';
   static const String updateProfile = '/users';
 
+  // Not used — chat list API already returns each contact's isOnline status,
+  // and the message screen listens to 'user-online'/'user-offline' socket
+  // events for realtime updates. No separate presence snapshot API needed.
+  // static String presence({required String userIds}) =>
+  //     '/users/presence?userIds=$userIds';
+
   static const String blockList = '/users/block-list';
   static const String unblock = '/users/unblock';
   static const String block = '/users/block';

@@ -77,6 +77,9 @@ class _MessageScreenState extends State<MessageScreen> {
 
     AppSocket.ensureConnected();
     chatController.initSocketListeners();
+    // Presence is seeded from the chat list API (onlineUsersMap) and kept
+    // live via 'user-online'/'user-offline' socket events — no separate
+    // presence API call needed here.
 
     if (_currentRoomId.isNotEmpty) {
       // fetchInboxMessage এর ভেতরেই message-read socket emit হয়
