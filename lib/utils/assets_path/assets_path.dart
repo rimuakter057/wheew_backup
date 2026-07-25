@@ -53,6 +53,7 @@ class AssetsPath {
   static const String van = '${_iconsBase}Van.svg';
   static const String apple = '${_iconsBase}apple.svg';
   static const String google = '${_iconsBase}google.svg';
+  //static const String google = '${_iconsBase}google.svg';
 
 
   ///===================================
