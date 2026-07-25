@@ -416,12 +416,44 @@ class ChatController extends GetxController {
     listenMessageDelivered();
     listenTypingEvents();
     listenDeleteMessageEvents();
+    listenOnlineStatusEvents();
 
     debugPrint('✅ Socket listeners initialized');
   }
 
   /// Typing indicators state
   RxBool isTyping = false.obs;
+  /// Online/offline presence state, keyed by userId
+  RxMap<String, bool> onlineUsersMap = <String, bool>{}.obs;
+
+  void listenOnlineStatusEvents() {
+    final s = AppSocket.socket;
+    if (s == null) return;
+
+    s.off('user-online');
+    s.off('user-offline');
+
+    s.on('user-online', (data) {
+      debugPrint('🟢 user-online event received: $data');
+      if (data is Map) {
+        final uId = data['userId']?.toString();
+        if (uId != null) {
+          onlineUsersMap[uId] = data['isOnline'] == true;
+        }
+      }
+    });
+
+    s.on('user-offline', (data) {
+      debugPrint('⚪ user-offline event received: $data');
+      if (data is Map) {
+        final uId = data['userId']?.toString();
+        if (uId != null) {
+          onlineUsersMap[uId] = data['isOnline'] == true;
+        }
+      }
+    });
+  }
+
   RxMap<String, bool> inboxTypingMap = <String, bool>{}.obs;
 
   /// get all message list ================================================
@@ -1243,6 +1275,16 @@ class ChatController extends GetxController {
             userChatList.addAll(data.rooms!);
           }
           page.value++; // ✅ page.value++ করো, page++ নয়
+
+          // Chat list API already returns each contact's current online
+          // status — seed onlineUsersMap with it so the message screen has
+          // a correct initial value before any socket event arrives.
+          for (final room in data.rooms!) {
+            final otherUserId = room.otherUser?.id;
+            if (otherUserId != null) {
+              onlineUsersMap[otherUserId] = room.otherUser?.isOnline == true;
+            }
+          }
         }
       } else {
         if (refresh) userChatList.clear();

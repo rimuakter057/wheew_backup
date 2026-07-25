@@ -261,8 +261,13 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 Obx(() {
                   final bool isTyping = chatController.isTyping.value;
+                  final bool isOnline =
+                      chatController.onlineUsersMap[receiverId] ?? false;
+                  final String statusText = isTyping
+                      ? AppStrings.typing.tr
+                      : (isOnline ? AppStrings.online.tr : AppStrings.offline.tr);
                   return Text(
-                    isTyping ? AppStrings.typing.tr : AppStrings.online.tr,
+                    statusText,
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(13),
                       fontWeight: FontWeight.w400,

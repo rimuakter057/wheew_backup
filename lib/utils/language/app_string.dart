@@ -699,6 +699,7 @@ class AppStrings {
   static const String typing = 'typing';
   static const String recording = 'recording';
   static const String online = 'online';
+  static const String offline = 'offline';
   static const String micPermissionError = 'mic_permission_error';
   static const String addCaption = 'add_caption';
   static const String youveBlockedName = 'youve_blocked_name';
