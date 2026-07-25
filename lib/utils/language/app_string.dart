@@ -864,6 +864,8 @@ class AppStrings {
 
   static const String navModeWalking = 'nav_mode_walking';
   static const String navModeDriving = 'nav_mode_driving';
+  static const String then = 'then';
+  static const String similarEta = 'similar_eta';
 
   static const String verifyAccountBecomeWheewer = 'verify_account_become_wheewer';
 }

@@ -4,15 +4,37 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
+class NavigationStep {
+  final String instruction;
+  final String? maneuver;
+  final String distanceText;
+  final String durationText;
+  final int distanceMeters;
+  final LatLng endLocation;
+
+  const NavigationStep({
+    required this.instruction,
+    required this.maneuver,
+    required this.distanceText,
+    required this.durationText,
+    required this.distanceMeters,
+    required this.endLocation,
+  });
+}
+
 class DirectionsResult {
   final List<LatLng> polylinePoints;
   final String distanceText;
   final String durationText;
+  final int? durationSeconds;
+  final List<NavigationStep> steps;
 
   const DirectionsResult({
     required this.polylinePoints,
     required this.distanceText,
     required this.durationText,
+    required this.durationSeconds,
+    required this.steps,
   });
 }
 
@@ -27,7 +49,10 @@ class DirectionsRepository {
     printer: PrettyPrinter(methodCount: 0, errorMethodCount: 3, lineLength: 100),
   );
 
-  static Future<DirectionsResult?> getRoute({
+  /// Returns every route Google offers for this origin/destination — index
+  /// 0 is Google's recommended route, any remaining entries are alternates
+  /// (only present when Google actually has a meaningfully different way).
+  static Future<List<DirectionsResult>?> getRoutes({
     required LatLng origin,
     required LatLng destination,
     required String travelMode,
@@ -36,6 +61,7 @@ class DirectionsRepository {
       'origin': '${origin.latitude},${origin.longitude}',
       'destination': '${destination.latitude},${destination.longitude}',
       'mode': travelMode,
+      'alternatives': 'true',
       'key': _googleMapsApiKey,
     });
 
@@ -56,36 +82,72 @@ class DirectionsRepository {
       final routes = body['routes'] as List?;
       if (routes == null || routes.isEmpty) return null;
 
-      final route = routes.first as Map<String, dynamic>;
-      final legs = route['legs'] as List?;
-      if (legs == null || legs.isEmpty) return null;
-      final leg = legs.first as Map<String, dynamic>;
+      final results = <DirectionsResult>[];
+      for (final r in routes) {
+        final route = r as Map<String, dynamic>;
+        final legs = route['legs'] as List?;
+        if (legs == null || legs.isEmpty) continue;
+        final leg = legs.first as Map<String, dynamic>;
 
-      final overviewPolyline = route['overview_polyline'] as Map<String, dynamic>?;
-      final encodedPoints = overviewPolyline?['points']?.toString();
-      if (encodedPoints == null || encodedPoints.isEmpty) return null;
+        final overviewPolyline = route['overview_polyline'] as Map<String, dynamic>?;
+        final encodedPoints = overviewPolyline?['points']?.toString();
+        if (encodedPoints == null || encodedPoints.isEmpty) continue;
 
-      final distanceMap = leg['distance'] as Map<String, dynamic>?;
-      final durationMap = leg['duration'] as Map<String, dynamic>?;
+        final distanceMap = leg['distance'] as Map<String, dynamic>?;
+        final durationMap = leg['duration'] as Map<String, dynamic>?;
 
-      final distanceMeters = (distanceMap?['value'] as num?)?.toInt();
-      final durationSeconds = (durationMap?['value'] as num?)?.toInt();
+        final distanceMeters = (distanceMap?['value'] as num?)?.toInt();
+        final durationSeconds = (durationMap?['value'] as num?)?.toInt();
 
-      _logger.i('Directions leg raw: distance=$distanceMap duration=$durationMap');
+        final stepsRaw = leg['steps'] as List? ?? [];
+        final steps = stepsRaw.map((s) {
+          final step = s as Map<String, dynamic>;
+          final stepDistance = step['distance'] as Map<String, dynamic>?;
+          final stepDuration = step['duration'] as Map<String, dynamic>?;
+          final endLoc = step['end_location'] as Map<String, dynamic>?;
+          return NavigationStep(
+            instruction: _stripHtml(step['html_instructions']?.toString() ?? ''),
+            maneuver: step['maneuver']?.toString(),
+            distanceText: stepDistance?['text']?.toString().trim() ?? '',
+            durationText: stepDuration?['text']?.toString().trim() ?? '',
+            distanceMeters: (stepDistance?['value'] as num?)?.toInt() ?? 0,
+            endLocation: LatLng(
+              (endLoc?['lat'] as num?)?.toDouble() ?? destination.latitude,
+              (endLoc?['lng'] as num?)?.toDouble() ?? destination.longitude,
+            ),
+          );
+        }).toList();
 
-      return DirectionsResult(
-        polylinePoints: _decodePolyline(encodedPoints),
-        distanceText: distanceMap?['text']?.toString().trim().isNotEmpty == true
-            ? distanceMap!['text'].toString().trim()
-            : _formatDistance(distanceMeters),
-        durationText: durationMap?['text']?.toString().trim().isNotEmpty == true
-            ? durationMap!['text'].toString().trim()
-            : _formatDuration(durationSeconds),
-      );
+        results.add(DirectionsResult(
+          polylinePoints: _decodePolyline(encodedPoints),
+          distanceText: distanceMap?['text']?.toString().trim().isNotEmpty == true
+              ? distanceMap!['text'].toString().trim()
+              : _formatDistance(distanceMeters),
+          durationText: durationMap?['text']?.toString().trim().isNotEmpty == true
+              ? durationMap!['text'].toString().trim()
+              : _formatDuration(durationSeconds),
+          durationSeconds: durationSeconds,
+          steps: steps,
+        ));
+      }
+
+      _logger.i('Directions: fetched ${results.length} route(s)');
+      return results.isEmpty ? null : results;
     } catch (e, st) {
-      _logger.e('DirectionsRepository.getRoute error', error: e, stackTrace: st);
+      _logger.e('DirectionsRepository.getRoutes error', error: e, stackTrace: st);
       return null;
     }
+  }
+
+  /// Google's `html_instructions` embed formatting tags (e.g. `<b>Square
+  /// Rd</b>`) — strip them down to plain text for display.
+  static String _stripHtml(String html) {
+    return html
+        .replaceAll(RegExp(r'<[^>]*>'), ' ')
+        .replaceAll('&nbsp;', ' ')
+        .replaceAll('&amp;', '&')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
   }
 
   /// Fallback when Google's own `duration.text` is missing — derived from

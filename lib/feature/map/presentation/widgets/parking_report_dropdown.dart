@@ -182,63 +182,63 @@ class ParkingReportDropdown extends StatelessWidget {
 
               Column(
                 children: [
-                  GestureDetector(
-                    onTap: () async {
-                      final spotId = controller.selectedReport.value?['id']?.toString();
-                      if (spotId == null) return;
-
-                      final success = await controller.leaveSpot(spotId);
-
-                      if (success) {
-                        CustomSnackbar.success(context: context, message: AppStrings.leaveSuccess.tr);
-                        controller.clearSelectedReport();
-                        // map refresh করতে চাইলে fetchParkingReport আবার call করো
-                      } else {
-                        CustomSnackbar.error(context: context, message: AppStrings.failedToLeave.tr);
-                      }
-                    },
-                    child: Obx(() => Container(
-                      padding: ResponsiveHelper.symmetric(
-                        horizontal: ResponsiveHelper.spacing(12),
-                        vertical: ResponsiveHelper.spacing(6),
-                      ),
-                      decoration: BoxDecoration(
-                        color: _isFree
-                            ? const Color(0xFFF1F5F9)
-                            : statusColor.withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(8)),
-                        border: Border.all(color: statusColor.withOpacity(0.3)),
-                      ),
-                      child: controller.isLeaving.value
-                          ? SizedBox(
-                        width: ResponsiveHelper.width(14),
-                        height: ResponsiveHelper.height(14),
-                        child: CircularProgressIndicator(strokeWidth: ResponsiveHelper.borderWidth(2)),
-                      )
-                          : Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.logout_rounded,
-                              size: ResponsiveHelper.iconSize(14),
-                              color: iconAndBadgeTextColor),
-                          SizedBox(width: ResponsiveHelper.spacing(4)),
-                          Text(AppStrings.leave.tr,
-                              style: context.bodyMedium.copyWith(
-                                color: iconAndBadgeTextColor,
-                                fontWeight: FontWeight.w600,
-                              )),
-                        ],
-                      ),
-                    )),
-                  ),
-
-                  // IconButton(
-                  //   onPressed: () => _openNavigation(context),
-                  //   icon: Icon(
-                  //     Icons.navigation_outlined,
-                  //     color: AppColors.paidBlue,
-                  //   ),
+                  // GestureDetector(
+                  //   onTap: () async {
+                  //     final spotId = controller.selectedReport.value?['id']?.toString();
+                  //     if (spotId == null) return;
+                  //
+                  //     final success = await controller.leaveSpot(spotId);
+                  //
+                  //     if (success) {
+                  //       CustomSnackbar.success(context: context, message: AppStrings.leaveSuccess.tr);
+                  //       controller.clearSelectedReport();
+                  //       // map refresh করতে চাইলে fetchParkingReport আবার call করো
+                  //     } else {
+                  //       CustomSnackbar.error(context: context, message: AppStrings.failedToLeave.tr);
+                  //     }
+                  //   },
+                  //   child: Obx(() => Container(
+                  //     padding: ResponsiveHelper.symmetric(
+                  //       horizontal: ResponsiveHelper.spacing(12),
+                  //       vertical: ResponsiveHelper.spacing(6),
+                  //     ),
+                  //     decoration: BoxDecoration(
+                  //       color: _isFree
+                  //           ? const Color(0xFFF1F5F9)
+                  //           : statusColor.withOpacity(0.12),
+                  //       borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(8)),
+                  //       border: Border.all(color: statusColor.withOpacity(0.3)),
+                  //     ),
+                  //     child: controller.isLeaving.value
+                  //         ? SizedBox(
+                  //       width: ResponsiveHelper.width(14),
+                  //       height: ResponsiveHelper.height(14),
+                  //       child: CircularProgressIndicator(strokeWidth: ResponsiveHelper.borderWidth(2)),
+                  //     )
+                  //         : Row(
+                  //       mainAxisSize: MainAxisSize.min,
+                  //       children: [
+                  //         Icon(Icons.logout_rounded,
+                  //             size: ResponsiveHelper.iconSize(14),
+                  //             color: iconAndBadgeTextColor),
+                  //         SizedBox(width: ResponsiveHelper.spacing(4)),
+                  //         Text(AppStrings.leave.tr,
+                  //             style: context.bodyMedium.copyWith(
+                  //               color: iconAndBadgeTextColor,
+                  //               fontWeight: FontWeight.w600,
+                  //             )),
+                  //       ],
+                  //     ),
+                  //   )),
                   // ),
+                  //
+                  // // IconButton(
+                  // //   onPressed: () => _openNavigation(context),
+                  // //   icon: Icon(
+                  // //     Icons.navigation_outlined,
+                  // //     color: AppColors.paidBlue,
+                  // //   ),
+                  // // ),
 
                   SizedBox(height: ResponsiveHelper.spacing(12)),
 
