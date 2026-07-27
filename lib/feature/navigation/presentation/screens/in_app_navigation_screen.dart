@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_type_dropdown.dart';
+import 'package:platchatapp/feature/map/utils/marker_icon_loader.dart';
 import 'package:platchatapp/feature/navigation/controller/in_app_navigation_controller.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
@@ -75,6 +76,7 @@ class InAppNavigationScreen extends StatefulWidget {
 class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
   late final InAppNavigationController controller;
   MapType _selectedMapType = MapType.normal;
+  BitmapDescriptor? _destinationIcon;
 
   @override
   void initState() {
@@ -82,6 +84,9 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
     controller = Get.put(InAppNavigationController());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.init(destination: widget.destination);
+    });
+    MapMarkerIcons.parkingPin().then((icon) {
+      if (mounted) setState(() => _destinationIcon = icon);
     });
   }
 
@@ -160,7 +165,8 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
                 Marker(
                   markerId: const MarkerId('destination'),
                   position: widget.destination,
-                  icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+                  icon: _destinationIcon ??
+                      BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
                 ),
                 if (userPosition != null)
                   Marker(

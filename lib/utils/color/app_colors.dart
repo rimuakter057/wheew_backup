@@ -6,6 +6,8 @@ class AppColors {
   static const Color lightBlue1 = Color(0xFFDEE7F0);
   static const Color lightBlue2 = Color(0xFFD0DCE8);
   static const Color blueGrey = Color(0xFFB6C5DA);
+  static const Color bulShadeGradient = Color(0xFFC6D2E2);
+
 
   static const LinearGradient primaryBackgroundGradient = LinearGradient(
     begin: Alignment.topCenter,
@@ -18,11 +20,74 @@ class AppColors {
     ],
   );
 
+
+  static const LinearGradient containerGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+    white,
+      blueShadeConBg
+
+    ],
+  );
+
+
+  // Custom Button Colors
+  static const Color buttonGradientColor1 = Color(0xFF0C7DC9);
+  static const Color buttonGradientColor2 = Color(0xFF014495);
+  static const Color buttonShadowColor = Color(0xFF587CA7);
+  static const Color parkingConBg = Color(0xFFC6D2E2);
+  static const Color redBg1 = Color(0xFFB23216);
+  static const Color redBg2 = Color(0xFF992E16);
+  static const Color redBg3 = Color(0xFF68120E);
+
+  // Custom Button Gradient
+  static const LinearGradient buttonGradient = LinearGradient(
+    colors: [
+      buttonGradientColor1,
+      buttonGradientColor2,
+      buttonGradientColor1,
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+
+  static const LinearGradient redGradient = LinearGradient(
+    colors: [
+      redBg1,
+      redBg2,
+      redBg3,
+      redBg2,
+      redBg1,
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+
+  static const LinearGradient parkingContainerGradient = LinearGradient(
+    colors: [
+      white,
+      parkingConBg
+    ],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+
   static const Color notificationBg = Color(0xFFE5EBF2);
   static const Color notificationBoxBorder = Color(0xFFC8D3E3);
   static const Color notificationBoxColor = Color(0xFFECF1F6);
+  static const Color blackGrey = Color(0xFF3F3F40);
 
   static const LinearGradient notificationBoxGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+    blackGrey,
+      black,
+    ],
+  );
+
+  static const LinearGradient blackGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [

@@ -1,6 +1,8 @@
 // // widgets/message_app_bar.dart
 //
 // import 'package:flutter/material.dart';
+import 'package:platchatapp/helper/custom_image/custom_image.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 // import 'package:get/get.dart';
 // import 'package:go_router/go_router.dart';
@@ -282,57 +284,115 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         PopupMenuButton<String>(
-          padding: EdgeInsets.zero,
+          padding: EdgeInsets.only(right: ResponsiveHelper.width(8)),
           icon: Icon(Icons.more_vert, color: AppColors.black),
-          onSelected: (value) async {
-            if (value == "Block") {
-              chatController.block(receiverId, context);
-              chatController.isBlockedByMe.value = true;
-            } else if (value == "Unblock") {
-              chatController.unBlock(receiverId, context);
-              chatController.isBlockedByMe.value = false;
-            } else if (value == "Rate") {
-              onRateTap();
-            } else if (value == "ViewProfile") {
-              onProfileTap();
-            }
-          },
+          color: Colors.transparent,
+          elevation: 6,
+          offset: Offset(-ResponsiveHelper.width(36), ResponsiveHelper.height(40)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(ResponsiveHelper.borderRadius(24)),
+              bottomLeft: Radius.circular(ResponsiveHelper.borderRadius(24)),
+              bottomRight: Radius.circular(ResponsiveHelper.borderRadius(24)),
+            ),
+          ),
           itemBuilder: (context) => [
             PopupMenuItem<String>(
-              value: "ViewProfile",
-              child: Row(
-                children: [
-                  Icon(Icons.person_outline_rounded, color: AppColors.black),
-                  SizedBox(width: ResponsiveHelper.spacing(8)),
-                  Text(AppStrings.viewProfile.tr),
-                ],
-              ),
-            ),
-            PopupMenuItem<String>(
-              value: "Rate",
-              child: Row(
-                children: [
-                  Icon(Icons.star_rate_outlined, color: Colors.black),
-                  SizedBox(width: ResponsiveHelper.spacing(8)),
-                  Text(AppStrings.rateUser.tr),
-                ],
-              ),
-            ),
-            PopupMenuItem<String>(
-              value: chatController.isBlockedByMe.value ? "Unblock" : "Block",
-              child: Obx(
-                    () => Row(
+              padding: EdgeInsets.zero,
+              enabled: false, // পুরো item এর tap বন্ধ, ভেতরের InkWell গুলো কাজ করবে
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient:AppColors.containerGradient,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(ResponsiveHelper.borderRadius(24)),
+                    bottomLeft: Radius.circular(ResponsiveHelper.borderRadius(24)),
+                    bottomRight: Radius.circular(ResponsiveHelper.borderRadius(24)),
+                  ),
+                ),
+                padding: ResponsiveHelper.symmetric(vertical: 4, horizontal: 0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      chatController.isBlockedByMe.value
-                          ? Icons.lock_open
-                          : Icons.block,
+                    // ── View Profile ──────────────────────────────
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                        onProfileTap();
+                      },
+                      child: Padding(
+                        padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 10),
+                        child: Row(
+                          children: [
+                     CustomImage(imageSrc: AssetsPath.viewProfile),
+                            SizedBox(width: ResponsiveHelper.spacing(10)),
+                            Text(
+                              AppStrings.viewProfile.tr,
+                              style: GoogleFonts.poppins(
+                                fontSize: ResponsiveHelper.fontSize(14),
+                                color: AppColors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    SizedBox(width: ResponsiveHelper.spacing(8)),
-                    Text(
-                      chatController.isBlockedByMe.value
-                          ? AppStrings.unblock.tr
-                          : AppStrings.blocked.tr,
+
+                    // ── Rate ──────────────────────────────
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                        onRateTap();
+                      },
+                      child: Padding(
+                        padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 10),
+                        child: Row(
+                          children: [
+                            CustomImage(imageSrc: AssetsPath.rateUser),
+                            SizedBox(width: ResponsiveHelper.spacing(10)),
+                            Text(
+                              AppStrings.rateUser.tr,
+                              style: GoogleFonts.poppins(
+                                fontSize: ResponsiveHelper.fontSize(14),
+                                color: AppColors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // ── Block / Unblock ──────────────────────────────
+                    Obx(
+                          () => InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                          if (chatController.isBlockedByMe.value) {
+                            chatController.unBlock(receiverId, context);
+                            chatController.isBlockedByMe.value = false;
+                          } else {
+                            chatController.block(receiverId, context);
+                            chatController.isBlockedByMe.value = true;
+                          }
+                        },
+                        child: Padding(
+                          padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 10),
+                          child: Row(
+                            children: [
+                              CustomImage(imageSrc: AssetsPath.blockedIcon),
+                              SizedBox(width: ResponsiveHelper.spacing(10)),
+                              Text(
+                                chatController.isBlockedByMe.value
+                                    ? AppStrings.unblock.tr
+                                    : AppStrings.blocked.tr,
+                                style: GoogleFonts.poppins(
+                                  fontSize: ResponsiveHelper.fontSize(14),
+                                  color: AppColors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -340,7 +400,6 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ],
         ),
-        SizedBox(width: ResponsiveHelper.spacing(8)),
       ],
     );
   }

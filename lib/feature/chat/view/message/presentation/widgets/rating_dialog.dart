@@ -1,6 +1,7 @@
 // widgets/rating_dialog.dart
 
 import 'package:flutter/material.dart';
+import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -46,106 +47,21 @@ void showRatingDialog({
             bottom: ResponsiveHelper.spacing(24),
           ),
           decoration: BoxDecoration(
-            color: Colors.white,
+            gradient: AppColors.containerGradient,
             borderRadius: BorderRadius.circular(
               ResponsiveHelper.borderRadius(24),
             ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+
             children: [
               // ── Close Button ────────────────────────────
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             ///status show here
 
-            Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: ResponsiveHelper.spacing(10),
-                    vertical: ResponsiveHelper.spacing(4),
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.blue,
-                    borderRadius: BorderRadius.circular(
-                      ResponsiveHelper.borderRadius(4),
-                    ),
-                  ),
-                  child: Text(
-                    status.isEmpty ? 'None' : status,
-                    style: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.fontSize(11),
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.white,
-                    ),
-                  ),
-                ),
-
-                SizedBox(width: ResponsiveHelper.spacing(6)),
-
-                GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        backgroundColor: AppColors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            ResponsiveHelper.borderRadius(12),
-                          ),
-                        ),
-                        title: Row(
-                          children: [
-                            Icon(Icons.info_outline, color: AppColors.blue),
-                            SizedBox(width: ResponsiveHelper.spacing(8)),
-                            Text(
-                              AppStrings.statusInfo.tr,
-                              style: GoogleFonts.poppins(
-                                fontSize: ResponsiveHelper.fontSize(16),
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.black
-                              ),
-                            ),
-                          ],
-                        ),
-                        content: Text(
-                          _getStatusInfo(status),
-                          style: GoogleFonts.poppins(
-                            fontSize: ResponsiveHelper.fontSize(13),
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.black,
-                            height: 1.5,
-                          ),
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text(
-                              AppStrings.gotIt.tr,
-                              style: GoogleFonts.poppins(
-                                color: AppColors.blue,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                  child: SvgPicture.asset(
-                    "assets/icons/i.svg",
-                    width: ResponsiveHelper.iconSize(18),
-                    height: ResponsiveHelper.iconSize(18),
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.black,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                ),
-              ],
-            ),
 
 
 
@@ -186,6 +102,98 @@ void showRatingDialog({
                 ),
               ),
 
+              SizedBox(height: ResponsiveHelper.spacing(12)),
+
+
+              Row(
+               // crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: ResponsiveHelper.spacing(10),
+                      vertical: ResponsiveHelper.spacing(4),
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.blue,
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(4),
+                      ),
+                    ),
+                    child: Text(
+                      status.isEmpty ? 'None' : status,
+                      style: GoogleFonts.poppins(
+                        fontSize: ResponsiveHelper.fontSize(11),
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.white,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(width: ResponsiveHelper.spacing(6)),
+
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          backgroundColor: AppColors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveHelper.borderRadius(12),
+                            ),
+                          ),
+                          title: Row(
+                            children: [
+                              Icon(Icons.info_outline, color: AppColors.blue),
+                              SizedBox(width: ResponsiveHelper.spacing(8)),
+                              Text(
+                                AppStrings.statusInfo.tr,
+                                style: GoogleFonts.poppins(
+                                    fontSize: ResponsiveHelper.fontSize(16),
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.black
+                                ),
+                              ),
+                            ],
+                          ),
+                          content: Text(
+                            _getStatusInfo(status),
+                            style: GoogleFonts.poppins(
+                              fontSize: ResponsiveHelper.fontSize(13),
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.black,
+                              height: 1.5,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text(
+                                AppStrings.gotIt.tr,
+                                style: GoogleFonts.poppins(
+                                  color: AppColors.blue,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    child: SvgPicture.asset(
+                      "assets/icons/i.svg",
+                      width: ResponsiveHelper.iconSize(18),
+                      height: ResponsiveHelper.iconSize(18),
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.black,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
               SizedBox(height: ResponsiveHelper.spacing(10)),
 
               // ── Name ────────────────────────────────────
@@ -205,13 +213,13 @@ void showRatingDialog({
                     ? AppStrings.updateRating.tr
                     : AppStrings.addRating.tr,
                 style: GoogleFonts.poppins(
-                  fontSize: ResponsiveHelper.fontSize(10),
-                  color: Colors.grey.shade400,
+                  fontSize: ResponsiveHelper.fontSize(12),
+                  color: AppColors.black.withOpacity(0.5),
                   fontWeight: FontWeight.w400
                 ),
               ),
 
-              SizedBox(height: ResponsiveHelper.spacing(24)),
+              SizedBox(height: ResponsiveHelper.spacing(18)),
 
               // ── Star Rating ──────────────────────────────
               SizedBox(
@@ -221,8 +229,14 @@ void showRatingDialog({
                   children: List.generate(5, (starIndex) {
                     final starValue = starIndex + 1;
                     return GestureDetector(
-                      onTap: () => setState(
-                              () => ratingValue = starValue.toDouble()),
+                      onTap: () => setState(() {
+                        // একই star এ দ্বিতীয়বার click করলে rating reset হয়ে যাবে
+                        if (ratingValue == starValue.toDouble()) {
+                          ratingValue = 0;
+                        } else {
+                          ratingValue = starValue.toDouble();
+                        }
+                      }),
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: ResponsiveHelper.spacing(2),
@@ -235,77 +249,32 @@ void showRatingDialog({
                 ),
               ),
 
-              SizedBox(height: ResponsiveHelper.spacing(8)),
+              SizedBox(height: ResponsiveHelper.spacing(18)),
 
-              // ── Rating Label ─────────────────────────────
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: Text(
-                  key: ValueKey(ratingValue),
-                  _ratingLabel(ratingValue),
-                  style: GoogleFonts.poppins(
-                    fontSize: ResponsiveHelper.fontSize(14),
-                    color: ratingValue < 1
-                        ? Colors.transparent
-                        : Colors.amber.shade700,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+
+
+
+
+              Obx(
+                    () => CustomGradientButton(
+                      onPressed: ratingValue < 1 ||
+                          chatController.isSubmittingRating.value
+                          ? null
+                          : () {
+                        chatController.submitRating(
+                          rateeId: receiverId,
+                          rating: ratingValue,
+                          context: dialogContext,
+                        );
+                      },
+                      label: isUpdate
+                          ? AppStrings.updateRating.tr
+                          : AppStrings.submitRating.tr,
+                      isLoading: chatController.isSubmittingRating.value,
+                      keepGradientWhenDisabled: true,
+                    ),
               ),
 
-              SizedBox(height: ResponsiveHelper.spacing(28)),
-
-              // ── Submit / Update Button ───────────────────
-              Obx(() => SizedBox(
-                width: double.infinity,
-                height: ResponsiveHelper.buttonHeight(58),
-                child: ElevatedButton(
-                  onPressed: (ratingValue < 1 ||
-                      chatController
-                          .isSubmittingRating.value)
-                      ? null
-                      : () {
-                    chatController.submitRating(
-                      rateeId: receiverId,
-                      rating: ratingValue,
-                      context: dialogContext,
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.blue,
-                    disabledBackgroundColor:
-             AppColors.blue,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        ResponsiveHelper.borderRadius(12),
-                      ),
-                    ),
-                  ),
-                  child:
-                  chatController.isSubmittingRating.value
-                      ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                      : Text(
-                    isUpdate
-                        ? AppStrings.updateRating.tr
-                        : AppStrings.submitRating.tr,
-                    style: GoogleFonts.inter(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize:
-                      ResponsiveHelper.fontSize(
-                          14),
-                    ),
-                  ),
-                ),
-              )),
             ],
           ),
         ),
@@ -328,7 +297,7 @@ Widget _buildStarIcon(int starIndex, double rating) {
     color = Colors.amber;
   } else {
     icon = Icons.star_outline_rounded;
-    color = Colors.grey.shade300;
+    color = AppColors.black.withOpacity(0.3);
   }
 
   return Icon(

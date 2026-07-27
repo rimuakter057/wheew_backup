@@ -226,8 +226,8 @@ final Map<String, String> italian = {
 
   AppStrings.delete: "Elimina account",
   AppStrings.deleteAccount: "Elimina account",
-  AppStrings.warning: "Avvertimento",
-  AppStrings.deleteAccountWarning: "Avviso di eliminazione dell'account",
+  AppStrings.warning: "Questa azione è irreversibile.",
+  AppStrings.deleteAccountWarning: "Una volta eliminato il tuo account, tutti i tuoi dati, le prenotazioni, le preferenze e la cronologia verranno cancellati definitivamente e non potranno essere recuperati.",
   AppStrings.deleteAccountSuccessfully: "Account eliminato con successo",
   AppStrings.failedDeleteAccount: "Impossibile eliminare l'account",
 
@@ -704,8 +704,8 @@ final Map<String, String> italian = {
   AppStrings.navigate: "Naviga",
   AppStrings.yourSavedParkingSpot: "Il tuo Parcheggio Salvato",
   AppStrings.searchParking: "Cerca parcheggio",
-  AppStrings.parkingConfirmation: "Conferma Parcheggio",
-  AppStrings.areYouLeavingAParkingSpotRightNow: "Stai lasciando un parcheggio in questo momento?",
+  AppStrings.parkingConfirmation: "Stai per lasciare il tuo posto auto?",
+  AppStrings.areYouLeavingAParkingSpotRightNow: "Il tuo posto diventerà visibile agli automobilisti nelle vicinanze alla ricerca di parcheggio.",
   AppStrings.contactUsAt: "Contattaci a",
   AppStrings.cropImage: "Ritaglia Immagine",
   AppStrings.failedToLoadDocuments: "Caricamento documenti fallito",

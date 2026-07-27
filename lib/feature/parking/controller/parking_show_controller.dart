@@ -1,19 +1,16 @@
-
 import 'dart:async';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'dart:convert';
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
+import 'package:platchatapp/feature/map/utils/marker_icon_loader.dart';
 import 'package:platchatapp/feature/parking/repository/parking_repository.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
-import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/router/routes.dart';
@@ -24,7 +21,7 @@ class ParkingShowController extends GetxController {
   final ParkingRepository _repository = ParkingRepository();
   BuildContext? get _dialogContext =>
       AppRouter.navigatorKey.currentState?.overlay?.context ??
-          AppRouter.navigatorKey.currentContext;
+      AppRouter.navigatorKey.currentContext;
 
   final Logger _logger = Logger(
     printer: PrettyPrinter(
@@ -80,7 +77,6 @@ class ParkingShowController extends GetxController {
   bool _isRefreshing = false;
 
   GoogleMapController? mapController;
-  final Map<String, BitmapDescriptor> _carIconCache = {};
 
   @override
   void onInit() {
@@ -128,7 +124,6 @@ class ParkingShowController extends GetxController {
   ///    renders with no delay.
   /// 2. In the background, checks /parking-mode/me and branches the flow.
   Future<void> initializeFlow({required VoidCallback onShowPopup}) async {
-
     _resetSearchState();
 
     isLocating.value = false;
@@ -139,16 +134,13 @@ class ParkingShowController extends GetxController {
     await checkParkingModeMe(onShowPopup: onShowPopup);
   }
 
-
   void _resetSearchState() {
     handoffList.clear();
     parkingAreaList.clear();
     polygons.clear();
     polylines.clear();
     circles.clear();
-    markers.removeWhere(
-          (m) => m.markerId.value != 'saved_car_location',
-    );
+    markers.removeWhere((m) => m.markerId.value != 'saved_car_location');
     status.value = 'IDLE';
 
     showLocationPulse.value = false;
@@ -206,15 +198,18 @@ class ParkingShowController extends GetxController {
     }
   }
 
-
   Future<void> checkParkingModeMe({required VoidCallback onShowPopup}) async {
     isLoading.value = true;
     _logger.i('=== checkParkingModeMe START ===');
     try {
       final response = await _repository.getParkingModeMe();
-      print("PARKING_MODE_ME_RESPONSE: status=${response.statusCode}, body=${response.body}");
-      _logger.d('checkParkingModeMe status: ${response.statusCode}\n'
-          'body: ${response.body}');
+      print(
+        "PARKING_MODE_ME_RESPONSE: status=${response.statusCode}, body=${response.body}",
+      );
+      _logger.d(
+        'checkParkingModeMe status: ${response.statusCode}\n'
+        'body: ${response.body}',
+      );
       if (response.statusCode == 200) {
         final data = _asMap(jsonDecode(response.body));
         final String modeStatus =
@@ -246,13 +241,18 @@ class ParkingShowController extends GetxController {
         onShowPopup();
       }
     } catch (e) {
-      _showMessage(AppStrings.failedToConnectToParkingService.tr.replaceFirst('@error', e.toString()), isError: true);
+      _showMessage(
+        AppStrings.failedToConnectToParkingService.tr.replaceFirst(
+          '@error',
+          e.toString(),
+        ),
+        isError: true,
+      );
       onShowPopup();
     } finally {
       isLoading.value = false;
     }
   }
-
 
   Future<void> fetchNearbyData(double? lat, double? lng) async {
     if (lat == null || lng == null) {
@@ -261,10 +261,12 @@ class ParkingShowController extends GetxController {
     }
     isLoading.value = true;
 
-    _logger.i('=== fetchNearbyData START ===\n'
-        'lat=$lat, lng=$lng, '
-        'handoffRadius=${selectedRadiusMeter.value}m, '
-        'parkingAreaRadius=${_parkingAreaRadiusMeters}m');
+    _logger.i(
+      '=== fetchNearbyData START ===\n'
+      'lat=$lat, lng=$lng, '
+      'handoffRadius=${selectedRadiusMeter.value}m, '
+      'parkingAreaRadius=${_parkingAreaRadiusMeters}m',
+    );
 
     try {
       final results = await Future.wait([
@@ -283,28 +285,44 @@ class ParkingShowController extends GetxController {
       final handoffsResponse = results[0];
       final areasResponse = results[1];
 
-      print("GET_NEARBY_HANDOFFS_RESPONSE: status=${handoffsResponse.statusCode}, body=${handoffsResponse.body}");
-      print("GET_NEARBY_PARKING_AREAS_RESPONSE: status=${areasResponse.statusCode}, body=${areasResponse.body}");
+      print(
+        "GET_NEARBY_HANDOFFS_RESPONSE: status=${handoffsResponse.statusCode}, body=${handoffsResponse.body}",
+      );
+      print(
+        "GET_NEARBY_PARKING_AREAS_RESPONSE: status=${areasResponse.statusCode}, body=${areasResponse.body}",
+      );
 
-      _logger.d('GET /handoffs/nearby -> status: ${handoffsResponse.statusCode}\n'
-          'body: ${handoffsResponse.body}');
-      _logger.d('GET /parking-areas/nearby -> status: ${areasResponse.statusCode}\n'
-          'body: ${areasResponse.body}');
+      _logger.d(
+        'GET /handoffs/nearby -> status: ${handoffsResponse.statusCode}\n'
+        'body: ${handoffsResponse.body}',
+      );
+      _logger.d(
+        'GET /parking-areas/nearby -> status: ${areasResponse.statusCode}\n'
+        'body: ${areasResponse.body}',
+      );
 
       if (handoffsResponse.statusCode == 200) {
         handoffList.value = jsonDecode(handoffsResponse.body) as List<dynamic>;
       } else {
-        _showMessage(AppStrings.failedToLoadNearbyHandoffSpots.tr, isError: true);
+        _showMessage(
+          AppStrings.failedToLoadNearbyHandoffSpots.tr,
+          isError: true,
+        );
       }
 
       if (areasResponse.statusCode == 200) {
         parkingAreaList.value = jsonDecode(areasResponse.body) as List<dynamic>;
       } else {
-        _showMessage(AppStrings.failedToLoadNearbyParkingAreas.tr, isError: true);
+        _showMessage(
+          AppStrings.failedToLoadNearbyParkingAreas.tr,
+          isError: true,
+        );
       }
 
-      _logger.d('Parsed -> handoffList: ${handoffList.length} items, '
-          'parkingAreaList: ${parkingAreaList.length} items');
+      _logger.d(
+        'Parsed -> handoffList: ${handoffList.length} items, '
+        'parkingAreaList: ${parkingAreaList.length} items',
+      );
 
       await _buildMarkersAndPolygons();
 
@@ -317,16 +335,23 @@ class ParkingShowController extends GetxController {
         );
       }
 
-      _logger.i('=== fetchNearbyData END -> markers: ${markers.length}, '
-          'polygons: ${polygons.length}, circles: ${circles.length} ===');
+      _logger.i(
+        '=== fetchNearbyData END -> markers: ${markers.length}, '
+        'polygons: ${polygons.length}, circles: ${circles.length} ===',
+      );
     } catch (e, st) {
       _logger.e('fetchNearbyData ERROR', error: e, stackTrace: st);
-      _showMessage(AppStrings.failedToLoadNearbyParkingSpotsWithError.tr.replaceFirst('@error', e.toString()), isError: true);
+      _showMessage(
+        AppStrings.failedToLoadNearbyParkingSpotsWithError.tr.replaceFirst(
+          '@error',
+          e.toString(),
+        ),
+        isError: true,
+      );
     } finally {
       isLoading.value = false;
     }
   }
-
 
   Future<void> onLeavingPopupNo() async {
     _logger.i('=== onLeavingPopupNo CLICKED ===');
@@ -342,71 +367,129 @@ class ParkingShowController extends GetxController {
 
     try {
       _logger.d('onLeavingPopupNo calling setParkingModeSearching');
-      final response = await _repository.setParkingModeSearching(latitude: lat, longitude: lng);
-      _logger.d('setParkingModeSearching response status: ${response.statusCode}\n'
-          'body: ${response.body}');
+      final response = await _repository.setParkingModeSearching(
+        latitude: lat,
+        longitude: lng,
+      );
+      _logger.d(
+        'setParkingModeSearching response status: ${response.statusCode}\n'
+        'body: ${response.body}',
+      );
     } catch (e, st) {
       _logger.e('Error setting searching mode', error: e, stackTrace: st);
     }
     await fetchNearbyData(lat, lng);
   }
 
-
   Future<void> onLeavingPopupYes() async {
     await getUserLocation();
 
     final lat = gpsPosition.value?.latitude;
     final lng = gpsPosition.value?.longitude;
+
     if (lat == null || lng == null) {
-      _showMessage(
-        AppStrings.locationNotActiveOrAvailable.tr,
-        isError: true,
-      );
+      _showMessage(AppStrings.locationNotActiveOrAvailable.tr, isError: true);
       return;
     }
 
-    isLoading.value = true;
     try {
-      _logger.i('=== YES CLICK -> 2 API CALLS ===\n'
-          '1. POST /park-relay/handoffs\n'
-          '2. POST /park-relay/parking-mode/idle\n'
-          'body: {"latitude": $lat, "longitude": $lng}');
+      _logger.i(
+        '=== YES CLICK -> 2 API CALLS ===\n'
+        '1. POST /park-relay/handoffs\n'
+        '2. POST /park-relay/parking-mode/idle\n'
+        'body: {"latitude": $lat, "longitude": $lng}',
+      );
 
-      // Call 1: Handoff
-      final responseHandoff =
-      await _repository.createHandoff(latitude: lat, longitude: lng);
-      _logger.d('createHandoff status: ${responseHandoff.statusCode}\n'
-          'body: ${responseHandoff.body}');
+      // Call 1: Create Handoff
+      final responseHandoff = await _repository.createHandoff(
+        latitude: lat,
+        longitude: lng,
+      );
 
-      // Call 2: Idle mode
-      final responseIdle =
-      await _repository.setParkingModeIdle(latitude: lat, longitude: lng);
-      _logger.d('setParkingModeIdle status: ${responseIdle.statusCode}\n'
-          'body: ${responseIdle.body}');
+      debugPrint('Handoffs Response Status: ${responseHandoff.statusCode}');
 
-      if ((responseHandoff.statusCode == 200 || responseHandoff.statusCode == 201) &&
-          (responseIdle.statusCode == 200 || responseIdle.statusCode == 201)) {
-        _showMessage(
-            AppStrings.parkingSpotHandoffReportedSuccessfully.tr, isError: false);
-        if (mapController != null) {
-          await mapController!.animateCamera(
-            CameraUpdate.newLatLngZoom(LatLng(lat, lng), 17),
-          );
+      debugPrint('Handoffs Response Body: ${responseHandoff.body}');
+
+      _logger.d(
+        'createHandoff status: ${responseHandoff.statusCode}\n'
+        'body: ${responseHandoff.body}',
+      );
+
+      final handoffSuccess =
+          responseHandoff.statusCode == 200 ||
+          responseHandoff.statusCode == 201;
+
+      // Handle backend error directly
+      if (!handoffSuccess) {
+        try {
+          final responseData = jsonDecode(responseHandoff.body);
+
+          final backendMessage = responseData['message']?.toString();
+
+          if (backendMessage != null && backendMessage.isNotEmpty) {
+            _showMessage(backendMessage, isError: true);
+          }
+        } catch (e) {
+          debugPrint('Failed to parse handoff error response: $e');
         }
-      } else {
-        String msg = '';
-        if (responseHandoff.statusCode != 200 && responseHandoff.statusCode != 201) {
-          msg += '${AppStrings.failedToRecordSpotHandoff.tr} ';
+
+        return;
+      }
+
+      // Call 2: Set Parking Mode Idle
+      final responseIdle = await _repository.setParkingModeIdle(
+        latitude: lat,
+        longitude: lng,
+      );
+
+      debugPrint('Idle Response Status: ${responseIdle.statusCode}');
+
+      debugPrint('Idle Response Body: ${responseIdle.body}');
+
+      _logger.d(
+        'setParkingModeIdle status: ${responseIdle.statusCode}\n'
+        'body: ${responseIdle.body}',
+      );
+
+      final idleSuccess =
+          responseIdle.statusCode == 200 || responseIdle.statusCode == 201;
+
+      // Handle Idle API error
+      if (!idleSuccess) {
+        try {
+          final responseData = jsonDecode(responseIdle.body);
+
+          final backendMessage = responseData['message']?.toString();
+
+          if (backendMessage != null && backendMessage.isNotEmpty) {
+            _showMessage(backendMessage, isError: true);
+          }
+        } catch (e) {
+          debugPrint('Failed to parse idle error response: $e');
         }
-        if (responseIdle.statusCode != 200 && responseIdle.statusCode != 201) {
-          msg += AppStrings.failedToSetParkingModeIdle.tr;
-        }
-        _showMessage(msg.trim(), isError: true);
+
+        return;
+      }
+
+      // Both APIs successful
+      _showMessage(
+        AppStrings.parkingSpotHandoffReportedSuccessfully.tr,
+        isError: false,
+      );
+
+      if (mapController != null) {
+        await mapController!.animateCamera(
+          CameraUpdate.newLatLngZoom(LatLng(lat, lng), 17),
+        );
       }
     } catch (e) {
-      _showMessage(AppStrings.networkErrorReportingSpotHandoffWithError.tr.replaceFirst('@error', e.toString()), isError: true);
-    } finally {
-      isLoading.value = false;
+      _showMessage(
+        AppStrings.networkErrorReportingSpotHandoffWithError.tr.replaceFirst(
+          '@error',
+          e.toString(),
+        ),
+        isError: true,
+      );
     }
   }
 
@@ -417,11 +500,7 @@ class ParkingShowController extends GetxController {
     final Set<Circle> newCircles = {};
     final now = DateTime.now();
 
-    // final freeCarIcon = await _getCarIcon(AssetsPath.freeCar);
-    // final paidCarIcon = await _getCarIcon(AssetsPath.paidCar);
-
-    final freeCarIcon = await _getCarIcon(AssetsPath.bluePin);
-    final paidCarIcon = await _getCarIcon(AssetsPath.bluePin);
+    final parkingPinIcon = await MapMarkerIcons.parkingPin();
 
     bool needRefresh = false;
 
@@ -431,8 +510,7 @@ class ParkingShowController extends GetxController {
         Marker(
           markerId: const MarkerId('saved_car_location'),
           position: savedParkingLocation.value!,
-          icon: BitmapDescriptor.defaultMarkerWithHue(
-              BitmapDescriptor.hueAzure),
+          icon: parkingPinIcon,
           anchor: const Offset(0.5, 0.5),
           infoWindow: const InfoWindow(
             title: 'Your Saved Parking Spot',
@@ -453,8 +531,7 @@ class ParkingShowController extends GetxController {
       if (lat == null || lng == null) continue;
 
       final id = handoff['id']?.toString() ?? '';
-      final handoffStatus =
-          handoff['status']?.toString().toUpperCase() ?? '';
+      final handoffStatus = handoff['status']?.toString().toUpperCase() ?? '';
       final expiresAtStr = handoff['expiresAt']?.toString() ?? '';
       var isBlinking = false;
 
@@ -473,7 +550,7 @@ class ParkingShowController extends GetxController {
         Marker(
           markerId: MarkerId('handoff_$id'),
           position: LatLng(lat, lng),
-          icon: freeCarIcon,
+          icon: parkingPinIcon,
           anchor: const Offset(0.5, 0.5),
           infoWindow: InfoWindow.noText,
           onTap: () => showHandoffDetails(handoff),
@@ -489,7 +566,9 @@ class ParkingShowController extends GetxController {
     for (var idx = 0; idx < parkingAreaList.length; idx++) {
       final area = _asMap(parkingAreaList[idx]);
       if (area == null) {
-        _logger.w('parkingArea[$idx] SKIPPED: not a valid map -> ${parkingAreaList[idx]}');
+        _logger.w(
+          'parkingArea[$idx] SKIPPED: not a valid map -> ${parkingAreaList[idx]}',
+        );
         continue;
       }
 
@@ -497,8 +576,10 @@ class ParkingShowController extends GetxController {
       final polyPoints = area['polygon'];
       final points = _parsePolygonPoints(polyPoints);
 
-      _logger.d('parkingArea[$idx] id=$areaId -> raw polygon: $polyPoints '
-          '-> parsed points: ${points.length}');
+      _logger.d(
+        'parkingArea[$idx] id=$areaId -> raw polygon: $polyPoints '
+        '-> parsed points: ${points.length}',
+      );
 
       if (points.length >= 3) {
         newPolygons.add(
@@ -529,13 +610,11 @@ class ParkingShowController extends GetxController {
       final centerLat = _toDouble(area['centerLat']);
       final centerLng = _toDouble(area['centerLng']);
       if (centerLat != null && centerLng != null) {
-        final isPaid =
-            area['parkingCost']?.toString().toUpperCase() == 'PAID';
         newMarkers.add(
           Marker(
             markerId: MarkerId('area_marker_$areaId'),
             position: LatLng(centerLat, centerLng),
-            icon: isPaid ? paidCarIcon : freeCarIcon,
+            icon: parkingPinIcon,
             anchor: const Offset(0.5, 0.5),
             infoWindow: InfoWindow.noText,
             onTap: () => showParkingAreaDetails(area),
@@ -553,9 +632,9 @@ class ParkingShowController extends GetxController {
 
     _logger.i(
       '_buildMarkersAndPolygons DONE -> markers: ${newMarkers.length}, '
-          'polygons: ${newPolygons.length}, polylines: ${newPolylines.length}, '
-          'circles: ${newCircles.length} (handoffList=${handoffList.length}, '
-          'parkingAreaList=${parkingAreaList.length})',
+      'polygons: ${newPolygons.length}, polylines: ${newPolylines.length}, '
+      'circles: ${newCircles.length} (handoffList=${handoffList.length}, '
+      'parkingAreaList=${parkingAreaList.length})',
     );
 
     if (needRefresh) {
@@ -600,8 +679,7 @@ class ParkingShowController extends GetxController {
       if (lat == null || lng == null) continue;
 
       final id = handoff['id']?.toString() ?? '';
-      final handoffStatus =
-          handoff['status']?.toString().toUpperCase() ?? '';
+      final handoffStatus = handoff['status']?.toString().toUpperCase() ?? '';
       final expiresAtStr = handoff['expiresAt']?.toString() ?? '';
       var isBlinking = false;
 
@@ -640,9 +718,7 @@ class ParkingShowController extends GetxController {
       circleId: CircleId('glow_$id'),
       center: LatLng(lat, lng),
       radius: _blinkToggle.value ? 18 : 30,
-      fillColor: Colors.red.withValues(
-        alpha: _blinkToggle.value ? 0.30 : 0.12,
-      ),
+      fillColor: Colors.red.withValues(alpha: _blinkToggle.value ? 0.30 : 0.12),
       strokeColor: Colors.red.withValues(alpha: 0.7),
       strokeWidth: ResponsiveHelper.borderWidth(2).round(),
       consumeTapEvents: false,
@@ -684,33 +760,6 @@ class ParkingShowController extends GetxController {
     return null;
   }
 
-  Future<BitmapDescriptor> _getCarIcon(String assetPath) async {
-    if (_carIconCache.containsKey(assetPath)) {
-      return _carIconCache[assetPath]!;
-    }
-
-    try {
-      final ByteData data = await rootBundle.load(assetPath);
-      final ui.Codec codec = await ui.instantiateImageCodec(
-        data.buffer.asUint8List(),
-        targetWidth: 18,
-      );
-      final ui.FrameInfo frame = await codec.getNextFrame();
-      final ByteData? byteData = await frame.image.toByteData(
-        format: ui.ImageByteFormat.png,
-      );
-      if (byteData == null) {
-        return BitmapDescriptor.defaultMarker;
-      }
-      final icon = BitmapDescriptor.bytes(byteData.buffer.asUint8List());
-      _carIconCache[assetPath] = icon;
-      return icon;
-    } catch (e) {
-      _logger.e('Error loading custom car icon: $assetPath', error: e);
-      return BitmapDescriptor.defaultMarker;
-    }
-  }
-
   double? _toDouble(dynamic value) {
     if (value == null) return null;
     if (value is num) return value.toDouble();
@@ -722,8 +771,7 @@ class ParkingShowController extends GetxController {
   void toggleParkMode() {
     showLocationPulse.value = !showLocationPulse.value;
     if (showLocationPulse.value) {
-      _showMessage(AppStrings.parkModeActive.tr,
-          isError: false);
+      _showMessage(AppStrings.parkModeActive.tr, isError: false);
       final lat = gpsPosition.value?.latitude;
       final lng = gpsPosition.value?.longitude;
       if (lat != null && lng != null) {
@@ -778,42 +826,45 @@ class ParkingShowController extends GetxController {
     final totalSeconds = minutes * 60;
     _startTimerUpdate(totalSeconds);
     _showMessage(
-        AppStrings.paidSpotTimerStartedForMinutes
-            .tr
-            .replaceFirst('@minutes', minutes.toString()), isError: false);
+      AppStrings.paidSpotTimerStartedForMinutes.tr.replaceFirst(
+        '@minutes',
+        minutes.toString(),
+      ),
+      isError: false,
+    );
   }
 
   void _startTimerUpdate(int totalSeconds) {
     int remainingSeconds = totalSeconds;
 
-    _parkingCountdownTimer =
-        Timer.periodic(const Duration(seconds: 1), (timer) {
-          if (remainingSeconds <= 0) {
-            timer.cancel();
-            isTimerActive.value = false;
-            remainingTimeString.value = '';
-            savedParkingLocation.value = null; // spot removed after expiration
-            _buildMarkersAndPolygons();
-            _showMessage(AppStrings.parkingSpotDurationExpired.tr,
-                isError: false);
-            return;
-          }
+    _parkingCountdownTimer = Timer.periodic(const Duration(seconds: 1), (
+      timer,
+    ) {
+      if (remainingSeconds <= 0) {
+        timer.cancel();
+        isTimerActive.value = false;
+        remainingTimeString.value = '';
+        savedParkingLocation.value = null; // spot removed after expiration
+        _buildMarkersAndPolygons();
+        _showMessage(AppStrings.parkingSpotDurationExpired.tr, isError: false);
+        return;
+      }
 
-          remainingSeconds--;
+      remainingSeconds--;
 
-          final int mins = remainingSeconds ~/ 60;
-          final int secs = remainingSeconds % 60;
-          remainingTimeString.value =
+      final int mins = remainingSeconds ~/ 60;
+      final int secs = remainingSeconds % 60;
+      remainingTimeString.value =
           '${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
 
-          // Expiring warning alert
-          final bool triggerAlert = (totalSeconds > 600 &&
-              remainingSeconds == 600) ||
-              (totalSeconds <= 600 && remainingSeconds == 60);
-          if (triggerAlert) {
-            _showExpirationAlert();
-          }
-        });
+      // Expiring warning alert
+      final bool triggerAlert =
+          (totalSeconds > 600 && remainingSeconds == 600) ||
+          (totalSeconds <= 600 && remainingSeconds == 60);
+      if (triggerAlert) {
+        _showExpirationAlert();
+      }
+    });
     isTimerActive.value = true;
   }
 
@@ -821,37 +872,68 @@ class ParkingShowController extends GetxController {
     final ctx = _dialogContext;
 
     if (ctx == null) return;
-    showDialog(
+    showModalBottomSheet(
       context: ctx,
-      barrierDismissible: false,
+      isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
+      backgroundColor: Colors.transparent,
       builder: (dialogContext) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20))),
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(ResponsiveHelper.borderRadius(24)),
+            ),
+          ),
           child: Padding(
             padding: ResponsiveHelper.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                Center(
+                  child: Container(
+                    width: ResponsiveHelper.width(40),
+                    height: ResponsiveHelper.height(5),
+                    margin: EdgeInsets.only(
+                      bottom: ResponsiveHelper.spacing(16),
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[350],
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(10),
+                      ),
+                    ),
+                  ),
+                ),
                 Container(
                   padding: ResponsiveHelper.all(16),
                   decoration: BoxDecoration(
                     color: Colors.blue.shade50,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.local_parking,
-                      size: ResponsiveHelper.iconSize(40), color: Colors.blue.shade700),
+                  child: Icon(
+                    Icons.local_parking,
+                    size: ResponsiveHelper.iconSize(40),
+                    color: Colors.blue.shade700,
+                  ),
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(20)),
-                 Text(
+                Text(
                   AppStrings.theCarHasBeenParked.tr,
-                  style: TextStyle(fontSize: ResponsiveHelper.fontSize(18), fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: ResponsiveHelper.fontSize(18),
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(8)),
-                 Text(
+                Text(
                   AppStrings.isItAFreeSpotOrIsItAPaidSpot.tr,
-                  style: TextStyle(fontSize: ResponsiveHelper.fontSize(14), color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: ResponsiveHelper.fontSize(14),
+                    color: Colors.grey,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(24)),
@@ -864,16 +946,23 @@ class ParkingShowController extends GetxController {
                           isPaidSpot.value = false;
                           isTimerActive.value = false;
                           remainingTimeString.value = '';
-                          _showMessage(AppStrings.parkingLocationSavedAsFreeSpot.tr,
-                              isError: false);
+                          _showMessage(
+                            AppStrings.parkingLocationSavedAsFreeSpot.tr,
+                            isError: false,
+                          );
                         },
                         style: OutlinedButton.styleFrom(
                           padding: ResponsiveHelper.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12))),
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveHelper.borderRadius(12),
+                            ),
+                          ),
                         ),
-                        child: Text(AppStrings.freeSpot.tr,
-                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        child: Text(
+                          AppStrings.freeSpot.tr,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                     SizedBox(width: ResponsiveHelper.spacing(12)),
@@ -888,16 +977,22 @@ class ParkingShowController extends GetxController {
                           backgroundColor: const Color(0xFF185FA5),
                           padding: ResponsiveHelper.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12))),
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveHelper.borderRadius(12),
+                            ),
+                          ),
                         ),
-                        child: Text(AppStrings.paidSpot.tr,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold)),
+                        child: Text(
+                          AppStrings.paidSpot.tr,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -910,26 +1005,54 @@ class ParkingShowController extends GetxController {
     final ctx = _dialogContext;
 
     if (ctx == null) return;
-    showDialog(
+    showModalBottomSheet(
       context: ctx,
-      barrierDismissible: false,
+      isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
+      backgroundColor: Colors.transparent,
       builder: (dialogContext) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20))),
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(ResponsiveHelper.borderRadius(24)),
+            ),
+          ),
           child: Padding(
             padding: ResponsiveHelper.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                Center(
+                  child: Container(
+                    width: ResponsiveHelper.width(40),
+                    height: ResponsiveHelper.height(5),
+                    margin: EdgeInsets.only(
+                      bottom: ResponsiveHelper.spacing(16),
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[350],
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(10),
+                      ),
+                    ),
+                  ),
+                ),
                 Text(
                   'Staying Duration',
-                  style: TextStyle(fontSize: ResponsiveHelper.fontSize(18), fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: ResponsiveHelper.fontSize(18),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(8)),
-                 Text(
+                Text(
                   AppStrings.forHowLongIsTheUserStayingInThatSpot.tr,
-                  style: TextStyle(fontSize: ResponsiveHelper.fontSize(14), color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: ResponsiveHelper.fontSize(14),
+                    color: Colors.grey,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(20)),
@@ -953,13 +1076,16 @@ class ParkingShowController extends GetxController {
                           elevation: 0,
                           padding: ResponsiveHelper.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveHelper.borderRadius(10),
+                            ),
                             side: BorderSide(color: Colors.grey.shade300),
                           ),
                         ),
-                        child: Text(label,
-                            style:
-                            const TextStyle(fontWeight: FontWeight.bold)),
+                        child: Text(
+                          label,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                   );
@@ -967,8 +1093,10 @@ class ParkingShowController extends GetxController {
                 SizedBox(height: ResponsiveHelper.spacing(12)),
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(),
-                  child:
-                  Text(AppStrings.cancel.tr, style: TextStyle(color: Colors.grey)),
+                  child: Text(
+                    AppStrings.cancel.tr,
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
               ],
             ),
@@ -982,36 +1110,69 @@ class ParkingShowController extends GetxController {
     final ctx = _dialogContext;
 
     if (ctx == null) return;
-    showDialog(
+    showModalBottomSheet(
       context: ctx,
-      barrierDismissible: false,
+      isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
+      backgroundColor: Colors.transparent,
       builder: (dialogContext) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20))),
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(ResponsiveHelper.borderRadius(24)),
+            ),
+          ),
           child: Padding(
             padding: ResponsiveHelper.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                Center(
+                  child: Container(
+                    width: ResponsiveHelper.width(40),
+                    height: ResponsiveHelper.height(5),
+                    margin: EdgeInsets.only(
+                      bottom: ResponsiveHelper.spacing(16),
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[350],
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(10),
+                      ),
+                    ),
+                  ),
+                ),
                 Container(
                   padding: ResponsiveHelper.all(16),
                   decoration: BoxDecoration(
                     color: Colors.amber.shade50,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.warning_amber_rounded,
-                      size: ResponsiveHelper.iconSize(40), color: Colors.amber),
+                  child: Icon(
+                    Icons.warning_amber_rounded,
+                    size: ResponsiveHelper.iconSize(40),
+                    color: Colors.amber,
+                  ),
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(20)),
-                 Text(
+                Text(
                   AppStrings.parkingExpiring.tr,
-                  style: TextStyle(fontSize: ResponsiveHelper.fontSize(18), fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: ResponsiveHelper.fontSize(18),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(8)),
-                 Text(
-                  AppStrings.areYouLeavingThePaidSpotYourPaidSpotIsExpiringIn10Minutes.tr,
-                  style: TextStyle(fontSize: ResponsiveHelper.fontSize(14), color: Colors.grey),
+                Text(
+                  AppStrings
+                      .areYouLeavingThePaidSpotYourPaidSpotIsExpiringIn10Minutes
+                      .tr,
+                  style: TextStyle(
+                    fontSize: ResponsiveHelper.fontSize(14),
+                    color: Colors.grey,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(24)),
@@ -1021,16 +1182,23 @@ class ParkingShowController extends GetxController {
                       child: OutlinedButton(
                         onPressed: () {
                           Navigator.of(dialogContext).pop();
-                          _showMessage(AppStrings.acknowledgedKeepingSpotActive.tr,
-                              isError: false);
+                          _showMessage(
+                            AppStrings.acknowledgedKeepingSpotActive.tr,
+                            isError: false,
+                          );
                         },
                         style: OutlinedButton.styleFrom(
                           padding: ResponsiveHelper.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12))),
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveHelper.borderRadius(12),
+                            ),
+                          ),
                         ),
-                        child: Text(AppStrings.noStaying.tr,
-                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        child: Text(
+                          AppStrings.noStaying.tr,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                     SizedBox(width: ResponsiveHelper.spacing(12)),
@@ -1040,23 +1208,30 @@ class ParkingShowController extends GetxController {
                           Navigator.of(dialogContext).pop();
                           clearSavedParkingLocation();
                           _showMessage(
-                              AppStrings.parkingClearedReleasedSpotStatus.tr,
-                              isError: false);
+                            AppStrings.parkingClearedReleasedSpotStatus.tr,
+                            isError: false,
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.amber.shade700,
                           padding: ResponsiveHelper.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12))),
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveHelper.borderRadius(12),
+                            ),
+                          ),
                         ),
-                        child: Text(AppStrings.yesLeaving.tr,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold)),
+                        child: Text(
+                          AppStrings.yesLeaving.tr,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -1064,7 +1239,6 @@ class ParkingShowController extends GetxController {
       },
     );
   }
-
 
   // ── Handoff Details Dialog: Status, Expires At, Navigate only ──
   Future<void> showHandoffDetails(Map<String, dynamic> handoff) async {
@@ -1078,7 +1252,9 @@ class ParkingShowController extends GetxController {
     try {
       _logger.i('=== showHandoffDetails: fetching /handoffs/$id ===');
       final response = await _repository.getHandoffById(handoffId: id);
-      print("GET_HANDOFF_BY_ID_RESPONSE: status=${response.statusCode}, body=${response.body}");
+      print(
+        "GET_HANDOFF_BY_ID_RESPONSE: status=${response.statusCode}, body=${response.body}",
+      );
 
       if (response.statusCode == 200) {
         final data = _asMap(jsonDecode(response.body));
@@ -1091,7 +1267,13 @@ class ParkingShowController extends GetxController {
       _showHandoffDialog(handoff); // fallback to cached data
     } catch (e, st) {
       _logger.e('showHandoffDetails ERROR', error: e, stackTrace: st);
-      _showMessage(AppStrings.networkErrorLoadingHandoffDetails.tr.replaceFirst('@error', e.toString()), isError: true);
+      _showMessage(
+        AppStrings.networkErrorLoadingHandoffDetails.tr.replaceFirst(
+          '@error',
+          e.toString(),
+        ),
+        isError: true,
+      );
       _showHandoffDialog(handoff);
     } finally {
       isLoading.value = false;
@@ -1159,20 +1341,39 @@ class ParkingShowController extends GetxController {
     final ctx = _dialogContext;
     if (ctx == null) return;
 
-    showDialog(
+    showModalBottomSheet(
       context: ctx,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (dialogContext) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(ResponsiveHelper.borderRadius(24)),
+            ),
           ),
-          backgroundColor: Colors.white,
           child: Padding(
             padding: ResponsiveHelper.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Center(
+                  child: Container(
+                    width: ResponsiveHelper.width(40),
+                    height: ResponsiveHelper.height(5),
+                    margin: EdgeInsets.only(
+                      bottom: ResponsiveHelper.spacing(16),
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[350],
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(10),
+                      ),
+                    ),
+                  ),
+                ),
                 Text(
                   title,
                   style: TextStyle(
@@ -1197,14 +1398,16 @@ class ParkingShowController extends GetxController {
                       );
                     },
                     icon: const Icon(Icons.directions, color: Colors.white),
-                    label:  Text(
+                    label: Text(
                       AppStrings.navigate.tr,
                       style: TextStyle(color: Colors.white),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF185FA5),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveHelper.borderRadius(12),
+                        ),
                       ),
                       padding: ResponsiveHelper.symmetric(vertical: 12),
                     ),
@@ -1213,7 +1416,7 @@ class ParkingShowController extends GetxController {
                 SizedBox(height: ResponsiveHelper.spacing(12)),
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(),
-                  child:  Text(
+                  child: Text(
                     AppStrings.close.tr,
                     style: TextStyle(
                       color: Colors.grey,
@@ -1241,7 +1444,9 @@ class ParkingShowController extends GetxController {
         return Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(ResponsiveHelper.borderRadius(24))),
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(ResponsiveHelper.borderRadius(24)),
+            ),
           ),
           padding: ResponsiveHelper.symmetric(horizontal: 20, vertical: 16),
           child: Column(
@@ -1254,27 +1459,38 @@ class ParkingShowController extends GetxController {
                   height: ResponsiveHelper.height(5),
                   decoration: BoxDecoration(
                     color: Colors.grey[350],
-                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.borderRadius(10),
+                    ),
                   ),
                 ),
               ),
               SizedBox(height: ResponsiveHelper.spacing(16)),
-               Text(
-
+              Text(
                 AppStrings.savedParkingLocation.tr,
                 style: TextStyle(
-                    fontSize: ResponsiveHelper.fontSize(20),
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87),
+                  fontSize: ResponsiveHelper.fontSize(20),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: ResponsiveHelper.spacing(16)),
-              _buildDetailRow(AppStrings.confidenceLevel.tr,
-                  '${confidenceLevel.value}% (High Accuracy)'),
               _buildDetailRow(
-                  AppStrings.spotType.tr, isPaidSpot.value ? AppStrings.paidSpot.tr : AppStrings.freeSpot.tr),
+                AppStrings.confidenceLevel.tr,
+                '${confidenceLevel.value}% (High Accuracy)',
+              ),
+              _buildDetailRow(
+                AppStrings.spotType.tr,
+                isPaidSpot.value
+                    ? AppStrings.paidSpot.tr
+                    : AppStrings.freeSpot.tr,
+              ),
               if (isTimerActive.value)
-                _buildDetailRow(AppStrings.timeRemaining.tr, remainingTimeString.value),
+                _buildDetailRow(
+                  AppStrings.timeRemaining.tr,
+                  remainingTimeString.value,
+                ),
               SizedBox(height: ResponsiveHelper.spacing(24)),
               ElevatedButton.icon(
                 onPressed: () {
@@ -1282,13 +1498,18 @@ class ParkingShowController extends GetxController {
                   launchSavedParkingRoute();
                 },
                 icon: const Icon(Icons.directions_walk, color: Colors.white),
-                label: Text(AppStrings.walkBackToCar.tr,
-                    style: TextStyle(color: Colors.white)),
+                label: Text(
+                  AppStrings.walkBackToCar.tr,
+                  style: TextStyle(color: Colors.white),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF185FA5),
                   padding: ResponsiveHelper.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12))),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.borderRadius(12),
+                    ),
+                  ),
                 ),
               ),
               SizedBox(height: ResponsiveHelper.spacing(10)),
@@ -1298,13 +1519,21 @@ class ParkingShowController extends GetxController {
                   clearSavedParkingLocation();
                 },
                 icon: const Icon(Icons.delete_outline, color: Colors.red),
-                label:
-                Text(AppStrings.removeSpot.tr, style: TextStyle(color: Colors.red)),
+                label: Text(
+                  AppStrings.removeSpot.tr,
+                  style: TextStyle(color: Colors.red),
+                ),
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Colors.red, width: ResponsiveHelper.borderWidth(1)),
+                  side: BorderSide(
+                    color: Colors.red,
+                    width: ResponsiveHelper.borderWidth(1),
+                  ),
                   padding: ResponsiveHelper.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12))),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.borderRadius(12),
+                    ),
+                  ),
                 ),
               ),
               SizedBox(height: ResponsiveHelper.spacing(16)),
@@ -1315,11 +1544,11 @@ class ParkingShowController extends GetxController {
     );
   }
 
-
-
   void showDetailsDialog(Map<String, dynamic> data, String title) {
-    _logger.i('=== showDetailsDialog: title="$title" ===\n'
-        'data: ${jsonEncode(data)}');
+    _logger.i(
+      '=== showDetailsDialog: title="$title" ===\n'
+      'data: ${jsonEncode(data)}',
+    );
     final ctx = _dialogContext;
 
     if (ctx == null) return;
@@ -1331,20 +1560,42 @@ class ParkingShowController extends GetxController {
       return entry.key != 'id' && entry.key != 'createdById';
     }).toList();
 
-    showDialog(
+    showModalBottomSheet(
       context: ctx,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (dialogContext) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
+        return Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(dialogContext).size.height * 0.85,
           ),
-          backgroundColor: Colors.white,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(ResponsiveHelper.borderRadius(24)),
+            ),
+          ),
           child: Padding(
             padding: ResponsiveHelper.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Center(
+                  child: Container(
+                    width: ResponsiveHelper.width(40),
+                    height: ResponsiveHelper.height(5),
+                    margin: EdgeInsets.only(
+                      bottom: ResponsiveHelper.spacing(16),
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[350],
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(10),
+                      ),
+                    ),
+                  ),
+                ),
                 Text(
                   title,
                   style: TextStyle(
@@ -1375,9 +1626,11 @@ class ParkingShowController extends GetxController {
                         //
                         // final displayKey = _formatKey(entry.key);
 
-
                         final displayKey = _formatKey(entry.key);
-                        final valStr = _formatFieldValue(entry.key, entry.value);
+                        final valStr = _formatFieldValue(
+                          entry.key,
+                          entry.value,
+                        );
                         if (valStr.isEmpty) return const SizedBox.shrink();
 
                         if (entry.key == 'googleMapsLink') {
@@ -1385,18 +1638,24 @@ class ParkingShowController extends GetxController {
                             padding: ResponsiveHelper.symmetric(vertical: 8),
                             child: ElevatedButton.icon(
                               onPressed: () => _launchURL(valStr),
-                              icon: const Icon(Icons.directions,
-                                  color: Colors.white),
-                              label:  Text(
+                              icon: const Icon(
+                                Icons.directions,
+                                color: Colors.white,
+                              ),
+                              label: Text(
                                 AppStrings.navigate.tr,
                                 style: TextStyle(color: Colors.white),
                               ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF185FA5),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+                                  borderRadius: BorderRadius.circular(
+                                    ResponsiveHelper.borderRadius(12),
+                                  ),
                                 ),
-                                padding: ResponsiveHelper.symmetric(vertical: 12),
+                                padding: ResponsiveHelper.symmetric(
+                                  vertical: 12,
+                                ),
                               ),
                             ),
                           );
@@ -1410,7 +1669,7 @@ class ParkingShowController extends GetxController {
                 SizedBox(height: ResponsiveHelper.spacing(16)),
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(),
-                  child:  Text(
+                  child: Text(
                     AppStrings.close.tr,
                     style: TextStyle(
                       color: Colors.grey,
@@ -1463,12 +1722,14 @@ class ParkingShowController extends GetxController {
   String _formatKey(String key) {
     final RegExp camelCase = RegExp(r'(?<=[a-z])(?=[A-Z])');
     final formatted = key.replaceAll(camelCase, ' ').replaceAll('_', ' ');
-    return formatted.split(' ').map((word) {
-      if (word.isEmpty) return '';
-      return word[0].toUpperCase() + word.substring(1);
-    }).join(' ');
+    return formatted
+        .split(' ')
+        .map((word) {
+          if (word.isEmpty) return '';
+          return word[0].toUpperCase() + word.substring(1);
+        })
+        .join(' ');
   }
-
 
   static const _dateFieldKeys = {
     'expiresAt',

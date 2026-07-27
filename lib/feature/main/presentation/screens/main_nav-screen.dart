@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
+import 'package:platchatapp/feature/map/presentation/screens/simple_map_screen.dart';
 import 'package:platchatapp/feature/notification/presentation/screens/notification_screen.dart';
 import 'package:platchatapp/feature/parking/presentation/screens/parking_show_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_nav_screen.dart';
@@ -47,6 +48,8 @@ class _MainNavScreenState extends State<MainNavScreen> {
         return ProfileNavScreen();
       case 4:
         return ScanScreen();
+      case 5:
+        return const SimpleMapScreen();
       default:
         return const SizedBox.shrink();
     }
@@ -108,6 +111,7 @@ class _MainNavScreenState extends State<MainNavScreen> {
     );
   }
 }
+
 
 // ─── Scan chooser overlay (OCR Scanner / Scan QR Code) ────────────────────────
 // Lives inside the body Stack (not a modal route) so the floating bottom nav
@@ -222,10 +226,21 @@ class _AppBottomNav extends StatelessWidget {
                             onTap: onTap,
                           ),
 
+                          // Scanner nav icon disabled — replaced by the
+                          // plain Google Map tab below. Scan/OCR is still
+                          // reachable via the QR flow (_openQrScanner).
+                          // _NavItem(
+                          //   icon: AssetsPath.scannerNav,
+                          //   label: AppStrings.scan.tr,
+                          //   index: 4,
+                          //   currentIndex: currentIndex,
+                          //   onTap: onTap,
+                          // ),
+
                           _NavItem(
-                            icon: AssetsPath.scannerNav,
-                            label: AppStrings.scan.tr,
-                            index: 4,
+                            icon: AssetsPath.savePNav,
+                            label: "Save Parking",
+                            index: 5,
                             currentIndex: currentIndex,
                             onTap: onTap,
                           ),

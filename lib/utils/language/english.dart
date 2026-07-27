@@ -222,8 +222,8 @@ final Map<String, String> english = {
   AppStrings.supportRequest: 'Support Request',
 
   AppStrings.deleteAccount: 'Delete Account',
-  AppStrings.warning: 'Warning',
-  AppStrings.deleteAccountWarning: 'Delete Account Warning',
+  AppStrings.warning: 'This action is permanent',
+  AppStrings.deleteAccountWarning: 'Once you delete your account, all your data, bookings,preferences, and history will be permanently deleted and can’t be recovered.',
 
   AppStrings.deleteAccountSuccessfully: 'Account deleted successfully',
   AppStrings.failedDeleteAccount: 'Failed to delete account',
@@ -674,8 +674,8 @@ AppStrings.group:"Group",
   AppStrings.yourSavedParkingSpot: "Your Saved Parking Spot",
 
   AppStrings.searchParking: "Search parking",
-  AppStrings.parkingConfirmation: "Parking Confirmation",
-  AppStrings.areYouLeavingAParkingSpotRightNow: "Are you leaving a parking spot right now?",
+  AppStrings.parkingConfirmation: "Are you about to leave your parking spot?",
+  AppStrings.areYouLeavingAParkingSpotRightNow: "Your spot will become visible to nearby drivers looking for parking.",
   AppStrings.contactUsAt: "Contact us at",
   AppStrings.cropImage: "Crop Image",
   AppStrings.failedToLoadDocuments: "Failed to load documents",

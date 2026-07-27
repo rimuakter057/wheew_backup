@@ -261,11 +261,14 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
               );
             }),
 
-            ParkingConfirmationOverlay(
-              visible: _showConfirmationPopup,
-              onYes: _onParkingYes,
-              onNo: _onParkingNo,
-            ),
+            // ParkingConfirmationOverlay(
+            //   visible: _showConfirmationPopup,
+            //   onYes: _onParkingYes,
+            //   onNo: _onParkingNo,
+            // ),
+
+
+
 
           ],
         ),
@@ -274,11 +277,22 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
   }
 
 
-
   void _showParkingConfirmationPopup() {
-    mapDebug('Showing Parking Confirmation Dialog Overlay');
-    _showConfirmationPopup.value = true;
+    mapDebug('Showing Parking Confirmation Dialog');
+
+    ParkingConfirmationDialog.show(
+      context,
+      onYes: _onParkingYes,
+      onNo: _onParkingNo,
+    );
   }
+
+
+
+  // void _showParkingConfirmationPopup() {
+  //   mapDebug('Showing Parking Confirmation Dialog Overlay');
+  //   _showConfirmationPopup.value = true;
+  // }
 
   void _onParkingNo() {
     mapDebug('Parking Confirmation: User clicked NO');

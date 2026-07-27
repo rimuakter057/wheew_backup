@@ -426,6 +426,9 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
                         }
                       },
                       decoration: InputDecoration(
+
+                        filled: true,
+                        fillColor: AppColors.white,
                         hintText: _selectedFilePath != null
                             ? 'Add caption...'
                             : "Write here...",

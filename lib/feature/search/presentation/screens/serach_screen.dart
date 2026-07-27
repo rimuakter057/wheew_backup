@@ -7,16 +7,13 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/chat/model/chat_model.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
-import 'package:platchatapp/helper/data_converter/data_converter.dart';
-import 'package:platchatapp/share/widgets/avatar/user_avatar.dart'
-    show UserAvatar;
+import 'package:platchatapp/share/widgets/avatar/user_avatar.dart' show UserAvatar;
 import 'package:platchatapp/utils/extension/base_extension.dart';
 import '../../../../core/router/routes_name.dart';
 import '../../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../../utils/app_const/app_const.dart';
 import '../../../../utils/color/app_colors.dart';
 
-import '../../../chat/view/widgets/chat_tile.dart';
 
 class SearchListScreen extends StatefulWidget {
   const SearchListScreen({super.key});
@@ -259,20 +256,14 @@ class _SearchListScreenState extends State<SearchListScreen> {
                                   padding: ResponsiveHelper.all(20),
                                   margin: ResponsiveHelper.symmetric(
                                     horizontal: 16,
-                                    vertical: 6,
+                                    vertical: 3,
                                   ),
                                   decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Color(0xFFFFFFFF),
-                                        Color(0xFFC6D2E2),
-                                      ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                    ),
+                                    gradient:AppColors.containerGradient,
                                     borderRadius: BorderRadius.circular(
                                       ResponsiveHelper.borderRadius(32),
                                     ),
+                                    border: Border.all(color: AppColors.white,width: 0.5),
                                     boxShadow: [
                                       BoxShadow(
                                         color: const Color(
@@ -549,7 +540,7 @@ class _SendRequestDialogState extends State<_SendRequestDialog> {
 
   @override
   void dispose() {
-    // ✅ এটা তখনই কল হবে যখন widget আসলেই tree থেকে সরে যাবে (animation শেষে)
+
     messageController.dispose();
     messageFocusNode.dispose();
     super.dispose();
@@ -627,10 +618,7 @@ class _SendRequestDialogState extends State<_SendRequestDialog> {
                     Text(
                       AppStrings.writeAShortMessageToIntroduceYourself.tr,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: ResponsiveHelper.fontSize(13),
-                        color: Colors.grey[500],
-                      ),
+                      style:context.bodySmall.copyWith(color: AppColors.black.withOpacity(0.6))
                     ),
                     SizedBox(height: ResponsiveHelper.height(18)),
                     TextFormField(

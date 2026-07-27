@@ -4,59 +4,73 @@ import 'package:platchatapp/utils/color/app_colors.dart';
 
 class CustomGradientButton extends StatelessWidget {
   final bool isLoading;
-  final String label;
+  final String? label;
   final VoidCallback? onPressed;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
+  final Widget? child;
+
+  // Custom styling
+  final Gradient? gradient;
+  final Color? backgroundColor;
+  final Color? borderColor;
+  final Color? textColor;
+  final Color? shadowColor;
+  final bool keepGradientWhenDisabled;
 
   const CustomGradientButton({
     super.key,
-    required this.label,
+    this.label,
     required this.onPressed,
     this.isLoading = false,
     this.suffixIcon,
     this.prefixIcon,
+    this.child,
+    this.gradient,
+    this.backgroundColor,
+    this.textColor,
+    this.shadowColor, this.borderColor, this.keepGradientWhenDisabled = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final bool isButtonDisabled = isLoading || onPressed == null;
 
-    final borderRadius =
-    BorderRadius.circular(ResponsiveHelper.borderRadius(30));
-
-    const Color color1 = Color(0xFF0C7DC9);
-    const Color color2 = Color(0xFF014495);
-    const Color shadowColor = Color(0xFF587CA7);
+    final borderRadius = BorderRadius.circular(
+      ResponsiveHelper.borderRadius(30),
+    );
 
     return Card(
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
       elevation: 6,
-      shadowColor: shadowColor,
+      shadowColor: shadowColor ?? const Color(0xFF587CA7),
       shape: RoundedRectangleBorder(
         borderRadius: borderRadius,
       ),
       child: Ink(
         width: double.infinity,
-        height: ResponsiveHelper.buttonHeight(54),
+        padding: ResponsiveHelper.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
         decoration: BoxDecoration(
           borderRadius: borderRadius,
-          gradient: isButtonDisabled
+
+          // Custom gradient, otherwise default gradient
+          gradient: (!isButtonDisabled || keepGradientWhenDisabled)
+              ? (backgroundColor != null
               ? null
-              : const LinearGradient(
-            colors: [
-              color1,
-              color2,
-              color1,
-            ],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          color: isButtonDisabled ? Colors.grey.shade400 : null,
-          border: const Border(
+              : gradient ?? AppColors.buttonGradient)
+              : null,
+
+          color: (!isButtonDisabled || keepGradientWhenDisabled)
+              ? backgroundColor
+              : Colors.grey.shade400,
+
+          border:  Border(
             bottom: BorderSide(
-              color: AppColors.darBlue,
+              color:borderColor?? AppColors.darBlue,
               width: 1,
             ),
           ),
@@ -65,7 +79,7 @@ class CustomGradientButton extends StatelessWidget {
           onTap: isButtonDisabled ? null : onPressed,
           splashColor: Colors.white24,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: ResponsiveHelper.symmetric(horizontal: 16),
             child: Center(
               child: isLoading
                   ? const SizedBox(
@@ -76,28 +90,29 @@ class CustomGradientButton extends StatelessWidget {
                   strokeWidth: 2.5,
                 ),
               )
-                  : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (prefixIcon != null) ...[
-                    prefixIcon!,
-                    const SizedBox(width: 8),
-                  ],
-                  Text(
-                    label,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: ResponsiveHelper.fontSize(16),
-                      fontWeight: FontWeight.w400,
-                      //letterSpacing: 0.5,
-                    ),
+                  : child ??
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (prefixIcon != null) ...[
+                        prefixIcon!,
+                        const SizedBox(width: 8),
+                      ],
+                      if (label != null)
+                        Text(
+                          label!,
+                          style: TextStyle(
+                            color: textColor ?? Colors.white,
+                            fontSize: ResponsiveHelper.fontSize(16),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      if (suffixIcon != null) ...[
+                        const SizedBox(width: 8),
+                        suffixIcon!,
+                      ],
+                    ],
                   ),
-                  if (suffixIcon != null) ...[
-                    const SizedBox(width: 8),
-                    suffixIcon!,
-                  ],
-                ],
-              ),
             ),
           ),
         ),

@@ -11,6 +11,7 @@ class AssetsPath {
   static const String logoPng = '${_logoBase}logo.png';
   static const String appLogoUpdate = 'assets/logo/app_logo_update.png';
 
+
   //icons====================================
   static const String send = '${_iconsBase}send.svg';
   static const String pNav = '${_iconsBase}p.svg';
@@ -38,6 +39,7 @@ class AssetsPath {
   static const String carInspectionIcon = '${_iconsBase}car_inspection_icon.svg';
   static const String carInsuranceIcon = '${_iconsBase}car_insurance_icon.svg';
   static const String carTaxIcon = '${_iconsBase}car_text_icon.svg';
+  static const String dolar = '${_iconsBase}doller.svg';
 
 
   ///==============================================
@@ -82,6 +84,14 @@ class AssetsPath {
   static const String plateChat = '${_iconsBase}plateChat.png';
   static const String italy = '${_iconsBase}italy.png';
   static const String uk = '${_iconsBase}uk.png';
+  static const String addMember = '${_iconsBase}add_member_icon.svg';
+  static const String editGroup = '${_iconsBase}edit_group_icon.svg';
+  static const String seeMember = '${_iconsBase}see_member.svg';
+  static const String viewProfile = '${_iconsBase}view_profile.svg';
+  static const String rateUser = '${_iconsBase}user_rate.svg';
+  static const String blockedIcon = '${_iconsBase}block.svg';
+  static const String enableStar = '${_iconsBase}enable_star.svg';
+  static const String disableStar = '${_iconsBase}disable_star.svg';
   static const String homeJson="assets/animations/icon_animated.json";
   static const String group="assets/icons/group.svg";
 
@@ -90,11 +100,25 @@ class AssetsPath {
   static const String back="assets/icons/back.svg";
   static const String none="assets/icons/none.svg";
   static const String all="assets/icons/all.svg";
+  static const String electricCharging="assets/icons/electric_carging.svg";
+  static const String disabledFacility="assets/icons/disable_fac.svg";
+  static const String shareLinkBadge="assets/icons/share_link_badge.svg";
+  static const String facebookLogo="assets/icons/facebook.svg";
+  static const String whatsapp="assets/icons/whatsapp.svg";
+  static const String instagram="assets/icons/instagram.svg";
+  static const String xLogo="assets/icons/x_logo.svg";
+  static const String savePNav="assets/icons/save_p_nav.svg";
+  static const String mapMarkerPin="assets/icons/map_marker_pin.svg";
+  static const String allBooking="assets/icons/all_booking.svg";
+  static const String payment="assets/icons/payment.svg";
+  static const String personal="assets/icons/personal.svg";
+  static const String accountRecovery="assets/icons/account_recovery.svg";
   static const String scanIcon="assets/icons/scan_icon.svg";
   static const String freeCar="assets/icons/free.png";
   static const String paidCar="assets/icons/paid_car.png";
   static const String electricCar="assets/icons/electric_car.png";
   static const String disableCar="assets/icons/orange_car.png";
+
 
 
 

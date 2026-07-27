@@ -447,10 +447,12 @@ class _MessageInputState extends State<MessageInput> {
                   // Text field
                   Expanded(
                     child: TextField(
+
                       focusNode: _focusNode,
                       controller: widget.chatController.messageController,
                       minLines: 1,
                       maxLines: 3,
+
                       onChanged: _onTextChanged,
                       onTap: () {
                         if (_isEmojiVisible) {
@@ -458,6 +460,9 @@ class _MessageInputState extends State<MessageInput> {
                         }
                       },
                       decoration: InputDecoration(
+
+                filled: true,
+               fillColor: AppColors.white,
                         hintText: _selectedFilePath != null
                             ? AppStrings.addCaption.tr
                             : "Write here...",

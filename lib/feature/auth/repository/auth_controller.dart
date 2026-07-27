@@ -312,6 +312,17 @@ class AuthController extends GetxController {
     return await SharePrefsHelper.getBool(AppConst.isLoggedIn) ?? false;
   }
 
+  /// Backend validation errors (class-validator style) send `message` as a
+  /// list of strings instead of a plain string — passing that straight to a
+  /// String-typed toast/Rx crashes with a List-to-String type error.
+  /// Normalize both shapes here.
+  String _extractMessage(dynamic data, String fallback) {
+    final msg = data is Map ? data['message'] : null;
+    if (msg is String && msg.isNotEmpty) return msg;
+    if (msg is List && msg.isNotEmpty) return msg.map((e) => e.toString()).join(', ');
+    return fallback;
+  }
+
   // ================= FORGET PASSWORD =================
 
   var isLoadingEmail = false.obs;
@@ -331,10 +342,10 @@ class AuthController extends GetxController {
     isLoadingEmail.value = false;
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      showSuccessToast(data['message'] ?? AppStrings.otpSendSuccess.tr);
+      showSuccessToast(_extractMessage(data, AppStrings.otpSendSuccess.tr));
       return true;
     } else {
-      showErrorToast(data['message'] ?? AppStrings.someThingWrong.tr);
+      showErrorToast(_extractMessage(data, AppStrings.someThingWrong.tr));
       return false;
     }
   }
@@ -359,11 +370,11 @@ class AuthController extends GetxController {
     isLoadingVerify.value = false;
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      showSuccessToast(data['message'] ?? AppStrings.otpVerifySuccess.tr);
+      showSuccessToast(_extractMessage(data, AppStrings.otpVerifySuccess.tr));
       return data["otp_verification_token"];
     }
 
-    showErrorToast(data['message'] ?? AppStrings.someThingWrong.tr);
+    showErrorToast(_extractMessage(data, AppStrings.someThingWrong.tr));
     return null;
   }
 
@@ -388,10 +399,10 @@ class AuthController extends GetxController {
     isLoadingReset.value = false;
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      showSuccessToast(data['message'] ?? AppStrings.passwordChanged.tr);
+      showSuccessToast(_extractMessage(data, AppStrings.passwordChanged.tr));
       return true;
     } else {
-      showErrorToast(data['message'] ?? AppStrings.someThingWrong.tr);
+      showErrorToast(_extractMessage(data, AppStrings.someThingWrong.tr));
       return false;
     }
   }
@@ -411,9 +422,9 @@ class AuthController extends GetxController {
       final body = jsonDecode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        message.value = body['message'] ?? '';
+        message.value = _extractMessage(body, '');
       } else {
-        errorMessage.value = body['message'] ?? AppStrings.someThingWrong.tr;
+        errorMessage.value = _extractMessage(body, AppStrings.someThingWrong.tr);
       }
     } catch (e) {
       errorMessage.value = e.toString();
@@ -429,7 +440,8 @@ class AuthController extends GetxController {
   Future<void> deleteAccount({
     required BuildContext context,
     required String password,
-  }) async {
+  }) async
+  {
     isLoadingDeleteAccount.value = true;
 
     final response = await ApiClient.deleteData(
@@ -443,10 +455,10 @@ class AuthController extends GetxController {
 
     if (response["statusCode"] == 200 || response["statusCode"] == 201) {
       await clearUserData();
-      showSuccessToast(data['message'] ?? AppStrings.deleted.tr);
+      showSuccessToast(_extractMessage(data, AppStrings.deleted.tr));
       context.goNamed(RouteName.signIn);
     } else {
-      showErrorToast(data['message'] ?? AppStrings.someThingWrong.tr);
+      showErrorToast(_extractMessage(data, AppStrings.someThingWrong.tr));
     }
   }
 

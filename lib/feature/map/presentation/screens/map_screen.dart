@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:platchatapp/feature/auth/repository/user_location_controller.dart';
 import 'package:platchatapp/feature/map/controller/map_controller.dart';
@@ -17,10 +16,12 @@ import 'package:platchatapp/feature/map/presentation/widgets/parking_report_drop
 import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/radius_filter_button.dart';
 import 'package:platchatapp/feature/map/utils/map_debug.dart';
+import 'package:platchatapp/feature/map/utils/marker_icon_loader.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:platchatapp/utils/toast_message/toast_message.dart';
 
+import '../../../../utils/color/app_colors.dart';
 import '../widgets/location_of_promt.dart';
 import '../widgets/picking-location_banner.dart';
 import '../widgets/save_parking_dialog.dart';
@@ -84,13 +85,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _loadCustomMarkerIcon() async {
-    final ByteData data = await rootBundle.load(AssetsPath.bluePin);
-
-    final BitmapDescriptor icon = BitmapDescriptor.bytes(
-      data.buffer.asUint8List(),
-      width: 32,   // 👈 logical pixels — এখান থেকে size control করো
-      height: 32,
-    );
+    final icon = await MapMarkerIcons.parkingPin();
 
     if (!mounted) return;
     setState(() {
@@ -239,17 +234,24 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   void _showParkingDialog() {
     _parkingCtrl.reset();
 
-    showDialog(
+    // Explicit actions (pick-on-map / submit) set this so the sheet-dismiss
+    // cleanup below doesn't double-run the same reset when they pop it.
+    bool handled = false;
+
+    showModalBottomSheet(
       context: context,
-      barrierDismissible: false,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (_) => ParkingInfoDialog(
         controller: _parkingCtrl,
         pickedLocation: _pickedLocation,
         onPickOnMap: () {
+          handled = true;
           Navigator.of(context).pop();
           _startPickingLocation(purpose: _PickingPurpose.report);
         },
         onSubmit: () async {
+          handled = true;
           Navigator.of(context).pop();
           _stopPickingLocation();
 
@@ -280,6 +282,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
             _pickedLocation = null;
           } else {
             showCustomSnackBar(
+
               _parkingCtrl.submitMessage.value.isNotEmpty
                   ? _parkingCtrl.submitMessage.value
                   : AppStrings.mapFailedToSubmitParkingReport.tr,
@@ -287,13 +290,15 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
             );
           }
         },
-        onCancel: () {
-          Navigator.of(context).pop();
-          _pickedLocation = null;
-          _stopPickingLocation();
-        },
       ),
-    );
+    ).whenComplete(() {
+      // User swiped the sheet down / tapped outside without picking a
+      // location or dropping the pin — same cleanup as the old Cancel button.
+      if (!handled) {
+        _pickedLocation = null;
+        _stopPickingLocation();
+      }
+    });
   }
 
   // ══════════════════════════════════════════════════════════════════════
@@ -319,10 +324,12 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     );
   }
 
+///add my save paring ====================================
   void _showSaveParkingSheet() {
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      barrierDismissible: false,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (context) {
         return SaveParkingDialog(
           pickedLocation: _pickedLocation,
@@ -556,10 +563,9 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
               return Positioned(
                 left: 0,
                 right: 0,
-                top: MediaQuery.of(context).padding.top +
-                    ResponsiveHelper.padding(92),
+                bottom: MediaQuery.of(context).padding.top +
+                    ResponsiveHelper.padding(52),
                 child: ParkingReportDropdown(
-                  controller: _parkingCtrl,
                   report: selected,
                   onClose: _parkingCtrl.clearSelectedReport,
                 ),
@@ -579,10 +585,11 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
 
             /// ── Action buttons cluster (Report Spot / Save My Parking) ─────
             Positioned(
-              right: ResponsiveHelper.padding(20),
-              bottom: ResponsiveHelper.padding(140),
+              right: 0,
+              left: 0,
+              bottom: ResponsiveHelper.padding(340),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _ActionPillButton(
@@ -597,10 +604,10 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                   SizedBox(height: ResponsiveHelper.spacing(14)),
                   _ActionPillButton(
                     label: AppStrings.parkMyCar.tr,
-                    icon: Icons.local_parking_rounded,
-                    gradientColors: const [
-                      Color(0xFF4E8CFF),
-                      Color(0xFF2E5FD9),
+                    icon: Icons.add_circle_outline,
+                    gradientColors:  [
+                    AppColors.blackGrey,
+                    AppColors.black,
                     ],
                     onPressed: _showSaveParkingSheet,
                   ),
@@ -630,60 +637,63 @@ class _ActionPillButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(28)),
-        child: Ink(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: gradientColors,
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: gradientColors,
+          ),
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.borderRadius(28),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: gradientColors.last.withValues(alpha: 0.35),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
             ),
-            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(28)),
-            boxShadow: [
-              BoxShadow(
-                color: gradientColors.last.withValues(alpha: 0.35),
-                blurRadius: 16,
-                offset: const Offset(0, 8),
+          ],
+        ),
+        child: Padding(
+          padding: ResponsiveHelper.symmetric(
+            horizontal: 16,
+            vertical: 10,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.all(
+                  ResponsiveHelper.padding(6),
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.22),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  color: Colors.white,
+                  size: ResponsiveHelper.iconSize(16),
+                ),
+              ),
+
+              SizedBox(
+                width: ResponsiveHelper.spacing(10),
+              ),
+
+              Text(
+                label,
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: ResponsiveHelper.fontSize(13),
+                  letterSpacing: 0.1,
+                ),
               ),
             ],
-          ),
-          child: Padding(
-            padding: ResponsiveHelper.symmetric(
-
-              horizontal: 16,
-              vertical: 10,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: EdgeInsets.all(ResponsiveHelper.padding(6)),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.22),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    icon,
-                    color: Colors.white,
-                    size: ResponsiveHelper.iconSize(16),
-                  ),
-                ),
-                SizedBox(width: ResponsiveHelper.spacing(10)),
-                Text(
-                  label,
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: ResponsiveHelper.fontSize(13),
-                    letterSpacing: 0.1,
-                  ),
-                ),
-              ],
-            ),
           ),
         ),
       ),

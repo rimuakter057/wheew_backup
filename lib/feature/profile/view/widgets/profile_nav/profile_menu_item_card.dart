@@ -292,46 +292,158 @@ void _showLanguageBottomSheet(BuildContext context) {
 
   showModalBottomSheet(
     context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(
-        top: Radius.circular(ResponsiveHelper.borderRadius(20)),
+        top: Radius.circular(
+          ResponsiveHelper.borderRadius(20),
+        ),
       ),
     ),
     builder: (_) {
-      return Padding(
-        padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.spacing(16)),
-        child: Obx(() {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: ResponsiveHelper.spacing(8)),
-              Text(
-                AppStrings.language.tr,
-                style: context.titleSmall.copyWith(
-                  fontSize: ResponsiveHelper.fontSize(16),
-                  fontWeight: FontWeight.w600,
+      return Container(
+        decoration: BoxDecoration(
+          gradient: AppColors.primaryBackgroundGradient,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(
+              ResponsiveHelper.borderRadius(20),
+            ),
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: ResponsiveHelper.padding(16),
+            vertical: ResponsiveHelper.spacing(16),
+          ),
+          child: Obx(() {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Drag handle
+                Center(
+                  child: Container(
+                    width: ResponsiveHelper.width(32),
+                    height: ResponsiveHelper.height(4),
+                    decoration: BoxDecoration(
+                      color: AppColors.black,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
-              ),
-              SizedBox(height: ResponsiveHelper.spacing(12)),
-              ...controller.availableLanguageNames.map((language) {
-                final isSelected = controller.isLanguageSelected(language);
 
-                return ListTile(
-                  title: Text(language),
-                  trailing: isSelected
-                      ? const Icon(Icons.check, color: Colors.blue)
-                      : null,
-                  onTap: () async {
-                    await controller.saveLanguage(language);
-                    if (context.mounted) {
-                      Navigator.pop(context);
-                    }
-                  },
-                );
-              }),
-            ],
-          );
-        }),
+                SizedBox(
+                  height: ResponsiveHelper.spacing(22),
+                ),
+
+                Text(
+                  AppStrings.language.tr,
+                  style: context.titleSmall.copyWith(
+                    fontSize: ResponsiveHelper.fontSize(20),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+
+                SizedBox(
+                  height: ResponsiveHelper.spacing(16),
+                ),
+
+                ...controller.availableLanguageNames.map((language) {
+                  final isSelected =
+                  controller.isLanguageSelected(language);
+
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      bottom: ResponsiveHelper.spacing(8),
+                    ),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(22),
+                      ),
+                      onTap: () async {
+                        await controller.saveLanguage(language);
+
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        padding: ResponsiveHelper.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: isSelected
+                              ? AppColors.buttonGradient
+                              : null,
+                          color: isSelected
+                              ? null
+                              : AppColors.blueShadeConBg,
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveHelper.borderRadius(22),
+                          ),
+                          boxShadow: isSelected
+                              ? [
+                            BoxShadow(
+                              color: AppColors.buttonGradientColor2
+                                  .withValues(alpha: 0.30),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ]
+                              : null,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    language == 'English'
+                                        ? 'English (UK)'
+                                        : language,
+                                    style: context.bodyMedium.copyWith(
+                                      color: isSelected
+                                          ? AppColors.white
+                                          : AppColors.black,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: ResponsiveHelper.spacing(4),
+                                  ),
+                                  Text(
+                                    language == 'English'
+                                        ? 'English'
+                                        : 'Italiano',
+                                    style: context.bodySmall.copyWith(
+                                      color: isSelected
+                                          ? AppColors.white.withValues(alpha: 0.7)
+                                          : AppColors.black.withValues(alpha: 0.5),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (isSelected)
+                              const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ],
+            );
+          }),
+        ),
       );
     },
   );

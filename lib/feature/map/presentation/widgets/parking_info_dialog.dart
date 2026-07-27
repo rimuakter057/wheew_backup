@@ -1,97 +1,92 @@
-
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:platchatapp/feature/auth/view/widgets/vehicle_submit_button.dart';
 import 'package:platchatapp/feature/map/controller/map_controller.dart';
+import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
+import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/extension/base_extension.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
 class ParkingInfoDialog extends StatelessWidget {
   final ParkingReportController controller;
   final VoidCallback onSubmit;
-  final VoidCallback onCancel;
-  final LatLng? pickedLocation; // ⚠️ নতুন — ম্যাপে পিক করা location (null হলে current GPS ব্যবহার হবে)
-  final VoidCallback onPickOnMap; // ⚠️ নতুন — "Pick on map" চাপলে কল হবে
+  final LatLng? pickedLocation; // ⚠️ ম্যাপে পিক করা location (null হলে current GPS ব্যবহার হবে)
+  final VoidCallback onPickOnMap; // ⚠️ "Pick on map" চাপলে কল হবে
 
   const ParkingInfoDialog({
     super.key,
     required this.controller,
     required this.onSubmit,
-    required this.onCancel,
     this.pickedLocation,
     required this.onPickOnMap,
   });
 
   @override
   Widget build(BuildContext context) {
-
-
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-      ),
-      insetPadding: EdgeInsets.symmetric(
-        horizontal: ResponsiveHelper.padding(20),
-        vertical: ResponsiveHelper.padding(24),
-      ),
-      child: Obx(
-            () => SingleChildScrollView(
-          padding: ResponsiveHelper.all(20),
+    return Obx(
+      () => Container(
+        padding: EdgeInsets.only(
+          left: ResponsiveHelper.padding(20),
+          right: ResponsiveHelper.padding(20),
+          top: ResponsiveHelper.padding(12),
+          bottom:
+              MediaQuery.of(context).viewInsets.bottom +
+              ResponsiveHelper.padding(24),
+        ),
+        decoration: BoxDecoration(
+         gradient:AppColors.primaryBackgroundGradient,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(ResponsiveHelper.borderRadius(28)),
+          ),
+        ),
+        child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: ResponsiveHelper.width(36),
-                    height: ResponsiveHelper.height(36),
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF3D72E8), Color(0xFF2557D6)],
-                      ),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Text(
-                        'P',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          fontSize: ResponsiveHelper.fontSize(16),
-                        ),
-                      ),
-                    ),
+              // ── Drag handle ──────────────────────────────────────────
+              Center(
+                child: Container(
+                  width: ResponsiveHelper.width(40),
+                  height: ResponsiveHelper.height(4),
+                  margin: EdgeInsets.only(
+                    bottom: ResponsiveHelper.spacing(16),
                   ),
-                  SizedBox(width: ResponsiveHelper.spacing(10)),
-                  Text(
-                   AppStrings.mapParkingDetails.tr,
-                    style: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.titleFontSize(16),
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF1A1A2E),
-                    ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFD1D5DB),
+                    borderRadius: BorderRadius.circular(4),
                   ),
-                ],
+                ),
               ),
-              SizedBox(height: ResponsiveHelper.spacing(20)),
-              Divider(height: ResponsiveHelper.height(1)),
-              SizedBox(height: ResponsiveHelper.spacing(16)),
 
-              // ── Location source row (নতুন) ──────────────────────────
+              Text(
+                AppStrings.mapParkingDetails.tr,
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.titleFontSize(20),
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF1A1A2E),
+                ),
+              ),
+              SizedBox(height: ResponsiveHelper.spacing(18)),
+
+              // ── Location source row ──────────────────────────────────
               GestureDetector(
                 onTap: onPickOnMap,
                 child: Container(
-                  padding: ResponsiveHelper.symmetric(horizontal: 14, vertical: 12),
+                  padding: ResponsiveHelper.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF4F6FB),
                     borderRadius: BorderRadius.circular(
-                      ResponsiveHelper.borderRadius(12),
+                      ResponsiveHelper.borderRadius(30),
                     ),
                     border: Border.all(
                       color: pickedLocation == null
@@ -124,7 +119,7 @@ class ParkingInfoDialog extends StatelessWidget {
                           pickedLocation == null
                               ? AppStrings.usingCurrentLocation.tr
                               : '${AppStrings.selectedLocation.tr}: ${pickedLocation!.latitude.toStringAsFixed(5)}, '
-                              '${pickedLocation!.longitude.toStringAsFixed(5)}',
+                                    '${pickedLocation!.longitude.toStringAsFixed(5)}',
                           style: GoogleFonts.poppins(
                             fontSize: ResponsiveHelper.fontSize(12),
                             fontWeight: FontWeight.w500,
@@ -143,135 +138,183 @@ class ParkingInfoDialog extends StatelessWidget {
                           fontSize: ResponsiveHelper.fontSize(12),
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF3D72E8),
+                          decoration: TextDecoration.underline,
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              SizedBox(height: ResponsiveHelper.spacing(16)),
 
+              SizedBox(height: ResponsiveHelper.spacing(20)),
 
-
-              SizedBox(height: ResponsiveHelper.spacing(16)),
-              ToggleRow(
-                icon: Icons.electric_bolt_rounded,
-                iconColor: const Color(0xFFF59E0B),
-                label: AppStrings.mapElectricCharging.tr,
-                value: controller.electricCharging.value,
-                onTap: () => controller.electricCharging.toggle(),
+              // ── Parking Cost ──────────────────────────────────────────
+              Text(
+                AppStrings.mapParkingCost.tr,
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(15),
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF1A1A2E),
+                ),
               ),
-              SizedBox(height: ResponsiveHelper.spacing(12)),
+              SizedBox(height: ResponsiveHelper.spacing(10)),
+              Row(
+                children: [
+                  Expanded(
+                    child: _CostOption(
+                      label: AppStrings.free.tr,
+                      selected: controller.parkingCost.value == 'FREE',
+                      onTap: () => controller.parkingCost.value = 'FREE',
+                    ),
+                  ),
+                  SizedBox(width: ResponsiveHelper.spacing(12)),
+                  Expanded(
+                    child: _CostOption(
+                      label: AppStrings.paid.tr,
+                      selected: controller.parkingCost.value == 'PAID',
+                      onTap: () => controller.parkingCost.value = 'PAID',
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: ResponsiveHelper.spacing(20)),
 
-
-
-
-
-              ToggleRow(
-                icon: Icons.accessible_rounded,
-                iconColor: const Color(0xFF10B981),
-                label: AppStrings.mapDisabledFacility.tr,
-                value: controller.disabledFacility.value,
-                onTap: controller.toggleDisabledFacility,
+              // ── Electric Charging + Disabled Facility (grouped card) ──
+              Container(
+                decoration: BoxDecoration(
+               gradient: AppColors.containerGradient,
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveHelper.borderRadius(16),
+                  ),
+                  border: Border.all(color: AppColors.white)
+                ),
+                child: Column(
+                  children: [
+                    ToggleRow(
+                      icon: AssetsPath.electricCharging,
+                      iconColor: const Color(0xFFF59E0B),
+                      label: AppStrings.mapElectricCharging.tr,
+                      value: controller.electricCharging.value,
+                      onTap: () => controller.electricCharging.toggle(),
+                      subtitle: "Show location with electric charging",
+                      showCard: false,
+                    ),
+                    Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: const Color(0xFFE5E7EB),
+                      indent: ResponsiveHelper.width(14),
+                      endIndent: ResponsiveHelper.width(14),
+                    ),
+                    ToggleRow(
+                      icon: AssetsPath.disabledFacility,
+                      iconColor: const Color(0xFF10B981),
+                      label: AppStrings.mapDisabledFacility.tr,
+                      value: controller.disabledFacility.value,
+                      subtitle: "Show disabled parking spot",
+                      onTap: controller.toggleDisabledFacility,
+                      showCard: false,
+                    ),
+                  ],
+                ),
               ),
 
               if (controller.disabledFacility.value) ...[
-                SizedBox(height: ResponsiveHelper.spacing(16)),
-                SectionLabel(
-                  icon: Icons.location_on_rounded,
-                  label: AppStrings.mapDisabledParkingLocation.tr,
+                SizedBox(height: ResponsiveHelper.spacing(20)),
+                Text(
+                  AppStrings.mapDisabledParkingLocation.tr,
+                  style: GoogleFonts.poppins(
+                    fontSize: ResponsiveHelper.fontSize(14),
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF1A1A2E),
+                  ),
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(10)),
                 DisabledLocationPicker(controller: controller),
               ],
               SizedBox(height: ResponsiveHelper.spacing(24)),
-              Obx(
-                    () => controller.isLoading.value
-                    ? const Center(
-                  child: CircularProgressIndicator(
-                    color: Color(0xFF3D72E8),
-                  ),
-                )
-                    : Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: onCancel,
-                        child: Container(
-                          height: ResponsiveHelper.buttonHeight(48),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF4F6FB),
-                            borderRadius: BorderRadius.circular(
-                              ResponsiveHelper.borderRadius(14),
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              AppStrings.mapCancel.tr,
-                              style: GoogleFonts.poppins(
-                                fontSize: ResponsiveHelper.fontSize(14),
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFF6B7280),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: ResponsiveHelper.spacing(12)),
-                    Expanded(
-                      flex: 2,
-                      child: GestureDetector(
-                        onTap: onSubmit,
-                        child: Container(
-                          height: ResponsiveHelper.buttonHeight(48),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [
-                                Color(0xFF3D72E8),
-                                Color(0xFF2557D6),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(
-                              ResponsiveHelper.borderRadius(14),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(
-                                  0xFF3D72E8,
-                                ).withValues(alpha: 0.35),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.pin_drop_rounded,
-                                color: Colors.white,
-                                size: ResponsiveHelper.iconSize(18),
-                              ),
-                              SizedBox(width: ResponsiveHelper.spacing(6)),
-                              Text(
-                                AppStrings.mapDropPin.tr,
-                                style: GoogleFonts.poppins(
-                                  fontSize: ResponsiveHelper.fontSize(14),
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+
+              // ── Drop Pin ──────────────────────────────────────────────
+              // VehicleSubmitButton(
+              //   isLoading: controller.isLoading.value,
+              //   label: AppStrings.mapDropPin.tr,
+              //   onPressed: onSubmit,
+              // ),
+
+              CustomGradientButton(onPressed: (){},
+                  child:Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(onPressed: (){}, icon: Icon(Icons.location_on_outlined,color: AppColors.white,)),
+                    Text("Drop Pin",style: context.bodyMedium.copyWith(color: AppColors.white),)
+                    
+                    ],
+                  )
+
+              )
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ===== _CostOption (Free / Paid pill) =====
+
+class _CostOption extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _CostOption({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          gradient: selected
+              ? AppColors.buttonGradient
+              : null,
+          color: selected ? null : const Color(0xFFF4F6FB),
+          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(30)),
+          boxShadow: selected
+              ? [
+            BoxShadow(
+              color: AppColors.blu.withValues(
+                alpha: 0.28,
+              ),
+              blurRadius: 8,
+              spreadRadius: 0,
+              offset: const Offset(0, 4),
+            ),
+          ]
+              : null,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CustomImage(imageSrc: AssetsPath.dolar,
+            imageColor: selected ? Colors.white : AppColors.black,
+            ),
+            SizedBox(width: ResponsiveHelper.spacing(4)),
+            Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: ResponsiveHelper.fontSize(14),
+                fontWeight: FontWeight.w600,
+                color: selected ? Colors.white : const Color(0xFF6B7280),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -296,7 +339,7 @@ class DisabledLocationPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(
-          () => Wrap(
+      () => Wrap(
         spacing: ResponsiveHelper.spacing(8),
         runSpacing: ResponsiveHelper.spacing(8),
         children: _options.map((opt) {
@@ -305,17 +348,18 @@ class DisabledLocationPicker extends StatelessWidget {
             onTap: () => controller.disabledLocation.value = opt.location,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              padding: ResponsiveHelper.symmetric(horizontal: 4, vertical: 4),
+              padding: ResponsiveHelper.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: selected
-                    ? const Color(0xFF10B981)
-                    : const Color(0xFFF4F6FB),
+                gradient: selected
+                    ? AppColors.buttonGradient
+                    : null,
+                color: selected ? null : const Color(0xFFF4F6FB),
                 borderRadius: BorderRadius.circular(
-                  ResponsiveHelper.borderRadius(10),
+                  ResponsiveHelper.borderRadius(50),
                 ),
                 border: Border.all(
                   color: selected
-                      ? const Color(0xFF10B981)
+                      ? Colors.transparent
                       : const Color(0xFFE5E7EB),
                 ),
               ),
@@ -324,8 +368,12 @@ class DisabledLocationPicker extends StatelessWidget {
                 children: [
                   SvgPicture.asset(
                     opt.icon,
-                    width: ResponsiveHelper.iconSize(24),
-                    height: ResponsiveHelper.iconSize(24),
+                    width: ResponsiveHelper.iconSize(20),
+                    height: ResponsiveHelper.iconSize(20),
+                    colorFilter: ColorFilter.mode(
+                      selected ? Colors.white : AppColors.blue,
+                      BlendMode.srcIn,
+                    ),
                   ),
                   SizedBox(width: ResponsiveHelper.spacing(4)),
                   Text(
@@ -354,53 +402,16 @@ class _DLocOption {
   const _DLocOption(this.location, this.label, this.icon);
 }
 
-// ===== SectionLabel =====
-
-class SectionLabel extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const SectionLabel({super.key, required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: ResponsiveHelper.width(32),
-          height: ResponsiveHelper.height(32),
-          decoration: BoxDecoration(
-            color: const Color(0xFF3D72E8).withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(
-              ResponsiveHelper.borderRadius(8),
-            ),
-          ),
-          child: Center(
-            child: Icon(icon, size: ResponsiveHelper.iconSize(18)),
-          ),
-        ),
-        SizedBox(width: ResponsiveHelper.spacing(10)),
-        Text(
-          label,
-          style: GoogleFonts.poppins(
-            fontSize: ResponsiveHelper.fontSize(13),
-            fontWeight: FontWeight.w600,
-            color: const Color(0xFF1A1A2E),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 // ===== ToggleRow =====
 
 class ToggleRow extends StatelessWidget {
-  final IconData icon;
+  final String icon;
   final Color iconColor;
   final String label;
   final bool value;
   final VoidCallback onTap;
+  final bool showCard;
+  final String subtitle;
 
   const ToggleRow({
     super.key,
@@ -409,6 +420,7 @@ class ToggleRow extends StatelessWidget {
     required this.label,
     required this.value,
     required this.onTap,
+    this.showCard = true, required this.subtitle,
   });
 
   @override
@@ -417,41 +429,39 @@ class ToggleRow extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: ResponsiveHelper.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF4F6FB),
-          borderRadius: BorderRadius.circular(
-            ResponsiveHelper.borderRadius(12),
-          ),
-          border: Border.all(
-            color: value
-                ? iconColor.withValues(alpha: 0.4)
-                : Colors.transparent,
-          ),
-        ),
+        decoration: showCard
+            ? BoxDecoration(
+                color: const Color(0xFFF4F6FB),
+                borderRadius: BorderRadius.circular(
+                  ResponsiveHelper.borderRadius(12),
+                ),
+                border: Border.all(
+                  color: AppColors.white
+                ),
+              )
+            : null,
         child: Row(
           children: [
-            Container(
-              width: ResponsiveHelper.width(32),
-              height: ResponsiveHelper.height(32),
-              decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                color: iconColor,
-                size: ResponsiveHelper.iconSize(16),
-              ),
+            SvgPicture.asset(
+              icon,
+              width: ResponsiveHelper.iconSize(16),
+              height: ResponsiveHelper.iconSize(16),
+             // colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
             ),
             SizedBox(width: ResponsiveHelper.spacing(10)),
             Expanded(
-              child: Text(
-                label,
-                style: GoogleFonts.poppins(
-                  fontSize: ResponsiveHelper.fontSize(13),
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF1A1A2E),
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: context.bodyMedium.copyWith(color: AppColors.black)
+                  ),
+                  Text(
+                      subtitle,
+                      style: context.bodySmall.copyWith(color: AppColors.black.withValues(alpha: 0.5))
+                  ),
+                ],
               ),
             ),
             AnimatedContainer(
@@ -466,8 +476,7 @@ class ToggleRow extends StatelessWidget {
               ),
               child: AnimatedAlign(
                 duration: const Duration(milliseconds: 250),
-                alignment:
-                value ? Alignment.centerRight : Alignment.centerLeft,
+                alignment: value ? Alignment.centerRight : Alignment.centerLeft,
                 child: Container(
                   width: ResponsiveHelper.width(18),
                   height: ResponsiveHelper.height(18),

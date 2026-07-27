@@ -10,6 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/feature/map/utils/map_debug.dart';
+import 'package:platchatapp/feature/map/utils/marker_icon_loader.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/feature/map/model/saved_parking_model.dart';
@@ -225,20 +226,6 @@ class ParkingReportController extends GetxController {
   final Rx<GoogleMapController?> mapController = Rx<GoogleMapController?>(null);
   final RxSet<Marker> markers = <Marker>{}.obs;
 
-  // ── isPaid helper ─────────────────────────────────────────────────────────
-  // API থেকে "FREE" language আসে — সব case handle করে
-  bool _isPaid(dynamic cost) {
-    if (cost == null) return false;
-    if (cost is bool) return false;
-    if (cost is int) return cost != 0;
-    if (cost is double) return cost != 0.0;
-    if (cost is String) {
-      final t = cost.trim().toLowerCase();
-      return t.isNotEmpty && t != '0' && t != 'free';
-    }
-    return false;
-  }
-
   // ── Build Markers ─────────────────────────────────────────────────────────
   // Future<void> _buildMarkers() async {
   //   final Set<Marker> newMarkers = {};
@@ -315,31 +302,7 @@ class ParkingReportController extends GetxController {
       final double? lng = _toDouble(parking['longitude']);
       if (lat == null || lng == null) continue;
 
-      final bool isDisabled = parking['disabled_facility'] == true;
-      final bool hasCharging = parking['electric_charging'] == true;
-      final dynamic cost = parking['parking_cost'];
-      final bool isPaid = _isPaid(cost);
-
-      // ===== Icon Condition =====
-
-      String iconPath;
-
-      if (isDisabled) {
-      //  iconPath = AssetsPath.disableCar;
-        iconPath = AssetsPath.bluePin;
-      } else if (hasCharging) {
-       // iconPath = AssetsPath.electricCar;
-        iconPath = AssetsPath.bluePin;
-      } else if (isPaid) {
-       // iconPath = AssetsPath.paidCar;
-        iconPath = AssetsPath.bluePin;
-      } else {
-       // iconPath = AssetsPath.freeCar;
-        iconPath = AssetsPath.bluePin;
-      }
-
-      final BitmapDescriptor icon =
-      await _getCarIcon(iconPath);
+      final BitmapDescriptor icon = await MapMarkerIcons.parkingPin();
 
       newMarkers.add(
         Marker(
@@ -361,38 +324,6 @@ class ParkingReportController extends GetxController {
 
 
 
-
-  final Map<String, BitmapDescriptor> _carIconCache = {};
-
-  Future<BitmapDescriptor> _getCarIcon(String assetPath) async {
-    if (_carIconCache.containsKey(assetPath)) {
-      return _carIconCache[assetPath]!;
-    }
-
-    final ByteData data = await rootBundle.load(assetPath);
-    final Uint8List resizedBytes = await _resizeIcon(
-      data.buffer.asUint8List(),
-      targetWidth: 48, // ← এখানে size adjust করো (কম মানে ছোট icon)
-    );
-
-    final icon = BitmapDescriptor.bytes(resizedBytes);
-
-    _carIconCache[assetPath] = icon;
-    return icon;
-  }
-
-// ── নতুন helper ───────────────────────────────────────────────
-  Future<Uint8List> _resizeIcon(Uint8List data, {required int targetWidth}) async {
-    final ui.Codec codec = await ui.instantiateImageCodec(
-      data,
-      targetWidth: targetWidth,
-    );
-    final ui.FrameInfo frame = await codec.getNextFrame();
-    final ByteData? byteData = await frame.image.toByteData(
-      format: ui.ImageByteFormat.png,
-    );
-    return byteData!.buffer.asUint8List();
-  }
 
   Future<BitmapDescriptor> _getLocationIcon(
       String location, Color color) async {

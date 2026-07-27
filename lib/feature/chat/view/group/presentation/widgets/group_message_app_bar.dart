@@ -7,9 +7,11 @@ import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/feature/chat/view/group/controller/group_controller.dart';
+import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/custom_container/custom_container.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
@@ -438,9 +440,20 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
         ],
       ),
       actions: [
+
         PopupMenuButton<String>(
-          padding: EdgeInsets.zero,
+          padding: EdgeInsets.only(right: ResponsiveHelper.width(8)),
           icon: Icon(Icons.more_vert, color: AppColors.black),
+          color: Colors.transparent, // আসল color transparent-ই থাকবে, gradient Container দিয়ে দেওয়া হবে
+          elevation: 6,
+          offset: Offset(-ResponsiveHelper.width(36), ResponsiveHelper.height(40)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(ResponsiveHelper.borderRadius(24)),
+              bottomLeft: Radius.circular(ResponsiveHelper.borderRadius(24)),
+              bottomRight: Radius.circular(ResponsiveHelper.borderRadius(24)),
+            ),
+          ),
           onSelected: (value) {
             if (value == "AddMembers") {
               context.pushNamed(RouteName.addMemberScreen, extra: widget.roomId);
@@ -456,95 +469,270 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
             }
           },
           itemBuilder: (context) => [
-            // ── See Members ──────────────────────────────
             PopupMenuItem<String>(
-              value: "SeeMembers",
-              child: Row(
-                children: [
-                  Icon(Icons.group_outlined, color: AppColors.black),
-                  SizedBox(width: ResponsiveHelper.spacing(8)),
-                  Text(
-                    AppStrings.seeMembers.tr,
-                    style: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.fontSize(14),
-                      color: AppColors.black,
-                    ),
+              padding: EdgeInsets.zero,
+              enabled: false, // পুরো item এর tap বন্ধ, ভেতরের InkWell গুলো কাজ করবে
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.containerGradient,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(ResponsiveHelper.borderRadius(24)),
+                    bottomLeft: Radius.circular(ResponsiveHelper.borderRadius(24)),
+                    bottomRight: Radius.circular(ResponsiveHelper.borderRadius(24)),
                   ),
-                ],
-              ),
-            ),
-            PopupMenuItem<String>(
-              enabled: false,
-              height: ResponsiveHelper.height(1),
-              child: Divider(height: ResponsiveHelper.height(1), color: Colors.grey.shade200),
-            ),
+                ),
+                padding: ResponsiveHelper.symmetric(vertical: 4, horizontal: 0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // ── See Members ──────────────────────────────
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.pushNamed(
+                          RouteName.groupMemberScreen,
+                          extra: {'roomId': widget.roomId, 'groupName': _currentGroupName},
+                        );
+                      },
+                      child: Padding(
+                        padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 10),
+                        child: Row(
+                          children: [
+                            CustomImage(imageSrc: AssetsPath.seeMember),
+                            SizedBox(width: ResponsiveHelper.spacing(10)),
+                            Text(
+                              AppStrings.seeMembers.tr,
+                              style: GoogleFonts.poppins(
+                                fontSize: ResponsiveHelper.fontSize(14),
+                                color: AppColors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
 
-            // ── Add Members ──────────────────────────────
-            PopupMenuItem<String>(
-              value: "AddMembers",
-              child: Row(
-                children: [
-                  Icon(Icons.person_add_outlined, color: AppColors.black),
-                  SizedBox(width: ResponsiveHelper.spacing(8)),
-                  Text(
-                    AppStrings.addMembers.tr,
-                    style: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.fontSize(14),
-                      color: AppColors.black,
+                    // ── Add Members ──────────────────────────────
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.pushNamed(RouteName.addMemberScreen, extra: widget.roomId);
+                      },
+                      child: Padding(
+                        padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 10),
+                        child: Row(
+                          children: [
+                            CustomImage(imageSrc: AssetsPath.addMember),
+                            SizedBox(width: ResponsiveHelper.spacing(10)),
+                            Text(
+                              AppStrings.addMembers.tr,
+                              style: GoogleFonts.poppins(
+                                fontSize: ResponsiveHelper.fontSize(14),
+                                color: AppColors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            PopupMenuItem<String>(
-              enabled: false,
-              height: ResponsiveHelper.height(1),
-              child: Divider(height: ResponsiveHelper.height(1), color: Colors.grey.shade200),
-            ),
 
-            // ── Edit Group ───────────────────────────────
-            PopupMenuItem<String>(
-              value: "EditGroup",
-              child: Row(
-                children: [
-                  Icon(Icons.edit_outlined, color: AppColors.black),
-                  SizedBox(width: ResponsiveHelper.spacing(8)),
-                  Text(
-                    AppStrings.editGroup.tr,
-                    style: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.fontSize(14),
-                      color: AppColors.black,
+                    // ── Edit Group ───────────────────────────────
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                        _showEditGroupDialog(context);
+                      },
+                      child: Padding(
+                        padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 10),
+                        child: Row(
+                          children: [
+                            CustomImage(imageSrc: AssetsPath.editGroup),
+                            SizedBox(width: ResponsiveHelper.spacing(10)),
+                            Text(
+                              AppStrings.editGroup.tr,
+                              style: GoogleFonts.poppins(
+                                fontSize: ResponsiveHelper.fontSize(14),
+                                color: AppColors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            PopupMenuItem<String>(
-              enabled: false,
-              height: ResponsiveHelper.height(1),
-              child: Divider(height: ResponsiveHelper.height(1), color: Colors.grey.shade200),
-            ),
 
-            // ── Leave Group ──────────────────────────────
-            PopupMenuItem<String>(
-              value: "LeaveGroup",
-              child: Row(
-                children: [
-                  const Icon(Icons.exit_to_app_outlined, color: Colors.red),
-                  SizedBox(width: ResponsiveHelper.spacing(8)),
-                  Text(
-                    AppStrings.leaveGroup.tr,
-                    style: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.fontSize(14),
-                      color: Colors.red,
+                    // ── Leave Group ──────────────────────────────
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                        _showLeaveGroupDialog(context);
+                      },
+                      child: Padding(
+                        padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 10),
+                        child: Row(
+                          children: [
+                            Icon(Icons.exit_to_app_outlined,
+                                size: ResponsiveHelper.iconSize(20),
+                                color: const Color(0xFFFF5722)),
+                            SizedBox(width: ResponsiveHelper.spacing(10)),
+                            Text(
+                              AppStrings.leaveGroup.tr,
+                              style: GoogleFonts.poppins(
+                                fontSize: ResponsiveHelper.fontSize(14),
+                                color: const Color(0xFFFF5722),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
         ),
+
+        // PopupMenuButton<String>(
+        //
+        //   padding: EdgeInsets.only(right: ResponsiveHelper.width(8)),
+        //   icon: Icon(Icons.more_vert, color: AppColors.black),
+        //   color: Colors.transparent,
+        //   elevation: 6,
+        // //  offset: Offset(0, ResponsiveHelper.height(40)), // icon-এর ঠিক নিচে বসবে
+        //   offset: Offset(-ResponsiveHelper.width(36), ResponsiveHelper.height(40)),
+        //   shape: RoundedRectangleBorder(
+        //     borderRadius: BorderRadius.only(
+        //       topLeft: Radius.circular(ResponsiveHelper.borderRadius(24)),
+        //       bottomLeft: Radius.circular(ResponsiveHelper.borderRadius(24)),
+        //       bottomRight: Radius.circular(ResponsiveHelper.borderRadius(24)),
+        //
+        //
+        //     ),
+        //   ),
+        //   onSelected: (value) {
+        //     if (value == "AddMembers") {
+        //       context.pushNamed(RouteName.addMemberScreen, extra: widget.roomId);
+        //     } else if (value == "SeeMembers") {
+        //       context.pushNamed(
+        //         RouteName.groupMemberScreen,
+        //         extra: {'roomId': widget.roomId, 'groupName': _currentGroupName},
+        //       );
+        //     } else if (value == "EditGroup") {
+        //       _showEditGroupDialog(context);
+        //     } else if (value == "LeaveGroup") {
+        //       _showLeaveGroupDialog(context);
+        //     }
+        //   },
+        //   itemBuilder: (context) => [
+        //     // ── See Members ──────────────────────────────
+        //     PopupMenuItem<String>(
+        //       value: "SeeMembers",
+        //       height: ResponsiveHelper.height(44),
+        //       child: Row(
+        //         children: [
+        //       CustomImage(imageSrc: AssetsPath.seeMember),
+        //           SizedBox(width: ResponsiveHelper.spacing(10)),
+        //           Text(
+        //             AppStrings.seeMembers.tr,
+        //             style: GoogleFonts.poppins(
+        //               fontSize: ResponsiveHelper.fontSize(14),
+        //               color: AppColors.black,
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //
+        //     // ── Add Members ──────────────────────────────
+        //     PopupMenuItem<String>(
+        //       value: "AddMembers",
+        //       height: ResponsiveHelper.height(44),
+        //       child: Row(
+        //         children: [
+        //           CustomImage(imageSrc: AssetsPath.addMember),
+        //           SizedBox(width: ResponsiveHelper.spacing(10)),
+        //           Text(
+        //             AppStrings.addMembers.tr,
+        //             style: GoogleFonts.poppins(
+        //               fontSize: ResponsiveHelper.fontSize(14),
+        //               color: AppColors.black,
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //
+        //     // ── Edit Group ───────────────────────────────
+        //     PopupMenuItem<String>(
+        //       value: "EditGroup",
+        //       height: ResponsiveHelper.height(44),
+        //       child: Row(
+        //         children: [
+        //           CustomImage(imageSrc: AssetsPath.editGroup),
+        //           SizedBox(width: ResponsiveHelper.spacing(10)),
+        //           Text(
+        //             AppStrings.editGroup.tr,
+        //             style: GoogleFonts.poppins(
+        //               fontSize: ResponsiveHelper.fontSize(14),
+        //               color: AppColors.black,
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //
+        //     // ── Leave Group ──────────────────────────────
+        //     PopupMenuItem<String>(
+        //       value: "LeaveGroup",
+        //       height: ResponsiveHelper.height(44),
+        //       child: Row(
+        //         children: [
+        //           Icon(Icons.exit_to_app_outlined,
+        //               size: ResponsiveHelper.iconSize(20),
+        //               color: const Color(0xFFFF5722)),
+        //           SizedBox(width: ResponsiveHelper.spacing(10)),
+        //           Text(
+        //             AppStrings.leaveGroup.tr,
+        //             style: GoogleFonts.poppins(
+        //               fontSize: ResponsiveHelper.fontSize(14),
+        //               color: const Color(0xFFFF5722),
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   ],
+        // ),
+
       ],
     );
   }
+
+  Widget _menuRow({
+    required IconData icon,
+    required String text,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 10),
+        child: Row(
+          children: [
+            Icon(icon, size: ResponsiveHelper.iconSize(20), color: color),
+            SizedBox(width: ResponsiveHelper.spacing(10)),
+            Text(
+              text,
+              style: GoogleFonts.poppins(
+                fontSize: ResponsiveHelper.fontSize(14),
+                color: color == const Color(0xFFFF5722) ? color : AppColors.black,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
 }
