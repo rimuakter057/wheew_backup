@@ -506,7 +506,12 @@ class _VoiceBubbleState extends State<_VoiceBubble> {
     // Prepare source to load metadata/duration
     if ((widget.totalDurationSeconds == null || widget.totalDurationSeconds! <= 0) &&
         widget.audioUrl.isNotEmpty) {
-      _player.setSource(UrlSource(widget.audioUrl)).catchError((e) {
+      _player.setSource(UrlSource(widget.audioUrl)).then((_) async {
+        final dur = await _player.getDuration();
+        if (mounted && dur != null && dur.inMilliseconds > 0) {
+          setState(() => _duration = dur);
+        }
+      }).catchError((e) {
         debugPrint('🎵 VoiceBubble setSource error: $e');
       });
     }
@@ -718,10 +723,25 @@ class _VoiceBubbleState extends State<_VoiceBubble> {
                         letterSpacing: 0.5,
                       ),
                     ),
-                    Text(
-                      ' / ${_fmt(_duration)}',
-                      style: TextStyle(color: muted, fontSize: ResponsiveHelper.fontSize(10)),
-                    ),
+                    if (_duration == Duration.zero && !_hasError) ...[
+                      Text(
+                        ' / ',
+                        style: TextStyle(color: muted, fontSize: ResponsiveHelper.fontSize(10)),
+                      ),
+                      SizedBox(
+                        width: ResponsiveHelper.width(8),
+                        height: ResponsiveHelper.width(8),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 1.2,
+                          color: muted,
+                        ),
+                      ),
+                    ] else ...[
+                      Text(
+                        ' / ${_fmt(_duration)}',
+                        style: TextStyle(color: muted, fontSize: ResponsiveHelper.fontSize(10)),
+                      ),
+                    ],
                   ],
                 ),
               ],

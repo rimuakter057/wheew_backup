@@ -287,7 +287,6 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       ),
                     ),
 
-
                   if (showLocationPulse)
                   Positioned(
                     bottom:

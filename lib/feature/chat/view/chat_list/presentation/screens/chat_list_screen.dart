@@ -14,7 +14,6 @@ import 'package:platchatapp/feature/chat/view/chat_list/presentation/widgets/cre
 import 'package:platchatapp/feature/chat/view/message/controller/message_controller.dart';
 import 'package:platchatapp/feature/chat/view/widgets/chat_list_screen_shimmer.dart';
 import 'package:platchatapp/feature/chat/view/widgets/chat_tile.dart';
-import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
 import 'package:platchatapp/feature/scan/presentation/widget/scan_options_card.dart';
 import 'package:platchatapp/helper/data_converter/data_converter.dart';
@@ -280,10 +279,13 @@ class _ChatListScreenState extends State<ChatListScreen> {
                             ? formatTime(room.latestMessage!.createdAt!)
                             : '',
                         // group chat এ block নেই
-                        isBlock:
-                            !isGroup &&
-                            (room.isBlockedByMe == true ||
-                                room.isBlockedMe == true),
+                        isBlockedByMe: !isGroup && room.isBlockedByMe == true,
+                        isBlockedMe: !isGroup && room.isBlockedMe == true,
+                        onUnblock: () {
+                          if (room.otherUser?.id != null) {
+                            controller.unBlock(room.otherUser!.id!, context);
+                          }
+                        },
                         isGroup: isGroup,
                         plateNumber: room.otherUser?.licenceId,
                         // group এ rating নেই
@@ -435,6 +437,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
               backgroundColor: Colors.red,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
+
               ),
             ),
             onPressed: () {
@@ -442,7 +445,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
              // controller.deleteChat(room.id); // আপনার controller এ এই method থাকতে হবে
             },
             child: Text(
-              AppStrings.delete.tr,
+              AppStrings.deleteMessage.tr,
               style: GoogleFonts.poppins(color: Colors.white),
             ),
           ),

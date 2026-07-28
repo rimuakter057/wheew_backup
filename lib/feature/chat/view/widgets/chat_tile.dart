@@ -18,6 +18,8 @@ class ChatTile extends StatelessWidget {
   final VoidCallback onTap;
   final FontWeight fontWeight;
   final bool? isBlock;
+  final bool? isBlockedByMe;
+  final bool? isBlockedMe;
   final bool isGroup;
   final double? rating;
   final int? unreadCount;           // ✅ নতুন
@@ -36,16 +38,23 @@ class ChatTile extends StatelessWidget {
     required this.onTap,
     required this.fontWeight,
     this.isBlock,
+    this.isBlockedByMe,
+    this.isBlockedMe,
     this.isGroup = false,
     this.rating,
     this.unreadCount,               // ✅ নতুন
-
-  this.onUnblock, this.isVehicleVerified, this.ratingColor, this.totalRating, this.plateNumber,
+    this.onUnblock,
+    this.isVehicleVerified,
+    this.ratingColor,
+    this.totalRating,
+    this.plateNumber,
   });
 
   @override
   Widget build(BuildContext context) {
     final bool hasUnread = (unreadCount ?? 0) > 0;
+    final bool showUnblockButton = isBlockedByMe == true || (isBlock == true && isBlockedMe != true);
+    final bool showBlockedStatus = isBlockedMe == true && isBlockedByMe != true;
 
     return InkWell(
       onTap: onTap,
@@ -105,29 +114,48 @@ class ChatTile extends StatelessWidget {
 
                       const SizedBox(width: 8),
 
-                      isBlock == true
-                          ? GestureDetector(
-                        onTap: onUnblock,
-                        child: Container(
+                      if (showUnblockButton)
+                        GestureDetector(
+                          onTap: onUnblock,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: ResponsiveHelper.padding(8),
+                              vertical: ResponsiveHelper.padding(6),
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.shade50,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Text(
+                              AppStrings.unblock.tr,
+                              style: GoogleFonts.poppins(
+                                fontSize: ResponsiveHelper.fontSize(12),
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.blue,
+                              ),
+                            ),
+                          ),
+                        )
+                      else if (showBlockedStatus)
+                        Container(
                           padding: EdgeInsets.symmetric(
                             horizontal: ResponsiveHelper.padding(8),
                             vertical: ResponsiveHelper.padding(6),
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.blue.shade50,
+                            color: Colors.red.shade50,
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Text(
-                            AppStrings.blockedUser1.tr,
+                            'Blocked',
                             style: GoogleFonts.poppins(
                               fontSize: ResponsiveHelper.fontSize(12),
                               fontWeight: FontWeight.w500,
-                              color: AppColors.blue,
+                              color: Colors.red.shade700,
                             ),
                           ),
-                        ),
-                      )
-                          : Row(
+                        )
+                      else Row(
                             children: [
 
 
