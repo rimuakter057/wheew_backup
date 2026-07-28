@@ -58,18 +58,8 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFFFFFFF),
-              Color(0xFFDEE7F0),
-              Color(0xFFD0DCE8),
-              Color(0xFFB6C5DA),
-            ],
-
-          ),
+        decoration:  BoxDecoration(
+          gradient: AppColors.primaryBackgroundGradient,
         ),
         child: SafeArea(
           child: SingleChildScrollView(

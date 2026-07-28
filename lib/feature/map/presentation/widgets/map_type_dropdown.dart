@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 
+import '../../../../utils/color/app_colors.dart';
+
 class MapTypeDropdown extends StatelessWidget {
   final MapType selectedType;
   final ValueChanged<MapType> onChanged;
@@ -22,11 +24,10 @@ class MapTypeDropdown extends StatelessWidget {
       child: GestureDetector(
         onTap: () => _showMapTypeBottomSheet(context),
         child: Container(
-          height: ResponsiveHelper.height(48),
-          width: ResponsiveHelper.width(48),
+          padding: ResponsiveHelper.all(8),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(14)),
+            color: AppColors.white.withValues(alpha: 0.5),
+            shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(.12),
