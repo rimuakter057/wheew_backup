@@ -10,7 +10,6 @@ import 'package:platchatapp/feature/map/controller/map_controller.dart';
 import 'package:platchatapp/feature/map/model/saved_parking_model.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_initial_shimmer.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_loading_banners.dart';
-import 'package:platchatapp/feature/map/presentation/widgets/map_type_dropdown.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/parking_info_dialog.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/parking_report_dropdown.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
@@ -18,6 +17,8 @@ import 'package:platchatapp/feature/map/presentation/widgets/radius_filter_butto
 import 'package:platchatapp/feature/map/utils/map_debug.dart';
 import 'package:platchatapp/feature/map/utils/marker_icon_loader.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/share/widgets/map_side_controls.dart';
+import 'package:platchatapp/share/widgets/map_top_bar.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:platchatapp/utils/toast_message/toast_message.dart';
 
@@ -43,6 +44,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   GoogleMapController? _mapController;
   int _selectedRadiusMeter = 100;
+  final TextEditingController _searchController = TextEditingController();
 
   LatLng _mapCenter = MapScreen.kInitialMapTarget;
   LatLng? _gpsPosition;
@@ -97,6 +99,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _mapController?.dispose();
+    _searchController.dispose();
     // Close the "Selected Report" dropdown when leaving this tab — otherwise
     // it reappears next time Home is reopened, since selectedReport lives on
     // the (find-or-put) controller past this widget's own lifecycle.
@@ -513,6 +516,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                       icon: _parkedCarIcon ??
                           BitmapDescriptor.defaultMarkerWithHue(
                               BitmapDescriptor.hueAzure),
+
                       infoWindow: const InfoWindow(
                         title: 'My Saved Parking',
                         snippet: 'Tap to view details & route',
@@ -572,16 +576,21 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
               );
             }),
 
-            /// ── Map Type Dropdown ───────────────────────────────────────
-            Obx(
-                  () => MapTypeDropdown(
-                selectedType: _parkingCtrl.selectedMapType.value,
-                onChanged: _parkingCtrl.changeMapType,
+            /// ── Top-bar: search pill + notification bell ─────────────────
+            if (_gpsPosition != null)
+              MapTopBar(
+                searchController: _searchController,
+                onSearchTap: _showRadiusFilterSheet,
               ),
-            ),
 
-            /// ── Radius filter button ──────────────────────────────────────
-            RadiusFilterButton(onPressed: _showRadiusFilterSheet),
+            /// ── Side controls: map type + current location ────────────────
+            if (_gpsPosition != null)
+              Obx(() => MapSideControls(
+                selectedMapType: _parkingCtrl.selectedMapType.value,
+                onMapTypeChanged: _parkingCtrl.changeMapType,
+                onLocationTap: _getUserLocation,
+              )),
+
 
             /// ── Action buttons cluster (Report Spot / Save My Parking) ─────
             Positioned(

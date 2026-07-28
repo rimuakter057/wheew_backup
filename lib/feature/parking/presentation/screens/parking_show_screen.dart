@@ -158,11 +158,6 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
 
                   if (isLoading) const FetchingParkingBanner(),
 
-///search=============
-
-
-
-
                   ///search=======================================================
                   if (showLocationPulse)
                     Positioned(
@@ -352,52 +347,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
               );
             }),
 
-// ///map type================================================
-//             Obx(() {
-//               if (!_parkingShowCtrl.showLocationPulse.value) {
-//                 return const SizedBox.shrink();
-//               }
-//               return MapTypeDropdown(
-//                 selectedType: _selectedMapType,
-//                 onChanged: (type) {
-//                   setState(() => _selectedMapType = type);
-//                 },
-//               );
-//             }),
-//
-// ///current location=============================================================
-//
-//             Obx(() {
-//               if (!_parkingShowCtrl.showLocationPulse.value) {
-//                 return const SizedBox.shrink();
-//               }
-//               return Positioned(
-//                 right: ResponsiveHelper.padding(20),
-//                 top: ResponsiveHelper.padding(180),
-//                 child: GestureDetector(
-//                   onTap: () => _parkingShowCtrl.getUserLocation(),
-//                   child: Container(
-//                     height: ResponsiveHelper.height(48),
-//                     width: ResponsiveHelper.width(48),
-//                     decoration: BoxDecoration(
-//                       color: Colors.white,
-//                       shape: BoxShape.circle,
-//                       boxShadow: [
-//                         BoxShadow(
-//                           color: Colors.black.withValues(alpha: 0.12),
-//                           blurRadius: 12,
-//                           offset: const Offset(0, 4),
-//                         ),
-//                       ],
-//                     ),
-//                     child: const Icon(
-//                       Icons.my_location_rounded,
-//                       color: Color(0xFF185FA5),
-//                     ),
-//                   ),
-//                 ),
-//               );
-//             }),
+
 
 
           ],
