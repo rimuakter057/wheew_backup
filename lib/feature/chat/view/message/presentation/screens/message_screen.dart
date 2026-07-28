@@ -27,6 +27,7 @@ class MessageScreen extends StatefulWidget {
   final String receiverId;
   final bool? isBlockedByMe;
   final bool? isBlockedMe;
+  final bool? isVehicleVerified;
   final bool voiceAutoSend;
   final String? voiceMessage;
 
@@ -38,6 +39,7 @@ class MessageScreen extends StatefulWidget {
     required this.receiverId,
     this.isBlockedByMe,
     this.isBlockedMe,
+    this.isVehicleVerified,
     required this.voiceAutoSend,
     this.voiceMessage,
   });

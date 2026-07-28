@@ -41,6 +41,7 @@ void navigateToChat({required BuildContext context, required Rooms room}) {
           receiverId: room.otherUser?.id ?? '',
           isBlockedByMe: room.isBlockedByMe,
           isBlockedMe: room.isBlockedMe,
+          isVehicleVerified: room.otherUser?.isVehicleVerified,
           voiceAutoSend: room.voiceAutoSend ?? false,
           voiceMessage: room.voiceMessage,
         ),
