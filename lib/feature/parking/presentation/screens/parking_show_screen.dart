@@ -6,18 +6,23 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:platchatapp/core/router/route_path.dart';
+import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_initial_shimmer.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_loading_banners.dart';
 import 'package:platchatapp/feature/map/utils/map_debug.dart';
 import 'package:platchatapp/feature/notification/controller/notification_controller.dart';
+import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/feature/parking/controller/parking_show_controller.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_location_off_prompt.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_type_dropdown.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_confirmation_overlay.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
+import 'package:platchatapp/utils/extension/base_extension.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
+import '../../../../helper/custom_gradient_button/custom_gradient_button.dart';
 import '../../../../utils/color/app_colors.dart';
 
 class ParkingShowScreen extends StatefulWidget {
@@ -172,6 +177,9 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                             child: GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onTap: () {
+                                // ── enter search mode: show the floating button ──
+                                showFindParkingButton.value = true;
+
                                 RadiusFilterSheet.show(
                                   context,
                                   initialRadiusMeter: _parkingShowCtrl.selectedRadiusMeter.value,
@@ -182,8 +190,14 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                                     if (lat != null && lng != null) {
                                       _parkingShowCtrl.fetchNearbyData(lat, lng);
                                     }
+                                    // ── sheet applied: hide the floating button ──
+                                    showFindParkingButton.value = false;
+
                                   },
-                                );
+                                ).then((_) {
+                                  // ── sheet dismissed (swipe/tap outside): hide button ──
+                                  showFindParkingButton.value = false;
+                                });
                               },
                               child: Builder(
                                 builder: (context) {
@@ -272,6 +286,29 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                         ),
                       ),
                     ),
+
+
+                  if (showLocationPulse)
+                  Positioned(
+                    bottom:
+                        ResponsiveHelper.padding(120),
+                    left: ResponsiveHelper.padding(100),
+                    right: ResponsiveHelper.padding(100),
+                    child: CustomGradientButton(
+                     // label: "Find Parking",
+                      onPressed: (){},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        
+                        children: [
+                       CustomImage(imageSrc: AssetsPath.pNav),
+                          SizedBox(width: ResponsiveHelper.width(4),),
+                          Text("Find Parking Spot",style: context.bodyMedium.copyWith(color: AppColors.white),)
+                        
+                      ],),
+
+                    )
+                  ),
                 ],
               );
             }),

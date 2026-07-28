@@ -9,12 +9,10 @@ import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
 import 'package:platchatapp/feature/map/presentation/screens/simple_map_screen.dart';
-import 'package:platchatapp/feature/notification/presentation/screens/notification_screen.dart';
 import 'package:platchatapp/feature/parking/presentation/screens/parking_show_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_nav_screen.dart';
 import 'package:platchatapp/feature/scan/presentation/widget/scan_options_card.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
-import 'package:platchatapp/main.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
@@ -173,20 +171,93 @@ class _AppBottomNav extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: ResponsiveHelper.padding(16),
-          vertical: ResponsiveHelper.padding(12),
+          vertical: ResponsiveHelper.padding(8),
         ),
-        child: Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Obx(() {
+              if (!showFindParkingButton.value) return const SizedBox.shrink();
+              return Container(
+                margin: EdgeInsets.only(
+                  left: ResponsiveHelper.padding(2),
+                  bottom: ResponsiveHelper.padding(8),
+                ),
+                child: GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    padding: ResponsiveHelper.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF0C7DC9),
+                          Color(0xFF014495),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(25),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF014495).withValues(alpha: 0.4),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: ResponsiveHelper.width(22),
+                          height: ResponsiveHelper.width(22),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 1.5),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'P',
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: ResponsiveHelper.fontSize(11),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: ResponsiveHelper.spacing(6)),
+                        Text(
+                          'Find Parking Spot',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: ResponsiveHelper.fontSize(13),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }),
+            Row(
+              children: [
+                /// Parking — floating standalone circle (leftmost)
+                ScanNavItem(
+                  icon: AssetsPath.pNav,
+                  index: 1,
+                  currentIndex: currentIndex,
+                  onTap: onTap,
+                ),
 
-            /// Parking — floating standalone circle (leftmost)
-            ScanNavItem(
-              icon: AssetsPath.pNav,
-              index: 1,
-              currentIndex: currentIndex,
-              onTap: onTap,
-            ),
-
-            SizedBox(width: ResponsiveHelper.spacing(12)),
+                SizedBox(width: ResponsiveHelper.spacing(12)),
 
             Expanded(
               child: Card(
@@ -269,8 +340,10 @@ class _AppBottomNav extends StatelessWidget {
 
           ],
         ),
-      ),
-    );
+      ],
+    ),
+  ),
+);
   }
 }
 
