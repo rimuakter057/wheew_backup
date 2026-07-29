@@ -90,6 +90,18 @@ class VehicleController extends GetxController {
 
   final RxBool isLoading = false.obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    // The type carousel always shows the first type as visually selected,
+    // so the controller's value must match from the start — otherwise
+    // Submit fails with "All fields are required" even though a type
+    // already looks selected on screen.
+    if (selectedType.value == null && vehicleTypes.isNotEmpty) {
+      selectedType.value = vehicleTypes.first;
+    }
+  }
+
   Future<void> submitVehicle({
     required BuildContext context,
   }) async {

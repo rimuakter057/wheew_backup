@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/router/route_path.dart';
 import 'package:platchatapp/feature/auth/repository/vihecal_controller.dart';
-import 'package:platchatapp/feature/auth/view/widgets/background_container.dart';
 import 'package:platchatapp/feature/auth/view/widgets/vehicle_model_field.dart';
 import 'package:platchatapp/feature/auth/view/widgets/vihele_type.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -54,7 +53,6 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: _buildAppBar(context),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -71,22 +69,25 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: ResponsiveHelper.height(10)),
+                  SizedBox(height: ResponsiveHelper.height(8)),
+                  _buildTopBar(context),
+                  SizedBox(height: ResponsiveHelper.spacing(20)),
+                  _buildHeading(),
+                  SizedBox(height: ResponsiveHelper.spacing(24)),
                   _buildTypeWheel(),
-                  SizedBox(height: ResponsiveHelper.spacing(30)),
-                  ///vihecle model and color ========
-                  _buildSectionTitle(),
-                  SizedBox(height: ResponsiveHelper.height(16)),
+                  SizedBox(height: ResponsiveHelper.spacing(28)),
 
-                  ///vihecle model and color ========
-                  CustomBackgroundContainer(
-                    child: Column(
-                      children: [
-                        _buildModelField(),
-                        _buildColorPicker(),
-                      ],
-                    ),
-                  ),
+                  ///vihecle model ========
+                  _buildFieldLabel(AppStrings.vehicleModel.tr),
+                  SizedBox(height: ResponsiveHelper.height(10)),
+                  _buildModelField(),
+
+                  SizedBox(height: ResponsiveHelper.spacing(24)),
+
+                  ///vihecle color ========
+                  _buildFieldLabel(AppStrings.vehicleColor.tr),
+                  SizedBox(height: ResponsiveHelper.height(12)),
+                  _buildColorPicker(),
 
                   SizedBox(height: ResponsiveHelper.spacing(40)),
 
@@ -103,35 +104,68 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
   }
 
 
-  ///app bar===================
-  AppBar _buildAppBar(BuildContext context) {
-    return AppBar(
-      title:  Text(
-        "Add Your Vehicle",
-        style: context.bodyLarge.copyWith(color: AppColors.black,fontWeight: FontWeight.w600)
-      ),
-      centerTitle: true,
-      elevation: 0,
-      backgroundColor: Colors.white,
-      foregroundColor: Colors.black,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_rounded),
-        onPressed: () => Navigator.maybePop(context),
-      ),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 12),
-          child: TextButton(
-            onPressed: () => context.go(RoutePath.mainNavScreen),
-            style: TextButton.styleFrom(
-              backgroundColor: Colors.grey[100],
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+  ///top bar (back + skip)===================
+  Widget _buildTopBar(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        GestureDetector(
+          onTap: () => Navigator.maybePop(context),
+          child: Container(
+            width: ResponsiveHelper.width(40),
+            height: ResponsiveHelper.height(40),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
-            child: const Text(
-              "Skip",
-              style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w600),
+            child: const Icon(Icons.arrow_back_rounded, color: Colors.black87),
+          ),
+        ),
+        TextButton(
+          onPressed: () => context.go(RoutePath.mainNavScreen),
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.white.withValues(alpha: 0.6),
+            padding: ResponsiveHelper.symmetric(horizontal: 18, vertical: 10),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
             ),
+          ),
+          child: Text(
+            "Skip",
+            style: context.bodyMedium.copyWith(
+              color: Colors.black54,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  ///heading + subtitle===================
+  Widget _buildHeading() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Add Your Vehicle",
+          style: context.titleLarge.copyWith(
+            color: AppColors.black,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        SizedBox(height: ResponsiveHelper.height(6)),
+        Text(
+          "Tell us about your vehicle so we can personalize your experience.",
+          style: context.bodyMedium.copyWith(
+            color: AppColors.black.withValues(alpha: 0.55),
           ),
         ),
       ],
@@ -151,13 +185,15 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
   }
 
 
-///build title text=========================
+///build field label=========================
 
-
-  Widget _buildSectionTitle() {
+  Widget _buildFieldLabel(String label) {
     return Text(
-      "Vehicle Model & Color",
-      style: context.bodyLarge.copyWith(color: AppColors.black)
+      label,
+      style: context.bodyLarge.copyWith(
+        color: AppColors.black,
+        fontWeight: FontWeight.w600,
+      ),
     );
   }
 
@@ -176,20 +212,10 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
 
   Widget _buildColorPicker() {
     return Obx(
-          () => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppStrings.vehicleColor.tr,
-            style: context.bodyLarge.copyWith(color: AppColors.black)
-          ),
-          SizedBox(height: ResponsiveHelper.height(12)),
-          VehicleColorPicker(
-            colorOptions: colorOptions,
-            selectedColorName: controller.selectedColor.value,
-            onSelected: (name) => controller.selectedColor.value = name,
-          ),
-        ],
+          () => VehicleColorPicker(
+        colorOptions: colorOptions,
+        selectedColorName: controller.selectedColor.value,
+        onSelected: (name) => controller.selectedColor.value = name,
       ),
     );
   }

@@ -235,23 +235,21 @@ class ParkingInfoDialog extends StatelessWidget {
               SizedBox(height: ResponsiveHelper.spacing(24)),
 
               // ── Drop Pin ──────────────────────────────────────────────
-              // VehicleSubmitButton(
-              //   isLoading: controller.isLoading.value,
-              //   label: AppStrings.mapDropPin.tr,
-              //   onPressed: onSubmit,
-              // ),
-
-              CustomGradientButton(onPressed: (){},
-                  child:Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(onPressed: (){}, icon: Icon(Icons.location_on_outlined,color: AppColors.white,)),
-                    Text("Drop Pin",style: context.bodyMedium.copyWith(color: AppColors.white),)
-                    
-                    ],
-                  )
-
+              CustomGradientButton(
+                onPressed: onSubmit,
+                isLoading: controller.isLoading.value,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.location_on_outlined, color: AppColors.white),
+                    SizedBox(width: ResponsiveHelper.spacing(8)),
+                    Text(
+                      "Drop Pin",
+                      style: context.bodyMedium.copyWith(color: AppColors.white),
+                    ),
+                  ],
+                ),
               )
             ],
           ),

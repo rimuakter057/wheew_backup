@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/feature/auth/repository/country_list.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -90,8 +90,11 @@ class VehicleModelDropdown extends StatelessWidget {
                 ),
               ),
             ),
-            // এখানে থাকা dropdown আইকনটি সম্পূর্ণ রিমুভ করে দেওয়া হয়েছে,
-            // ফলে আইকন দেখাবে না কিন্তু পুরো বক্সে ক্লিক করলেই ড্রপডাউন ওপেন হবে।
+            Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: Colors.grey[600],
+              size: ResponsiveHelper.iconSize(22),
+            ),
           ],
         ),
       ),
