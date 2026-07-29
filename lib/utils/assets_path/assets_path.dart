@@ -14,6 +14,10 @@ class AssetsPath {
 
   //icons====================================
   static const String send = '${_iconsBase}send.svg';
+  static const String addGroupIcon = '${_iconsBase}add_group.png';
+  static const String messageRequest = '${_iconsBase}message_request.svg';
+  static const String scannerTop = '${_iconsBase}scanner_nav.svg';
+
   static const String pNav = '${_iconsBase}p.svg';
   static const String chatNav = '${_iconsBase}chat_nav.svg';
   static const String mapNav = '${_iconsBase}map_nav.svg';

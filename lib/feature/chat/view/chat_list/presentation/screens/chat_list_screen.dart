@@ -23,6 +23,8 @@ import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
+import '../../../../../../core/router/route_path.dart';
+
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
 
@@ -87,13 +89,11 @@ class _ChatListScreenState extends State<ChatListScreen> {
     return Scaffold(
       // ── App Bar: logo + create group button ─────────────────
       appBar: ChatListAppBar(
+
         onCreateGroupTap: () =>
             showCreateGroupDialog(context: context, controller: controller),
 
-        // onScanTap: () {
-        //   context.pushNamed(RouteName.ocrScanner);
-        //   context.pushNamed(RouteName.scanScreen);
-        // },
+
 
         onScanTap: () async {
           final result = await showModalBottomSheet<String>(
@@ -122,193 +122,207 @@ class _ChatListScreenState extends State<ChatListScreen> {
           } else if (result == 'scan') {
             context.pushNamed(RouteName.scanScreen);
           }
-        },
+        }, onTapSearch: () {
+        context.push(RoutePath.searchList);
+
+      }, messageRequest: () {
+    context.pushNamed(RouteName.messageCenter);
+      },
 
       ),
 
-      body: RefreshIndicator(
-        color: AppColors.white,
-        backgroundColor: AppColors.blue,
-        onRefresh: () => controller.fetchChatList(refresh: true),
-        child: Column(
-          children: [
-            // ── Search Bar: tap করলে search screen এ যায় ────
-            const ChatListSearchBar(),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: AppColors.primaryBackgroundGradient
 
-            // ── Message Center: Send Message / Receive Request tabs ──
-            InkWell(
-              onTap: () => context.pushNamed(RouteName.messageCenter),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: ResponsiveHelper.width(16),
-                  vertical: ResponsiveHelper.height(10),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.mark_email_unread_outlined,
-                      color: AppColors.blue,
-                      size: ResponsiveHelper.iconSize(20),
-                    ),
-                    SizedBox(width: ResponsiveHelper.width(8)),
-                    Text(
-                      AppStrings.messageRequests.tr,
-                      style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w600,
-                        fontSize: ResponsiveHelper.fontSize(14),
-                        color: Colors.black87,
-                      ),
-                    ),
-                    SizedBox(width: ResponsiveHelper.width(8)),
-                    Obx(() {
-                      final count = Get.find<MessageController>().totalRequestsCount.value;
-                      if (count <= 0) return const SizedBox.shrink();
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF2F80ED),
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                        ),
-                        child: Text(
-                          '$count',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      );
-                    }),
-                    const Spacer(),
-                    Icon(
-                      Icons.chevron_right,
-                      color: Colors.grey.shade400,
-                      size: ResponsiveHelper.iconSize(20),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+        ),
+        child: RefreshIndicator(
+          color: AppColors.white,
+          backgroundColor: AppColors.blue,
+          onRefresh: () => controller.fetchChatList(refresh: true),
+          child: Column(
+            children: [
+              // ── Search Bar: tap করলে search screen এ যায় ────
+              //const ChatListSearchBar(),
 
-            // ── Chat List ────────────────────────────────────
-            Expanded(
-
-
-          child: Obx(() {
-
+              // ── Message Center: Send Message / Receive Request tabs ──
+              // InkWell(
+              //   onTap: () => context.pushNamed(RouteName.messageCenter),
+              //   child: Padding(
+              //     padding: EdgeInsets.symmetric(
+              //       horizontal: ResponsiveHelper.width(16),
+              //       vertical: ResponsiveHelper.height(10),
+              //     ),
+              //     child: Row(
+              //       children: [
+              //         Icon(
+              //           Icons.mark_email_unread_outlined,
+              //           color: AppColors.blue,
+              //           size: ResponsiveHelper.iconSize(20),
+              //         ),
+              //         SizedBox(width: ResponsiveHelper.width(8)),
+              //         Text(
+              //           AppStrings.messageRequests.tr,
+              //           style: GoogleFonts.poppins(
+              //             fontWeight: FontWeight.w600,
+              //             fontSize: ResponsiveHelper.fontSize(14),
+              //             color: Colors.black87,
+              //           ),
+              //         ),
+              //         SizedBox(width: ResponsiveHelper.width(8)),
+              //         Obx(() {
+              //           final count = Get.find<MessageController>().totalRequestsCount.value;
+              //           if (count <= 0) return const SizedBox.shrink();
+              //           return Container(
+              //             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              //             decoration: const BoxDecoration(
+              //               color: Color(0xFF2F80ED),
+              //               borderRadius: BorderRadius.all(Radius.circular(20)),
+              //             ),
+              //             child: Text(
+              //               '$count',
+              //               style: const TextStyle(
+              //                 fontSize: 11,
+              //                 color: Colors.white,
+              //                 fontWeight: FontWeight.bold,
+              //               ),
+              //             ),
+              //           );
+              //         }),
+              //         const Spacer(),
+              //         Icon(
+              //           Icons.chevron_right,
+              //           color: Colors.grey.shade400,
+              //           size: ResponsiveHelper.iconSize(20),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
 
 
-                if (controller.isLoadingChat.value &&
-                    controller.userChatList.isEmpty) {
-                  return const ChatListShimmer();
-                }
+              ///tab bar and multiple tab all individual and group
 
-                // কোনো chat না থাকলে empty state
-                if (controller.userChatList.isEmpty) {
-                  return ListView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    children: [
-                      SizedBox(height: MediaQuery.of(context).size.height * .3),
-                      Center(
+              // ── Chat List ────────────────────────────────────
+              Expanded(
 
-                        child: Padding(
-                          padding:  ResponsiveHelper.symmetric(horizontal: 8.0),
-                          child: Text(
-                            AppStrings.noChats.tr,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w500,
-                              fontSize: ResponsiveHelper.fontSize(18),
-                              color: AppColors.black,
 
+            child: Obx(() {
+
+
+
+                  if (controller.isLoadingChat.value &&
+                      controller.userChatList.isEmpty) {
+                    return const ChatListShimmer();
+                  }
+
+                  // কোনো chat না থাকলে empty state
+                  if (controller.userChatList.isEmpty) {
+                    return ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(height: MediaQuery.of(context).size.height * .3),
+                        Center(
+
+                          child: Padding(
+                            padding:  ResponsiveHelper.symmetric(horizontal: 8.0),
+                            child: Text(
+                              AppStrings.noChats.tr,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w500,
+                                fontSize: ResponsiveHelper.fontSize(18),
+                                color: AppColors.black,
+
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                }
-
-
-                // Chat list দেখাও
-                return ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  controller: scrollController,
-                  itemCount: controller.userChatList.length + 1,
-                  itemBuilder: (context, index) {
-                    // List এর শেষে pagination loader
-                    if (index == controller.userChatList.length) {
-                      return controller.isLoadingMore.value
-                          ? Padding(
-                              padding: ResponsiveHelper.all(8),
-                              child: const Center(child: CircularProgressIndicator()),
-                            )
-                          : const SizedBox.shrink();
-                    }
-
-                    final Rooms room = controller.userChatList[index];
-                    final bool isGroup = room.isGroup;
-                    final bool isTyping = controller.inboxTypingMap[room.id] == true;
-
-                    // Latest message text তৈরি করো
-                    final String lastMessage = isTyping
-                        ? AppStrings.typing.tr
-                        : _buildLastMessage(room, isGroup);
-
-                    return GestureDetector(
-                      onLongPress: () => _showDeleteDialog(context, room),
-                      child: ChatTile(
-                        name: room.displayName,
-                    imagePath:  isGroup
-                    ? (room.displayAvatar.isNotEmpty
-                    ? ImageHandler.imagesHandle(room.displayAvatar, isProfile: true)
-                    : 'assets/icons/group_chat.svg')
-                            : ImageHandler.imagesHandle(
-                          room.displayAvatar.isNotEmpty
-                              ? room.displayAvatar
-                              : AppConst.unknown,
-                          isProfile: true,
-                        ),
-                        message: lastMessage,
-
-                        // unread হলে bold
-                        fontWeight: room.latestMessage?.isUnread == true
-                            ? FontWeight.w700
-                            : FontWeight.w400,
-                        time: room.latestMessage?.createdAt != null
-                            ? formatTime(room.latestMessage!.createdAt!)
-                            : '',
-                        // group chat এ block নেই
-                        isBlockedByMe: !isGroup && room.isBlockedByMe == true,
-                        isBlockedMe: !isGroup && room.isBlockedMe == true,
-                        onUnblock: () {
-                          if (room.otherUser?.id != null) {
-                            controller.unBlock(room.otherUser!.id!, context);
-                          }
-                        },
-                        isGroup: isGroup,
-                        plateNumber: room.otherUser?.licenceId,
-                        // group এ rating নেই
-                      //  rating: isGroup ? null : ((room.otherUser?.rating ?? 0) > 0 ? (room.otherUser!.rating!).toDouble() : null),
-                        rating: isGroup ? null : (room.otherUser?.rating ?? 0).toDouble(),
-                        totalRating: isGroup ? null : (room.otherUser?.totalRatings ?? 0).toInt(),
-                        ratingColor:(room.otherUser?.rating ?? 0) > 0 ? null : Colors.grey,
-                        // ✅ unread badge — নিজের message হলে 0 দেখাবে
-                        unreadCount: room.latestMessage?.isMine == true
-                            ? 0
-                            : (room.unreadCount ?? 0),
-                        isVehicleVerified:  room.otherUser?.isVehicleVerified,
-                        onTap: () => navigateToChat(context: context, room: room),
-                      ),
+                      ],
                     );
-                  },
-                );
-              }),
-            ),
+                  }
+
+
+                  // Chat list দেখাও
+                  return ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    controller: scrollController,
+                    itemCount: controller.userChatList.length + 1,
+                    itemBuilder: (context, index) {
+                      // List এর শেষে pagination loader
+                      if (index == controller.userChatList.length) {
+                        return controller.isLoadingMore.value
+                            ? Padding(
+                                padding: ResponsiveHelper.all(8),
+                                child: const Center(child: CircularProgressIndicator()),
+                              )
+                            : const SizedBox.shrink();
+                      }
+
+                      final Rooms room = controller.userChatList[index];
+                      final bool isGroup = room.isGroup;
+                      final bool isTyping = controller.inboxTypingMap[room.id] == true;
+
+                      // Latest message text তৈরি করো
+                      final String lastMessage = isTyping
+                          ? AppStrings.typing.tr
+                          : _buildLastMessage(room, isGroup);
+
+                      return GestureDetector(
+                        onLongPress: () => _showDeleteDialog(context, room),
+                        child: ChatTile(
+                          name: room.displayName,
+                      imagePath:  isGroup
+                      ? (room.displayAvatar.isNotEmpty
+                      ? ImageHandler.imagesHandle(room.displayAvatar, isProfile: true)
+                      : 'assets/icons/group_chat.svg')
+                              : ImageHandler.imagesHandle(
+                            room.displayAvatar.isNotEmpty
+                                ? room.displayAvatar
+                                : AppConst.unknown,
+                            isProfile: true,
+                          ),
+                          message: lastMessage,
+
+                          // unread হলে bold
+                          fontWeight: room.latestMessage?.isUnread == true
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                          time: room.latestMessage?.createdAt != null
+                              ? formatTime(room.latestMessage!.createdAt!)
+                              : '',
+                          // group chat এ block নেই
+                          isBlockedByMe: !isGroup && room.isBlockedByMe == true,
+                          isBlockedMe: !isGroup && room.isBlockedMe == true,
+                          onUnblock: () {
+                            if (room.otherUser?.id != null) {
+                              controller.unBlock(room.otherUser!.id!, context);
+                            }
+                          },
+                          isGroup: isGroup,
+                          plateNumber: room.otherUser?.licenceId,
+                          // group এ rating নেই
+                        //  rating: isGroup ? null : ((room.otherUser?.rating ?? 0) > 0 ? (room.otherUser!.rating!).toDouble() : null),
+                          rating: isGroup ? null : (room.otherUser?.rating ?? 0).toDouble(),
+                          totalRating: isGroup ? null : (room.otherUser?.totalRatings ?? 0).toInt(),
+                          ratingColor:(room.otherUser?.rating ?? 0) > 0 ? null : Colors.grey,
+                          // ✅ unread badge — নিজের message হলে 0 দেখাবে
+                          unreadCount: room.latestMessage?.isMine == true
+                              ? 0
+                              : (room.unreadCount ?? 0),
+                          isVehicleVerified:  room.otherUser?.isVehicleVerified,
+                          onTap: () => navigateToChat(context: context, room: room),
+                        ),
+                      );
+                    },
+                  );
+                }),
+              ),
 
 
 
-          ],
+            ],
+          ),
         ),
       ),
     );
