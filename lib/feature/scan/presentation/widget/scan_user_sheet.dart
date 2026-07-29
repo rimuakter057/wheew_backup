@@ -178,8 +178,10 @@ class ScannedUserSheet extends StatelessWidget {
                       'otherUserAvatar':
                       avatar.isNotEmpty ? avatar : AppConst.unknown,
                       'receiverId': userId,
+                      'licenceId': user['licence_id']?.toString() ?? '',
                       'isBlockedByMe': false,
                       'isBlockedMe': false,
+                      'isSendRequest': true,
                     },
                   );
                 },

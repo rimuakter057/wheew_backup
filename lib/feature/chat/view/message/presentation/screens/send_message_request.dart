@@ -5,7 +5,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/chat/view/message/controller/message_controller.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:go_router/go_router.dart';
+import 'package:platchatapp/core/router/routes_name.dart';
+import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
+import 'package:platchatapp/share/widgets/avatar/user_avatar.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 
 class SentMessageRequestsScreen extends StatefulWidget {
   final bool showAppBar;
@@ -23,6 +28,7 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
   static const Color primaryBlue = Color(0xFF185FA5);
   static const Color bgColor = Color(0xFFF6F8FB);
   static const Color pendingColor = Color(0xFFB88A00);
+
 
   @override
   void initState() {
@@ -45,59 +51,92 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgColor,
+    final content = Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: widget.showAppBar
           ? AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        surfaceTintColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.black87),
-        title: Obx(() {
-          // ✅ শুধু PENDING request গুলো ফিল্টার করে count বের করা হচ্ছে
-          final pendingCount = messageController.sentRequests
-              .where((r) => (r['status'] ?? 'PENDING').toString().toUpperCase() == 'PENDING')
-              .length;
-
-          return Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                AppStrings.sentRequests.tr,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              surfaceTintColor: Colors.transparent,
+              leading: Center(
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Container(
+                    width: ResponsiveHelper.width(42),
+                    height: ResponsiveHelper.width(42),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.9),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: ResponsiveHelper.iconSize(16),
+                      color: AppColors.black,
+                    ),
+                  ),
+                ),
+              ),
+              title: Text(
+                'Sent Requests',
                 style: GoogleFonts.poppins(
                   color: Colors.black87,
                   fontWeight: FontWeight.w700,
                   fontSize: ResponsiveHelper.fontSize(18),
                 ),
               ),
-              if (pendingCount > 0) ...[
-                SizedBox(width: ResponsiveHelper.spacing(8)),
-                Container(
-                  padding: ResponsiveHelper.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: primaryBlue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-                  ),
-                  child: Text(
-                    '$pendingCount',
-                    style: GoogleFonts.poppins(
-                      color: primaryBlue,
-                      fontWeight: FontWeight.w700,
-                      fontSize: ResponsiveHelper.fontSize(12),
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          );
-        }),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(ResponsiveHelper.height(1)),
-          child: Container(height: ResponsiveHelper.height(1), color: Colors.grey.shade200),
-        ),
-      )
+            )
           : null,
       body: Obx(() {
+        final pendingRequests = messageController.sentRequests
+            .where((r) => (r['status'] ?? 'PENDING').toString().toUpperCase() == 'PENDING')
+            .toList();
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (widget.showAppBar)
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveHelper.padding(20),
+                  vertical: ResponsiveHelper.padding(4),
+                ),
+                child: Text(
+                  'Sent(${pendingRequests.length.toString().padLeft(2, '0')})',
+                  style: GoogleFonts.poppins(
+                    fontSize: ResponsiveHelper.fontSize(14),
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+            Expanded(
+              child: _buildSentRequestsList(context),
+            ),
+          ],
+        );
+      }),
+    );
+
+    if (widget.showAppBar) {
+      return Container(
+        decoration: BoxDecoration(
+          gradient: AppColors.primaryBackgroundGradient,
+        ),
+        child: content,
+      );
+    }
+    return content;
+  }
+
+  Widget _buildSentRequestsList(BuildContext context) {
         if (messageController.isLoadingSentRequests.value && messageController.sentRequests.isEmpty) {
           return const Center(
             child: CircularProgressIndicator(color: primaryBlue),
@@ -168,11 +207,11 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
               ResponsiveHelper.padding(16),
               ResponsiveHelper.padding(16),
               ResponsiveHelper.padding(16),
-              ResponsiveHelper.padding(24),
+              ResponsiveHelper.padding(16),
             ),
             // ✅ pendingRequests.length ব্যবহার করা হচ্ছে, পুরো list না
             itemCount: pendingRequests.length + (messageController.hasMoreSent.value ? 1 : 0),
-            separatorBuilder: (_, __) => SizedBox(height: ResponsiveHelper.spacing(12)),
+            separatorBuilder: (_, __) => SizedBox(height: ResponsiveHelper.spacing(6)),
             itemBuilder: (context, index) {
               if (index == pendingRequests.length) {
                 return Padding(
@@ -191,133 +230,154 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
               final message = request['firstMessage'] ?? '';
               final status = request['status'] ?? 'PENDING';
 
-              return Container(
-                padding: ResponsiveHelper.all(16),
+              return GestureDetector(
+                onTap: () {
+                  context.pushNamed(
+                    RouteName.message,
+                    extra: {
+                      'roomId': request['chatRoom']?['id'] ?? '',
+                      'otherUserName': name,
+                      'otherUserAvatar': avatar,
+                      'receiverId': receiver['id']?.toString() ?? '',
+                      'firstMessage': message,
+                      'requestId': request['id']?.toString() ?? '',
+                      'licenceId': receiver['licence_id']?.toString() ?? '',
+                      'isSendRequest': true,
+                    },
+                  );
+                },
+                child: Container(
+                padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(18)),
-                  border: Border.all(color: Colors.grey.shade100),
+                  gradient: AppColors.containerGradient,
+                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.8)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.03),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 15,
+                      offset: const Offset(0, 4),
                     )
                   ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: ResponsiveHelper.all(2),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              colors: [primaryBlue, primaryBlue.withValues(alpha: 0.4)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
+                    UserAvatar(
+                      imagePath: avatar.isNotEmpty ? avatar : AppConst.unknown,
+                      radius: 24,
+                    ),
+                    SizedBox(width: ResponsiveHelper.spacing(12)),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w700,
+                              fontSize: ResponsiveHelper.fontSize(15),
+                              color: const Color(0xFF1D2939),
                             ),
                           ),
-                          child: CircleAvatar(
-                            radius: ResponsiveHelper.width(22),
-                            backgroundColor: Colors.white,
-                            child: CircleAvatar(
-                              radius: ResponsiveHelper.width(20),
-                              backgroundImage: NetworkImage(
-                                ImageHandler.imagesHandle(avatar, isProfile: true),
+                          SizedBox(height: ResponsiveHelper.spacing(2)),
+                          if (receiver['licence_id'] != null && receiver['licence_id'].toString().isNotEmpty)
+                            Text(
+                              receiver['licence_id'].toString(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.poppins(
+                                fontSize: ResponsiveHelper.fontSize(12),
+                                color: Colors.grey.shade600,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: ResponsiveHelper.spacing(8)),
+                    if (status.toString().toUpperCase() == 'PENDING')
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: ResponsiveHelper.padding(16),
+                          vertical: ResponsiveHelper.padding(6),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+                          border: Border.all(
+                            color: const Color(0xFF0062E0),
+                            width: 1.2,
                           ),
                         ),
-                        SizedBox(width: ResponsiveHelper.spacing(12)),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                name,
-                                style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: ResponsiveHelper.fontSize(14),
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              SizedBox(height: ResponsiveHelper.spacing(2)),
-                              Text(
-                                AppStrings.requestSent.tr,
-                                style: GoogleFonts.poppins(
-                                  fontSize: ResponsiveHelper.fontSize(11.5),
-                                  color: Colors.grey.shade500,
-                                ),
+                        child: Text(
+                          'Pending',
+                          style: GoogleFonts.poppins(
+                            color: const Color(0xFF0062E0),
+                            fontWeight: FontWeight.w600,
+                            fontSize: ResponsiveHelper.fontSize(12),
+                          ),
+                        ),
+                      )
+                    else
+                      GestureDetector(
+                        onTap: () {
+                          final roomId = request['chatRoom_id'] ?? request['chatRoom']?['id'] ?? '';
+                          if (roomId.toString().isNotEmpty) {
+                            Get.find<ChatController>().roomID.value = roomId.toString();
+                            context.pushNamed(
+                              RouteName.message,
+                              extra: {
+                                'roomId': roomId.toString(),
+                                'otherUserName': name,
+                                'otherUserAvatar': avatar,
+                                'receiverId': receiver['id'] ?? '',
+                              },
+                            );
+                          }
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: ResponsiveHelper.padding(16),
+                            vertical: ResponsiveHelper.padding(8),
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color(0xFF0062E0),
+                                Color(0xFF014495),
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveHelper.borderRadius(25),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF014495).withValues(alpha: 0.35),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
                               ),
                             ],
                           ),
-                        ),
-                        _StatusBadge(status: status),
-                      ],
-                    ),
-                    SizedBox(height: ResponsiveHelper.spacing(14)),
-                    Container(
-                      width: double.infinity,
-                      padding: ResponsiveHelper.all(12),
-                      decoration: BoxDecoration(
-                        color: bgColor,
-                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
-                      ),
-                      child: Text(
-                        message,
-                        style: GoogleFonts.poppins(
-                          fontSize: ResponsiveHelper.fontSize(13),
-                          color: Colors.black87,
-                          height: 1.4,
+                          child: Text(
+                            'Message',
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: ResponsiveHelper.fontSize(13),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
-              );
-            },
-          ),
-        );
-      }),
-    );
-  }
-}
-
-class _StatusBadge extends StatelessWidget {
-  final String status;
-  const _StatusBadge({required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    final isPending = status.toUpperCase() == 'PENDING';
-    final color = isPending
-        ? _SentMessageRequestsScreenState.pendingColor
-        : Colors.grey;
-
-    return Container(
-      padding: ResponsiveHelper.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.schedule, size: ResponsiveHelper.iconSize(12), color: color),
-          SizedBox(width: ResponsiveHelper.spacing(4)),
-          Text(
-            isPending ? 'Pending' : status,
-            style: GoogleFonts.poppins(
-              color: color,
-              fontWeight: FontWeight.w600,
-              fontSize: ResponsiveHelper.fontSize(11),
-            ),
-          ),
-        ],
-      ),
-    );
+              ),
+            );
+          },
+        ),
+      );
   }
 }

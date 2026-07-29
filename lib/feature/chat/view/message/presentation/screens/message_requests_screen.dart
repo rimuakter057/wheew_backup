@@ -6,7 +6,10 @@ import 'package:platchatapp/feature/chat/view/message/controller/message_control
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:go_router/go_router.dart';
+import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
+import 'package:platchatapp/share/widgets/avatar/user_avatar.dart';
 
 class MessageRequestsScreen extends StatefulWidget {
   final bool showAppBar;
@@ -22,6 +25,7 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
   final ScrollController _scrollController = ScrollController();
 
   static const Color primaryBlue = Color(0xFF185FA5);
+
   static const Color bgColor = Color(0xFFF6F8FB);
 
   @override
@@ -46,55 +50,90 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgColor,
+    final content = Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: widget.showAppBar
           ? AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        surfaceTintColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.black87),
-        title: Obx(() {
-          final count = messageController.totalRequestsCount.value;
-          return Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                AppStrings.messageRequests.tr,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              surfaceTintColor: Colors.transparent,
+              leading: Center(
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Container(
+                    width: ResponsiveHelper.width(42),
+                    height: ResponsiveHelper.width(42),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.9),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: ResponsiveHelper.iconSize(16),
+                      color: AppColors.black,
+                    ),
+                  ),
+                ),
+              ),
+              title: Text(
+                'Received Requests',
                 style: GoogleFonts.poppins(
                   color: Colors.black87,
                   fontWeight: FontWeight.w700,
                   fontSize: ResponsiveHelper.fontSize(18),
                 ),
               ),
-              if (count > 0) ...[
-                SizedBox(width: ResponsiveHelper.spacing(8)),
-                Container(
-                  padding: ResponsiveHelper.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: primaryBlue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-                  ),
-                  child: Text(
-                    '$count',
-                    style: GoogleFonts.poppins(
-                      color: primaryBlue,
-                      fontWeight: FontWeight.w700,
-                      fontSize: ResponsiveHelper.fontSize(12),
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          );
-        }),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(ResponsiveHelper.height(1)),
-          child: Container(height: ResponsiveHelper.height(1), color: Colors.grey.shade200),
-        ),
-      )
+            )
           : null,
       body: Obx(() {
+        final count = messageController.totalRequestsCount.value;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (widget.showAppBar)
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveHelper.padding(20),
+                  vertical: ResponsiveHelper.padding(4),
+                ),
+                child: Text(
+                  'Requests(${count.toString().padLeft(2, '0')})',
+                  style: GoogleFonts.poppins(
+                    fontSize: ResponsiveHelper.fontSize(14),
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+            Expanded(
+              child: _buildRequestsList(context),
+            ),
+          ],
+        );
+      }),
+    );
+
+    if (widget.showAppBar) {
+      return Container(
+        decoration: BoxDecoration(
+          gradient: AppColors.primaryBackgroundGradient,
+        ),
+        child: content,
+      );
+    }
+    return content;
+  }
+
+  Widget _buildRequestsList(BuildContext context) {
         if (messageController.isLoadingRequests.value && messageController.messageRequests.isEmpty) {
           return const Center(
             child: CircularProgressIndicator(color: primaryBlue),
@@ -163,7 +202,7 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
               ResponsiveHelper.padding(24),
             ),
             itemCount: messageController.messageRequests.length + (messageController.hasMore.value ? 1 : 0),
-            separatorBuilder: (_, __) => SizedBox(height: ResponsiveHelper.spacing(12)),
+            separatorBuilder: (_, __) => SizedBox(height: ResponsiveHelper.spacing(6)),
             itemBuilder: (context, index) {
               if (index == messageController.messageRequests.length) {
                 return Padding(
@@ -181,154 +220,158 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
               final message = request['firstMessage'] ?? '';
               final requestId = request['id']?.toString() ?? '';
 
-              return Container(
-                padding: ResponsiveHelper.all(16),
+              return GestureDetector(
+                onTap: () {
+                  context.pushNamed(
+                    RouteName.message,
+                    extra: {
+                      'roomId': request['chatRoom']?['id'] ?? '',
+                      'otherUserName': name,
+                      'otherUserAvatar': avatar,
+                      'receiverId': requester['id']?.toString() ?? '',
+                      'firstMessage': message,
+                      'requestId': requestId,
+                      'licenceId': requester['licence_id']?.toString() ?? '',
+                      'isReceivedRequest': true,
+                    },
+                  );
+                },
+                child: Container(
+                padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(18)),
-                  border: Border.all(color: Colors.grey.shade100),
+                 // color: Colors.white.withValues(alpha: 0.85),
+                  gradient: AppColors.parkingContainerGradient,                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.8)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.03),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 15,
+                      offset: const Offset(0, 4),
                     )
                   ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: ResponsiveHelper.all(2),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              colors: [primaryBlue, primaryBlue.withValues(alpha: 0.4)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
+                    UserAvatar(
+                      imagePath: avatar.isNotEmpty ? avatar : AppConst.unknown,
+                      radius: 24,
+                    ),
+                    SizedBox(width: ResponsiveHelper.spacing(12)),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w700,
+                              fontSize: ResponsiveHelper.fontSize(15),
+                              color: const Color(0xFF1D2939),
                             ),
                           ),
-                          child: CircleAvatar(
-                            radius: ResponsiveHelper.width(22),
-                            backgroundColor: Colors.white,
-                            child: CircleAvatar(
-                              radius: ResponsiveHelper.width(20),
-                              backgroundImage: NetworkImage(
-                                ImageHandler.imagesHandle(avatar, isProfile: true),
+                          SizedBox(height: ResponsiveHelper.spacing(2)),
+                          if (requester['licence_id'] != null && requester['licence_id'].toString().isNotEmpty)
+                            Text(
+                              requester['licence_id'].toString(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.poppins(
+                                fontSize: ResponsiveHelper.fontSize(12),
+                                color: Colors.grey.shade600,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
-                          ),
+                          if (message.isNotEmpty) ...[
+                            SizedBox(height: ResponsiveHelper.spacing(4)),
+                            Text(
+                              message,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.poppins(
+                                fontSize: ResponsiveHelper.fontSize(12),
+                                color: Colors.grey.shade700,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: ResponsiveHelper.spacing(8)),
+                    // Reject (Red X button)
+                    GestureDetector(
+                      onTap: () {
+                        messageController.declineMessageRequest(
+                          requestId: requestId,
+                          context: context,
+                        );
+                      },
+                      child: Container(
+                        width: ResponsiveHelper.width(36),
+                        height: ResponsiveHelper.width(36),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xFFB02517),
                         ),
-                        SizedBox(width: ResponsiveHelper.spacing(12)),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                name,
-                                style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: ResponsiveHelper.fontSize(14),
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              SizedBox(height: ResponsiveHelper.spacing(2)),
-                              Text(
-                                AppStrings.wantsToSendYouAMessage.tr,
-                                style: GoogleFonts.poppins(
-                                  fontSize: ResponsiveHelper.fontSize(11.5),
-                                  color: Colors.grey.shade500,
-                                ),
-                              ),
+                        child: const Icon(
+                          Icons.close_rounded,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: ResponsiveHelper.spacing(8)),
+                    // Accept (Blue Pill button)
+                    GestureDetector(
+                      onTap: () {
+                        messageController.acceptMessageRequest(
+                          requestId: requestId,
+                          context: context,
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: ResponsiveHelper.padding(16),
+                          vertical: ResponsiveHelper.padding(8),
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFF0062E0),
+                              Color(0xFF014495),
                             ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveHelper.borderRadius(25),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF014495).withValues(alpha: 0.35),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          AppStrings.accept.tr,
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: ResponsiveHelper.fontSize(13),
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(height: ResponsiveHelper.spacing(14)),
-                    Container(
-                      width: double.infinity,
-                      padding: ResponsiveHelper.all(12),
-                      decoration: BoxDecoration(
-                        color: bgColor,
-                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
                       ),
-                      child: Text(
-                        message,
-                        style: GoogleFonts.poppins(
-                          fontSize: ResponsiveHelper.fontSize(13),
-                          color: Colors.black87,
-                          height: 1.4,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: ResponsiveHelper.spacing(14)),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () {
-                              messageController.declineMessageRequest(
-                                requestId: requestId,
-                                context: context,
-                              );
-                            },
-                            style: OutlinedButton.styleFrom(
-                              padding: ResponsiveHelper.symmetric(vertical: 12),
-                              side: BorderSide(color: Colors.red.shade200),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
-                              ),
-                            ),
-                            child: Text(
-                              AppStrings.decline.tr,
-                              style: GoogleFonts.poppins(
-                                color: Colors.red.shade400,
-                                fontWeight: FontWeight.w600,
-                                fontSize: ResponsiveHelper.fontSize(13),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(width: ResponsiveHelper.spacing(10)),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              messageController.acceptMessageRequest(
-                                requestId: requestId,
-                                context: context,
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryBlue,
-                              elevation: 0,
-                              padding: ResponsiveHelper.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
-                              ),
-                            ),
-                            child: Text(
-                              AppStrings.accept.tr,
-                              style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: ResponsiveHelper.fontSize(13),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
                     ),
                   ],
                 ),
-              );
-            },
-          ),
-        );
-      }),
-    );
+              ),
+            );
+          },
+        ),
+      );
   }
 }

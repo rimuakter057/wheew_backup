@@ -232,7 +232,9 @@ class ChatListAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColors.lightBlue,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      scrolledUnderElevation: 0,
       centerTitle: true,
       leading: Padding(
         padding: EdgeInsets.only(left: ResponsiveHelper.padding(12)),

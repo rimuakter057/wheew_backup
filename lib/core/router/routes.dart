@@ -143,7 +143,9 @@ class AppRouter {
         path: RoutePath.message,
         name: RouteName.message,
         builder: (context, state) {
-          final args = state.extra as Map<String, dynamic>;
+          final args = state.extra is Map<String, dynamic>
+              ? state.extra as Map<String, dynamic>
+              : <String, dynamic>{};
           return MessageScreen(
             roomId: args['roomId'] ?? '',
             otherUserName: args['otherUserName'] ?? "",
@@ -151,9 +153,13 @@ class AppRouter {
             receiverId: args['receiverId'] ?? '',
             isBlockedByMe: args['isBlockedByMe'],
             isBlockedMe: args['isBlockedMe'],
-            // ── নতুন দুটো ──
             voiceAutoSend: args['voiceAutoSend'] ?? false,
             voiceMessage: args['voiceMessage'],
+            isReceivedRequest: args['isReceivedRequest'] ?? false,
+            isSendRequest: args['isSendRequest'] ?? false,
+            requestId: args['requestId'],
+            firstMessage: args['firstMessage'],
+            licenceId: args['licenceId'],
           );
         },
       ),
@@ -330,7 +336,13 @@ class AppRouter {
         path: RoutePath.messageCenter,
         name: RouteName.messageCenter,
         builder: (context, state) {
-          return const MessageCenterScreen();
+          int index = 0;
+          if (state.extra is int) {
+            index = state.extra as int;
+          } else if (state.extra is Map && (state.extra as Map)['initialIndex'] != null) {
+            index = (state.extra as Map)['initialIndex'] as int? ?? 0;
+          }
+          return MessageCenterScreen(initialIndex: index);
         },
       ),
       GoRoute(

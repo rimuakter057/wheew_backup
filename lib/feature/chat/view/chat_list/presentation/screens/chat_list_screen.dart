@@ -35,6 +35,7 @@ class ChatListScreen extends StatefulWidget {
 class _ChatListScreenState extends State<ChatListScreen> {
   final ChatController controller = Get.put(ChatController());
   final ScrollController scrollController = ScrollController();
+  int _selectedTabIndex = 0; // 0: All, 1: Individual, 2: Group
 
   @override
   void initState() {
@@ -84,6 +85,221 @@ class _ChatListScreenState extends State<ChatListScreen> {
     super.dispose();
   }
 
+  void _showMessageRequestBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) => SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryBackgroundGradient,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(ResponsiveHelper.borderRadius(28)),
+            ),
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: ResponsiveHelper.padding(20),
+            vertical: ResponsiveHelper.padding(16),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Handle bar
+              Center(
+                child: Container(
+                  width: ResponsiveHelper.width(40),
+                  height: ResponsiveHelper.height(4),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade400,
+                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(2)),
+                  ),
+                ),
+              ),
+              SizedBox(height: ResponsiveHelper.spacing(16)),
+
+              Text(
+                AppStrings.messageRequests.tr,
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w700,
+                  fontSize: ResponsiveHelper.fontSize(20),
+                  color: AppColors.textBlack,
+                ),
+              ),
+
+              SizedBox(height: ResponsiveHelper.spacing(16)),
+
+              // Received Requests option
+              InkWell(
+                onTap: () {
+                  Navigator.pop(ctx);
+                  context.pushNamed(RouteName.messageRequests);
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.padding(10)),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(ResponsiveHelper.padding(10)),
+                        decoration: BoxDecoration(
+                          color: AppColors.blue.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.mail_outline_rounded,
+                          color: AppColors.blue,
+                          size: ResponsiveHelper.iconSize(20),
+                        ),
+                      ),
+                      SizedBox(width: ResponsiveHelper.spacing(14)),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              AppStrings.receiveRequestTab.tr,
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w600,
+                                fontSize: ResponsiveHelper.fontSize(15),
+                                color: AppColors.textBlack,
+                              ),
+                            ),
+                            SizedBox(height: ResponsiveHelper.spacing(2)),
+                            Text(
+                              'Requests others sent to you',
+                              style: GoogleFonts.poppins(
+                                fontSize: ResponsiveHelper.fontSize(12),
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: Colors.grey.shade400,
+                        size: ResponsiveHelper.iconSize(22),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              Divider(height: 1, thickness: 0.5, color: Colors.grey.shade300),
+
+              // Sent Requests option
+              InkWell(
+                onTap: () {
+                  Navigator.pop(ctx);
+                  context.pushNamed(RouteName.sendRequests);
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.padding(10)),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(ResponsiveHelper.padding(10)),
+                        decoration: BoxDecoration(
+                          color: AppColors.blue.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.send_outlined,
+                          color: AppColors.blue,
+                          size: ResponsiveHelper.iconSize(20),
+                        ),
+                      ),
+                      SizedBox(width: ResponsiveHelper.spacing(14)),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              AppStrings.sentRequests.tr,
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w600,
+                                fontSize: ResponsiveHelper.fontSize(15),
+                                color: AppColors.textBlack,
+                              ),
+                            ),
+                            SizedBox(height: ResponsiveHelper.spacing(2)),
+                            Text(
+                              'Requests you sent to others',
+                              style: GoogleFonts.poppins(
+                                fontSize: ResponsiveHelper.fontSize(12),
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: Colors.grey.shade400,
+                        size: ResponsiveHelper.iconSize(22),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              SizedBox(height: ResponsiveHelper.spacing(16)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabItem(int index, String title) {
+    final bool isActive = _selectedTabIndex == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _selectedTabIndex = index;
+          });
+        },
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          decoration: BoxDecoration(
+            gradient: isActive
+                ? const LinearGradient(
+                    colors: [
+                      Color(0xFF0062E0),
+                      Color(0xFF014495),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  )
+                : null,
+            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(25)),
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFF014495).withOpacity(0.35),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ]
+                : null,
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            title,
+            style: GoogleFonts.poppins(
+              color: isActive ? Colors.white : const Color(0xFF6E7C8E),
+              fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+              fontSize: ResponsiveHelper.fontSize(13),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,7 +342,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
         context.push(RoutePath.searchList);
 
       }, messageRequest: () {
-    context.pushNamed(RouteName.messageCenter);
+        _showMessageRequestBottomSheet(context);
       },
 
       ),
@@ -202,6 +418,29 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
 
               ///tab bar and multiple tab all individual and group
+              Container(
+                margin: EdgeInsets.symmetric(
+                  horizontal: ResponsiveHelper.padding(20),
+                  vertical: ResponsiveHelper.padding(10),
+                ),
+                height: ResponsiveHelper.height(46),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.55),
+                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(30)),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.8),
+                    width: 1,
+                  ),
+                ),
+                padding: const EdgeInsets.all(4),
+                child: Row(
+                  children: [
+                    _buildTabItem(0, 'All'),
+                    _buildTabItem(1, 'Individual'),
+                    _buildTabItem(2, 'Group'),
+                  ],
+                ),
+              ),
 
               // ── Chat List ────────────────────────────────────
               Expanded(
@@ -216,12 +455,18 @@ class _ChatListScreenState extends State<ChatListScreen> {
                     return const ChatListShimmer();
                   }
 
+                  final List<Rooms> displayChats = _selectedTabIndex == 1
+                      ? controller.userChatList.where((room) => !room.isGroup).toList()
+                      : (_selectedTabIndex == 2
+                          ? controller.userChatList.where((room) => room.isGroup).toList()
+                          : controller.userChatList);
+
                   // কোনো chat না থাকলে empty state
-                  if (controller.userChatList.isEmpty) {
+                  if (displayChats.isEmpty) {
                     return ListView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       children: [
-                        SizedBox(height: MediaQuery.of(context).size.height * .3),
+                        SizedBox(height: MediaQuery.of(context).size.height * .25),
                         Center(
 
                           child: Padding(
@@ -244,77 +489,120 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
 
                   // Chat list দেখাও
-                  return ListView.builder(
+                  return SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     controller: scrollController,
-                    itemCount: controller.userChatList.length + 1,
-                    itemBuilder: (context, index) {
-                      // List এর শেষে pagination loader
-                      if (index == controller.userChatList.length) {
-                        return controller.isLoadingMore.value
-                            ? Padding(
-                                padding: ResponsiveHelper.all(8),
-                                child: const Center(child: CircularProgressIndicator()),
-                              )
-                            : const SizedBox.shrink();
-                      }
-
-                      final Rooms room = controller.userChatList[index];
-                      final bool isGroup = room.isGroup;
-                      final bool isTyping = controller.inboxTypingMap[room.id] == true;
-
-                      // Latest message text তৈরি করো
-                      final String lastMessage = isTyping
-                          ? AppStrings.typing.tr
-                          : _buildLastMessage(room, isGroup);
-
-                      return GestureDetector(
-                        onLongPress: () => _showDeleteDialog(context, room),
-                        child: ChatTile(
-                          name: room.displayName,
-                      imagePath:  isGroup
-                      ? (room.displayAvatar.isNotEmpty
-                      ? ImageHandler.imagesHandle(room.displayAvatar, isProfile: true)
-                      : 'assets/icons/group_chat.svg')
-                              : ImageHandler.imagesHandle(
-                            room.displayAvatar.isNotEmpty
-                                ? room.displayAvatar
-                                : AppConst.unknown,
-                            isProfile: true,
-                          ),
-                          message: lastMessage,
-
-                          // unread হলে bold
-                          fontWeight: room.latestMessage?.isUnread == true
-                              ? FontWeight.w700
-                              : FontWeight.w400,
-                          time: room.latestMessage?.createdAt != null
-                              ? formatTime(room.latestMessage!.createdAt!)
-                              : '',
-                          // group chat এ block নেই
-                          isBlockedByMe: !isGroup && room.isBlockedByMe == true,
-                          isBlockedMe: !isGroup && room.isBlockedMe == true,
-                          onUnblock: () {
-                            if (room.otherUser?.id != null) {
-                              controller.unBlock(room.otherUser!.id!, context);
-                            }
-                          },
-                          isGroup: isGroup,
-                          plateNumber: room.otherUser?.licenceId,
-                          // group এ rating নেই
-                        //  rating: isGroup ? null : ((room.otherUser?.rating ?? 0) > 0 ? (room.otherUser!.rating!).toDouble() : null),
-                          rating: isGroup ? null : (room.otherUser?.rating ?? 0).toDouble(),
-                          totalRating: isGroup ? null : (room.otherUser?.totalRatings ?? 0).toInt(),
-                          ratingColor:(room.otherUser?.rating ?? 0) > 0 ? null : Colors.grey,
-                          // ✅ unread badge — নিজের message হলে 0 দেখাবে
-                          unreadCount: room.latestMessage?.isMine == true
-                              ? 0
-                              : (room.unreadCount ?? 0),
-                          isVehicleVerified:  room.otherUser?.isVehicleVerified,
-                          onTap: () => navigateToChat(context: context, room: room),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: ResponsiveHelper.padding(16),
+                        right: ResponsiveHelper.padding(16),
+                        top: ResponsiveHelper.padding(4),
+                        bottom: ResponsiveHelper.padding(16),
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.85),
+                          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 15,
+                              spreadRadius: 1,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                      );
-                    },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: displayChats.length + 1,
+                            separatorBuilder: (context, index) {
+                              if (index < displayChats.length - 1) {
+                                return Divider(
+                                  height: 1,
+                                  thickness: 0.5,
+                                  color: Colors.grey.shade200,
+                                  indent: ResponsiveHelper.padding(64),
+                                  endIndent: ResponsiveHelper.padding(14),
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
+                            itemBuilder: (context, index) {
+                              // List এর শেষে pagination loader
+                              if (index == displayChats.length) {
+                                return controller.isLoadingMore.value
+                                    ? Padding(
+                                        padding: ResponsiveHelper.all(8),
+                                        child: const Center(child: CircularProgressIndicator()),
+                                      )
+                                    : const SizedBox.shrink();
+                              }
+
+                              final Rooms room = displayChats[index];
+                              final bool isGroup = room.isGroup;
+                              final bool isTyping = controller.inboxTypingMap[room.id] == true;
+
+                              // Latest message text তৈরি করো
+                              final String lastMessage = isTyping
+                                  ? AppStrings.typing.tr
+                                  : _buildLastMessage(room, isGroup);
+
+                              return GestureDetector(
+                                onLongPress: () => _showDeleteDialog(context, room),
+                                child: ChatTile(
+                                  name: room.displayName,
+                                  imagePath: isGroup
+                                      ? (room.displayAvatar.isNotEmpty
+                                          ? ImageHandler.imagesHandle(room.displayAvatar, isProfile: true)
+                                          : 'assets/icons/group_chat.svg')
+                                      : ImageHandler.imagesHandle(
+                                          room.displayAvatar.isNotEmpty
+                                              ? room.displayAvatar
+                                              : AppConst.unknown,
+                                          isProfile: true,
+                                        ),
+                                  message: lastMessage,
+
+                                  // unread হলে bold
+                                  fontWeight: room.latestMessage?.isUnread == true
+                                      ? FontWeight.w700
+                                      : FontWeight.w400,
+                                  time: room.latestMessage?.createdAt != null
+                                      ? formatTime(room.latestMessage!.createdAt!)
+                                      : '',
+                                  // group chat এ block নেই
+                                  isBlockedByMe: !isGroup && room.isBlockedByMe == true,
+                                  isBlockedMe: !isGroup && room.isBlockedMe == true,
+                                  onUnblock: () {
+                                    if (room.otherUser?.id != null) {
+                                      controller.unBlock(room.otherUser!.id!, context);
+                                    }
+                                  },
+                                  isGroup: isGroup,
+                                  plateNumber: room.otherUser?.licenceId,
+                                  // group এ rating নেই
+                                  // rating: isGroup ? null : ((room.otherUser?.rating ?? 0) > 0 ? (room.otherUser!.rating!).toDouble() : null),
+                                  rating: isGroup ? null : (room.otherUser?.rating ?? 0).toDouble(),
+                                  totalRating: isGroup ? null : (room.otherUser?.totalRatings ?? 0).toInt(),
+                                  ratingColor: (room.otherUser?.rating ?? 0) > 0 ? null : Colors.grey,
+                                  // ✅ unread badge — নিজের message হলে 0 দেখাবে
+                                  unreadCount: room.latestMessage?.isMine == true
+                                      ? 0
+                                      : (room.unreadCount ?? 0),
+                                  isRead: room.latestMessage?.isRead,
+                                  isDelivered: room.latestMessage?.isDelivered,
+                                  isVehicleVerified: room.otherUser?.isVehicleVerified,
+                                  onTap: () => navigateToChat(context: context, room: room),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
                   );
                 }),
               ),

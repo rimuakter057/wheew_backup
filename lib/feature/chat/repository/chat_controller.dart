@@ -745,7 +745,9 @@ class ChatController extends GetxController {
     final idx = userChatList.indexWhere((r) => r.id == roomId);
     if (idx != -1) {
       userChatList[idx].unreadCount = 0;
-      userChatList[idx].latestMessage?.isRead = true;
+      if (userChatList[idx].latestMessage?.isMine != true) {
+        userChatList[idx].latestMessage?.isRead = true;
+      }
       userChatList.refresh(); // GetX UI trigger
       debugPrint('✅ Local unread reset for room: $roomId');
     }

@@ -214,44 +214,55 @@ class _SearchListScreenState extends State<SearchListScreen> {
                               final hasRoom = roomId.isNotEmpty;
 
                               return GestureDetector(
-                                // ✅ পুরো card এর onTap শুধু roomId থাকলেই কাজ করবে
-                                onTap: hasRoom
-                                    ? () async {
-                                        debugPrint(
-                                          "room exists, navigating directly ================================== $roomId",
+                                onTap: () async {
+                                  if (hasRoom) {
+                                    debugPrint(
+                                      "room exists, navigating directly ================================== $roomId",
+                                    );
+
+                                    controller.roomID.value = roomId;
+
+                                    await context.pushNamed(
+                                      RouteName.message,
+                                      extra: {
+                                        'roomId': roomId,
+                                        'otherUserName': user.nickName,
+                                        'otherUserAvatar':
+                                            user.avatar ?? AppConst.unknown,
+                                        'receiverId': user.id,
+                                        "isBlockedByMe": false,
+                                        "isBlockedMe": false,
+                                        'voiceAutoSend': false,
+                                        'voiceMessage': null,
+                                      },
+                                    );
+
+                                    final newRoomId =
+                                        controller.roomID.value;
+
+                                    if (newRoomId.isNotEmpty &&
+                                        (user.existingRoom?.id ?? '') !=
+                                            newRoomId) {
+                                      setState(() {
+                                        user.existingRoom = ExistingRoom2(
+                                          id: newRoomId,
                                         );
-
-                                        controller.roomID.value = roomId;
-
-                                        await context.pushNamed(
-                                          RouteName.message,
-                                          extra: {
-                                            'roomId': roomId,
-                                            'otherUserName': user.nickName,
-                                            'otherUserAvatar':
-                                                user.avatar ?? AppConst.unknown,
-                                            'receiverId': user.id,
-                                            "isBlockedByMe": false,
-                                            "isBlockedMe": false,
-                                            'voiceAutoSend': false,
-                                            'voiceMessage': null,
-                                          },
-                                        );
-
-                                        final newRoomId =
-                                            controller.roomID.value;
-
-                                        if (newRoomId.isNotEmpty &&
-                                            (user.existingRoom?.id ?? '') !=
-                                                newRoomId) {
-                                          setState(() {
-                                            user.existingRoom = ExistingRoom2(
-                                              id: newRoomId,
-                                            );
-                                          });
-                                        }
-                                      }
-                                    : null, // ✅ roomId না থাকলে card tap এ কিছু হবে না
+                                      });
+                                    }
+                                  } else {
+                                    context.pushNamed(
+                                      RouteName.message,
+                                      extra: {
+                                        'roomId': '',
+                                        'otherUserName': user.nickName,
+                                        'otherUserAvatar': user.avatar ?? AppConst.unknown,
+                                        'receiverId': user.id,
+                                        'licenceId': user.licenceId ?? '',
+                                        'isSendRequest': true,
+                                      },
+                                    );
+                                  }
+                                },
                                 child: Container(
                                   padding: ResponsiveHelper.all(20),
                                   margin: ResponsiveHelper.symmetric(
@@ -530,6 +541,7 @@ class _SendRequestDialogState extends State<_SendRequestDialog> {
   @override
   void initState() {
     super.initState();
+    widget.controller.fetchPresetMessages();
     // ✅ layout শেষ হওয়ার পর focus
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && messageFocusNode.canRequestFocus) {
@@ -540,7 +552,6 @@ class _SendRequestDialogState extends State<_SendRequestDialog> {
 
   @override
   void dispose() {
-
     messageController.dispose();
     messageFocusNode.dispose();
     super.dispose();
@@ -550,14 +561,13 @@ class _SendRequestDialogState extends State<_SendRequestDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: EdgeInsets.symmetric(horizontal: 24),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 400),
         child: Container(
           padding: EdgeInsets.all(ResponsiveHelper.width(20)),
           decoration: BoxDecoration(
-
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               colors: [Colors.white, Color(0xFFD4DDE9)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -580,51 +590,105 @@ class _SendRequestDialogState extends State<_SendRequestDialog> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(height: ResponsiveHelper.height(4)),
-                    Container(
+                    SizedBox(
                       width: ResponsiveHelper.width(64),
                       height: ResponsiveHelper.width(64),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          colors: [AppColors.blue, AppColors.darBlue],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
+                      child: ClipOval(
+                        child: UserAvatar(
+                          imagePath: widget.user.avatar ?? AppConst.unknown,
+                          radius: 32,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.blue.withValues(alpha: 0.35),
-                            blurRadius: 16,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.send_rounded,
-                        color: Colors.white,
-                        size: ResponsiveHelper.iconSize(26),
                       ),
                     ),
-                    SizedBox(height: ResponsiveHelper.height(14)),
+                    SizedBox(height: ResponsiveHelper.height(10)),
                     Text(
-                      AppStrings.sendMessageRequest.tr,
+                      widget.user.nickName ?? '',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(17),
                         fontWeight: FontWeight.w700,
                         color: AppColors.black,
                       ),
                     ),
-                    SizedBox(height: ResponsiveHelper.height(6)),
+                    SizedBox(height: ResponsiveHelper.height(2)),
                     Text(
-                      AppStrings.writeAShortMessageToIntroduceYourself.tr,
+                      "You're not following this person",
                       textAlign: TextAlign.center,
-                      style:context.bodySmall.copyWith(color: AppColors.black.withOpacity(0.6))
+                      style: GoogleFonts.poppins(
+                        fontSize: ResponsiveHelper.fontSize(13),
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
                     ),
-                    SizedBox(height: ResponsiveHelper.height(18)),
+                    SizedBox(height: ResponsiveHelper.height(4)),
+                    Text(
+                      "Send a request to start a conversation. They'll review your request before you can message each other.",
+                      textAlign: TextAlign.center,
+                      style: context.bodySmall.copyWith(
+                        color: AppColors.black.withOpacity(0.6),
+                        fontSize: ResponsiveHelper.fontSize(11.5),
+                      ),
+                    ),
+                    SizedBox(height: ResponsiveHelper.height(14)),
+
+                    // ✅ Preset message chips
+                    Obx(() {
+                      if (widget.controller.presetMessages.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+                      return Container(
+                        margin: EdgeInsets.only(bottom: ResponsiveHelper.height(12)),
+                        height: ResponsiveHelper.height(36),
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: widget.controller.presetMessages.length,
+                          separatorBuilder: (_, __) => SizedBox(width: ResponsiveHelper.spacing(8)),
+                          itemBuilder: (context, index) {
+                            final preset = widget.controller.presetMessages[index];
+                            final isItalian = Get.locale?.languageCode == 'it';
+                            final text = isItalian ? preset.messageIt : preset.message;
+
+                            return GestureDetector(
+                              onTap: () {
+                                messageController.text = text;
+                                messageController.selection = TextSelection.fromPosition(
+                                  TextPosition(offset: messageController.text.length),
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: ResponsiveHelper.padding(14),
+                                  vertical: ResponsiveHelper.padding(6),
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.85),
+                                  borderRadius: BorderRadius.circular(
+                                    ResponsiveHelper.borderRadius(20),
+                                  ),
+                                  border: Border.all(
+                                    color: AppColors.blue.withOpacity(0.4),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  text,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: ResponsiveHelper.fontSize(12),
+                                    color: AppColors.textBlack,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    }),
+
                     TextFormField(
                       controller: messageController,
                       focusNode: messageFocusNode,
-                      maxLines: 3,
+                      maxLines: 2,
                       style: TextStyle(fontSize: ResponsiveHelper.fontSize(14)),
                       decoration: InputDecoration(
                         hintText: AppStrings.hiCanIMessageYou.tr,
@@ -635,25 +699,25 @@ class _SendRequestDialogState extends State<_SendRequestDialog> {
                         filled: true,
                         fillColor: Colors.grey[50],
                         contentPadding: EdgeInsets.all(
-                          ResponsiveHelper.width(16),
+                          ResponsiveHelper.width(14),
                         ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(20),
                           borderSide: BorderSide.none,
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(20),
                           borderSide: BorderSide(color: Colors.grey[200]!),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(20),
                           borderSide: BorderSide(
                             color: AppColors.blue,
                             width: 1.5,
                           ),
                         ),
                         errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(20),
                           borderSide: const BorderSide(color: Colors.redAccent),
                         ),
                       ),

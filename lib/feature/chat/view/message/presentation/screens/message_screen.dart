@@ -20,6 +20,10 @@ import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../group/controller/group_controller.dart';
 import '../widgets/message_preset_chips.dart';
 
+import 'package:platchatapp/feature/chat/view/message/controller/message_controller.dart';
+import 'package:platchatapp/share/widgets/avatar/user_avatar.dart';
+import 'package:platchatapp/utils/app_const/app_const.dart';
+
 class MessageScreen extends StatefulWidget {
   final String? roomId;
   final String otherUserName;
@@ -30,6 +34,12 @@ class MessageScreen extends StatefulWidget {
   final bool? isVehicleVerified;
   final bool voiceAutoSend;
   final String? voiceMessage;
+
+  final bool isReceivedRequest;
+  final bool isSendRequest;
+  final String? requestId;
+  final String? firstMessage;
+  final String? licenceId;
 
   const MessageScreen({
     super.key,
@@ -42,6 +52,11 @@ class MessageScreen extends StatefulWidget {
     this.isVehicleVerified,
     required this.voiceAutoSend,
     this.voiceMessage,
+    this.isReceivedRequest = false,
+    this.isSendRequest = false,
+    this.requestId,
+    this.firstMessage,
+    this.licenceId,
   });
 
   @override
@@ -55,6 +70,11 @@ class _MessageScreenState extends State<MessageScreen> {
   final ChatController chatController = Get.find<ChatController>();
   late String _currentRoomId;
   bool _isAccepted = true;
+
+  final RxInt _selectedPresetIndex = (-1).obs;
+  final RxString _selectedPreset = ''.obs;
+  final RxBool _isSendingRequest = false.obs;
+  final RxBool _isRequestSent = false.obs;
 
   @override
   void initState() {
@@ -132,6 +152,12 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.isReceivedRequest) {
+      return _buildReceiveRequestView();
+    }
+    if (widget.isSendRequest) {
+      return _buildSendRequestView();
+    }
 
     return Container(
       decoration: const BoxDecoration(
@@ -453,6 +479,637 @@ class _MessageScreenState extends State<MessageScreen> {
                   ),
           )),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSendRequestView() {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: AppColors.primaryBackgroundGradient,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: Center(
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.9),
+                ),
+                child: const Icon(Icons.chevron_left, color: Colors.black87, size: 22),
+              ),
+            ),
+          ),
+          title: Row(
+            children: [
+              UserAvatar(imagePath: widget.otherUserAvatar ?? AppConst.unknown, radius: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            widget.otherUserName,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.poppins(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.verified, color: AppColors.blue, size: 16),
+                      ],
+                    ),
+                    if (widget.licenceId != null && widget.licenceId!.isNotEmpty)
+                      Text(
+                        widget.licenceId!,
+                        style: GoogleFonts.poppins(color: Colors.grey.shade600, fontSize: 11),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    UserAvatar(imagePath: widget.otherUserAvatar ?? AppConst.unknown, radius: 54),
+                    const SizedBox(height: 16),
+                    Text(
+                      "You're not following this person",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Send a request to start a conversation.\nThey'll review your request before you can message each other.",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                        fontSize: 12.5,
+                        color: Colors.grey.shade600,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 36),
+                    Obx(() {
+                      final presets = chatController.presetMessages;
+                      if (presets.isEmpty) return const SizedBox.shrink();
+
+                      return Wrap(
+                        spacing: 8,
+                        runSpacing: 10,
+                        children: List.generate(presets.length, (index) {
+                          final preset = presets[index];
+                          final text = Get.locale?.languageCode == 'it' ? preset.messageIt : preset.message;
+                          final isSelected = _selectedPresetIndex.value == index;
+
+                          return GestureDetector(
+                            onTap: () {
+                              if (_selectedPresetIndex.value == index) {
+                                _selectedPresetIndex.value = -1;
+                                _selectedPreset.value = '';
+                              } else {
+                                _selectedPresetIndex.value = index;
+                                _selectedPreset.value = text;
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: isSelected ? AppColors.blue.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.8),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(
+                                  color: isSelected ? AppColors.blue : Colors.white.withValues(alpha: 0.8),
+                                  width: 1.2,
+                                ),
+                              ),
+                              child: Text(
+                                text,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12.5,
+                                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                  color: isSelected ? AppColors.blue : Colors.black87,
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ),
+
+            // Bottom action card matching Image 1
+            Obx(() {
+              final bool isAlreadySent = _isRequestSent.value ||
+                  (widget.firstMessage != null && widget.firstMessage!.isNotEmpty);
+
+              if (isAlreadySent) {
+                return Container(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.92),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 20,
+                        offset: const Offset(0, -4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Request Sent",
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        "Your request has been sent to ${widget.otherUserName}. They will review it before you can start messaging.",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                          height: 1.35,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFEF3C7),
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.4)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.access_time_rounded, color: Color(0xFFD97706), size: 18),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Pending Review",
+                              style: GoogleFonts.poppins(
+                                color: const Color(0xFFB45309),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return Container(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.92),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 20,
+                      offset: const Offset(0, -4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Send a request to ${widget.otherUserName}?",
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      "${widget.otherUserName} will review your request. If accepted, you'll be able to message each other and see activity status and read receipts.",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                        height: 1.35,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: const Color(0xFFF1F5F9),
+                              side: BorderSide.none,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: Text(
+                              "Cancel",
+                              style: GoogleFonts.poppins(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF0062E0), Color(0xFF014495)],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: ElevatedButton(
+                              onPressed: _isSendingRequest.value
+                                  ? null
+                                  : () async {
+                                      _isSendingRequest.value = true;
+                                      final msg = _selectedPreset.value.isNotEmpty
+                                          ? _selectedPreset.value
+                                          : "Hi, I'd like to message you.";
+
+                                      final success = await chatController.createMessageRequest(
+                                        receiverId: widget.receiverId,
+                                        firstMessage: msg,
+                                        context: context,
+                                      );
+
+                                      _isSendingRequest.value = false;
+                                      if (success) {
+                                        _isRequestSent.value = true;
+                                      }
+                                    },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: _isSendingRequest.value
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : Text(
+                                      "Send Request",
+                                      style: GoogleFonts.poppins(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReceiveRequestView() {
+    final MessageController messageController = Get.find<MessageController>();
+
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: AppColors.primaryBackgroundGradient,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: Center(
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.9),
+                ),
+                child: const Icon(Icons.chevron_left, color: Colors.black87, size: 22),
+              ),
+            ),
+          ),
+          title: Row(
+            children: [
+              UserAvatar(imagePath: widget.otherUserAvatar ?? AppConst.unknown, radius: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            widget.otherUserName,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.poppins(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.verified, color: AppColors.blue, size: 16),
+                      ],
+                    ),
+                    if (widget.licenceId != null && widget.licenceId!.isNotEmpty)
+                      Text(
+                        widget.licenceId!,
+                        style: GoogleFonts.poppins(color: Colors.grey.shade600, fontSize: 11),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                children: [
+                  Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.6),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        "Today",
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          color: Colors.grey.shade700,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Message Bubble
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      UserAvatar(imagePath: widget.otherUserAvatar ?? AppConst.unknown, radius: 16),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(18),
+                              topRight: Radius.circular(18),
+                              bottomRight: Radius.circular(18),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.03),
+                                blurRadius: 10,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.firstMessage ?? 'Your vehicle is blocking my spot.',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: Text(
+                                  '7:30 PM',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 10,
+                                    color: Colors.grey.shade500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // Bottom action card matching Image 2
+            Container(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.92),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 20,
+                    offset: const Offset(0, -4),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Accept request from ${widget.otherUserName}?",
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    "If you accept, they will also be able to message you and see info, such as your activity status and when you've read messages.",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      color: Colors.grey.shade600,
+                      height: 1.35,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      // Block button
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            await chatController.block(widget.receiverId, context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF7A1C15),
+                            padding: const EdgeInsets.symmetric(vertical: 13),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          child: Text(
+                            "Block",
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+
+                      // Reject button
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            if (widget.requestId != null) {
+                              await messageController.declineMessageRequest(
+                                requestId: widget.requestId!,
+                                context: context,
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFB02517),
+                            padding: const EdgeInsets.symmetric(vertical: 13),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          child: Text(
+                            "Reject",
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+
+                      // Accept button
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF0062E0), Color(0xFF014495)],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              if (widget.requestId != null) {
+                                await messageController.acceptMessageRequest(
+                                  requestId: widget.requestId!,
+                                  context: context,
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              padding: const EdgeInsets.symmetric(vertical: 13),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: Text(
+                              "Accept",
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

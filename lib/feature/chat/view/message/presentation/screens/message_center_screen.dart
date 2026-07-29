@@ -7,11 +7,13 @@ import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
 class MessageCenterScreen extends StatefulWidget {
-  const MessageCenterScreen({super.key});
+  final int? initialIndex;
+  const MessageCenterScreen({super.key, this.initialIndex = 0});
 
   @override
   State<MessageCenterScreen> createState() => _MessageCenterScreenState();
 }
+
 
 class _MessageCenterScreenState extends State<MessageCenterScreen>
     with SingleTickerProviderStateMixin {
@@ -20,7 +22,12 @@ class _MessageCenterScreenState extends State<MessageCenterScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    final idx = (widget.initialIndex ?? 0).clamp(0, 1);
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+      initialIndex: idx,
+    );
   }
 
   @override
@@ -31,42 +38,46 @@ class _MessageCenterScreenState extends State<MessageCenterScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF6F8FB),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        surfaceTintColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.black87),
-        title: Text(
-          AppStrings.messageRequests.tr,
-          style: GoogleFonts.poppins(
-            color: Colors.black87,
-            fontWeight: FontWeight.w700,
-            fontSize: 18,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryBackgroundGradient,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
+          iconTheme: const IconThemeData(color: Colors.black87),
+          title: Text(
+            AppStrings.messageRequests.tr,
+            style: GoogleFonts.poppins(
+              color: Colors.black87,
+              fontWeight: FontWeight.w700,
+              fontSize: 18,
+            ),
+          ),
+          bottom: TabBar(
+            controller: _tabController,
+            labelColor: AppColors.blue,
+            unselectedLabelColor: Colors.grey.shade500,
+            indicatorColor: AppColors.blue,
+            labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14),
+            unselectedLabelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 14),
+            tabs: [
+              Tab(text: AppStrings.receiveRequestTab.tr),
+              Tab(text: AppStrings.sendMessageTab.tr),
+            ],
           ),
         ),
-        bottom: TabBar(
+        body: TabBarView(
           controller: _tabController,
-          labelColor: AppColors.blue,
-          unselectedLabelColor: Colors.grey.shade500,
-          indicatorColor: AppColors.blue,
-          labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14),
-          unselectedLabelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 14),
-          tabs: [
-
-            Tab(text: AppStrings.receiveRequestTab.tr),
-            Tab(text: AppStrings.sendMessageTab.tr),
+          children: const [
+            MessageRequestsScreen(showAppBar: false),
+            SentMessageRequestsScreen(showAppBar: false),
           ],
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: const [
-          MessageRequestsScreen(showAppBar: false),
-          SentMessageRequestsScreen(showAppBar: false),
-
-        ],
       ),
     );
   }
