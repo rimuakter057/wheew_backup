@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/share/widgets/avatar/user_avatar.dart';
+import 'package:platchatapp/share/widgets/dialog/action_confirm_dialog.dart';
 
 class MessageRequestsScreen extends StatefulWidget {
   final bool showAppBar;
@@ -106,7 +107,7 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                   vertical: ResponsiveHelper.padding(4),
                 ),
                 child: Text(
-                  'Requests(${count.toString().padLeft(2, '0')})',
+                  count > 0 ? 'Requests(${count.toString().padLeft(2, '0')})' : 'Requests',
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(14),
                     fontWeight: FontWeight.w600,
@@ -303,9 +304,24 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                     // Reject (Red X button)
                     GestureDetector(
                       onTap: () {
-                        messageController.declineMessageRequest(
-                          requestId: requestId,
-                          context: context,
+                        ActionConfirmDialog.show(
+                          context,
+                          title: 'Reject request?',
+                          message: "Reject the message request from $name?",
+                          confirmLabel: AppStrings.reject.tr,
+                          icon: Icons.cancel_outlined,
+                          iconColor: const Color(0xFFB02517),
+                          confirmGradient: const LinearGradient(
+                            colors: [Color(0xFFB02517), Color(0xFF7A1C15)],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                          onConfirm: () {
+                            messageController.rejectMessageRequest(
+                              requestId: requestId,
+                              context: context,
+                            );
+                          },
                         );
                       },
                       child: Container(
@@ -326,9 +342,20 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                     // Accept (Blue Pill button)
                     GestureDetector(
                       onTap: () {
-                        messageController.acceptMessageRequest(
-                          requestId: requestId,
-                          context: context,
+                        ActionConfirmDialog.show(
+                          context,
+                          title: 'Accept request?',
+                          message:
+                              "Accept the message request from $name? You'll be able to message each other.",
+                          confirmLabel: AppStrings.accept.tr,
+                          icon: Icons.check_circle_outline_rounded,
+                          iconColor: AppColors.blue,
+                          onConfirm: () {
+                            messageController.acceptMessageRequest(
+                              requestId: requestId,
+                              context: context,
+                            );
+                          },
                         );
                       },
                       child: Container(

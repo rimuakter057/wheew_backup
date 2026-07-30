@@ -62,7 +62,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
       Get.find<ProfileController>().reloadProfile();
       // Real-time-ish received-request count badge, same idea as the
       // notification bell's unread count.
-      Get.find<MessageController>().fetchMessageRequestInbox(refresh: true);
+      Get.find<MessageController>().fetchMessageRequestCounts();
     });
 
     scrollController.addListener(_onScroll);

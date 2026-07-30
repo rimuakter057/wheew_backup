@@ -26,6 +26,37 @@ class MessageController extends GetxController {
   int _sentPage = 1;
   final int _sentLimit = 30;
 
+  /// GET /chat/message-requests/counts — dedicated badge-count endpoint,
+  /// used instead of deriving the count from a full inbox/sent list fetch.
+  Future<void> fetchMessageRequestCounts() async {
+    try {
+      final response = await ApiClient.getData(uri: ApiUrl.getMessageRequestCounts);
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+        if (decoded is Map<String, dynamic>) {
+          final dynamic receivedRaw = decoded['received'] ??
+              decoded['receivedCount'] ??
+              decoded['inbox'] ??
+              decoded['receivedRequests'];
+          final dynamic sentRaw = decoded['sent'] ??
+              decoded['sentCount'] ??
+              decoded['sentRequests'];
+
+          if (receivedRaw != null) {
+            totalRequestsCount.value = int.tryParse(receivedRaw.toString()) ?? 0;
+          }
+          if (sentRaw != null) {
+            totalSentRequestsCount.value = int.tryParse(sentRaw.toString()) ?? 0;
+          }
+        }
+      } else {
+        debugPrint('Failed to load message request counts: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('fetchMessageRequestCounts error: $e');
+    }
+  }
+
   Future<void> fetchMessageRequestInbox({bool refresh = false}) async {
     if (refresh) {
       _page = 1;
@@ -149,22 +180,22 @@ class MessageController extends GetxController {
     }
   }
 
-  Future<bool> declineMessageRequest({
+  Future<bool> rejectMessageRequest({
     required String requestId,
     required BuildContext context,
   }) async {
     try {
       final response = await ApiClient.postData(
-        uri: ApiUrl.declineMessageRequest(requestId),
+        uri: ApiUrl.rejectMessageRequest(requestId),
         body: {},
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
-        CustomSnackbar.success(context: context, message: 'Request declined.');
+        CustomSnackbar.success(context: context, message: 'Request rejected.');
         messageRequests.removeWhere((req) => req['id']?.toString() == requestId);
         totalRequestsCount.value = (totalRequestsCount.value - 1).clamp(0, 999999);
         return true;
       } else {
-        String errMsg = 'Failed to decline message request';
+        String errMsg = 'Failed to reject message request';
         try {
           final decoded = jsonDecode(response.body);
           errMsg = decoded['message'] ?? decoded['error'] ?? errMsg;
@@ -173,9 +204,84 @@ class MessageController extends GetxController {
         return false;
       }
     } catch (e) {
-      debugPrint('declineMessageRequest error: $e');
-      CustomSnackbar.error(context: context, message: 'Failed to decline request.');
+      debugPrint('rejectMessageRequest error: $e');
+      CustomSnackbar.error(context: context, message: 'Failed to reject request.');
       return false;
     }
+  }
+
+  Future<bool> blockMessageRequest({
+    required String requestId,
+    required BuildContext context,
+  }) async {
+    try {
+      final response = await ApiClient.postData(
+        uri: ApiUrl.blockMessageRequest(requestId),
+        body: {},
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        CustomSnackbar.success(context: context, message: 'User blocked.');
+        messageRequests.removeWhere((req) => req['id']?.toString() == requestId);
+        totalRequestsCount.value = (totalRequestsCount.value - 1).clamp(0, 999999);
+        return true;
+      } else {
+        String errMsg = 'Failed to block';
+        try {
+          final decoded = jsonDecode(response.body);
+          errMsg = decoded['message'] ?? decoded['error'] ?? errMsg;
+        } catch (_) {}
+        CustomSnackbar.error(context: context, message: errMsg);
+        return false;
+      }
+    } catch (e) {
+      debugPrint('blockMessageRequest error: $e');
+      CustomSnackbar.error(context: context, message: 'Failed to block.');
+      return false;
+    }
+  }
+
+  Future<bool> withdrawMessageRequest({
+    required String requestId,
+    required BuildContext context,
+  }) async {
+    try {
+      final response = await ApiClient.postData(
+        uri: ApiUrl.withdrawMessageRequest(requestId),
+        body: {},
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        CustomSnackbar.success(context: context, message: 'Request withdrawn.');
+        sentRequests.removeWhere((req) => req['id']?.toString() == requestId);
+        totalSentRequestsCount.value = (totalSentRequestsCount.value - 1).clamp(0, 999999);
+        return true;
+      } else {
+        String errMsg = 'Failed to withdraw message request';
+        try {
+          final decoded = jsonDecode(response.body);
+          errMsg = decoded['message'] ?? decoded['error'] ?? errMsg;
+        } catch (_) {}
+        CustomSnackbar.error(context: context, message: errMsg);
+        return false;
+      }
+    } catch (e) {
+      debugPrint('withdrawMessageRequest error: $e');
+      CustomSnackbar.error(context: context, message: 'Failed to withdraw request.');
+      return false;
+    }
+  }
+
+  Future<Map<String, dynamic>?> fetchMessageRequestThread(String requestId) async {
+    try {
+      final response = await ApiClient.getData(
+        uri: ApiUrl.getMessageRequestThread(requestId),
+      );
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+        if (decoded is Map<String, dynamic>) return decoded;
+      }
+    } catch (e) {
+      debugPrint('fetchMessageRequestThread error: $e');
+    }
+    return null;
   }
 }

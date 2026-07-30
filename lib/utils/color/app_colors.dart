@@ -9,6 +9,7 @@ class AppColors {
   static const Color bulShadeGradient = Color(0xFFC6D2E2);
 
 
+
   static const LinearGradient primaryBackgroundGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
@@ -143,5 +144,20 @@ class AppColors {
   static const Color rosso = Color(0xFFD41B19);
   static const Color verde = Color(0xFF0AA409);
   static const Color marroneBronzo = Color(0xFF784520);
+
+  // Vehicle color picker swatches (Figma spec)
+  static const Color vehicleColorBlu = Color(0xFF0070B6);
+  static const Color vehicleColorArancione = Color(0xFFDE6402);
+  static const Color vehicleColorRosso = Color(0xFFEB2329);
+  static const Color vehicleColorNero = Color(0xFF202125);
+  static const Color vehicleColorGrigioArgento = Color(0xFFA0A1A6);
+  static const Color vehicleColorBianco = Color(0xFFF5F5F5);
+
+  static const Color vehicleColorBluBorder = Color(0xFF7FB7DA);
+  static const Color vehicleColorArancioneBorder = Color(0xFFEFB383);
+  static const Color vehicleColorRossoBorder = Color(0xFFF59396);
+  static const Color vehicleColorNeroBorder = Color(0xFF939496);
+  static const Color vehicleColorGrigioArgentoBorder = Color(0xFFCECFD1);
+  static const Color vehicleColorBiancoBorder = Color(0xFFFFFFFF);
 
 }

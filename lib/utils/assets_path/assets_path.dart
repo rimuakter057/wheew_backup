@@ -152,6 +152,28 @@ class AssetsPath {
   static const String blueCar="assets/icons/blue_car.svg";
   static const String greenCar="assets/icons/green_car.svg";
   static const String orangeCar="assets/icons/orange_car.svg";
+  // Vehicle type carousel (blue = selected, white = unselected)
+  static const String cityCarBlue="${_imagesBase}city car_blue.png";
+  static const String cityCarWhite="${_imagesBase}city car_white.png";
+  static const String vanBlue="${_imagesBase}van_blue.png";
+  static const String vanWhite="${_imagesBase}van_white.png";
+  static const String suvBlue="${_imagesBase}suv_blue.png";
+  static const String suvWhite="${_imagesBase}suv_white.png";
+  static const String truckBlue="${_imagesBase}truck_blue.png";
+  static const String truckWhite="${_imagesBase}truck_white.png";
+  static const String camperBlue="${_imagesBase}camper_blue.png";
+  static const String camperWhite="${_imagesBase}camper_white.png";
+  static const String scooterBlue="${_imagesBase}scooter_blue.png";
+  static const String scooterWhite="${_imagesBase}scooter_white.png";
+  static const String motoBlue="${_imagesBase}moto_blue.png";
+  static const String motoWhite="${_imagesBase}moto_white.png";
+  static const String pickupBlue="${_imagesBase}pickup_blue.png";
+  static const String pickupWhite="${_imagesBase}pickup_white.png";
+  static const String microCarBlue="${_imagesBase}micro car_blue.png";
+  static const String microCarWhite="${_imagesBase}mircro car_white.png";
+  static const String eScooterBlue="${_imagesBase}E scooter_blue.png";
+  static const String eScooterWhite="${_imagesBase}E scooter_white.png";
+
   static const String profileOneIcon="assets/icons/profile_one_icon.svg";
   static const String profileTwoIcon="assets/icons/profile_two_icon.svg";
   static const String profileThreeIcon="assets/icons/profile_three_icon.svg";

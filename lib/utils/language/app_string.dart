@@ -791,6 +791,9 @@ class AppStrings {
   static const String deleteMessage = 'delete_message';
   static const String accept = 'accept';
   static const String decline = 'decline';
+  static const String reject = 'reject';
+  static const String block = 'block';
+  static const String withdraw = 'withdraw';
   static const String newRequestsShowUpHere = 'new_requests_show_up_here';
   static const String noPendingMessageRequests = 'no_pending_message_requests';
   static const String wantsToSendYouAMessage = 'wants_to_send_you_a_message';

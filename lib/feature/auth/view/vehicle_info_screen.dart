@@ -28,13 +28,21 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
 
   /// color select===========================
   final List<Map<String, dynamic>> colorOptions = [
-    {'name': 'Blu', 'color': AppColors.blu},
-    {'name': 'Nero', 'color': AppColors.nero},
-    {'name': 'Grigio / Argento', 'color': AppColors.grigioArgento},
-    {'name': 'Bianco', 'color': AppColors.bianco},
-    {'name': 'Rosso', 'color': AppColors.rosso},
-    {'name': 'Verde', 'color': AppColors.verde},
-    {'name': 'Marrone / Bronzo', 'color': AppColors.marroneBronzo},
+    {'name': 'Blu', 'color': AppColors.vehicleColorBlu},
+    {'name': 'Arancione', 'color': AppColors.vehicleColorArancione},
+    {'name': 'Rosso', 'color': AppColors.vehicleColorRosso},
+    {'name': 'Nero', 'color': AppColors.vehicleColorNero},
+    {'name': 'Grigio / Argento', 'color': AppColors.vehicleColorGrigioArgento},
+    {'name': 'Bianco', 'color': AppColors.vehicleColorBianco},
+  ];
+
+  final List<Map<String, dynamic>> borderColorOptions = [
+    {'name': 'Blu', 'color': AppColors.vehicleColorBluBorder},
+    {'name': 'Arancione', 'color': AppColors.vehicleColorArancioneBorder},
+    {'name': 'Rosso', 'color': AppColors.vehicleColorRossoBorder},
+    {'name': 'Nero', 'color': AppColors.vehicleColorNeroBorder},
+    {'name': 'Grigio / Argento', 'color': AppColors.vehicleColorGrigioArgentoBorder},
+    {'name': 'Bianco', 'color': AppColors.vehicleColorBiancoBorder},
   ];
 
   @override
@@ -158,13 +166,14 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
           "Add Your Vehicle",
           style: context.titleLarge.copyWith(
             color: AppColors.black,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w400,
           ),
         ),
         SizedBox(height: ResponsiveHelper.height(6)),
         Text(
           "Tell us about your vehicle so we can personalize your experience.",
           style: context.bodyMedium.copyWith(
+            fontWeight: FontWeight.w400,
             color: AppColors.black.withValues(alpha: 0.55),
           ),
         ),
@@ -214,6 +223,7 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
     return Obx(
           () => VehicleColorPicker(
         colorOptions: colorOptions,
+        borderColorOptions: borderColorOptions,
         selectedColorName: controller.selectedColor.value,
         onSelected: (name) => controller.selectedColor.value = name,
       ),

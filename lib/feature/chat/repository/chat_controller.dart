@@ -2160,13 +2160,17 @@ class ChatController extends GetxController {
 
   Future<bool> createMessageRequest({
     required String receiverId,
-    required String firstMessage,
+    String? presetMessageId,
     required BuildContext context,
   }) async {
     try {
       final response = await ApiClient.postData(
         uri: ApiUrl.createMessageRequest,
-        body: {'receiverId': receiverId, 'firstMessage': firstMessage},
+        body: {
+          'receiverId': receiverId,
+          if (presetMessageId != null && presetMessageId.isNotEmpty)
+            'presetMessageId': presetMessageId,
+        },
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final index = searchResults.indexWhere((u) => u.id == receiverId);
@@ -2176,7 +2180,6 @@ class ChatController extends GetxController {
           u.messageRequest = {
             'status': 'PENDING',
             'receiverId': receiverId,
-            'firstMessage': firstMessage,
           };
           searchResults[index] = u;
           searchResults.refresh();

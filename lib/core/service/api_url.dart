@@ -4,13 +4,19 @@ class ApiUrl {
 
   // Base URL - Replace with your actual API base URL
 
-  // Local url
+  // // Local url
   // static const String baseUrl = 'http://10.10.28.200:8003';
   // static const baseSocketUrl = 'ws://10.10.28.200:8003';
 
   // live url
-  static const String baseUrl = 'http://54.198.239.101:8003';
-   static const baseSocketUrl = 'ws://54.198.239.101:8003';
+  // static const String baseUrl = 'http://54.198.239.101:8003';
+  //  static const baseSocketUrl = 'ws://54.198.239.101:8003';
+
+
+
+  // // Local testing url
+  static const String baseUrl = 'https://hqwwvtcz-8003.inc1.devtunnels.ms';
+  static const baseSocketUrl = 'https://hqwwvtcz-8003.inc1.devtunnels.ms';
 
   //http://13.50.99.165:8003
   //static const baseSocketUrl = 'ws://13.50.99.165:8003';
@@ -189,8 +195,13 @@ class ApiUrl {
   static const String createMessageRequest = '/chat/message-requests';
   static const String getMessageRequestInbox = '/chat/message-requests/inbox';
   static const String getSentMessageRequests = '/chat/message-requests/sent';
+  static const String getMessageRequestCounts = '/chat/message-requests/counts';
+  static String getMessageRequestThread(String messageRequestId) => '/chat/message-requests/$messageRequestId/thread';
   static String acceptMessageRequest(String requestId) => '/chat/message-requests/$requestId/accept';
   static String declineMessageRequest(String requestId) => '/chat/message-requests/$requestId/decline';
+  static String rejectMessageRequest(String requestId) => '/chat/message-requests/$requestId/reject';
+  static String blockMessageRequest(String requestId) => '/chat/message-requests/$requestId/block';
+  static String withdrawMessageRequest(String requestId) => '/chat/message-requests/$requestId/withdraw';
 
   // ── Postman Messaging - E2EE Device Keys ──────────────────────
   static const String registerE2EEDeviceKey = '/chat/e2ee/keys';

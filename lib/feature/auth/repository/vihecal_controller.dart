@@ -108,12 +108,14 @@ class VehicleController extends GetxController {
     if (selectedType.value == null ||
         selectedVehicleModel.value.isEmpty ||
         selectedColor.value.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'All fields are required',
+
+      CustomSnackbar.error(
+        context: context,
+        message: 'All fields are required',
       );
       return;
     }
+
 
     isLoading.value = true;
 

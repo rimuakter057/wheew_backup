@@ -22,7 +22,9 @@ import '../widgets/message_preset_chips.dart';
 
 import 'package:platchatapp/feature/chat/view/message/controller/message_controller.dart';
 import 'package:platchatapp/share/widgets/avatar/user_avatar.dart';
+import 'package:platchatapp/share/widgets/dialog/action_confirm_dialog.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
 
 class MessageScreen extends StatefulWidget {
   final String? roomId;
@@ -68,13 +70,20 @@ class _MessageScreenState extends State<MessageScreen> {
 
   final GroupController _groupController = Get.find<GroupController>();
   final ChatController chatController = Get.find<ChatController>();
+  final MessageController messageController = Get.find<MessageController>();
   late String _currentRoomId;
   bool _isAccepted = true;
 
   final RxInt _selectedPresetIndex = (-1).obs;
-  final RxString _selectedPreset = ''.obs;
+  final RxString _selectedPresetId = ''.obs;
   final RxBool _isSendingRequest = false.obs;
   final RxBool _isRequestSent = false.obs;
+
+  // Canonical request state from GET /chat/message-requests/{id}/thread —
+  // used to decide sender-vs-receiver view from the real `actions` array
+  // instead of trusting the isReceivedRequest/isSendRequest route extras.
+  final Rxn<Map<String, dynamic>> _threadData = Rxn<Map<String, dynamic>>();
+  final RxBool _isLoadingThread = false.obs;
 
   @override
   void initState() {
@@ -87,8 +96,59 @@ class _MessageScreenState extends State<MessageScreen> {
     chatController.isBlockedMe.value = widget.isBlockedMe ?? false;
     chatController.fetchPresetMessages();
 
+    if (widget.requestId != null &&
+        (widget.isReceivedRequest || widget.isSendRequest)) {
+      _loadThread();
+    }
+
     _initChat();
     _scrollController.addListener(_onScroll);
+  }
+
+  Future<void> _loadThread() async {
+    _isLoadingThread.value = true;
+    final data = await messageController.fetchMessageRequestThread(widget.requestId!);
+    if (!mounted) return;
+    if (data != null) {
+      _threadData.value = data;
+    }
+    _isLoadingThread.value = false;
+  }
+
+  /// Actions the backend says are valid for this request (e.g. ["ACCEPT",
+  /// "REJECT","BLOCK"] for the receiver, ["WITHDRAW"] for the sender).
+  /// Falls back to the route-extra flags while the thread is still loading
+  /// or if the fetch failed, so the screen never gets stuck blank.
+  List<String>? get _threadActions =>
+      (_threadData.value?['actions'] as List?)?.cast<String>();
+
+  bool get _isReceiverView =>
+      _threadActions?.contains('ACCEPT') ?? widget.isReceivedRequest;
+
+  String get _effectiveRequestId =>
+      _threadData.value?['request']?['id']?.toString() ?? widget.requestId ?? '';
+
+  String get _effectiveOtherUserName =>
+      _threadData.value?['otherUser']?['nick_name']?.toString() ?? widget.otherUserName;
+
+  String? get _effectiveOtherUserAvatar =>
+      _threadData.value?['otherUser']?['avatar']?.toString() ?? widget.otherUserAvatar;
+
+  String? get _effectiveLicenceId =>
+      _threadData.value?['otherUser']?['licence_id']?.toString() ?? widget.licenceId;
+
+  bool get _effectiveIsVehicleVerified =>
+      _threadData.value?['otherUser']?['is_vehicle_verified'] as bool? ??
+      widget.isVehicleVerified ??
+      false;
+
+  String get _effectiveFirstMessage {
+    final messages = _threadData.value?['messages'] as List?;
+    if (messages != null && messages.isNotEmpty) {
+      final firstText = messages.first?['message']?.toString();
+      if (firstText != null && firstText.isNotEmpty) return firstText;
+    }
+    return widget.firstMessage ?? '';
   }
 
   Future<void> _initChat() async {
@@ -152,11 +212,12 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.isReceivedRequest) {
-      return _buildReceiveRequestView();
-    }
-    if (widget.isSendRequest) {
-      return _buildSendRequestView();
+    if (widget.isReceivedRequest || widget.isSendRequest) {
+      return Obx(() {
+        // While the canonical /thread fetch is in flight, keep rendering
+        // using the route-extra flags so the screen never sits blank.
+        return _isReceiverView ? _buildReceiveRequestView() : _buildSendRequestView();
+      });
     }
 
     return Container(
@@ -510,7 +571,7 @@ class _MessageScreenState extends State<MessageScreen> {
           ),
           title: Row(
             children: [
-              UserAvatar(imagePath: widget.otherUserAvatar ?? AppConst.unknown, radius: 18),
+              UserAvatar(imagePath: _effectiveOtherUserAvatar ?? AppConst.unknown, radius: 18),
               const SizedBox(width: 8),
               Expanded(
                 child: Column(
@@ -521,7 +582,7 @@ class _MessageScreenState extends State<MessageScreen> {
                       children: [
                         Flexible(
                           child: Text(
-                            widget.otherUserName,
+                            _effectiveOtherUserName,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.poppins(
                               color: Colors.black87,
@@ -531,12 +592,18 @@ class _MessageScreenState extends State<MessageScreen> {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        const Icon(Icons.verified, color: AppColors.blue, size: 16),
+                        Image.asset(
+                          _effectiveIsVehicleVerified
+                              ? AssetsPath.verified
+                              : AssetsPath.unverified,
+                          width: ResponsiveHelper.iconSize(16),
+                          height: ResponsiveHelper.iconSize(16),
+                        ),
                       ],
                     ),
-                    if (widget.licenceId != null && widget.licenceId!.isNotEmpty)
+                    if (_effectiveLicenceId != null && _effectiveLicenceId!.isNotEmpty)
                       Text(
-                        widget.licenceId!,
+                        _effectiveLicenceId!,
                         style: GoogleFonts.poppins(color: Colors.grey.shade600, fontSize: 11),
                       ),
                   ],
@@ -553,7 +620,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
-                    UserAvatar(imagePath: widget.otherUserAvatar ?? AppConst.unknown, radius: 54),
+                    UserAvatar(imagePath: _effectiveOtherUserAvatar ?? AppConst.unknown, radius: 54),
                     const SizedBox(height: 16),
                     Text(
                       "You're not following this person",
@@ -576,7 +643,9 @@ class _MessageScreenState extends State<MessageScreen> {
                     ),
                     const SizedBox(height: 36),
                     Obx(() {
-                      final presets = chatController.presetMessages;
+                      final presets = chatController.presetMessages
+                          .where((p) => p.type.toUpperCase() == 'ALERT')
+                          .toList();
                       if (presets.isEmpty) return const SizedBox.shrink();
 
                       return Wrap(
@@ -591,10 +660,10 @@ class _MessageScreenState extends State<MessageScreen> {
                             onTap: () {
                               if (_selectedPresetIndex.value == index) {
                                 _selectedPresetIndex.value = -1;
-                                _selectedPreset.value = '';
+                                _selectedPresetId.value = '';
                               } else {
                                 _selectedPresetIndex.value = index;
-                                _selectedPreset.value = text;
+                                _selectedPresetId.value = preset.id;
                               }
                             },
                             child: Container(
@@ -627,8 +696,11 @@ class _MessageScreenState extends State<MessageScreen> {
 
             // Bottom action card matching Image 1
             Obx(() {
-              final bool isAlreadySent = _isRequestSent.value ||
-                  (widget.firstMessage != null && widget.firstMessage!.isNotEmpty);
+              // A requestId means we opened an existing (already-sent) request
+              // from the Sent Requests list — not a fresh compose from search,
+              // which starts with no requestId at all.
+              final bool isAlreadySent =
+                  _isRequestSent.value || _effectiveRequestId.isNotEmpty;
 
               if (isAlreadySent) {
                 return Container(
@@ -657,7 +729,7 @@ class _MessageScreenState extends State<MessageScreen> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        "Your request has been sent to ${widget.otherUserName}. They will review it before you can start messaging.",
+                        "Your request has been sent to $_effectiveOtherUserName. They will review it before you can start messaging.",
                         textAlign: TextAlign.center,
                         style: GoogleFonts.poppins(
                           fontSize: 12,
@@ -690,6 +762,44 @@ class _MessageScreenState extends State<MessageScreen> {
                           ],
                         ),
                       ),
+                      if (_effectiveRequestId.isNotEmpty) ...[
+                        const SizedBox(height: 14),
+                        TextButton(
+                          onPressed: () {
+                            ActionConfirmDialog.show(
+                              context,
+                              title: 'Withdraw request?',
+                              message:
+                                  "Withdraw your message request to $_effectiveOtherUserName?",
+                              confirmLabel: AppStrings.withdraw.tr,
+                              icon: Icons.undo_rounded,
+                              iconColor: const Color(0xFFB02517),
+                              confirmGradient: const LinearGradient(
+                                colors: [Color(0xFFB02517), Color(0xFF7A1C15)],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              onConfirm: () async {
+                                final success = await messageController.withdrawMessageRequest(
+                                  requestId: _effectiveRequestId,
+                                  context: context,
+                                );
+                                if (success && context.mounted) {
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                            );
+                          },
+                          child: Text(
+                            "Withdraw Request",
+                            style: GoogleFonts.poppins(
+                              color: const Color(0xFFB02517),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 );
@@ -712,7 +822,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "Send a request to ${widget.otherUserName}?",
+                      "Send a request to $_effectiveOtherUserName?",
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -721,7 +831,7 @@ class _MessageScreenState extends State<MessageScreen> {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      "${widget.otherUserName} will review your request. If accepted, you'll be able to message each other and see activity status and read receipts.",
+                      "$_effectiveOtherUserName will review your request. If accepted, you'll be able to message each other and see activity status and read receipts.",
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
                         fontSize: 12,
@@ -769,13 +879,12 @@ class _MessageScreenState extends State<MessageScreen> {
                                   ? null
                                   : () async {
                                       _isSendingRequest.value = true;
-                                      final msg = _selectedPreset.value.isNotEmpty
-                                          ? _selectedPreset.value
-                                          : "Hi, I'd like to message you.";
 
                                       final success = await chatController.createMessageRequest(
                                         receiverId: widget.receiverId,
-                                        firstMessage: msg,
+                                        presetMessageId: _selectedPresetId.value.isNotEmpty
+                                            ? _selectedPresetId.value
+                                            : null,
                                         context: context,
                                       );
 
@@ -825,8 +934,6 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   Widget _buildReceiveRequestView() {
-    final MessageController messageController = Get.find<MessageController>();
-
     return Container(
       decoration: const BoxDecoration(
         gradient: AppColors.primaryBackgroundGradient,
@@ -853,7 +960,7 @@ class _MessageScreenState extends State<MessageScreen> {
           ),
           title: Row(
             children: [
-              UserAvatar(imagePath: widget.otherUserAvatar ?? AppConst.unknown, radius: 18),
+              UserAvatar(imagePath: _effectiveOtherUserAvatar ?? AppConst.unknown, radius: 18),
               const SizedBox(width: 8),
               Expanded(
                 child: Column(
@@ -864,7 +971,7 @@ class _MessageScreenState extends State<MessageScreen> {
                       children: [
                         Flexible(
                           child: Text(
-                            widget.otherUserName,
+                            _effectiveOtherUserName,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.poppins(
                               color: Colors.black87,
@@ -874,12 +981,18 @@ class _MessageScreenState extends State<MessageScreen> {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        const Icon(Icons.verified, color: AppColors.blue, size: 16),
+                        Image.asset(
+                          _effectiveIsVehicleVerified
+                              ? AssetsPath.verified
+                              : AssetsPath.unverified,
+                          width: ResponsiveHelper.iconSize(16),
+                          height: ResponsiveHelper.iconSize(16),
+                        ),
                       ],
                     ),
-                    if (widget.licenceId != null && widget.licenceId!.isNotEmpty)
+                    if (_effectiveLicenceId != null && _effectiveLicenceId!.isNotEmpty)
                       Text(
-                        widget.licenceId!,
+                        _effectiveLicenceId!,
                         style: GoogleFonts.poppins(color: Colors.grey.shade600, fontSize: 11),
                       ),
                   ],
@@ -917,7 +1030,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      UserAvatar(imagePath: widget.otherUserAvatar ?? AppConst.unknown, radius: 16),
+                      UserAvatar(imagePath: _effectiveOtherUserAvatar ?? AppConst.unknown, radius: 16),
                       const SizedBox(width: 8),
                       Flexible(
                         child: Container(
@@ -941,7 +1054,9 @@ class _MessageScreenState extends State<MessageScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                widget.firstMessage ?? 'Your vehicle is blocking my spot.',
+                                _effectiveFirstMessage.isNotEmpty
+                                    ? _effectiveFirstMessage
+                                    : 'Your vehicle is blocking my spot.',
                                 style: GoogleFonts.poppins(
                                   fontSize: 14,
                                   color: Colors.black87,
@@ -986,7 +1101,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Accept request from ${widget.otherUserName}?",
+                    "Accept request from $_effectiveOtherUserName?",
                     style: GoogleFonts.poppins(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
@@ -1009,9 +1124,32 @@ class _MessageScreenState extends State<MessageScreen> {
                       // Block button
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () async {
-                            Navigator.pop(context);
-                            await chatController.block(widget.receiverId, context);
+                          onPressed: () {
+                            ActionConfirmDialog.show(
+                              context,
+                              title: 'Block $_effectiveOtherUserName?',
+                              message:
+                                  "They won't be able to message you or find your profile again.",
+                              confirmLabel: AppStrings.block.tr,
+                              icon: Icons.block_rounded,
+                              iconColor: const Color(0xFF7A1C15),
+                              confirmGradient: const LinearGradient(
+                                colors: [Color(0xFF7A1C15), Color(0xFF4A0F0A)],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              onConfirm: () async {
+                                if (_effectiveRequestId.isNotEmpty) {
+                                  await messageController.blockMessageRequest(
+                                    requestId: _effectiveRequestId,
+                                    context: context,
+                                  );
+                                } else {
+                                  await chatController.block(widget.receiverId, context);
+                                }
+                                if (context.mounted) Navigator.pop(context);
+                              },
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF7A1C15),
@@ -1035,14 +1173,30 @@ class _MessageScreenState extends State<MessageScreen> {
                       // Reject button
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () async {
-                            Navigator.pop(context);
-                            if (widget.requestId != null) {
-                              await messageController.declineMessageRequest(
-                                requestId: widget.requestId!,
-                                context: context,
-                              );
-                            }
+                          onPressed: () {
+                            ActionConfirmDialog.show(
+                              context,
+                              title: 'Reject request?',
+                              message:
+                                  "Reject the message request from $_effectiveOtherUserName?",
+                              confirmLabel: AppStrings.reject.tr,
+                              icon: Icons.cancel_outlined,
+                              iconColor: const Color(0xFFB02517),
+                              confirmGradient: const LinearGradient(
+                                colors: [Color(0xFFB02517), Color(0xFF7A1C15)],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              onConfirm: () async {
+                                if (_effectiveRequestId.isNotEmpty) {
+                                  await messageController.rejectMessageRequest(
+                                    requestId: _effectiveRequestId,
+                                    context: context,
+                                  );
+                                }
+                                if (context.mounted) Navigator.pop(context);
+                              },
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFB02517),
@@ -1075,14 +1229,25 @@ class _MessageScreenState extends State<MessageScreen> {
                             borderRadius: BorderRadius.circular(30),
                           ),
                           child: ElevatedButton(
-                            onPressed: () async {
-                              Navigator.pop(context);
-                              if (widget.requestId != null) {
-                                await messageController.acceptMessageRequest(
-                                  requestId: widget.requestId!,
-                                  context: context,
-                                );
-                              }
+                            onPressed: () {
+                              ActionConfirmDialog.show(
+                                context,
+                                title: 'Accept request?',
+                                message:
+                                    "Accept the message request from $_effectiveOtherUserName? You'll be able to message each other.",
+                                confirmLabel: AppStrings.accept.tr,
+                                icon: Icons.check_circle_outline_rounded,
+                                iconColor: AppColors.blue,
+                                onConfirm: () async {
+                                  if (_effectiveRequestId.isNotEmpty) {
+                                    await messageController.acceptMessageRequest(
+                                      requestId: _effectiveRequestId,
+                                      context: context,
+                                    );
+                                  }
+                                  if (context.mounted) Navigator.pop(context);
+                                },
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,

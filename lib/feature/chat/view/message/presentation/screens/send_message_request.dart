@@ -109,7 +109,9 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                   vertical: ResponsiveHelper.padding(4),
                 ),
                 child: Text(
-                  'Sent(${pendingRequests.length.toString().padLeft(2, '0')})',
+                  pendingRequests.isNotEmpty
+                      ? 'Sent(${pendingRequests.length.toString().padLeft(2, '0')})'
+                      : 'Sent',
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(14),
                     fontWeight: FontWeight.w600,

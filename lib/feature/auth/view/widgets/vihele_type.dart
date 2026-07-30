@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:platchatapp/feature/auth/repository/vehicle_type_info.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
@@ -17,6 +16,7 @@ class VehicleTypeWheel extends StatefulWidget {
     required this.types,
     required this.selected,
     required this.onSelected,
+
   });
 
   @override
@@ -50,53 +50,38 @@ class _VehicleTypeWheelState extends State<VehicleTypeWheel> {
       return const SizedBox.shrink();
     }
 
-    final VehicleType current = widget.selected ?? widget.types.first;
+    return SizedBox(
+      height: ResponsiveHelper.height(190),
+      child: PageView.builder(
+        controller: _pageController,
+        itemCount: widget.types.length,
+        onPageChanged: (index) => widget.onSelected(widget.types[index]),
+        itemBuilder: (context, index) {
+          return AnimatedBuilder(
+            animation: _pageController,
+            builder: (context, child) {
+              double page = index.toDouble();
+              if (_pageController.position.haveDimensions) {
+                page = _pageController.page ?? index.toDouble();
+              }
+              final double distance = (page - index).abs().clamp(0.0, 1.0);
+              final double scale = 1 - (distance * 0.35);
+              final double opacity = 1 - (distance * 0.35);
 
-    return Column(
-      children: [
-        SizedBox(
-          height: ResponsiveHelper.height(160),
-          child: PageView.builder(
-            controller: _pageController,
-            itemCount: widget.types.length,
-            onPageChanged: (index) => widget.onSelected(widget.types[index]),
-            itemBuilder: (context, index) {
-              return AnimatedBuilder(
-                animation: _pageController,
-                builder: (context, child) {
-                  double page = index.toDouble();
-                  if (_pageController.position.haveDimensions) {
-                    page = _pageController.page ?? index.toDouble();
-                  }
-                  final double distance = (page - index).abs().clamp(0.0, 1.0);
-                  final double scale = 1 - (distance * 0.35);
-                  final double opacity = 1 - (distance * 0.55);
-
-                  return Opacity(
-                    opacity: opacity,
-                    child: Transform.scale(
-                      scale: scale,
-                      child: _VehicleTypeCard(
-                        type: widget.types[index],
-                        isCenter: distance < 0.5,
-                      ),
-                    ),
-                  );
-                },
+              return Opacity(
+                opacity: opacity,
+                child: Transform.scale(
+                  scale: scale,
+                  child: _VehicleTypeCard(
+                    type: widget.types[index],
+                    isCenter: distance < 0.5,
+                  ),
+                ),
               );
             },
-          ),
-        ),
-        SizedBox(height: ResponsiveHelper.spacing(14)),
-        Text(
-          current.displayName,
-          style: TextStyle(
-            fontSize: ResponsiveHelper.fontSize(17),
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF1A1A2E),
-          ),
-        ),
-      ],
+          );
+        },
+      ),
     );
   }
 }
@@ -110,17 +95,27 @@ class _VehicleTypeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: SizedBox(
-        width: ResponsiveHelper.width(140),
-        height: ResponsiveHelper.height(140),
-        child: SvgPicture.asset(
-          type.icon,
-          fit: BoxFit.contain,
-          colorFilter: ColorFilter.mode(
-            isCenter ? AppColors.blue : Colors.grey.shade400,
-            BlendMode.srcIn,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: ResponsiveHelper.width(140),
+            height: ResponsiveHelper.height(140),
+            child: Image.asset(
+              isCenter ? type.imageBlue : type.imageWhite,
+              fit: BoxFit.contain,
+            ),
           ),
-        ),
+          SizedBox(height: ResponsiveHelper.spacing(10)),
+          Text(
+            type.displayName,
+            style: TextStyle(
+              fontSize: ResponsiveHelper.fontSize(isCenter ? 17 : 13),
+              fontWeight: isCenter ? FontWeight.w700 : FontWeight.w500,
+              color: isCenter ?AppColors.black : AppColors.black,
+            ),
+          ),
+        ],
       ),
     );
   }

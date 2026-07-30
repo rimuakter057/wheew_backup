@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable
+﻿// ignore_for_file: unused_local_variable
 
 import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
@@ -52,12 +52,17 @@ class _SearchListScreenState extends State<SearchListScreen> {
     super.dispose();
   }
 
-  // ✅ Send Request dialog
-  void _showSendRequestDialog(BuildContext context, dynamic user) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return _SendRequestDialog(user: user, controller: controller);
+  // ✅ Send Request — full screen (preset picker + normal send), no dialog/input field
+  void _openSendRequestScreen(BuildContext context, dynamic user) {
+    context.pushNamed(
+      RouteName.message,
+      extra: {
+        'roomId': '',
+        'otherUserName': user.nickName ?? '',
+        'otherUserAvatar': user.avatar ?? '',
+        'receiverId': user.id ?? '',
+        'licenceId': user.licenceId ?? '',
+        'isSendRequest': true,
       },
     );
   }
@@ -422,9 +427,9 @@ class _SearchListScreenState extends State<SearchListScreen> {
                                                     ),
                                                   )
                                                 : GestureDetector(
-                                                    // ✅ শুধু এই badge এ tap করলেই request dialog খুলবে
+                                                    // ✅ শুধু এই badge এ tap করলেই send-request স্ক্রিন খুলবে
                                                     onTap: () =>
-                                                        _showSendRequestDialog(
+                                                        _openSendRequestScreen(
                                                           context,
                                                           user,
                                                         ),
@@ -522,310 +527,3 @@ class _SearchListScreenState extends State<SearchListScreen> {
   }
 }
 
-// ✅ Send Request Dialog কে আলাদা StatefulWidget হিসেবে বানানো হলো
-class _SendRequestDialog extends StatefulWidget {
-  final dynamic user;
-  final ChatController controller;
-
-  const _SendRequestDialog({required this.user, required this.controller});
-
-  @override
-  State<_SendRequestDialog> createState() => _SendRequestDialogState();
-}
-
-class _SendRequestDialogState extends State<_SendRequestDialog> {
-  final TextEditingController messageController = TextEditingController();
-  final FocusNode messageFocusNode = FocusNode();
-  final formKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    super.initState();
-    widget.controller.fetchPresetMessages();
-    // ✅ layout শেষ হওয়ার পর focus
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && messageFocusNode.canRequestFocus) {
-        messageFocusNode.requestFocus();
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    messageController.dispose();
-    messageFocusNode.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 400),
-        child: Container(
-          padding: EdgeInsets.all(ResponsiveHelper.width(20)),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Colors.white, Color(0xFFD4DDE9)],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Form(
-            key: formKey,
-            child: Stack(
-              children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(height: ResponsiveHelper.height(4)),
-                    SizedBox(
-                      width: ResponsiveHelper.width(64),
-                      height: ResponsiveHelper.width(64),
-                      child: ClipOval(
-                        child: UserAvatar(
-                          imagePath: widget.user.avatar ?? AppConst.unknown,
-                          radius: 32,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: ResponsiveHelper.height(10)),
-                    Text(
-                      widget.user.nickName ?? '',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        fontSize: ResponsiveHelper.fontSize(17),
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.black,
-                      ),
-                    ),
-                    SizedBox(height: ResponsiveHelper.height(2)),
-                    Text(
-                      "You're not following this person",
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        fontSize: ResponsiveHelper.fontSize(13),
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    SizedBox(height: ResponsiveHelper.height(4)),
-                    Text(
-                      "Send a request to start a conversation. They'll review your request before you can message each other.",
-                      textAlign: TextAlign.center,
-                      style: context.bodySmall.copyWith(
-                        color: AppColors.black.withOpacity(0.6),
-                        fontSize: ResponsiveHelper.fontSize(11.5),
-                      ),
-                    ),
-                    SizedBox(height: ResponsiveHelper.height(14)),
-
-                    // ✅ Preset message chips
-                    Obx(() {
-                      if (widget.controller.presetMessages.isEmpty) {
-                        return const SizedBox.shrink();
-                      }
-                      return Container(
-                        margin: EdgeInsets.only(bottom: ResponsiveHelper.height(12)),
-                        height: ResponsiveHelper.height(36),
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: widget.controller.presetMessages.length,
-                          separatorBuilder: (_, __) => SizedBox(width: ResponsiveHelper.spacing(8)),
-                          itemBuilder: (context, index) {
-                            final preset = widget.controller.presetMessages[index];
-                            final isItalian = Get.locale?.languageCode == 'it';
-                            final text = isItalian ? preset.messageIt : preset.message;
-
-                            return GestureDetector(
-                              onTap: () {
-                                messageController.text = text;
-                                messageController.selection = TextSelection.fromPosition(
-                                  TextPosition(offset: messageController.text.length),
-                                );
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: ResponsiveHelper.padding(14),
-                                  vertical: ResponsiveHelper.padding(6),
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.85),
-                                  borderRadius: BorderRadius.circular(
-                                    ResponsiveHelper.borderRadius(20),
-                                  ),
-                                  border: Border.all(
-                                    color: AppColors.blue.withOpacity(0.4),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Text(
-                                  text,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: ResponsiveHelper.fontSize(12),
-                                    color: AppColors.textBlack,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    }),
-
-                    TextFormField(
-                      controller: messageController,
-                      focusNode: messageFocusNode,
-                      maxLines: 2,
-                      style: TextStyle(fontSize: ResponsiveHelper.fontSize(14)),
-                      decoration: InputDecoration(
-                        hintText: AppStrings.hiCanIMessageYou.tr,
-                        hintStyle: TextStyle(
-                          fontSize: ResponsiveHelper.fontSize(14),
-                          color: Colors.grey[400],
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey[50],
-                        contentPadding: EdgeInsets.all(
-                          ResponsiveHelper.width(14),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: BorderSide(color: Colors.grey[200]!),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: BorderSide(
-                            color: AppColors.blue,
-                            width: 1.5,
-                          ),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: const BorderSide(color: Colors.redAccent),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return AppStrings.messageIsRequired.tr;
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: ResponsiveHelper.height(22)),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            // ✅ শুধু pop() — কোনো manual dispose/unfocus দরকার নেই
-                            onPressed: () => Navigator.of(context).pop(),
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor: Colors.grey[100],
-                              padding: EdgeInsets.symmetric(
-                                vertical: ResponsiveHelper.height(13),
-                              ),
-                              side: BorderSide.none,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            child: Text(
-                              AppStrings.cancel.tr,
-                              style: TextStyle(
-                                color: Colors.grey[700],
-                                fontWeight: FontWeight.w600,
-                                fontSize: ResponsiveHelper.fontSize(14),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: ResponsiveHelper.width(12)),
-                        Expanded(
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              gradient: LinearGradient(
-                                colors: [AppColors.blue, AppColors.darBlue],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                            ),
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                if (formKey.currentState!.validate()) {
-                                  final msg = messageController.text.trim();
-                                  final navigator = Navigator.of(context);
-                                  final ctrl = widget.controller;
-                                  final u = widget.user;
-
-                                  navigator.pop(); // dialog বন্ধ
-
-                                  await ctrl.createMessageRequest(
-                                    receiverId: u.id ?? '',
-                                    firstMessage: msg,
-                                    context: context,
-                                  );
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                elevation: 0,
-                                padding: EdgeInsets.symmetric(
-                                  vertical: ResponsiveHelper.height(13),
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                              ),
-                              child: Text(
-                                AppStrings.send.tr,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: ResponsiveHelper.fontSize(14),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Icon(
-                      Icons.close_rounded,
-                      size: ResponsiveHelper.iconSize(20),
-                      color: Colors.grey[400],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

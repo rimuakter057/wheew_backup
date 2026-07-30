@@ -1,85 +1,120 @@
 import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
-import 'package:platchatapp/utils/color/app_colors.dart';
+
+/// Darker shade of [color] used as the circle's own border ring.
+Color _shadeOf(Color color) {
+  final hsl = HSLColor.fromColor(color);
+  return hsl.withLightness((hsl.lightness - 0.18).clamp(0.0, 1.0)).toColor();
+}
 
 class VehicleColorPicker extends StatelessWidget {
   final List<Map<String, dynamic>> colorOptions;
+  final List<Map<String, dynamic>> borderColorOptions;
   final String? selectedColorName;
   final ValueChanged<String> onSelected;
 
   const VehicleColorPicker({
     super.key,
     required this.colorOptions,
+    required this.borderColorOptions,
     required this.selectedColorName,
     required this.onSelected,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: ResponsiveHelper.spacing(14),
-      runSpacing: ResponsiveHelper.spacing(14),
-      children: colorOptions.map((c) {
-        final bool isSelected = selectedColorName == c['name'];
-        final Color color = c['color'] as Color;
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE3E8F0),
+        borderRadius: BorderRadius.circular(40),
+        border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: colorOptions.asMap().entries.map((entry) {
+            final int index = entry.key;
+            final Map<String, dynamic> c = entry.value;
+            final bool isSelected = selectedColorName == c['name'];
+            final Color color = c['color'] as Color;
+            final Color borderBase = index < borderColorOptions.length
+                ? borderColorOptions[index]['color'] as Color
+                : color;
+            final bool isLight =
+                ThemeData.estimateBrightnessForColor(color) == Brightness.light;
 
-        return GestureDetector(
-          onTap: () => onSelected(c['name'] as String),
-          child: Tooltip(
-            message: c['name'] as String,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: ResponsiveHelper.iconSize(38),
-                  height: ResponsiveHelper.iconSize(38),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: color,
-                    border: Border.all(
-                      color: isSelected ? AppColors.blue : Colors.white,
-                      width: isSelected ? 2.5 : 1.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.10),
-                        blurRadius: 6,
-                        offset: const Offset(0, 3),
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6.0),
+              child: GestureDetector(
+                onTap: () => onSelected(c['name'] as String),
+                child: Tooltip(
+                  message: c['name'] as String,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: ResponsiveHelper.iconSize(44),
+                    height: ResponsiveHelper.iconSize(44),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: color,
+                      border: Border.all(
+                        color: borderBase,
+                        width: 1.5,
                       ),
-                    ],
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: color.withOpacity(0.4),
+                                blurRadius: 6,
+                                offset: const Offset(0, 3),
+                              )
+                            ]
+                          : null,
+                    ),
+                    child: isSelected
+                        ? Container(
+                            width: ResponsiveHelper.iconSize(20),
+                            height: ResponsiveHelper.iconSize(20),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: color,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.25),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                                BoxShadow(
+                                  color: Colors.white.withOpacity(0.2),
+                                  blurRadius: 2,
+                                  offset: const Offset(0, -1),
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              Icons.check,
+                              size: 14,
+                              color: isLight ? Colors.black87 : Colors.white,
+                            ),
+                          )
+                        : null,
                   ),
                 ),
-                if (isSelected)
-                  Positioned(
-                    bottom: -2,
-                    left: -2,
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Container(
-                        width: ResponsiveHelper.iconSize(14),
-                        height: ResponsiveHelper.iconSize(14),
-                        decoration: const BoxDecoration(
-                          color: AppColors.blue,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.check,
-                          size: 10,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 }

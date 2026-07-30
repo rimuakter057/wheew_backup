@@ -90,4 +90,56 @@ enum VehicleType {
         return AssetsPath.eScooter;
     }
   }
+
+  /// PNG shown when this type is the centered/selected item in the carousel.
+  String get imageBlue {
+    switch (this) {
+      case VehicleType.cityCar:
+        return AssetsPath.cityCarBlue;
+      case VehicleType.van:
+        return AssetsPath.vanBlue;
+      case VehicleType.suv:
+        return AssetsPath.suvBlue;
+      case VehicleType.truck:
+        return AssetsPath.truckBlue;
+      case VehicleType.camper:
+        return AssetsPath.camperBlue;
+      case VehicleType.scooter:
+        return AssetsPath.scooterBlue;
+      case VehicleType.motorcycle:
+        return AssetsPath.motoBlue;
+      case VehicleType.pickup:
+        return AssetsPath.pickupBlue;
+      case VehicleType.microCar:
+        return AssetsPath.microCarBlue;
+      case VehicleType.eScooter:
+        return AssetsPath.eScooterBlue;
+    }
+  }
+
+  /// PNG shown when this type is a side/unselected item in the carousel.
+  String get imageWhite {
+    switch (this) {
+      case VehicleType.cityCar:
+        return AssetsPath.cityCarWhite;
+      case VehicleType.van:
+        return AssetsPath.vanWhite;
+      case VehicleType.suv:
+        return AssetsPath.suvWhite;
+      case VehicleType.truck:
+        return AssetsPath.truckWhite;
+      case VehicleType.camper:
+        return AssetsPath.camperWhite;
+      case VehicleType.scooter:
+        return AssetsPath.scooterWhite;
+      case VehicleType.motorcycle:
+        return AssetsPath.motoWhite;
+      case VehicleType.pickup:
+        return AssetsPath.pickupWhite;
+      case VehicleType.microCar:
+        return AssetsPath.microCarWhite;
+      case VehicleType.eScooter:
+        return AssetsPath.eScooterWhite;
+    }
+  }
 }
