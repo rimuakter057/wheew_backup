@@ -74,12 +74,16 @@ class _MessageScreenState extends State<MessageScreen> {
   final ChatController chatController = Get.find<ChatController>();
   final MessageController messageController = Get.find<MessageController>();
   late String _currentRoomId;
-  bool _isAccepted = true;
 
   final RxInt _selectedPresetIndex = (-1).obs;
   final RxString _selectedPresetId = ''.obs;
   final RxBool _isSendingRequest = false.obs;
   final RxBool _isRequestSent = false.obs;
+
+  // Flips to true the moment the receiver accepts a message request, so the
+  // same screen switches straight into the normal chat (message list + input
+  // field) instead of navigating away and requiring a fresh screen.
+  final RxBool _requestAccepted = false.obs;
 
   // Canonical request state from GET /chat/message-requests/{id}/thread —
   // used to decide sender-vs-receiver view from the real `actions` array
@@ -91,8 +95,6 @@ class _MessageScreenState extends State<MessageScreen> {
   void initState() {
     super.initState();
     _currentRoomId = widget.roomId ?? '';
-    _isAccepted = _currentRoomId
-        .isEmpty; // Sender is accepted by default. Recipient has to accept message request.
 
     chatController.isBlockedByMe.value = widget.isBlockedByMe ?? false;
     chatController.isBlockedMe.value = widget.isBlockedMe ?? false;
@@ -230,12 +232,21 @@ class _MessageScreenState extends State<MessageScreen> {
   Widget build(BuildContext context) {
     if (widget.isReceivedRequest || widget.isSendRequest) {
       return Obx(() {
+        // Once the receiver accepts, drop straight into the normal chat
+        // (message list + input) on this same screen instead of the
+        // request views.
+        if (_requestAccepted.value) return _buildChatScaffold(context);
+
         // While the canonical /thread fetch is in flight, keep rendering
         // using the route-extra flags so the screen never sits blank.
         return _isReceiverView ? _buildReceiveRequestView() : _buildSendRequestView();
       });
     }
 
+    return _buildChatScaffold(context);
+  }
+
+  Widget _buildChatScaffold(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
         gradient: AppColors.primaryBackgroundGradient,
@@ -697,9 +708,10 @@ class _MessageScreenState extends State<MessageScreen> {
                   );
                 }
 
-                // Compose state: the "not following" header + preset picker,
-                // top-anchored and scrollable in case it overflows.
-                return SingleChildScrollView(
+                // Compose state: header stays top-anchored, but the preset
+                // picker is pushed down to sit just above the bottom sheet —
+                // matching the Figma "Send" reference layout.
+                return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                   child: Column(
                     children: [
@@ -725,7 +737,7 @@ class _MessageScreenState extends State<MessageScreen> {
                           height: 1.4,
                         ),
                       ),
-                      const SizedBox(height: 36),
+                      const Spacer(),
                       Obx(() {
                         final presets = chatController.presetMessages
                             .where((p) => p.type.toUpperCase() == 'ALERT')
@@ -735,6 +747,7 @@ class _MessageScreenState extends State<MessageScreen> {
                         return Wrap(
                           spacing: 8,
                           runSpacing: 10,
+                          alignment: WrapAlignment.center,
                           children: List.generate(presets.length, (index) {
                             final preset = presets[index];
                             final text = Get.locale?.languageCode == 'it' ? preset.messageIt : preset.message;
@@ -1070,53 +1083,55 @@ class _MessageScreenState extends State<MessageScreen> {
                 // Real-message-like positioning: pin the preview near the
                 // bottom, right above the action sheet, instead of
                 // stacking it at the top with a big empty gap below.
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Center(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.6),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Text(
-                            "Today",
-                            style: GoogleFonts.poppins(
-                              fontSize: 12,
-                              color: Colors.grey.shade700,
-                              fontWeight: FontWeight.w500,
+                // Nothing renders at all when there's no actual message —
+                // no fallback placeholder text.
+                child: Builder(builder: (context) {
+                  if (_effectiveFirstMessage.isEmpty) return const SizedBox.shrink();
+
+                  final bool isMine = _effectiveIsMine;
+
+                  return Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.6),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Text(
+                              "Today",
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: Colors.grey.shade700,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
+                        const SizedBox(height: 16),
 
-                      // Message Bubble — position/color driven by the real
-                      // `is_mine` flag, same as the actual message screen.
-                      Builder(builder: (context) {
-                        final String text = _effectiveFirstMessage.isNotEmpty
-                            ? _effectiveFirstMessage
-                            : 'Your vehicle is blocking my spot.';
-                        final bool isMine = _effectiveIsMine;
-
-                        if (isMine) {
-                          return MessageBubble(message: text, isMine: true);
-                        }
-                        return Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            UserAvatar(imagePath: _effectiveOtherUserAvatar ?? AppConst.unknown, radius: 16),
-                            const SizedBox(width: 8),
-                            Flexible(child: MessageBubble(message: text, isMine: false)),
-                          ],
-                        );
-                      }),
-                    ],
-                  ),
-                ),
+                        // Message Bubble — position/color driven by the
+                        // real `is_mine` flag, same as the actual message
+                        // screen.
+                        if (isMine)
+                          MessageBubble(message: _effectiveFirstMessage, isMine: true)
+                        else
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              UserAvatar(imagePath: _effectiveOtherUserAvatar ?? AppConst.unknown, radius: 16),
+                              const SizedBox(width: 8),
+                              Flexible(child: MessageBubble(message: _effectiveFirstMessage, isMine: false)),
+                            ],
+                          ),
+                      ],
+                    ),
+                  );
+                }),
               ),
             ),
 
@@ -1276,13 +1291,20 @@ class _MessageScreenState extends State<MessageScreen> {
                                 icon: Icons.check_circle_outline_rounded,
                                 iconColor: AppColors.blue,
                                 onConfirm: () async {
-                                  if (_effectiveRequestId.isNotEmpty) {
-                                    await messageController.acceptMessageRequest(
-                                      requestId: _effectiveRequestId,
-                                      context: context,
-                                    );
-                                  }
-                                  if (context.mounted) Navigator.pop(context);
+                                  if (_effectiveRequestId.isEmpty) return;
+
+                                  final roomId = await messageController.acceptMessageRequest(
+                                    requestId: _effectiveRequestId,
+                                    context: context,
+                                  );
+                                  if (roomId == null) return;
+
+                                  // Drop straight into the normal chat on
+                                  // this same screen — no navigation needed.
+                                  _currentRoomId = roomId;
+                                  chatController.roomID.value = roomId;
+                                  chatController.fetchInboxMessage(roomId: roomId, refresh: true);
+                                  _requestAccepted.value = true;
                                 },
                               );
                             },

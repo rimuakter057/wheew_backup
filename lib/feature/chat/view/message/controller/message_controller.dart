@@ -149,7 +149,9 @@ class MessageController extends GetxController {
     }
   }
 
-  Future<bool> acceptMessageRequest({
+  /// Returns the newly-created room's id on success (so callers can jump
+  /// straight into the chat), or null on failure.
+  Future<String?> acceptMessageRequest({
     required String requestId,
     required BuildContext context,
   }) async {
@@ -162,7 +164,13 @@ class MessageController extends GetxController {
         CustomSnackbar.success(context: context, message: 'Request accepted!');
         messageRequests.removeWhere((req) => req['id']?.toString() == requestId);
         totalRequestsCount.value = (totalRequestsCount.value - 1).clamp(0, 999999);
-        return true;
+
+        String roomId = '';
+        try {
+          final decoded = jsonDecode(response.body);
+          roomId = decoded['room']?['id']?.toString() ?? '';
+        } catch (_) {}
+        return roomId.isNotEmpty ? roomId : '';
       } else {
         String errMsg = 'Failed to accept message request';
         try {
@@ -170,12 +178,12 @@ class MessageController extends GetxController {
           errMsg = decoded['message'] ?? decoded['error'] ?? errMsg;
         } catch (_) {}
         CustomSnackbar.error(context: context, message: errMsg);
-        return false;
+        return null;
       }
     } catch (e) {
       debugPrint('acceptMessageRequest error: $e');
       CustomSnackbar.error(context: context, message: 'Failed to accept request.');
-      return false;
+      return null;
     }
   }
 

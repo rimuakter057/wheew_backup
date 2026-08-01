@@ -539,6 +539,12 @@ class ChatController extends GetxController {
               continue;
 
             }
+            // A socket 'new-message' event can land in the gap between the
+            // clear() above and this REST response coming back (e.g. right
+            // after accepting a request, whose delivered message arrives via
+            // socket almost immediately) — skip it here instead of adding a
+            // duplicate on top of what the socket handler already inserted.
+            if (userMessageList.any((m) => m.id == msg.id)) continue;
             msg.isMine = msg.isMine == true;
             userMessageList.add(msg);
           }

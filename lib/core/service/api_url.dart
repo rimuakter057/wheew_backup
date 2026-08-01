@@ -9,14 +9,14 @@ class ApiUrl {
   // static const baseSocketUrl = 'ws://10.10.28.200:8003';
 
   // live url
-  // static const String baseUrl = 'http://54.198.239.101:8003';
-  //  static const baseSocketUrl = 'ws://54.198.239.101:8003';
+  static const String baseUrl = 'http://54.198.239.101:8003';
+   static const baseSocketUrl = 'ws://54.198.239.101:8003';
 
 
 
   // // Local testing url
-  static const String baseUrl = 'https://hqwwvtcz-8003.inc1.devtunnels.ms';
-  static const baseSocketUrl = 'https://hqwwvtcz-8003.inc1.devtunnels.ms';
+  // static const String baseUrl = 'https://hqwwvtcz-8003.inc1.devtunnels.ms';
+  // static const baseSocketUrl = 'https://hqwwvtcz-8003.inc1.devtunnels.ms';
 
   //http://13.50.99.165:8003
   //static const baseSocketUrl = 'ws://13.50.99.165:8003';
