@@ -6,6 +6,9 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 
 import '../../../../utils/color/app_colors.dart';
 
+/// Positions the map-type layers button inside a [Stack]. Use
+/// [MapTypeLayersButton] directly when the button needs to sit inside
+/// non-Stack flow layout (e.g. a [Column]).
 class MapTypeDropdown extends StatelessWidget {
   final MapType selectedType;
   final ValueChanged<MapType> onChanged;
@@ -21,25 +24,46 @@ class MapTypeDropdown extends StatelessWidget {
     return Positioned(
       right: ResponsiveHelper.padding(20),
       top: ResponsiveHelper.padding(120),
-      child: GestureDetector(
-        onTap: () => _showMapTypeBottomSheet(context),
-        child: Container(
-          padding: ResponsiveHelper.all(8),
-          decoration: BoxDecoration(
-            color: AppColors.white.withValues(alpha: 0.5),
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(.12),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: const Icon(
-            Icons.layers_outlined,
-            color: Color(0xFF185FA5),
-          ),
+      child: MapTypeLayersButton(
+        selectedType: selectedType,
+        onChanged: onChanged,
+      ),
+    );
+  }
+}
+
+/// The map-type layers button itself, with no positioning applied — safe to
+/// place inside any layout (Stack, Column, Row, etc.).
+class MapTypeLayersButton extends StatelessWidget {
+  final MapType selectedType;
+  final ValueChanged<MapType> onChanged;
+
+  const MapTypeLayersButton({
+    super.key,
+    required this.selectedType,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _showMapTypeBottomSheet(context),
+      child: Container(
+        padding: ResponsiveHelper.all(8),
+        decoration: BoxDecoration(
+          color: AppColors.white.withValues(alpha: 0.5),
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(.12),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: const Icon(
+          Icons.layers_outlined,
+          color: Color(0xFF185FA5),
         ),
       ),
     );

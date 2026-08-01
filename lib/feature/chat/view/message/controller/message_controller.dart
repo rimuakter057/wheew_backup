@@ -34,20 +34,19 @@ class MessageController extends GetxController {
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         if (decoded is Map<String, dynamic>) {
-          final dynamic receivedRaw = decoded['received'] ??
-              decoded['receivedCount'] ??
-              decoded['inbox'] ??
-              decoded['receivedRequests'];
-          final dynamic sentRaw = decoded['sent'] ??
-              decoded['sentCount'] ??
-              decoded['sentRequests'];
+          // Response shape: { "received": { "pending": n }, "sent": { "pending": n, ... } }
+          final dynamic receivedRaw = decoded['received'];
+          final dynamic sentRaw = decoded['sent'];
 
-          if (receivedRaw != null) {
-            totalRequestsCount.value = int.tryParse(receivedRaw.toString()) ?? 0;
-          }
-          if (sentRaw != null) {
-            totalSentRequestsCount.value = int.tryParse(sentRaw.toString()) ?? 0;
-          }
+          final int? receivedCount = receivedRaw is Map
+              ? int.tryParse((receivedRaw['pending'] ?? 0).toString())
+              : int.tryParse((receivedRaw ?? '').toString());
+          final int? sentCount = sentRaw is Map
+              ? int.tryParse((sentRaw['pending'] ?? 0).toString())
+              : int.tryParse((sentRaw ?? '').toString());
+
+          totalRequestsCount.value = receivedCount ?? 0;
+          totalSentRequestsCount.value = sentCount ?? 0;
         }
       } else {
         debugPrint('Failed to load message request counts: ${response.statusCode}');

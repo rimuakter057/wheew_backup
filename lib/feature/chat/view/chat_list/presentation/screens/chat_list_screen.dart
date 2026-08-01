@@ -443,9 +443,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
               ),
 
               // ── Chat List ────────────────────────────────────
-              Expanded(
-
-
+              Flexible(
+                fit: FlexFit.loose,
             child: Obx(() {
 
 
@@ -489,35 +488,33 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
 
                   // Chat list দেখাও
-                  return SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    controller: scrollController,
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        left: ResponsiveHelper.padding(16),
-                        right: ResponsiveHelper.padding(16),
-                        top: ResponsiveHelper.padding(4),
-                        bottom: ResponsiveHelper.padding(16),
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      left: ResponsiveHelper.padding(16),
+                      right: ResponsiveHelper.padding(16),
+                      top: ResponsiveHelper.padding(4),
+                      bottom: ResponsiveHelper.padding(16),
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.85),
+                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 15,
+                            spreadRadius: 1,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.85),
-                          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.04),
-                              blurRadius: 15,
-                              spreadRadius: 1,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
-                          child: ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: displayChats.length + 1,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
+                        child: ListView.separated(
+                          controller: scrollController,
+                          shrinkWrap: true,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: displayChats.length + 1,
                             separatorBuilder: (context, index) {
                               if (index < displayChats.length - 1) {
                                 return Divider(
@@ -602,8 +599,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                           ),
                         ),
                       ),
-                    ),
-                  );
+                    );
                 }),
               ),
 

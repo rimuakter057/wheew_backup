@@ -255,6 +255,16 @@ class _SearchListScreenState extends State<SearchListScreen> {
                                       });
                                     }
                                   } else {
+                                    // Already-pending users must reopen on the
+                                    // "Request Sent / Pending Review" view, not
+                                    // the compose screen — pass the existing
+                                    // requestId so MessageScreen picks it up.
+                                    final existingRequestId =
+                                        user.isMessageRequestSent == true
+                                            ? (user.messageRequest?['id']
+                                                    ?.toString() ??
+                                                '')
+                                            : '';
                                     context.pushNamed(
                                       RouteName.message,
                                       extra: {
@@ -264,6 +274,8 @@ class _SearchListScreenState extends State<SearchListScreen> {
                                         'receiverId': user.id,
                                         'licenceId': user.licenceId ?? '',
                                         'isSendRequest': true,
+                                        if (existingRequestId.isNotEmpty)
+                                          'requestId': existingRequestId,
                                       },
                                     );
                                   }

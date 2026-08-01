@@ -17,6 +17,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import '../../../group/controller/group_controller.dart';
 import '../widgets/message_preset_chips.dart';
 
@@ -47,6 +48,7 @@ class MessageScreen extends StatefulWidget {
     super.key,
     this.roomId,
     required this.otherUserName,
+
     this.otherUserAvatar,
     required this.receiverId,
     this.isBlockedByMe,
@@ -149,6 +151,20 @@ class _MessageScreenState extends State<MessageScreen> {
       if (firstText != null && firstText.isNotEmpty) return firstText;
     }
     return widget.firstMessage ?? '';
+  }
+
+  // Whether the preview message was sent by the current user — read from
+  // the real thread's `is_mine` flag once loaded so the bubble position
+  // matches the actual message screen, not a per-screen assumption. Falls
+  // back to the receiver/sender route flag while the thread is still
+  // loading.
+  bool get _effectiveIsMine {
+    final messages = _threadData.value?['messages'] as List?;
+    if (messages != null && messages.isNotEmpty) {
+      final isMineRaw = messages.first?['is_mine'];
+      if (isMineRaw is bool) return isMineRaw;
+    }
+    return !_isReceiverView;
   }
 
   Future<void> _initChat() async {
@@ -615,83 +631,152 @@ class _MessageScreenState extends State<MessageScreen> {
         body: Column(
           children: [
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    UserAvatar(imagePath: _effectiveOtherUserAvatar ?? AppConst.unknown, radius: 54),
-                    const SizedBox(height: 16),
-                    Text(
-                      "You're not following this person",
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      "Send a request to start a conversation.\nThey'll review your request before you can message each other.",
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        fontSize: 12.5,
-                        color: Colors.grey.shade600,
-                        height: 1.4,
-                      ),
-                    ),
-                    const SizedBox(height: 36),
-                    Obx(() {
-                      final presets = chatController.presetMessages
-                          .where((p) => p.type.toUpperCase() == 'ALERT')
-                          .toList();
-                      if (presets.isEmpty) return const SizedBox.shrink();
+              child: Obx(() {
+                final bool isAlreadySent =
+                    _isRequestSent.value || _effectiveRequestId.isNotEmpty;
 
-                      return Wrap(
-                        spacing: 8,
-                        runSpacing: 10,
-                        children: List.generate(presets.length, (index) {
-                          final preset = presets[index];
-                          final text = Get.locale?.languageCode == 'it' ? preset.messageIt : preset.message;
-                          final isSelected = _selectedPresetIndex.value == index;
+                if (isAlreadySent) {
+                  // Real-message-like positioning: pin the preview near the
+                  // bottom, right above the action sheet — like an actual
+                  // conversation — instead of stacking it at the top with a
+                  // big empty gap below.
+                  final presets = chatController.presetMessages
+                      .where((p) => p.type.toUpperCase() == 'ALERT')
+                      .toList();
+                  final String sentText = _effectiveFirstMessage.isNotEmpty
+                      ? _effectiveFirstMessage
+                      : (_selectedPresetIndex.value >= 0 &&
+                              _selectedPresetIndex.value < presets.length
+                          ? (Get.locale?.languageCode == 'it'
+                              ? presets[_selectedPresetIndex.value].messageIt
+                              : presets[_selectedPresetIndex.value].message)
+                          : '');
+                  if (sentText.isEmpty) return const SizedBox.shrink();
 
-                          return GestureDetector(
-                            onTap: () {
-                              if (_selectedPresetIndex.value == index) {
-                                _selectedPresetIndex.value = -1;
-                                _selectedPresetId.value = '';
-                              } else {
-                                _selectedPresetIndex.value = index;
-                                _selectedPresetId.value = preset.id;
-                              }
-                            },
+                  final bool isMine = _effectiveIsMine;
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Center(
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                               decoration: BoxDecoration(
-                                color: isSelected ? AppColors.blue.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.8),
-                                borderRadius: BorderRadius.circular(24),
-                                border: Border.all(
-                                  color: isSelected ? AppColors.blue : Colors.white.withValues(alpha: 0.8),
-                                  width: 1.2,
-                                ),
+                                color: Colors.white.withValues(alpha: 0.6),
+                                borderRadius: BorderRadius.circular(16),
                               ),
                               child: Text(
-                                text,
+                                "Today",
                                 style: GoogleFonts.poppins(
-                                  fontSize: 12.5,
-                                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                                  color: isSelected ? AppColors.blue : Colors.black87,
+                                  fontSize: 12,
+                                  color: Colors.grey.shade700,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),
-                          );
-                        }),
-                      );
-                    }),
-                  ],
-                ),
-              ),
+                          ),
+                          const SizedBox(height: 16),
+                          if (isMine)
+                            MessageBubble(message: sentText, isMine: true)
+                          else
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                UserAvatar(imagePath: _effectiveOtherUserAvatar ?? AppConst.unknown, radius: 16),
+                                const SizedBox(width: 8),
+                                Flexible(child: MessageBubble(message: sentText, isMine: false)),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                // Compose state: the "not following" header + preset picker,
+                // top-anchored and scrollable in case it overflows.
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      UserAvatar(imagePath: _effectiveOtherUserAvatar ?? AppConst.unknown, radius: 54),
+                      const SizedBox(height: 16),
+                      Text(
+                        "You're not following this person",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Send a request to start a conversation.\nThey'll review your request before you can message each other.",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                          fontSize: 12.5,
+                          color: Colors.grey.shade600,
+                          height: 1.4,
+                        ),
+                      ),
+                      const SizedBox(height: 36),
+                      Obx(() {
+                        final presets = chatController.presetMessages
+                            .where((p) => p.type.toUpperCase() == 'ALERT')
+                            .toList();
+                        if (presets.isEmpty) return const SizedBox.shrink();
+
+                        return Wrap(
+                          spacing: 8,
+                          runSpacing: 10,
+                          children: List.generate(presets.length, (index) {
+                            final preset = presets[index];
+                            final text = Get.locale?.languageCode == 'it' ? preset.messageIt : preset.message;
+                            final isSelected = _selectedPresetIndex.value == index;
+
+                            return GestureDetector(
+                              onTap: () {
+                                if (_selectedPresetIndex.value == index) {
+                                  _selectedPresetIndex.value = -1;
+                                  _selectedPresetId.value = '';
+                                } else {
+                                  _selectedPresetIndex.value = index;
+                                  _selectedPresetId.value = preset.id;
+                                }
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: isSelected ? AppColors.blue.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.8),
+                                  borderRadius: BorderRadius.circular(24),
+                                  border: Border.all(
+                                    color: isSelected ? AppColors.blue : Colors.white.withValues(alpha: 0.8),
+                                    width: 1.2,
+                                  ),
+                                ),
+                                child: Text(
+                                  text,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12.5,
+                                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                    color: isSelected ? AppColors.blue : Colors.black87,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        );
+                      }),
+                    ],
+                  ),
+                );
+              }),
             ),
 
             // Bottom action card matching Image 1
@@ -706,7 +791,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 return Container(
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.92),
+                    gradient: AppColors.containerGradient,
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
                     boxShadow: [
                       BoxShadow(
@@ -738,33 +823,21 @@ class _MessageScreenState extends State<MessageScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFEF3C7),
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.4)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.access_time_rounded, color: Color(0xFFD97706), size: 18),
-                            const SizedBox(width: 8),
-                            Text(
-                              "Pending Review",
-                              style: GoogleFonts.poppins(
-                                color: const Color(0xFFB45309),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
+                      CustomGradientButton(
+                        onPressed: null,
+                        keepGradientWhenDisabled: true,
+                        gradient: AppColors.buttonGradient,
+                        borderColor: const Color(0xFFF59E0B).withValues(alpha: 0.4),
+                        prefixIcon: const Icon(Icons.access_time_rounded, color: AppColors.white, size: 18),
+                        label: "Pending Review",
+                        textColor: AppColors.white,
                       ),
                       if (_effectiveRequestId.isNotEmpty) ...[
                         const SizedBox(height: 14),
-                        TextButton(
+                        CustomGradientButton(
+                          gradient: AppColors.redGradient,
+                          borderColor: const Color(0xFF7A1C15),
+                          label: "Withdraw Request",
                           onPressed: () {
                             ActionConfirmDialog.show(
                               context,
@@ -774,11 +847,7 @@ class _MessageScreenState extends State<MessageScreen> {
                               confirmLabel: AppStrings.withdraw.tr,
                               icon: Icons.undo_rounded,
                               iconColor: const Color(0xFFB02517),
-                              confirmGradient: const LinearGradient(
-                                colors: [Color(0xFFB02517), Color(0xFF7A1C15)],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
+                              confirmGradient: AppColors.redGradient,
                               onConfirm: () async {
                                 final success = await messageController.withdrawMessageRequest(
                                   requestId: _effectiveRequestId,
@@ -790,14 +859,6 @@ class _MessageScreenState extends State<MessageScreen> {
                               },
                             );
                           },
-                          child: Text(
-                            "Withdraw Request",
-                            style: GoogleFonts.poppins(
-                              color: const Color(0xFFB02517),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
-                            ),
-                          ),
                         ),
                       ],
                     ],
@@ -808,7 +869,7 @@ class _MessageScreenState extends State<MessageScreen> {
               return Container(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.92),
+                  gradient: AppColors.containerGradient,
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
                   boxShadow: [
                     BoxShadow(
@@ -1004,82 +1065,58 @@ class _MessageScreenState extends State<MessageScreen> {
         body: Column(
           children: [
             Expanded(
-              child: ListView(
+              child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                children: [
-                  Center(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.6),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(
-                        "Today",
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          color: Colors.grey.shade700,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Message Bubble
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                // Real-message-like positioning: pin the preview near the
+                // bottom, right above the action sheet, instead of
+                // stacking it at the top with a big empty gap below.
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      UserAvatar(imagePath: _effectiveOtherUserAvatar ?? AppConst.unknown, radius: 16),
-                      const SizedBox(width: 8),
-                      Flexible(
+                      Center(
                         child: Container(
-                          padding: const EdgeInsets.all(14),
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(18),
-                              topRight: Radius.circular(18),
-                              bottomRight: Radius.circular(18),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.03),
-                                blurRadius: 10,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
+                            color: Colors.white.withValues(alpha: 0.6),
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                _effectiveFirstMessage.isNotEmpty
-                                    ? _effectiveFirstMessage
-                                    : 'Your vehicle is blocking my spot.',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Align(
-                                alignment: Alignment.bottomRight,
-                                child: Text(
-                                  '7:30 PM',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 10,
-                                    color: Colors.grey.shade500,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          child: Text(
+                            "Today",
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              color: Colors.grey.shade700,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
+                      const SizedBox(height: 16),
+
+                      // Message Bubble — position/color driven by the real
+                      // `is_mine` flag, same as the actual message screen.
+                      Builder(builder: (context) {
+                        final String text = _effectiveFirstMessage.isNotEmpty
+                            ? _effectiveFirstMessage
+                            : 'Your vehicle is blocking my spot.';
+                        final bool isMine = _effectiveIsMine;
+
+                        if (isMine) {
+                          return MessageBubble(message: text, isMine: true);
+                        }
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            UserAvatar(imagePath: _effectiveOtherUserAvatar ?? AppConst.unknown, radius: 16),
+                            const SizedBox(width: 8),
+                            Flexible(child: MessageBubble(message: text, isMine: false)),
+                          ],
+                        );
+                      }),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
 

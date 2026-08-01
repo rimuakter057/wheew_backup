@@ -25,6 +25,7 @@ import '../../../core/service/socket_service.dart';
 import '../../../utils/app_const/app_const.dart';
 import '../../profile/repository/user_model.dart';
 import '../model/preset_message.dart';
+import '../view/message/controller/message_controller.dart';
 import 'chat_repository.dart';
 import 'package:http/http.dart' as http;
 
@@ -1444,7 +1445,31 @@ class ChatController extends GetxController {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final List users = data['users'] ?? []; // ✅ 'users' key
-        searchResults.value = users.map((e) => UserModel.fromJson(e)).toList();
+        final parsed = users.map((e) => UserModel.fromJson(e)).toList();
+
+        // The search endpoint's own "already requested" flag can be stale
+        // right after a request is sent, so cross-check against the sent
+        // requests list — the same source of truth the Sent Requests
+        // screen uses and is always correct — to fix the pending badge
+        // on a fresh search.
+        final messageController = Get.find<MessageController>();
+        await messageController.fetchSentMessageRequests(refresh: true);
+        for (final user in parsed) {
+          final pending = _findPendingSentRequest(
+            messageController.sentRequests,
+            user.id,
+          );
+          if (pending != null) {
+            user.isMessageRequestSent = true;
+            user.messageRequest = {
+              'id': pending['id']?.toString(),
+              'status': pending['status'] ?? 'PENDING',
+              'receiverId': user.id,
+            };
+          }
+        }
+
+        searchResults.value = parsed;
       } else {
         searchResults.clear();
       }
@@ -1454,6 +1479,18 @@ class ChatController extends GetxController {
       isSearching.value = false;
       update();
     }
+  }
+
+  Map? _findPendingSentRequest(List<dynamic> requests, String? userId) {
+    if (userId == null || userId.isEmpty) return null;
+    for (final r in requests) {
+      if (r is Map &&
+          r['receiver']?['id']?.toString() == userId &&
+          (r['status'] ?? 'PENDING').toString().toUpperCase() == 'PENDING') {
+        return r;
+      }
+    }
+    return null;
   }
 
   // Dispose mein cancel karein
@@ -2173,11 +2210,23 @@ class ChatController extends GetxController {
         },
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
+        String? newRequestId;
+        try {
+          final decoded = jsonDecode(response.body);
+          if (decoded is Map) {
+            newRequestId = (decoded['id'] ??
+                    decoded['request']?['id'] ??
+                    decoded['data']?['id'])
+                ?.toString();
+          }
+        } catch (_) {}
+
         final index = searchResults.indexWhere((u) => u.id == receiverId);
         if (index != -1) {
           final u = searchResults[index];
           u.isMessageRequestSent = true;
           u.messageRequest = {
+            'id': newRequestId,
             'status': 'PENDING',
             'receiverId': receiverId,
           };

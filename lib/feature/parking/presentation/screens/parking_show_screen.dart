@@ -68,6 +68,13 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    // Clear the controller's reference so its existing `mapController != null`
+    // guards correctly skip animateCamera calls once this GoogleMap widget is
+    // gone — otherwise in-flight async work (e.g. fetchNearbyData) still
+    // holds a stale, non-null controller and crashes trying to use it.
+    if (_parkingShowCtrl.mapController == _mapController) {
+      _parkingShowCtrl.mapController = null;
+    }
     _mapController?.dispose();
     _pulseController.dispose();
     _searchController.dispose();
@@ -291,8 +298,8 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                   Positioned(
                     bottom:
                         ResponsiveHelper.padding(120),
-                    left: ResponsiveHelper.padding(100),
-                    right: ResponsiveHelper.padding(100),
+                    left: ResponsiveHelper.padding(80),
+                    right: ResponsiveHelper.padding(80),
                     child: CustomGradientButton(
                      // label: "Find Parking",
                       onPressed: (){},
@@ -351,7 +358,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           // ১. ম্যাপ টাইপ ড্রপডাউন বা লেয়ার উইজেট
-                          MapTypeDropdown(
+                          MapTypeLayersButton(
                             selectedType: _selectedMapType,
                             onChanged: (type) {
                               setState(() => _selectedMapType = type);

@@ -12,7 +12,6 @@ import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/feature/map/utils/map_debug.dart';
 import 'package:platchatapp/feature/map/utils/marker_icon_loader.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
-import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/feature/map/model/saved_parking_model.dart';
 
 /// Disabled facility location options

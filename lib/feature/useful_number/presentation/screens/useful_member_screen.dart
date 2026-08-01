@@ -3,9 +3,11 @@ import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/feature/useful_number/controller/useful_number_controller.dart';
+import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UsefulMemberScreen extends StatefulWidget {
   const UsefulMemberScreen({super.key});
@@ -53,9 +55,9 @@ class _UsefulMemberScreenState extends State<UsefulMemberScreen> {
 
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.lightBlue,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
@@ -118,32 +120,37 @@ class _UsefulMemberScreenState extends State<UsefulMemberScreen> {
         }
 
         // ─── List ──────────────────────────────────────
-        return RefreshIndicator(
-          onRefresh: controller.refresh,
-          child: ListView.separated(
-            controller: _scrollController,
-            padding: ResponsiveHelper.all(10),
-            itemCount:
-            controller.numbers.length + (controller.hasNextPage ? 1 : 0),
-            separatorBuilder: (_, __) => Divider(
-              height: 1,
-              thickness: 0.5,
-              color: Colors.grey.shade200,
-            ),
-            itemBuilder: (context, index) {
-              if (index == controller.numbers.length) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  child: Center(child: CircularProgressIndicator()),
-                );
-              }
+        return Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryBackgroundGradient
+          ),
+          child: RefreshIndicator(
+            onRefresh: controller.refresh,
+            child: ListView.separated(
+              controller: _scrollController,
+              padding: ResponsiveHelper.all(10),
+              itemCount:
+              controller.numbers.length + (controller.hasNextPage ? 1 : 0),
+              separatorBuilder: (_, __) => Divider(
+                height: 1,
+                thickness: 0.5,
+                color: Colors.grey.shade200,
+              ),
+              itemBuilder: (context, index) {
+                if (index == controller.numbers.length) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
 
-              final item = controller.numbers[index];
-              return _UsefulNumberTile(
-                title: item.title,
-                phone: item.phone,
-              );
-            },
+                final item = controller.numbers[index];
+                return _UsefulNumberTile(
+                  title: item.title,
+                  phone: item.phone,
+                );
+              },
+            ),
           ),
         );
       }),
@@ -161,6 +168,21 @@ class _UsefulNumberTile extends StatelessWidget {
     required this.title,
     required this.phone,
   });
+
+  Future<void> _callNumber(BuildContext context) async {
+    final uri = Uri(scheme: 'tel', path: phone);
+    try {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri);
+      } else if (context.mounted) {
+        CustomSnackbar.error(context: context, message: 'Could not launch dialer.');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        CustomSnackbar.error(context: context, message: 'Could not launch dialer.');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -208,16 +230,19 @@ class _UsefulNumberTile extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            padding: EdgeInsets.all(ResponsiveHelper.spacing(8)),
-            decoration: BoxDecoration(
-              color: AppColors.greyBorder,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.phone_in_talk,
-              size: ResponsiveHelper.iconSize(18),
-              color: Colors.black87,
+          GestureDetector(
+            onTap: () => _callNumber(context),
+            child: Container(
+              padding: EdgeInsets.all(ResponsiveHelper.spacing(8)),
+              decoration: BoxDecoration(
+                color: AppColors.greyBorder,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.phone_in_talk,
+                size: ResponsiveHelper.iconSize(18),
+                color: Colors.black87,
+              ),
             ),
           ),
         ],
