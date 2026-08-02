@@ -14,6 +14,7 @@ class AssetsPath {
 
   //icons====================================
   static const String ratingIcon = '${_iconsBase}rating_icon.svg';
+  static const String standardIcon = '${_iconsBase}standard_icon.svg';
   static const String send = '${_iconsBase}send.svg';
   static const String addGroupIcon = '${_iconsBase}add_group.png';
   static const String messageRequest = '${_iconsBase}message_request.svg';

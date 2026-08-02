@@ -7,6 +7,7 @@ class AppColors {
   static const Color lightBlue2 = Color(0xFFD0DCE8);
   static const Color blueGrey = Color(0xFFB6C5DA);
   static const Color bulShadeGradient = Color(0xFFC6D2E2);
+  static const Color blackButton = Color(0xFF404040);
 
 
 
@@ -33,6 +34,15 @@ class AppColors {
     ],
   );
 
+  static const LinearGradient blackGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      blackButton,
+      black
+
+    ],
+  );
 
   // Custom Button Colors
   static const Color buttonGradientColor1 = Color(0xFF0C7DC9);
@@ -89,14 +99,14 @@ class AppColors {
     ],
   );
 
-  static const LinearGradient blackGradient = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [
-      Colors.white,
-      notificationBoxColor,
-    ],
-  );
+  // static const LinearGradient blackGradient = LinearGradient(
+  //   begin: Alignment.topCenter,
+  //   end: Alignment.bottomCenter,
+  //   colors: [
+  //     Colors.white,
+  //     notificationBoxColor,
+  //   ],
+  // );
 
   static const Color blue = Color(0xFF1070B7);
   static const Color darBlue = Color(0xFF014495);

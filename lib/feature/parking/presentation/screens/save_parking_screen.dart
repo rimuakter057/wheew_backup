@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/parking_location_card.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
 
@@ -35,6 +36,7 @@ class SaveParkingScreen extends StatelessWidget {
                 subtitle: 'Basement 2',
                 badgeLabel: 'Standard',
                 badgeIcon: Icons.local_parking_rounded,
+                badgeIconAsset: AssetsPath.standardIcon,
                 badgeColor: AppColors.paidBlue,
                 distanceLabel: '350 m away',
                 ratingLabel: '4.5',

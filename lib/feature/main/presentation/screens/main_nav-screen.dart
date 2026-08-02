@@ -314,7 +314,7 @@ class _AppBottomNav extends StatelessWidget {
 
                           _NavItem(
                             icon: AssetsPath.savePNav,
-                            label: "Save Parking",
+                            label: "Parking",
                             index: 5,
                             currentIndex: currentIndex,
                             onTap: onTap,

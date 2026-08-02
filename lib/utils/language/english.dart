@@ -271,7 +271,7 @@ AppStrings.findAnswersBelow:'Find Answers Below',
   AppStrings.renew: 'Renew',
   AppStrings.expires: 'Expires',
   AppStrings.expired: 'Expired',
-  AppStrings.daysLeft: 'days left',
+  AppStrings.daysLeft: 'days',
   AppStrings.id: 'ID',
 
   // -------- Scan Screen --------

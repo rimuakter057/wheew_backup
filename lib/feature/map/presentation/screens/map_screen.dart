@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:platchatapp/feature/auth/repository/user_location_controller.dart';
 import 'package:platchatapp/feature/map/controller/map_controller.dart';
@@ -615,25 +616,34 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                     : CrossAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // _ActionPillButton(
+                  //   label: AppStrings.addParkingSpot.tr,
+                  //   icon: Icons.add_location_alt_rounded,
+                  //   gradientColors: const [
+                  //     Color(0xFFFF8A3D),
+                  //     Color(0xFFF5590B),
+                  //   ],
+                  //   onPressed: _toggleParkingPin,
+                  // ),
+                  // SizedBox(height: ResponsiveHelper.spacing(14)),
+                  // _ActionPillButton(
+                  //   label: AppStrings.parkMyCar.tr,
+                  //   icon: Icons.add_circle_outline,
+                  //   gradientColors:  [
+                  //   AppColors.blackGrey,
+                  //   AppColors.black,
+                  //   ],
+                  //   onPressed: _showSaveParkingSheet,
+                  // ),
+
+
                   _ActionPillButton(
-                    label: AppStrings.addParkingSpot.tr,
-                    icon: Icons.add_location_alt_rounded,
-                    gradientColors: const [
-                      Color(0xFFFF8A3D),
-                      Color(0xFFF5590B),
-                    ],
+                    label: "Add Parking",
+                    icon: "assets/icons/add_circle.svg",
+
                     onPressed: _toggleParkingPin,
                   ),
-                  SizedBox(height: ResponsiveHelper.spacing(14)),
-                  _ActionPillButton(
-                    label: AppStrings.parkMyCar.tr,
-                    icon: Icons.add_circle_outline,
-                    gradientColors:  [
-                    AppColors.blackGrey,
-                    AppColors.black,
-                    ],
-                    onPressed: _showSaveParkingSheet,
-                  ),
+
                 ],
               ),
             ),
@@ -647,14 +657,14 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
 
 class _ActionPillButton extends StatelessWidget {
   final String label;
-  final IconData icon;
-  final List<Color> gradientColors;
+  final String icon;
+
   final VoidCallback onPressed;
 
   const _ActionPillButton({
     required this.label,
     required this.icon,
-    required this.gradientColors,
+
     required this.onPressed,
   });
 
@@ -664,17 +674,13 @@ class _ActionPillButton extends StatelessWidget {
       onTap: onPressed,
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: gradientColors,
-          ),
+          gradient: AppColors.blackGradient,
           borderRadius: BorderRadius.circular(
             ResponsiveHelper.borderRadius(28),
           ),
           boxShadow: [
             BoxShadow(
-              color: gradientColors.last.withValues(alpha: 0.35),
+              color: AppColors.greyBorder,
               blurRadius: 16,
               offset: const Offset(0, 8),
             ),
@@ -688,23 +694,9 @@ class _ActionPillButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                padding: EdgeInsets.all(
-                  ResponsiveHelper.padding(6),
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.22),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  icon,
-                  color: Colors.white,
-                  size: ResponsiveHelper.iconSize(16),
-                ),
-              ),
-
+       CustomImage(imageSrc: icon),
               SizedBox(
-                width: ResponsiveHelper.spacing(10),
+                width: ResponsiveHelper.spacing(6),
               ),
 
               Text(

@@ -3,6 +3,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -233,7 +234,6 @@ class ParkingShowController extends GetxController {
         final data = _asMap(jsonDecode(response.body));
         final String modeStatus =
             data?['status']?.toString().toUpperCase() ?? 'IDLE';
-        status.value = modeStatus;
 
         if (modeStatus == 'SEARCHING' || modeStatus == 'PARKED') {
           // PARKED still needs the real location + nearby markers loaded so
@@ -248,10 +248,21 @@ class ParkingShowController extends GetxController {
           }
           if (modeStatus == 'SEARCHING') {
             showLocationPulse.value = true;
+          } else {
+            // PARKED — make sure a stale pulse from a previous SEARCHING
+            // session doesn't keep the screen blinking now.
+            showLocationPulse.value = false;
           }
         }
         // IDLE -> plain search UI, no auto-fetch (handled by the screen
         // from `status`).
+
+        // Only reveal the resolved status — and therefore the matching
+        // button/card — once any loading it triggered above has fully
+        // finished. Setting this earlier let the Find Parking Spot button
+        // (or the parked card) flash in while location/nearby-data was
+        // still loading underneath it.
+        status.value = modeStatus;
       } else {
         String errorMsg = AppStrings.failedToRetrieveParkingStatus.tr;
         try {
@@ -1540,12 +1551,14 @@ class ParkingShowController extends GetxController {
       subtitle: handoffStatus.isNotEmpty ? handoffStatus : 'Available',
       badgeLabel: 'Standard',
       badgeIcon: Icons.local_parking_rounded,
+      badgeIconAsset: AssetsPath.standardIcon,
       badgeColor: AppColors.paidBlue,
       distanceLabel: distanceDisplay,
       ratingLabel: '--',
       leftStatLabel: '-- spots',
       rightStatLabel: 'Free',
       rightStatIcon: Icons.money_off_rounded,
+      isFree: true,
       destination: (lat != null && lng != null) ? LatLng(lat, lng) : null,
     );
   }
@@ -1572,6 +1585,7 @@ class ParkingShowController extends GetxController {
       title: name.isNotEmpty ? name : 'Parking Area',
       subtitle: description.isNotEmpty ? description : 'Parking area',
       badgeLabel: isActive ? 'Standard' : 'Inactive',
+      badgeIconAsset: isActive ? AssetsPath.standardIcon : null,
       badgeIcon: Icons.local_parking_rounded,
       badgeColor: isActive ? AppColors.paidBlue : Colors.grey,
       distanceLabel: distanceDisplay,
@@ -1579,6 +1593,7 @@ class ParkingShowController extends GetxController {
       leftStatLabel: '-- spots',
       rightStatLabel: isFree ? 'Free' : '\$$parkingCost/hr',
       rightStatIcon: isFree ? Icons.money_off_rounded : Icons.monetization_on_outlined,
+      isFree: isFree,
       destination: (lat != null && lng != null) ? LatLng(lat, lng) : null,
     );
   }
@@ -1595,6 +1610,8 @@ class ParkingShowController extends GetxController {
     required String ratingLabel,
     required String leftStatLabel,
     required String rightStatLabel,
+    required bool isFree,
+    String? badgeIconAsset,
     IconData rightStatIcon = Icons.monetization_on_outlined,
     LatLng? destination,
   }) {
@@ -1608,56 +1625,239 @@ class ParkingShowController extends GetxController {
       builder: (dialogContext) {
         return Padding(
           padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ParkingLocationCard(
-                title: title,
-                subtitle: subtitle,
-                badgeLabel: badgeLabel,
-                badgeIcon: badgeIcon,
-                badgeColor: badgeColor,
-                distanceLabel: distanceLabel,
-                ratingLabel: ratingLabel,
-                leftStatLabel: leftStatLabel,
-                rightStatLabel: rightStatLabel,
-                rightStatIcon: rightStatIcon,
-              ),
-              SizedBox(height: ResponsiveHelper.spacing(14)),
-              SizedBox(
-                width: double.infinity,
-                child: CustomGradientButton(
-                  // No save-parking-spot API yet — closes the sheet only,
-                  // ready to wire up to a real save call later.
-                  onPressed: () => Navigator.of(dialogContext).pop(),
-                  label: 'Save Park',
-                ),
-              ),
-              if (destination != null) ...[
-                SizedBox(height: ResponsiveHelper.spacing(10)),
-                SizedBox(
-                  width: double.infinity,
-                  child: CustomGradientButton(
-                    label: AppStrings.navigate.tr,
-                    prefixIcon: const Icon(
-                      Icons.directions,
-                      color: Colors.white,
-                      size: 18,
-                    ),
-                    onPressed: () {
-                      Navigator.of(dialogContext).pop();
-                      AppRouter.router.pushNamed(
-                        RouteName.inAppNavigation,
-                        extra: {'destination': destination},
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ],
+          child: ParkingLocationCard(
+            title: title,
+            subtitle: subtitle,
+            badgeLabel: badgeLabel,
+            badgeIcon: badgeIcon,
+            badgeIconAsset: badgeIconAsset,
+            badgeColor: badgeColor,
+            distanceLabel: distanceLabel,
+            ratingLabel: ratingLabel,
+            leftStatLabel: leftStatLabel,
+            rightStatLabel: rightStatLabel,
+            rightStatIcon: rightStatIcon,
+            // No save-parking-spot API yet — UI only. Free spots save
+            // immediately; paid spots ask how long first.
+            onSavePark: () {
+              if (isFree) {
+                Navigator.of(dialogContext).pop();
+                _showMessage('Parking spot saved', isError: false);
+                return;
+              }
+              Navigator.of(dialogContext).pop();
+              _showSaveDurationPickerSheet();
+            },
+            onNavigate: destination == null
+                ? null
+                : () {
+                    Navigator.of(dialogContext).pop();
+                    AppRouter.router.pushNamed(
+                      RouteName.inAppNavigation,
+                      extra: {'destination': destination},
+                    );
+                  },
           ),
         );
       },
+    );
+  }
+
+  // ── Save Park — paid duration prompt. No save API yet, UI only. ──
+  void _showSaveDurationPickerSheet() {
+    final ctx = _dialogContext;
+    if (ctx == null) return;
+
+    final durationController = TextEditingController();
+    bool hasError = false;
+    String errorText = '';
+
+    showModalBottomSheet(
+      context: ctx,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (sheetContext, setState) => Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(ResponsiveHelper.borderRadius(24)),
+            ),
+          ),
+          child: Padding(
+            padding: ResponsiveHelper.all(24).copyWith(
+              bottom: ResponsiveHelper.padding(24) +
+                  MediaQuery.of(sheetContext).viewInsets.bottom,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Center(
+                  child: Container(
+                    width: ResponsiveHelper.width(40),
+                    height: ResponsiveHelper.height(5),
+                    margin: EdgeInsets.only(bottom: ResponsiveHelper.spacing(16)),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[350],
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(10),
+                      ),
+                    ),
+                  ),
+                ),
+                Text(
+                  'Staying Duration',
+                  style: TextStyle(
+                    fontSize: ResponsiveHelper.fontSize(18),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(8)),
+                Text(
+                  'How long will you park here?',
+                  style: TextStyle(
+                    fontSize: ResponsiveHelper.fontSize(14),
+                    color: Colors.grey,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(20)),
+
+                // ── Custom minutes input ──
+                TextField(
+                  controller: durationController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  onChanged: (_) {
+                    if (hasError) setState(() => hasError = false);
+                  },
+                  style: TextStyle(fontSize: ResponsiveHelper.fontSize(14)),
+                  decoration: InputDecoration(
+                    hintText: 'Enter minutes',
+                    suffixText: 'min',
+                    errorText: hasError ? errorText : null,
+                    filled: true,
+                    fillColor: Colors.grey.shade100,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(12),
+                      ),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: ResponsiveHelper.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
+                  ),
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(16)),
+
+                Text(
+                  'Quick select',
+                  style: TextStyle(
+                    fontSize: ResponsiveHelper.fontSize(12),
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(8)),
+                Wrap(
+                  spacing: ResponsiveHelper.spacing(8),
+                  runSpacing: ResponsiveHelper.spacing(8),
+                  children: [15, 30, 45, 60, 120].map((mins) {
+                    String label = '$mins min';
+                    if (mins >= 60) {
+                      label = '${mins ~/ 60} hr${mins == 60 ? "" : "s"}';
+                    }
+                    return GestureDetector(
+                      onTap: () => setState(() {
+                        durationController.text = mins.toString();
+                        hasError = false;
+                      }),
+                      child: Container(
+                        padding: ResponsiveHelper.symmetric(
+                          horizontal: 14,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveHelper.borderRadius(20),
+                          ),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: Text(
+                          label,
+                          style: TextStyle(
+                            fontSize: ResponsiveHelper.fontSize(12),
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(20)),
+
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      final minutes =
+                          int.tryParse(durationController.text.trim());
+                      if (minutes == null || minutes <= 0) {
+                        setState(() {
+                          hasError = true;
+                          errorText = 'Enter a valid duration';
+                        });
+                        return;
+                      }
+
+                      final label = minutes >= 60
+                          ? '${minutes ~/ 60} hr${minutes == 60 ? "" : "s"}'
+                              '${minutes % 60 == 0 ? "" : " ${minutes % 60} min"}'
+                          : '$minutes min';
+
+                      Navigator.of(sheetContext).pop();
+                      _showMessage(
+                        'Parking spot saved for $label',
+                        isError: false,
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF185FA5),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: ResponsiveHelper.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveHelper.borderRadius(12),
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      'Save',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: ResponsiveHelper.fontSize(15),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(12)),
+                TextButton(
+                  onPressed: () => Navigator.of(sheetContext).pop(),
+                  child: Text(
+                    AppStrings.cancel.tr,
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 

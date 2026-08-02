@@ -1,4 +1,6 @@
 import 'dart:ui';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
@@ -10,6 +12,10 @@ class ParkingLocationCard extends StatelessWidget {
   final String subtitle;
   final String badgeLabel;
   final IconData badgeIcon;
+
+  /// SVG asset for the badge icon — takes precedence over [badgeIcon] when
+  /// provided (e.g. the "Standard" badge's dedicated icon).
+  final String? badgeIconAsset;
   final Color badgeColor;
   final String distanceLabel;
   final String ratingLabel;
@@ -20,6 +26,14 @@ class ParkingLocationCard extends StatelessWidget {
 
   final String? remainingTimeLabel;
   final String? remainingTimeSubLabel;
+
+  /// Small inline "Navigate" link shown next to the rating — not a full
+  /// button, just an icon + label.
+  final VoidCallback? onNavigate;
+
+  /// Full-width "Save Park" button rendered inside the card, below the
+  /// stats row — omit to hide it.
+  final VoidCallback? onSavePark;
 
   const ParkingLocationCard({
     super.key,
@@ -32,10 +46,13 @@ class ParkingLocationCard extends StatelessWidget {
     required this.ratingLabel,
     required this.leftStatLabel,
     required this.rightStatLabel,
+    this.badgeIconAsset,
     this.leftStatIcon = Icons.map_outlined,
     this.rightStatIcon = Icons.monetization_on_outlined,
     this.remainingTimeLabel,
     this.remainingTimeSubLabel,
+    this.onNavigate,
+    this.onSavePark,
   });
 
   @override
@@ -43,7 +60,7 @@ class ParkingLocationCard extends StatelessWidget {
     return Container(
       // Outer container styling matching the rounded corners and subtle shadow
       decoration: BoxDecoration(
-        color:  Color(0xFFD6DFEA),
+        color: const Color(0xFFE6ECF3),
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(32)),
         border: Border.all(color: AppColors.white)
       ),
@@ -100,11 +117,21 @@ class ParkingLocationCard extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
-                                badgeIcon,
-                                size: ResponsiveHelper.iconSize(14),
-                                color: badgeColor,
-                              ),
+                              badgeIconAsset != null
+                                  ? SvgPicture.asset(
+                                      badgeIconAsset!,
+                                      width: ResponsiveHelper.iconSize(14),
+                                      height: ResponsiveHelper.iconSize(14),
+                                      colorFilter: ColorFilter.mode(
+                                        badgeColor,
+                                        BlendMode.srcIn,
+                                      ),
+                                    )
+                                  : Icon(
+                                      badgeIcon,
+                                      size: ResponsiveHelper.iconSize(14),
+                                      color: badgeColor,
+                                    ),
                               SizedBox(width: ResponsiveHelper.spacing(4)),
                               Text(
                                 badgeLabel,
@@ -161,9 +188,7 @@ class ParkingLocationCard extends StatelessWidget {
                       ],
                     ),
 
-
-                    if (remainingTimeLabel != null) ...[
-                      SizedBox(height: ResponsiveHelper.spacing(6)),
+                    if (remainingTimeLabel != null)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -192,10 +217,30 @@ class ParkingLocationCard extends StatelessWidget {
                               style: context.bodySmall.copyWith(color: AppColors.black.withOpacity(0.6),)
                             ),
                         ],
+                      )
+                    else if (onNavigate != null)
+                      GestureDetector(
+                        onTap: onNavigate,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.near_me_outlined,
+                              size: ResponsiveHelper.iconSize(16),
+                              color: AppColors.blue,
+                            ),
+                            SizedBox(width: ResponsiveHelper.spacing(4)),
+                            Text(
+                              'Navigate',
+                              style: TextStyle(
+                                fontSize: ResponsiveHelper.fontSize(13),
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.blue,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-
-                    ],
-
                   ],
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(8)),
@@ -252,6 +297,17 @@ class ParkingLocationCard extends StatelessWidget {
                     ],
                   ),
                 ),
+
+                if (onSavePark != null) ...[
+                  SizedBox(height: ResponsiveHelper.spacing(12)),
+                  SizedBox(
+                    width: double.infinity,
+                    child: CustomGradientButton(
+                      label: 'Save Park',
+                      onPressed: onSavePark,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

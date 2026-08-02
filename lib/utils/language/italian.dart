@@ -294,7 +294,7 @@ final Map<String, String> italian = {
   AppStrings.renew: 'Rinnova',
   AppStrings.expires: 'Scadenza',
   AppStrings.expired: 'Scaduto',
-  AppStrings.daysLeft: 'giorni rimanenti',
+  AppStrings.daysLeft: 'giorni',
   AppStrings.id: 'ID',
 
 // ------------------ Scan / QR ------------------

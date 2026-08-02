@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
@@ -14,14 +13,16 @@ class CustomParkingDetailsDialog extends StatelessWidget {
   final IconData tagIcon;
   final Color tagColor;
   final String spots;
-  final String buttonText;
   final String price;
   final VoidCallback onClose;
-  final VoidCallback onGetDirections;
 
-  /// Optional second CTA — opens the in-app navigation screen for this
-  /// spot. Kept separate from [onGetDirections]/[buttonText] so existing
-  /// behavior there is untouched.
+  /// "Free" / "Paid" label shown next to [subtitle] so the cost is clear
+  /// at a glance, without waiting to reach the price row below.
+  final String costStatusLabel;
+  final Color costStatusColor;
+
+  /// Small inline "Navigate" link shown next to the rating — not a full
+  /// button, opens the in-app navigation screen for this spot.
   final VoidCallback? onNavigate;
 
   const CustomParkingDetailsDialog({
@@ -36,7 +37,8 @@ class CustomParkingDetailsDialog extends StatelessWidget {
     required this.spots,
     required this.price,
     required this.onClose,
-    required this.onGetDirections, required this.buttonText,
+    required this.costStatusLabel,
+    required this.costStatusColor,
     this.onNavigate,
   });
 
@@ -104,14 +106,40 @@ class CustomParkingDetailsDialog extends StatelessWidget {
 
                           const SizedBox(height: 2),
 
-                          Text(
-                            subtitle,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: ResponsiveHelper.fontSize(10),
-                              color: const Color(0xFF64748B),
-                            ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  subtitle,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: ResponsiveHelper.fontSize(10),
+                                    color: const Color(0xFF64748B),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 1,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: costStatusColor.withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  costStatusLabel,
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w700,
+                                    color: costStatusColor,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
 
                           const SizedBox(height: 6),
@@ -152,6 +180,32 @@ class CustomParkingDetailsDialog extends StatelessWidget {
                                   color: Color(0xFF334155),
                                 ),
                               ),
+
+                              if (onNavigate != null) ...[
+                                const SizedBox(width: 18),
+                                GestureDetector(
+                                  onTap: onNavigate,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        Icons.near_me_outlined,
+                                        size: 11,
+                                        color: Color(0xFF0077B6),
+                                      ),
+                                      const SizedBox(width: 3),
+                                      Text(
+                                        'Navigate',
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xFF0077B6),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ],
@@ -288,28 +342,6 @@ class CustomParkingDetailsDialog extends StatelessWidget {
                   ],
                 ),
               ),
-
-              const SizedBox(height: 8),
-
-              // ================= BUTTON =================
-
-              CustomGradientButton(
-                label: buttonText,
-                onPressed: onGetDirections,
-              ),
-
-              if (onNavigate != null) ...[
-                const SizedBox(height: 10),
-                CustomGradientButton(
-                  label: 'Navigate',
-                  onPressed: onNavigate,
-                  prefixIcon: const Icon(
-                    Icons.directions,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                ),
-              ],
             ],
           ),
         ),

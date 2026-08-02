@@ -404,9 +404,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:platchatapp/core/router/routes_name.dart';
-import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
-import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
@@ -469,12 +467,16 @@ class ParkingReportDropdown extends StatelessWidget {
   }
 
   String get displayPrice {
-    if (_isFree) {
-      return 'Free';
-    }
-
-    return '\$${report['parking_cost']}/hr';
+    // `parking_cost` only ever stores 'FREE'/'PAID' (see ParkingInfoDialog's
+    // cost toggle) — there's no numeric amount to show, so don't fabricate
+    // one like "$PAID/hr".
+    return _isFree ? 'Free' : 'Paid';
   }
+
+  String get costStatusLabel => _isFree ? 'Free' : 'Paid';
+
+  Color get costStatusColor =>
+      _isFree ? AppColors.successColor : AppColors.paidBlue;
 
   // ============================================================
   // DYNAMIC TAG
@@ -561,9 +563,9 @@ class ParkingReportDropdown extends StatelessWidget {
       spots: displaySpots,
       price: displayPrice,
       onClose: onClose,
-      buttonText: "Book Now",
-      onGetDirections: () => _openNavigation(context),
       onNavigate: () => _openNavigation(context),
+      costStatusLabel: costStatusLabel,
+      costStatusColor: costStatusColor,
     );
   }
 }

@@ -299,7 +299,11 @@ class ParkingConfirmationDialog extends StatelessWidget {
               top: ResponsiveHelper.padding(12),
               right: ResponsiveHelper.padding(16),
               child: InkWell(
-                onTap: () => Get.back(),
+                onTap: () {
+                //  Get.back();
+                  context.pop();
+
+                },
                 borderRadius: BorderRadius.circular(20),
                 child: Icon(
                   Icons.close,

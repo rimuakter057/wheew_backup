@@ -188,7 +188,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           ),
                           Container(
                             decoration: BoxDecoration(
-                              gradient: AppColors.notificationBoxGradient,
+                             // gradient: AppColors.notificationBoxGradient,
+                              color: AppColors.lightBlue,
                               borderRadius: BorderRadius.circular(
                                 ResponsiveHelper.borderRadius(20),
                               ),

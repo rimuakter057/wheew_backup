@@ -88,70 +88,68 @@ class ProfileHeaderCard extends StatelessWidget {
     required int? days,
   }) {
     return Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: ResponsiveHelper.padding(12),
-          vertical: ResponsiveHelper.padding(10),
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.6),
-          borderRadius: BorderRadius.circular(
-            ResponsiveHelper.borderRadius(14),
+      padding: EdgeInsets.symmetric(
+        horizontal: ResponsiveHelper.padding(12),
+        vertical: ResponsiveHelper.padding(10),
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(14)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CustomImage(
+            imageSrc: icon,
+            width: ResponsiveHelper.iconSize(18),
+            height: ResponsiveHelper.iconSize(18),
           ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CustomImage(
-              imageSrc: icon,
-              width: ResponsiveHelper.iconSize(18),
-              height: ResponsiveHelper.iconSize(18),
+          SizedBox(width: ResponsiveHelper.width(6)),
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.poppins(
+                fontSize: ResponsiveHelper.fontSize(11),
+                fontWeight: FontWeight.w600,
+                color: AppColors.black,
+              ),
             ),
+          ),
+          if (days != null) ...[
             SizedBox(width: ResponsiveHelper.width(6)),
-            Flexible(
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveHelper.padding(6),
+                vertical: ResponsiveHelper.padding(2),
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.blue.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(20),
+              ),
               child: Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                '$days',
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(11),
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.black,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.blue,
                 ),
               ),
             ),
-            if (days != null) ...[
-              SizedBox(width: ResponsiveHelper.width(6)),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: ResponsiveHelper.padding(6),
-                  vertical: ResponsiveHelper.padding(2),
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.blue.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  '$days',
-                  style: GoogleFonts.poppins(
-                    fontSize: ResponsiveHelper.fontSize(11),
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.blue,
-                  ),
-                ),
+            SizedBox(width: ResponsiveHelper.width(4)),
+            Text(
+              AppStrings.daysLeft.tr,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.poppins(
+                fontSize: ResponsiveHelper.fontSize(10),
+                color: const Color(0xFF555555),
               ),
-              SizedBox(width: ResponsiveHelper.width(4)),
-              Text(
-                AppStrings.daysLeft.tr,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.poppins(
-                  fontSize: ResponsiveHelper.fontSize(10),
-                  color: const Color(0xFF555555),
-                ),
-              ),
-            ],
+            ),
           ],
-        ),
+        ],
+      ),
     );
   }
 
@@ -179,9 +177,8 @@ class ProfileHeaderCard extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
 
-        mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-
         ///==================== LEFT ====================
         Expanded(
           child: Column(
@@ -192,20 +189,19 @@ class ProfileHeaderCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                      user?.nickName.isNotEmpty == true
-                          ? user!.nickName
-                          : AppStrings.unknown.tr,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.bodyMedium.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.black,
-                          fontSize: ResponsiveHelper.fontSize(22)
-                      )
+                    user?.nickName.isNotEmpty == true
+                        ? user!.nickName
+                        : AppStrings.unknown.tr,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.black,
+                      fontSize: ResponsiveHelper.fontSize(22),
+                    ),
                   ),
 
-                  SizedBox(
-                      width: ResponsiveHelper.width(2)),
+                  SizedBox(width: ResponsiveHelper.width(2)),
 
                   GestureDetector(
                     onTap: () async {
@@ -225,18 +221,16 @@ class ProfileHeaderCard extends StatelessWidget {
                 ],
               ),
 
-              SizedBox(
-                  height: ResponsiveHelper.height(14)),
+              SizedBox(height: ResponsiveHelper.height(14)),
 
               /// Vehicle Model
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-    AppStrings.vehicleModel.tr,
+                    AppStrings.vehicleModel.tr,
                     style: GoogleFonts.poppins(
-                      fontSize:
-                      ResponsiveHelper.fontSize(13),
+                      fontSize: ResponsiveHelper.fontSize(13),
                       fontWeight: FontWeight.w500,
                       color: const Color(0xFF555555),
                     ),
@@ -245,41 +239,34 @@ class ProfileHeaderCard extends StatelessWidget {
                   Text(
                     user?.vehicleModel ?? "N/A",
                     style: GoogleFonts.poppins(
-                        fontSize:
-                        ResponsiveHelper.fontSize(13),
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.black
+                      fontSize: ResponsiveHelper.fontSize(13),
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.black,
                     ),
                   ),
                 ],
               ),
 
-              SizedBox(
-                  height: ResponsiveHelper.height(18)),
+              SizedBox(height: ResponsiveHelper.height(18)),
 
               /// Location
               Row(
                 children: [
-
-                   Icon(
+                  Icon(
                     Icons.location_on_outlined,
                     color: AppColors.blue,
                     size: ResponsiveHelper.iconSize(20),
                   ),
 
-                  SizedBox(
-                      width: ResponsiveHelper.width(6)),
+                  SizedBox(width: ResponsiveHelper.width(6)),
 
                   Expanded(
                     child: Text(
-                      location.isEmpty
-                          ? "N/A"
-                          : location,
+                      location.isEmpty ? "N/A" : location,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.poppins(
-                        fontSize:
-                        ResponsiveHelper.fontSize(14),
+                        fontSize: ResponsiveHelper.fontSize(14),
                         fontWeight: FontWeight.w500,
                         color: const Color(0xff3A3A3A),
                       ),
@@ -291,8 +278,7 @@ class ProfileHeaderCard extends StatelessWidget {
           ),
         ),
 
-        SizedBox(
-            width: ResponsiveHelper.width(22)),
+        SizedBox(width: ResponsiveHelper.width(22)),
 
         /// Avatar Section with Scan/QR Overlay on Top-Left
         Stack(
@@ -300,12 +286,8 @@ class ProfileHeaderCard extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () {
-                if (avatarUrl != null &&
-                    avatarUrl.isNotEmpty) {
-                  context.pushNamed(
-                    RouteName.showProfile,
-                    extra: avatarUrl,
-                  );
+                if (avatarUrl != null && avatarUrl.isNotEmpty) {
+                  context.pushNamed(RouteName.showProfile, extra: avatarUrl);
                 }
               },
               child: Stack(
@@ -313,18 +295,13 @@ class ProfileHeaderCard extends StatelessWidget {
                   Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white24,
-                        width: 2,
-                      ),
+                      border: Border.all(color: Colors.white24, width: 2),
                     ),
                     child: CircleAvatar(
                       radius: ResponsiveHelper.width(40),
-                      backgroundColor: Colors.white
-                          .withOpacity(0.15),
+                      backgroundColor: Colors.white.withOpacity(0.15),
                       backgroundImage: NetworkImage(
-                        (avatarUrl != null &&
-                            avatarUrl.isNotEmpty)
+                        (avatarUrl != null && avatarUrl.isNotEmpty)
                             ? avatarUrl
                             : AppConst.unknown,
                       ),
@@ -341,8 +318,7 @@ class ProfileHeaderCard extends StatelessWidget {
                           child: SizedBox(
                             width: 20,
                             height: 20,
-                            child:
-                            CircularProgressIndicator(
+                            child: CircularProgressIndicator(
                               strokeWidth: 2,
                               color: Colors.white,
                             ),
@@ -359,19 +335,13 @@ class ProfileHeaderCard extends StatelessWidget {
               bottom: -ResponsiveHelper.height(4),
               right: -ResponsiveHelper.width(4),
               child: FutureBuilder<bool?>(
-                future: SharePrefsHelper.getBool(
-                  AppConst.licenseNoVerified,
-                ),
+                future: SharePrefsHelper.getBool(AppConst.licenseNoVerified),
                 builder: (context, snapshot) {
-                  final bool isVerified =
-                      snapshot.data ?? false;
+                  final bool isVerified = snapshot.data ?? false;
 
                   return InkWell(
                     onTap: () {
-                      if (scanController
-                          .qrCardHtml
-                          .value
-                          .isEmpty) {
+                      if (scanController.qrCardHtml.value.isEmpty) {
                         scanController.getQrCode();
                       }
 
@@ -386,9 +356,7 @@ class ProfileHeaderCard extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.vertical(
                             top: Radius.circular(
-                              ResponsiveHelper.borderRadius(
-                                24,
-                              ),
+                              ResponsiveHelper.borderRadius(24),
                             ),
                           ),
                         ),
@@ -396,70 +364,41 @@ class ProfileHeaderCard extends StatelessWidget {
                           return Padding(
                             padding: EdgeInsets.only(
                               bottom:
-                              MediaQuery.of(
-                                context,
-                              ).viewInsets.bottom +
-                                  ResponsiveHelper.padding(
-                                    24,
-                                  ),
-                              left:
-                              ResponsiveHelper.padding(
-                                16,
-                              ),
-                              right:
-                              ResponsiveHelper.padding(
-                                16,
-                              ),
+                                  MediaQuery.of(context).viewInsets.bottom +
+                                  ResponsiveHelper.padding(24),
+                              left: ResponsiveHelper.padding(16),
+                              right: ResponsiveHelper.padding(16),
                             ),
                             child: Container(
                               width: double.infinity,
-                              padding: ResponsiveHelper.all(
-                                20,
-                              ),
+                              padding: ResponsiveHelper.all(20),
                               constraints: BoxConstraints(
-                                minHeight:
-                                ResponsiveHelper.height(
-                                  650,
-                                ),
-                                maxHeight:
-                                ResponsiveHelper.height(
-                                  650,
-                                ),
+                                minHeight: ResponsiveHelper.height(650),
+                                maxHeight: ResponsiveHelper.height(650),
                               ),
                               child: Column(
-                                mainAxisSize:
-                                MainAxisSize.min,
-                                crossAxisAlignment:
-                                CrossAxisAlignment
-                                    .center,
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment
-                                        .end,
+                                    mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       IconButton(
-                                        onPressed: () =>
-                                            context.pop(),
+                                        onPressed: () => context.pop(),
                                         icon: Icon(
                                           Icons.close,
-                                          color: AppColors
-                                              .black,
+                                          color: AppColors.black,
                                         ),
                                       ),
                                     ],
                                   ),
                                   Expanded(
                                     child: Obx(() {
-                                      if (scanController
-                                          .isLoadingQr
-                                          .value) {
+                                      if (scanController.isLoadingQr.value) {
                                         return const Center(
                                           child: CircularProgressIndicator(
-                                            color: AppColors
-                                                .blue,
-                                            strokeWidth:
-                                            2.5,
+                                            color: AppColors.blue,
+                                            strokeWidth: 2.5,
                                           ),
                                         );
                                       }
@@ -471,39 +410,30 @@ class ProfileHeaderCard extends StatelessWidget {
                                         return Center(
                                           child: GestureDetector(
                                             onTap: () =>
-                                                scanController
-                                                    .getQrCode(),
+                                                scanController.getQrCode(),
                                             child: Column(
                                               mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .center,
+                                                  MainAxisAlignment.center,
                                               children: [
                                                 Icon(
-                                                  Icons
-                                                      .refresh_rounded,
-                                                  color: Colors
-                                                      .grey
-                                                      .shade400,
+                                                  Icons.refresh_rounded,
+                                                  color: Colors.grey.shade400,
                                                   size: 36,
                                                 ),
                                                 SizedBox(
                                                   height:
-                                                  ResponsiveHelper.spacing(
-                                                    8,
-                                                  ),
+                                                      ResponsiveHelper.spacing(
+                                                        8,
+                                                      ),
                                                 ),
                                                 Text(
-                                                  AppStrings
-                                                      .tapToRetry
-                                                      .tr,
+                                                  AppStrings.tapToRetry.tr,
                                                   style: GoogleFonts.poppins(
                                                     fontSize:
-                                                    ResponsiveHelper.fontSize(
-                                                      13,
-                                                    ),
-                                                    color: Colors
-                                                        .grey
-                                                        .shade400,
+                                                        ResponsiveHelper.fontSize(
+                                                          13,
+                                                        ),
+                                                    color: Colors.grey.shade400,
                                                   ),
                                                 ),
                                               ],
@@ -515,27 +445,19 @@ class ProfileHeaderCard extends StatelessWidget {
                                       return RepaintBoundary(
                                         key: qrCardKey,
                                         child: ClipRRect(
-                                          borderRadius:
-                                          BorderRadius.circular(
-                                            ResponsiveHelper.borderRadius(
-                                              16,
-                                            ),
+                                          borderRadius: BorderRadius.circular(
+                                            ResponsiveHelper.borderRadius(16),
                                           ),
                                           child: QrCardWebView(
                                             htmlContent:
-                                            scanController
-                                                .qrCardHtml
-                                                .value,
+                                                scanController.qrCardHtml.value,
                                           ),
                                         ),
                                       );
                                     }),
                                   ),
                                   SizedBox(
-                                    height:
-                                    ResponsiveHelper.spacing(
-                                      16,
-                                    ),
+                                    height: ResponsiveHelper.spacing(16),
                                   ),
                                   Obx(() {
                                     if (scanController
@@ -546,97 +468,68 @@ class ProfileHeaderCard extends StatelessWidget {
                                     }
 
                                     return SizedBox(
-                                      width:
-                                      double.infinity,
+                                      width: double.infinity,
                                       child: ElevatedButton.icon(
                                         onPressed:
-                                        scanController
-                                            .isDownloadingQr
-                                            .value
+                                            scanController.isDownloadingQr.value
                                             ? null
                                             : () async {
-                                          scanController
-                                              .isDownloadingQr
-                                              .value =
-                                          true;
+                                                scanController
+                                                        .isDownloadingQr
+                                                        .value =
+                                                    true;
 
-                                          try {
-                                            await downloadQrCard(
-                                              context,
-                                            );
+                                                try {
+                                                  await downloadQrCard(context);
 
-                                            if (context
-                                                .mounted)
-                                              Navigator.pop(
-                                                context,
-                                              );
-                                          } finally {
-                                            scanController
-                                                .isDownloadingQr
-                                                .value =
-                                            false;
-                                          }
-                                        },
+                                                  if (context.mounted)
+                                                    Navigator.pop(context);
+                                                } finally {
+                                                  scanController
+                                                          .isDownloadingQr
+                                                          .value =
+                                                      false;
+                                                }
+                                              },
                                         icon:
-                                        scanController
-                                            .isDownloadingQr
-                                            .value
+                                            scanController.isDownloadingQr.value
                                             ? const SizedBox(
-                                          width: 18,
-                                          height: 18,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth:
-                                            2,
-                                            color: Colors
-                                                .white,
-                                          ),
-                                        )
+                                                width: 18,
+                                                height: 18,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                      color: Colors.white,
+                                                    ),
+                                              )
                                             : const Icon(
-                                          Icons
-                                              .download_rounded,
-                                          color: Colors
-                                              .white,
-                                        ),
+                                                Icons.download_rounded,
+                                                color: Colors.white,
+                                              ),
                                         label: Text(
-                                          scanController
-                                              .isDownloadingQr
-                                              .value
-                                              ? AppStrings
-                                              .downloading
-                                              .tr
-                                              : AppStrings
-                                              .download
-                                              .tr,
+                                          scanController.isDownloadingQr.value
+                                              ? AppStrings.downloading.tr
+                                              : AppStrings.download.tr,
                                           style: GoogleFonts.poppins(
-                                            fontSize:
-                                            ResponsiveHelper.fontSize(
+                                            fontSize: ResponsiveHelper.fontSize(
                                               15,
                                             ),
-                                            fontWeight:
-                                            FontWeight
-                                                .w600,
-                                            color: Colors
-                                                .white,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
                                           ),
                                         ),
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                          const Color(
+                                          backgroundColor: const Color(
                                             0xFF3D72E8,
                                           ),
-                                          padding:
-                                          EdgeInsets.symmetric(
-                                            vertical:
-                                            ResponsiveHelper.padding(
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: ResponsiveHelper.padding(
                                               14,
                                             ),
                                           ),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(
-                                              ResponsiveHelper.borderRadius(
-                                                12,
-                                              ),
+                                            borderRadius: BorderRadius.circular(
+                                              ResponsiveHelper.borderRadius(12),
                                             ),
                                           ),
                                         ),
@@ -644,10 +537,7 @@ class ProfileHeaderCard extends StatelessWidget {
                                     );
                                   }),
                                   SizedBox(
-                                    height:
-                                    ResponsiveHelper.spacing(
-                                      46,
-                                    ),
+                                    height: ResponsiveHelper.spacing(46),
                                   ),
                                 ],
                               ),
@@ -684,12 +574,3 @@ class ProfileHeaderCard extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-
-
