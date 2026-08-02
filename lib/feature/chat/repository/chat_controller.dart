@@ -1235,7 +1235,9 @@ class ChatController extends GetxController {
   ///get all user chat list========================================================
 
   RxList<Rooms> userChatList = <Rooms>[].obs;
-  var isLoadingChat = false.obs;
+  // Starts true so the first frame shows the loading shimmer instead of
+  // briefly flashing the "no chats" empty state before fetchChatList runs.
+  var isLoadingChat = true.obs;
   var isLoadingMore = false.obs;
   RxInt page = 1.obs;
   final int limit = 25;
