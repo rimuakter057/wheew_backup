@@ -238,6 +238,7 @@ class ChatController extends GetxController {
         message: newMessage.message,
         type: newMessage.type,
         isRead: newMessage.isRead,
+
         isDelivered: newMessage.isDelivered,
         createdAt: newMessage.createdAt,
         updatedAt: newMessage.updatedAt,
