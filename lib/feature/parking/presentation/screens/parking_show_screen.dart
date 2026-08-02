@@ -17,6 +17,7 @@ import 'package:platchatapp/feature/parking/controller/parking_show_controller.d
 import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_location_off_prompt.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_type_dropdown.dart';
+import 'package:platchatapp/feature/parking/presentation/widgets/parked_session_card.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_confirmation_overlay.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
@@ -41,7 +42,6 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
   MapType _selectedMapType = MapType.normal;
 
   late final ParkingShowController _parkingShowCtrl;
-  final RxBool _showConfirmationPopup = false.obs;
 
   late AnimationController _pulseController;
   final TextEditingController _searchController = TextEditingController();
@@ -86,26 +86,13 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
     // On resume, just re-check status/branching without resetting the
     // map back to the approximate default location.
     if (state == AppLifecycleState.resumed) {
-      _parkingShowCtrl.refreshStatus(
-        onShowPopup: () {
-          if (mounted) {
-            _showParkingConfirmationPopup();
-          }
-        },
-      );
+      _parkingShowCtrl.refreshStatus();
     }
   }
 
   Future<void> _initializeMap() async {
     mapDebug('_initializeMap: running initializeFlow');
-    await _parkingShowCtrl.initializeFlow(
-      onShowPopup: () {
-        if (mounted) {
-          mapDebug('_initializeMap: show popup callback triggered');
-          _showParkingConfirmationPopup();
-        }
-      },
-    );
+    await _parkingShowCtrl.initializeFlow();
   }
 
   void _onMapCreated(GoogleMapController controller) {
@@ -127,6 +114,17 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
               final gpsPosition = _parkingShowCtrl.gpsPosition.value;
               final showLocationPulse = _parkingShowCtrl.showLocationPulse.value;
               final isLoading = _parkingShowCtrl.isLoading.value;
+              final status = _parkingShowCtrl.status.value;
+              // Empty until /parking-mode/me resolves — treat that as
+              // "still loading" so nothing here defaults to the IDLE view.
+              final statusResolved = status.isNotEmpty;
+              final isParked = status == 'PARKED';
+              final isSearching = status == 'SEARCHING';
+              // Search bar + Find Parking Spot button + map controls show
+              // only once the real status is known and the user isn't
+              // parked (both plain-idle and active-search states) — never
+              // during the initial loading window, and never as a default.
+              final showSearchUi = statusResolved && !isParked;
 
               if (!isLocating && gpsPosition == null) {
                 return const ParkingLocationOffPrompt();
@@ -171,7 +169,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                   if (isLoading) const FetchingParkingBanner(),
 
                   ///search=======================================================
-                  if (showLocationPulse)
+                  if (showSearchUi)
                     Positioned(
                       top: MediaQuery.of(context).padding.top +
                           ResponsiveHelper.padding(16),
@@ -294,27 +292,43 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       ),
                     ),
 
-                  if (showLocationPulse)
-                  Positioned(
-                    bottom:
-                        ResponsiveHelper.padding(120),
-                    left: ResponsiveHelper.padding(80),
-                    right: ResponsiveHelper.padding(80),
-                    child: CustomGradientButton(
-                     // label: "Find Parking",
-                      onPressed: (){},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        
-                        children: [
-                       CustomImage(imageSrc: AssetsPath.pNav),
-                          SizedBox(width: ResponsiveHelper.width(4),),
-                          Text("Find Parking Spot",style: context.bodyMedium.copyWith(color: AppColors.white),)
-                        
-                      ],),
-
+                  if (isParked)
+                    Positioned(
+                      bottom: ResponsiveHelper.padding(120),
+                      left: ResponsiveHelper.padding(20),
+                      right: ResponsiveHelper.padding(20),
+                      child: ParkedSessionCard(
+                        // No "current session" API/data source exists yet —
+                        // placeholder details, ready to bind once it does.
+                        locationName: 'Green Park Mall',
+                        spotCode: 'B2 • A-27',
+                        onExitPressed: _showExitParkingConfirmation,
+                      ),
                     )
-                  ),
+                  else if (showSearchUi)
+                    Positioned(
+                      bottom: ResponsiveHelper.padding(120),
+                      left: ResponsiveHelper.padding(80),
+                      right: ResponsiveHelper.padding(80),
+                      child: CustomGradientButton(
+                        onPressed: isSearching
+                            ? _parkingShowCtrl.stopSearching
+                            : _parkingShowCtrl.onLeavingPopupNo,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (!isSearching) ...[
+                              CustomImage(imageSrc: AssetsPath.pNav),
+                              SizedBox(width: ResponsiveHelper.width(4)),
+                            ],
+                            Text(
+                              isSearching ? "Stop Searching" : "Find Parking Spot",
+                              style: context.bodyMedium.copyWith(color: AppColors.white),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                 ],
               );
             }),
@@ -323,7 +337,8 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
             ///map type and current location combined container (Gradient & Glassmorphism Effect)=============================================================
 
             Obx(() {
-              if (!_parkingShowCtrl.showLocationPulse.value) {
+              final navStatus = _parkingShowCtrl.status.value;
+              if (navStatus.isEmpty || navStatus == 'PARKED') {
                 return const SizedBox.shrink();
               }
               return Positioned(
@@ -400,31 +415,18 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
   }
 
 
-  void _showParkingConfirmationPopup() {
-    mapDebug('Showing Parking Confirmation Dialog');
+  // Triggered only by the "Exit Parking" button on the parked-session card.
+  // Yes reuses the existing "I'm leaving this spot" logic unchanged
+  // (createHandoff + set idle, then the rating dialog). No just closes the
+  // dialog and leaves the user on the parked-session view.
+  void _showExitParkingConfirmation() {
+    mapDebug('Showing Exit Parking Confirmation Dialog');
 
     ParkingConfirmationDialog.show(
       context,
-      onYes: _onParkingYes,
-      onNo: _onParkingNo,
+      onYes: _parkingShowCtrl.onLeavingPopupYes,
+      onNo: () {},
     );
-  }
-
-
-
-  // void _showParkingConfirmationPopup() {
-  //   mapDebug('Showing Parking Confirmation Dialog Overlay');
-  //   _showConfirmationPopup.value = true;
-  // }
-
-  void _onParkingNo() {
-    mapDebug('Parking Confirmation: User clicked NO');
-    _parkingShowCtrl.onLeavingPopupNo();
-  }
-
-  void _onParkingYes() {
-    mapDebug('Parking Confirmation: User clicked YES');
-    _parkingShowCtrl.onLeavingPopupYes();
   }
 }
 

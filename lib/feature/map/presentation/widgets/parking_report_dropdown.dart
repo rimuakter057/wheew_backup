@@ -563,6 +563,7 @@ class ParkingReportDropdown extends StatelessWidget {
       onClose: onClose,
       buttonText: "Book Now",
       onGetDirections: () => _openNavigation(context),
+      onNavigate: () => _openNavigation(context),
     );
   }
 }

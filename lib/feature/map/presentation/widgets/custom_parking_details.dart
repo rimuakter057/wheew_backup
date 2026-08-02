@@ -19,6 +19,11 @@ class CustomParkingDetailsDialog extends StatelessWidget {
   final VoidCallback onClose;
   final VoidCallback onGetDirections;
 
+  /// Optional second CTA — opens the in-app navigation screen for this
+  /// spot. Kept separate from [onGetDirections]/[buttonText] so existing
+  /// behavior there is untouched.
+  final VoidCallback? onNavigate;
+
   const CustomParkingDetailsDialog({
     super.key,
     required this.title,
@@ -32,6 +37,7 @@ class CustomParkingDetailsDialog extends StatelessWidget {
     required this.price,
     required this.onClose,
     required this.onGetDirections, required this.buttonText,
+    this.onNavigate,
   });
 
   @override
@@ -291,6 +297,19 @@ class CustomParkingDetailsDialog extends StatelessWidget {
                 label: buttonText,
                 onPressed: onGetDirections,
               ),
+
+              if (onNavigate != null) ...[
+                const SizedBox(height: 10),
+                CustomGradientButton(
+                  label: 'Navigate',
+                  onPressed: onNavigate,
+                  prefixIcon: const Icon(
+                    Icons.directions,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+              ],
             ],
           ),
         ),

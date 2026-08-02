@@ -3,14 +3,20 @@ import 'package:platchatapp/utils/language/app_string.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
+import 'package:platchatapp/feature/map/presentation/widgets/parking_location_card.dart';
 import 'package:platchatapp/feature/map/utils/marker_icon_loader.dart';
 import 'package:platchatapp/feature/parking/repository/parking_repository.dart';
+import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/router/routes.dart';
@@ -47,7 +53,10 @@ class ParkingShowController extends GetxController {
 
   final RxBool isLoading = false.obs;
   final RxBool isLocating = true.obs;
-  final RxString status = 'IDLE'.obs;
+  // Empty until /parking-mode/me resolves — the screen treats an empty
+  // status as "still loading" so it never falls back to showing IDLE's
+  // "Find Parking Spot" button by default before the real status is known.
+  final RxString status = ''.obs;
   final Rxn<LatLng> gpsPosition = Rxn<LatLng>();
   final Rxn<LatLng> mapCenter = Rxn<LatLng>();
   final RxBool showLocationPulse = false.obs;
@@ -123,32 +132,37 @@ class ParkingShowController extends GetxController {
   /// 1. Shows an approximate default location immediately so the map
   ///    renders with no delay.
   /// 2. In the background, checks /parking-mode/me and branches the flow.
-  Future<void> initializeFlow({required VoidCallback onShowPopup}) async {
-    _resetSearchState();
+  Future<void> initializeFlow() async {
+    // Don't assert IDLE yet — leave `status` empty ("still loading") until
+    // checkParkingModeMe actually resolves the real status below, so the
+    // screen never flashes the IDLE "Find Parking Spot" button by default.
+    _resetSearchState(setIdleStatus: false);
 
     isLocating.value = false;
     isRealLocationLoaded.value = false;
     gpsPosition.value = kApproxDefaultLocation;
     mapCenter.value = kApproxDefaultLocation;
 
-    await checkParkingModeMe(onShowPopup: onShowPopup);
+    await checkParkingModeMe();
   }
 
-  void _resetSearchState() {
+  void _resetSearchState({bool setIdleStatus = true}) {
     handoffList.clear();
     parkingAreaList.clear();
     polygons.clear();
     polylines.clear();
     circles.clear();
     markers.removeWhere((m) => m.markerId.value != 'saved_car_location');
-    status.value = 'IDLE';
+    if (setIdleStatus) {
+      status.value = 'IDLE';
+    }
 
     showLocationPulse.value = false;
     mapOverlayVersion.value++;
   }
 
-  Future<void> refreshStatus({required VoidCallback onShowPopup}) async {
-    await checkParkingModeMe(onShowPopup: onShowPopup);
+  Future<void> refreshStatus() async {
+    await checkParkingModeMe();
   }
 
   Future<bool> getUserLocation() async {
@@ -198,7 +212,12 @@ class ParkingShowController extends GetxController {
     }
   }
 
-  Future<void> checkParkingModeMe({required VoidCallback onShowPopup}) async {
+  /// Checks /parking-mode/me and updates [status] so the screen can branch
+  /// on it directly (IDLE -> plain search UI, SEARCHING -> auto-search,
+  /// PARKED -> active-session card). No dialog is shown automatically here
+  /// anymore — the leaving-confirmation dialog is only triggered explicitly
+  /// from the "Exit Parking" button now.
+  Future<void> checkParkingModeMe() async {
     isLoading.value = true;
     _logger.i('=== checkParkingModeMe START ===');
     try {
@@ -216,18 +235,23 @@ class ParkingShowController extends GetxController {
             data?['status']?.toString().toUpperCase() ?? 'IDLE';
         status.value = modeStatus;
 
-        if (modeStatus == 'SEARCHING') {
+        if (modeStatus == 'SEARCHING' || modeStatus == 'PARKED') {
+          // PARKED still needs the real location + nearby markers loaded so
+          // the map behind the "You're Parked" card isn't empty — it just
+          // skips the search-mode pulse/search-bar UI (handled by the
+          // screen from `status`).
           await getUserLocation();
-          showLocationPulse.value = true;
           final lat = gpsPosition.value?.latitude;
           final lng = gpsPosition.value?.longitude;
           if (lat != null && lng != null) {
             await fetchNearbyData(lat, lng);
           }
-        } else {
-          // IDLE or PARKED
-          onShowPopup();
+          if (modeStatus == 'SEARCHING') {
+            showLocationPulse.value = true;
+          }
         }
+        // IDLE -> plain search UI, no auto-fetch (handled by the screen
+        // from `status`).
       } else {
         String errorMsg = AppStrings.failedToRetrieveParkingStatus.tr;
         try {
@@ -238,7 +262,6 @@ class ParkingShowController extends GetxController {
           }
         } catch (_) {}
         _showMessage(errorMsg, isError: true);
-        onShowPopup();
       }
     } catch (e) {
       _showMessage(
@@ -248,7 +271,6 @@ class ParkingShowController extends GetxController {
         ),
         isError: true,
       );
-      onShowPopup();
     } finally {
       isLoading.value = false;
     }
@@ -355,6 +377,7 @@ class ParkingShowController extends GetxController {
 
   Future<void> onLeavingPopupNo() async {
     _logger.i('=== onLeavingPopupNo CLICKED ===');
+    status.value = 'SEARCHING';
     await getUserLocation();
     showLocationPulse.value = true;
     final lat = gpsPosition.value?.latitude;
@@ -381,6 +404,32 @@ class ParkingShowController extends GetxController {
     await fetchNearbyData(lat, lng);
   }
 
+  /// "Stop Searching" — sets parking mode back to idle and clears the
+  /// in-progress search (markers/pulse), returning the screen to the plain
+  /// "Find Parking Spot" view.
+  Future<void> stopSearching() async {
+    _logger.i('=== stopSearching CLICKED ===');
+    final lat = gpsPosition.value?.latitude;
+    final lng = gpsPosition.value?.longitude;
+
+    try {
+      if (lat != null && lng != null) {
+        final response = await _repository.setParkingModeIdle(
+          latitude: lat,
+          longitude: lng,
+        );
+        _logger.d(
+          'setParkingModeIdle (stopSearching) response status: ${response.statusCode}\n'
+          'body: ${response.body}',
+        );
+      }
+    } catch (e, st) {
+      _logger.e('Error stopping search / setting idle', error: e, stackTrace: st);
+    }
+
+    _resetSearchState();
+  }
+
   Future<void> onLeavingPopupYes() async {
     await getUserLocation();
 
@@ -391,6 +440,9 @@ class ParkingShowController extends GetxController {
       _showMessage(AppStrings.locationNotActiveOrAvailable.tr, isError: true);
       return;
     }
+
+    _showExitLoadingDialog();
+    bool succeeded = false;
 
     try {
       _logger.i(
@@ -482,6 +534,10 @@ class ParkingShowController extends GetxController {
           CameraUpdate.newLatLngZoom(LatLng(lat, lng), 17),
         );
       }
+
+      // Session ended -> back to the plain "not parked" search view.
+      _resetSearchState();
+      succeeded = true;
     } catch (e) {
       _showMessage(
         AppStrings.networkErrorReportingSpotHandoffWithError.tr.replaceFirst(
@@ -490,7 +546,197 @@ class ParkingShowController extends GetxController {
         ),
         isError: true,
       );
+    } finally {
+      _closeExitLoadingDialog();
     }
+
+    // Rating dialog only opens once the loader is fully closed and the
+    // exit actually succeeded — never stacked on top of the loader dialog.
+    if (succeeded) {
+      _showRatingDialog();
+    }
+  }
+
+  void _showExitLoadingDialog() {
+    final ctx = _dialogContext;
+    if (ctx == null) return;
+
+    showDialog(
+      context: ctx,
+      barrierDismissible: false,
+      barrierColor: Colors.black.withValues(alpha: 0.4),
+      builder: (_) => PopScope(
+        canPop: false,
+        child: Center(
+          child: Container(
+            padding: ResponsiveHelper.all(28),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(20),
+              ),
+            ),
+            child: SizedBox(
+              width: ResponsiveHelper.width(36),
+              height: ResponsiveHelper.width(36),
+              child: const CircularProgressIndicator(
+                strokeWidth: 3,
+                color: Color(0xFF185FA5),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _closeExitLoadingDialog() {
+    final ctx = _dialogContext;
+    if (ctx == null) return;
+    if (Navigator.of(ctx).canPop()) {
+      Navigator.of(ctx).pop();
+    }
+  }
+
+  // ── Post-exit parking experience rating — UI only for now, no submit
+  //    API exists yet, so Skip/Submit both just dismiss the dialog. ──
+  String _ratingLabel(double rating) {
+    if (rating <= 0) return '';
+    if (rating <= 1) return AppStrings.ratingPoor.tr;
+    if (rating <= 2) return AppStrings.ratingFair.tr;
+    if (rating <= 3) return AppStrings.ratingGood.tr;
+    if (rating <= 4) return AppStrings.ratingGreat.tr;
+    return AppStrings.ratingExcellent.tr;
+  }
+
+  void _showRatingDialog() {
+    final ctx = _dialogContext;
+    if (ctx == null) return;
+
+    double rating = 0;
+
+    showDialog(
+      context: ctx,
+      barrierDismissible: true,
+      barrierColor: Colors.black.withValues(alpha: 0.4),
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setState) => Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: EdgeInsets.symmetric(
+            horizontal: ResponsiveHelper.padding(24),
+          ),
+          child: Container(
+            padding: ResponsiveHelper.symmetric(horizontal: 24, vertical: 28),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(24),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SvgPicture.asset(
+                  AssetsPath.ratingIcon,
+                  width: ResponsiveHelper.iconSize(64),
+                  height: ResponsiveHelper.iconSize(64),
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(16)),
+                Text(
+                  'How was your parking experience?',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: ResponsiveHelper.fontSize(17),
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF1A1A2E),
+                  ),
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(18)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(5, (index) {
+                    final starValue = index + 1;
+                    final filled = rating >= starValue;
+                    return GestureDetector(
+                      onTap: () => setState(() {
+                        rating = rating == starValue.toDouble()
+                            ? 0
+                            : starValue.toDouble();
+                      }),
+                      child: Padding(
+                        padding: ResponsiveHelper.symmetric(horizontal: 2),
+                        child: Icon(
+                          filled ? Icons.star_rounded : Icons.star_outline_rounded,
+                          color: filled
+                              ? Colors.amber
+                              : Colors.black.withValues(alpha: 0.25),
+                          size: ResponsiveHelper.iconSize(36),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+                if (rating > 0) ...[
+                  SizedBox(height: ResponsiveHelper.spacing(8)),
+                  Container(
+                    padding: ResponsiveHelper.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF185FA5).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(20),
+                      ),
+                    ),
+                    child: Text(
+                      _ratingLabel(rating),
+                      style: GoogleFonts.poppins(
+                        fontSize: ResponsiveHelper.fontSize(13),
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF185FA5),
+                      ),
+                    ),
+                  ),
+                ],
+                SizedBox(height: ResponsiveHelper.spacing(22)),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomGradientButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(),
+                        label: AppStrings.skip.tr,
+                        backgroundColor: AppColors.blueShadeConBg,
+                        shadowColor: Colors.transparent,
+                        textColor: AppColors.black,
+                        borderColor: AppColors.white,
+                      ),
+                    ),
+                    SizedBox(width: ResponsiveHelper.spacing(14)),
+                    Expanded(
+                      child: CustomGradientButton(
+                        onPressed: rating < 1
+                            ? null
+                            : () {
+                                Navigator.of(dialogContext).pop();
+                                // No rating API yet — just acknowledge for now.
+                                _showMessage(
+                                  AppStrings.ratingSubmitted.tr,
+                                  isError: false,
+                                );
+                              },
+                        label: AppStrings.submitRating.tr,
+                        keepGradientWhenDisabled: true,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _buildMarkersAndPolygons() async {
@@ -1281,61 +1527,75 @@ class ParkingShowController extends GetxController {
   }
 
   void _showHandoffDialog(Map<String, dynamic> handoff) {
-    final status = handoff['status']?.toString() ?? '';
-    final expiresAtStr = handoff['expiresAt']?.toString() ?? '';
-    final expiresAt = DateTime.tryParse(expiresAtStr);
-    final expiresDisplay = expiresAt != null
-        ? DateConverter.formatDateTime(dateTime: expiresAt.toLocal())
-        : expiresAtStr;
+    final handoffStatus = handoff['status']?.toString() ?? '';
     final distanceMeters = handoff['distanceMeters'];
     final distanceDisplay = distanceMeters != null
-        ? '$distanceMeters m (from your location)'
-        : '';
+        ? '$distanceMeters m away'
+        : '-- m away';
     final lat = _toDouble(handoff['latitude']);
     final lng = _toDouble(handoff['longitude']);
 
-    _showFixedDetailsDialog(
-      title: 'Details',
-      rows: [
-        _DetailField('Status', status),
-        _DetailField('Expires At', expiresDisplay),
-        _DetailField('Distance', distanceDisplay),
-      ],
+    _showSpotDetailsCardSheet(
+      title: 'Handoff Spot',
+      subtitle: handoffStatus.isNotEmpty ? handoffStatus : 'Available',
+      badgeLabel: 'Standard',
+      badgeIcon: Icons.local_parking_rounded,
+      badgeColor: AppColors.paidBlue,
+      distanceLabel: distanceDisplay,
+      ratingLabel: '--',
+      leftStatLabel: '-- spots',
+      rightStatLabel: 'Free',
+      rightStatIcon: Icons.money_off_rounded,
       destination: (lat != null && lng != null) ? LatLng(lat, lng) : null,
     );
   }
 
-  // ── Parking Area Details Dialog: Name, Description, Parking Cost,
-  //    Is Active, Distance (with hint), Navigate only ──
+  // ── Parking Area Details: card view (title/badge/distance/rating +
+  //    spots/price) with a Save Park action. No save API yet — the button
+  //    is wired up visually only, ready for real submission later. ──
   void showParkingAreaDetails(Map<String, dynamic> area) {
     final name = area['name']?.toString() ?? '';
     final description = area['description']?.toString() ?? '';
-    final parkingCost = area['parkingCost']?.toString() ?? '';
-    final isActive = area['isActive'] == true ? 'Yes' : 'No';
+    final parkingCost = area['parkingCost']?.toString().trim() ?? '';
+    final isFree = parkingCost.isEmpty ||
+        parkingCost == '0' ||
+        parkingCost.toUpperCase() == 'FREE';
+    final isActive = area['isActive'] == true;
     final distanceMeters = area['distanceMeters'];
     final distanceDisplay = distanceMeters != null
-        ? '$distanceMeters m (from your location)'
-        : '';
+        ? '$distanceMeters m away'
+        : '-- m away';
     final lat = _toDouble(area['centerLat']);
     final lng = _toDouble(area['centerLng']);
 
-    _showFixedDetailsDialog(
-      title: name.isNotEmpty ? name : 'Details',
-      rows: [
-        _DetailField('Name', name),
-        _DetailField('Description', description),
-        _DetailField('Parking Cost', parkingCost),
-        _DetailField('Is Active', isActive),
-        _DetailField('Distance', distanceDisplay),
-      ],
+    _showSpotDetailsCardSheet(
+      title: name.isNotEmpty ? name : 'Parking Area',
+      subtitle: description.isNotEmpty ? description : 'Parking area',
+      badgeLabel: isActive ? 'Standard' : 'Inactive',
+      badgeIcon: Icons.local_parking_rounded,
+      badgeColor: isActive ? AppColors.paidBlue : Colors.grey,
+      distanceLabel: distanceDisplay,
+      ratingLabel: '--',
+      leftStatLabel: '-- spots',
+      rightStatLabel: isFree ? 'Free' : '\$$parkingCost/hr',
+      rightStatIcon: isFree ? Icons.money_off_rounded : Icons.monetization_on_outlined,
       destination: (lat != null && lng != null) ? LatLng(lat, lng) : null,
     );
   }
 
-  // ── Shared dialog shell used by both dialogs above ──
-  void _showFixedDetailsDialog({
+  // ── Shared "found spot" details bottom sheet — same card design used
+  //    on the Saved Parkings screen, plus a Save Park action. ──
+  void _showSpotDetailsCardSheet({
     required String title,
-    required List<_DetailField> rows,
+    required String subtitle,
+    required String badgeLabel,
+    required IconData badgeIcon,
+    required Color badgeColor,
+    required String distanceLabel,
+    required String ratingLabel,
+    required String leftStatLabel,
+    required String rightStatLabel,
+    IconData rightStatIcon = Icons.monetization_on_outlined,
     LatLng? destination,
   }) {
     final ctx = _dialogContext;
@@ -1346,50 +1606,44 @@ class ParkingShowController extends GetxController {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (dialogContext) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(ResponsiveHelper.borderRadius(24)),
-            ),
-          ),
-          child: Padding(
-            padding: ResponsiveHelper.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Center(
-                  child: Container(
-                    width: ResponsiveHelper.width(40),
-                    height: ResponsiveHelper.height(5),
-                    margin: EdgeInsets.only(
-                      bottom: ResponsiveHelper.spacing(16),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[350],
-                      borderRadius: BorderRadius.circular(
-                        ResponsiveHelper.borderRadius(10),
-                      ),
-                    ),
-                  ),
+        return Padding(
+          padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ParkingLocationCard(
+                title: title,
+                subtitle: subtitle,
+                badgeLabel: badgeLabel,
+                badgeIcon: badgeIcon,
+                badgeColor: badgeColor,
+                distanceLabel: distanceLabel,
+                ratingLabel: ratingLabel,
+                leftStatLabel: leftStatLabel,
+                rightStatLabel: rightStatLabel,
+                rightStatIcon: rightStatIcon,
+              ),
+              SizedBox(height: ResponsiveHelper.spacing(14)),
+              SizedBox(
+                width: double.infinity,
+                child: CustomGradientButton(
+                  // No save-parking-spot API yet — closes the sheet only,
+                  // ready to wire up to a real save call later.
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  label: 'Save Park',
                 ),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: ResponsiveHelper.fontSize(20),
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: ResponsiveHelper.spacing(16)),
-                ...rows
-                    .where((r) => r.value.isNotEmpty)
-                    .map((r) => _buildDetailRow(r.label, r.value)),
-                if (destination != null) ...[
-                  SizedBox(height: ResponsiveHelper.spacing(8)),
-                  ElevatedButton.icon(
+              ),
+              if (destination != null) ...[
+                SizedBox(height: ResponsiveHelper.spacing(10)),
+                SizedBox(
+                  width: double.infinity,
+                  child: CustomGradientButton(
+                    label: AppStrings.navigate.tr,
+                    prefixIcon: const Icon(
+                      Icons.directions,
+                      color: Colors.white,
+                      size: 18,
+                    ),
                     onPressed: () {
                       Navigator.of(dialogContext).pop();
                       AppRouter.router.pushNamed(
@@ -1397,35 +1651,10 @@ class ParkingShowController extends GetxController {
                         extra: {'destination': destination},
                       );
                     },
-                    icon: const Icon(Icons.directions, color: Colors.white),
-                    label: Text(
-                      AppStrings.navigate.tr,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF185FA5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          ResponsiveHelper.borderRadius(12),
-                        ),
-                      ),
-                      padding: ResponsiveHelper.symmetric(vertical: 12),
-                    ),
-                  ),
-                ],
-                SizedBox(height: ResponsiveHelper.spacing(12)),
-                TextButton(
-                  onPressed: () => Navigator.of(dialogContext).pop(),
-                  child: Text(
-                    AppStrings.close.tr,
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontWeight: FontWeight.bold,
-                    ),
                   ),
                 ),
               ],
-            ),
+            ],
           ),
         );
       },
@@ -1763,10 +1992,4 @@ class ParkingShowController extends GetxController {
       _logger.e('Could not launch URL: $url', error: e);
     }
   }
-}
-
-class _DetailField {
-  final String label;
-  final String value;
-  const _DetailField(this.label, this.value);
 }
