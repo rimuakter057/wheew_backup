@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -25,19 +26,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
       elevation: 0,
 
-      backgroundColor:bgColor?? Colors.white,
+      backgroundColor:bgColor?? AppColors.lightBlue,
 
-      leading: IconButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-
-        icon: Icon(
-          Icons.arrow_back,
-          size: ResponsiveHelper.iconSize(24),
-          color: Colors.black,
-        ),
-      ),
+      leading: BackIconWidget(),
 
       title: Text(
         title.tr,
@@ -58,3 +49,42 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
+
+
+
+class BackIconWidget extends StatelessWidget {
+  const BackIconWidget({
+    super.key,
+  });
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding:  EdgeInsets.only(left: ResponsiveHelper.padding(8)),
+      child: GestureDetector(
+        onTap: (){
+
+          Navigator.pop(context);
+
+        },
+        child: Container(
+
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.white.withOpacity(0.5),
+              border: Border.all(color: AppColors.white)
+          ),
+          child:  Icon(
+            Icons.arrow_back,
+            size: ResponsiveHelper.iconSize(24),
+            color: Colors.black,
+          ),
+        ),
+      ),
+    );
+  }
+}
+

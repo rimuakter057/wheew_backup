@@ -255,6 +255,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/share/widgets/bottom_sheet_aware/tracked_bottom_sheet.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
 
@@ -273,7 +274,7 @@ class RadiusFilterSheet extends StatefulWidget {
         required int initialRadiusMeter,
         required ValueChanged<int> onApply,
       }) {
-    return showModalBottomSheet(
+    return showTrackedBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,

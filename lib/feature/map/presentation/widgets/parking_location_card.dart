@@ -1,39 +1,63 @@
 import 'dart:ui';
-import 'package:get/get.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
-import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/extension/base_extension.dart';
+
 
 class ParkingLocationCard extends StatelessWidget {
-  const ParkingLocationCard({Key? key}) : super(key: key);
+  final String title;
+  final String subtitle;
+  final String badgeLabel;
+  final IconData badgeIcon;
+  final Color badgeColor;
+  final String distanceLabel;
+  final String ratingLabel;
+  final String leftStatLabel;
+  final String rightStatLabel;
+  final IconData leftStatIcon;
+  final IconData rightStatIcon;
 
-  @pragma('vm:entry-point')
+  final String? remainingTimeLabel;
+  final String? remainingTimeSubLabel;
+
+  const ParkingLocationCard({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.badgeLabel,
+    required this.badgeIcon,
+    required this.badgeColor,
+    required this.distanceLabel,
+    required this.ratingLabel,
+    required this.leftStatLabel,
+    required this.rightStatLabel,
+    this.leftStatIcon = Icons.map_outlined,
+    this.rightStatIcon = Icons.monetization_on_outlined,
+    this.remainingTimeLabel,
+    this.remainingTimeSubLabel,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Container(
       // Outer container styling matching the rounded corners and subtle shadow
       decoration: BoxDecoration(
-        color: const Color(0xFFE3E9F0).withOpacity(0.85),
+        color:  Color(0xFFD6DFEA),
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(32)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        border: Border.all(color: AppColors.white)
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(32)),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Padding(
-            padding: ResponsiveHelper.all(24),
+            padding: ResponsiveHelper.all(16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Top Header Section: Title and "Electric" Badge
+                // Top Header Section: Title and status Badge
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,101 +67,142 @@ class ParkingLocationCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Green Park Mall',
-                            style: TextStyle(
-                              fontSize: ResponsiveHelper.fontSize(24),
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF1E293B),
-                              letterSpacing: -0.5,
-                            ),
+                            title,
+                            style: context.bodyLarge.copyWith(color: AppColors.black,fontWeight: FontWeight.w700)
                           ),
                           SizedBox(height: ResponsiveHelper.spacing(4)),
                           Text(
-                            AppStrings.sideParking.tr,
-                            style: TextStyle(
-                              fontSize: ResponsiveHelper.fontSize(15),
-                              color: const Color(0xFF1E293B).withOpacity(0.6),
-                              fontWeight: FontWeight.w400,
-                            ),
+                            subtitle,
+                            style: context.bodySmall.copyWith(color: AppColors.black.withOpacity(0.6),fontWeight: FontWeight.w500)
                           ),
                         ],
                       ),
                     ),
-                    // "Electric" Pill Badge
-                    Container(
-
-                      padding: ResponsiveHelper.symmetric(horizontal: 14, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-                        border: Border.all(
-                          color: const Color(0xFF22C55E).withOpacity(0.2),
-                          width: ResponsiveHelper.borderWidth(1),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        // Status Pill Badge
+                        Container(
+                          padding: ResponsiveHelper.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                          gradient: AppColors.containerGradient,
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveHelper.borderRadius(20),
+                            ),
+                            border: Border.all(
+                              color: AppColors.white,
+                              width: ResponsiveHelper.borderWidth(1),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                badgeIcon,
+                                size: ResponsiveHelper.iconSize(14),
+                                color: badgeColor,
+                              ),
+                              SizedBox(width: ResponsiveHelper.spacing(4)),
+                              Text(
+                                badgeLabel,
+                                style:context.bodySmall.copyWith(
+                                  color: badgeColor,
+                                  fontWeight: FontWeight.w600
+                                )
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(8)),
+
+                /// Distance and Rating Section and time
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on_outlined,
+                          size: ResponsiveHelper.iconSize(18),
+                          color: AppColors.blue
+                        ),
+                        SizedBox(width: ResponsiveHelper.spacing(4)),
+                        Text(
+                          distanceLabel,
+                          style: TextStyle(
+                            fontSize: ResponsiveHelper.fontSize(14),
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF1E293B),
+                          ),
+                        ),
+                        SizedBox(width: ResponsiveHelper.spacing(16)),
+                        Icon(
+                          Icons.star_rounded,
+                          size: ResponsiveHelper.iconSize(18),
+                          color: const Color(0xFF1D4ED8), // Deep blue star as seen in UI
+                        ),
+                        SizedBox(width: ResponsiveHelper.spacing(4)),
+                        Text(
+                          ratingLabel,
+                          style: TextStyle(
+                            fontSize: ResponsiveHelper.fontSize(14),
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF1E293B),
+                          ),
+                        ),
+                      ],
+                    ),
+
+
+                    if (remainingTimeLabel != null) ...[
+                      SizedBox(height: ResponsiveHelper.spacing(6)),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            Icons.electric_bolt_rounded, // Swap with a custom plug icon if preferred
-                            size: ResponsiveHelper.iconSize(14),
-                            color: const Color(0xFF22C55E),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.timer_outlined,
+                                size: ResponsiveHelper.iconSize(14),
+                                color: const Color(0xFF1D4ED8),
+                              ),
+                              SizedBox(width: ResponsiveHelper.spacing(4)),
+                              Text(
+                                remainingTimeLabel!,
+                                style: TextStyle(
+                                  fontSize: ResponsiveHelper.fontSize(13),
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF1D4ED8),
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(width: ResponsiveHelper.spacing(4)),
-                           Text(
-                            AppStrings.electric.tr,
-                            style: TextStyle(
-                              color: Color(0xFF22C55E),
-                              fontSize: ResponsiveHelper.fontSize(13),
-                              fontWeight: FontWeight.w500,
+                          if (remainingTimeSubLabel != null)
+                            Text(
+                              remainingTimeSubLabel!,
+                              style: context.bodySmall.copyWith(color: AppColors.black.withOpacity(0.6),)
                             ),
-                          ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: ResponsiveHelper.spacing(16)),
 
-                // Distance and Rating Section
-                Row(
-                  children: [
-                    Icon(
-                      Icons.location_on_outlined,
-                      size: ResponsiveHelper.iconSize(18),
-                      color: const Color(0xFF2563EB),
-                    ),
-                    SizedBox(width: ResponsiveHelper.spacing(4)),
-                     Text(
-                      AppStrings.twoFiftyMAway.tr,
-                      style: TextStyle(
-                        fontSize: ResponsiveHelper.fontSize(14),
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF1E293B),
-                      ),
-                    ),
-                    SizedBox(width: ResponsiveHelper.spacing(16)),
-                    Icon(
-                      Icons.star_rounded,
-                      size: ResponsiveHelper.iconSize(18),
-                      color: const Color(0xFF1D4ED8), // Deep blue star as seen in UI
-                    ),
-                    SizedBox(width: ResponsiveHelper.spacing(4)),
-                    Text(
-                      '4.5',
-                      style: TextStyle(
-                        fontSize: ResponsiveHelper.fontSize(14),
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF1E293B),
-                      ),
-                    ),
+                    ],
+
                   ],
                 ),
-                SizedBox(height: ResponsiveHelper.spacing(20)),
+                SizedBox(height: ResponsiveHelper.spacing(8)),
 
                 // Bottom Detailed Stats Pill Container
                 Container(
-                  padding: ResponsiveHelper.symmetric(vertical: 16),
+                  padding: ResponsiveHelper.symmetric(vertical: 8),
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.04),
                     borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
@@ -149,18 +214,14 @@ class ParkingLocationCard extends StatelessWidget {
                         child: Column(
                           children: [
                             Icon(
-                              Icons.map_outlined,
-                              color: const Color(0xFF1E293B).withOpacity(0.7),
+                              leftStatIcon,
+                              color: AppColors.black,
                               size: ResponsiveHelper.iconSize(22),
                             ),
                             SizedBox(height: ResponsiveHelper.spacing(6)),
                             Text(
-                              AppStrings.twoSpots.tr,
-                              style: TextStyle(
-                                fontSize: ResponsiveHelper.fontSize(14),
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF1E293B).withOpacity(0.6),
-                              ),
+                              leftStatLabel,
+                              style: context.bodySmall.copyWith(color: AppColors.black.withOpacity(0.6),fontWeight: FontWeight.w600)
                             ),
                           ],
                         ),
@@ -176,18 +237,14 @@ class ParkingLocationCard extends StatelessWidget {
                         child: Column(
                           children: [
                             Icon(
-                              Icons.monetization_on_outlined,
-                              color: const Color(0xFF1E293B).withOpacity(0.7),
+                              rightStatIcon,
+                              color: AppColors.black,
                               size: ResponsiveHelper.iconSize(22),
                             ),
                             SizedBox(height: ResponsiveHelper.spacing(6)),
                             Text(
-                              AppStrings.twentyDollarsPerHour.tr,
-                              style: TextStyle(
-                                fontSize: ResponsiveHelper.fontSize(14),
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF1E293B).withOpacity(0.6),
-                              ),
+                              rightStatLabel,
+                                style: context.bodySmall.copyWith(color: AppColors.black.withOpacity(0.6),fontWeight: FontWeight.w600)
                             ),
                           ],
                         ),

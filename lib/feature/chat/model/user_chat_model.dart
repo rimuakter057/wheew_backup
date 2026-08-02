@@ -9,6 +9,7 @@ class UserChatModel {
       rooms = <Rooms>[];
       json['rooms'].forEach((v) {
         rooms!.add(Rooms.fromJson(v));
+
       });
     }
     total = json['total'];
@@ -94,6 +95,7 @@ class Rooms {
       groupMembers = <GroupMessage>[];
       json['group_members'].forEach((v) {
         groupMembers!.add(GroupMessage.fromJson(v));
+
       });
     }
   }

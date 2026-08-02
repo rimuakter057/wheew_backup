@@ -28,7 +28,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return Scaffold(
       appBar: CustomAppBar(
         title: AppStrings.forgotPassword.tr,
-        bgColor: Colors.transparent,
+
+
       ),
 
       body: Container(

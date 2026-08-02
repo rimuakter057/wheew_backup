@@ -5,6 +5,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
 import 'package:platchatapp/share/widgets/button/primary_button.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
+import 'package:platchatapp/utils/extension/base_extension.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
 import '../../../core/router/routes_name.dart';
@@ -38,112 +39,113 @@ class _OtpScreenState extends State<OtpScreen> {
         title: AppStrings.verificationCode.tr,
       ),
 
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(ResponsiveHelper.padding(24)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                AppStrings.enterVerificationCode.tr,
-                style: TextStyle(
-                  fontSize: ResponsiveHelper.fontSize(16),
-                ),
-              ),
-
-              SizedBox(height: ResponsiveHelper.height(16)),
-
-              Text(
-                AppStrings.weSent6DigitCode.tr,
-                style: TextStyle(
-                  fontSize: ResponsiveHelper.fontSize(14),
-                ),
-              ),
-
-              const SizedBox(height: 32),
-
-              /// OTP FIELD
-              PinCodeTextField(
-                appContext: context,
-                length: 6,
-                controller: _otpController,
-                keyboardType: TextInputType.number,
-                animationType: AnimationType.fade,
-                enableActiveFill: true,
-                backgroundColor: Colors.transparent,
-                cursorColor: AppColors.successColor,
-
-                pinTheme: PinTheme(
-                  shape: PinCodeFieldShape.box,
-                  borderRadius: BorderRadius.circular(12),
-                  fieldHeight: ResponsiveHelper.iconSize(52),
-                  fieldWidth: ResponsiveHelper.iconSize(52),
-
-                  activeColor: AppColors.successColor,
-                  selectedColor: AppColors.brandHoverColor,
-                  inactiveColor: Colors.transparent,
-
-                  activeFillColor: AppColors.softBrandColor,
-                  selectedFillColor: Colors.white,
-                  inactiveFillColor: AppColors.softBrandColor,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: AppColors.primaryBackgroundGradient
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(ResponsiveHelper.padding(24)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  AppStrings.enterVerificationCode.tr,
+                  style: context.titleMedium
                 ),
 
-                textStyle:
-                Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.primaryText,
-                  fontSize: ResponsiveHelper.fontSize(16),
+                SizedBox(height: ResponsiveHelper.height(16)),
+
+                Text(
+                  AppStrings.weSent6DigitCode.tr,
+                  style: context.bodySmall
                 ),
 
-                beforeTextPaste: (text) => true,
+                const SizedBox(height: 32),
 
-                onChanged: (_) {
-                  if (hasError) {
-                    setState(() => hasError = false);
-                  }
-                },
+                /// OTP FIELD
+                PinCodeTextField(
+                  appContext: context,
+                  length: 6,
+                  controller: _otpController,
+                  keyboardType: TextInputType.number,
+                  animationType: AnimationType.fade,
+                  enableActiveFill: true,
+                  backgroundColor:Colors.transparent,
+                  cursorColor: AppColors.successColor,
 
-                onCompleted: (value) {
-                  debugPrint('OTP: $value');
-                },
-              ),
+                  pinTheme: PinTheme(
+                    shape: PinCodeFieldShape.box,
+                    borderRadius: BorderRadius.circular(12),
+                    fieldHeight: ResponsiveHelper.iconSize(52),
+                    fieldWidth: ResponsiveHelper.iconSize(52),
 
-              const Spacer(),
+                    activeColor: AppColors.greyBorder,
+                    selectedColor: AppColors.brandHoverColor,
+                    inactiveColor:AppColors.white,
 
-              PrimaryButton(
-                title: AppStrings.send.tr,
-                onTap: () async {
-                  if (_otpController.text.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          AppStrings.otpRequired.tr,
+                    activeFillColor: AppColors.softBrandColor,
+                    selectedFillColor:AppColors.white,
+                    inactiveFillColor: AppColors.softBrandColor,
+                  ),
+
+                  textStyle:
+                  Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primaryText,
+                    fontSize: ResponsiveHelper.fontSize(16),
+                  ),
+
+                  beforeTextPaste: (text) => true,
+
+                  onChanged: (_) {
+                    if (hasError) {
+                      setState(() => hasError = false);
+                    }
+                  },
+
+                  onCompleted: (value) {
+                    debugPrint('OTP: $value');
+                  },
+                ),
+
+                const Spacer(),
+
+                PrimaryButton(
+                  title: AppStrings.send.tr,
+                  onTap: () async {
+                    if (_otpController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            AppStrings.otpRequired.tr,
+                          ),
                         ),
-                      ),
-                    );
-                    return;
-                  }
+                      );
+                      return;
+                    }
 
-                  final otpToken = await controller.verifyOtp(
-                    email: widget.email,
-                    otp: _otpController.text,
-                    context: context,
-                  );
-
-                  if (otpToken != null) {
-                    context.pushNamed(
-                      RouteName.resetPassword,
-                      extra: {
-                        "otpToken": otpToken,
-                        "email": widget.email,
-                      },
+                    final otpToken = await controller.verifyOtp(
+                      email: widget.email,
+                      otp: _otpController.text,
+                      context: context,
                     );
 
-                    _otpController.clear();
-                  }
-                },
-              ),
-            ],
+                    if (otpToken != null) {
+                      context.pushNamed(
+                        RouteName.resetPassword,
+                        extra: {
+                          "otpToken": otpToken,
+                          "email": widget.email,
+                        },
+                      );
+
+                      _otpController.clear();
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

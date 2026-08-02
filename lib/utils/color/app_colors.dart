@@ -10,6 +10,7 @@ class AppColors {
 
 
 
+
   static const LinearGradient primaryBackgroundGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,

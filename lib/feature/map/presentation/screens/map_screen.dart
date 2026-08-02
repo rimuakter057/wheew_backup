@@ -17,6 +17,9 @@ import 'package:platchatapp/feature/map/presentation/widgets/radius_filter_butto
 import 'package:platchatapp/feature/map/utils/map_debug.dart';
 import 'package:platchatapp/feature/map/utils/marker_icon_loader.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/share/widgets/bottom_sheet_aware/bottom_overlay_height_reporter.dart';
+import 'package:platchatapp/share/widgets/bottom_sheet_aware/bottom_sheet_aware_positioned.dart';
+import 'package:platchatapp/share/widgets/bottom_sheet_aware/tracked_bottom_sheet.dart';
 import 'package:platchatapp/share/widgets/map_side_controls.dart';
 import 'package:platchatapp/share/widgets/map_top_bar.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
@@ -241,7 +244,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     // cleanup below doesn't double-run the same reset when they pop it.
     bool handled = false;
 
-    showModalBottomSheet(
+    showTrackedBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -310,7 +313,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   // ══════════════════════════════════════════════════════════════════════
 
   void _showSavedParkingDetailsSheet(SavedParkingModel parking) {
-    showModalBottomSheet(
+    showTrackedBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
@@ -329,7 +332,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
 
 ///add my save paring ====================================
   void _showSaveParkingSheet() {
-    showModalBottomSheet(
+    showTrackedBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -564,14 +567,18 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
             Obx(() {
               final selected = _parkingCtrl.selectedReport.value;
               if (selected == null) return const SizedBox.shrink();
+              final cardBottomOffset = MediaQuery.of(context).padding.top +
+                  ResponsiveHelper.padding(52);
               return Positioned(
                 left: 0,
                 right: 0,
-                bottom: MediaQuery.of(context).padding.top +
-                    ResponsiveHelper.padding(52),
-                child: ParkingReportDropdown(
-                  report: selected,
-                  onClose: _parkingCtrl.clearSelectedReport,
+                bottom: cardBottomOffset,
+                child: BottomOverlayHeightReporter(
+                  extraBottomOffset: cardBottomOffset,
+                  child: ParkingReportDropdown(
+                    report: selected,
+                    onClose: _parkingCtrl.clearSelectedReport,
+                  ),
                 ),
               );
             }),
@@ -593,12 +600,19 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
 
 
             /// ── Action buttons cluster (Report Spot / Save My Parking) ─────
-            Positioned(
-              right: 0,
-              left: 0,
-              bottom: ResponsiveHelper.padding(340),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+            /// Right-aligned by default; switches to centered whenever a
+            /// bottom sheet is open, staying just above it.
+            BottomSheetAwarePositioned(
+              defaultBottom: ResponsiveHelper.padding(200),
+              gap: ResponsiveHelper.spacing(16),
+              left: null,
+              right: ResponsiveHelper.padding(20),
+              openLeft: 0,
+              openRight: 0,
+              builder: (context, isSheetOpen) => Column(
+                crossAxisAlignment: isSheetOpen
+                    ? CrossAxisAlignment.center
+                    : CrossAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _ActionPillButton(

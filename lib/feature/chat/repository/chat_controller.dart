@@ -1152,6 +1152,7 @@ class ChatController extends GetxController {
         if (value['message_id'] != null) deliveredIds.add(value['message_id'].toString());
         if (value['messageIds'] != null) {
           final ids = value['messageIds'];
+
           if (ids is List) {
             deliveredIds.addAll(ids.map((e) => e.toString()));
           }

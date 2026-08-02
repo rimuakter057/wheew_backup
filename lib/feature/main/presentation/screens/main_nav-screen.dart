@@ -10,6 +10,7 @@ import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
 import 'package:platchatapp/feature/map/presentation/screens/simple_map_screen.dart';
 import 'package:platchatapp/feature/parking/presentation/screens/parking_show_screen.dart';
+import 'package:platchatapp/feature/parking/presentation/screens/save_parking_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_nav_screen.dart';
 import 'package:platchatapp/feature/scan/presentation/widget/scan_options_card.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -47,7 +48,9 @@ class _MainNavScreenState extends State<MainNavScreen> {
       case 4:
         return ScanScreen();
       case 5:
-        return const SimpleMapScreen();
+      //  return const SimpleMapScreen(); //SaveParkingScreen
+
+        return SaveParkingScreen();
       default:
         return const SizedBox.shrink();
     }

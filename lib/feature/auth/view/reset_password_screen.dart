@@ -27,6 +27,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final AuthController controller = AuthController();
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmedPasswordController =
+
       TextEditingController();
 
   @override
@@ -42,7 +43,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     return Scaffold(
       appBar: CustomAppBar(
         title: AppStrings.resetCode.tr,
-        bgColor: Colors.transparent,
       ),
       body: Container(
         width: double.infinity,
