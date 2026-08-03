@@ -79,6 +79,13 @@ class ParkingShowController extends GetxController {
   final RxSet<Polyline> polylines = <Polyline>{}.obs;
   final RxList<dynamic> handoffList = <dynamic>[].obs;
   final RxList<dynamic> parkingAreaList = <dynamic>[].obs;
+
+  // Captured opportunistically from /parking-mode/me when status is PARKED,
+  // if the backend includes it (spotId/parkingAreaId/areaId). No "current
+  // session" endpoint exists yet to fetch this directly, so it stays null
+  // until the backend response actually carries one — used as the
+  // handoff's spotId on exit and as the ratings endpoint's parkingAreaId.
+  final Rxn<String> currentParkingAreaId = Rxn<String>();
   final RxSet<Marker> markers = <Marker>{}.obs;
   final RxSet<Polygon> polygons = <Polygon>{}.obs;
 
@@ -154,8 +161,11 @@ class ParkingShowController extends GetxController {
     polylines.clear();
     circles.clear();
     markers.removeWhere((m) => m.markerId.value != 'saved_car_location');
+    currentParkingAreaId.value = null;
     if (setIdleStatus) {
       status.value = 'IDLE';
+    } else {
+      status.value = '';
     }
 
     showLocationPulse.value = false;
@@ -235,7 +245,32 @@ class ParkingShowController extends GetxController {
         final String modeStatus =
             data?['status']?.toString().toUpperCase() ?? 'IDLE';
 
-        if (modeStatus == 'SEARCHING' || modeStatus == 'PARKED') {
+        currentParkingAreaId.value = modeStatus == 'PARKED'
+            ? (data?['spotId'] ?? data?['parkingAreaId'] ?? data?['areaId'])
+                ?.toString()
+            : null;
+
+        if (modeStatus == 'IDLE') {
+          // IDLE -> same nearby parking areas the map (home tab) shows,
+          // while the "Find Parking Spot" button is visible. Single GET,
+          // no handoffs call (that's only for SEARCHING).
+          await getUserLocation();
+          final lat = gpsPosition.value?.latitude;
+          final lng = gpsPosition.value?.longitude;
+          if (lat != null && lng != null) {
+            await fetchNearbyParkingAreasOnly(lat, lng);
+          }
+          showLocationPulse.value = false;
+        } else if (modeStatus == 'SEARCHING') {
+          // SEARCHING -> just 1 API call (nearby handoffs), same as before.
+          await getUserLocation();
+          final lat = gpsPosition.value?.latitude;
+          final lng = gpsPosition.value?.longitude;
+          if (lat != null && lng != null) {
+            await fetchNearbyHandoffsOnly(lat, lng);
+          }
+          showLocationPulse.value = true;
+        } else if (modeStatus == 'PARKED') {
           // PARKED still needs the real location + nearby markers loaded so
           // the map behind the "You're Parked" card isn't empty — it just
           // skips the search-mode pulse/search-bar UI (handled by the
@@ -246,16 +281,10 @@ class ParkingShowController extends GetxController {
           if (lat != null && lng != null) {
             await fetchNearbyData(lat, lng);
           }
-          if (modeStatus == 'SEARCHING') {
-            showLocationPulse.value = true;
-          } else {
-            // PARKED — make sure a stale pulse from a previous SEARCHING
-            // session doesn't keep the screen blinking now.
-            showLocationPulse.value = false;
-          }
+          // PARKED — make sure a stale pulse from a previous SEARCHING
+          // session doesn't keep the screen blinking now.
+          showLocationPulse.value = false;
         }
-        // IDLE -> plain search UI, no auto-fetch (handled by the screen
-        // from `status`).
 
         // Only reveal the resolved status — and therefore the matching
         // button/card — once any loading it triggered above has fully
@@ -344,7 +373,7 @@ class ParkingShowController extends GetxController {
       }
 
       if (areasResponse.statusCode == 200) {
-        parkingAreaList.value = jsonDecode(areasResponse.body) as List<dynamic>;
+        parkingAreaList.value = _extractAreasList(areasResponse.body);
       } else {
         _showMessage(
           AppStrings.failedToLoadNearbyParkingAreas.tr,
@@ -386,6 +415,104 @@ class ParkingShowController extends GetxController {
     }
   }
 
+  // /park-relay/parking-areas/search returns {"areas": [...], "total": ...}
+  // (not a bare list) — unwrap it, same as the map (home tab) does.
+  List<dynamic> _extractAreasList(String body) {
+    final decoded = jsonDecode(body);
+    if (decoded is Map<String, dynamic>) {
+      final nested = decoded['areas'];
+      if (nested is List) return nested;
+      return const [];
+    }
+    if (decoded is List) return decoded;
+    return const [];
+  }
+
+  // IDLE -> nearby parking areas only, same endpoint/data the map (home
+  // tab) shows. Single GET, no handoffs call.
+  Future<void> fetchNearbyParkingAreasOnly(double? lat, double? lng) async {
+    if (lat == null || lng == null) {
+      _logger.w('fetchNearbyParkingAreasOnly SKIPPED: lat/lng is null');
+      return;
+    }
+    isLoading.value = true;
+    try {
+      final response = await _repository.getNearbyParkingAreas(
+        latitude: lat,
+        longitude: lng,
+        radiusMeters: _parkingAreaRadiusMeters,
+      );
+      _logger.d(
+        'GET /parking-areas/search -> status: ${response.statusCode}\n'
+        'body: ${response.body}',
+      );
+      if (response.statusCode == 200) {
+        parkingAreaList.value = _extractAreasList(response.body);
+      } else {
+        _showMessage(AppStrings.failedToLoadNearbyParkingAreas.tr, isError: true);
+      }
+      await _buildMarkersAndPolygons();
+      if (mapController != null && gpsPosition.value != null) {
+        await mapController!.animateCamera(
+          CameraUpdate.newLatLngZoom(gpsPosition.value!, _initialSpotsZoom),
+        );
+      }
+    } catch (e, st) {
+      _logger.e('fetchNearbyParkingAreasOnly ERROR', error: e, stackTrace: st);
+      _showMessage(
+        AppStrings.failedToLoadNearbyParkingSpotsWithError.tr.replaceFirst(
+          '@error',
+          e.toString(),
+        ),
+        isError: true,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // SEARCHING -> nearby handoffs only — just the 1 API call.
+  Future<void> fetchNearbyHandoffsOnly(double? lat, double? lng) async {
+    if (lat == null || lng == null) {
+      _logger.w('fetchNearbyHandoffsOnly SKIPPED: lat/lng is null');
+      return;
+    }
+    isLoading.value = true;
+    try {
+      final response = await _repository.getNearbyHandoffs(
+        latitude: lat,
+        longitude: lng,
+        radiusMeters: selectedRadiusMeter.value,
+      );
+      _logger.d(
+        'GET /handoffs/nearby -> status: ${response.statusCode}\n'
+        'body: ${response.body}',
+      );
+      if (response.statusCode == 200) {
+        handoffList.value = jsonDecode(response.body) as List<dynamic>;
+      } else {
+        _showMessage(AppStrings.failedToLoadNearbyHandoffSpots.tr, isError: true);
+      }
+      await _buildMarkersAndPolygons();
+      if (mapController != null && gpsPosition.value != null) {
+        await mapController!.animateCamera(
+          CameraUpdate.newLatLngZoom(gpsPosition.value!, _initialSpotsZoom),
+        );
+      }
+    } catch (e, st) {
+      _logger.e('fetchNearbyHandoffsOnly ERROR', error: e, stackTrace: st);
+      _showMessage(
+        AppStrings.failedToLoadNearbyParkingSpotsWithError.tr.replaceFirst(
+          '@error',
+          e.toString(),
+        ),
+        isError: true,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<void> onLeavingPopupNo() async {
     _logger.i('=== onLeavingPopupNo CLICKED ===');
     status.value = 'SEARCHING';
@@ -412,7 +539,8 @@ class ParkingShowController extends GetxController {
     } catch (e, st) {
       _logger.e('Error setting searching mode', error: e, stackTrace: st);
     }
-    await fetchNearbyData(lat, lng);
+    // SEARCHING -> just 1 API call (nearby handoffs).
+    await fetchNearbyHandoffsOnly(lat, lng);
   }
 
   /// "Stop Searching" — sets parking mode back to idle and clears the
@@ -454,19 +582,22 @@ class ParkingShowController extends GetxController {
 
     _showExitLoadingDialog();
     bool succeeded = false;
+    String? ratedAreaId;
 
     try {
       _logger.i(
-        '=== YES CLICK -> 2 API CALLS ===\n'
-        '1. POST /park-relay/handoffs\n'
-        '2. POST /park-relay/parking-mode/idle\n'
+        '=== YES CLICK -> 1 API CALL ===\n'
+        '1. POST /park-relay/handoffs (spotId: ${currentParkingAreaId.value})\n'
         'body: {"latitude": $lat, "longitude": $lng}',
       );
 
-      // Call 1: Create Handoff
+      // Create Handoff — the backend now handles the idle transition as
+      // part of this call, so /park-relay/parking-mode/idle is no longer
+      // called manually here afterward.
       final responseHandoff = await _repository.createHandoff(
         latitude: lat,
         longitude: lng,
+        spotId: currentParkingAreaId.value,
       );
 
       debugPrint('Handoffs Response Status: ${responseHandoff.statusCode}');
@@ -499,42 +630,6 @@ class ParkingShowController extends GetxController {
         return;
       }
 
-      // Call 2: Set Parking Mode Idle
-      final responseIdle = await _repository.setParkingModeIdle(
-        latitude: lat,
-        longitude: lng,
-      );
-
-      debugPrint('Idle Response Status: ${responseIdle.statusCode}');
-
-      debugPrint('Idle Response Body: ${responseIdle.body}');
-
-      _logger.d(
-        'setParkingModeIdle status: ${responseIdle.statusCode}\n'
-        'body: ${responseIdle.body}',
-      );
-
-      final idleSuccess =
-          responseIdle.statusCode == 200 || responseIdle.statusCode == 201;
-
-      // Handle Idle API error
-      if (!idleSuccess) {
-        try {
-          final responseData = jsonDecode(responseIdle.body);
-
-          final backendMessage = responseData['message']?.toString();
-
-          if (backendMessage != null && backendMessage.isNotEmpty) {
-            _showMessage(backendMessage, isError: true);
-          }
-        } catch (e) {
-          debugPrint('Failed to parse idle error response: $e');
-        }
-
-        return;
-      }
-
-      // Both APIs successful
       _showMessage(
         AppStrings.parkingSpotHandoffReportedSuccessfully.tr,
         isError: false,
@@ -545,6 +640,10 @@ class ParkingShowController extends GetxController {
           CameraUpdate.newLatLngZoom(LatLng(lat, lng), 17),
         );
       }
+
+      // Captured before _resetSearchState() clears it — the rating dialog
+      // needs it to submit against the right parking area.
+      ratedAreaId = currentParkingAreaId.value;
 
       // Session ended -> back to the plain "not parked" search view.
       _resetSearchState();
@@ -564,7 +663,7 @@ class ParkingShowController extends GetxController {
     // Rating dialog only opens once the loader is fully closed and the
     // exit actually succeeded — never stacked on top of the loader dialog.
     if (succeeded) {
-      _showRatingDialog();
+      _showRatingDialog(ratedAreaId);
     }
   }
 
@@ -609,8 +708,38 @@ class ParkingShowController extends GetxController {
     }
   }
 
-  // ── Post-exit parking experience rating — UI only for now, no submit
-  //    API exists yet, so Skip/Submit both just dismiss the dialog. ──
+  // ── Post-exit parking experience rating. Submits via
+  //    POST /park-relay/parking-areas/{parkingAreaId}/ratings when a real
+  //    parkingAreaId was captured (see currentParkingAreaId) — no review
+  //    text field exists in the UI yet, so review is sent empty. Falls
+  //    back to the old "just acknowledge" behavior when no id is known. ──
+  Future<void> _submitRating(String? parkingAreaId, double rating) async {
+    if (parkingAreaId == null || parkingAreaId.isEmpty) {
+      _showMessage(AppStrings.ratingSubmitted.tr, isError: false);
+      return;
+    }
+    try {
+      final response = await _repository.submitParkingAreaRating(
+        parkingAreaId: parkingAreaId,
+        rating: rating.toInt(),
+        review: '',
+      );
+      _logger.d(
+        'submitParkingAreaRating status: ${response.statusCode}\n'
+        'body: ${response.body}',
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _showMessage(AppStrings.ratingSubmitted.tr, isError: false);
+      } else {
+        _showMessage(AppStrings.somethingWentWrong.tr, isError: true);
+      }
+    } catch (e, st) {
+      _logger.e('submitParkingAreaRating ERROR', error: e, stackTrace: st);
+      _showMessage(AppStrings.somethingWentWrong.tr, isError: true);
+    }
+  }
+
+
   String _ratingLabel(double rating) {
     if (rating <= 0) return '';
     if (rating <= 1) return AppStrings.ratingPoor.tr;
@@ -620,7 +749,7 @@ class ParkingShowController extends GetxController {
     return AppStrings.ratingExcellent.tr;
   }
 
-  void _showRatingDialog() {
+  void _showRatingDialog(String? parkingAreaId) {
     final ctx = _dialogContext;
     if (ctx == null) return;
 
@@ -730,11 +859,7 @@ class ParkingShowController extends GetxController {
                             ? null
                             : () {
                                 Navigator.of(dialogContext).pop();
-                                // No rating API yet — just acknowledge for now.
-                                _showMessage(
-                                  AppStrings.ratingSubmitted.tr,
-                                  isError: false,
-                                );
+                                _submitRating(parkingAreaId, rating);
                               },
                         label: AppStrings.submitRating.tr,
                         keepGradientWhenDisabled: true,
@@ -844,8 +969,9 @@ class ParkingShowController extends GetxController {
             polygonId: PolygonId(areaId),
             points: points,
             strokeWidth: ResponsiveHelper.borderWidth(3).round(),
-            strokeColor: Colors.red,
-            fillColor: Colors.red.withValues(alpha: 0.15),
+            // Blue — matches the map (home tab)'s parking-area outline.
+            strokeColor: const Color(0xFF1E88E5),
+            fillColor: const Color(0xFF1E88E5).withValues(alpha: 0.15),
             consumeTapEvents: true,
             onTap: () => showParkingAreaDetails(area),
           ),
@@ -855,7 +981,7 @@ class ParkingShowController extends GetxController {
           Polyline(
             polylineId: PolylineId('outline_$areaId'),
             points: [...points, points.first],
-            color: Colors.red,
+            color: const Color(0xFF1E88E5),
             width: ResponsiveHelper.borderWidth(3).round(),
             jointType: JointType.round,
             startCap: Cap.roundCap,
@@ -988,7 +1114,9 @@ class ParkingShowController extends GetxController {
     final lat = gpsPosition.value?.latitude;
     final lng = gpsPosition.value?.longitude;
     if (lat != null && lng != null) {
-      await fetchNearbyData(lat, lng);
+      // SEARCHING -> still just the 1 API call (nearby handoffs), even on
+      // this auto-refresh triggered by an expired blinking handoff.
+      await fetchNearbyHandoffsOnly(lat, lng);
     }
     _isRefreshing = false;
   }
@@ -1545,6 +1673,7 @@ class ParkingShowController extends GetxController {
         : '-- m away';
     final lat = _toDouble(handoff['latitude']);
     final lng = _toDouble(handoff['longitude']);
+    final handoffId = handoff['id']?.toString();
 
     _showSpotDetailsCardSheet(
       title: 'Handoff Spot',
@@ -1560,6 +1689,10 @@ class ParkingShowController extends GetxController {
       rightStatIcon: Icons.money_off_rounded,
       isFree: true,
       destination: (lat != null && lng != null) ? LatLng(lat, lng) : null,
+      // Save (accept-and-park) is only possible while actively searching.
+      onSavePark: (status.value == 'SEARCHING' && handoffId != null)
+          ? () => _acceptAndParkHandoff(handoffId)
+          : null,
     );
   }
 
@@ -1599,7 +1732,10 @@ class ParkingShowController extends GetxController {
   }
 
   // ── Shared "found spot" details bottom sheet — same card design used
-  //    on the Saved Parkings screen, plus a Save Park action. ──
+  //    on the Saved Parkings screen. [onSavePark] is supplied by the
+  //    caller so only the handoff flow (SEARCHING) gets a working save
+  //    action; parking-area details (IDLE) pass null — read-only, same
+  //    as the map (home tab). ──
   void _showSpotDetailsCardSheet({
     required String title,
     required String subtitle,
@@ -1614,6 +1750,7 @@ class ParkingShowController extends GetxController {
     String? badgeIconAsset,
     IconData rightStatIcon = Icons.monetization_on_outlined,
     LatLng? destination,
+    VoidCallback? onSavePark,
   }) {
     final ctx = _dialogContext;
     if (ctx == null) return;
@@ -1637,17 +1774,12 @@ class ParkingShowController extends GetxController {
             leftStatLabel: leftStatLabel,
             rightStatLabel: rightStatLabel,
             rightStatIcon: rightStatIcon,
-            // No save-parking-spot API yet — UI only. Free spots save
-            // immediately; paid spots ask how long first.
-            onSavePark: () {
-              if (isFree) {
-                Navigator.of(dialogContext).pop();
-                _showMessage('Parking spot saved', isError: false);
-                return;
-              }
-              Navigator.of(dialogContext).pop();
-              _showSaveDurationPickerSheet();
-            },
+            onSavePark: onSavePark == null
+                ? null
+                : () {
+                    Navigator.of(dialogContext).pop();
+                    onSavePark();
+                  },
             onNavigate: destination == null
                 ? null
                 : () {
@@ -1663,7 +1795,60 @@ class ParkingShowController extends GetxController {
     );
   }
 
-  // ── Save Park — paid duration prompt. No save API yet, UI only. ──
+  // ── Handoff accept — POST /park-relay/handoffs/{id}/accept-and-park.
+  //    Only ever wired up while status == SEARCHING (see _showHandoffDialog).
+  //    Just this 1 API call — status flips to PARKED locally from this
+  //    response directly, no follow-up GET /parking-mode/me.
+  Future<void> _acceptAndParkHandoff(String handoffId) async {
+    isLoading.value = true;
+    try {
+      final response = await _repository.acceptAndParkHandoff(handoffId: handoffId);
+      print(
+        "ACCEPT_AND_PARK_RESPONSE: status=${response.statusCode}, body=${response.body}",
+      );
+      _logger.d(
+        'acceptAndParkHandoff status: ${response.statusCode}\n'
+        'body: ${response.body}',
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = _asMap(jsonDecode(response.body));
+        // Capture whatever id the backend hands back, for the exit/rating
+        // calls later — same fallback chain as checkParkingModeMe.
+        currentParkingAreaId.value =
+            (data?['spotId'] ?? data?['parkingAreaId'] ?? data?['areaId'])
+                ?.toString();
+
+        status.value = 'PARKED';
+        showLocationPulse.value = false;
+        handoffList.clear();
+        parkingAreaList.clear();
+        polygons.clear();
+        polylines.clear();
+        circles.clear();
+        markers.removeWhere((m) => m.markerId.value != 'saved_car_location');
+        mapOverlayVersion.value++;
+
+        _showMessage('Parking spot saved', isError: false);
+      } else {
+        String errorMsg = AppStrings.somethingWentWrong.tr;
+        try {
+          final data = _asMap(jsonDecode(response.body));
+          if (data?['message'] != null) errorMsg = data!['message'].toString();
+        } catch (_) {}
+        _showMessage(errorMsg, isError: true);
+      }
+    } catch (e, st) {
+      _logger.e('acceptAndParkHandoff ERROR', error: e, stackTrace: st);
+      _showMessage(AppStrings.somethingWentWrong.tr, isError: true);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Old "Save Park" paid-duration prompt — no longer wired up (parking-area
+  // details are read-only now; the handoff flow saves via accept-and-park
+  // directly, with no duration step). Left here for reference.
+  // ignore: unused_element
   void _showSaveDurationPickerSheet() {
     final ctx = _dialogContext;
     if (ctx == null) return;

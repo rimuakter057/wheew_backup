@@ -79,6 +79,7 @@ class AppColors {
   static const LinearGradient parkingContainerGradient = LinearGradient(
     colors: [
       white,
+      white,
       parkingConBg
     ],
     begin: Alignment.topCenter,
@@ -138,6 +139,7 @@ class AppColors {
   static const Color deleteButton = Color(0xFFe41713);
   static const Color greyBg = Color(0xFFFAFAFA);
   static const Color greyBorder = Color(0xFFE0E0E0);
+  static const Color greyText = Color(0xFF5D6065);
   static const Color red = Color(0xFFEF4444);
   static const Color paidBlue = Color(0xFF1D4ED8);
   static const Color freeWhite = Color(0xFFFFFFFF);

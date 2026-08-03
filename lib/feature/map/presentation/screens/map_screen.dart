@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -47,7 +48,7 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   GoogleMapController? _mapController;
-  int _selectedRadiusMeter = 100;
+  int _selectedRadiusMeter = 250;
   final TextEditingController _searchController = TextEditingController();
 
   LatLng _mapCenter = MapScreen.kInitialMapTarget;
@@ -80,10 +81,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     _loadCustomMarkerIcon();   // 👈 নতুন
     _initializeMap();
 
-    // Home screen is where location/Maps permission is requested — also
-    // bootstraps the background location tracking used for parking handoff
-    // matching. Denial here only disables location-based features; it
-    // can't crash the app (see UserLocationController.initLocationTracking).
+
     final locationController = Get.isRegistered<UserLocationController>()
         ? Get.find<UserLocationController>()
         : Get.put(UserLocationController());
@@ -139,7 +137,15 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
       longitude: location.longitude,
       radius: _selectedRadiusMeter,
     );
+
+    // Small delay so map controller is ready after GPS camera animation
+    await Future.delayed(const Duration(milliseconds: 600));
+
+    // Auto-fit camera to show all fetched parking areas
+    await _fitCameraToParking();
   }
+
+  double? _initialZoomLevel;
 
   Future<void> _getUserLocation() async {
     mapDebug('location: start');
@@ -204,10 +210,12 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
       });
 
       if (_mapController != null) {
+        // Keep the exact same zoom level established during initial load/fit
+        final zoomToUse = _initialZoomLevel ?? 16.5;
         await _mapController!.animateCamera(
           CameraUpdate.newLatLngZoom(
             latLng,
-            20,
+            zoomToUse,
           ),
         );
       }
@@ -437,8 +445,9 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     mapDebug('GoogleMap created');
 
     if (_gpsPosition != null) {
+      final zoomToUse = _initialZoomLevel ?? 16.5;
       controller.animateCamera(
-        CameraUpdate.newLatLngZoom(_gpsPosition!, 20),
+        CameraUpdate.newLatLngZoom(_gpsPosition!, zoomToUse),
       );
       mapDebug('onMapCreated: camera synced to GPS');
     }
@@ -471,11 +480,93 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
       radius: _selectedRadiusMeter,
     );
 
+    // Auto-fit camera to show all fetched parking areas
+    await _fitCameraToParking();
+
     if (!mounted) return;
     showCustomSnackBar(
       '${AppStrings.showingParking.tr} $_selectedRadiusMeter m',
       isError: false,
     );
+  }
+
+  /// Animate the camera to fit user location + all fetched parking area
+  /// centers in the viewport, so the user can see every result at once.
+  Future<void> _fitCameraToParking() async {
+    final ctrl = _mapController;
+    if (ctrl == null || !mounted) return;
+
+    final list = _parkingCtrl.parkingList;
+    final user = _gpsPosition;
+
+    if (list.isEmpty && user == null) return;
+
+    double minLat = double.infinity;
+    double maxLat = -double.infinity;
+    double minLng = double.infinity;
+    double maxLng = -double.infinity;
+
+    // Include user's GPS position
+    if (user != null) {
+      minLat = min(minLat, user.latitude);
+      maxLat = max(maxLat, user.latitude);
+      minLng = min(minLng, user.longitude);
+      maxLng = max(maxLng, user.longitude);
+    }
+
+    // Include every parking area center + its polygon vertices
+    for (final area in list) {
+      final cLat = _toDouble(area['centerLat'] ?? area['latitude']);
+      final cLng = _toDouble(area['centerLng'] ?? area['longitude']);
+      if (cLat != null && cLng != null) {
+        minLat = min(minLat, cLat);
+        maxLat = max(maxLat, cLat);
+        minLng = min(minLng, cLng);
+        maxLng = max(maxLng, cLng);
+      }
+
+      final rawPoly = area['polygon'];
+      if (rawPoly is List) {
+        for (final pt in rawPoly) {
+          if (pt is Map) {
+            final pLat = _toDouble(pt['latitude']);
+            final pLng = _toDouble(pt['longitude']);
+            if (pLat != null && pLng != null) {
+              minLat = min(minLat, pLat);
+              maxLat = max(maxLat, pLat);
+              minLng = min(minLng, pLng);
+              maxLng = max(maxLng, pLng);
+            }
+          }
+        }
+      }
+    }
+
+    if (minLat == double.infinity) return;
+
+    // Add a small buffer so markers aren't clipped to the edge
+    const buffer = 0.0008;
+    final bounds = LatLngBounds(
+      southwest: LatLng(minLat - buffer, minLng - buffer),
+      northeast: LatLng(maxLat + buffer, maxLng + buffer),
+    );
+
+    try {
+      await ctrl.animateCamera(
+        CameraUpdate.newLatLngBounds(bounds, 70),
+      );
+      _initialZoomLevel = await ctrl.getZoomLevel();
+      mapDebug('camera: fit to ${list.length} parking areas (zoom=$_initialZoomLevel)');
+    } catch (e) {
+      mapDebug('camera: fit error $e');
+    }
+  }
+
+  /// Parse any numeric type to double
+  double? _toDouble(dynamic v) {
+    if (v == null) return null;
+    if (v is num) return v.toDouble();
+    return double.tryParse(v.toString());
   }
 
   @override
@@ -501,9 +592,14 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
             else
               Obx(() {
                 final mySaved = _parkingCtrl.mySavedParking.value;
+                // .toSet() forces GetX to track dependency on the RxSet
+                final parkingMarkers = _parkingCtrl.markers.toSet();
+                // final parkingPolylines = _parkingCtrl.areaPolylines.toSet();
+                final parkingPolygons = _parkingCtrl.areaPolygons.toSet();
+
                 final markers = {
                   ..._markers,
-                  ..._parkingCtrl.markers,
+                  ...parkingMarkers,
                   if (_pickedLocation != null)
                     Marker(
                       markerId: const MarkerId('picked_location'),
@@ -520,7 +616,6 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                       icon: _parkedCarIcon ??
                           BitmapDescriptor.defaultMarkerWithHue(
                               BitmapDescriptor.hueAzure),
-
                       infoWindow: const InfoWindow(
                         title: 'My Saved Parking',
                         snippet: 'Tap to view details & route',
@@ -537,9 +632,11 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                   onMapCreated: _onMapCreated,
                   initialCameraPosition: CameraPosition(
                     target: MapScreen.kInitialMapTarget,
-                    zoom: 20,
+                    zoom: 16.5,
                   ),
                   markers: markers,
+                  // polylines: parkingPolylines,
+                  polygons: parkingPolygons,
                   myLocationEnabled: true,
                   myLocationButtonEnabled: false,
                   zoomControlsEnabled: false,
@@ -569,10 +666,10 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
               final selected = _parkingCtrl.selectedReport.value;
               if (selected == null) return const SizedBox.shrink();
               final cardBottomOffset = MediaQuery.of(context).padding.top +
-                  ResponsiveHelper.padding(52);
+                  ResponsiveHelper.padding(102);
               return Positioned(
-                left: 0,
-                right: 0,
+                left:  ResponsiveHelper.padding(8),
+                right:  ResponsiveHelper.padding(8),
                 bottom: cardBottomOffset,
                 child: BottomOverlayHeightReporter(
                   extraBottomOffset: cardBottomOffset,

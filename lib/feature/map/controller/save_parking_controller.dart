@@ -84,10 +84,10 @@ class SaveParkingController extends GetxController {
     errorMessage.value = '';
     try {
       final response = await ApiClient.getData(
-        uri: ApiUrl.showMapDetails(
+        uri: ApiUrl.searchParkingAreas(
           latitude: latitude,
           longitude: longitude,
-          radius: _radiusMeters,
+          radiusMeters: _radiusMeters,
         ),
       );
 
@@ -96,7 +96,12 @@ class SaveParkingController extends GetxController {
         List<dynamic> rawList = [];
 
         if (decoded is Map<String, dynamic>) {
-          final dynamic nested = decoded['spots'] ?? decoded['reports'] ?? decoded['data'];
+          final dynamic nested = decoded['areas'] ??
+              decoded['parkingAreas'] ??
+              decoded['spots'] ??
+              decoded['reports'] ??
+              decoded['data'] ??
+              decoded['items'];
           if (nested is List) {
             rawList = nested;
           } else if (nested is Map<String, dynamic>) {
@@ -166,8 +171,8 @@ class SaveParkingController extends GetxController {
 
     for (var i = 0; i < parkingList.length; i++) {
       final parking = parkingList[i];
-      final double? lat = _toDouble(parking['latitude']);
-      final double? lng = _toDouble(parking['longitude']);
+      final double? lat = _toDouble(parking['latitude'] ?? parking['centerLat']);
+      final double? lng = _toDouble(parking['longitude'] ?? parking['centerLng']);
       if (lat == null || lng == null) continue;
 
       newMarkers.add(

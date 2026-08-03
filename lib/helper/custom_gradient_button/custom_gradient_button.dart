@@ -79,7 +79,7 @@ class CustomGradientButton extends StatelessWidget {
           onTap: isButtonDisabled ? null : onPressed,
           splashColor: Colors.white24,
           child: Padding(
-            padding: ResponsiveHelper.symmetric(horizontal: 16),
+            padding: ResponsiveHelper.symmetric(horizontal: 4),
             child: Center(
               child: isLoading
                   ? const SizedBox(
@@ -96,19 +96,25 @@ class CustomGradientButton extends StatelessWidget {
                     children: [
                       if (prefixIcon != null) ...[
                         prefixIcon!,
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
                       ],
                       if (label != null)
-                        Text(
-                          label!,
-                          style: TextStyle(
-                            color: textColor ?? Colors.white,
-                            fontSize: ResponsiveHelper.fontSize(16),
-                            fontWeight: FontWeight.w400,
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              label!,
+                              maxLines: 1,
+                              style: TextStyle(
+                                color: textColor ?? Colors.white,
+                                fontSize: ResponsiveHelper.fontSize(15),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
                         ),
                       if (suffixIcon != null) ...[
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
                         suffixIcon!,
                       ],
                     ],

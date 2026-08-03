@@ -3,15 +3,22 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/extension/base_extension.dart';
 
 class CustomParkingDetailsDialog extends StatelessWidget {
   final String title;
   final String subtitle;
   final String distance;
   final String rating;
-  final String tag;
-  final IconData tagIcon;
-  final Color tagColor;
+
+  /// Grey when [rating] has no real value (backend sent null), otherwise
+  /// the normal accent color.
+  final Color ratingColor;
+
+  /// null when the area's parkingAreaTypes list is empty — hides the badge.
+  final String? tag;
+  final IconData? tagIcon;
+  final Color? tagColor;
   final String spots;
   final String price;
   final VoidCallback onClose;
@@ -31,6 +38,7 @@ class CustomParkingDetailsDialog extends StatelessWidget {
     required this.subtitle,
     required this.distance,
     required this.rating,
+    required this.ratingColor,
     required this.tag,
     required this.tagIcon,
     required this.tagColor,
@@ -97,14 +105,10 @@ class CustomParkingDetailsDialog extends StatelessWidget {
                             title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: ResponsiveHelper.fontSize(15),
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF1E293B),
-                            ),
+                            style: context.titleMedium.copyWith(color: AppColors.black,fontSize: ResponsiveHelper.fontSize(18))
                           ),
 
-                          const SizedBox(height: 2),
+                       SizedBox(height: ResponsiveHelper.height(8)),
 
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -114,13 +118,10 @@ class CustomParkingDetailsDialog extends StatelessWidget {
                                   subtitle,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: ResponsiveHelper.fontSize(10),
-                                    color: const Color(0xFF64748B),
-                                  ),
+                                  style: context.bodySmall.copyWith(color: AppColors.greyText)
                                 ),
                               ),
-                              const SizedBox(width: 6),
+                              SizedBox(height: ResponsiveHelper.height(6)),
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 6,
@@ -142,112 +143,119 @@ class CustomParkingDetailsDialog extends StatelessWidget {
                             ],
                           ),
 
-                          const SizedBox(height: 6),
+                          SizedBox(height: ResponsiveHelper.height(12)),
 
-                          Row(
-                            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-                              const Icon(
-                                Icons.location_on_outlined,
-                                size: 11,
-                                color: Color(0xFF0077B6),
-                              ),
 
-                              const SizedBox(width: 3),
+                children: [
 
-                              Text(
-                                distance,
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  color: Color(0xFF334155),
-                                ),
-                              ),
 
-                              const SizedBox(width: 10),
+                Row(
+                  children: [
 
-                              const Icon(
-                                Icons.star_rounded,
-                                size: 12,
-                                color: Color(0xFF334155),
-                              ),
+                    Icon(
+                        Icons.location_on_outlined,
+                        size: ResponsiveHelper.iconSize(16),
+                        color: AppColors.blue
+                    ),
 
-                              const SizedBox(width: 3),
+                    const SizedBox(width: 3),
 
-                              Text(
-                                rating,
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  color: Color(0xFF334155),
-                                ),
-                              ),
+                    Text(
+                        distance,
+                        style: context.bodySmall.copyWith(fontSize: ResponsiveHelper.fontSize(14),fontWeight: FontWeight.w600)
+                    ),
 
-                              if (onNavigate != null) ...[
-                                const SizedBox(width: 18),
-                                GestureDetector(
-                                  onTap: onNavigate,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        Icons.near_me_outlined,
-                                        size: 11,
-                                        color: Color(0xFF0077B6),
-                                      ),
-                                      const SizedBox(width: 3),
-                                      Text(
-                                        'Navigate',
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(0xFF0077B6),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
+                    const SizedBox(width: 10),
+
+
+                    Icon(
+                      Icons.star_rounded,
+                      size: ResponsiveHelper.iconSize(16),
+                      color: ratingColor,
+                    ),
+
+                    const SizedBox(width: 3),
+
+                    Text(
+                        rating,
+                        style:context.bodySmall.copyWith(fontWeight: FontWeight.w600)
+                    ),
+
+
+                  ],
+                ),
+
+                if (onNavigate != null) ...[
+
+                  GestureDetector(
+                    onTap: onNavigate,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                         Icon(
+                          Icons.near_me_outlined,
+                          size: ResponsiveHelper.iconSize(16),
+                          color:AppColors.blue,
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          'Navigate',
+                          style: context.bodyMedium.copyWith(color: AppColors.blue)
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+
+
+              ],)
                         ],
                       ),
                     ),
 
                     // ================= TAG =================
+                    // parkingAreaTypes == [] → tag/tagIcon/tagColor are all
+                    // null, so the badge is skipped entirely.
 
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 7,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: tagColor.withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
+                    if (tag != null && tagIcon != null && tagColor != null) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 7,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: tagColor!.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
 
-                          Icon(
-                            tagIcon,
-                            size: 10,
-                            color: tagColor,
-                          ),
-
-                          const SizedBox(width: 3),
-
-                          Text(
-                            tag,
-                            style: TextStyle(
-                              fontSize: 9,
-                              fontWeight: FontWeight.w600,
+                            Icon(
+                              tagIcon,
+                              size: 10,
                               color: tagColor,
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
 
-                    const SizedBox(width: 5),
+                            const SizedBox(width: 3),
+
+                            Text(
+                              tag!,
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w600,
+                                color: tagColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(width: 5),
+                    ],
 
                     // ================= CLOSE =================
 

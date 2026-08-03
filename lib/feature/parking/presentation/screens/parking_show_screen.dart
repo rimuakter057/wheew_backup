@@ -115,16 +115,20 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
               final showLocationPulse = _parkingShowCtrl.showLocationPulse.value;
               final isLoading = _parkingShowCtrl.isLoading.value;
               final status = _parkingShowCtrl.status.value;
-              // Empty until /parking-mode/me resolves — treat that as
-              // "still loading" so nothing here defaults to the IDLE view.
-              final statusResolved = status.isNotEmpty;
+              // Empty until /parking-mode/me resolves & not loading — treat that as
+              // "still loading" so nothing here defaults to the IDLE view or shows buttons while loading.
+              final statusResolved = status.isNotEmpty && !isLoading;
               final isParked = status == 'PARKED';
               final isSearching = status == 'SEARCHING';
-              // Search bar + Find Parking Spot button + map controls show
-              // only once the real status is known and the user isn't
-              // parked (both plain-idle and active-search states) — never
-              // during the initial loading window, and never as a default.
-              final showSearchUi = statusResolved && !isParked;
+              // Search bar / notification bell / layers+location header —
+              // stays visible in every resolved state (including PARKED),
+              // same as the map (home tab). Never shown during the initial
+              // loading window.
+              final showHeader = statusResolved;
+              // Find Parking Spot / Stop Searching button — only for the
+              // plain-idle and active-search states; PARKED shows the
+              // "You're Parked" card in that spot instead. Hidden while loading.
+              final showSearchUi = statusResolved && !isParked && !isLoading;
 
               if (!isLocating && gpsPosition == null) {
                 return const ParkingLocationOffPrompt();
@@ -169,7 +173,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                   if (isLoading) const FetchingParkingBanner(),
 
                   ///search=======================================================
-                  if (showSearchUi)
+                  if (showHeader)
                     Positioned(
                       top: MediaQuery.of(context).padding.top +
                           ResponsiveHelper.padding(16),
@@ -193,7 +197,9 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                                     final lat = _parkingShowCtrl.gpsPosition.value?.latitude;
                                     final lng = _parkingShowCtrl.gpsPosition.value?.longitude;
                                     if (lat != null && lng != null) {
-                                      _parkingShowCtrl.fetchNearbyData(lat, lng);
+                                      // Radius filter only affects the handoffs
+                                      // radius — parking areas use a fixed radius.
+                                      _parkingShowCtrl.fetchNearbyHandoffsOnly(lat, lng);
                                     }
                                     // ── sheet applied: hide the floating button ──
                                     showFindParkingButton.value = false;
@@ -338,7 +344,8 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
 
             Obx(() {
               final navStatus = _parkingShowCtrl.status.value;
-              if (navStatus.isEmpty || navStatus == 'PARKED') {
+              // Stays visible while PARKED too, same as the map (home tab).
+              if (navStatus.isEmpty) {
                 return const SizedBox.shrink();
               }
               return Positioned(

@@ -174,7 +174,9 @@ class ParkingLocationCard extends StatelessWidget {
                         Icon(
                           Icons.star_rounded,
                           size: ResponsiveHelper.iconSize(18),
-                          color: const Color(0xFF1D4ED8), // Deep blue star as seen in UI
+                          color: (double.tryParse(ratingLabel) ?? 0.0) > 0
+                              ? const Color(0xFF1D4ED8)
+                              : Colors.grey,
                         ),
                         SizedBox(width: ResponsiveHelper.spacing(4)),
                         Text(

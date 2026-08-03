@@ -8,15 +8,15 @@ class ApiUrl {
   // static const String baseUrl = 'http://10.10.28.200:8003';
   // static const baseSocketUrl = 'ws://10.10.28.200:8003';
 
-  // live url
-  static const String baseUrl = 'http://54.198.239.101:8003';
-   static const baseSocketUrl = 'ws://54.198.239.101:8003';
+  // // live url
+  // static const String baseUrl = 'http://54.198.239.101:8003';
+  //  static const baseSocketUrl = 'ws://54.198.239.101:8003';
 
 
 
-  // // Local testing url
-  // static const String baseUrl = 'https://hqwwvtcz-8003.inc1.devtunnels.ms';
-  // static const baseSocketUrl = 'https://hqwwvtcz-8003.inc1.devtunnels.ms';
+  // Local testing url
+  static const String baseUrl = 'https://hqwwvtcz-8003.inc1.devtunnels.ms';
+  static const baseSocketUrl = 'https://hqwwvtcz-8003.inc1.devtunnels.ms';
 
   //http://13.50.99.165:8003
   //static const baseSocketUrl = 'ws://13.50.99.165:8003';
@@ -107,15 +107,47 @@ class ApiUrl {
   static const String addParking = '/parking-report/spot';
   static const String saveParking = '/park-relay/saved-parking';
   static const String getMySavedParking = '/park-relay/saved-parking/me';
+  static String getSavedParkingHistory({required int page, required int limit}) =>
+      '/park-relay/saved-parking/history?page=$page&limit=$limit';
   static const String parkingModeParked = '/park-relay/parking-mode/parked';
   static const String parkingModeIdle = '/park-relay/parking-mode/idle';
   static const String verifyLicense= '/users/verify-license';
   static const String vehicle= '/users/vehicle';
  // static const String showDetails = "/parking-report";
+
   static  String showMapDetails ({required double latitude,required double longitude,required int radius}) => "/parking-report/spot/nearby?latitude=$latitude&longitude=$longitude&radiusInMeters=$radius";
+
+
+
+
+
   static  String spotDetails ({required String spotId,}) => "/parking-report/spot/$spotId";
 
   static  String leaveSpot  = "/parking-report/spot/leave";
+
+  // ── Park-Relay: Parking Areas & Handoffs (Home tab) ─────────────────────
+  static const String createParkingArea = '/park-relay/parking-areas';
+
+  static String searchParkingAreas({
+    required double latitude,
+    required double longitude,
+    required int radiusMeters,
+  }) =>
+      '/park-relay/parking-areas/search?latitude=$latitude&longitude=$longitude&radiusMeters=$radiusMeters';
+
+  static String nearbyHandoffs({
+    required double latitude,
+    required double longitude,
+    required int radiusMeters,
+  }) =>
+      '/park-relay/handoffs/nearby?latitude=$latitude&longitude=$longitude&radiusMeters=$radiusMeters';
+
+  static String handoffDetails({
+    required String handoffId,
+    required double latitude,
+    required double longitude,
+  }) =>
+      '/park-relay/handoffs/$handoffId?latitude=$latitude&longitude=$longitude';
   static  String verifyPlate  = "/chat/rooms/by-plate";
   static String deleteMessage({required String messageId}) => "/chat/messages/$messageId";
 

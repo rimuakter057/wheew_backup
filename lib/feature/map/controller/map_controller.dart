@@ -29,6 +29,7 @@ class ParkingReportController extends GetxController {
     selectedMapType.value = type;
   }
   // ── Form State ────────────────────────────────────────────────────────────
+  final TextEditingController nameController = TextEditingController();
   final RxString parkingCost = 'FREE'.obs;
   final RxBool electricCharging = false.obs;
   final RxBool disabledFacility = false.obs;
@@ -42,6 +43,7 @@ class ParkingReportController extends GetxController {
 
   // ── Reset ─────────────────────────────────────────────────────────────────
   void reset() {
+    nameController.clear();
     parkingCost.value = 'FREE';
     electricCharging.value = false;
     disabledFacility.value = false;
@@ -49,35 +51,102 @@ class ParkingReportController extends GetxController {
   }
 
   // ── Submit ────────────────────────────────────────────────────────────────
+  // Old flow — POST /parking-report/spot. Superseded by the /park-relay/
+  // parking-areas call below; kept here, commented, for reference.
+  // Future<bool> addParking({
+  //   required double latitude,
+  //   required double longitude,
+  // }) async
+  // {
+  //   isLoading.value = true;
+  //   submitMessage.value = '';
+  //   submitSuccess.value = false;
+  //
+  //   final Map<String, dynamic> body = {
+  //     'latitude': latitude,
+  //     'longitude': longitude,
+  //     'parking_cost': parkingCost.value,
+  //     'electric_charging': electricCharging.value,
+  //     'disabled_facility': disabledFacility.value,
+  //     if (disabledFacility.value)
+  //       'disabled_facility_location': disabledLocation.value.value,
+  //   };
+  //
+  //   try {
+  //     final response = await ApiClient.postData(
+  //       uri: ApiUrl.addParking,
+  //       body: body,
+  //     );
+  //
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       submitSuccess.value = true;
+  //       submitMessage.value = AppStrings.mapParkingReportSubmitted.tr;
+  //       mapDebug('parking POST: success');
+  //       return true;
+  //     } else {
+  //       final decoded = jsonDecode(response.body);
+  //       final msg =
+  //       (decoded is Map<String, dynamic> && decoded['message'] != null)
+  //           ? decoded['message'].toString()
+  //           : AppStrings.somethingWentWrong.tr;
+  //       submitMessage.value = msg;
+  //       mapDebug('parking POST: failed ${response.statusCode} message=$msg');
+  //       return false;
+  //     }
+  //   } catch (e) {
+  //     submitMessage.value = e.toString();
+  //     mapDebug('parking POST: exception $e');
+  //     return false;
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
+
+  /// POST /park-relay/parking-areas — home tab "Add Parking" flow.
   Future<bool> addParking({
     required double latitude,
     required double longitude,
-  }) async
-  {
+    String? name,
+    int totalSpots = 1,
+  }) async {
     isLoading.value = true;
     submitMessage.value = '';
     submitSuccess.value = false;
 
+    final String areaName = (name != null && name.trim().isNotEmpty)
+        ? name.trim()
+        : (nameController.text.trim().isNotEmpty
+            ? nameController.text.trim()
+            : 'My Parking Spot');
+
+    final List<String> areaTypes = [
+      if (electricCharging.value) 'ELECTRIC_CHARGING',
+      if (disabledFacility.value) 'DISABLED_FACILITY',
+    ];
+
     final Map<String, dynamic> body = {
-      'latitude': latitude,
-      'longitude': longitude,
-      'parking_cost': parkingCost.value,
-      'electric_charging': electricCharging.value,
-      'disabled_facility': disabledFacility.value,
+      'name': areaName,
+      // 'description': description, // no description input in the UI yet
+      'centerLat': latitude,
+      'centerLng': longitude,
+      'parkingCost': parkingCost.value,
+      // 'parkingFee': parkingFee, // no fee input in the UI yet (PAID only)
+      'parkingAreaTypes': areaTypes,
       if (disabledFacility.value)
-        'disabled_facility_location': disabledLocation.value.value,
+        'disabledFacilityLocation': disabledLocation.value.value,
+      'totalSpots': totalSpots,
     };
 
     try {
       final response = await ApiClient.postData(
-        uri: ApiUrl.addParking,
+        uri: ApiUrl.createParkingArea,
         body: body,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         submitSuccess.value = true;
         submitMessage.value = AppStrings.mapParkingReportSubmitted.tr;
-        mapDebug('parking POST: success');
+        mapDebug('parking area POST: success');
         return true;
       } else {
         final decoded = jsonDecode(response.body);
@@ -86,12 +155,12 @@ class ParkingReportController extends GetxController {
             ? decoded['message'].toString()
             : AppStrings.somethingWentWrong.tr;
         submitMessage.value = msg;
-        mapDebug('parking POST: failed ${response.statusCode} message=$msg');
+        mapDebug('parking area POST: failed ${response.statusCode} message=$msg');
         return false;
       }
     } catch (e) {
       submitMessage.value = e.toString();
-      mapDebug('parking POST: exception $e');
+      mapDebug('parking area POST: exception $e');
       return false;
     } finally {
       isLoading.value = false;
@@ -221,9 +290,13 @@ class ParkingReportController extends GetxController {
   // icon cache
   final Map<String, BitmapDescriptor> _locationIconCache = {};
 
-  // Map controller & markers
+  // Map controller, markers & polygons
   final Rx<GoogleMapController?> mapController = Rx<GoogleMapController?>(null);
   final RxSet<Marker> markers = <Marker>{}.obs;
+  // Old outline — Polyline has no tap support, so only the center marker
+  // was tappable. Superseded by areaPolygons below.
+  // final RxSet<Polyline> areaPolylines = <Polyline>{}.obs;
+  final RxSet<Polygon> areaPolygons = <Polygon>{}.obs;
 
   // ── Build Markers ─────────────────────────────────────────────────────────
   // Future<void> _buildMarkers() async {
@@ -293,31 +366,96 @@ class ParkingReportController extends GetxController {
 
   Future<void> _buildMarkers() async {
     final Set<Marker> newMarkers = {};
+    final Set<Polygon> newPolygons = {};
 
     for (int i = 0; i < parkingList.length; i++) {
       final parking = parkingList[i];
 
-      final double? lat = _toDouble(parking['latitude']);
-      final double? lng = _toDouble(parking['longitude']);
+      // isActive == false → hide this area entirely (no marker, no polygon).
+      if (parking['isActive'] == false) continue;
+
+      // ── Center marker (SVG pin at centerLat/centerLng) ──────────────────
+      final double? lat = _toDouble(parking['latitude'] ?? parking['centerLat']);
+      final double? lng = _toDouble(parking['longitude'] ?? parking['centerLng']);
       if (lat == null || lng == null) continue;
 
       final BitmapDescriptor icon = await MapMarkerIcons.parkingPin();
+      final String areaId = parking['id']?.toString() ?? 'parking_$i';
 
       newMarkers.add(
         Marker(
-          markerId: MarkerId(
-            parking['id']?.toString() ?? 'parking_$i',
-          ),
+          markerId: MarkerId(areaId),
           position: LatLng(lat, lng),
           icon: icon,
           infoWindow: InfoWindow.noText,
           onTap: () => _onMarkerTap(parking),
         ),
       );
+
+      // ── Blue polygon outline from polygon array ──────────────────────────
+      // Old version used a closed Polyline for the outline, but Polyline
+      // has no tap support — only the center marker was tappable. Polygon
+      // renders the same blue outline (transparent fill) and is tappable
+      // anywhere inside the shape.
+      // final dynamic rawPolygon = parking['polygon'];
+      // if (rawPolygon is List && rawPolygon.isNotEmpty) {
+      //   final List<LatLng> polyPoints = [];
+      //   for (final point in rawPolygon) {
+      //     if (point is Map) {
+      //       final double? pLat = _toDouble(point['latitude']);
+      //       final double? pLng = _toDouble(point['longitude']);
+      //       if (pLat != null && pLng != null) {
+      //         polyPoints.add(LatLng(pLat, pLng));
+      //       }
+      //     }
+      //   }
+      //   if (polyPoints.isNotEmpty) {
+      //     // Close the polygon by repeating the first point
+      //     polyPoints.add(polyPoints.first);
+      //     newPolylines.add(
+      //       Polyline(
+      //         polylineId: PolylineId('area_poly_$areaId'),
+      //         points: polyPoints,
+      //         color: const Color(0xFF1E88E5),   // blue
+      //         width: 2,
+      //         patterns: [],
+      //       ),
+      //     );
+      //   }
+      // }
+
+      final dynamic rawPolygon = parking['polygon'];
+      if (rawPolygon is List && rawPolygon.isNotEmpty) {
+        final List<LatLng> polyPoints = [];
+        for (final point in rawPolygon) {
+          if (point is Map) {
+            final double? pLat = _toDouble(point['latitude']);
+            final double? pLng = _toDouble(point['longitude']);
+            if (pLat != null && pLng != null) {
+              polyPoints.add(LatLng(pLat, pLng));
+            }
+          }
+        }
+        if (polyPoints.isNotEmpty) {
+          newPolygons.add(
+            Polygon(
+              polygonId: PolygonId('area_poly_$areaId'),
+              points: polyPoints,
+              strokeColor: const Color(0xFF1E88E5), // blue
+              strokeWidth: 2,
+              fillColor: Colors.transparent,
+              consumeTapEvents: true,
+              onTap: () => _onMarkerTap(parking),
+            ),
+          );
+        }
+      }
     }
 
     markers.value = newMarkers;
+    areaPolygons.value = newPolygons;
     mapDebug('markers: built ${newMarkers.length} from parking list');
+    mapDebug('polygons: built ${newPolygons.length} area outlines');
   }
 
 
@@ -457,12 +595,6 @@ class ParkingReportController extends GetxController {
 
   void _onMarkerTap(Map<String, dynamic> parking) {
     selectedReport.value = parking;
-
-    final spotId = parking['id']?.toString();
-    if (spotId != null) {
-      fetchSpotDetails(spotId); // ← নতুন call
-    }
-
     mapDebug('marker tap: id=${parking['id']}');
   }
 
@@ -510,14 +642,15 @@ class ParkingReportController extends GetxController {
     try {
       isLoadingShowDetails.value = true;
       errorMessage.value = '';
-      mapDebug('parking API: GET ${ApiUrl.showMapDetails}');
+      final String uri = ApiUrl.searchParkingAreas(
+        latitude: latitude,
+        longitude: longitude,
+        radiusMeters: radius,
+      );
+      mapDebug('parking API: GET $uri');
 
       final response = await ApiClient.getData(
-        uri: ApiUrl.showMapDetails(latitude:latitude ,longitude:longitude,radius: radius ),
-        // queryParams: {
-        //   'latitude': latitude.toString(),
-        //   'longitude': longitude.toString(),
-        // },
+        uri: uri,
       );
 
       if (response.statusCode == 200) {
@@ -529,7 +662,12 @@ class ParkingReportController extends GetxController {
           totalParking.value = decoded['total'] ?? 0;
           currentPage.value = decoded['page'] ?? 1;
 
-          final dynamic nested = decoded['spots'] ?? decoded['reports'] ?? decoded['data'];
+          final dynamic nested = decoded['areas'] ??
+              decoded['parkingAreas'] ??
+              decoded['spots'] ??
+              decoded['reports'] ??
+              decoded['data'] ??
+              decoded['items'];
           if (nested is List) {
             rawList = nested;
           } else if (nested is Map<String, dynamic>) {
@@ -643,6 +781,122 @@ class ParkingReportController extends GetxController {
 
 
 
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  //  PARK-RELAY: PARKING AREAS & HANDOFFS (Home tab)
+  //  addParking() above already covers POST /park-relay/parking-areas.
+  //  The GET endpoints below are callable API methods only; not yet wired
+  //  into any marker/UI on the home tab (no design change).
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // ─── Search nearby parking areas ──────────────────────────────────────────
+  final RxList<Map<String, dynamic>> parkingAreaList = <Map<String, dynamic>>[].obs;
+  final RxBool isLoadingParkingAreas = false.obs;
+
+  /// GET /park-relay/parking-areas/search
+  Future<void> searchParkingAreas({
+    required double latitude,
+    required double longitude,
+    required int radiusMeters,
+  }) async {
+    isLoadingParkingAreas.value = true;
+    try {
+      final response = await ApiClient.getData(
+        uri: ApiUrl.searchParkingAreas(
+          latitude: latitude,
+          longitude: longitude,
+          radiusMeters: radiusMeters,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+        final List<dynamic> rawList = decoded is List ? decoded : [];
+        parkingAreaList.value =
+            rawList.map((e) => Map<String, dynamic>.from(e)).toList();
+        mapDebug('search parking areas GET: loaded ${parkingAreaList.length}');
+      } else {
+        mapDebug('search parking areas GET: failed ${response.statusCode}');
+      }
+    } catch (e) {
+      mapDebug('search parking areas GET: exception $e');
+    } finally {
+      isLoadingParkingAreas.value = false;
+    }
+  }
+
+  // ─── Nearby handoffs ───────────────────────────────────────────────────────
+  final RxList<Map<String, dynamic>> handoffList = <Map<String, dynamic>>[].obs;
+  final RxBool isLoadingHandoffs = false.obs;
+
+  /// GET /park-relay/handoffs/nearby
+  Future<void> fetchNearbyHandoffs({
+    required double latitude,
+    required double longitude,
+    required int radiusMeters,
+  }) async {
+    isLoadingHandoffs.value = true;
+    try {
+      final response = await ApiClient.getData(
+        uri: ApiUrl.nearbyHandoffs(
+          latitude: latitude,
+          longitude: longitude,
+          radiusMeters: radiusMeters,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+        final List<dynamic> rawList = decoded is List ? decoded : [];
+        handoffList.value =
+            rawList.map((e) => Map<String, dynamic>.from(e)).toList();
+        mapDebug('nearby handoffs GET: loaded ${handoffList.length}');
+      } else {
+        mapDebug('nearby handoffs GET: failed ${response.statusCode}');
+      }
+    } catch (e) {
+      mapDebug('nearby handoffs GET: exception $e');
+    } finally {
+      isLoadingHandoffs.value = false;
+    }
+  }
+
+  // ─── Handoff details (show details) ────────────────────────────────────────
+  final Rxn<Map<String, dynamic>> handoffDetails = Rxn<Map<String, dynamic>>();
+  final RxBool isLoadingHandoffDetails = false.obs;
+
+  /// GET /park-relay/handoffs/{handoffId}
+  Future<void> fetchHandoffDetails({
+    required String handoffId,
+    required double latitude,
+    required double longitude,
+  }) async {
+    isLoadingHandoffDetails.value = true;
+    handoffDetails.value = null;
+    try {
+      final response = await ApiClient.getData(
+        uri: ApiUrl.handoffDetails(
+          handoffId: handoffId,
+          latitude: latitude,
+          longitude: longitude,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+        if (decoded is Map<String, dynamic>) {
+          handoffDetails.value = Map<String, dynamic>.from(decoded);
+        }
+        mapDebug('handoff details GET: loaded for $handoffId');
+      } else {
+        mapDebug('handoff details GET: failed ${response.statusCode}');
+      }
+    } catch (e) {
+      mapDebug('handoff details GET: exception $e');
+    } finally {
+      isLoadingHandoffDetails.value = false;
+    }
+  }
 
   void toggleDisabledFacility() {
     disabledFacility.value = !disabledFacility.value;

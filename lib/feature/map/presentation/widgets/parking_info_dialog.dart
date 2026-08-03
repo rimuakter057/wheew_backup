@@ -148,6 +148,46 @@ class ParkingInfoDialog extends StatelessWidget {
 
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
+              // ── Parking Name ──────────────────────────────────────────
+              Text(
+                'Parking Name',
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(15),
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF1A1A2E),
+                ),
+              ),
+              SizedBox(height: ResponsiveHelper.spacing(10)),
+              Container(
+                padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF4F6FB),
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveHelper.borderRadius(16),
+                  ),
+                  border: Border.all(
+                    color: const Color(0xFFE5E7EB),
+                  ),
+                ),
+                child: TextField(
+                  controller: controller.nameController,
+                  style: GoogleFonts.poppins(
+                    fontSize: ResponsiveHelper.fontSize(14),
+                    color: const Color(0xFF1A1A2E),
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Enter parking area name',
+                    hintStyle: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(14),
+                      color: const Color(0xFF9CA3AF),
+                    ),
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+
+              SizedBox(height: ResponsiveHelper.spacing(20)),
+
               // ── Parking Cost ──────────────────────────────────────────
               Text(
                 AppStrings.mapParkingCost.tr,

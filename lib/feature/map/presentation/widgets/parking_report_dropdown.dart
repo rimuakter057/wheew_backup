@@ -437,17 +437,52 @@ class ParkingReportDropdown extends StatelessWidget {
   }
 
   String get displayDistance {
-    return report['distance']?.toString() ?? '250 m away';
+    final dm = report['distanceMeters'];
+    if (dm != null) {
+      final meters = (dm is num) ? dm.toInt() : int.tryParse(dm.toString());
+      if (meters != null) {
+        return meters >= 1000
+            ? '${(meters / 1000).toStringAsFixed(1)} km away'
+            : '$meters m away';
+      }
+    }
+    return report['distance']?.toString() ?? '';
   }
 
+  // rating == null → show '0.0' with a grey star (see [ratingColor]).
+  // reviewCount, when > 0, is appended as "4.5 (12)".
   String get displayRating {
-    return report['rating']?.toString() ?? '4.5';
+    final dynamic ratingVal = report['rating'];
+    final String ratingText = ratingVal == null
+        ? '0.0'
+        : (ratingVal is num
+            ? ratingVal.toStringAsFixed(1)
+            : ratingVal.toString());
+
+    final dynamic reviewCountVal = report['reviewCount'];
+    final int? reviewCount = reviewCountVal is num
+        ? reviewCountVal.toInt()
+        : int.tryParse(reviewCountVal?.toString() ?? '');
+
+    if (reviewCount != null && reviewCount > 0) {
+      return '$ratingText ($reviewCount)';
+    }
+    return ratingText;
   }
 
+  Color get ratingColor =>
+      report['rating'] == null ? AppColors.greyText : AppColors.blue;
+
+  // totalSpots == null → show 0.
   String get displaySpots {
-    return report['available_spots']?.toString() ??
-        report['spots_left']?.toString() ??
-        '2 spots';
+    final dynamic totalSpots = report['totalSpots'];
+    final int spots = totalSpots is num
+        ? totalSpots.toInt()
+        : (int.tryParse(totalSpots?.toString() ?? '') ??
+            int.tryParse(report['available_spots']?.toString() ?? '') ??
+            int.tryParse(report['spots_left']?.toString() ?? '') ??
+            0);
+    return '$spots spots';
   }
 
   // ============================================================
@@ -455,7 +490,7 @@ class ParkingReportDropdown extends StatelessWidget {
   // ============================================================
 
   bool get _isFree {
-    final cost = report['parking_cost']
+    final cost = (report['parkingCost'] ?? report['parking_cost'])
         ?.toString()
         .trim()
         .toUpperCase();
@@ -466,11 +501,17 @@ class ParkingReportDropdown extends StatelessWidget {
         cost == 'FREE';
   }
 
+  // paid + parkingFee present → show the fee; otherwise fall back to 'Paid'.
   String get displayPrice {
-    // `parking_cost` only ever stores 'FREE'/'PAID' (see ParkingInfoDialog's
-    // cost toggle) — there's no numeric amount to show, so don't fabricate
-    // one like "$PAID/hr".
-    return _isFree ? 'Free' : 'Paid';
+    if (_isFree) return 'Free';
+    final dynamic fee = report['parkingFee'];
+    final num? feeNum = fee is num ? fee : num.tryParse(fee?.toString() ?? '');
+    if (feeNum != null) {
+      final String feeText =
+          feeNum % 1 == 0 ? feeNum.toInt().toString() : feeNum.toString();
+      return '\$$feeText';
+    }
+    return 'Paid';
   }
 
   String get costStatusLabel => _isFree ? 'Free' : 'Paid';
@@ -478,44 +519,68 @@ class ParkingReportDropdown extends StatelessWidget {
   Color get costStatusColor =>
       _isFree ? AppColors.successColor : AppColors.paidBlue;
 
-  // ============================================================
-  // DYNAMIC TAG
-  // ============================================================
+  // Old tag logic — kept for reference, replaced by parkingAreaTypes below.
+  // String get displayTag {
+  //   if (report['electric_charging'] == true) {
+  //     return 'Electric';
+  //   }
+  //
+  //   if (report['disabled_facility'] == true) {
+  //     return 'Disabled';
+  //   }
+  //
+  //   return 'Parking';
+  // }
+  //
+  // IconData get displayTagIcon {
+  //   if (report['electric_charging'] == true) {
+  //     return Icons.electric_car_rounded;
+  //   }
+  //
+  //   if (report['disabled_facility'] == true) {
+  //     return Icons.accessible_rounded;
+  //   }
+  //
+  //   return Icons.local_parking_rounded;
+  // }
+  //
+  // Color get displayTagColor {
+  //   if (report['electric_charging'] == true) {
+  //     return AppColors.chargingGreen;
+  //   }
+  //
+  //   if (report['disabled_facility'] == true) {
+  //     return AppColors.disableOrange;
+  //   }
+  //
+  //   return const Color(0xFF64748B);
+  // }
 
-  String get displayTag {
-    if (report['electric_charging'] == true) {
-      return 'Electric';
+  // parkingAreaTypes == [] → no badge at all (tag stays null).
+  List<String> get _areaTypes {
+    final dynamic raw = report['parkingAreaTypes'];
+    if (raw is List) {
+      return raw.map((e) => e.toString().toUpperCase()).toList();
     }
-
-    if (report['disabled_facility'] == true) {
-      return 'Disabled';
-    }
-
-    return 'Parking';
+    return const [];
   }
 
-  IconData get displayTagIcon {
-    if (report['electric_charging'] == true) {
-      return Icons.electric_car_rounded;
-    }
-
-    if (report['disabled_facility'] == true) {
-      return Icons.accessible_rounded;
-    }
-
-    return Icons.local_parking_rounded;
+  String? get displayTag {
+    if (_areaTypes.contains('ELECTRIC_CHARGING')) return 'Electric';
+    if (_areaTypes.contains('DISABLED_FACILITY')) return 'Disabled';
+    return null;
   }
 
-  Color get displayTagColor {
-    if (report['electric_charging'] == true) {
-      return AppColors.chargingGreen;
-    }
+  IconData? get displayTagIcon {
+    if (_areaTypes.contains('ELECTRIC_CHARGING')) return Icons.electric_car_rounded;
+    if (_areaTypes.contains('DISABLED_FACILITY')) return Icons.accessible_rounded;
+    return null;
+  }
 
-    if (report['disabled_facility'] == true) {
-      return AppColors.disableOrange;
-    }
-
-    return const Color(0xFF64748B);
+  Color? get displayTagColor {
+    if (_areaTypes.contains('ELECTRIC_CHARGING')) return AppColors.chargingGreen;
+    if (_areaTypes.contains('DISABLED_FACILITY')) return AppColors.disableOrange;
+    return null;
   }
 
   // ============================================================
@@ -523,8 +588,8 @@ class ParkingReportDropdown extends StatelessWidget {
   // ============================================================
 
   void _openNavigation(BuildContext context) {
-    final dynamic rawLat = report['latitude'];
-    final dynamic rawLng = report['longitude'];
+    final dynamic rawLat = report['centerLat'] ?? report['latitude'];
+    final dynamic rawLng = report['centerLng'] ?? report['longitude'];
 
     final double? destLat = rawLat is num
         ? rawLat.toDouble()
@@ -557,6 +622,7 @@ class ParkingReportDropdown extends StatelessWidget {
       subtitle: displaySubtitle,
       distance: displayDistance,
       rating: displayRating,
+      ratingColor: ratingColor,
       tag: displayTag,
       tagIcon: displayTagIcon,
       tagColor: displayTagColor,
