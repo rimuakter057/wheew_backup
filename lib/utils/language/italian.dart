@@ -5,7 +5,7 @@ final Map<String, String> italian = {
   AppStrings.home: "Home",
   AppStrings.parking: "Parcheggio",
   AppStrings.chatNav: "Chat",
-  AppStrings.welcomeTitle1: "GUIDA. CHATTA. PARCHEGGIA. RESPIRA.",
+  AppStrings.welcomeTitle1: "Guida.\nChatta.\nParcheggia.\nRespira.",
   AppStrings.welcomeSubtitle1: "Connettiti con i conducenti vicini usando solo una targa.",
   AppStrings.getStarted: "Inizia",
   AppStrings.alreadyHaveAccount: "Hai già un account?",
@@ -56,6 +56,7 @@ final Map<String, String> italian = {
   AppStrings.enterLicensePlateOrNickName: 'Inserisci la targa o il nickname',
 
   AppStrings.password: 'Password',
+  AppStrings.currentPassword: 'password attuale',
   AppStrings.enterYourPassword: 'Inserisci la tua password',
   AppStrings.passwordIsRequired: 'La password è obbligatoria',
   AppStrings.passwordMust6Character: 'La password deve contenere almeno 6 caratteri',
@@ -123,7 +124,8 @@ final Map<String, String> italian = {
   AppStrings.save: 'Salva',
 
   // -------- General --------
-  AppStrings.or: 'OPPURE',
+  AppStrings.oR: 'OPPURE',
+  AppStrings.or: 'Oppure',
   AppStrings.alreadyAccount: 'Hai già un account?',
   AppStrings.termsAndConditions: 'Termini e Condizioni',
   AppStrings.privacyPolicy: 'Informativa sulla privacy',
@@ -174,6 +176,7 @@ final Map<String, String> italian = {
   AppStrings.blockedUser1: "Sblocca",
   AppStrings.blockedUser5: "Utenti bloccati",
   AppStrings.unblock: "Sblocca",
+  AppStrings.blockUserAction: "Blocca utente",
 
   AppStrings.profile: "Profilo",
   AppStrings.edit: "Modifica",
@@ -259,7 +262,7 @@ final Map<String, String> italian = {
   AppStrings.passwordMustBe6Characters: "La password deve contenere almeno 6 caratteri",
   AppStrings.supportRequest: "Richiesta di supporto",
 
-  AppStrings.and: ' e le ',
+  AppStrings.and: ' E ',
 
 // -------- Toast message --------
   AppStrings.invalidCredentials: 'Credenziali non valide!',
@@ -383,6 +386,7 @@ final Map<String, String> italian = {
   AppStrings.uniqueNumber: 'Numero Univoco',
   AppStrings.expireDate: 'Data di Scadenza',
   AppStrings.admin:"Amministratore",
+  AppStrings.groupMembersTitle: "Membri del gruppo",
 
   AppStrings.uploadFile: 'Carica File',
   AppStrings.replaceFile: 'Sostituisci File',

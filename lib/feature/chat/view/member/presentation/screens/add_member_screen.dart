@@ -116,6 +116,84 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
     );
   }
 
+  // A-Z sections, sorted alphabetically by nickName — matches Figma's
+  // letter-header grouping. No "Frequently Contacted" section: the search
+  // API doesn't return any frequency/recency signal to build one from.
+  Map<String, List<SearchMemberModel>> _groupByLetter(
+    List<SearchMemberModel> list,
+  ) {
+    final sorted = [...list]
+      ..sort((a, b) => a.nickName.toLowerCase().compareTo(b.nickName.toLowerCase()));
+
+    final Map<String, List<SearchMemberModel>> grouped = {};
+    for (final member in sorted) {
+      final letter = member.nickName.isNotEmpty
+          ? member.nickName[0].toUpperCase()
+          : '#';
+      grouped.putIfAbsent(letter, () => []).add(member);
+    }
+    return grouped;
+  }
+
+  Widget _buildMemberTile(SearchMemberModel member) {
+    return Obx(() => AddMemberTile(
+      name: member.nickName,
+      avatarUrl: ImageHandler.imagesHandle(
+        member.avatar?.isNotEmpty == true
+            ? member.avatar!
+            : AppConst.unknown,
+        isProfile: true,
+      ),
+      rating: null,
+      isSelected: _controller.isSelected(member.id),
+      onTap: () => _controller.toggleSelect(member.id),
+      onCheckChanged: (_) => _controller.toggleSelect(member.id),
+    ));
+  }
+
+  Widget _buildLetterCard(List<SearchMemberModel> members) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFFE8EEF5),
+            Color(0xFFD3DEE9),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(
+          ResponsiveHelper.borderRadius(20),
+        ),
+        border: Border.all(color: Colors.white.withOpacity(0.6)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: ResponsiveHelper.padding(16),
+        vertical: ResponsiveHelper.padding(4),
+      ),
+      child: Column(
+        children: [
+          for (var i = 0; i < members.length; i++) ...[
+            _buildMemberTile(members[i]),
+            if (i != members.length - 1)
+              Divider(
+                color: Colors.grey.shade200,
+                height: 1,
+                indent: ResponsiveHelper.width(60),
+              ),
+          ],
+        ],
+      ),
+    );
+  }
+
   Widget _buildList() {
     return Obx(() {
       // Loading indicator
@@ -146,61 +224,29 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
         );
       }
 
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(20)),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFFE8EEF5),
-                Color(0xFFD3DEE9),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(
-              ResponsiveHelper.borderRadius(20),
-            ),
-            border: Border.all(color: Colors.white.withOpacity(0.6)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 16,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: ListView.separated(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.symmetric(
-              horizontal: ResponsiveHelper.padding(16),
-              vertical: ResponsiveHelper.padding(8),
-            ),
-            itemCount: list.length,
-            separatorBuilder: (_, __) => Divider(
-              color: Colors.grey.shade200,
-              height: 1,
-              indent: ResponsiveHelper.width(60),
-            ),
-            itemBuilder: (context, index) {
-              final SearchMemberModel member = list[index];
+      final grouped = _groupByLetter(list);
+      final letters = grouped.keys.toList()..sort();
 
-              return Obx(() => AddMemberTile(       // ✅ এই Obx টা নতুন
-                name: member.nickName,
-                avatarUrl: ImageHandler.imagesHandle(
-                  member.avatar?.isNotEmpty == true
-                      ? member.avatar!
-                      : AppConst.unknown,
-                  isProfile: true,
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(20)),
+        children: [
+          for (final letter in letters) ...[
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.padding(8)),
+              child: Text(
+                letter,
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(14),
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.black,
                 ),
-                rating: null,
-                isSelected: _controller.isSelected(member.id),  // এখন reactive
-                onTap: () => _controller.toggleSelect(member.id),
-                onCheckChanged: (_) => _controller.toggleSelect(member.id),
-              ));
-            },
-          ),
-        ),
+              ),
+            ),
+            _buildLetterCard(grouped[letter]!),
+            SizedBox(height: ResponsiveHelper.spacing(16)),
+          ],
+        ],
       );
     });
   }

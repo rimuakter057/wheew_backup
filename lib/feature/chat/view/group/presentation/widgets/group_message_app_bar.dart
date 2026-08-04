@@ -445,7 +445,10 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
           padding: EdgeInsets.only(right: ResponsiveHelper.width(8)),
           icon: Icon(Icons.more_vert, color: AppColors.black),
           color: Colors.transparent, // আসল color transparent-ই থাকবে, gradient Container দিয়ে দেওয়া হবে
-          elevation: 6,
+          // elevation: 6 added a second (Material default) drop shadow on
+          // top of the Container's own boxShadow below — the double shadow
+          // showed up as an unwanted grey halo around the popup.
+          elevation: 0,
           offset: Offset(-ResponsiveHelper.width(36), ResponsiveHelper.height(40)),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
@@ -473,15 +476,19 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
               padding: EdgeInsets.zero,
               enabled: false, // পুরো item এর tap বন্ধ, ভেতরের InkWell গুলো কাজ করবে
               child: Container(
+                width: 175,
                 decoration: BoxDecoration(
-                  gradient: AppColors.containerGradient,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(ResponsiveHelper.borderRadius(24)),
-                    bottomLeft: Radius.circular(ResponsiveHelper.borderRadius(24)),
-                    bottomRight: Radius.circular(ResponsiveHelper.borderRadius(24)),
-                  ),
+                  color: Colors.white.withOpacity(0.96),
+                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.12),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
                 ),
-                padding: ResponsiveHelper.symmetric(vertical: 4, horizontal: 0),
+                padding: ResponsiveHelper.symmetric(vertical: 8, horizontal: 0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -498,13 +505,19 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                         padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 10),
                         child: Row(
                           children: [
-                            CustomImage(imageSrc: AssetsPath.seeMember),
-                            SizedBox(width: ResponsiveHelper.spacing(10)),
+                            CustomImage(
+                              imageSrc: AssetsPath.seeMember,
+                              imageColor: AppColors.blue,
+                              width: ResponsiveHelper.iconSize(22),
+                              height: ResponsiveHelper.iconSize(22),
+                            ),
+                            SizedBox(width: ResponsiveHelper.spacing(12)),
                             Text(
                               AppStrings.seeMembers.tr,
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(14),
-                                color: AppColors.black,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF1E293B),
                               ),
                             ),
                           ],
@@ -522,13 +535,19 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                         padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 10),
                         child: Row(
                           children: [
-                            CustomImage(imageSrc: AssetsPath.addMember),
-                            SizedBox(width: ResponsiveHelper.spacing(10)),
+                            CustomImage(
+                              imageSrc: AssetsPath.addMember,
+                              imageColor: AppColors.blue,
+                              width: ResponsiveHelper.iconSize(22),
+                              height: ResponsiveHelper.iconSize(22),
+                            ),
+                            SizedBox(width: ResponsiveHelper.spacing(12)),
                             Text(
                               AppStrings.addMembers.tr,
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(14),
-                                color: AppColors.black,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF1E293B),
                               ),
                             ),
                           ],
@@ -546,13 +565,19 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                         padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 10),
                         child: Row(
                           children: [
-                            CustomImage(imageSrc: AssetsPath.editGroup),
-                            SizedBox(width: ResponsiveHelper.spacing(10)),
+                            CustomImage(
+                              imageSrc: AssetsPath.editGroup,
+                              imageColor: AppColors.blue,
+                              width: ResponsiveHelper.iconSize(22),
+                              height: ResponsiveHelper.iconSize(22),
+                            ),
+                            SizedBox(width: ResponsiveHelper.spacing(12)),
                             Text(
                               AppStrings.editGroup.tr,
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(14),
-                                color: AppColors.black,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF1E293B),
                               ),
                             ),
                           ],
@@ -570,15 +595,19 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                         padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 10),
                         child: Row(
                           children: [
-                            Icon(Icons.exit_to_app_outlined,
-                                size: ResponsiveHelper.iconSize(20),
-                                color: const Color(0xFFFF5722)),
-                            SizedBox(width: ResponsiveHelper.spacing(10)),
+                            CustomImage(
+                              imageSrc: AssetsPath.leaveGroupIcon,
+                              imageColor: const Color(0xFFE53E3E),
+                              width: ResponsiveHelper.iconSize(22),
+                              height: ResponsiveHelper.iconSize(22),
+                            ),
+                            SizedBox(width: ResponsiveHelper.spacing(12)),
                             Text(
                               AppStrings.leaveGroup.tr,
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(14),
-                                color: const Color(0xFFFF5722),
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFFE53E3E),
                               ),
                             ),
                           ],

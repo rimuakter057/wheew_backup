@@ -29,7 +29,7 @@ Widget buildAccountSettingsItems({
 }) {
   final List<Map<String, dynamic>> items = [
     {
-      'icon': AssetsPath.profile,
+      'icon': AssetsPath.personalInfo,
       'title': AppStrings.profile.tr,
       'subtitle': AppStrings.personalInformationSubtitle.tr,
       'onTap': () async {
@@ -120,7 +120,7 @@ Widget buildSupportLegalItems({required BuildContext context}) {
       },
     },
     {
-      'icon': AssetsPath.blocked,
+      'icon': AssetsPath.blockedUsers,
       'title': AppStrings.blockedUser5.tr,
       'subtitle': AppStrings.blockedUsersSubtitle.tr,
       'onTap': () {
@@ -136,7 +136,7 @@ Widget buildSupportLegalItems({required BuildContext context}) {
 Widget buildAccountActionsItems({required BuildContext context}) {
   final List<Map<String, dynamic>> items = [
     {
-      'icon': AssetsPath.remove,
+      'icon': AssetsPath.delete,
       'title': AppStrings.delete.tr,
       'subtitle': AppStrings.deleteAccountSubtitle.tr,
       'iconColor': AppColors.errorColor,
@@ -248,10 +248,11 @@ Widget _buildLanguageDropdown({
 }) {
   return ListTile(
     contentPadding: EdgeInsets.zero,
-    leading: Icon(
-      Icons.translate,
-      size: ResponsiveHelper.iconSize(24),
-      color: AppColors.blue,
+    leading: SvgPicture.asset(
+      AssetsPath.languageIcon,
+      width: ResponsiveHelper.iconSize(24),
+      height: ResponsiveHelper.iconSize(24),
+      colorFilter: ColorFilter.mode(AppColors.blue, BlendMode.srcIn),
     ),
     title: Text(
       AppStrings.language.tr,
@@ -375,12 +376,13 @@ void _showLanguageBottomSheet(BuildContext context) {
                           vertical: 14,
                         ),
                         decoration: BoxDecoration(
+                          border: Border.all(color: isSelected?AppColors.blue:AppColors.white),
                           gradient: isSelected
                               ? AppColors.buttonGradient
                               : null,
                           color: isSelected
                               ? null
-                              : AppColors.blueShadeConBg,
+                              : AppColors.iceBlue,
                           borderRadius: BorderRadius.circular(
                             ResponsiveHelper.borderRadius(22),
                           ),
@@ -440,6 +442,11 @@ void _showLanguageBottomSheet(BuildContext context) {
                     ),
                   );
                 }),
+
+
+                SizedBox(
+                  height: ResponsiveHelper.spacing(44),
+                ),
               ],
             );
           }),

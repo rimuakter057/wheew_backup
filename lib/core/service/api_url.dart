@@ -89,8 +89,8 @@ class ApiUrl {
 
   ///terms and privacy==========================
 
-  static const String terms = "http://13.50.99.165/terms-and-condition-public";
-  static const String privacy = "http://13.50.99.165/privacy-policy-public";
+  static const String terms = "$baseUrl/terms-and-condition-public";
+  static const String privacy = "$baseUrl/privacy-policy-public";
 
   // http://13.50.99.165/privacy-policy-public
   // http://13.50.99.165/terms-and-condition-public

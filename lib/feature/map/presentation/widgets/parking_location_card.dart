@@ -24,6 +24,10 @@ class ParkingLocationCard extends StatelessWidget {
   final IconData leftStatIcon;
   final IconData rightStatIcon;
 
+  /// SVG asset for the right stat icon — takes precedence over
+  /// [rightStatIcon] when provided (e.g. the dollar icon for Free/Paid).
+  final String? rightStatIconAsset;
+
   final String? remainingTimeLabel;
   final String? remainingTimeSubLabel;
 
@@ -49,6 +53,7 @@ class ParkingLocationCard extends StatelessWidget {
     this.badgeIconAsset,
     this.leftStatIcon = Icons.map_outlined,
     this.rightStatIcon = Icons.monetization_on_outlined,
+    this.rightStatIconAsset,
     this.remainingTimeLabel,
     this.remainingTimeSubLabel,
     this.onNavigate,
@@ -283,11 +288,21 @@ class ParkingLocationCard extends StatelessWidget {
                       Expanded(
                         child: Column(
                           children: [
-                            Icon(
-                              rightStatIcon,
-                              color: AppColors.black,
-                              size: ResponsiveHelper.iconSize(22),
-                            ),
+                            rightStatIconAsset != null
+                                ? SvgPicture.asset(
+                                    rightStatIconAsset!,
+                                    width: ResponsiveHelper.iconSize(22),
+                                    height: ResponsiveHelper.iconSize(22),
+                                    colorFilter: ColorFilter.mode(
+                                      AppColors.black,
+                                      BlendMode.srcIn,
+                                    ),
+                                  )
+                                : Icon(
+                                    rightStatIcon,
+                                    color: AppColors.black,
+                                    size: ResponsiveHelper.iconSize(22),
+                                  ),
                             SizedBox(height: ResponsiveHelper.spacing(6)),
                             Text(
                               rightStatLabel,

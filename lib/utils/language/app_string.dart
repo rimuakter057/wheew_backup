@@ -57,6 +57,7 @@ class AppStrings {
       'enter_license_plate_or_nick_name';
 
   static const String password = 'password';
+  static const String currentPassword = 'current_password';
   static const String enterYourPassword = 'enter_your_password';
   static const String passwordIsRequired = 'password_is_required';
   static const String passwordMust6Character = 'password_must_6_character';
@@ -128,6 +129,7 @@ class AppStrings {
   static const String save = 'save';
 
   // -------- General --------
+  static const String oR = 'oR';
   static const String or = 'or';
   static const String alreadyAccount = 'already_account';
 
@@ -182,6 +184,7 @@ class AppStrings {
 
   static const String blocked = 'block_';
   static const String unblock = 'unblock';
+  static const String blockUserAction = 'block_user_action';
 
   static const String blockedUser1 = 'blocked_user1';
   static const String blockedUser5 = 'blocked_user5';
@@ -382,6 +385,7 @@ class AppStrings {
 
   static const String noMembersFound = 'no_members_found';
   static const String admin = 'admin';
+  static const String groupMembersTitle = 'group_members_title';
 
   static const String addMember = 'add_member';
   static const String noResultsFor = 'no_results_for';

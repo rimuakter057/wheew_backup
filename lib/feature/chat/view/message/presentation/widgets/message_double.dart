@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/feature/chat/view/widgets/media_viewer_screen.dart';
+import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
@@ -24,6 +25,8 @@ class MessageBubble extends StatelessWidget {
   final bool? isRead;
   final bool? isDelivered;
   final num? durationSeconds;  // ← API: durationSeconds (voice)
+  final String? time;          // ← Timestamp (e.g. 7:29 PM)
+  final String? avatarUrl;     // ← Receiver avatar
 
   const MessageBubble({
     super.key,
@@ -37,6 +40,8 @@ class MessageBubble extends StatelessWidget {
     this.isRead,
     this.isDelivered,
     this.durationSeconds,
+    this.time,
+    this.avatarUrl,
   });
 
 
@@ -89,20 +94,6 @@ class MessageBubble extends StatelessWidget {
   }
 
   void _openViewer({required BuildContext context}) {
-    // Get.to(
-    //       () => MediaViewerScreen(
-    //     fileUrl: _fullUrl,
-    //     messageType: fileMimeType ?? type,
-    //     fileName: _displayName,
-    //   ),
-    //   transition: Transition.fadeIn,
-    //   duration: const Duration(milliseconds: 220),
-    // );
-
-
-
-
-
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -113,89 +104,177 @@ class MessageBubble extends StatelessWidget {
         ),
       ),
     );
-
-
-        }
+  }
 
   // ── build ───────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
+    if (!isMine) {
+      // Received Message with Avatar on bottom-left
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.height(4)),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              radius: ResponsiveHelper.borderRadius(14),
+              backgroundImage: NetworkImage(
+                ImageHandler.imagesHandle(
+                  avatarUrl,
+                  isProfile: true,
+                ),
+              ),
+            ),
+            SizedBox(width: ResponsiveHelper.spacing(8)),
+            Flexible(
+              child: GestureDetector(
+                onTap: _canOpenViewer ? () => _openViewer(context: context) : null,
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: ResponsiveHelper.width(260)),
+                  padding: _isImage
+                      ? EdgeInsets.zero
+                      : EdgeInsets.symmetric(
+                          vertical: ResponsiveHelper.height(10),
+                          horizontal: ResponsiveHelper.width(14),
+                        ),
+                  decoration: BoxDecoration(
+                    color: _isImage ? Colors.transparent : Colors.white,
+                    border: Border.all(
+                      color: _isImage ? Colors.transparent : Colors.grey.shade200,
+                    ),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(ResponsiveHelper.borderRadius(18)),
+                      topRight: Radius.circular(ResponsiveHelper.borderRadius(18)),
+                      bottomRight: Radius.circular(ResponsiveHelper.borderRadius(18)),
+                      bottomLeft: Radius.circular(ResponsiveHelper.borderRadius(4)),
+                    ),
+                    boxShadow: _isImage
+                        ? []
+                        : [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.03),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                  ),
+                  child: IntrinsicWidth(child: _buildBubbleContent()),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Sent Message (Right-aligned)
     return Align(
-      alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
-      child: Column(
-        crossAxisAlignment:
-        isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      alignment: Alignment.centerRight,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.height(4)),
+        child: GestureDetector(
+          onTap: _canOpenViewer ? () => _openViewer(context: context) : null,
+          child: Container(
+            constraints: BoxConstraints(maxWidth: ResponsiveHelper.width(260)),
+            padding: _isImage
+                ? EdgeInsets.zero
+                : EdgeInsets.symmetric(
+                    vertical: ResponsiveHelper.height(10),
+                    horizontal: ResponsiveHelper.width(14),
+                  ),
+            decoration: BoxDecoration(
+              color: _isImage ? Colors.transparent : const Color(0xFFD6E4F0),
+              border: Border.all(
+                color: _isImage ? Colors.transparent : const Color(0xFFC4D7E8),
+              ),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(ResponsiveHelper.borderRadius(18)),
+                topRight: Radius.circular(ResponsiveHelper.borderRadius(18)),
+                bottomLeft: Radius.circular(ResponsiveHelper.borderRadius(18)),
+                bottomRight: Radius.circular(ResponsiveHelper.borderRadius(4)),
+              ),
+            ),
+            child: IntrinsicWidth(child: _buildBubbleContent()),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBubbleContent() {
+    if (_isFileMessage) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
-          GestureDetector(
-            onTap: _canOpenViewer
-                ? () {
-              _openViewer(context: context);
-            }
-                : null,
-            child: Container(
-              constraints:
-              BoxConstraints(maxWidth: ResponsiveHelper.width(272)),
-              margin: EdgeInsets.only(
-                top: ResponsiveHelper.height(5),
-                bottom: isMine
-                    ? ResponsiveHelper.height(2)
-                    : ResponsiveHelper.height(5),
-              ),
-              padding: _isImage
-                  ? EdgeInsets.zero
-                  : EdgeInsets.symmetric(
-                vertical: ResponsiveHelper.height(10),
-                horizontal: ResponsiveHelper.width(14),
-              ),
-              decoration: BoxDecoration(
-                color: _isImage
-                    ? Colors.transparent
-                    : isMine
-                    ? AppColors.blue
-                    : AppColors.white,
-                border: Border.all(
-                  color: _isImage
-                      ? Colors.transparent
-                      : isMine
-                      ? AppColors.blue
-                      : AppColors.greyBorder,
+          _buildFileContent(),
+          if (time != null && time!.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  time!,
+                  style: GoogleFonts.poppins(
+                    color: Colors.grey.shade600,
+                    fontSize: ResponsiveHelper.fontSize(10),
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
-                borderRadius: BorderRadius.only(
-                  topLeft:
-                  Radius.circular(ResponsiveHelper.borderRadius(15)),
-                  topRight:
-                  Radius.circular(ResponsiveHelper.borderRadius(15)),
-                  bottomLeft: isMine
-                      ? Radius.circular(ResponsiveHelper.borderRadius(15))
-                      : Radius.zero,
-                  bottomRight: isMine
-                      ? Radius.zero
-                      : Radius.circular(
-                      ResponsiveHelper.borderRadius(15)),
+                if (isMine) ...[
+                  const SizedBox(width: 4),
+                  _buildReadReceipt(),
+                ],
+              ],
+            ),
+          ],
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          message,
+          style: GoogleFonts.inter(
+            color: const Color(0xFF1E293B),
+            fontSize: ResponsiveHelper.fontSize(14),
+            fontWeight: FontWeight.w400,
+            height: 1.35,
+          ),
+        ),
+        if (time != null && time!.isNotEmpty) ...[
+          const SizedBox(height: 4),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  time!,
+                  style: GoogleFonts.poppins(
+                    color: Colors.grey.shade600,
+                    fontSize: ResponsiveHelper.fontSize(10),
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
-              ),
-              child: _isFileMessage
-                  ? _buildFileContent()
-                  : Text(
-                message,
-                style: GoogleFonts.inter(
-                  color: isMine ? AppColors.white : AppColors.black,
-                  fontSize: ResponsiveHelper.fontSize(15),
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
+                if (isMine) ...[
+                  const SizedBox(width: 4),
+                  _buildReadReceipt(),
+                ],
+              ],
             ),
           ),
-
-          if (isMine)
-            Padding(
-              padding: EdgeInsets.only(bottom: ResponsiveHelper.padding(4), right: ResponsiveHelper.padding(2)),
-              child: _buildReadReceipt(),
-            ),
         ],
-      ),
+      ],
     );
   }
 

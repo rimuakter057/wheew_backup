@@ -34,10 +34,15 @@ class ShareLinkDialog extends StatelessWidget {
         ),
       ),
       child: Container(
-        color: AppColors.backgroundColor,
+   
         width: ResponsiveHelper.isTablet
             ? ResponsiveHelper.maxContentWidth
             : double.infinity,
+        decoration: BoxDecoration(
+          color: AppColors.backgroundColor,
+          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16))
+          
+        ),
         padding: ResponsiveHelper.all(24),
         child: SingleChildScrollView(
           child: Stack(
@@ -59,7 +64,7 @@ class ShareLinkDialog extends StatelessWidget {
                   /// Title
                   Text(
                     AppStrings.shareWithFriends.tr,
-                    style: context.bodyLarge?.copyWith(
+                    style: context.bodyLarge.copyWith(
                       color: AppColors.primaryText,
                       fontWeight: FontWeight.bold,
                     ),
@@ -71,10 +76,10 @@ class ShareLinkDialog extends StatelessWidget {
                   Text(
                     AppStrings.shareThisLinkInviteFriends.tr,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: ResponsiveHelper.fontSize(13),
-                      color: AppColors.secondaryText,
-                    ),
+                    style: context.bodySmall.copyWith(
+                      color: AppColors.greyText
+
+                    )
                   ),
 
                   SizedBox(height: ResponsiveHelper.spacing(22)),
@@ -139,10 +144,7 @@ class ShareLinkDialog extends StatelessWidget {
                         padding: ResponsiveHelper.symmetric(horizontal: 12),
                         child: Text(
                           AppStrings.or.tr,
-                          style: TextStyle(
-                            fontSize: ResponsiveHelper.fontSize(12),
-                            color: AppColors.secondaryText,
-                          ),
+                          style: context.bodyMedium.copyWith(color: AppColors.greyText)
                         ),
                       ),
                       Expanded(

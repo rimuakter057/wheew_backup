@@ -443,8 +443,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
               ),
 
               // ── Chat List ────────────────────────────────────
-              Flexible(
-                fit: FlexFit.loose,
+              Expanded(
             child: Obx(() {
 
 
@@ -487,8 +486,15 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   }
 
 
-                  // Chat list দেখাও
-                  return Padding(
+                  // Chat list দেখাও — outer SingleChildScrollView owns all
+                  // scrolling (same pattern as BlockListScreen), so the
+                  // white card's height stays tied to its actual content
+                  // instead of the shrinkWrapped ListView fighting an
+                  // Expanded parent for space.
+                  return SingleChildScrollView(
+                    controller: scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Padding(
                     padding: EdgeInsets.only(
                       left: ResponsiveHelper.padding(16),
                       right: ResponsiveHelper.padding(16),
@@ -511,9 +517,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
                         child: ListView.separated(
-                          controller: scrollController,
                           shrinkWrap: true,
-                          physics: const AlwaysScrollableScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           itemCount: displayChats.length + 1,
                             separatorBuilder: (context, index) {
                               if (index < displayChats.length - 1) {
@@ -599,7 +604,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
                           ),
                         ),
                       ),
-                    );
+                    ),
+                  );
                 }),
               ),
 

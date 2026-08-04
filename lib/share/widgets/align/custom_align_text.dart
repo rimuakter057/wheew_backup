@@ -36,7 +36,7 @@ class CustomAlignText extends StatelessWidget {
         style:
             style ??
             GoogleFonts.poppins(
-              fontWeight: fontWeight ?? FontWeight.w400,
+              fontWeight: fontWeight ?? FontWeight.w600,
               fontSize: fontSize ?? ResponsiveHelper.fontSize(14),
               color: color ?? AppColors.textBlack,
             ),

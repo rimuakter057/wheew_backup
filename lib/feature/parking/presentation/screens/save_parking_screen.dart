@@ -213,20 +213,21 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
     return '$spots spots';
   }
 
-  ({String label, IconData icon}) _priceStat(Map<String, dynamic>? area) {
+  // Dollar SVG shown for both Free and Paid — same icon either way.
+  ({String label, String asset}) _priceStat(Map<String, dynamic>? area) {
     final cost = area?['parkingCost']?.toString().toUpperCase();
     if (cost == null || cost.isEmpty || cost == 'FREE') {
-      return (label: 'Free', icon: Icons.money_off_rounded);
+      return (label: 'Free', asset: AssetsPath.dolar);
     }
     final fee = area?['parkingFee'];
     if (fee != null) {
       final feeNum = fee is num ? fee : num.tryParse('$fee');
       if (feeNum != null) {
         final feeText = feeNum % 1 == 0 ? feeNum.toInt().toString() : feeNum.toString();
-        return (label: '\$$feeText', icon: Icons.monetization_on_outlined);
+        return (label: '\$$feeText', asset: AssetsPath.dolar);
       }
     }
-    return (label: 'Paid', icon: Icons.monetization_on_outlined);
+    return (label: 'Paid', asset: AssetsPath.dolar);
   }
 
   ({String label, String sub})? _remainingTime(Map<String, dynamic> location) {
@@ -317,7 +318,7 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
                             ratingLabel: _ratingLabel(area),
                             leftStatLabel: _spotsLabel(area),
                             rightStatLabel: priceStat.label,
-                            rightStatIcon: priceStat.icon,
+                            rightStatIconAsset: priceStat.asset,
                             remainingTimeLabel: remaining?.label,
                             remainingTimeSubLabel: remaining?.sub,
                             onNavigate: remaining == null

@@ -3,6 +3,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
+import 'package:platchatapp/helper/data_converter/data_converter.dart';
 
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/feature/chat/view/message/presentation/widgets/message_appbar.dart';
@@ -39,6 +40,7 @@ class MessageScreen extends StatefulWidget {
   final String? voiceMessage;
 
   final bool isReceivedRequest;
+
   final bool isSendRequest;
   final String? requestId;
   final String? firstMessage;
@@ -260,6 +262,8 @@ class _MessageScreenState extends State<MessageScreen> {
           otherUserAvatar: widget.otherUserAvatar,
           receiverId: widget.receiverId,
           chatController: chatController,
+          licenceId: widget.licenceId,
+          isVerified: widget.isVehicleVerified,
           onRateTap: () async {
             await chatController.fetchMyRating(widget.receiverId);
             if (!context.mounted) return;
@@ -269,6 +273,7 @@ class _MessageScreenState extends State<MessageScreen> {
               image: widget.otherUserAvatar ?? '',
               name: widget.otherUserName,
               receiverId: widget.receiverId,
+              isVerified: _effectiveIsVehicleVerified,
             );
           },
           onProfileTap: () async {
@@ -303,6 +308,7 @@ class _MessageScreenState extends State<MessageScreen> {
                         image: widget.otherUserAvatar ?? '',
                         name: widget.otherUserName,
                         receiverId: widget.receiverId,
+                        isVerified: _effectiveIsVehicleVerified,
                       );
                     },
                   ),
@@ -381,6 +387,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
                         final msg = messages[msgIndex];
                         final bool isMine = msg.isMine == true;
+                        final String formattedTime = formatTime(msg.createdAt ?? '');
 
                         return GestureDetector(
                           onLongPress: () {
@@ -399,6 +406,8 @@ class _MessageScreenState extends State<MessageScreen> {
                             fileMimeType: msg.fileMimeType,
                             durationSeconds: msg.durationSeconds,
                             isDelivered: msg.isDelivered,
+                            time: formattedTime.isNotEmpty ? formattedTime : '7:30 PM',
+                            avatarUrl: widget.otherUserAvatar,
                           ),
                         );
                       },

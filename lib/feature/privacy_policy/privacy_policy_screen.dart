@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
@@ -35,26 +36,25 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
         if (await canLaunchUrl(uri)) {
           final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
           if (!ok && mounted) {
-            Get.snackbar(
-              'Error',
-              'Could not open link',
-              snackPosition: SnackPosition.BOTTOM,
-            );
+
+
+
+            CustomSnackbar.error(context: context, message: 'Could not open link',);
+
+
           }
         } else if (mounted) {
-          Get.snackbar(
-            'Error',
-            'No app can open this link',
-            snackPosition: SnackPosition.BOTTOM,
-          );
+
+
+          CustomSnackbar.error(context: context, message:     'No app can open this link',);
+
         }
       } catch (_) {
         if (mounted) {
-          Get.snackbar(
-            'Error',
-            'Could not open link',
-            snackPosition: SnackPosition.BOTTOM,
-          );
+
+
+          CustomSnackbar.error(context: context, message: 'Could not open link',);
+
         }
       }
     }
@@ -66,20 +66,29 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   void initState() {
     super.initState();
 
+    debugPrint('🌐 [Privacy] loading URL: ${widget.url}');
+
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
-          onPageStarted: (_) {
+          onPageStarted: (url) {
+            debugPrint('🌐 [Privacy] page started: $url');
             if (mounted) setState(() => isLoading = true);
           },
-          onPageFinished: (_) {
+          onPageFinished: (url) {
+            debugPrint('🟢 [Privacy] page finished: $url');
             if (mounted) setState(() => isLoading = false);
           },
-          onWebResourceError: (_) {
+          onWebResourceError: (error) {
+            debugPrint(
+              '🔴 [Privacy] web resource error: code=${error.errorCode} '
+              'desc=${error.description} url=${error.url}',
+            );
             if (mounted) setState(() => isLoading = false);
           },
           onNavigationRequest: (NavigationRequest request) {
+            debugPrint('🌐 [Privacy] navigation request: ${request.url}');
             final uri = Uri.tryParse(request.url);
             if (uri != null && _openExternalScheme(uri)) {
               _launchExternal(uri);

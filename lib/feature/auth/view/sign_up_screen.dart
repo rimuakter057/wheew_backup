@@ -227,6 +227,90 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                   SizedBox(height: ResponsiveHelper.spacing(16)),
 
+
+
+                  /// License Number
+                  CustomTextField(
+                    controller: licenseController,
+                    title: AppStrings.licenseNumber.tr,
+                    hintText: AppStrings.typeHere.tr,
+                    fillColor: Colors.white.withOpacity(0.55),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: ResponsiveHelper.padding(16),
+                      vertical: ResponsiveHelper.padding(16),
+                    ),
+                    prefixIconConstraints: _fieldIconConstraints,
+                    prefixIcon: _fieldIcon(AssetsPath.licenseNumberSignUp),
+                    border: _fieldBorder(Colors.transparent, 1),
+                    enabledBorder: _fieldBorder(Colors.transparent, 1),
+                    focusedBorder: _fieldBorder(AppColors.blue, 1.5),
+
+                    // validator: (value) {
+                    //   if (value == null || value.trim().isEmpty) {
+                    //     return 'License number is required';
+                    //   } else if (value.trim().length < 7) {
+                    //     return AppStrings.licenseNumberMustBe.tr;
+                    //   }
+                    //   return null;
+                    // },
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return AppStrings.licenseNumberRequired.tr;
+                      }
+
+                      final text = value.trim();
+
+                      // Check total length
+                      if (text.length < 6 || text.length > 7) {
+                        return AppStrings.licenseNumberMustBe.tr;
+                      }
+
+                      // Count letters and numbers
+                      final letterCount = RegExp(
+                        r'[A-Za-z]',
+                      ).allMatches(text).length;
+
+                      final numberCount = RegExp(r'[0-9]').allMatches(text).length;
+
+                      if (letterCount < 3 || numberCount < 3) {
+                        return AppStrings.licenceValidator.tr;
+                      }
+
+                      return null;
+                    },
+                  ),
+
+                  SizedBox(height: ResponsiveHelper.spacing(16)),
+          ///email==============
+
+                  CustomTextField(
+                    controller: emailController,
+                    title: AppStrings.email.tr + " (" + AppStrings.onlyForRecovery.tr + ")",
+                    hintText: AppStrings.typeHere1.tr,
+                    keyboardType: TextInputType.emailAddress,
+                    fillColor: Colors.white.withOpacity(0.55),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: ResponsiveHelper.padding(16),
+                      vertical: ResponsiveHelper.padding(16),
+                    ),
+                    prefixIconConstraints: _fieldIconConstraints,
+                    prefixIcon: _fieldIcon(AssetsPath.emailSignUp),
+                    border: _fieldBorder(Colors.transparent, 1),
+                    enabledBorder: _fieldBorder(Colors.transparent, 1),
+                    focusedBorder: _fieldBorder(AppColors.blue, 1.5),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return AppStrings.emailIsRequired.tr;
+                      }
+                      if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
+                        return AppStrings.enterValidEmail.tr;
+                      }
+                      return null;
+                    },
+                  ),
+
+                  SizedBox(height: ResponsiveHelper.spacing(16)),
+
               /// Designation
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -235,7 +319,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     AppStrings.selectDesignation.tr,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
-                      color: AppColors.secondaryText,
+                      color: AppColors.textBlack,
                       fontSize: ResponsiveHelper.fontSize(14),
                     ),
                   ),
@@ -300,89 +384,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
               SizedBox(height: ResponsiveHelper.spacing(16)),
 
-              /// License Number
-              CustomTextField(
-                controller: licenseController,
-                title: AppStrings.licenseNumber.tr,
-                hintText: AppStrings.typeHere.tr,
-                fillColor: Colors.white.withOpacity(0.55),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: ResponsiveHelper.padding(16),
-                  vertical: ResponsiveHelper.padding(16),
-                ),
-                prefixIconConstraints: _fieldIconConstraints,
-                prefixIcon: _fieldIcon(AssetsPath.licenseNumberSignUp),
-                border: _fieldBorder(Colors.transparent, 1),
-                enabledBorder: _fieldBorder(Colors.transparent, 1),
-                focusedBorder: _fieldBorder(AppColors.blue, 1.5),
 
-                // validator: (value) {
-                //   if (value == null || value.trim().isEmpty) {
-                //     return 'License number is required';
-                //   } else if (value.trim().length < 7) {
-                //     return AppStrings.licenseNumberMustBe.tr;
-                //   }
-                //   return null;
-                // },
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return AppStrings.licenseNumberRequired.tr;
-                  }
-
-                  final text = value.trim();
-
-                  // Check total length
-                  if (text.length < 6 || text.length > 7) {
-                    return AppStrings.licenseNumberMustBe.tr;
-                  }
-
-                  // Count letters and numbers
-                  final letterCount = RegExp(
-                    r'[A-Za-z]',
-                  ).allMatches(text).length;
-
-                  final numberCount = RegExp(r'[0-9]').allMatches(text).length;
-
-                  if (letterCount < 3 || numberCount < 3) {
-                    return AppStrings.licenceValidator.tr;
-                  }
-
-                  return null;
-                },
-              ),
-
-              SizedBox(height: ResponsiveHelper.spacing(16)),
               /*CustomTextField(
                 title: AppStrings.email.tr,
                 hintText: AppStrings.emailOnlyForRecoverPassword.tr,
               )*/
-              CustomTextField(
-                controller: emailController,
-                title: AppStrings.email.tr + " (" + AppStrings.onlyForRecovery.tr + ")",
-                hintText: AppStrings.typeHere1.tr,
-                keyboardType: TextInputType.emailAddress,
-                fillColor: Colors.white.withOpacity(0.55),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: ResponsiveHelper.padding(16),
-                  vertical: ResponsiveHelper.padding(16),
-                ),
-                prefixIconConstraints: _fieldIconConstraints,
-                prefixIcon: _fieldIcon(AssetsPath.emailSignUp),
-                border: _fieldBorder(Colors.transparent, 1),
-                enabledBorder: _fieldBorder(Colors.transparent, 1),
-                focusedBorder: _fieldBorder(AppColors.blue, 1.5),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return AppStrings.emailIsRequired.tr;
-                  }
-                  if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
-                    return AppStrings.enterValidEmail.tr;
-                  }
-                  return null;
-                },
-              ),
 
-              SizedBox(height: ResponsiveHelper.spacing(16)),
 
               /// Country + City
               Row(
@@ -397,7 +404,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           AppStrings.country.tr,
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
-                            color: AppColors.secondaryText,
+                            color: AppColors.black,
                             fontSize: ResponsiveHelper.fontSize(14),
                           ),
                         ),

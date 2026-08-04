@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/feature/chat/view/group/controller/group_controller.dart';
+import 'package:platchatapp/feature/chat/view/group/model/group_member.dart';
 import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
@@ -32,19 +33,6 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
   final ChatController controller = Get.put(ChatController());
   String currentUserId = '';
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     groupController.fetchGroupMembers(roomId: widget.roomId);
-  //   });
-  // }
-
-
-
-
-
-
   @override
   void initState() {
     super.initState();
@@ -62,17 +50,6 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
       currentUserId = prefs.getString(AppConst.userID) ?? '';
     });
   }
-
-
-
-
-
-
-
-
-
-
-
 
   void _showRemoveDialog(String memberId, String memberName) {
     showDialog(
@@ -144,20 +121,20 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
   @override
   Widget build(BuildContext context) {
 
-    final currentUser = groupController.groupMemberList.firstWhereOrNull(
-          (e) => e.userId == currentUserId,
-    );
-
     bool isAdmin = groupController.groupMemberList.any(
           (e) =>
       e.userId == currentUserId &&
           e.groupRole == 'GROUP_ADMIN',
     );
 
-    return Scaffold(
-      backgroundColor: AppColors.white,
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: AppColors.primaryBackgroundGradient,
+      ),
+      child: Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
@@ -250,105 +227,158 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
           );
         }
 
-        // ── Member List ──────────────────────────────────
-        return ListView.separated(
-          padding: EdgeInsets.all(ResponsiveHelper.padding(16)),
-          itemCount: groupController.groupMemberList.length,
-          separatorBuilder: (_, __) => Divider(color: Colors.grey.shade100),
-          itemBuilder: (context, index) {
-            final member = groupController.groupMemberList[index];
-            final isAdmin = member.groupRole == 'GROUP_ADMIN';
+        // ── Member List — admin(s) get their own card up top, the rest
+        //    are grouped together under a "Group Members" section ──────
+        final admins = groupController.groupMemberList
+            .where((m) => m.groupRole == 'GROUP_ADMIN')
+            .toList();
+        final others = groupController.groupMemberList
+            .where((m) => m.groupRole != 'GROUP_ADMIN')
+            .toList();
 
-            return ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: CircleAvatar(
-                radius: ResponsiveHelper.borderRadius(22),
-                backgroundColor: AppColors.blue.withOpacity(0.2),
-                backgroundImage: member.avatar.isNotEmpty
-                    ? NetworkImage(member.avatar)
-                    : null,
-                child: member.avatar.isEmpty
-                    ? Icon(Icons.person, color: AppColors.blue)
-                    : null,
-              ),
-              title: Text(
-                member.nickName,
+        return ListView(
+          padding: EdgeInsets.all(ResponsiveHelper.padding(16)),
+          children: [
+            for (final admin in admins) ...[
+              _buildMemberCard([admin], canManage: isAdmin),
+              SizedBox(height: ResponsiveHelper.spacing(20)),
+            ],
+            if (others.isNotEmpty) ...[
+              Text(
+                AppStrings.groupMembersTitle.tr,
                 style: GoogleFonts.poppins(
-                  fontSize: ResponsiveHelper.fontSize(14),
-                  fontWeight: FontWeight.w500,
+                  fontSize: ResponsiveHelper.fontSize(15),
+                  fontWeight: FontWeight.w600,
                   color: AppColors.black,
                 ),
               ),
-              subtitle: Text(
-                member.licenceId,
-                style: GoogleFonts.poppins(
-                  fontSize: ResponsiveHelper.fontSize(12),
-                  color: Colors.grey,
-                ),
-              ),
-              trailing: isAdmin
-                  ? Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: ResponsiveHelper.padding(10),
-                        vertical: ResponsiveHelper.padding(4),
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.blue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(
-                          ResponsiveHelper.borderRadius(20),
-                        ),
-                      ),
-                      child: Text(
-                        AppStrings.admin.tr,
-                        style: GoogleFonts.poppins(
-                          fontSize: ResponsiveHelper.fontSize(11),
-                          color: AppColors.blue,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    )
-                  : PopupMenuButton<String>(
-                      icon: Icon(Icons.more_vert, color: Colors.grey),
-                      onSelected: (value) {
-                        if (value == 'Remove') {
-                          _showRemoveDialog(member.userId, member.nickName);
-                        }
-                      },
-                      itemBuilder: (_) => [
-                        PopupMenuItem(
-                          value: 'Remove',
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.person_remove_outlined,
-                                color: Colors.red,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                AppStrings.remove.tr,
-                                style: GoogleFonts.poppins(color: Colors.red),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-
-
-
-
-
-
-
-
-
-
-
-
-            );
-          },
+              SizedBox(height: ResponsiveHelper.spacing(12)),
+              _buildMemberCard(others, canManage: isAdmin),
+            ],
+          ],
         );
       }),
+      ),
+    );
+  }
+
+  // ── Grouped card — one or more member rows, divided by thin dividers.
+  //    Same gradient card style as the Add Member screen. ──
+  Widget _buildMemberCard(List<GroupMemberModel> members, {required bool canManage}) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFFE8EEF5),
+            Color(0xFFD3DEE9),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.6)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(16)),
+      child: Column(
+        children: [
+          for (var i = 0; i < members.length; i++) ...[
+            _buildMemberRow(members[i], canManage: canManage),
+            if (i != members.length - 1)
+              Divider(color: Colors.grey.shade200, height: 1),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMemberRow(GroupMemberModel member, {required bool canManage}) {
+    final isAdmin = member.groupRole == 'GROUP_ADMIN';
+
+    return ListTile(
+      contentPadding: EdgeInsets.symmetric(
+        vertical: ResponsiveHelper.padding(4),
+      ),
+      leading: CircleAvatar(
+        radius: ResponsiveHelper.borderRadius(22),
+        backgroundColor: AppColors.blue.withValues(alpha: 0.2),
+        backgroundImage: member.avatar.isNotEmpty
+            ? NetworkImage(member.avatar)
+            : null,
+        child: member.avatar.isEmpty
+            ? Icon(Icons.person, color: AppColors.blue)
+            : null,
+      ),
+      title: Text(
+        member.nickName,
+        style: GoogleFonts.poppins(
+          fontSize: ResponsiveHelper.fontSize(14),
+          fontWeight: FontWeight.w500,
+          color: AppColors.black,
+        ),
+      ),
+      subtitle: Text(
+        member.licenceId,
+        style: GoogleFonts.poppins(
+          fontSize: ResponsiveHelper.fontSize(12),
+          color: Colors.grey,
+        ),
+      ),
+      trailing: isAdmin
+          ? Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveHelper.padding(10),
+                vertical: ResponsiveHelper.padding(4),
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.blue.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(
+                  ResponsiveHelper.borderRadius(20),
+                ),
+              ),
+              child: Text(
+                AppStrings.admin.tr,
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(11),
+                  color: AppColors.blue,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            )
+          : (canManage
+              ? PopupMenuButton<String>(
+                  icon: Icon(Icons.more_vert, color: Colors.grey),
+                  onSelected: (value) {
+                    if (value == 'Remove') {
+                      _showRemoveDialog(member.userId, member.nickName);
+                    }
+                  },
+                  itemBuilder: (_) => [
+                    PopupMenuItem(
+                      value: 'Remove',
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.person_remove_outlined,
+                            color: Colors.red,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            AppStrings.remove.tr,
+                            style: GoogleFonts.poppins(color: Colors.red),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                )
+              : null),
     );
   }
 

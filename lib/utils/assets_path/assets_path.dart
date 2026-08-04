@@ -61,6 +61,7 @@ class AssetsPath {
   static const String van = '${_iconsBase}Van.svg';
   static const String apple = '${_iconsBase}apple.svg';
   static const String google = '${_iconsBase}google.svg';
+  static const String fb = '${_iconsBase}fb.svg';
   //static const String google = '${_iconsBase}google.svg';
 
 
@@ -96,8 +97,10 @@ class AssetsPath {
   static const String viewProfile = '${_iconsBase}view_profile.svg';
   static const String rateUser = '${_iconsBase}user_rate.svg';
   static const String blockedIcon = '${_iconsBase}block.svg';
+  static const String leaveGroupIcon = '${_iconsBase}leave_group.svg';
   static const String enableStar = '${_iconsBase}enable_star.svg';
   static const String disableStar = '${_iconsBase}disable_star.svg';
+  static const String helpSupport = '${_iconsBase}help_support.svg';
   static const String homeJson="assets/animations/icon_animated.json";
   static const String group="assets/icons/group.svg";
 
@@ -130,6 +133,9 @@ class AssetsPath {
 
 
   static const String profile="assets/icons/profile.svg";
+  static const String personalInfo="assets/icons/personal_information.svg";
+  static const String blockedUsers="assets/icons/blocked_user.svg";
+  static const String languageIcon="assets/icons/setting.svg";
   static const String usefulNumber="assets/icons/useful_number.svg";
   static const String terms="assets/icons/terms.svg";
   static const String privacy="assets/icons/privacy.svg";
@@ -137,7 +143,7 @@ class AssetsPath {
   static const String faq="assets/icons/faq.svg";
   static const String share="assets/icons/share.svg";
   static const String blocked="assets/icons/block_user.svg";
-  static const String remove="assets/icons/remove_account.svg";
+  static const String delete="assets/icons/delete.svg";
   static const String changePass="assets/icons/change_pass.svg";
   static const String verified="assets/icons/verified.png";
   static const String unverified="assets/icons/unverified.png";
@@ -181,6 +187,17 @@ class AssetsPath {
   static const String profileThreeIcon="assets/icons/profile_three_icon.svg";
   static const String profileFourIcon="assets/icons/profile_four_icon.svg";
   static const String bluePin="assets/icons/blue_pin.png";
+
+  // Useful Numbers — per-item icons (key matches the backend's `icon` field)
+  static const String usefulNumberPolice="assets/icons/police.svg";
+  static const String usefulNumberAmbulance="assets/icons/ambulance.svg";
+  static const String usefulNumberFireTruck="assets/icons/fire_brigade.svg";
+  static const String usefulNumberWomenHelpline="assets/icons/women_helpline.svg";
+  static const String usefulNumberRoadsideAssistance="assets/icons/roadside_assistance.svg";
+  static const String usefulNumberTowTruck="assets/icons/tow_truck_service.svg";
+  static const String usefulNumberHighway="assets/icons/highway_helpline.svg";
+  static const String usefulNumberTrafficPolice="assets/icons/traffic_police.svg";
+  static const String usefulNumberParking="assets/icons/parking_support.svg";
 
 
 

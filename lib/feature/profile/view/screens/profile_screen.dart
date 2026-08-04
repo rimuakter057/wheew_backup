@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:platchatapp/feature/auth/view/widgets/custom_devider_or.dart';
 import 'package:platchatapp/feature/auth/view/widgets/vehicle_model_field.dart';
 import 'package:platchatapp/feature/profile/repository/upload_controller.dart';
 import 'package:platchatapp/feature/profile/view/widgets/color_picker.dart';
@@ -278,21 +279,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     );
                   }),
 
-                  Text(
-                    AppStrings.verifyAccountBecomeWheewer.tr,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.fontSize(14),
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.secondaryText,
-                    ),
-                  ),
+                  // Text(
+                  //   AppStrings.verifyAccountBecomeWheewer.tr,
+                  //   maxLines: 2,
+                  //   overflow: TextOverflow.ellipsis,
+                  //   style:context.bodyMedium.copyWith(color:AppColors.black ),
+                  // ),
 
+
+                  _sectionTitle(AppStrings.verifyAccountBecomeWheewer.tr),
                   SizedBox(height: ResponsiveHelper.spacing(16)),
 
                   ///owner ship document==========================================================
-                  _sectionTitle(AppStrings.vehicleOwnershipStatus.tr),
+                 // _sectionTitle(AppStrings.vehicleOwnershipStatus.tr),
+                  Text(
+                    AppStrings.vehicleOwnershipStatus.tr,
+
+                    style:context.bodySmall.copyWith(color:AppColors.greyText ),
+                  ),
+
+
                   SizedBox(height: ResponsiveHelper.spacing(12)),
                   const VehicleOwnershipStatusWidget(),
                   SizedBox(height: ResponsiveHelper.spacing(8)),
@@ -310,31 +316,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   SizedBox(height: ResponsiveHelper.spacing(12)),
 
-                  CustomUploadCard(
-                    title: AppStrings.driversLicense.tr,
-                    documentType: 'LICENSE',
-                    iconPath: AssetsPath.driverIcon,
-                  ),
-
-                  SizedBox(height: ResponsiveHelper.spacing(12)),
-                  CustomUploadCard(
-                    title: AppStrings.carInspection.tr,
-                    documentType: 'CAR_INSPECTION',
-
-                    iconPath: AssetsPath.carInspectionIcon,
-                  ),
-                  SizedBox(height: ResponsiveHelper.spacing(12)),
-
-                  CustomUploadCard(
-                    title: AppStrings.carInsurance.tr,
-                    documentType: 'INSURANCE',
-                    iconPath: AssetsPath.carInsuranceIcon,
-                  ),
-                  SizedBox(height: ResponsiveHelper.spacing(12)),
-                  CustomUploadCard(
-                    title: AppStrings.carTax.tr,
-                    documentType: 'TAX',
-                    iconPath: AssetsPath.carTaxIcon,
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: AppColors.containerGradient,
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(14),
+                      ),
+                      border: Border.all(color: AppColors.white),
+                    ),
+                    child: Column(
+                      children: [
+                        CustomUploadCard(
+                          title: AppStrings.driversLicense.tr,
+                          documentType: 'LICENSE',
+                          iconPath: AssetsPath.driverIcon,
+                          showCard: false,
+                        ),
+                        CustomDivider(),
+                        CustomUploadCard(
+                          title: AppStrings.carInspection.tr,
+                          documentType: 'CAR_INSPECTION',
+                          iconPath: AssetsPath.carInspectionIcon,
+                          showCard: false,
+                        ),
+                    CustomDivider(),
+                        CustomUploadCard(
+                          title: AppStrings.carInsurance.tr,
+                          documentType: 'INSURANCE',
+                          iconPath: AssetsPath.carInsuranceIcon,
+                          showCard: false,
+                        ),
+                       CustomDivider(),
+                        CustomUploadCard(
+                          title: AppStrings.carTax.tr,
+                          documentType: 'TAX',
+                          iconPath: AssetsPath.carTaxIcon,
+                          showCard: false,
+                        ),
+                      ],
+                    ),
                   ),
 
                   SizedBox(height: ResponsiveHelper.spacing(16)),
@@ -421,6 +441,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
       color: AppColors.primaryText,
     ),
   );
+}
+
+class CustomDivider extends StatelessWidget {
+  const CustomDivider({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Divider(
+      height: 1,
+      thickness: 0.5,
+      color: AppColors.divider,
+      indent: ResponsiveHelper.width(16),
+      endIndent: ResponsiveHelper.width(16),
+    );
+  }
 }
 
 /// Compact "● Color Name" summary shown while not editing — the full swatch

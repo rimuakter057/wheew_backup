@@ -121,7 +121,7 @@ class FaqScreen extends StatelessWidget {
                       children: controller.faqs.asMap().entries.map((entry) {
                         return Padding(
                           padding: EdgeInsets.only(
-                            bottom: ResponsiveHelper.spacing(14),
+                            bottom: ResponsiveHelper.spacing(8),
                           ),
                           child: _FaqTile(
                             question: entry.value.question,
@@ -221,6 +221,7 @@ class _FaqTileState extends State<_FaqTile>
           borderRadius: BorderRadius.circular(
             ResponsiveHelper.borderRadius(28),
           ),
+          border: Border.all(color: AppColors.white),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -268,7 +269,7 @@ class _FaqTileState extends State<_FaqTile>
                 padding: EdgeInsets.only(
                   left: ResponsiveHelper.padding(20),
                   right: ResponsiveHelper.padding(20),
-                  bottom: ResponsiveHelper.padding(18),
+                  bottom: ResponsiveHelper.padding(8),
                 ),
                 child: Text(
                   widget.answer,

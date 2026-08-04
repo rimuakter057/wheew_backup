@@ -3,13 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
 import '../../../../../../utils/color/app_colors.dart';
@@ -20,6 +20,7 @@ void showRatingDialog({
   required String name,
   required String status,
   required String receiverId,
+  bool isVerified = false,
 }) {
   final ChatController chatController = Get.find<ChatController>();
   final int existing =
@@ -105,105 +106,101 @@ void showRatingDialog({
               SizedBox(height: ResponsiveHelper.spacing(12)),
 
 
-              Row(
-               // crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: ResponsiveHelper.spacing(10),
-                      vertical: ResponsiveHelper.spacing(4),
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.blue,
-                      borderRadius: BorderRadius.circular(
-                        ResponsiveHelper.borderRadius(4),
-                      ),
-                    ),
-                    child: Text(
-                      status.isEmpty ? 'None' : status,
-                      style: GoogleFonts.poppins(
-                        fontSize: ResponsiveHelper.fontSize(11),
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.white,
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(width: ResponsiveHelper.spacing(6)),
-
-                  GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          backgroundColor: AppColors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              ResponsiveHelper.borderRadius(12),
-                            ),
-                          ),
-                          title: Row(
-                            children: [
-                              Icon(Icons.info_outline, color: AppColors.blue),
-                              SizedBox(width: ResponsiveHelper.spacing(8)),
-                              Text(
-                                AppStrings.statusInfo.tr,
-                                style: GoogleFonts.poppins(
-                                    fontSize: ResponsiveHelper.fontSize(16),
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.black
-                                ),
-                              ),
-                            ],
-                          ),
-                          content: Text(
-                            _getStatusInfo(status),
-                            style: GoogleFonts.poppins(
-                              fontSize: ResponsiveHelper.fontSize(13),
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.black,
-                              height: 1.5,
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(
-                                AppStrings.gotIt.tr,
-                                style: GoogleFonts.poppins(
-                                  color: AppColors.blue,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
+              // ── Status pill — tap for what it means ──────
+              GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      backgroundColor: AppColors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveHelper.borderRadius(12),
                         ),
-                      );
-                    },
-                    child: SvgPicture.asset(
-                      "assets/icons/i.svg",
-                      width: ResponsiveHelper.iconSize(18),
-                      height: ResponsiveHelper.iconSize(18),
-                      colorFilter: const ColorFilter.mode(
-                        AppColors.black,
-                        BlendMode.srcIn,
                       ),
+                      title: Row(
+                        children: [
+                          Icon(Icons.info_outline, color: AppColors.blue),
+                          SizedBox(width: ResponsiveHelper.spacing(8)),
+                          Text(
+                            AppStrings.statusInfo.tr,
+                            style: GoogleFonts.poppins(
+                                fontSize: ResponsiveHelper.fontSize(16),
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.black
+                            ),
+                          ),
+                        ],
+                      ),
+                      content: Text(
+                        _getStatusInfo(status),
+                        style: GoogleFonts.poppins(
+                          fontSize: ResponsiveHelper.fontSize(13),
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.black,
+                          height: 1.5,
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(
+                            AppStrings.gotIt.tr,
+                            style: GoogleFonts.poppins(
+                              color: AppColors.blue,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveHelper.spacing(14),
+                    vertical: ResponsiveHelper.spacing(5),
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    border: Border.all(color: AppColors.blue, width: 1.2),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.borderRadius(20),
                     ),
                   ),
-                ],
+                  child: Text(
+                    status.isEmpty ? 'None' : status,
+                    style: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(11),
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.blue,
+                    ),
+                  ),
+                ),
               ),
 
               SizedBox(height: ResponsiveHelper.spacing(10)),
 
-              // ── Name ────────────────────────────────────
-              Text(
-                name,
-                style: GoogleFonts.poppins(
-                  fontSize: ResponsiveHelper.fontSize(16),
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.black,
-                ),
+              // ── Name + verified badge (same asset/condition as the
+              //    chat app bar's _effectiveIsVehicleVerified) ─────
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    name,
+                    style: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(16),
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.black,
+                    ),
+                  ),
+                  SizedBox(width: ResponsiveHelper.spacing(4)),
+                  Image.asset(
+                    isVerified ? AssetsPath.verified : AssetsPath.unverified,
+                    width: ResponsiveHelper.iconSize(16),
+                    height: ResponsiveHelper.iconSize(16),
+                  ),
+                ],
               ),
 
               SizedBox(height: ResponsiveHelper.spacing(4)),

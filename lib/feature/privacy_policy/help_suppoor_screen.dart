@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
+import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
@@ -67,24 +69,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     /// Support Icon
-                    Container(
-                      width: ResponsiveHelper.width(82),
-                      height: ResponsiveHelper.width(82),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(.35),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.blue.withOpacity(.45),
-                          width: 1,
-                        ),
-                      ),
-                      child: Icon(
-                        Icons.support_agent_outlined,
-                        color: AppColors.blue,
-                        size: ResponsiveHelper.width(38),
-                      ),
-                    ),
-
+                  CustomImage(imageSrc: AssetsPath.helpSupport),
                     SizedBox(
                       height: ResponsiveHelper.height(18),
                     ),
@@ -93,7 +78,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                     Text(
                       "Contact us at",
                       style: context.bodyLarge.copyWith(
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.black,
                       ),
                     ),
@@ -132,9 +117,9 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                               color: AppColors.blue,
                               size: ResponsiveHelper.width(20),
                             ),
-                            SizedBox(
-                              width: ResponsiveHelper.width(10),
-                            ),
+                            // SizedBox(
+                            //   width: ResponsiveHelper.width(4),
+                            // ),
                             Expanded(
                               child: Text(
                                 controller.message.value,
@@ -157,15 +142,13 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                     ),
 
                     /// Description
-                    SizedBox(
-                      width: ResponsiveHelper.width(250),
-                      child: Text(
-                        AppStrings.supportText2.tr,
-                        textAlign: TextAlign.center,
-                        style: context.bodyMedium.copyWith(
-                          color: Colors.black54,
-                          height: 1.5,
-                        ),
+                    Text(
+                      AppStrings.supportText2.tr,
+                      textAlign: TextAlign.center,
+                      style: context.bodyLarge.copyWith(
+                        color: AppColors.greyText,
+                        fontWeight: FontWeight.w400,
+
                       ),
                     ),
                   ],

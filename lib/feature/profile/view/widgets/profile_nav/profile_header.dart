@@ -224,27 +224,37 @@ class ProfileHeaderCard extends StatelessWidget {
               SizedBox(height: ResponsiveHelper.height(14)),
 
               /// Vehicle Model
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    AppStrings.vehicleModel.tr,
-                    style: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.fontSize(13),
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFF555555),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveHelper.padding(12),
+                  vertical: ResponsiveHelper.padding(8),
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(14)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      AppStrings.vehicleModel.tr,
+                      style: GoogleFonts.poppins(
+                        fontSize: ResponsiveHelper.fontSize(13),
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF555555),
+                      ),
                     ),
-                  ),
 
-                  Text(
-                    user?.vehicleModel ?? "N/A",
-                    style: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.fontSize(13),
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.black,
+                    Text(
+                      user?.vehicleModel ?? "N/A",
+                      style: GoogleFonts.poppins(
+                        fontSize: ResponsiveHelper.fontSize(13),
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.black,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
 
               SizedBox(height: ResponsiveHelper.height(18)),

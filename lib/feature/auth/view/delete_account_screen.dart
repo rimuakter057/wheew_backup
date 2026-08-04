@@ -306,7 +306,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                         ),
 
                         SizedBox(
-                          height: ResponsiveHelper.spacing(10),
+                          height: ResponsiveHelper.spacing(18),
                         ),
 
                         /// Information Card
@@ -314,7 +314,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                           width: double.infinity,
                           padding: EdgeInsets.symmetric(
                             horizontal: ResponsiveHelper.padding(16),
-                            vertical: ResponsiveHelper.padding(8),
+                            vertical: ResponsiveHelper.padding(16),
                           ),
                           decoration: BoxDecoration(
 
@@ -325,20 +325,20 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                           ),
                           child: Column(
                             children: [
-                              _buildDeleteInfo(
-                                icon: AssetsPath.allBooking,
-                                title: 'All Your Bookings',
-                                subtitle:
-                                'Your current and past bookings will be removed',
-                              ),
-                              _buildDivider(),
-                              _buildDeleteInfo(
-                                icon: AssetsPath.payment,
-                                title: 'Payment Methods',
-                                subtitle:
-                                'Saved payment methods will be deleted',
-                              ),
-                              _buildDivider(),
+                              // _buildDeleteInfo(
+                              //   icon: AssetsPath.allBooking,
+                              //   title: 'All Your Bookings',
+                              //   subtitle:
+                              //   'Your current and past bookings will be removed',
+                              // ),
+                              // _buildDivider(),
+                              // _buildDeleteInfo(
+                              //   icon: AssetsPath.payment,
+                              //   title: 'Payment Methods',
+                              //   subtitle:
+                              //   'Saved payment methods will be deleted',
+                              // ),
+                              // _buildDivider(),
                               GestureDetector(
                                 onTap: (){
                                   Navigator.push(
@@ -371,7 +371,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                         /// Password
                         CustomTextField(
                           controller: authController.passwordController,
-                          title: AppStrings.password.tr,
+                          title: AppStrings.currentPassword.tr,
                           hintText: AppStrings.enterYourPassword.tr,
                           isPassword: true,
                           fillColor: Colors.white.withOpacity(0.55),
@@ -409,7 +409,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                         ),
 
                         SizedBox(
-                          height: ResponsiveHelper.spacing(10),
+                          height: ResponsiveHelper.spacing(14),
                         ),
 
                         /// Security Info
@@ -428,9 +428,9 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                               child: Text(
                                 'For security reasons, please enter your password to confirm account deletion.',
                                 style: GoogleFonts.poppins(
-                                  color: const Color(0xff2468C5),
-                                  fontSize: ResponsiveHelper.fontSize(10),
-                                  height: 1.4,
+                                  color: AppColors.blue,
+                                  fontSize: ResponsiveHelper.fontSize(14),
+                                fontWeight: FontWeight.w400
                                 ),
                               ),
                             ),

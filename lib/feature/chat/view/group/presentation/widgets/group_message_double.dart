@@ -204,7 +204,9 @@ class _Bubble extends StatelessWidget {
                 : Radius.circular(ResponsiveHelper.borderRadius(15)),
           ),
         ),
-        child: _isFileMessage ? _buildFileContent() : _buildTextContent(),
+        child: IntrinsicWidth(
+          child: _isFileMessage ? _buildFileContent() : _buildTextContent(),
+        ),
       ),
     );
   }

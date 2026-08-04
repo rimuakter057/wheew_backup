@@ -1,6 +1,7 @@
 // ignore_for_file: unused_local_variable
 
 import 'package:flutter/material.dart';
+import 'package:platchatapp/utils/extension/base_extension.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -167,12 +168,8 @@ class _BlockListScreenState extends State<BlockListScreen> {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                "${AppStrings.blockedUser1.tr} ${formatTime(block.createdAt ?? "")}",
-                                style: GoogleFonts.poppins(
-                                  fontSize: ResponsiveHelper.fontSize(13),
-                                  color: Colors.grey.shade500,
-                                  fontWeight: FontWeight.w400,
-                                ),
+                                "${AppStrings.blocked.tr} ${formatTime(block.createdAt ?? "")}",
+                                style: context.bodySmall.copyWith(color: AppColors.greyText)
                               ),
                             ],
                           ),

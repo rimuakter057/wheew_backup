@@ -10,7 +10,7 @@ final Map<String, String> english = {
   AppStrings.accountAndSettings: "Account & Settings",
   AppStrings.unknown: "Unknown",
   AppStrings.vehicleModel: "Vehicle Model:",
-  AppStrings.welcomeTitle1: "DRIVE.\nCHAT.\nPARK.\nBREATHE.",
+  AppStrings.welcomeTitle1: "Drive.\nChat.\nPark.\nBreathe.",
   AppStrings.welcomeSubtitle1: "Connect with nearby drivers using just a license plate.",
   AppStrings.tapOnTheMapToSelectParkingLocation:
   "Tap on the map to select a parking location.",
@@ -46,6 +46,7 @@ final Map<String, String> english = {
   AppStrings.enterLicensePlateOrNickName: 'Enter License Plate or Nickname',
 
   AppStrings.password: 'Password',
+  AppStrings.currentPassword: 'Current Password',
   AppStrings.enterYourPassword: 'Enter your password',
   AppStrings.passwordIsRequired: 'Password is required',
   AppStrings.passwordMust6Character: 'Password must be at least 6 characters',
@@ -112,10 +113,11 @@ final Map<String, String> english = {
   AppStrings.save: 'Save',
 
   // -------- General --------
-  AppStrings.or: 'OR',
+  AppStrings.oR: 'OR',
+  AppStrings.or: 'Or',
   AppStrings.alreadyAccount: 'Already have an account?',
   AppStrings.termsAndConditions: 'Terms and Conditions',
-  AppStrings.and: 'and',
+  AppStrings.and: ' and ',
   AppStrings.privacyPolicy: 'Privacy Policy',
 
   AppStrings.logOut: 'Log Out',
@@ -128,7 +130,7 @@ final Map<String, String> english = {
 
   // -------- Messages --------
   AppStrings.viewProfile: 'View Profile',
-  AppStrings.rateUser: 'Rate User',
+  AppStrings.rateUser: 'User Rate',
 
   AppStrings.noMessagesYet: 'No messages yet',
   AppStrings.noRecentsYet: 'No recents yet',
@@ -164,6 +166,7 @@ final Map<String, String> english = {
   AppStrings.typeHere1: 'Type here',
   AppStrings.blocked: 'Blocked',
   AppStrings.unblock: 'Unblock',
+  AppStrings.blockUserAction: 'Block User',
 
   AppStrings.blockedUser1: 'Unblock',
   AppStrings.blockedUser5: 'Blocked users',
@@ -344,6 +347,7 @@ AppStrings.findAnswersBelow:'Find Answers Below',
 
   AppStrings.noMembersFound: 'No members found',
   AppStrings.admin: 'Admin',
+  AppStrings.groupMembersTitle: 'Group Members',
 
   AppStrings.addMember: 'Add Member',
   AppStrings.noResultsFor: 'No results for',

@@ -293,12 +293,6 @@ class _SignInScreenState extends State<SignInScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             SocialButton(
-                              icon: AssetsPath.apple,
-                              onTap: () {},
-                            ),
-
-                            SizedBox(width: ResponsiveHelper.width(24)),
-                            SocialButton(
                               icon: AssetsPath.google,
                               onTap: () async {
                                 final account = await GoogleSignInService()
@@ -308,6 +302,26 @@ class _SignInScreenState extends State<SignInScreen> {
                                   print("Login Success");
                                 }
                               },
+                            ),
+
+                            SizedBox(width: ResponsiveHelper.width(24)),
+                            SocialButton(
+                              icon: AssetsPath.fb,
+                              onTap: () async {
+                                final account = await GoogleSignInService()
+                                    .signIn();
+
+                                if (account != null) {
+                                  print("Login Success");
+                                }
+                              },
+                            ),
+
+                            SizedBox(width: ResponsiveHelper.width(24)),
+
+                            SocialButton(
+                              icon: AssetsPath.apple,
+                              onTap: () {},
                             ),
                           ],
                         ),
@@ -371,11 +385,11 @@ class SocialButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: ResponsiveHelper.width(52),
-        height: ResponsiveHelper.height(52),
+padding: ResponsiveHelper.all(18),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: AppColors.iceBlue,
           shape: BoxShape.circle,
+          border: Border.all(color: AppColors.white),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
@@ -387,8 +401,8 @@ class SocialButton extends StatelessWidget {
         child: Center(
           child: CustomImage(
             imageSrc: icon,
-            height: ResponsiveHelper.height(22),
-            width: ResponsiveHelper.width(22),
+            height: ResponsiveHelper.height(24),
+            width: ResponsiveHelper.width(24),
           ),
         ),
       ),

@@ -465,7 +465,7 @@ class _MessageInputState extends State<MessageInput> {
                fillColor: AppColors.white,
                         hintText: _selectedFilePath != null
                             ? AppStrings.addCaption.tr
-                            : "Write here...",
+                            : "Have a nice day!",
                         hintStyle: TextStyle(
                           color: Colors.grey.shade400,
                           fontSize: ResponsiveHelper.fontSize(15),

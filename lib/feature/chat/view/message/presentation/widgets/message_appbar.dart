@@ -197,8 +197,11 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
   final ChatController chatController;
   final VoidCallback onRateTap;
   final VoidCallback onProfileTap;
+  final String? licenceId;
+  final bool? isVerified;
 
   const MessageAppBar({
+
     super.key,
     required this.otherUserName,
     required this.otherUserAvatar,
@@ -206,6 +209,8 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.chatController,
     required this.onRateTap,
     required this.onProfileTap,
+    this.licenceId,
+    this.isVerified,
   });
 
   // ✅ AppBar হিসেবে ব্যবহার করতে PreferredSize দরকার
@@ -215,7 +220,7 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Color(0xFFF1F5F9),
+      backgroundColor: const Color(0xFFF1F5F9),
       elevation: 0,
       automaticallyImplyLeading: false,
       titleSpacing: 0,
@@ -252,31 +257,56 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  otherUserName,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.poppins(
-                    fontSize: ResponsiveHelper.fontSize(16),
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.black,
-                  ),
-                ),
-                Obx(() {
-                  final bool isTyping = chatController.isTyping.value;
-                  final bool isOnline =
-                      chatController.onlineUsersMap[receiverId] ?? false;
-                  final String statusText = isTyping
-                      ? AppStrings.typing.tr
-                      : (isOnline ? AppStrings.online.tr : AppStrings.offline.tr);
-                  return Text(
-                    statusText,
-                    style: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.fontSize(13),
-                      fontWeight: FontWeight.w400,
-                      color: isTyping ? AppColors.blue : Colors.grey,
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        otherUserName,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.poppins(
+                          fontSize: ResponsiveHelper.fontSize(15),
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.black,
+                        ),
+                      ),
                     ),
-                  );
-                }),
+                    if (isVerified == true) ...[
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.verified,
+                        color: AppColors.blue,
+                        size: ResponsiveHelper.iconSize(16),
+                      ),
+                    ],
+                  ],
+                ),
+                if (licenceId != null && licenceId!.isNotEmpty)
+                  Text(
+                    licenceId!,
+                    style: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(12),
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey.shade600,
+                    ),
+                  )
+                else
+                  Obx(() {
+                    final bool isTyping = chatController.isTyping.value;
+                    final bool isOnline =
+                        chatController.onlineUsersMap[receiverId] ?? false;
+                    final String statusText = isTyping
+                        ? AppStrings.typing.tr
+                        : (isOnline ? AppStrings.online.tr : AppStrings.offline.tr);
+                    return Text(
+                      statusText,
+                      style: GoogleFonts.poppins(
+                        fontSize: ResponsiveHelper.fontSize(12),
+                        fontWeight: FontWeight.w400,
+                        color: isTyping ? AppColors.blue : Colors.grey.shade600,
+                      ),
+                    );
+                  }),
               ],
             ),
           ),
@@ -287,29 +317,26 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
           padding: EdgeInsets.only(right: ResponsiveHelper.width(8)),
           icon: Icon(Icons.more_vert, color: AppColors.black),
           color: Colors.transparent,
-          elevation: 6,
-          offset: Offset(-ResponsiveHelper.width(36), ResponsiveHelper.height(40)),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(ResponsiveHelper.borderRadius(24)),
-              bottomLeft: Radius.circular(ResponsiveHelper.borderRadius(24)),
-              bottomRight: Radius.circular(ResponsiveHelper.borderRadius(24)),
-            ),
-          ),
+          elevation: 0,
+          offset: Offset(0, ResponsiveHelper.height(40)),
           itemBuilder: (context) => [
             PopupMenuItem<String>(
               padding: EdgeInsets.zero,
-              enabled: false, // পুরো item এর tap বন্ধ, ভেতরের InkWell গুলো কাজ করবে
+              enabled: false,
               child: Container(
+                width: 170,
                 decoration: BoxDecoration(
-                  gradient:AppColors.containerGradient,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(ResponsiveHelper.borderRadius(24)),
-                    bottomLeft: Radius.circular(ResponsiveHelper.borderRadius(24)),
-                    bottomRight: Radius.circular(ResponsiveHelper.borderRadius(24)),
-                  ),
+                  color: Colors.white.withOpacity(0.96),
+                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.12),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
                 ),
-                padding: ResponsiveHelper.symmetric(vertical: 4, horizontal: 0),
+                padding: ResponsiveHelper.symmetric(vertical: 8, horizontal: 0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -323,13 +350,19 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                         padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 10),
                         child: Row(
                           children: [
-                     CustomImage(imageSrc: AssetsPath.viewProfile),
-                            SizedBox(width: ResponsiveHelper.spacing(10)),
+                            CustomImage(
+                              imageSrc: AssetsPath.viewProfile,
+                              imageColor: AppColors.blu,
+                              width: ResponsiveHelper.iconSize(22),
+                              height: ResponsiveHelper.iconSize(22),
+                            ),
+                            SizedBox(width: ResponsiveHelper.spacing(12)),
                             Text(
                               AppStrings.viewProfile.tr,
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(14),
-                                color: AppColors.black,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF1E293B),
                               ),
                             ),
                           ],
@@ -337,7 +370,7 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
 
-                    // ── Rate ──────────────────────────────
+                    // ── Rate / User Rate ──────────────────────────
                     InkWell(
                       onTap: () {
                         Navigator.pop(context);
@@ -347,13 +380,19 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                         padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 10),
                         child: Row(
                           children: [
-                            CustomImage(imageSrc: AssetsPath.rateUser),
-                            SizedBox(width: ResponsiveHelper.spacing(10)),
+                            CustomImage(
+                              imageSrc: AssetsPath.rateUser,
+                              imageColor: AppColors.blue,
+                              width: ResponsiveHelper.iconSize(22),
+                              height: ResponsiveHelper.iconSize(22),
+                            ),
+                            SizedBox(width: ResponsiveHelper.spacing(12)),
                             Text(
                               AppStrings.rateUser.tr,
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(14),
-                                color: AppColors.black,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF1E293B),
                               ),
                             ),
                           ],
@@ -363,7 +402,7 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
 
                     // ── Block / Unblock ──────────────────────────────
                     Obx(
-                          () => InkWell(
+                      () => InkWell(
                         onTap: () {
                           Navigator.pop(context);
                           if (chatController.isBlockedByMe.value) {
@@ -378,15 +417,27 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                           padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 10),
                           child: Row(
                             children: [
-                              CustomImage(imageSrc: AssetsPath.blockedIcon),
-                              SizedBox(width: ResponsiveHelper.spacing(10)),
+                              chatController.isBlockedByMe.value
+                                  ? Icon(
+                                      Icons.lock_open_rounded,
+                                      color: AppColors.blue,
+                                      size: ResponsiveHelper.iconSize(22),
+                                    )
+                                  : CustomImage(
+                                      imageSrc: AssetsPath.blockedIcon,
+                                      imageColor: AppColors.blue,
+                                      width: ResponsiveHelper.iconSize(22),
+                                      height: ResponsiveHelper.iconSize(22),
+                                    ),
+                              SizedBox(width: ResponsiveHelper.spacing(12)),
                               Text(
                                 chatController.isBlockedByMe.value
                                     ? AppStrings.unblock.tr
-                                    : AppStrings.blocked.tr,
+                                    : AppStrings.blockUserAction.tr,
                                 style: GoogleFonts.poppins(
                                   fontSize: ResponsiveHelper.fontSize(14),
-                                  color: AppColors.black,
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF1E293B),
                                 ),
                               ),
                             ],

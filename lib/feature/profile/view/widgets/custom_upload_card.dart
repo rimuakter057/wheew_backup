@@ -23,6 +23,10 @@ class CustomUploadCard extends StatelessWidget {
   final String? iconPath;
   final bool isOwner;
 
+  /// false → renders just the row (no border/background/rounded corners),
+  /// so several of these can sit inside one shared grouped container.
+  final bool showCard;
+
   const  CustomUploadCard({
     super.key,
     required this.title,
@@ -30,6 +34,7 @@ class CustomUploadCard extends StatelessWidget {
     this.iconText = '',
     this.iconPath,
     this.isOwner = false,
+    this.showCard = true,
   });
 
   @override
@@ -56,6 +61,7 @@ class CustomUploadCard extends StatelessWidget {
         iconText: iconText,
         iconPath: iconPath,
         isOwner:      isOwner,
+        showCard:     showCard,
       );
     });
   }
@@ -73,6 +79,7 @@ class _CardShell extends StatelessWidget {
   final String iconText;
   final String? iconPath;
   final bool isOwner;
+  final bool showCard;
 
   const _CardShell({
     required this.state,
@@ -84,6 +91,7 @@ class _CardShell extends StatelessWidget {
     this.iconText = '',
     this.iconPath,
     this.isOwner = false,
+    this.showCard = true,
   });
 
   // colours per state
@@ -136,11 +144,13 @@ class _CardShell extends StatelessWidget {
           horizontal: ResponsiveHelper.padding(16),
           vertical:   ResponsiveHelper.padding(14),
         ),
-        decoration: BoxDecoration(
-          color:        _bgColor,
-          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(14)),
-          border:       Border.all(color: _borderColor, width: 2),
-        ),
+        decoration: showCard
+            ? BoxDecoration(
+                color:        _bgColor,
+                borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(14)),
+                border:       Border.all(color: _borderColor, width: 2),
+              )
+            : null,
         child: Row(
           children: [
 

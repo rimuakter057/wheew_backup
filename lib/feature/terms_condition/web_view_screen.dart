@@ -66,20 +66,29 @@ class _WebViewScreenState extends State<WebViewScreen> {
   void initState() {
     super.initState();
 
+    debugPrint('🌐 [Terms] loading URL: ${widget.url}');
+
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
-          onPageStarted: (_) {
+          onPageStarted: (url) {
+            debugPrint('🌐 [Terms] page started: $url');
             if (mounted) setState(() => isLoading = true);
           },
-          onPageFinished: (_) {
+          onPageFinished: (url) {
+            debugPrint('🟢 [Terms] page finished: $url');
             if (mounted) setState(() => isLoading = false);
           },
-          onWebResourceError: (_) {
+          onWebResourceError: (error) {
+            debugPrint(
+              '🔴 [Terms] web resource error: code=${error.errorCode} '
+              'desc=${error.description} url=${error.url}',
+            );
             if (mounted) setState(() => isLoading = false);
           },
           onNavigationRequest: (NavigationRequest request) {
+            debugPrint('🌐 [Terms] navigation request: ${request.url}');
             final uri = Uri.tryParse(request.url);
             if (uri != null && _openExternalScheme(uri)) {
               _launchExternal(uri);

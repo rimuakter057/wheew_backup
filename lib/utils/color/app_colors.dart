@@ -8,6 +8,7 @@ class AppColors {
   static const Color blueGrey = Color(0xFFB6C5DA);
   static const Color bulShadeGradient = Color(0xFFC6D2E2);
   static const Color blackButton = Color(0xFF404040);
+  static const Color containerBg = Color(0xFFC6D2E2);
 
 
 
@@ -119,6 +120,7 @@ class AppColors {
   static  Color gradientTwo =    Color(0xFF014495);
 
   static const Color white = Color(0xFFFFFFFF);
+  static const Color iceBlue = Color(0xFFC5D0E0);
   static const Color textBlack = Color(0xFF333333);
   static const Color primaryText = Color(0xFF1E1E1E);
   static const Color secondaryText = Color(0xFF555555);
