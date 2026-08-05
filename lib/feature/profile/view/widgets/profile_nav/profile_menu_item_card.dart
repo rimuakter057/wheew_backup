@@ -106,7 +106,7 @@ Widget buildSupportLegalItems({required BuildContext context}) {
     },
     {
       'icon': AssetsPath.share,
-      'title': AppStrings.shareLink.tr,
+      'title': AppStrings.shareApp.tr,
       'subtitle': AppStrings.shareLinkSubtitle.tr,
       'onTap': () {
         showDialog(

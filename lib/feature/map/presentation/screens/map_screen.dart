@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:platchatapp/feature/auth/repository/user_location_controller.dart';
@@ -244,6 +245,73 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     _stopPickingLocation();
     mapDebug('parking report dialog open');
     _showParkingDialog();
+  }
+
+  // ── "Add Parking" button → choose between the two existing flows ───────
+  // (FLOW 1 report-a-spot / FLOW 2 save-my-parking) instead of the old
+  // always-visible two-pill layout.
+  void _showAddParkingOptions() {
+    HapticFeedback.selectionClick();
+    showTrackedBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.containerGradient,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(ResponsiveHelper.borderRadius(24)),
+            ),
+          ),
+          padding: EdgeInsets.only(
+            left: ResponsiveHelper.padding(16),
+            right: ResponsiveHelper.padding(16),
+            top: ResponsiveHelper.padding(12),
+            bottom: ResponsiveHelper.padding(24),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Container(
+                  width: ResponsiveHelper.width(40),
+                  height: ResponsiveHelper.height(4),
+                  margin: EdgeInsets.only(bottom: ResponsiveHelper.spacing(18)),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFD1D5DB),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+              CustomGradientButton(
+                prefixIcon: const Icon(
+                  Icons.add_location_alt_rounded,
+                  color: Colors.white,
+                ),
+                label: AppStrings.addParkingSpot.tr,
+                onPressed: () {
+                  Navigator.of(sheetContext).pop();
+                  _toggleParkingPin();
+                },
+              ),
+              SizedBox(height: ResponsiveHelper.spacing(14)),
+              CustomGradientButton(
+                prefixIcon: const Icon(
+                  Icons.add_circle_outline,
+                  color: Colors.white,
+                ),
+                label: AppStrings.parkMyCar.tr,
+                onPressed: () {
+                  Navigator.of(sheetContext).pop();
+                  _showSaveParkingSheet();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _showParkingDialog() {
@@ -698,19 +766,15 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
 
 
             /// ── Action buttons cluster (Report Spot / Save My Parking) ─────
-            /// Right-aligned by default; switches to centered whenever a
-            /// bottom sheet is open, staying just above it.
+            /// Bottom-centered above the nav bar, always — same position
+            /// whether or not a bottom sheet is open.
             BottomSheetAwarePositioned(
-              defaultBottom: ResponsiveHelper.padding(200),
+              defaultBottom: ResponsiveHelper.padding(120),
               gap: ResponsiveHelper.spacing(16),
-              left: null,
-              right: ResponsiveHelper.padding(20),
-              openLeft: 0,
-              openRight: 0,
+              left: 0,
+              right: 0,
               builder: (context, isSheetOpen) => Column(
-                crossAxisAlignment: isSheetOpen
-                    ? CrossAxisAlignment.center
-                    : CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // _ActionPillButton(
@@ -738,7 +802,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                     label: "Add Parking",
                     icon: "assets/icons/add_circle.svg",
 
-                    onPressed: _toggleParkingPin,
+                    onPressed: _showAddParkingOptions,
                   ),
 
                 ],
@@ -812,3 +876,4 @@ class _ActionPillButton extends StatelessWidget {
     );
   }
 }
+

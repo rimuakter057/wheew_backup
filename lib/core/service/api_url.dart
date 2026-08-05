@@ -15,8 +15,8 @@ class ApiUrl {
 
 
   // Local testing url
-  static const String baseUrl = 'https://hqwwvtcz-8003.inc1.devtunnels.ms';
-  static const baseSocketUrl = 'https://hqwwvtcz-8003.inc1.devtunnels.ms';
+  static const String baseUrl = 'https://075lrgv5-8003.inc1.devtunnels.ms';
+  static const baseSocketUrl = 'https://075lrgv5-8003.inc1.devtunnels.ms';
 
   //http://13.50.99.165:8003
   //static const baseSocketUrl = 'ws://13.50.99.165:8003';
@@ -106,6 +106,7 @@ class ApiUrl {
  // static const String createPin = "/parking-report";
   static const String addParking = '/parking-report/spot';
   static const String saveParking = '/park-relay/saved-parking';
+
   static const String getMySavedParking = '/park-relay/saved-parking/me';
   static String getSavedParkingHistory({required int page, required int limit}) =>
       '/park-relay/saved-parking/history?page=$page&limit=$limit';

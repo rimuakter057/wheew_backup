@@ -77,12 +77,40 @@ class ParkingRepository {
   }
 
   Future<http.Response> getHandoffById({required String handoffId}) async {
-    return await ApiClient.getData(uri: '/park-relay/handoffs/$handoffId');
+    final uri = '/park-relay/handoffs/$handoffId';
+    print("GET_HANDOFF_BY_ID_URL: $uri (handoffId=$handoffId)");
+    return await ApiClient.getData(uri: uri);
+  }
+
+  // Same endpoint the home tab's "Save My Parking" flow uses — reused here
+  // so the parking-area details sheet's Save Park button (IDLE) has a
+  // working save action too, same as the handoff's accept-and-park does
+  // for SEARCHING.
+  Future<http.Response> saveMyParking({
+    required double latitude,
+    required double longitude,
+    required String parkingType,
+  }) async {
+    final uri = '/park-relay/saved-parking';
+    print("SAVE_MY_PARKING_URL: $uri (lat=$latitude, lng=$longitude, parkingType=$parkingType)");
+    return await ApiClient.postData(
+      uri: uri,
+      body: {
+        'latitude': latitude,
+        'longitude': longitude,
+        'accuracy': 10,
+        'confidence': 0.91,
+        'source': 'AUTO',
+        'parkingType': parkingType,
+      },
+    );
   }
 
   Future<http.Response> acceptAndParkHandoff({required String handoffId}) async {
+    final uri = '/park-relay/handoffs/$handoffId/accept-and-park';
+    print("ACCEPT_AND_PARK_URL: $uri (handoffId=$handoffId)");
     return await ApiClient.postData(
-      uri: '/park-relay/handoffs/$handoffId/accept-and-park',
+      uri: uri,
       body: const {},
     );
   }

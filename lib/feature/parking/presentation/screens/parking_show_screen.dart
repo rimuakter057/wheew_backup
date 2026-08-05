@@ -1,4 +1,5 @@
 
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -27,6 +28,7 @@ import '../../../../helper/custom_gradient_button/custom_gradient_button.dart';
 import '../../../../utils/color/app_colors.dart';
 
 class ParkingShowScreen extends StatefulWidget {
+
   const ParkingShowScreen({super.key});
 
   static const LatLng kInitialMapTarget =
@@ -57,7 +59,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
 
     _pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 800),
     )..repeat();
 
     // Runs the full flow (approx map -> /parking-mode/me -> branch)
@@ -110,6 +112,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
         body: Stack(
           children: [
             Obx(() {
+
               final isLocating = _parkingShowCtrl.isLocating.value;
               final gpsPosition = _parkingShowCtrl.gpsPosition.value;
               final showLocationPulse = _parkingShowCtrl.showLocationPulse.value;
@@ -127,8 +130,12 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
               final showHeader = statusResolved;
               // Find Parking Spot / Stop Searching button — only for the
               // plain-idle and active-search states; PARKED shows the
-              // "You're Parked" card in that spot instead. Hidden while loading.
-              final showSearchUi = statusResolved && !isParked && !isLoading;
+              // "You're Parked" card in that spot instead. Stays visible
+              // while transitioning (shows a spinner instead of vanishing —
+              // see isTransitioningSearch below).
+              final showSearchUi = statusResolved && !isParked;
+              final isTransitioningSearch =
+                  _parkingShowCtrl.isTransitioningSearch.value;
 
               if (!isLocating && gpsPosition == null) {
                 return const ParkingLocationOffPrompt();
@@ -270,6 +277,10 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       ),
                     ),
 
+                  // Same solid pulsing frame as before (width breathes the
+                  // same way), just: (1) gradient-colored instead of solid
+                  // blue, (2) the stroke width waves irregularly around the
+                  // perimeter instead of being uniform, per the reference.
                   if (showLocationPulse && gpsPosition != null)
                     Positioned.fill(
                       child: IgnorePointer(
@@ -279,18 +290,13 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                             final t = _pulseController.value < 0.5
                                 ? _pulseController.value * 2
                                 : (1.0 - _pulseController.value) * 2;
+                            final wavePhase = _pulseController.value * 2 * pi;
 
-
-                            final glowWidth = 8.0 + (t * 10.0);
-                            final glowOpacity = 0.4 + (t * 0.6);
-
-                            return Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: const Color(0xFF185FA5)
-                                      .withValues(alpha: glowOpacity),
-                                  width: glowWidth,
-                                ),
+                            return CustomPaint(
+                              size: Size.infinite,
+                              painter: _WavyGradientBorderPainter(
+                                t: t,
+                                wavePhase: wavePhase,
                               ),
                             );
                           },
@@ -320,6 +326,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                         onPressed: isSearching
                             ? _parkingShowCtrl.stopSearching
                             : _parkingShowCtrl.onLeavingPopupNo,
+                        isLoading: isTransitioningSearch,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -395,6 +402,8 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                             child: Container(
                          padding: ResponsiveHelper.all(8),
                               decoration:  BoxDecoration(
+
+
                                 shape: BoxShape.circle,
                                 color: AppColors.white.withValues(alpha: 0.5),
                               ),
@@ -496,4 +505,76 @@ class _NotificationBellButton extends StatelessWidget {
       }),
     );
   }
+}
+
+// ── SEARCHING-mode glow frame: gradient-colored (blue → white → purple),
+//    stroke width waves irregularly around the perimeter and the wave
+//    travels over time — same base pulsing width/timing as the old solid
+//    Border.all() version, just not a uniform line anymore. ──
+class _WavyGradientBorderPainter extends CustomPainter {
+  final double t; // 0..1 "breathing" phase — same as the old glowWidth calc
+  final double wavePhase; // rotates the wave around the perimeter over time
+
+  const _WavyGradientBorderPainter({
+    required this.t,
+    required this.wavePhase,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final metrics = (Path()..addRect(rect)).computeMetrics().first;
+    final length = metrics.length;
+
+    final gradient = const SweepGradient(
+      colors: [
+        Color(0xFF1E88E5), // blue
+        Colors.white,
+        Color(0xFF1E88E5), // back to blue
+        Colors.white,
+        Color(0xFF1E88E5), // back to blue
+      ],
+      stops: [0.0, 0.25, 0.5, 0.75, 1.0],
+    );
+    final shader = gradient.createShader(rect);
+
+    // Modulated by a traveling sine wave so it's thicker/thinner at
+    // different points around the frame instead of uniform.
+    final baseWidth = 14.0 + (t * 10.0);
+    const waveAmplitude = 5.0;
+    const waveCount = 3; // how many "bulges" travel around the perimeter
+
+    const segments = 160;
+    for (int i = 0; i < segments; i++) {
+      final d0 = length * i / segments;
+      final d1 = length * (i + 1) / segments;
+      final segmentPath = metrics.extractPath(d0, d1);
+
+      final wave = sin((d0 / length) * 2 * pi * waveCount + wavePhase);
+      final strokeWidth = (baseWidth + wave * waveAmplitude).clamp(6.0, 30.0);
+
+      // Soft outer halo (blurred, wider) + a tighter, less-blurred core on
+      // top — this combo is what actually reads as "glow" instead of a
+      // crisp painted line, kept narrow so it hugs the edge.
+      final haloPaint = Paint()
+        ..shader = shader
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth * 1.4
+        ..strokeCap = StrokeCap.round
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, strokeWidth * 0.5);
+      canvas.drawPath(segmentPath, haloPaint);
+
+      final corePaint = Paint()
+        ..shader = shader
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth * 0.6
+        ..strokeCap = StrokeCap.round
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, strokeWidth * 0.15);
+      canvas.drawPath(segmentPath, corePaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _WavyGradientBorderPainter oldDelegate) =>
+      oldDelegate.t != t || oldDelegate.wavePhase != wavePhase;
 }

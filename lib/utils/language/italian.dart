@@ -412,7 +412,7 @@ final Map<String, String> italian = {
   'La targa deve avere almeno 3 lettere e 3 numeri',
 
 // -------- Share --------
-  AppStrings.shareLink: 'Condividi collegamento',
+  AppStrings.shareApp: "Condividi l'app",
   AppStrings.tryAmazingApp: 'Prova a usare questa fantastica app!',
   AppStrings.shareWithFriends: 'Condividi con i tuoi amici',
   AppStrings.shareThisLinkInviteFriends:

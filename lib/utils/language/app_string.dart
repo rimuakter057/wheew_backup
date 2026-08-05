@@ -432,7 +432,7 @@ class AppStrings {
   static const String licenceValidator = 'licence_validator';
 
   // -------- Share --------
-  static const String shareLink = 'share_link';
+  static const String shareApp = 'share_link';
   static const String tryAmazingApp = 'try_amazing_app';
   static const String shareWithFriends = 'share_with_friends';
   static const String shareThisLinkInviteFriends = 'share_this_link_invite_friends';

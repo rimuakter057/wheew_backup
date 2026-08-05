@@ -151,44 +151,51 @@ class CustomParkingDetailsDialog extends StatelessWidget {
 
                 children: [
 
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      children: [
 
-                Row(
-                  children: [
+                        Icon(
+                            Icons.location_on_outlined,
+                            size: ResponsiveHelper.iconSize(16),
+                            color: AppColors.blue
+                        ),
 
-                    Icon(
-                        Icons.location_on_outlined,
-                        size: ResponsiveHelper.iconSize(16),
-                        color: AppColors.blue
+                        const SizedBox(width: 3),
+
+                        Text(
+                            distance,
+                            style: context.bodySmall.copyWith(fontSize: ResponsiveHelper.fontSize(14),fontWeight: FontWeight.w600)
+                        ),
+
+                        const SizedBox(width: 10),
+
+
+                        Icon(
+                          Icons.star_rounded,
+                          size: ResponsiveHelper.iconSize(16),
+                          color: ratingColor,
+                        ),
+
+                        const SizedBox(width: 3),
+
+                        Text(
+                            rating,
+                            style:context.bodySmall.copyWith(fontWeight: FontWeight.w600)
+                        ),
+
+
+                      ],
                     ),
-
-                    const SizedBox(width: 3),
-
-                    Text(
-                        distance,
-                        style: context.bodySmall.copyWith(fontSize: ResponsiveHelper.fontSize(14),fontWeight: FontWeight.w600)
-                    ),
-
-                    const SizedBox(width: 10),
-
-
-                    Icon(
-                      Icons.star_rounded,
-                      size: ResponsiveHelper.iconSize(16),
-                      color: ratingColor,
-                    ),
-
-                    const SizedBox(width: 3),
-
-                    Text(
-                        rating,
-                        style:context.bodySmall.copyWith(fontWeight: FontWeight.w600)
-                    ),
-
-
-                  ],
+                  ),
                 ),
 
                 if (onNavigate != null) ...[
+
+                  SizedBox(width: ResponsiveHelper.spacing(8)),
 
                   GestureDetector(
                     onTap: onNavigate,

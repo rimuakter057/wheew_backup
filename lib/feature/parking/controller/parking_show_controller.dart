@@ -513,40 +513,58 @@ class ParkingShowController extends GetxController {
     }
   }
 
-  Future<void> onLeavingPopupNo() async {
-    _logger.i('=== onLeavingPopupNo CLICKED ===');
-    status.value = 'SEARCHING';
-    await getUserLocation();
-    showLocationPulse.value = true;
-    final lat = gpsPosition.value?.latitude;
-    final lng = gpsPosition.value?.longitude;
-    _logger.d('onLeavingPopupNo coordinates: lat=$lat, lng=$lng');
-    if (lat == null || lng == null) {
-      _logger.w('onLeavingPopupNo SKIPPED: location is null');
-      return;
-    }
+  // Guards Find Parking Spot / Stop Searching against rapid repeated taps —
+  // without this, tapping again before the previous transition finishes
+  // fired overlapping API calls and made the UI flicker between states.
+  final RxBool isTransitioningSearch = false.obs;
 
+  Future<void> onLeavingPopupNo() async {
+    if (isTransitioningSearch.value) return;
+    isTransitioningSearch.value = true;
     try {
-      _logger.d('onLeavingPopupNo calling setParkingModeSearching');
-      final response = await _repository.setParkingModeSearching(
-        latitude: lat,
-        longitude: lng,
-      );
-      _logger.d(
-        'setParkingModeSearching response status: ${response.statusCode}\n'
-        'body: ${response.body}',
-      );
-    } catch (e, st) {
-      _logger.e('Error setting searching mode', error: e, stackTrace: st);
+      _logger.i('=== onLeavingPopupNo CLICKED ===');
+      status.value = 'SEARCHING';
+      await getUserLocation();
+      showLocationPulse.value = true;
+      final lat = gpsPosition.value?.latitude;
+      final lng = gpsPosition.value?.longitude;
+      _logger.d('onLeavingPopupNo coordinates: lat=$lat, lng=$lng');
+      if (lat == null || lng == null) {
+        _logger.w('onLeavingPopupNo SKIPPED: location is null');
+        return;
+      }
+
+      // Parking area polygons stay visible across every status (IDLE,
+      // SEARCHING, PARKED) — not cleared here, so they carry over as-is
+      // into SEARCHING alongside the newly fetched handoffs below.
+
+      try {
+        _logger.d('onLeavingPopupNo calling setParkingModeSearching');
+        final response = await _repository.setParkingModeSearching(
+          latitude: lat,
+          longitude: lng,
+        );
+        _logger.d(
+          'setParkingModeSearching response status: ${response.statusCode}\n'
+          'body: ${response.body}',
+        );
+      } catch (e, st) {
+        _logger.e('Error setting searching mode', error: e, stackTrace: st);
+      }
+      // SEARCHING -> just 1 API call (nearby handoffs).
+      await fetchNearbyHandoffsOnly(lat, lng);
+    } finally {
+      isTransitioningSearch.value = false;
     }
-    // SEARCHING -> just 1 API call (nearby handoffs).
-    await fetchNearbyHandoffsOnly(lat, lng);
   }
 
   /// "Stop Searching" — sets parking mode back to idle and clears the
   /// in-progress search (markers/pulse), returning the screen to the plain
   /// "Find Parking Spot" view.
   Future<void> stopSearching() async {
+    if (isTransitioningSearch.value) return;
+    isTransitioningSearch.value = true;
+    try {
     _logger.i('=== stopSearching CLICKED ===');
     final lat = gpsPosition.value?.latitude;
     final lng = gpsPosition.value?.longitude;
@@ -567,6 +585,12 @@ class ParkingShowController extends GetxController {
     }
 
     _resetSearchState();
+    // Back to IDLE -> same auto-fetch checkParkingModeMe() does for a
+    // fresh IDLE resolve, so the map isn't left blank after Stop Searching.
+    await fetchNearbyParkingAreasOnly(lat, lng);
+    } finally {
+      isTransitioningSearch.value = false;
+    }
   }
 
   Future<void> onLeavingPopupYes() async {
@@ -647,6 +671,9 @@ class ParkingShowController extends GetxController {
 
       // Session ended -> back to the plain "not parked" search view.
       _resetSearchState();
+      // Back to IDLE -> same auto-fetch checkParkingModeMe() does for a
+      // fresh IDLE resolve, so the map isn't left blank after exiting.
+      await fetchNearbyParkingAreasOnly(lat, lng);
       succeeded = true;
     } catch (e) {
       _showMessage(
@@ -1636,6 +1663,7 @@ class ParkingShowController extends GetxController {
     isLoading.value = true;
     try {
       _logger.i('=== showHandoffDetails: fetching /handoffs/$id ===');
+      print("GET_HANDOFF_BY_ID_REQUESTED_ID: $id");
       final response = await _repository.getHandoffById(handoffId: id);
       print(
         "GET_HANDOFF_BY_ID_RESPONSE: status=${response.statusCode}, body=${response.body}",
@@ -1644,6 +1672,12 @@ class ParkingShowController extends GetxController {
       if (response.statusCode == 200) {
         final data = _asMap(jsonDecode(response.body));
         if (data != null) {
+          // Compare against the requested id — this is also the id
+          // _acceptAndParkHandoff will use for Save Park.
+          print(
+            "GET_HANDOFF_BY_ID_RETURNED_ID: ${data['id']} "
+            "(matchesRequested=${data['id']?.toString() == id})",
+          );
           _showHandoffDialog(data);
           return;
         }
@@ -1714,7 +1748,39 @@ class ParkingShowController extends GetxController {
     final lat = _toDouble(area['centerLat']);
     final lng = _toDouble(area['centerLng']);
 
+    // rating == null -> '0.0'; reviewCount, when > 0, appended as "4.0 (1)".
+    final ratingRaw = area['rating'];
+    final ratingText = ratingRaw == null
+        ? '0.0'
+        : (ratingRaw is num ? ratingRaw.toStringAsFixed(1) : ratingRaw.toString());
+    final reviewCountRaw = area['reviewCount'];
+    final reviewCount = reviewCountRaw is num
+        ? reviewCountRaw.toInt()
+        : int.tryParse(reviewCountRaw?.toString() ?? '');
+    final ratingLabel = (reviewCount != null && reviewCount > 0)
+        ? '$ratingText ($reviewCount)'
+        : ratingText;
+
+    // totalSpots == null -> 0.
+    final totalSpotsRaw = area['totalSpots'];
+    final totalSpots = totalSpotsRaw is num
+        ? totalSpotsRaw.toInt()
+        : (int.tryParse(totalSpotsRaw?.toString() ?? '') ?? 0);
+
+    // paid + parkingFee present -> show the fee; else fall back to 'Paid'.
+    String priceLabel;
+    if (isFree) {
+      priceLabel = 'Free';
+    } else {
+      final feeRaw = area['parkingFee'];
+      final feeNum = feeRaw is num ? feeRaw : num.tryParse(feeRaw?.toString() ?? '');
+      priceLabel = feeNum != null
+          ? '\$${feeNum % 1 == 0 ? feeNum.toInt() : feeNum}'
+          : 'Paid';
+    }
+
     _showSpotDetailsCardSheet(
+
       title: name.isNotEmpty ? name : 'Parking Area',
       subtitle: description.isNotEmpty ? description : 'Parking area',
       badgeLabel: isActive ? 'Standard' : 'Inactive',
@@ -1722,20 +1788,75 @@ class ParkingShowController extends GetxController {
       badgeIcon: Icons.local_parking_rounded,
       badgeColor: isActive ? AppColors.paidBlue : Colors.grey,
       distanceLabel: distanceDisplay,
-      ratingLabel: '--',
-      leftStatLabel: '-- spots',
-      rightStatLabel: isFree ? 'Free' : '\$$parkingCost/hr',
+      ratingLabel: ratingLabel,
+      leftStatLabel: '$totalSpots spots',
+      rightStatLabel: priceLabel,
       rightStatIcon: isFree ? Icons.money_off_rounded : Icons.monetization_on_outlined,
       isFree: isFree,
       destination: (lat != null && lng != null) ? LatLng(lat, lng) : null,
+      // Save Park from a parking area's details — allowed in any status
+      // except PARKED (areas now stay visible across IDLE/SEARCHING/
+      // PARKED, but saving only makes sense before you're already parked).
+      onSavePark: (status.value != 'PARKED' && lat != null && lng != null)
+          ? () => _saveParkingAtArea(area, latitude: lat, longitude: lng)
+          : null,
     );
+  }
+
+  // Reuses the same /park-relay/saved-parking endpoint the home tab's
+  // "Save My Parking" flow already uses — there's no dedicated
+  // accept-and-park-style endpoint for parking areas (that one is
+  // handoff-specific), so this marks the area's location as parked.
+  Future<void> _saveParkingAtArea(
+    Map<String, dynamic> area, {
+    required double latitude,
+    required double longitude,
+  }) async {
+    final costRaw = area['parkingCost']?.toString().toUpperCase();
+    final parkingType = costRaw == 'PAID' ? 'PAID' : 'FREE';
+
+    isLoading.value = true;
+    try {
+      final response = await _repository.saveMyParking(
+        latitude: latitude,
+        longitude: longitude,
+        parkingType: parkingType,
+      );
+      print(
+        "SAVE_MY_PARKING_RESPONSE: status=${response.statusCode}, body=${response.body}",
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        currentParkingAreaId.value = area['id']?.toString();
+        status.value = 'PARKED';
+        showLocationPulse.value = false;
+        handoffList.clear();
+        parkingAreaList.clear();
+        polygons.clear();
+        polylines.clear();
+        circles.clear();
+        markers.removeWhere((m) => m.markerId.value != 'saved_car_location');
+        mapOverlayVersion.value++;
+        _showMessage('Parking spot saved', isError: false);
+      } else {
+        String errorMsg = AppStrings.somethingWentWrong.tr;
+        try {
+          final data = _asMap(jsonDecode(response.body));
+          if (data?['message'] != null) errorMsg = data!['message'].toString();
+        } catch (_) {}
+        _showMessage(errorMsg, isError: true);
+      }
+    } catch (e, st) {
+      _logger.e('_saveParkingAtArea ERROR', error: e, stackTrace: st);
+      _showMessage(AppStrings.somethingWentWrong.tr, isError: true);
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   // ── Shared "found spot" details bottom sheet — same card design used
   //    on the Saved Parkings screen. [onSavePark] is supplied by the
-  //    caller so only the handoff flow (SEARCHING) gets a working save
-  //    action; parking-area details (IDLE) pass null — read-only, same
-  //    as the map (home tab). ──
+  //    caller so only IDLE (parking areas) and SEARCHING (handoffs) get
+  //    a working save action, each wired to the right endpoint. ──
   void _showSpotDetailsCardSheet({
     required String title,
     required String subtitle,
@@ -1761,7 +1882,15 @@ class ParkingShowController extends GetxController {
       backgroundColor: Colors.transparent,
       builder: (dialogContext) {
         return Padding(
-          padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 16),
+          padding: EdgeInsets.only(
+            left: ResponsiveHelper.padding(16),
+            right: ResponsiveHelper.padding(16),
+            top: ResponsiveHelper.padding(16),
+            // 8-height gap above the bottom nav / device edge, on top of
+            // the safe-area inset (gesture bar / home indicator).
+            bottom: ResponsiveHelper.padding(8) +
+                MediaQuery.of(dialogContext).padding.bottom,
+          ),
           child: ParkingLocationCard(
             title: title,
             subtitle: subtitle,
@@ -1799,7 +1928,11 @@ class ParkingShowController extends GetxController {
   //    Only ever wired up while status == SEARCHING (see _showHandoffDialog).
   //    Just this 1 API call — status flips to PARKED locally from this
   //    response directly, no follow-up GET /parking-mode/me.
+
+
+
   Future<void> _acceptAndParkHandoff(String handoffId) async {
+    print("ACCEPT_AND_PARK_HANDOFF_ID (Save Park tapped): $handoffId");
     isLoading.value = true;
     try {
       final response = await _repository.acceptAndParkHandoff(handoffId: handoffId);

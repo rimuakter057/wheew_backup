@@ -9,21 +9,6 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
-/// ──────────────────────────────────────────────────────────────────────────
-/// Reusable top-bar for map screens.
-///
-/// Contains:
-///  • A frosted-glass search pill (read-only tap target)
-///  • A notification-bell button with unread badge
-///
-/// Usage:
-/// ```dart
-/// MapTopBar(
-///   onSearchTap: () { /* open radius filter or search */ },
-///   searchController: _searchController, // optional — shows current text
-/// )
-/// ```
-/// ──────────────────────────────────────────────────────────────────────────
 class MapTopBar extends StatelessWidget {
   /// Called when the search pill is tapped.
   final VoidCallback? onSearchTap;
@@ -156,6 +141,7 @@ class _NotificationBellButton extends StatelessWidget {
                 color: Color(0xFF185FA5),
               ),
             ),
+
             if (count > 0)
               Positioned(
                 top: -2,

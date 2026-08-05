@@ -101,6 +101,8 @@ class AssetsPath {
   static const String enableStar = '${_iconsBase}enable_star.svg';
   static const String disableStar = '${_iconsBase}disable_star.svg';
   static const String helpSupport = '${_iconsBase}help_support.svg';
+  static const String electricCarjingMarker = '${_iconsBase}electric_carjing_marker.svg';
+  static const String disable = '${_iconsBase}disable_marker.svg';
   static const String homeJson="assets/animations/icon_animated.json";
   static const String group="assets/icons/group.svg";
 

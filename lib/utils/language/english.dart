@@ -395,7 +395,7 @@ AppStrings.findAnswersBelow:'Find Answers Below',
   AppStrings.licenceValidator: 'License plate must have at least 3 letters and 3 numbers',
 
   // -------- Share --------
-  AppStrings.shareLink: 'Share Link',
+  AppStrings.shareApp: 'Share App',
   AppStrings.tryAmazingApp: 'Try using this amazing app!',
   AppStrings.shareWithFriends: 'Share with your friends',
   AppStrings.shareThisLinkInviteFriends: 'Share this link to invite your friends',
