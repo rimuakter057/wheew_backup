@@ -48,7 +48,7 @@ class AppSocket {
     socket = io.io(
       socketUrl,
       io.OptionBuilder()
-          .setTransports(['websocket'])
+          .setTransports(['websocket', 'polling'])
           .enableForceNew()
           .enableReconnection()
           .setReconnectionDelay(1000)

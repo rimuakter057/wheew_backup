@@ -250,6 +250,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   // ── "Add Parking" button → choose between the two existing flows ───────
   // (FLOW 1 report-a-spot / FLOW 2 save-my-parking) instead of the old
   // always-visible two-pill layout.
+  // ignore: unused_element
   void _showAddParkingOptions() {
     HapticFeedback.selectionClick();
     showTrackedBottomSheet(
@@ -733,8 +734,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
             Obx(() {
               final selected = _parkingCtrl.selectedReport.value;
               if (selected == null) return const SizedBox.shrink();
-              final cardBottomOffset = MediaQuery.of(context).padding.top +
-                  ResponsiveHelper.padding(102);
+              final double cardBottomOffset = ResponsiveHelper.bottomNavOffset(context);
               return Positioned(
                 left:  ResponsiveHelper.padding(8),
                 right:  ResponsiveHelper.padding(8),
@@ -769,7 +769,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
             /// Bottom-centered above the nav bar, always — same position
             /// whether or not a bottom sheet is open.
             BottomSheetAwarePositioned(
-              defaultBottom: ResponsiveHelper.padding(120),
+              defaultBottom: ResponsiveHelper.bottomNavOffset(context),
               gap: ResponsiveHelper.spacing(16),
               left: 0,
               right: 0,
@@ -777,32 +777,11 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // _ActionPillButton(
-                  //   label: AppStrings.addParkingSpot.tr,
-                  //   icon: Icons.add_location_alt_rounded,
-                  //   gradientColors: const [
-                  //     Color(0xFFFF8A3D),
-                  //     Color(0xFFF5590B),
-                  //   ],
-                  //   onPressed: _toggleParkingPin,
-                  // ),
-                  // SizedBox(height: ResponsiveHelper.spacing(14)),
-                  // _ActionPillButton(
-                  //   label: AppStrings.parkMyCar.tr,
-                  //   icon: Icons.add_circle_outline,
-                  //   gradientColors:  [
-                  //   AppColors.blackGrey,
-                  //   AppColors.black,
-                  //   ],
-                  //   onPressed: _showSaveParkingSheet,
-                  // ),
-
-
                   _ActionPillButton(
                     label: "Add Parking",
                     icon: "assets/icons/add_circle.svg",
 
-                    onPressed: _showAddParkingOptions,
+                    onPressed: _toggleParkingPin,
                   ),
 
                 ],

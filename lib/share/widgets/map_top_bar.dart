@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/router/route_path.dart';
 import 'package:platchatapp/feature/notification/controller/notification_controller.dart';
+import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
@@ -23,7 +25,7 @@ class MapTopBar extends StatelessWidget {
     super.key,
     this.onSearchTap,
     this.searchController,
-    this.horizontalPadding = 42,
+    this.horizontalPadding = 16,
   });
 
   @override
@@ -123,11 +125,13 @@ class _NotificationBellButton extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Container(
-              height: ResponsiveHelper.height(44),
-              width: ResponsiveHelper.width(44),
+              height: ResponsiveHelper.width(42),
+              width: ResponsiveHelper.width(42),
+              padding: ResponsiveHelper.all(10),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.white.withValues(alpha: 0.5),
                 shape: BoxShape.circle,
+                border: Border.all(color: AppColors.white),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.12),
@@ -136,9 +140,13 @@ class _NotificationBellButton extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Icon(
-                Icons.notifications_none_rounded,
-                color: Color(0xFF185FA5),
+              child: Center(
+                child: CustomImage(
+                  imageSrc: AssetsPath.notificationMap,
+                  height: ResponsiveHelper.height(18),
+                  width: ResponsiveHelper.width(18),
+                  boxFit: BoxFit.contain,
+                ),
               ),
             ),
 

@@ -312,6 +312,7 @@ class _AppBottomNav extends StatelessWidget {
                           //   onTap: onTap,
                           // ),
 
+                          SizedBox(width: ResponsiveHelper.spacing(8)),
                           _NavItem(
                             icon: AssetsPath.savePNav,
                             label: "Parking",
@@ -320,6 +321,7 @@ class _AppBottomNav extends StatelessWidget {
                             onTap: onTap,
                           ),
 
+                          SizedBox(width: ResponsiveHelper.spacing(8)),
                           _NavItem(
                             icon: AssetsPath.chatNav,
                             label: AppStrings.chat.tr,
@@ -327,6 +329,8 @@ class _AppBottomNav extends StatelessWidget {
                             currentIndex: currentIndex,
                             onTap: onTap,
                           ),
+
+                          SizedBox(width: ResponsiveHelper.spacing(8)),
                           _NavItem(
                             icon: AssetsPath.profileNav,
                             label: AppStrings.profile.tr,

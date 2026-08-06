@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/router/route_path.dart';
 import 'package:platchatapp/feature/notification/controller/notification_controller.dart';
+import 'package:platchatapp/helper/custom_image/custom_image.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
 
 import '../../../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../../../utils/color/app_colors.dart';
@@ -45,15 +47,19 @@ class ProfileNavAppBar extends StatelessWidget
                 alignment: Alignment.center,
                 children: [
                   Container(
-                    height: ResponsiveHelper.height(40),
-                    width: ResponsiveHelper.height(40),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
+                    height: ResponsiveHelper.height(32),
+                    width: ResponsiveHelper.height(32),
+                    padding: ResponsiveHelper.all(7),
+                    decoration:  BoxDecoration(
+                      color: AppColors.white.withOpacity(0.5),
+                      border: Border.all(color: AppColors.white),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      Icons.notifications_none_rounded,
-                      color: Color(0xFF1A1D20),
+                    child: CustomImage(
+                      imageSrc: AssetsPath.notificationMap,
+                      height: ResponsiveHelper.iconSize(16),
+                      width: ResponsiveHelper.iconSize(16),
+                      boxFit: BoxFit.contain,
                     ),
                   ),
                   if (count > 0)

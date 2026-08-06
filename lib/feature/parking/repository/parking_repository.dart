@@ -6,6 +6,10 @@ class ParkingRepository {
     return await ApiClient.getData(uri: '/park-relay/parking-mode/me');
   }
 
+  Future<http.Response> getSavedParkingMe() async {
+    return await ApiClient.getData(uri: '/park-relay/saved-parking/me');
+  }
+
   Future<http.Response> getNearbyHandoffs({
     required double latitude,
     required double longitude,
@@ -90,9 +94,11 @@ class ParkingRepository {
     required double latitude,
     required double longitude,
     required String parkingType,
+    String? spotId,
+    int? durationMin,
   }) async {
     final uri = '/park-relay/saved-parking';
-    print("SAVE_MY_PARKING_URL: $uri (lat=$latitude, lng=$longitude, parkingType=$parkingType)");
+    print("SAVE_MY_PARKING_URL: $uri (lat=$latitude, lng=$longitude, parkingType=$parkingType, spotId=$spotId, durationMin=$durationMin)");
     return await ApiClient.postData(
       uri: uri,
       body: {
@@ -101,7 +107,9 @@ class ParkingRepository {
         'accuracy': 10,
         'confidence': 0.91,
         'source': 'AUTO',
+        if (spotId != null) 'spotId': spotId,
         'parkingType': parkingType,
+        if (parkingType == 'PAID' && durationMin != null) 'durationMin': durationMin,
       },
     );
   }

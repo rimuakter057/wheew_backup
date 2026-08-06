@@ -396,8 +396,6 @@
 
 
 
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -408,7 +406,9 @@ import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
-import 'custom_parking_details.dart';
+import 'package:platchatapp/feature/map/controller/map_controller.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
+import 'parking_location_card.dart';
 
 class ParkingReportDropdown extends StatelessWidget {
   final Map<String, dynamic> report;
@@ -519,44 +519,6 @@ class ParkingReportDropdown extends StatelessWidget {
   Color get costStatusColor =>
       _isFree ? AppColors.successColor : AppColors.paidBlue;
 
-  // Old tag logic — kept for reference, replaced by parkingAreaTypes below.
-  // String get displayTag {
-  //   if (report['electric_charging'] == true) {
-  //     return 'Electric';
-  //   }
-  //
-  //   if (report['disabled_facility'] == true) {
-  //     return 'Disabled';
-  //   }
-  //
-  //   return 'Parking';
-  // }
-  //
-  // IconData get displayTagIcon {
-  //   if (report['electric_charging'] == true) {
-  //     return Icons.electric_car_rounded;
-  //   }
-  //
-  //   if (report['disabled_facility'] == true) {
-  //     return Icons.accessible_rounded;
-  //   }
-  //
-  //   return Icons.local_parking_rounded;
-  // }
-  //
-  // Color get displayTagColor {
-  //   if (report['electric_charging'] == true) {
-  //     return AppColors.chargingGreen;
-  //   }
-  //
-  //   if (report['disabled_facility'] == true) {
-  //     return AppColors.disableOrange;
-  //   }
-  //
-  //   return const Color(0xFF64748B);
-  // }
-
-  // parkingAreaTypes == [] → no badge at all (tag stays null).
   List<String> get _areaTypes {
     final dynamic raw = report['parkingAreaTypes'];
     if (raw is List) {
@@ -615,23 +577,61 @@ class ParkingReportDropdown extends StatelessWidget {
     );
   }
 
+  // ignore: unused_element
+  void _onSavePark(BuildContext context) async {
+    final dynamic rawLat = report['centerLat'] ?? report['latitude'];
+    final dynamic rawLng = report['centerLng'] ?? report['longitude'];
+
+    final double? lat = rawLat is num
+        ? rawLat.toDouble()
+        : double.tryParse(rawLat?.toString() ?? '');
+    final double? lng = rawLng is num
+        ? rawLng.toDouble()
+        : double.tryParse(rawLng?.toString() ?? '');
+
+    if (lat == null || lng == null) return;
+
+    if (Get.isRegistered<ParkingReportController>()) {
+      final ctrl = Get.find<ParkingReportController>();
+      final String costRaw =
+          (report['parkingCost'] ?? report['parking_cost'])?.toString().toUpperCase() ?? '';
+      final String parkingType = costRaw == 'PAID' ? 'PAID' : 'FREE';
+
+      final success = await ctrl.saveMyParking(
+        latitude: lat,
+        longitude: lng,
+        parkingType: parkingType,
+      );
+      if (success) {
+        onClose();
+        CustomSnackbar.success(context: context, message: 'Parking spot saved');
+      } else {
+        CustomSnackbar.error(
+          context: context,
+          message: ctrl.submitMessage.value.isNotEmpty
+              ? ctrl.submitMessage.value
+              : 'Failed to save parking spot',
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return CustomParkingDetailsDialog(
+    return ParkingLocationCard(
       title: displayTitle,
       subtitle: displaySubtitle,
-      distance: displayDistance,
-      rating: displayRating,
-      ratingColor: ratingColor,
-      tag: displayTag,
-      tagIcon: displayTagIcon,
-      tagColor: displayTagColor,
-      spots: displaySpots,
-      price: displayPrice,
-      onClose: onClose,
+      badgeLabel: displayTag ?? 'Standard',
+      badgeIcon: displayTagIcon ?? Icons.local_parking_rounded,
+      badgeIconAsset: displayTag == null ? AssetsPath.standardIcon : null,
+      badgeColor: displayTagColor ?? AppColors.paidBlue,
+      distanceLabel: displayDistance,
+      ratingLabel: displayRating,
+      leftStatLabel: displaySpots,
+      rightStatLabel: displayPrice,
+      rightStatIcon: _isFree ? Icons.money_off_rounded : Icons.monetization_on_outlined,
       onNavigate: () => _openNavigation(context),
-      costStatusLabel: costStatusLabel,
-      costStatusColor: costStatusColor,
+      onSavePark: null,
     );
   }
 }

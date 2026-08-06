@@ -32,10 +32,10 @@ class MapSideControls extends StatelessWidget {
   /// Called when the user taps the current-location button.
   final VoidCallback onLocationTap;
 
-  /// Distance from the top of the screen (default matches ParkingShowScreen).
-  final double topOffset;
+  /// Distance from the top of the screen (defaults to 8px below MapTopBar's notification bell).
+  final double? topOffset;
 
-  /// Distance from the right edge of the screen.
+  /// Distance from the right edge of the screen (default 16 to align with MapTopBar).
   final double rightOffset;
 
   const MapSideControls({
@@ -43,15 +43,19 @@ class MapSideControls extends StatelessWidget {
     required this.selectedMapType,
     required this.onMapTypeChanged,
     required this.onLocationTap,
-    this.topOffset = 110,
-    this.rightOffset = 30,
+    this.topOffset,
+    this.rightOffset = 16,
   });
 
   @override
   Widget build(BuildContext context) {
+    final double calculatedTop = topOffset != null
+        ? ResponsiveHelper.padding(topOffset!)
+        : MediaQuery.of(context).padding.top + ResponsiveHelper.padding(68);
+
     return Positioned(
       right: ResponsiveHelper.padding(rightOffset),
-      top: ResponsiveHelper.padding(topOffset),
+      top: calculatedTop,
       child: Container(
         padding: ResponsiveHelper.symmetric(horizontal: 4, vertical: 4),
         decoration: BoxDecoration(
@@ -87,14 +91,16 @@ class MapSideControls extends StatelessWidget {
                 GestureDetector(
                   onTap: onLocationTap,
                   child: Container(
-                    padding: ResponsiveHelper.all(8),
+                    height: ResponsiveHelper.height(44),
+                    width: ResponsiveHelper.width(44),
+                    alignment: Alignment.center,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: AppColors.white.withValues(alpha: 0.5),
                     ),
                     child: const Icon(
                       Icons.my_location_rounded,
-                      color: Color(0xFF185FA5),
+                      color:AppColors.black,
                     ),
                   ),
                 ),

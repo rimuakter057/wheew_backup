@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
@@ -39,7 +41,7 @@ class ScanOptionsCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             _ScanOptionTile(
-              icon: Icons.document_scanner_outlined,
+              svgIcon: AssetsPath.ocrScannerSvg,
               title: AppStrings.ocrScanner.tr,
               subtitle: AppStrings.ocrScannerSubtitle.tr,
               highlighted: false,
@@ -47,7 +49,7 @@ class ScanOptionsCard extends StatelessWidget {
             ),
             SizedBox(height: ResponsiveHelper.spacing(8)),
             _ScanOptionTile(
-              icon: Icons.qr_code_scanner_rounded,
+              svgIcon: AssetsPath.scanQrSvg,
               title: AppStrings.scanQrCode.tr,
               subtitle: AppStrings.scanQrCodeSubtitle.tr,
               highlighted: true,
@@ -61,14 +63,14 @@ class ScanOptionsCard extends StatelessWidget {
 }
 
 class _ScanOptionTile extends StatelessWidget {
-  final IconData icon;
+  final String svgIcon;
   final String title;
   final String subtitle;
   final bool highlighted;
   final VoidCallback onTap;
 
   const _ScanOptionTile({
-    required this.icon,
+    required this.svgIcon,
     required this.title,
     required this.subtitle,
     required this.highlighted,
@@ -102,13 +104,19 @@ class _ScanOptionTile extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: highlighted
-                    ? Colors.white.withOpacity(0.2)
-                    : AppColors.blue.withOpacity(0.1),
+                    ? Colors.white.withValues(alpha: 0.2)
+                    : AppColors.blue.withValues(alpha: 0.1),
               ),
-              child: Icon(
-                icon,
-                size: ResponsiveHelper.iconSize(18),
-                color: highlighted ? Colors.white : AppColors.blue,
+              child: Center(
+                child: SvgPicture.asset(
+                  svgIcon,
+                  width: ResponsiveHelper.iconSize(18),
+                  height: ResponsiveHelper.iconSize(18),
+                  colorFilter: ColorFilter.mode(
+                    highlighted ? Colors.white : AppColors.blue,
+                    BlendMode.srcIn,
+                  ),
+                ),
               ),
             ),
             SizedBox(width: ResponsiveHelper.spacing(12)),

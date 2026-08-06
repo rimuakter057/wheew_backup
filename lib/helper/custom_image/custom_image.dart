@@ -46,7 +46,7 @@ class _CustomImageState extends State<CustomImage> {
         color: widget.imageColor,
         height: widget.height,
         width: widget.width,
-        fit: widget.boxFit ?? BoxFit.cover,
+        fit: widget.boxFit ?? widget.fit ?? BoxFit.contain,
       );
     } else if (widget.imageSrc.endsWith('.png')) {
       imageWidget = Image.asset(

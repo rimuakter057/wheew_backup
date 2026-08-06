@@ -8,7 +8,6 @@ import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/feature/chat/model/user_chat_model.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/feature/chat/view/chat_list/presentation/widgets/chat_list_appbar.dart';
-import 'package:platchatapp/feature/chat/view/chat_list/presentation/widgets/chat_list_search_bar.dart';
 import 'package:platchatapp/feature/chat/view/chat_list/presentation/widgets/chat_navigator.dart';
 import 'package:platchatapp/feature/chat/view/chat_list/presentation/widgets/create_group.dart';
 import 'package:platchatapp/feature/chat/view/message/controller/message_controller.dart';
@@ -312,22 +311,58 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
 
         onScanTap: () async {
-          final result = await showModalBottomSheet<String>(
+          final result = await showGeneralDialog<String>(
             context: context,
-            backgroundColor: Colors.transparent,
+            barrierDismissible: true,
+            barrierLabel: 'Dismiss',
             barrierColor: Colors.black.withOpacity(0.35),
-            isScrollControlled: true,
-            builder: (context) {
-              return SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: ResponsiveHelper.padding(20),
-                    vertical: ResponsiveHelper.padding(12),
+            transitionDuration: const Duration(milliseconds: 200),
+            pageBuilder: (dialogContext, animation, secondaryAnimation) {
+              final double topPadding =
+                  MediaQuery.of(dialogContext).padding.top + kToolbarHeight;
+              return Stack(
+                children: [
+                  Positioned(
+                    top: topPadding + ResponsiveHelper.padding(6),
+                    left: ResponsiveHelper.padding(16),
+                    width: MediaQuery.of(dialogContext).size.width * 0.85,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: ResponsiveHelper.padding(14),
+                          ),
+                          child: ClipPath(
+                            clipper: _TopTriangleClipper(),
+                            child: Container(
+                              width: 14,
+                              height: 8,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        ScanOptionsCard(
+                          onOcrTap: () => Navigator.pop(dialogContext, 'ocr'),
+                          onQrTap: () => Navigator.pop(dialogContext, 'scan'),
+                        ),
+                      ],
+                    ),
                   ),
-                  child: ScanOptionsCard(
-                    onOcrTap: () => Navigator.pop(context, 'ocr'),
-                    onQrTap: () => Navigator.pop(context, 'scan'),
+                ],
+              );
+            },
+            transitionBuilder: (dialogContext, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: ScaleTransition(
+                  scale: CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOutBack,
                   ),
+                  alignment: const Alignment(-0.85, -0.9),
+                  child: child,
                 ),
               );
             },
@@ -503,7 +538,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
                     ),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.85),
+                        border: Border.all(color: AppColors.white),
+                        color:Color(0xFFDFE6EF),
                         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
                         boxShadow: [
                           BoxShadow(
@@ -525,7 +561,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                 return Divider(
                                   height: 1,
                                   thickness: 0.5,
-                                  color: Colors.grey.shade200,
+                                  color: AppColors.divider,
                                   indent: ResponsiveHelper.padding(64),
                                   endIndent: ResponsiveHelper.padding(14),
                                 );
@@ -757,4 +793,19 @@ class _ChatListScreenState extends State<ChatListScreen> {
       ),
     );
   }
+}
+
+class _TopTriangleClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.moveTo(size.width / 2, 0);
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

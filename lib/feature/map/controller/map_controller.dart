@@ -379,18 +379,20 @@ class ParkingReportController extends GetxController {
       final double? lng = _toDouble(parking['longitude'] ?? parking['centerLng']);
       if (lat == null || lng == null) continue;
 
-      final BitmapDescriptor icon = await MapMarkerIcons.parkingPin();
-      final String areaId = parking['id']?.toString() ?? 'parking_$i';
+      // Center icon commented out per user request when getting area
+      // final BitmapDescriptor icon = await MapMarkerIcons.parkingPin();
+      // final String areaId = parking['id']?.toString() ?? 'parking_$i';
 
-      newMarkers.add(
-        Marker(
-          markerId: MarkerId(areaId),
-          position: LatLng(lat, lng),
-          icon: icon,
-          infoWindow: InfoWindow.noText,
-          onTap: () => _onMarkerTap(parking),
-        ),
-      );
+      // newMarkers.add(
+      //   Marker(
+      //     markerId: MarkerId(areaId),
+      //     position: LatLng(lat, lng),
+      //     icon: icon,
+      //     infoWindow: InfoWindow.noText,
+      //     onTap: () => _onMarkerTap(parking),
+      //   ),
+      // );
+      final String areaId = parking['id']?.toString() ?? 'parking_$i';
 
       // ── Blue polygon outline from polygon array ──────────────────────────
       // Old version used a closed Polyline for the outline, but Polyline

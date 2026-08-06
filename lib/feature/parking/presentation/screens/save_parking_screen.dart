@@ -170,15 +170,15 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
         label: 'Electric',
         icon: Icons.electric_bolt_rounded,
         color: AppColors.chargingGreen,
-        asset: null,
+        asset: AssetsPath.electricCharging,
       );
     }
     if (types.contains('DISABLED_FACILITY')) {
       return (
-        label: 'Accessible',
+        label: 'Disable',
         icon: Icons.accessible_rounded,
-        color: AppColors.disableOrange,
-        asset: null,
+        color: Colors.grey,
+        asset: AssetsPath.electricCharging,
       );
     }
 
@@ -193,7 +193,7 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
       label: formattedLabel,
       icon: Icons.local_parking_rounded,
       color: AppColors.paidBlue,
-      asset: null,
+      asset: AssetsPath.standardIcon,
     );
   }
 
@@ -260,7 +260,7 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ResponsiveHelper.init(context);
+
 
     return Scaffold(
       body: Container(

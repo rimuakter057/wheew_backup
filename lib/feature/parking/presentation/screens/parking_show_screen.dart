@@ -1,5 +1,4 @@
 
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -7,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:platchatapp/core/router/route_path.dart';
+import 'package:platchatapp/core/router/routes.dart';
+import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_initial_shimmer.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_loading_banners.dart';
@@ -17,9 +18,10 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/feature/parking/controller/parking_show_controller.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_location_off_prompt.dart';
-import 'package:platchatapp/feature/map/presentation/widgets/map_type_dropdown.dart';
+import 'package:platchatapp/feature/map/presentation/widgets/parking_location_card.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parked_session_card.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_confirmation_overlay.dart';
+import 'package:platchatapp/share/widgets/map_side_controls.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
@@ -39,28 +41,23 @@ class ParkingShowScreen extends StatefulWidget {
 }
 
 class _ParkingShowScreenState extends State<ParkingShowScreen>
-    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+    with WidgetsBindingObserver {
   GoogleMapController? _mapController;
   MapType _selectedMapType = MapType.normal;
 
   late final ParkingShowController _parkingShowCtrl;
 
-  late AnimationController _pulseController;
   final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    print("PARKING_SHOW_SCREEN_INIT_STATE (screen mounted/re-mounted)");
     WidgetsBinding.instance.addObserver(this);
 
     _parkingShowCtrl = Get.isRegistered<ParkingShowController>()
         ? Get.find<ParkingShowController>()
         : Get.put(ParkingShowController());
-
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    )..repeat();
 
     // Runs the full flow (approx map -> /parking-mode/me -> branch)
     // every time this screen is entered.
@@ -78,7 +75,6 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
       _parkingShowCtrl.mapController = null;
     }
     _mapController?.dispose();
-    _pulseController.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -115,7 +111,6 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
 
               final isLocating = _parkingShowCtrl.isLocating.value;
               final gpsPosition = _parkingShowCtrl.gpsPosition.value;
-              final showLocationPulse = _parkingShowCtrl.showLocationPulse.value;
               final isLoading = _parkingShowCtrl.isLoading.value;
               final status = _parkingShowCtrl.status.value;
               // Empty until /parking-mode/me resolves & not loading — treat that as
@@ -128,11 +123,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
               // same as the map (home tab). Never shown during the initial
               // loading window.
               final showHeader = statusResolved;
-              // Find Parking Spot / Stop Searching button — only for the
-              // plain-idle and active-search states; PARKED shows the
-              // "You're Parked" card in that spot instead. Stays visible
-              // while transitioning (shows a spinner instead of vanishing —
-              // see isTransitioningSearch below).
+
               final showSearchUi = statusResolved && !isParked;
               final isTransitioningSearch =
                   _parkingShowCtrl.isTransitioningSearch.value;
@@ -156,6 +147,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       mapType: _selectedMapType,
                       key: const ValueKey<Object>('wheew_google_map'),
                       onMapCreated: _onMapCreated,
+                      onTap: (_) => _parkingShowCtrl.clearSpotDetailsCard(),
                       initialCameraPosition: CameraPosition(
                         target: gpsPosition ?? ParkingShowScreen.kInitialMapTarget,
                         zoom: 18,
@@ -179,13 +171,14 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
 
                   if (isLoading) const FetchingParkingBanner(),
 
+
                   ///search=======================================================
                   if (showHeader)
                     Positioned(
                       top: MediaQuery.of(context).padding.top +
                           ResponsiveHelper.padding(16),
-                      left: ResponsiveHelper.padding(42),
-                      right: ResponsiveHelper.padding(42),
+                      left: ResponsiveHelper.padding(16),
+                      right: ResponsiveHelper.padding(16),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -277,49 +270,22 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       ),
                     ),
 
-                  // Same solid pulsing frame as before (width breathes the
-                  // same way), just: (1) gradient-colored instead of solid
-                  // blue, (2) the stroke width waves irregularly around the
-                  // perimeter instead of being uniform, per the reference.
-                  if (showLocationPulse && gpsPosition != null)
-                    Positioned.fill(
-                      child: IgnorePointer(
-                        child: AnimatedBuilder(
-                          animation: _pulseController,
-                          builder: (context, child) {
-                            final t = _pulseController.value < 0.5
-                                ? _pulseController.value * 2
-                                : (1.0 - _pulseController.value) * 2;
-                            final wavePhase = _pulseController.value * 2 * pi;
-
-                            return CustomPaint(
-                              size: Size.infinite,
-                              painter: _WavyGradientBorderPainter(
-                                t: t,
-                                wavePhase: wavePhase,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-
                   if (isParked)
                     Positioned(
-                      bottom: ResponsiveHelper.padding(120),
+                      bottom: ResponsiveHelper.bottomNavOffset(context),
                       left: ResponsiveHelper.padding(20),
                       right: ResponsiveHelper.padding(20),
-                      child: ParkedSessionCard(
-                        // No "current session" API/data source exists yet —
-                        // placeholder details, ready to bind once it does.
-                        locationName: 'Green Park Mall',
-                        spotCode: 'B2 • A-27',
+                      child: Obx(() => ParkedSessionCard(
+                        locationName: _parkingShowCtrl.parkedLocationName.value.isNotEmpty
+                            ? _parkingShowCtrl.parkedLocationName.value
+                            : 'Your Parking Spot',
+                        spotCode: _parkingShowCtrl.parkedSpotCode.value,
                         onExitPressed: _showExitParkingConfirmation,
-                      ),
+                      )),
                     )
                   else if (showSearchUi)
                     Positioned(
-                      bottom: ResponsiveHelper.padding(120),
+                      bottom: ResponsiveHelper.bottomNavOffset(context),
                       left: ResponsiveHelper.padding(80),
                       right: ResponsiveHelper.padding(80),
                       child: CustomGradientButton(
@@ -342,82 +308,67 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                         ),
                       ),
                     ),
+
+                  /// ── Active spot details card overlay (floating above bottom nav) ──
+                  Obx(() {
+                    final cardData = _parkingShowCtrl.activeSpotDetailsCard.value;
+                    if (cardData == null) return const SizedBox.shrink();
+
+                    return Positioned(
+                      bottom: ResponsiveHelper.bottomNavOffset(context),
+                      left: ResponsiveHelper.padding(16),
+                      right: ResponsiveHelper.padding(16),
+                      child: ParkingLocationCard(
+                        title: (cardData.title == null || cardData.title!.trim().isEmpty)
+                            ? "Unknown"
+                            : cardData.title!,
+                        subtitle: cardData.subtitle,
+                        badgeLabel: cardData.badgeLabel,
+                        badgeIcon: cardData.badgeIcon,
+                        badgeIconAsset: cardData.badgeIconAsset,
+                        badgeColor: cardData.badgeColor,
+                        distanceLabel: cardData.distanceLabel,
+                        ratingLabel: cardData.ratingLabel,
+                        leftStatLabel: cardData.leftStatLabel,
+                        rightStatLabel: cardData.rightStatLabel,
+                        rightStatIcon: cardData.rightStatIcon,
+                        onSavePark: cardData.onSavePark == null
+                            ? null
+                            : () {
+                                final onSave = cardData.onSavePark!;
+                                _parkingShowCtrl.clearSpotDetailsCard();
+                                onSave();
+                              },
+                        onNavigate: cardData.destination == null
+                            ? null
+                            : () {
+                                final dest = cardData.destination!;
+                                _parkingShowCtrl.clearSpotDetailsCard();
+                                AppRouter.router.pushNamed(
+                                  RouteName.inAppNavigation,
+                                  extra: {'destination': dest},
+                                );
+                              },
+                      ),
+                    );
+                  }),
                 ],
               );
             }),
 
 
-            ///map type and current location combined container (Gradient & Glassmorphism Effect)=============================================================
-
+            ///map type and current location combined container =============================================================
             Obx(() {
               final navStatus = _parkingShowCtrl.status.value;
-              // Stays visible while PARKED too, same as the map (home tab).
               if (navStatus.isEmpty) {
                 return const SizedBox.shrink();
               }
-              return Positioned(
-                right: ResponsiveHelper.padding(30),
-                top: ResponsiveHelper.padding(110), // আগের মতোই পজিশন রাখা হয়েছে
-                child: Container(
-                  padding: ResponsiveHelper.symmetric(horizontal: 4,vertical: 4),
-                  decoration: BoxDecoration(
-
-                    // ফিগমা ডিজাইন অনুযায়ী হোয়াইট কালারের সাথে 32% অপাসিটি
-                    color: Colors.white.withValues(alpha: 0.32),
-                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(68)),
-                    // ১ পিক্সেল লিনিয়ার স্ট্রোক (বর্ডার)
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.12),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(68)),
-                    child: BackdropFilter(
-                      // ব্যাকগ্রাউন্ড ব্লার ইফেক্ট
-                      filter: ColorFilter.mode(Colors.transparent, BlendMode.src), // অথবা ui.ImageFilter.blur ব্যবহার করতে পারেন নিচে দেখানো নিয়মে
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // ১. ম্যাপ টাইপ ড্রপডাউন বা লেয়ার উইজেট
-                          MapTypeLayersButton(
-                            selectedType: _selectedMapType,
-                            onChanged: (type) {
-                              setState(() => _selectedMapType = type);
-                            },
-                          ),
-
-                          // মাঝখানের ডিভাইডার লাইন (যদি প্রয়োজন হয়)
-                      SizedBox(height: ResponsiveHelper.height(4),),
-                          // ২. কারেন্ট লোকেশন বাটন
-                          GestureDetector(
-                            onTap: () => _parkingShowCtrl.getUserLocation(),
-                            child: Container(
-                         padding: ResponsiveHelper.all(8),
-                              decoration:  BoxDecoration(
-
-
-                                shape: BoxShape.circle,
-                                color: AppColors.white.withValues(alpha: 0.5),
-                              ),
-                              child: const Icon(
-                                Icons.my_location_rounded,
-                                color: Color(0xFF185FA5),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+              return MapSideControls(
+                selectedMapType: _selectedMapType,
+                onMapTypeChanged: (type) {
+                  setState(() => _selectedMapType = type);
+                },
+                onLocationTap: () => _parkingShowCtrl.getUserLocation(),
               );
             }),
 
@@ -459,10 +410,12 @@ class _NotificationBellButton extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Container(
-              height: ResponsiveHelper.height(44),
-              width: ResponsiveHelper.width(44),
+              height: ResponsiveHelper.width(42),
+              width: ResponsiveHelper.width(42),
+              padding: ResponsiveHelper.all(10),
               decoration: BoxDecoration(
-                color: Colors.white,
+                border: Border.all(color: AppColors.white),
+                color: AppColors.white.withValues(alpha: 0.5),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -472,9 +425,14 @@ class _NotificationBellButton extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Icon(
-                Icons.notifications_none_rounded,
-                color: Color(0xFF185FA5),
+              child: Center(
+                child: CustomImage(
+
+                  imageSrc: AssetsPath.notificationMap,
+                  height: ResponsiveHelper.height(18),
+                  width: ResponsiveHelper.width(18),
+                  boxFit: BoxFit.contain,
+                ),
               ),
             ),
             if (count > 0)
@@ -507,74 +465,3 @@ class _NotificationBellButton extends StatelessWidget {
   }
 }
 
-// ── SEARCHING-mode glow frame: gradient-colored (blue → white → purple),
-//    stroke width waves irregularly around the perimeter and the wave
-//    travels over time — same base pulsing width/timing as the old solid
-//    Border.all() version, just not a uniform line anymore. ──
-class _WavyGradientBorderPainter extends CustomPainter {
-  final double t; // 0..1 "breathing" phase — same as the old glowWidth calc
-  final double wavePhase; // rotates the wave around the perimeter over time
-
-  const _WavyGradientBorderPainter({
-    required this.t,
-    required this.wavePhase,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-    final metrics = (Path()..addRect(rect)).computeMetrics().first;
-    final length = metrics.length;
-
-    final gradient = const SweepGradient(
-      colors: [
-        Color(0xFF1E88E5), // blue
-        Colors.white,
-        Color(0xFF1E88E5), // back to blue
-        Colors.white,
-        Color(0xFF1E88E5), // back to blue
-      ],
-      stops: [0.0, 0.25, 0.5, 0.75, 1.0],
-    );
-    final shader = gradient.createShader(rect);
-
-    // Modulated by a traveling sine wave so it's thicker/thinner at
-    // different points around the frame instead of uniform.
-    final baseWidth = 14.0 + (t * 10.0);
-    const waveAmplitude = 5.0;
-    const waveCount = 3; // how many "bulges" travel around the perimeter
-
-    const segments = 160;
-    for (int i = 0; i < segments; i++) {
-      final d0 = length * i / segments;
-      final d1 = length * (i + 1) / segments;
-      final segmentPath = metrics.extractPath(d0, d1);
-
-      final wave = sin((d0 / length) * 2 * pi * waveCount + wavePhase);
-      final strokeWidth = (baseWidth + wave * waveAmplitude).clamp(6.0, 30.0);
-
-      // Soft outer halo (blurred, wider) + a tighter, less-blurred core on
-      // top — this combo is what actually reads as "glow" instead of a
-      // crisp painted line, kept narrow so it hugs the edge.
-      final haloPaint = Paint()
-        ..shader = shader
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = strokeWidth * 1.4
-        ..strokeCap = StrokeCap.round
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, strokeWidth * 0.5);
-      canvas.drawPath(segmentPath, haloPaint);
-
-      final corePaint = Paint()
-        ..shader = shader
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = strokeWidth * 0.6
-        ..strokeCap = StrokeCap.round
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, strokeWidth * 0.15);
-      canvas.drawPath(segmentPath, corePaint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _WavyGradientBorderPainter oldDelegate) =>
-      oldDelegate.t != t || oldDelegate.wavePhase != wavePhase;
-}

@@ -9,14 +9,16 @@ class ApiUrl {
   // static const baseSocketUrl = 'ws://10.10.28.200:8003';
 
   // // live url
-  // static const String baseUrl = 'http://54.198.239.101:8003';
-  //  static const baseSocketUrl = 'ws://54.198.239.101:8003';
+  static const String baseUrl = 'http://54.198.239.101:8003';
+   static const baseSocketUrl = 'ws://54.198.239.101:8003';
+
+
 
 
 
   // Local testing url
-  static const String baseUrl = 'https://075lrgv5-8003.inc1.devtunnels.ms';
-  static const baseSocketUrl = 'https://075lrgv5-8003.inc1.devtunnels.ms';
+  // static const String baseUrl = 'https://075lrgv5-8003.inc1.devtunnels.ms';
+  // static const baseSocketUrl = 'https://075lrgv5-8003.inc1.devtunnels.ms';
 
   //http://13.50.99.165:8003
   //static const baseSocketUrl = 'ws://13.50.99.165:8003';
@@ -26,8 +28,13 @@ class ApiUrl {
 
   static const String imageUrl = "$baseUrl/";
 
-  static String socketUrl({required String userId}) =>
-      "$baseSocketUrl?userId=$userId";
+  static String socketUrl({required String userId}) {
+    String cleanUrl = baseSocketUrl;
+    if (cleanUrl.endsWith('/')) {
+      cleanUrl = cleanUrl.substring(0, cleanUrl.length - 1);
+    }
+    return "$cleanUrl?userId=$userId";
+  }
 
 
   // Fixed endpoints to match your backend
@@ -89,8 +96,9 @@ class ApiUrl {
 
   ///terms and privacy==========================
 
-  static const String terms = "$baseUrl/terms-and-condition-public";
-  static const String privacy = "$baseUrl/privacy-policy-public";
+  static const String terms = "http://54.198.239.101/terms-and-condition-public";
+  static const String privacy = "http://54.198.239.101/privacy-policy-public";
+
 
   // http://13.50.99.165/privacy-policy-public
   // http://13.50.99.165/terms-and-condition-public

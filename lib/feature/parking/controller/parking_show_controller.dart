@@ -10,7 +10,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
-import 'package:platchatapp/feature/map/presentation/widgets/parking_location_card.dart';
 import 'package:platchatapp/feature/map/utils/marker_icon_loader.dart';
 import 'package:platchatapp/feature/parking/repository/parking_repository.dart';
 import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
@@ -66,6 +65,13 @@ class ParkingShowController extends GetxController {
 
   final RxBool isRealLocationLoaded = false.obs;
 
+  /// Active spot card data floating inline above the bottom navigation bar.
+  final Rxn<SpotDetailsCardData> activeSpotDetailsCard = Rxn<SpotDetailsCardData>();
+
+  void clearSpotDetailsCard() {
+    activeSpotDetailsCard.value = null;
+  }
+
   // ── SavePark, ParkMode, and Parktime States ──────────────────────
   final Rxn<LatLng> savedParkingLocation = Rxn<LatLng>();
   final RxInt confidenceLevel = 98.obs;
@@ -86,34 +92,19 @@ class ParkingShowController extends GetxController {
   // until the backend response actually carries one — used as the
   // handoff's spotId on exit and as the ratings endpoint's parkingAreaId.
   final Rxn<String> currentParkingAreaId = Rxn<String>();
+  final RxString parkedLocationName = ''.obs;
+  final RxString parkedSpotCode = ''.obs;
   final RxSet<Marker> markers = <Marker>{}.obs;
   final RxSet<Polygon> polygons = <Polygon>{}.obs;
 
-  final RxBool _blinkToggle = true.obs;
-  Timer? _blinkTimer;
   bool _isRefreshing = false;
 
   GoogleMapController? mapController;
 
   @override
-  void onInit() {
-    super.onInit();
-    _startBlinkTimer();
-  }
-
-  @override
   void onClose() {
-    _blinkTimer?.cancel();
     _parkingCountdownTimer?.cancel();
     super.onClose();
-  }
-
-  void _startBlinkTimer() {
-    _blinkTimer?.cancel();
-    _blinkTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
-      _blinkToggle.value = !_blinkToggle.value;
-      _updateBlinkingOverlays();
-    });
   }
 
   void _showMessage(String message, {required bool isError}) {
@@ -198,9 +189,16 @@ class ParkingShowController extends GetxController {
         return false;
       }
 
+      // timeLimit guards against a hung GPS fetch (seen after returning to
+      // this tab from another screen) stalling checkParkingModeMe() forever
+      // — without it, a SEARCHING session that can't get a quick fix never
+      // reaches fetchNearbyHandoffsOnly or re-asserts `status`, so the
+      // screen looks stuck instead of falling back to the last known /
+      // approx position.
       final position = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.high,
+          timeLimit: Duration(seconds: 8),
         ),
       );
 
@@ -230,6 +228,7 @@ class ParkingShowController extends GetxController {
   /// from the "Exit Parking" button now.
   Future<void> checkParkingModeMe() async {
     isLoading.value = true;
+    print("CHECK_PARKING_MODE_ME_CALLED (about to GET /parking-mode/me)");
     _logger.i('=== checkParkingModeMe START ===');
     try {
       final response = await _repository.getParkingModeMe();
@@ -250,37 +249,41 @@ class ParkingShowController extends GetxController {
                 ?.toString()
             : null;
 
+        if (modeStatus == 'PARKED') {
+          // Fetch real active saved parking session details from /park-relay/saved-parking/me
+          await fetchSavedParkingMe();
+        }
+
+        print("CHECK_PARKING_MODE_ME_RESOLVED_STATUS: $modeStatus");
+
+        // getUserLocation() may fail/timeout (permissions, hung GPS fix,
+        // etc.) — that's fine, gpsPosition already holds at least the
+        // approx default set by initializeFlow(), so it's never null here.
+        // The nearby-data GET below must fire unconditionally once we know
+        // the mode, the same way for SEARCHING as it already does for IDLE.
+        await getUserLocation();
+        final lat = gpsPosition.value?.latitude ?? kApproxDefaultLocation.latitude;
+        final lng = gpsPosition.value?.longitude ?? kApproxDefaultLocation.longitude;
+
         if (modeStatus == 'IDLE') {
           // IDLE -> same nearby parking areas the map (home tab) shows,
           // while the "Find Parking Spot" button is visible. Single GET,
           // no handoffs call (that's only for SEARCHING).
-          await getUserLocation();
-          final lat = gpsPosition.value?.latitude;
-          final lng = gpsPosition.value?.longitude;
-          if (lat != null && lng != null) {
-            await fetchNearbyParkingAreasOnly(lat, lng);
-          }
+          print("CHECK_PARKING_MODE_ME: fetching nearby parking areas (IDLE)");
+          await fetchNearbyParkingAreasOnly(lat, lng);
           showLocationPulse.value = false;
         } else if (modeStatus == 'SEARCHING') {
-          // SEARCHING -> just 1 API call (nearby handoffs), same as before.
-          await getUserLocation();
-          final lat = gpsPosition.value?.latitude;
-          final lng = gpsPosition.value?.longitude;
-          if (lat != null && lng != null) {
-            await fetchNearbyHandoffsOnly(lat, lng);
-          }
+          // SEARCHING -> fetch both nearby handoffs AND parking areas (same as IDLE/PARKED)
+          print("CHECK_PARKING_MODE_ME: fetching nearby data (SEARCHING)");
+          await fetchNearbyData(lat, lng);
           showLocationPulse.value = true;
         } else if (modeStatus == 'PARKED') {
           // PARKED still needs the real location + nearby markers loaded so
           // the map behind the "You're Parked" card isn't empty — it just
           // skips the search-mode pulse/search-bar UI (handled by the
           // screen from `status`).
-          await getUserLocation();
-          final lat = gpsPosition.value?.latitude;
-          final lng = gpsPosition.value?.longitude;
-          if (lat != null && lng != null) {
-            await fetchNearbyData(lat, lng);
-          }
+          print("CHECK_PARKING_MODE_ME: fetching nearby data (PARKED)");
+          await fetchNearbyData(lat, lng);
           // PARKED — make sure a stale pulse from a previous SEARCHING
           // session doesn't keep the screen blinking now.
           showLocationPulse.value = false;
@@ -313,6 +316,55 @@ class ParkingShowController extends GetxController {
       );
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  /// Calls GET /park-relay/saved-parking/me to parse real active parked session details:
+  /// parkingArea['name'], parkingArea['description'], note, spotId, etc.
+  Future<void> fetchSavedParkingMe() async {
+    try {
+      final response = await _repository.getSavedParkingMe();
+      _logger.d('fetchSavedParkingMe status: ${response.statusCode}, body: ${response.body}');
+      if (response.statusCode == 200) {
+        final data = _asMap(jsonDecode(response.body));
+        if (data != null) {
+          final parkingArea = _asMap(data['parkingArea']);
+          final String name = parkingArea?['name']?.toString() ??
+              data['areaName']?.toString() ??
+              data['locationName']?.toString() ??
+              data['name']?.toString() ??
+              '';
+
+          final String desc = parkingArea?['description']?.toString() ?? '';
+          final String note = data['note']?.toString() ??
+              data['spotCode']?.toString() ??
+              data['spotNumber']?.toString() ??
+              '';
+
+          String combinedSpot = '';
+          if (desc.isNotEmpty && note.isNotEmpty) {
+            combinedSpot = '$desc • $note';
+          } else if (desc.isNotEmpty) {
+            combinedSpot = desc;
+          } else if (note.isNotEmpty) {
+            combinedSpot = note;
+          }
+
+          if (name.isNotEmpty) {
+            parkedLocationName.value = name;
+          }
+          if (combinedSpot.isNotEmpty) {
+            parkedSpotCode.value = combinedSpot;
+          }
+
+          final String? resolvedAreaId = (parkingArea?['id'] ?? data['spotId'] ?? data['parkingAreaId'])?.toString();
+          if (resolvedAreaId != null && resolvedAreaId.isNotEmpty) {
+            currentParkingAreaId.value = resolvedAreaId;
+          }
+        }
+      }
+    } catch (e) {
+      _logger.e('Error fetching saved parking me', error: e);
     }
   }
 
@@ -551,8 +603,8 @@ class ParkingShowController extends GetxController {
       } catch (e, st) {
         _logger.e('Error setting searching mode', error: e, stackTrace: st);
       }
-      // SEARCHING -> just 1 API call (nearby handoffs).
-      await fetchNearbyHandoffsOnly(lat, lng);
+      // SEARCHING -> fetch both nearby handoffs AND nearby parking areas (polygon search).
+      await fetchNearbyData(lat, lng);
     } finally {
       isTransitioningSearch.value = false;
     }
@@ -942,33 +994,27 @@ class ParkingShowController extends GetxController {
       final id = handoff['id']?.toString() ?? '';
       final handoffStatus = handoff['status']?.toString().toUpperCase() ?? '';
       final expiresAtStr = handoff['expiresAt']?.toString() ?? '';
-      var isBlinking = false;
 
       if (handoffStatus == 'AVAILABLE' && expiresAtStr.isNotEmpty) {
         try {
           final expiryTime = DateTime.parse(expiresAtStr).toLocal();
-          if (expiryTime.isAfter(now)) {
-            isBlinking = true;
-          } else {
+          if (!expiryTime.isAfter(now)) {
             needRefresh = true;
           }
         } catch (_) {}
       }
 
+      final handoffIcon = await MapMarkerIcons.iconForData(handoff, size: 56);
       newMarkers.add(
         Marker(
           markerId: MarkerId('handoff_$id'),
           position: LatLng(lat, lng),
-          icon: parkingPinIcon,
+          icon: handoffIcon,
           anchor: const Offset(0.5, 0.5),
           infoWindow: InfoWindow.noText,
           onTap: () => showHandoffDetails(handoff),
         ),
       );
-
-      if (isBlinking) {
-        newCircles.add(_buildBlinkCircle(id: id, lat: lat, lng: lng));
-      }
     }
 
     // Parking areas — red polygon outline
@@ -1016,21 +1062,6 @@ class ParkingShowController extends GetxController {
           ),
         );
       }
-
-      final centerLat = _toDouble(area['centerLat']);
-      final centerLng = _toDouble(area['centerLng']);
-      if (centerLat != null && centerLng != null) {
-        newMarkers.add(
-          Marker(
-            markerId: MarkerId('area_marker_$areaId'),
-            position: LatLng(centerLat, centerLng),
-            icon: parkingPinIcon,
-            anchor: const Offset(0.5, 0.5),
-            infoWindow: InfoWindow.noText,
-            onTap: () => showParkingAreaDetails(area),
-          ),
-        );
-      }
     }
 
     _applyOverlaySets(
@@ -1041,10 +1072,8 @@ class ParkingShowController extends GetxController {
     );
 
     _logger.i(
-      '_buildMarkersAndPolygons DONE -> markers: ${newMarkers.length}, '
-      'polygons: ${newPolygons.length}, polylines: ${newPolylines.length}, '
-      'circles: ${newCircles.length} (handoffList=${handoffList.length}, '
-      'parkingAreaList=${parkingAreaList.length})',
+      '=== _buildMarkersAndPolygons END -> markers: ${newMarkers.length}, '
+      'polygons: ${newPolygons.length}, circles: ${newCircles.length} ===',
     );
 
     if (needRefresh) {
@@ -1071,68 +1100,6 @@ class ParkingShowController extends GetxController {
       ..clear()
       ..addAll(newCircles);
     mapOverlayVersion.value++;
-  }
-
-  void _updateBlinkingOverlays() {
-    if (handoffList.isEmpty) return;
-
-    final Set<Circle> newCircles = {};
-    final now = DateTime.now();
-    var needRefresh = false;
-
-    for (final rawHandoff in handoffList) {
-      final handoff = _asMap(rawHandoff);
-      if (handoff == null) continue;
-
-      final lat = _toDouble(handoff['latitude']);
-      final lng = _toDouble(handoff['longitude']);
-      if (lat == null || lng == null) continue;
-
-      final id = handoff['id']?.toString() ?? '';
-      final handoffStatus = handoff['status']?.toString().toUpperCase() ?? '';
-      final expiresAtStr = handoff['expiresAt']?.toString() ?? '';
-      var isBlinking = false;
-
-      if (handoffStatus == 'AVAILABLE' && expiresAtStr.isNotEmpty) {
-        try {
-          final expiryTime = DateTime.parse(expiresAtStr).toLocal();
-          if (expiryTime.isAfter(now)) {
-            isBlinking = true;
-          } else {
-            needRefresh = true;
-          }
-        } catch (_) {}
-      }
-
-      if (isBlinking) {
-        newCircles.add(_buildBlinkCircle(id: id, lat: lat, lng: lng));
-      }
-    }
-
-    circles
-      ..clear()
-      ..addAll(newCircles);
-    mapOverlayVersion.value++;
-
-    if (needRefresh) {
-      _refreshExpiredHandoffs();
-    }
-  }
-
-  Circle _buildBlinkCircle({
-    required String id,
-    required double lat,
-    required double lng,
-  }) {
-    return Circle(
-      circleId: CircleId('glow_$id'),
-      center: LatLng(lat, lng),
-      radius: _blinkToggle.value ? 18 : 30,
-      fillColor: Colors.red.withValues(alpha: _blinkToggle.value ? 0.30 : 0.12),
-      strokeColor: Colors.red.withValues(alpha: 0.7),
-      strokeWidth: ResponsiveHelper.borderWidth(2).round(),
-      consumeTapEvents: false,
-    );
   }
 
   void _refreshExpiredHandoffs() async {
@@ -1701,27 +1668,68 @@ class ParkingShowController extends GetxController {
 
   void _showHandoffDialog(Map<String, dynamic> handoff) {
     final handoffStatus = handoff['status']?.toString() ?? '';
-    final distanceMeters = handoff['distanceMeters'];
-    final distanceDisplay = distanceMeters != null
-        ? '$distanceMeters m away'
-        : '-- m away';
+    final area = _asMap(handoff['parkingArea']);
+
+    final name = area?['name']?.toString() ?? '';
+    final description = area?['description']?.toString() ?? '';
+    final parkingCost = area?['parkingCost']?.toString().trim() ?? '';
+    final isFree = parkingCost.isEmpty ||
+        parkingCost == '0' ||
+        parkingCost.toUpperCase() == 'FREE';
+
+    final distanceDisplay = _formatDistance(handoff['distanceMeters']);
     final lat = _toDouble(handoff['latitude']);
     final lng = _toDouble(handoff['longitude']);
     final handoffId = handoff['id']?.toString();
 
+    // rating == null -> '0.0'; reviewCount, when > 0, appended as "4.5 (2)".
+    final ratingRaw = area?['rating'];
+    final ratingText = ratingRaw == null
+        ? '0.0'
+        : (ratingRaw is num ? ratingRaw.toStringAsFixed(1) : ratingRaw.toString());
+    final reviewCountRaw = area?['reviewCount'];
+    final reviewCount = reviewCountRaw is num
+        ? reviewCountRaw.toInt()
+        : int.tryParse(reviewCountRaw?.toString() ?? '');
+    final ratingLabel = (reviewCount != null && reviewCount > 0)
+        ? '$ratingText ($reviewCount)'
+        : ratingText;
+
+    // totalSpots == null -> 0.
+    final totalSpotsRaw = area?['totalSpots'];
+    final totalSpots = totalSpotsRaw is num
+        ? totalSpotsRaw.toInt()
+        : (int.tryParse(totalSpotsRaw?.toString() ?? '') ?? 0);
+
+    // paid + parkingFee present -> show the fee; else fall back to 'Paid'.
+    String priceLabel;
+    if (isFree) {
+      priceLabel = 'Free';
+    } else {
+      final feeRaw = area?['parkingFee'];
+      final feeNum = feeRaw is num ? feeRaw : num.tryParse(feeRaw?.toString() ?? '');
+      priceLabel = feeNum != null
+          ? '\$${feeNum % 1 == 0 ? feeNum.toInt() : feeNum}'
+          : 'Paid';
+    }
+
+    final badge = _areaTypeBadge(area);
+
     _showSpotDetailsCardSheet(
-      title: 'Handoff Spot',
-      subtitle: handoffStatus.isNotEmpty ? handoffStatus : 'Available',
-      badgeLabel: 'Standard',
-      badgeIcon: Icons.local_parking_rounded,
-      badgeIconAsset: AssetsPath.standardIcon,
-      badgeColor: AppColors.paidBlue,
+      title: name.isNotEmpty ? name : 'Handoff Spot',
+      subtitle: description.isNotEmpty
+          ? description
+          : (handoffStatus.isNotEmpty ? handoffStatus : 'Available'),
+      badgeLabel: badge.label,
+      badgeIcon: badge.icon,
+      badgeIconAsset: badge.asset,
+      badgeColor: badge.color,
       distanceLabel: distanceDisplay,
-      ratingLabel: '--',
-      leftStatLabel: '-- spots',
-      rightStatLabel: 'Free',
-      rightStatIcon: Icons.money_off_rounded,
-      isFree: true,
+      ratingLabel: ratingLabel,
+      leftStatLabel: '$totalSpots spots',
+      rightStatLabel: priceLabel,
+      rightStatIcon: isFree ? Icons.money_off_rounded : Icons.monetization_on_outlined,
+      isFree: isFree,
       destination: (lat != null && lng != null) ? LatLng(lat, lng) : null,
       // Save (accept-and-park) is only possible while actively searching.
       onSavePark: (status.value == 'SEARCHING' && handoffId != null)
@@ -1730,9 +1738,57 @@ class ParkingShowController extends GetxController {
     );
   }
 
+  // ── Distance label shared by the handoff and parking-area detail sheets —
+  //    the backend occasionally returns distanceMeters in the millions
+  //    (bad seed/test data), so convert to km past 1000m to keep it readable
+  //    instead of printing a raw absurd meter count. ──
+  String _formatDistance(dynamic distanceMeters) {
+    final meters = distanceMeters is num
+        ? distanceMeters.toDouble()
+        : double.tryParse(distanceMeters?.toString() ?? '');
+    if (meters == null) return '-- m away';
+    return meters >= 1000
+        ? '${(meters / 1000).toStringAsFixed(1)} km away'
+        : '${meters.round()} m away';
+  }
+
+  // ── Badge (label/icon/color) derived from parkingArea.parkingAreaTypes —
+  //    mirrors the same Electric/Accessible/Standard classification used on
+  //    the Saved Parkings list. ──
+  ({String label, IconData icon, Color color, String? asset}) _areaTypeBadge(
+    Map<String, dynamic>? area,
+  ) {
+    final raw = area?['parkingAreaTypes'];
+    final types = raw is List
+        ? raw.map((e) => e.toString().toUpperCase()).toList()
+        : const <String>[];
+
+    if (types.contains('ELECTRIC_CHARGING')) {
+      return (
+        label: 'Electric',
+        icon: Icons.electric_bolt_rounded,
+        color: AppColors.chargingGreen,
+        asset: AssetsPath.electricCharging,
+      );
+    }
+    if (types.contains('DISABLED_FACILITY')) {
+      return (
+        label: 'Accessible',
+        icon: Icons.accessible_rounded,
+        color: AppColors.disableOrange,
+        asset: AssetsPath.disabledFacility,
+      );
+    }
+    return (
+      label: 'Standard',
+      icon: Icons.local_parking_rounded,
+      color: AppColors.paidBlue,
+      asset: AssetsPath.standardIcon,
+    );
+  }
+
   // ── Parking Area Details: card view (title/badge/distance/rating +
-  //    spots/price) with a Save Park action. No save API yet — the button
-  //    is wired up visually only, ready for real submission later. ──
+  //    spots/price) with a Save Park action. ──
   void showParkingAreaDetails(Map<String, dynamic> area) {
     final name = area['name']?.toString() ?? '';
     final description = area['description']?.toString() ?? '';
@@ -1740,11 +1796,7 @@ class ParkingShowController extends GetxController {
     final isFree = parkingCost.isEmpty ||
         parkingCost == '0' ||
         parkingCost.toUpperCase() == 'FREE';
-    final isActive = area['isActive'] == true;
-    final distanceMeters = area['distanceMeters'];
-    final distanceDisplay = distanceMeters != null
-        ? '$distanceMeters m away'
-        : '-- m away';
+    final distanceDisplay = _formatDistance(area['distanceMeters']);
     final lat = _toDouble(area['centerLat']);
     final lng = _toDouble(area['centerLng']);
 
@@ -1779,14 +1831,15 @@ class ParkingShowController extends GetxController {
           : 'Paid';
     }
 
-    _showSpotDetailsCardSheet(
+    final badge = _areaTypeBadge(area);
 
+    _showSpotDetailsCardSheet(
       title: name.isNotEmpty ? name : 'Parking Area',
       subtitle: description.isNotEmpty ? description : 'Parking area',
-      badgeLabel: isActive ? 'Standard' : 'Inactive',
-      badgeIconAsset: isActive ? AssetsPath.standardIcon : null,
-      badgeIcon: Icons.local_parking_rounded,
-      badgeColor: isActive ? AppColors.paidBlue : Colors.grey,
+      badgeLabel: badge.label,
+      badgeIconAsset: badge.asset,
+      badgeIcon: badge.icon,
+      badgeColor: badge.color,
       distanceLabel: distanceDisplay,
       ratingLabel: ratingLabel,
       leftStatLabel: '$totalSpots spots',
@@ -1794,9 +1847,6 @@ class ParkingShowController extends GetxController {
       rightStatIcon: isFree ? Icons.money_off_rounded : Icons.monetization_on_outlined,
       isFree: isFree,
       destination: (lat != null && lng != null) ? LatLng(lat, lng) : null,
-      // Save Park from a parking area's details — allowed in any status
-      // except PARKED (areas now stay visible across IDLE/SEARCHING/
-      // PARKED, but saving only makes sense before you're already parked).
       onSavePark: (status.value != 'PARKED' && lat != null && lng != null)
           ? () => _saveParkingAtArea(area, latitude: lat, longitude: lng)
           : null,
@@ -1807,26 +1857,67 @@ class ParkingShowController extends GetxController {
   // "Save My Parking" flow already uses — there's no dedicated
   // accept-and-park-style endpoint for parking areas (that one is
   // handoff-specific), so this marks the area's location as parked.
-  Future<void> _saveParkingAtArea(
+  void _saveParkingAtArea(
     Map<String, dynamic> area, {
     required double latitude,
     required double longitude,
-  }) async {
+  }) {
     final costRaw = area['parkingCost']?.toString().toUpperCase();
     final parkingType = costRaw == 'PAID' ? 'PAID' : 'FREE';
 
+    if (parkingType == 'PAID') {
+      final feeRaw = area['parkingFee'];
+      final feeNum = feeRaw is num ? feeRaw : num.tryParse(feeRaw?.toString() ?? '');
+      final feeLabel = feeNum != null
+          ? '\$${feeNum % 1 == 0 ? feeNum.toInt() : feeNum}'
+          : null;
+
+      _showDurationInputDialog(
+        feeLabel: feeLabel,
+        onConfirm: (durationMin) => _submitSaveParkingAtArea(
+          area,
+          latitude: latitude,
+          longitude: longitude,
+          parkingType: parkingType,
+          durationMin: durationMin,
+        ),
+      );
+      return;
+    }
+
+    _submitSaveParkingAtArea(
+      area,
+      latitude: latitude,
+      longitude: longitude,
+      parkingType: parkingType,
+    );
+  }
+
+  Future<void> _submitSaveParkingAtArea(
+    Map<String, dynamic> area, {
+    required double latitude,
+    required double longitude,
+    required String parkingType,
+    int? durationMin,
+  }) async {
     isLoading.value = true;
     try {
       final response = await _repository.saveMyParking(
         latitude: latitude,
         longitude: longitude,
         parkingType: parkingType,
+        spotId: area['id']?.toString(),
+        durationMin: durationMin,
       );
       print(
         "SAVE_MY_PARKING_RESPONSE: status=${response.statusCode}, body=${response.body}",
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         currentParkingAreaId.value = area['id']?.toString();
+        // Load the real parked-session name/spot from
+        // /park-relay/saved-parking/me before flipping to PARKED, so the
+        // "You're Parked" card never has to fall back to placeholder text.
+        await fetchSavedParkingMe();
         status.value = 'PARKED';
         showLocationPulse.value = false;
         handoffList.clear();
@@ -1853,6 +1944,179 @@ class ParkingShowController extends GetxController {
     }
   }
 
+  // ── Duration prompt for PAID areas — mirrors the home tab's Save My
+  //    Parking dialog validation (>=15 min) since this "Save Park" flow
+  //    from a parking area's details doesn't have its own duration field. ──
+  void _showDurationInputDialog({
+    required void Function(int durationMin) onConfirm,
+    String? feeLabel,
+  }) {
+    final ctx = _dialogContext;
+    if (ctx == null) return;
+
+    final durationController = TextEditingController();
+    bool hasError = false;
+    String errorText = '';
+
+    showDialog(
+      context: ctx,
+      barrierDismissible: true,
+      barrierColor: Colors.black.withValues(alpha: 0.4),
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setState) => Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: EdgeInsets.symmetric(
+            horizontal: ResponsiveHelper.padding(24),
+          ),
+          child: Container(
+            padding: ResponsiveHelper.symmetric(horizontal: 24, vertical: 28),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(24),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppStrings.parkingType.tr,
+                  style: GoogleFonts.poppins(
+                    fontSize: ResponsiveHelper.fontSize(17),
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF1A1A2E),
+                  ),
+                ),
+                if (feeLabel != null) ...[
+                  SizedBox(height: ResponsiveHelper.spacing(6)),
+                  Container(
+                    padding: ResponsiveHelper.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF185FA5).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(20),
+                      ),
+                    ),
+                    child: Text(
+                      'Fee: $feeLabel',
+                      style: GoogleFonts.poppins(
+                        fontSize: ResponsiveHelper.fontSize(13),
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF185FA5),
+                      ),
+                    ),
+                  ),
+                ],
+                SizedBox(height: ResponsiveHelper.spacing(16)),
+                TextField(
+                  controller: durationController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  autofocus: true,
+                  onChanged: (_) {
+                    if (hasError) setState(() => hasError = false);
+                  },
+                  style: GoogleFonts.poppins(
+                    fontSize: ResponsiveHelper.fontSize(14),
+                  ),
+                  decoration: InputDecoration(
+                    hintText: AppStrings.durationMin15Minutes.tr,
+                    hintStyle: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(14),
+                    ),
+                    filled: true,
+                    fillColor: const Color(0xFFF4F6FB),
+                    errorText: hasError ? errorText : null,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(12),
+                      ),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(12),
+                      ),
+                      borderSide: hasError
+                          ? BorderSide(
+                              color: const Color(0xFFEF4444),
+                              width: ResponsiveHelper.borderWidth(1),
+                            )
+                          : BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(12),
+                      ),
+                      borderSide: BorderSide(
+                        color: hasError
+                            ? const Color(0xFFEF4444)
+                            : const Color(0xFF185FA5),
+                        width: ResponsiveHelper.borderWidth(1.4),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(22)),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomGradientButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(),
+                        label: AppStrings.cancel.tr,
+                        backgroundColor: AppColors.blueShadeConBg,
+                        shadowColor: Colors.transparent,
+                        textColor: AppColors.black,
+                        borderColor: AppColors.white,
+                      ),
+                    ),
+                    SizedBox(width: ResponsiveHelper.spacing(14)),
+                    Expanded(
+                      child: CustomGradientButton(
+                        onPressed: () {
+                          final input = durationController.text.trim();
+                          final parsed = int.tryParse(input);
+                          if (input.isEmpty) {
+                            setState(() {
+                              hasError = true;
+                              errorText = AppStrings.timeIsRequired.tr;
+                            });
+                            return;
+                          }
+                          if (parsed == null || parsed <= 0) {
+                            setState(() {
+                              hasError = true;
+                              errorText = AppStrings.enterValidNumber.tr;
+                            });
+                            return;
+                          }
+                          if (parsed < 15) {
+                            setState(() {
+                              hasError = true;
+                              errorText = AppStrings.minimum15MinutesRequired.tr;
+                            });
+                            return;
+                          }
+                          Navigator.of(dialogContext).pop();
+                          onConfirm(parsed);
+                        },
+                        label: AppStrings.confirm.tr,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   // ── Shared "found spot" details bottom sheet — same card design used
   //    on the Saved Parkings screen. [onSavePark] is supplied by the
   //    caller so only IDLE (parking areas) and SEARCHING (handoffs) get
@@ -1873,54 +2137,21 @@ class ParkingShowController extends GetxController {
     LatLng? destination,
     VoidCallback? onSavePark,
   }) {
-    final ctx = _dialogContext;
-    if (ctx == null) return;
-
-    showModalBottomSheet(
-      context: ctx,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (dialogContext) {
-        return Padding(
-          padding: EdgeInsets.only(
-            left: ResponsiveHelper.padding(16),
-            right: ResponsiveHelper.padding(16),
-            top: ResponsiveHelper.padding(16),
-            // 8-height gap above the bottom nav / device edge, on top of
-            // the safe-area inset (gesture bar / home indicator).
-            bottom: ResponsiveHelper.padding(8) +
-                MediaQuery.of(dialogContext).padding.bottom,
-          ),
-          child: ParkingLocationCard(
-            title: title,
-            subtitle: subtitle,
-            badgeLabel: badgeLabel,
-            badgeIcon: badgeIcon,
-            badgeIconAsset: badgeIconAsset,
-            badgeColor: badgeColor,
-            distanceLabel: distanceLabel,
-            ratingLabel: ratingLabel,
-            leftStatLabel: leftStatLabel,
-            rightStatLabel: rightStatLabel,
-            rightStatIcon: rightStatIcon,
-            onSavePark: onSavePark == null
-                ? null
-                : () {
-                    Navigator.of(dialogContext).pop();
-                    onSavePark();
-                  },
-            onNavigate: destination == null
-                ? null
-                : () {
-                    Navigator.of(dialogContext).pop();
-                    AppRouter.router.pushNamed(
-                      RouteName.inAppNavigation,
-                      extra: {'destination': destination},
-                    );
-                  },
-          ),
-        );
-      },
+    activeSpotDetailsCard.value = SpotDetailsCardData(
+      title: title,
+      subtitle: subtitle,
+      badgeLabel: badgeLabel,
+      badgeIcon: badgeIcon,
+      badgeColor: badgeColor,
+      distanceLabel: distanceLabel,
+      ratingLabel: ratingLabel,
+      leftStatLabel: leftStatLabel,
+      rightStatLabel: rightStatLabel,
+      isFree: isFree,
+      badgeIconAsset: badgeIconAsset,
+      rightStatIcon: rightStatIcon,
+      destination: destination,
+      onSavePark: onSavePark,
     );
   }
 
@@ -1951,6 +2182,10 @@ class ParkingShowController extends GetxController {
             (data?['spotId'] ?? data?['parkingAreaId'] ?? data?['areaId'])
                 ?.toString();
 
+        // Load the real parked-session name/spot from
+        // /park-relay/saved-parking/me before flipping to PARKED, so the
+        // "You're Parked" card never has to fall back to placeholder text.
+        await fetchSavedParkingMe();
         status.value = 'PARKED';
         showLocationPulse.value = false;
         handoffList.clear();
@@ -2510,4 +2745,38 @@ class ParkingShowController extends GetxController {
       _logger.e('Could not launch URL: $url', error: e);
     }
   }
+}
+
+class SpotDetailsCardData {
+  final String title;
+  final String subtitle;
+  final String badgeLabel;
+  final IconData badgeIcon;
+  final Color badgeColor;
+  final String distanceLabel;
+  final String ratingLabel;
+  final String leftStatLabel;
+  final String rightStatLabel;
+  final bool isFree;
+  final String? badgeIconAsset;
+  final IconData rightStatIcon;
+  final LatLng? destination;
+  final VoidCallback? onSavePark;
+
+  SpotDetailsCardData({
+    required this.title,
+    required this.subtitle,
+    required this.badgeLabel,
+    required this.badgeIcon,
+    required this.badgeColor,
+    required this.distanceLabel,
+    required this.ratingLabel,
+    required this.leftStatLabel,
+    required this.rightStatLabel,
+    required this.isFree,
+    this.badgeIconAsset,
+    this.rightStatIcon = Icons.monetization_on_outlined,
+    this.destination,
+    this.onSavePark,
+  });
 }

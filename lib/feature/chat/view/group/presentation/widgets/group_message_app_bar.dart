@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -7,10 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/feature/chat/view/group/controller/group_controller.dart';
+import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
-import 'package:platchatapp/share/widgets/custom_container/custom_container.dart';
-import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/core/service/api_url.dart';
@@ -136,231 +134,182 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
     groupController.groupNameController.text = _currentGroupName;
     groupController.groupImageFile.value = null;
 
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      barrierDismissible: true, // বাইরে ক্লিক করলে যাতে বন্ধ হয়
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (ctx) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: ResponsiveHelper.symmetric(horizontal: 20, vertical: 24),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(28)), // ছবির মতো রাউন্ডেড কর্নার
+        return Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.containerGradient,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(ResponsiveHelper.borderRadius(28)),
             ),
-            padding: ResponsiveHelper.all(24),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start, // টেক্সটগুলো বামে এলাইন করার জন্য
-                children: [
-                  // Top Indicator and Close Button
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(width: ResponsiveHelper.width(32)), // ব্যালেন্স করার জন্য খালি স্পেস
-                      // টপ গ্রে লাইন
-                      Container(
-                        width: ResponsiveHelper.width(40),
-                        height: ResponsiveHelper.height(4),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(2)),
-                        ),
-                      ),
-                      // ক্লোজ (X) বাটন
-                      GestureDetector(
-                        onTap: () => Navigator.pop(ctx),
-                        child: Container(
-                          padding: ResponsiveHelper.all(6),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(Icons.close, size: ResponsiveHelper.iconSize(18), color: Colors.black54),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: ResponsiveHelper.spacing(16)),
-
-                  // Title
-                  Text(
-                    AppStrings.editGroupChat.tr,
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.bold,
-                      fontSize: ResponsiveHelper.fontSize(22),
-                      color: Colors.black,
+          ),
+          padding: EdgeInsets.only(
+            left: ResponsiveHelper.padding(24),
+            right: ResponsiveHelper.padding(24),
+            top: ResponsiveHelper.padding(12),
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + ResponsiveHelper.padding(28),
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Top drag handle bar
+                Center(
+                  child: Container(
+                    width: ResponsiveHelper.width(40),
+                    height: ResponsiveHelper.height(4),
+                    decoration: BoxDecoration(
+                      color: Colors.black26,
+                      borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(2)),
                     ),
                   ),
-                  SizedBox(height: ResponsiveHelper.spacing(24)),
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(16)),
 
-                  // Profile Picture Label & Image Picker
-                  Center(
-                    child: Column(
-                      children: [
-                        Text(
-                          AppStrings.profilePicture.tr,
-                          style: GoogleFonts.poppins(
-                            fontSize: ResponsiveHelper.fontSize(14),
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade600,
+                // Title
+                Text(
+                  AppStrings.editGroupChat.tr,
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.bold,
+                    fontSize: ResponsiveHelper.fontSize(20),
+                    color: AppColors.black,
+                  ),
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(20)),
+
+                // Profile Picture Picker
+                Center(
+                  child: GestureDetector(
+                    onTap: () async {
+                      await groupController.pickGroupImage();
+                    },
+                    child: Obx(() {
+                      final imageFile = groupController.groupImageFile.value;
+                      return Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          CircleAvatar(
+                            radius: ResponsiveHelper.width(45),
+                            backgroundColor: Colors.grey.shade300,
+                            backgroundImage: imageFile != null
+                                ? FileImage(imageFile)
+                                : (_currentGroupImage.isNotEmpty
+                                ? NetworkImage(_buildImageUrl(_currentGroupImage))
+                                : null) as ImageProvider?,
+                            child: imageFile == null && _currentGroupImage.isEmpty
+                                ? Icon(
+                              Icons.group,
+                              size: ResponsiveHelper.iconSize(45),
+                              color: Colors.grey.shade500,
+                            )
+                                : null,
                           ),
-                        ),
-                        SizedBox(height: ResponsiveHelper.spacing(12)),
-                        GestureDetector(
-                          onTap: () async {
-                            await groupController.pickGroupImage();
-                          },
-                          child: Obx(() {
-                            final imageFile = groupController.groupImageFile.value;
-                            return Stack(
-                              alignment: Alignment.bottomRight,
-                              children: [
-                                // মেইন ইমেজ বর্ডার (ছবির ব্লু বর্ডার স্টাইল)
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: const Color(0xFF1976D2), width: ResponsiveHelper.borderWidth(2)),
-                                  ),
-                                  child: CircleAvatar(
-                                    radius: ResponsiveHelper.width(45),
-                                    backgroundColor: Colors.grey.shade200,
-                                    backgroundImage: imageFile != null
-                                        ? FileImage(imageFile)
-                                        : (_currentGroupImage.isNotEmpty
-                                        ? NetworkImage(_buildImageUrl(_currentGroupImage))
-                                        : null)
-                                    as ImageProvider?,
-                                    child: imageFile == null && _currentGroupImage.isEmpty
-                                        ? Icon(
-                                      Icons.group,
-                                      size: ResponsiveHelper.iconSize(45),
-                                      color: Colors.grey.shade400,
-                                    )
-                                        : null,
-                                  ),
-                                ),
-                                // ছোট ক্যামেরা/ছবি আইকন (সাদা ব্যাকগ্রাউন্ড ও গ্রে বর্ডার)
-                                Container(
-                                  padding: ResponsiveHelper.all(4),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.grey.shade300, width: ResponsiveHelper.borderWidth(1)),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 2),
-                                      )
-                                    ],
-                                  ),
-                                  child: Icon(
-                                    Icons.camera_alt_outlined,
-                                    size: ResponsiveHelper.iconSize(14),
-                                    color: Colors.grey,
-                                  ),
-                                ),
+                          // Small camera icon badge
+                          Container(
+                            padding: ResponsiveHelper.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.15),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                )
                               ],
-                            );
-                          }),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: ResponsiveHelper.spacing(24)),
-
-                  // Group Name Label
-                  Text(
-                    AppStrings.groupName.tr,
-                    style: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.fontSize(14),
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  SizedBox(height: ResponsiveHelper.spacing(8)),
-
-                  // Group Name Text Field (ছবির মতো লাইট গ্রে ব্যাকগ্রাউন্ড)
-                  TextField(
-                    controller: groupController.groupNameController,
-                    style: GoogleFonts.poppins(fontSize: ResponsiveHelper.fontSize(15)),
-                    decoration: InputDecoration(
-                      hintText: AppStrings.groupNameHint.tr,
-                      hintStyle: GoogleFonts.poppins(color: Colors.grey.shade400),
-                      filled: true,
-                      fillColor: const Color(0xFFF5F6F8), // ছবির ভেতরের লাইট গ্রে কালার
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
-                        borderSide: BorderSide.none, // কোনো বর্ডার আউটলাইন থাকবে না
-                      ),
-                      contentPadding: ResponsiveHelper.symmetric(
-                        horizontal: 16,
-                        vertical: 16,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: ResponsiveHelper.spacing(32)),
-
-                  // Save & Change Button (ছবির ব্লু বাটন)
-                  Obx(() {
-                    final isUpdating = groupController.isUpdatingGroup.value;
-                    return SizedBox(
-                      width: double.infinity, // ফুল উইডথ বাটন
-                      height: ResponsiveHelper.height(54),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1565C0), // ছবির মতো রয়েল ব্লু কালার
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(28)), // রাউন্ডেড বাটন
+                            ),
+                            child: Icon(
+                              Icons.camera_alt_outlined,
+                              size: ResponsiveHelper.iconSize(16),
+                              color: const Color(0xFF1565C0),
+                            ),
                           ),
-                        ),
-                        onPressed: isUpdating
-                            ? null
-                            : () async {
-                          final result = await groupController.updateGroup(
-                            roomId: widget.roomId,
-                            context: context,
-                          );
-                          if (result != null && ctx.mounted) {
-                            setState(() {
-                              _currentGroupName =
-                                  groupController.groupNameController.text.trim();
-                              final newImage = result['image'] ??
-                                  result['avatar'] ??
-                                  result['room']?['image'] ??
-                                  result['room']?['avatar'];
-                              if (newImage != null) {
-                                _currentGroupImage = newImage.toString();
-                              }
-                            });
-                            Navigator.pop(ctx);
+                        ],
+                      );
+                    }),
+                  ),
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(24)),
+
+                // Group Name Label
+                Text(
+                  AppStrings.groupName.tr,
+                  style: GoogleFonts.poppins(
+                    fontSize: ResponsiveHelper.fontSize(14),
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(8)),
+
+                // Group Name Input Field with Icon
+                TextField(
+                  controller: groupController.groupNameController,
+                  style: GoogleFonts.poppins(fontSize: ResponsiveHelper.fontSize(15)),
+                  decoration: InputDecoration(
+                    hintText: AppStrings.groupNameHint.tr,
+                    hintStyle: GoogleFonts.poppins(color: Colors.grey.shade500),
+                    prefixIcon: Icon(
+                      Icons.people_outline_rounded,
+                      color: const Color(0xFF1565C0),
+                      size: ResponsiveHelper.iconSize(20),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white.withValues(alpha: 0.6),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: ResponsiveHelper.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                  ),
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(28)),
+
+                // Save & Change Button (CustomGradientButton)
+                Obx(() {
+                  final isUpdating = groupController.isUpdatingGroup.value;
+                  return CustomGradientButton(
+                    onPressed: isUpdating
+                        ? null
+                        : () async {
+                      final result = await groupController.updateGroup(
+                        roomId: widget.roomId,
+                        context: context,
+                      );
+                      if (result != null && ctx.mounted) {
+                        setState(() {
+                          _currentGroupName =
+                              groupController.groupNameController.text.trim();
+                          final newImage = result['image'] ??
+                              result['avatar'] ??
+                              result['room']?['image'] ??
+                              result['room']?['avatar'];
+                          if (newImage != null) {
+                            _currentGroupImage = newImage.toString();
                           }
-                        },
-                        child: isUpdating
-                            ? SizedBox(
-                          width: ResponsiveHelper.width(24),
-                          height: ResponsiveHelper.height(24),
-                          child: CircularProgressIndicator(
-                            strokeWidth: ResponsiveHelper.borderWidth(2.5),
-                            valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
-                            : Text(
-                          AppStrings.saveAndChange.tr,
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: ResponsiveHelper.fontSize(16),
-                          ),
-                        ),
+                        });
+                        Navigator.pop(ctx);
+                      }
+                    },
+                    isLoading: isUpdating,
+                    child: Text(
+                      AppStrings.saveAndChange.tr,
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: ResponsiveHelper.fontSize(16),
                       ),
-                    );
-                  }),
-                ],
-              ),
+                    ),
+                  );
+                }),
+              ],
             ),
           ),
         );

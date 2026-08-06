@@ -150,4 +150,11 @@ class ResponsiveHelper {
       vertical: padding(vertical),
     );
   }
+
+  /// Dynamic bottom offset for overlays/cards/buttons floating 8 height above floating bottom nav bar.
+  /// Dynamically includes safe area bottom inset + bottom nav bar height + 8 gap.
+  static double bottomNavOffset(BuildContext context) {
+    final double bottomInset = MediaQuery.of(context).padding.bottom;
+    return bottomInset + padding(6);
+  }
 }

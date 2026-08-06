@@ -22,8 +22,8 @@ class MapTypeDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      right: ResponsiveHelper.padding(20),
-      top: ResponsiveHelper.padding(120),
+      right: ResponsiveHelper.padding(16),
+      top: MediaQuery.of(context).padding.top + ResponsiveHelper.padding(68),
       child: MapTypeLayersButton(
         selectedType: selectedType,
         onChanged: onChanged,
@@ -49,13 +49,15 @@ class MapTypeLayersButton extends StatelessWidget {
     return GestureDetector(
       onTap: () => _showMapTypeBottomSheet(context),
       child: Container(
-        padding: ResponsiveHelper.all(8),
+        height: ResponsiveHelper.height(44),
+        width: ResponsiveHelper.width(44),
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: AppColors.white.withValues(alpha: 0.5),
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(.12),
+              color: Colors.black.withValues(alpha: 0.12),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -63,7 +65,7 @@ class MapTypeLayersButton extends StatelessWidget {
         ),
         child: const Icon(
           Icons.layers_outlined,
-          color: Color(0xFF185FA5),
+          color:AppColors.black,
         ),
       ),
     );

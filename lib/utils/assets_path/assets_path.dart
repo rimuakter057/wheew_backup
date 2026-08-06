@@ -9,6 +9,7 @@ class AssetsPath {
   static const String plateIcon = '${_logoBase}platechat_icon.svg';
   static const String plateLogo = '${_logoBase}platechat_logo.svg';
   static const String logoPng = '${_logoBase}logo.png';
+
   static const String appLogoUpdate = 'assets/logo/app_logo_update.png';
 
 
@@ -19,7 +20,7 @@ class AssetsPath {
   static const String addGroupIcon = '${_iconsBase}add_group.png';
   static const String messageRequest = '${_iconsBase}message_request.svg';
   static const String scannerTop = '${_iconsBase}scanner_nav.svg';
-
+  static const String notificationMap = '${_iconsBase}map_notification.svg';
   static const String pNav = '${_iconsBase}p.svg';
   static const String chatNav = '${_iconsBase}chat_nav.svg';
   static const String mapNav = '${_iconsBase}map_nav.svg';
@@ -104,7 +105,9 @@ class AssetsPath {
   static const String electricCarjingMarker = '${_iconsBase}electric_carjing_marker.svg';
   static const String disable = '${_iconsBase}disable_marker.svg';
   static const String homeJson="assets/animations/icon_animated.json";
-  static const String group="assets/icons/group.svg";
+  static const String group = 'assets/icons/group.svg';
+  static const String ocrScannerSvg = 'assets/icons/ocr_scanner.svg';
+  static const String scanQrSvg = 'assets/icons/scan_qr.svg';
 
   static const String left="assets/icons/left.svg";
   static const String right="assets/icons/right.svg";

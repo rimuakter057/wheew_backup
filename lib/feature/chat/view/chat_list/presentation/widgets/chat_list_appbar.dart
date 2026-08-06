@@ -202,12 +202,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
-import 'package:platchatapp/core/router/route_path.dart';
 import 'package:platchatapp/feature/chat/view/message/controller/message_controller.dart';
 import 'package:platchatapp/feature/notification/controller/notification_controller.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
-import 'package:platchatapp/share/widgets/custom_image/custom_image.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
@@ -232,7 +229,7 @@ class ChatListAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.lightBlue,
       elevation: 0,
       scrolledUnderElevation: 0,
       centerTitle: true,
@@ -276,6 +273,7 @@ class ChatListAppBar extends StatelessWidget implements PreferredSizeWidget {
             onTap: onCreateGroupTap,
             child: IconBgContainer(
               icon: AssetsPath.group,
+
               showAddOverlay: true,
             ),
           ),
@@ -355,12 +353,12 @@ class IconBgContainer extends StatelessWidget {
         /// "+" overlay — blue circle + white border, icon-এর edge এ বসানো
         if (showAddOverlay)
           Positioned(
-            top: -4,
+            top: -2,
             right: -4,
             child: Container(
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
-                color: const Color(0xFF2F80ED),
+                gradient: AppColors.buttonGradient,
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.white, width: 2),
               ),

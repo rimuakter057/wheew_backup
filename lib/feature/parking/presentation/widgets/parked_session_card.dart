@@ -64,14 +64,16 @@ class ParkedSessionCard extends StatelessWidget {
                         color: const Color(0xFF1E293B),
                       ),
                     ),
-                    SizedBox(height: ResponsiveHelper.spacing(2)),
-                    Text(
-                      spotCode,
-                      style: GoogleFonts.poppins(
-                        fontSize: ResponsiveHelper.fontSize(13),
-                        color: const Color(0xFF1E293B).withValues(alpha: 0.6),
+                    if (spotCode.isNotEmpty) ...[
+                      SizedBox(height: ResponsiveHelper.spacing(2)),
+                      Text(
+                        spotCode,
+                        style: GoogleFonts.poppins(
+                          fontSize: ResponsiveHelper.fontSize(13),
+                          color: const Color(0xFF1E293B).withValues(alpha: 0.6),
+                        ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ),
