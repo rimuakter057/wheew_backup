@@ -47,8 +47,8 @@ class ProfileNavAppBar extends StatelessWidget
                 alignment: Alignment.center,
                 children: [
                   Container(
-                    height: ResponsiveHelper.height(32),
-                    width: ResponsiveHelper.height(32),
+                    height: ResponsiveHelper.height(38),
+                    width: ResponsiveHelper.height(38),
                     padding: ResponsiveHelper.all(7),
                     decoration:  BoxDecoration(
                       color: AppColors.white.withOpacity(0.5),
@@ -64,12 +64,13 @@ class ProfileNavAppBar extends StatelessWidget
                   ),
                   if (count > 0)
                     Positioned(
-                      top: 2,
+                      top: -2,
                       right: 2,
                       child: Container(
                         padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF2F80ED),
+                        decoration:  BoxDecoration(
+                          gradient:AppColors.buttonGradient ,
+                          border: Border.all(color: AppColors.white),
                           shape: BoxShape.circle,
                         ),
                         child: Text(
