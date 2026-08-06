@@ -254,12 +254,13 @@ class ProfileController extends GetxController {
   Future<void> updateProfile() async {
     final hasImage = tempCroppedImage.value != null;
 
-    // Each field locks independently once set — but any of the three
-    // having a value (or just being filled in this session) still counts
-    // as "something to save".
-    final hasVehicleData = vehicleTypeController.text.isNotEmpty ||
-        vehicleModelController.text.isNotEmpty ||
-        vehicleColorController.text.isNotEmpty;
+    // Compare against the last-saved snapshot, not just non-emptiness —
+    // the fields already show the saved values in edit mode, so checking
+    // "isNotEmpty" alone made Save always fire even with zero edits.
+    final hasVehicleData =
+        vehicleTypeController.text != _savedVehicleType ||
+        vehicleModelController.text != _savedVehicleModel ||
+        vehicleColorController.text != _savedVehicleColor;
 
     debugPrint('🔄 updateProfile called');
     debugPrint('📸 hasImage: $hasImage');

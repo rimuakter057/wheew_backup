@@ -53,7 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.lightBlue,
         elevation: 0,
         title: Text(
           AppStrings.personalInfoTitle.tr,
