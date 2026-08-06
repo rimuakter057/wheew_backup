@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/feature/auth/repository/vehicle_type_info.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
+import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
@@ -49,14 +49,10 @@ class VehicleTypeDropdown extends StatelessWidget {
             value: type,
             child: Row(
               children: [
-                SvgPicture.asset(
-                  type.icon,
+                CustomImage(
+                  imageSrc: type.imageBlue,
                   width: 20,
                   height: 20,
-                  colorFilter: const ColorFilter.mode(
-                    AppColors.black,
-                    BlendMode.srcIn,
-                  ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -105,14 +101,10 @@ class VehicleTypeDropdown extends StatelessWidget {
               )
                   : Row(
                 children: [
-                  SvgPicture.asset(
-                    currentType.icon,
+                  CustomImage(
+                    imageSrc: currentType.imageBlue,
                     width: 20,
                     height: 20,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.black,
-                      BlendMode.srcIn,
-                    ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
