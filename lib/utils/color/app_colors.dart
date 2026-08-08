@@ -9,6 +9,7 @@ class AppColors {
   static const Color bulShadeGradient = Color(0xFFC6D2E2);
   static const Color blackButton = Color(0xFF404040);
   static const Color containerBg = Color(0xFFC6D2E2);
+  static const Color lightGreyDivider = Color(0xFFD9D9D9);
 
 
 

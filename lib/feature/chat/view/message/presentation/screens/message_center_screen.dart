@@ -23,6 +23,7 @@ class _MessageCenterScreenState extends State<MessageCenterScreen>
   void initState() {
     super.initState();
     final idx = (widget.initialIndex ?? 0).clamp(0, 1);
+
     _tabController = TabController(
       length: 2,
       vsync: this,
