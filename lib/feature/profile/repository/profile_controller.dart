@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -227,7 +227,7 @@ class ProfileController extends GetxController {
             AndroidUiSettings(
               toolbarTitle: 'Crop Image',
               toolbarColor: AppColors.blue,
-              toolbarWidgetColor: Colors.white,
+              toolbarWidgetColor: AppColors.white,
               lockAspectRatio: false,
             ),
             IOSUiSettings(title: 'Crop Image'),
@@ -348,3 +348,4 @@ class ProfileController extends GetxController {
     super.onClose();
   }
 }
+

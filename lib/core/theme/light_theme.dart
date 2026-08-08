@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../helper/responsive_helper/responsive_helper.dart';
 import '../../utils/color/app_colors.dart';
@@ -20,7 +20,7 @@ final ThemeData lightTheme = ThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: AppColors.greenClient,
       minimumSize: Size(double.infinity, ResponsiveHelper.height(48)),
-      shadowColor: Colors.transparent,
+      shadowColor: AppColors.transparent,
       padding: EdgeInsets.symmetric(
         horizontal: ResponsiveHelper.width(32),
         vertical: ResponsiveHelper.height(16),
@@ -38,7 +38,7 @@ final ThemeData lightTheme = ThemeData(
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       side: const BorderSide(color: AppColors.brandHoverColor, width: 1.5),
-      foregroundColor: Colors.black,
+      foregroundColor: AppColors.black,
       minimumSize: const Size(186, 48),
       padding: const EdgeInsets.all(10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -70,7 +70,7 @@ final ThemeData lightTheme = ThemeData(
     contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: Colors.transparent),
+      borderSide: const BorderSide(color: AppColors.transparent),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
@@ -82,11 +82,11 @@ final ThemeData lightTheme = ThemeData(
     ),
     disabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: Colors.transparent),
+      borderSide: const BorderSide(color: AppColors.transparent),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: Colors.transparent),
+      borderSide: const BorderSide(color: AppColors.transparent),
     ),
     hintStyle: const TextStyle(
       fontFamily: AppConfig.fontFamily,
@@ -136,3 +136,5 @@ final ThemeData lightTheme = ThemeData(
     ),
   ),
 );
+
+

@@ -1,4 +1,4 @@
-// widgets/rating_dialog.dart
+﻿// widgets/rating_dialog.dart
 
 import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
@@ -33,10 +33,10 @@ void showRatingDialog({
   showDialog(
     context: context,
     barrierDismissible: true,
-    barrierColor: Colors.black.withOpacity(0.5),
+    barrierColor: AppColors.black.withOpacity(0.5),
     builder: (_) => StatefulBuilder(
       builder: (dialogContext, setState) => Dialog(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         insetPadding: EdgeInsets.symmetric(
           horizontal: ResponsiveHelper.spacing(24),
         ),
@@ -57,7 +57,7 @@ void showRatingDialog({
             mainAxisSize: MainAxisSize.min,
 
             children: [
-              // ── Close Button ────────────────────────────
+              // â”€â”€ Close Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -79,13 +79,13 @@ void showRatingDialog({
                         padding:
                         EdgeInsets.all(ResponsiveHelper.spacing(4)),
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
+                          color: AppColors.greyShade100,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.close,
                           size: ResponsiveHelper.iconSize(16),
-                          color: Colors.grey.shade600,
+                          color: AppColors.greyShade600,
                         ),
                       ),
                     ),
@@ -95,7 +95,7 @@ void showRatingDialog({
 
               SizedBox(height: ResponsiveHelper.spacing(4)),
 
-              // ── Avatar ──────────────────────────────────
+              // â”€â”€ Avatar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               CircleAvatar(
                 radius: ResponsiveHelper.borderRadius(30),
                 backgroundImage: NetworkImage(
@@ -181,8 +181,8 @@ void showRatingDialog({
 
               SizedBox(height: ResponsiveHelper.spacing(10)),
 
-              // ── Name + verified badge (same asset/condition as the
-              //    chat app bar's _effectiveIsVehicleVerified) ─────
+              // â”€â”€ Name + verified badge (same asset/condition as the
+              //    chat app bar's _effectiveIsVehicleVerified) â”€â”€â”€â”€â”€
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -218,7 +218,7 @@ void showRatingDialog({
 
               SizedBox(height: ResponsiveHelper.spacing(18)),
 
-              // ── Star Rating ──────────────────────────────
+              // â”€â”€ Star Rating â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               SizedBox(
                 height: ResponsiveHelper.iconSize(50),
                 child: Row(
@@ -227,7 +227,7 @@ void showRatingDialog({
                     final starValue = starIndex + 1;
                     return GestureDetector(
                       onTap: () => setState(() {
-                        // একই star এ দ্বিতীয়বার click করলে rating reset হয়ে যাবে
+                        // à¦à¦•à¦‡ star à¦ à¦¦à§à¦¬à¦¿à¦¤à§€à¦¯à¦¼à¦¬à¦¾à¦° click à¦•à¦°à¦²à§‡ rating reset à¦¹à¦¯à¦¼à§‡ à¦¯à¦¾à¦¬à§‡
                         if (ratingValue == starValue.toDouble()) {
                           ratingValue = 0;
                         } else {
@@ -280,7 +280,7 @@ void showRatingDialog({
   );
 }
 
-// ── Star icon builder ─────────────────────────────────────────
+// â”€â”€ Star icon builder â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Widget _buildStarIcon(int starIndex, double rating) {
   final double value = rating - starIndex;
   final IconData icon;
@@ -288,10 +288,10 @@ Widget _buildStarIcon(int starIndex, double rating) {
 
   if (value >= 1.0) {
     icon = Icons.star_rounded;
-    color = Colors.amber;
+    color = AppColors.amber;
   } else if (value >= 0.5) {
     icon = Icons.star_half_rounded;
-    color = Colors.amber;
+    color = AppColors.amber;
   } else {
     icon = Icons.star_outline_rounded;
     color = AppColors.black.withOpacity(0.3);
@@ -304,7 +304,7 @@ Widget _buildStarIcon(int starIndex, double rating) {
   );
 }
 
-// ── Rating label ──────────────────────────────────────────────
+// â”€â”€ Rating label â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 String _ratingLabel(double rating) {
   if (rating == 0) return '';
   if (rating <= 1.0) return AppStrings.ratingPoor.tr;
@@ -326,3 +326,5 @@ String _getStatusInfo(String status) {
       return 'No status yet. Once you submit a rating, the status will update automatically.';
   }
 }
+
+

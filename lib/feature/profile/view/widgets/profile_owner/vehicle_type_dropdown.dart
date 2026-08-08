@@ -1,4 +1,4 @@
-
+﻿
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/feature/auth/repository/vehicle_type_info.dart';
@@ -36,7 +36,7 @@ class VehicleTypeDropdown extends StatelessWidget {
     return PopupMenuButton<VehicleType>(
       enabled: isFieldEnabled,
       constraints: const BoxConstraints(minWidth: 220, maxWidth: 220),
-      color: Colors.white,
+      color: AppColors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(14)),
       ),
@@ -97,7 +97,7 @@ class VehicleTypeDropdown extends StatelessWidget {
               child: currentType == null
                   ? Text(
                 AppStrings.vehicleType.tr,
-                style: const TextStyle(fontSize: 13.0, color: Colors.grey),
+                style: const TextStyle(fontSize: 13.0, color: AppColors.grey),
               )
                   : Row(
                 children: [
@@ -111,17 +111,18 @@ class VehicleTypeDropdown extends StatelessWidget {
                     child: Text(
                       currentType.displayName,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 13.0, color: Colors.black),
+                      style: const TextStyle(fontSize: 13.0, color: AppColors.black),
                     ),
                   ),
                 ],
               ),
             ),
             if (isFieldEnabled)
-              const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.grey),
+              const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.grey),
           ],
         ),
       ),
     );
   }
 }
+

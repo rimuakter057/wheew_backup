@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -57,10 +57,10 @@ class FaqScreen extends StatelessWidget {
                           height: ResponsiveHelper.width(40),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.white.withOpacity(0.6),
+                            color: AppColors.white.withOpacity(0.6),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
+                                color: AppColors.black.withOpacity(0.05),
                                 blurRadius: 6,
                                 offset: const Offset(0, 2),
                               ),
@@ -95,7 +95,7 @@ class FaqScreen extends StatelessWidget {
                       child: Text(
                         controller.error.value!,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.poppins(color: Colors.red),
+                        style: GoogleFonts.poppins(color: AppColors.red),
                       ),
                     );
                   }
@@ -224,7 +224,7 @@ class _FaqTileState extends State<_FaqTile>
           border: Border.all(color: AppColors.white),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: AppColors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -288,3 +288,4 @@ class _FaqTileState extends State<_FaqTile>
     );
   }
 }
+

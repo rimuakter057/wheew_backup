@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -187,7 +187,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         ResponsiveHelper.borderRadius(12),
                       ),
                       borderSide: BorderSide(
-                        color: Colors.blue,
+                        color: AppColors.blue,
                         width: ResponsiveHelper.borderWidth(1),
                       ),
                     ),
@@ -198,7 +198,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         ResponsiveHelper.borderRadius(12),
                       ),
                       borderSide: BorderSide(
-                        color: Colors.blue,
+                        color: AppColors.blue,
                         width: ResponsiveHelper.borderWidth(2),
                       ),
                     ),
@@ -209,7 +209,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         ResponsiveHelper.borderRadius(12),
                       ),
                       borderSide: BorderSide(
-                        color: Colors.grey,
+                        color: AppColors.grey,
                         width: ResponsiveHelper.borderWidth(1),
                       ),
                     ),
@@ -225,3 +225,5 @@ class _CustomTextFieldState extends State<CustomTextField> {
     _obscureText.value = !_obscureText.value;
   }
 }
+
+

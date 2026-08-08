@@ -1,4 +1,4 @@
-// // import 'package:flutter/material.dart';
+﻿// // import 'package:flutter/material.dart';
 // // import 'package:flutter/services.dart';
 // // import 'package:get/get.dart';
 // // import 'package:go_router/go_router.dart';
@@ -95,7 +95,7 @@
 // //                     width: ResponsiveHelper.width(40),
 // //                     height: ResponsiveHelper.height(40),
 // //                     /*decoration: const BoxDecoration(
-// //                       color: Colors.green,
+// //                       color: AppColors.green,
 // //                       shape: BoxShape.circle,
 // //                     ),*/
 // //                     padding: const EdgeInsets.all(0),
@@ -129,8 +129,8 @@
 // //                 onTap: () {
 // //                   context.pushNamed(RouteName.signIn);
 // //                 },
-// //                 borderColor: Colors.blue,
-// //                 textColor: Colors.blue,
+// //                 borderColor: AppColors.blue,
+// //                 textColor: AppColors.blue,
 // //               ),
 // //             ),
 // //
@@ -146,8 +146,8 @@
 // //                 onTap: () {
 // //                   context.pushNamed(RouteName.signUp);
 // //                 },
-// //                 backgroundColor: Colors.blue,
-// //                 textColor: Colors.white,
+// //                 backgroundColor: AppColors.blue,
+// //                 textColor: AppColors.white,
 // //               ),
 // //             ),*/
 // //             Padding(
@@ -159,8 +159,8 @@
 // //                 onTap: () {
 // //                   _showAgeConfirmationDialog(context);
 // //                 },
-// //                 backgroundColor: Colors.blue,
-// //                 textColor: Colors.white,
+// //                 backgroundColor: AppColors.blue,
+// //                 textColor: AppColors.white,
 // //               ),
 // //             ),
 // //
@@ -198,8 +198,8 @@
 // //                 // NO BUTTON
 // //                 ElevatedButton(
 // //                   style: ElevatedButton.styleFrom(
-// //                     backgroundColor: Colors.grey.shade300,
-// //                     foregroundColor: Colors.black,
+// //                     backgroundColor: AppColors.greyShade300,
+// //                     foregroundColor: AppColors.black,
 // //                     shape: RoundedRectangleBorder(
 // //                       borderRadius: BorderRadius.circular(12),
 // //                     ),
@@ -231,8 +231,8 @@
 // //                 // YES BUTTON
 // //                 ElevatedButton(
 // //                   style: ElevatedButton.styleFrom(
-// //                     backgroundColor: Colors.blue,
-// //                     foregroundColor: Colors.white,
+// //                     backgroundColor: AppColors.blue,
+// //                     foregroundColor: AppColors.white,
 // //                     shape: RoundedRectangleBorder(
 // //                       borderRadius: BorderRadius.circular(12),
 // //                     ),
@@ -250,7 +250,7 @@
 // //                     style: context.titleMedium.copyWith(
 // //                       fontSize: 16,
 // //                       fontWeight: FontWeight.w600,
-// //                       color: Colors.white,
+// //                       color: AppColors.white,
 // //                     ),
 // //                   ),
 // //                 ),
@@ -317,7 +317,7 @@
 // //                   // LANGUAGE TOGGLE
 // //                   Positioned(
 // //                     top: ResponsiveHelper.spacing(36),
-// //                     right: 16, // 👈 push to right side
+// //                     right: 16, // ðŸ‘ˆ push to right side
 // //                     child: const LanguageToggleWidget(),
 // //                   ),
 // //
@@ -408,7 +408,7 @@
 // //             //   width: ResponsiveHelper.iconSize(100),
 // //             //   height: ResponsiveHelper.iconSize(100),
 // //             //   fit: BoxFit.cover,
-// //             //   repeat: true, // animation loop করবে
+// //             //   repeat: true, // animation loop à¦•à¦°à¦¬à§‡
 // //             // ),
 // //             // CustomImage(
 // //             //   imageSrc: AssetsPath.plateChat,
@@ -470,7 +470,7 @@
 // //             //     //     width: ResponsiveHelper.width(40),
 // //             //     //     height: ResponsiveHelper.height(40),
 // //             //     //     /*decoration: const BoxDecoration(
-// //             //     //       color: Colors.green,
+// //             //     //       color: AppColors.green,
 // //             //     //       shape: BoxShape.circle,
 // //             //     //     ),*/
 // //             //     //     padding: const EdgeInsets.all(0),
@@ -489,7 +489,7 @@
 // //                 children: [
 // //                   Column(
 // //                     crossAxisAlignment: CrossAxisAlignment.start,
-// //                     // ✅ align all text to left
+// //                     // âœ… align all text to left
 // //                     children: [
 // //                       Text(
 // //                         AppStrings.welcomeMessage.tr,
@@ -627,8 +627,8 @@
 // //                 onTap: () {
 // //                   context.pushNamed(RouteName.signUp);
 // //                 },
-// //                 backgroundColor: Colors.blue,
-// //                 textColor: Colors.white,
+// //                 backgroundColor: AppColors.blue,
+// //                 textColor: AppColors.white,
 // //               ),
 // //             ),*/
 // //             Padding(
@@ -641,7 +641,7 @@
 // //                   _showAgeConfirmationDialog(context);
 // //                 },
 // //                 backgroundColor: AppColors.blue,
-// //                 textColor: Colors.white, // ✅ correct parameter name
+// //                 textColor: AppColors.white, // âœ… correct parameter name
 // //               ),
 // //             ),
 // //
@@ -699,8 +699,8 @@
 // //         //         // NO BUTTON
 // //         //         ElevatedButton(
 // //         //           style: ElevatedButton.styleFrom(
-// //         //             backgroundColor: Colors.grey.shade300,
-// //         //             foregroundColor: Colors.black,
+// //         //             backgroundColor: AppColors.greyShade300,
+// //         //             foregroundColor: AppColors.black,
 // //         //             shape: RoundedRectangleBorder(
 // //         //               borderRadius: BorderRadius.circular(12),
 // //         //             ),
@@ -733,7 +733,7 @@
 // //         //         ElevatedButton(
 // //         //           style: ElevatedButton.styleFrom(
 // //         //             backgroundColor: AppColors.blue,
-// //         //             foregroundColor: Colors.white,
+// //         //             foregroundColor: AppColors.white,
 // //         //             shape: RoundedRectangleBorder(
 // //         //               borderRadius: BorderRadius.circular(12),
 // //         //             ),
@@ -751,7 +751,7 @@
 // //         //             style: context.titleMedium.copyWith(
 // //         //               fontSize: 16,
 // //         //               fontWeight: FontWeight.w600,
-// //         //               color: Colors.white,
+// //         //               color: AppColors.white,
 // //         //             ),
 // //         //           ),
 // //         //         ),
@@ -845,7 +845,7 @@
 //           child: Column(
 //             crossAxisAlignment: CrossAxisAlignment.stretch,
 //             children: [
-//               // ─── Language Toggle ───────────────────────────────────────
+//               // â”€â”€â”€ Language Toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 //               Align(
 //                 alignment: Alignment.topRight,
 //                 child: Padding(
@@ -859,7 +859,7 @@
 //
 //               SizedBox(height: ResponsiveHelper.spacing(20)),
 //
-//               // ─── Everything inside one padding ─────────────────────────
+//               // â”€â”€â”€ Everything inside one padding â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 //               Padding(
 //                 padding: EdgeInsets.symmetric(
 //                   horizontal: ResponsiveHelper.padding(24),
@@ -959,7 +959,7 @@
 //                       title: AppStrings.signUp.tr,
 //                       onTap: () => _showAgeConfirmationDialog(context),
 //                       backgroundColor: AppColors.blue,
-//                       textColor: Colors.white,
+//                       textColor: AppColors.white,
 //                     ),
 //
 //                     SizedBox(height: ResponsiveHelper.spacing(24)),
@@ -974,7 +974,7 @@
 //   }
 // }
 //
-// // ─── Age Confirmation Dialog ───────────────────────────────────────────────────
+// // â”€â”€â”€ Age Confirmation Dialog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 //
 // void _showAgeConfirmationDialog(BuildContext context) {
 //   showDialog(
@@ -1162,7 +1162,7 @@
 //             ),
 //           ),
 //
-//           const Spacer(), // ✅ pushes buttons to bottom
+//           const Spacer(), // âœ… pushes buttons to bottom
 //
 //           /// Sign In Button
 //           Padding(
@@ -1188,7 +1188,7 @@
 //               title: AppStrings.signUp.tr,
 //               onTap: () => _showAgeConfirmationDialog(context),
 //               backgroundColor: AppColors.blue,
-//               textColor: Colors.white,
+//               textColor: AppColors.white,
 //             ),
 //           ),
 //
@@ -1404,7 +1404,7 @@
 //                 title: AppStrings.signUp.tr,
 //                 onTap: () => _showAgeConfirmationDialog(context),
 //                 backgroundColor: AppColors.blue,
-//                 textColor: Colors.white,
+//                 textColor: AppColors.white,
 //               ),
 //             ),
 //
@@ -1497,3 +1497,5 @@
 //   );
 // }
 // */
+
+

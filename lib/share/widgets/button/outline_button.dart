@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 
@@ -14,8 +15,8 @@ class OutlineButton extends StatelessWidget {
     super.key,
     required this.title,
     required this.onTap,
-    this.borderColor = Colors.blue,
-    this.textColor = Colors.blue,
+    this.borderColor = AppColors.blue,
+    this.textColor = AppColors.blue,
     this.height = 52,
     this.borderRadius = 16,
     this.borderWidth = 1,
@@ -50,3 +51,4 @@ class OutlineButton extends StatelessWidget {
     );
   }
 }
+

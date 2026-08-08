@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart' hide Config;
@@ -79,7 +79,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
           '${AppStrings.leaveGroupConfirmation.tr} "$_currentGroupName"?',
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(14),
-            color: Colors.grey.shade600,
+            color: AppColors.greyShade600,
           ),
         ),
         actions: [
@@ -89,7 +89,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
               AppStrings.cancel.tr,
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(14),
-                color: Colors.grey,
+                color: AppColors.grey,
               ),
             ),
           ),
@@ -111,14 +111,14 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                 height: ResponsiveHelper.height(16),
                 child: CircularProgressIndicator(
                   strokeWidth: ResponsiveHelper.borderWidth(2),
-                  color: Colors.red,
+                  color: AppColors.red,
                 ),
               )
                   : Text(
                 AppStrings.leave.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(14),
-                  color: Colors.red,
+                  color: AppColors.red,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -137,7 +137,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (ctx) {
         return Container(
           decoration: BoxDecoration(
@@ -163,7 +163,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                     width: ResponsiveHelper.width(40),
                     height: ResponsiveHelper.height(4),
                     decoration: BoxDecoration(
-                      color: Colors.black26,
+                      color: AppColors.black26,
                       borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(2)),
                     ),
                   ),
@@ -194,7 +194,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                         children: [
                           CircleAvatar(
                             radius: ResponsiveHelper.width(45),
-                            backgroundColor: Colors.grey.shade300,
+                            backgroundColor: AppColors.greyShade300,
                             backgroundImage: imageFile != null
                                 ? FileImage(imageFile)
                                 : (_currentGroupImage.isNotEmpty
@@ -204,7 +204,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                                 ? Icon(
                               Icons.group,
                               size: ResponsiveHelper.iconSize(45),
-                              color: Colors.grey.shade500,
+                              color: AppColors.greyShade500,
                             )
                                 : null,
                           ),
@@ -212,11 +212,11 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                           Container(
                             padding: ResponsiveHelper.all(6),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: AppColors.white,
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.15),
+                                  color: AppColors.black.withValues(alpha: 0.15),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 )
@@ -241,7 +241,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(14),
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    color: AppColors.black87,
                   ),
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(8)),
@@ -252,14 +252,14 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                   style: GoogleFonts.poppins(fontSize: ResponsiveHelper.fontSize(15)),
                   decoration: InputDecoration(
                     hintText: AppStrings.groupNameHint.tr,
-                    hintStyle: GoogleFonts.poppins(color: Colors.grey.shade500),
+                    hintStyle: GoogleFonts.poppins(color: AppColors.greyShade500),
                     prefixIcon: Icon(
                       Icons.people_outline_rounded,
                       color: const Color(0xFF1565C0),
                       size: ResponsiveHelper.iconSize(20),
                     ),
                     filled: true,
-                    fillColor: Colors.white.withValues(alpha: 0.6),
+                    fillColor: AppColors.white.withValues(alpha: 0.6),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
                       borderSide: BorderSide.none,
@@ -302,7 +302,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                     child: Text(
                       AppStrings.saveAndChange.tr,
                       style: GoogleFonts.poppins(
-                        color: Colors.white,
+                        color: AppColors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: ResponsiveHelper.fontSize(16),
                       ),
@@ -379,7 +379,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(13),
                       fontWeight: FontWeight.w400,
-                      color: isTyping ? AppColors.blue : Colors.grey,
+                      color: isTyping ? AppColors.blue : AppColors.grey,
                     ),
                   );
                 }),
@@ -393,7 +393,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
         PopupMenuButton<String>(
           padding: EdgeInsets.only(right: ResponsiveHelper.width(8)),
           icon: Icon(Icons.more_vert, color: AppColors.black),
-          color: Colors.transparent, // আসল color transparent-ই থাকবে, gradient Container দিয়ে দেওয়া হবে
+          color: AppColors.transparent, // à¦†à¦¸à¦² color transparent-à¦‡ à¦¥à¦¾à¦•à¦¬à§‡, gradient Container à¦¦à¦¿à¦¯à¦¼à§‡ à¦¦à§‡à¦“à¦¯à¦¼à¦¾ à¦¹à¦¬à§‡
           // elevation: 6 added a second (Material default) drop shadow on
           // top of the Container's own boxShadow below — the double shadow
           // showed up as an unwanted grey halo around the popup.
@@ -423,15 +423,15 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
           itemBuilder: (context) => [
             PopupMenuItem<String>(
               padding: EdgeInsets.zero,
-              enabled: false, // পুরো item এর tap বন্ধ, ভেতরের InkWell গুলো কাজ করবে
+              enabled: false, // à¦ªà§à¦°à§‹ item à¦à¦° tap à¦¬à¦¨à§à¦§, à¦­à§‡à¦¤à¦°à§‡à¦° InkWell à¦—à§à¦²à§‹ à¦•à¦¾à¦œ à¦•à¦°à¦¬à§‡
               child: Container(
                 width: 175,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.96),
+                  color: AppColors.white.withOpacity(0.96),
                   borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.12),
+                      color: AppColors.black.withOpacity(0.12),
                       blurRadius: 16,
                       offset: const Offset(0, 6),
                     ),
@@ -441,7 +441,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // ── See Members ──────────────────────────────
+                    // â”€â”€ See Members â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     InkWell(
                       onTap: () {
                         Navigator.pop(context);
@@ -474,7 +474,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                       ),
                     ),
 
-                    // ── Add Members ──────────────────────────────
+                    // â”€â”€ Add Members â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     InkWell(
                       onTap: () {
                         Navigator.pop(context);
@@ -504,7 +504,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                       ),
                     ),
 
-                    // ── Edit Group ───────────────────────────────
+                    // â”€â”€ Edit Group â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     InkWell(
                       onTap: () {
                         Navigator.pop(context);
@@ -534,7 +534,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                       ),
                     ),
 
-                    // ── Leave Group ──────────────────────────────
+                    // â”€â”€ Leave Group â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     InkWell(
                       onTap: () {
                         Navigator.pop(context);
@@ -574,9 +574,9 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
         //
         //   padding: EdgeInsets.only(right: ResponsiveHelper.width(8)),
         //   icon: Icon(Icons.more_vert, color: AppColors.black),
-        //   color: Colors.transparent,
+        //   color: AppColors.transparent,
         //   elevation: 6,
-        // //  offset: Offset(0, ResponsiveHelper.height(40)), // icon-এর ঠিক নিচে বসবে
+        // //  offset: Offset(0, ResponsiveHelper.height(40)), // icon-à¦à¦° à¦ à¦¿à¦• à¦¨à¦¿à¦šà§‡ à¦¬à¦¸à¦¬à§‡
         //   offset: Offset(-ResponsiveHelper.width(36), ResponsiveHelper.height(40)),
         //   shape: RoundedRectangleBorder(
         //     borderRadius: BorderRadius.only(
@@ -602,7 +602,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
         //     }
         //   },
         //   itemBuilder: (context) => [
-        //     // ── See Members ──────────────────────────────
+        //     // â”€â”€ See Members â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         //     PopupMenuItem<String>(
         //       value: "SeeMembers",
         //       height: ResponsiveHelper.height(44),
@@ -621,7 +621,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
         //       ),
         //     ),
         //
-        //     // ── Add Members ──────────────────────────────
+        //     // â”€â”€ Add Members â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         //     PopupMenuItem<String>(
         //       value: "AddMembers",
         //       height: ResponsiveHelper.height(44),
@@ -640,7 +640,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
         //       ),
         //     ),
         //
-        //     // ── Edit Group ───────────────────────────────
+        //     // â”€â”€ Edit Group â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         //     PopupMenuItem<String>(
         //       value: "EditGroup",
         //       height: ResponsiveHelper.height(44),
@@ -659,7 +659,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
         //       ),
         //     ),
         //
-        //     // ── Leave Group ──────────────────────────────
+        //     // â”€â”€ Leave Group â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         //     PopupMenuItem<String>(
         //       value: "LeaveGroup",
         //       height: ResponsiveHelper.height(44),
@@ -714,3 +714,5 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
   }
 
 }
+
+

@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:flutter/services.dart';
@@ -50,7 +51,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
         child: Container(
           padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.padding(14)),
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFF3D72E8) : Colors.transparent,
+            color: isSelected ? const Color(0xFF3D72E8) : AppColors.transparent,
             borderRadius: BorderRadius.circular(
               ResponsiveHelper.borderRadius(10),
             ),
@@ -61,7 +62,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
               style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w600,
                 fontSize: ResponsiveHelper.fontSize(14),
-                color: isSelected ? Colors.white : const Color(0xFF8F9BB3),
+                color: isSelected ? AppColors.white : const Color(0xFF8F9BB3),
               ),
             ),
           ),
@@ -138,7 +139,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
         maxHeight: MediaQuery.of(context).size.height * 0.85,
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(ResponsiveHelper.borderRadius(24)),
         ),
@@ -208,7 +209,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
                   : 'Using current location',
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(12),
-                color: Colors.grey.shade600,
+                color: AppColors.greyShade600,
               ),
             ),
             SizedBox(height: ResponsiveHelper.spacing(16)),
@@ -357,7 +358,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
                       padding: EdgeInsets.symmetric(
                         vertical: ResponsiveHelper.padding(14),
                       ),
-                      side: BorderSide(color: Colors.grey.shade300),
+                      side: BorderSide(color: AppColors.greyShade300),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
                           ResponsiveHelper.borderRadius(14),
@@ -444,7 +445,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
                               height: ResponsiveHelper.iconSize(18),
                               child: CircularProgressIndicator(
                                 strokeWidth: ResponsiveHelper.borderWidth(2),
-                                color: Colors.white,
+                                color: AppColors.white,
                               ),
                             )
                           : Text(
@@ -454,7 +455,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(14),
                                 fontWeight: FontWeight.w600,
-                                color: Colors.white,
+                                color: AppColors.white,
                               ),
                             ),
                     );
@@ -468,3 +469,4 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
     );
   }
 }
+

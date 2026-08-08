@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 
@@ -34,7 +34,7 @@ class WelcomeScreen extends StatelessWidget {
         child: SafeArea(
           child: Stack(
             children: [
-              // ─── TOP ROW: Logo + Language Toggle ───────────────────────
+              // â”€â”€â”€ TOP ROW: Logo + Language Toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               Positioned(
                 top: ResponsiveHelper.height(20),
                 left: ResponsiveHelper.padding(20),
@@ -52,7 +52,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
 
-              // ─── HEADLINE + DIVIDER + SUBTITLE ──────────────────────────
+              // â”€â”€â”€ HEADLINE + DIVIDER + SUBTITLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               Positioned(
                 top: size.height * 0.15,
                 left: ResponsiveHelper.padding(24),
@@ -73,7 +73,7 @@ class WelcomeScreen extends StatelessWidget {
                     Text(
                       AppStrings.welcomeSubtitle1.tr,
                       style: context.titleSmall.copyWith(
-                        color: Colors.grey.shade700,
+                        color: AppColors.greyShade700,
                         fontSize: ResponsiveHelper.fontSize(14),
                         fontWeight: FontWeight.w400,
                         height: 1.3,
@@ -83,7 +83,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
 
-              // ─── GET STARTED + SIGN IN (pinned to bottom) ───────────────
+              // â”€â”€â”€ GET STARTED + SIGN IN (pinned to bottom) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               Positioned(
                 left: ResponsiveHelper.padding(24),
                 right: ResponsiveHelper.padding(24),
@@ -102,7 +102,7 @@ class WelcomeScreen extends StatelessWidget {
                       child: RichText(
                         text: TextSpan(
                           style: context.bodySmall.copyWith(
-                            color: Colors.grey.withOpacity(0.9),
+                            color: AppColors.grey.withOpacity(0.9),
                             fontSize: ResponsiveHelper.fontSize(13),
                           ),
                           children: [
@@ -149,3 +149,4 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 }
+

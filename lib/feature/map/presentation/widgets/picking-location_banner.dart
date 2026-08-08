@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
@@ -16,15 +17,16 @@ class PickingLocationBanner extends StatelessWidget {
       child: Container(
         padding: ResponsiveHelper.symmetric(vertical: 10, horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.black87,
+          color: AppColors.black87,
           borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(8)),
         ),
         child:  Text(
           AppStrings.tapOnTheMapToSelectParkingLocation.tr,
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white, fontSize: ResponsiveHelper.fontSize(13)),
+          style: TextStyle(color: AppColors.white, fontSize: ResponsiveHelper.fontSize(13)),
         ),
       ),
     );
   }
 }
+

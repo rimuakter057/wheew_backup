@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
@@ -25,7 +25,7 @@ class ActionConfirmDialog {
       context: context,
       barrierDismissible: true,
       builder: (_) => Dialog(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         insetPadding: EdgeInsets.symmetric(
           horizontal: ResponsiveHelper.padding(24),
         ),
@@ -84,7 +84,7 @@ class ActionConfirmDialog {
                       onPressed: () => Navigator.of(context).pop(),
                       label: cancelLabel,
                       backgroundColor: AppColors.blueShadeConBg,
-                      shadowColor: Colors.transparent,
+                      shadowColor: AppColors.transparent,
                       textColor: AppColors.black,
                       borderColor: AppColors.white,
                     ),
@@ -109,3 +109,5 @@ class ActionConfirmDialog {
     );
   }
 }
+
+

@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +10,7 @@ import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
 import 'package:platchatapp/feature/map/presentation/screens/simple_map_screen.dart';
 import 'package:platchatapp/feature/parking/presentation/screens/parking_show_screen.dart';
+import 'package:platchatapp/feature/parking/controller/parking_show_controller.dart';
 import 'package:platchatapp/feature/parking/presentation/screens/save_parking_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_nav_screen.dart';
 import 'package:platchatapp/feature/scan/presentation/widget/scan_options_card.dart';
@@ -59,6 +60,10 @@ class _MainNavScreenState extends State<MainNavScreen> {
 
   void _onTap(int index) {
     HapticFeedback.lightImpact();
+    if (Get.isRegistered<ParkingShowController>()) {
+      Get.find<ParkingShowController>().clearSpotDetailsCard();
+    }
+
     if (index == 4) {
       setState(() => _showScanOptions = true);
       return;
@@ -115,7 +120,7 @@ class _MainNavScreenState extends State<MainNavScreen> {
 }
 
 
-// ─── Scan chooser overlay (OCR Scanner / Scan QR Code) ────────────────────────
+// â”€â”€â”€ Scan chooser overlay (OCR Scanner / Scan QR Code) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Lives inside the body Stack (not a modal route) so the floating bottom nav
 // stays crisp on top while the current tab dims/blurs behind the card.
 
@@ -139,7 +144,7 @@ class _ScanOptionsOverlay extends StatelessWidget {
             onTap: onClose,
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-              child: Container(color: Colors.black.withOpacity(0.35)),
+              child: Container(color: AppColors.black.withOpacity(0.35)),
             ),
           ),
           Positioned(
@@ -157,7 +162,7 @@ class _ScanOptionsOverlay extends StatelessWidget {
   }
 }
 
-// ─── Bottom Navigation Bar ────────────────────────────────────────────────────
+// â”€â”€â”€ Bottom Navigation Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _AppBottomNav extends StatelessWidget {
   final int currentIndex;
@@ -223,13 +228,13 @@ class _AppBottomNav extends StatelessWidget {
                           height: ResponsiveHelper.width(22),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 1.5),
+                            border: Border.all(color: AppColors.white, width: 1.5),
                           ),
                           child: Center(
                             child: Text(
                               'P',
                               style: GoogleFonts.poppins(
-                                color: Colors.white,
+                                color: AppColors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: ResponsiveHelper.fontSize(11),
                               ),
@@ -240,7 +245,7 @@ class _AppBottomNav extends StatelessWidget {
                         Text(
                           'Find Parking Spot',
                           style: GoogleFonts.poppins(
-                            color: Colors.white,
+                            color: AppColors.white,
                             fontWeight: FontWeight.w600,
                             fontSize: ResponsiveHelper.fontSize(13),
                           ),
@@ -267,14 +272,14 @@ class _AppBottomNav extends StatelessWidget {
               child: Card(
                 margin: EdgeInsets.zero,
                 elevation: 3,
-                shadowColor: Colors.black.withOpacity(0.08),
+                shadowColor: AppColors.black.withOpacity(0.08),
                 color: const Color(0xFFACB9C8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
                     ResponsiveHelper.borderRadius(36),
                   ),
                   side: BorderSide(
-                    color: Colors.white.withOpacity(0.6),
+                    color: AppColors.white.withOpacity(0.6),
                     width: 1.5,
                   ),
                 ),
@@ -315,7 +320,7 @@ class _AppBottomNav extends StatelessWidget {
                           SizedBox(width: ResponsiveHelper.spacing(8)),
                           _NavItem(
                             icon: AssetsPath.savePNav,
-                            label: "Parking",
+                            label: AppStrings.parking.tr,
                             index: 5,
                             currentIndex: currentIndex,
                             onTap: onTap,
@@ -355,7 +360,7 @@ class _AppBottomNav extends StatelessWidget {
   }
 }
 
-// ─── Regular Nav Item ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Regular Nav Item â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _NavItem extends StatelessWidget {
   final String icon;
@@ -377,8 +382,8 @@ class _NavItem extends StatelessWidget {
     final bool isActive = currentIndex == index;
 
     return Expanded(
-      // active item একটু বেশি জায়গা নেবে, কিন্তু নিচে ConstrainedBox
-      // দিয়ে overflow আটকানো হয়েছে
+      // active item à¦à¦•à¦Ÿà§ à¦¬à§‡à¦¶à¦¿ à¦œà¦¾à¦¯à¦¼à¦—à¦¾ à¦¨à§‡à¦¬à§‡, à¦•à¦¿à¦¨à§à¦¤à§ à¦¨à¦¿à¦šà§‡ ConstrainedBox
+      // à¦¦à¦¿à¦¯à¦¼à§‡ overflow à¦†à¦Ÿà¦•à¦¾à¦¨à§‹ à¦¹à¦¯à¦¼à§‡à¦›à§‡
       flex: isActive ? 2 : 1,
       child: GestureDetector(
         onTap: () => onTap(index),
@@ -423,7 +428,7 @@ class _NavItem extends StatelessWidget {
                   ),
                   onTap: () => onTap(index),
                   child: ConstrainedBox(
-                    // ── overflow fix: active/inactive অনুযায়ী max width বেঁধে দেওয়া ──
+                    // â”€â”€ overflow fix: active/inactive à¦…à¦¨à§à¦¯à¦¾à¦¯à¦¼à§€ max width à¦¬à§‡à¦à¦§à§‡ à¦¦à§‡à¦“à¦¯à¦¼à¦¾ â”€â”€
                     constraints: BoxConstraints(
                       maxWidth: isActive
                           ? ResponsiveHelper.width(120)
@@ -448,7 +453,7 @@ class _NavItem extends StatelessWidget {
                               width: ResponsiveHelper.iconSize(15),
                               height: ResponsiveHelper.iconSize(15),
                               colorFilter: ColorFilter.mode(
-                                isActive ? Colors.white : Color(0xFF1E252E),
+                                isActive ? AppColors.white : Color(0xFF1E252E),
                                 BlendMode.srcIn,
                               ),
                             ),
@@ -460,7 +465,7 @@ class _NavItem extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                                 softWrap: false,
                                 style: GoogleFonts.poppins(
-                                  color: Colors.white,
+                                  color: AppColors.white,
                                   fontWeight: FontWeight.w400,
                                   fontSize: ResponsiveHelper.fontSize(12),
                                 ),
@@ -481,7 +486,7 @@ class _NavItem extends StatelessWidget {
   }
 }
 
-// ─── Scan Nav Item (Standalone Floating Black Button) ─────────────────────────
+// â”€â”€â”€ Scan Nav Item (Standalone Floating Black Button) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class ScanNavItem extends StatelessWidget {
   final String icon;
@@ -523,7 +528,7 @@ class ScanNavItem extends StatelessWidget {
           boxShadow: [
             BoxShape.circle == BoxShape.circle
                 ? BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: AppColors.black.withOpacity(0.3),
               blurRadius: 15,
               offset: const Offset(0, 8),
             )
@@ -536,7 +541,7 @@ class ScanNavItem extends StatelessWidget {
               ),
           ],
           border: Border.all(
-            color: Colors.white.withOpacity(0.15),
+            color: AppColors.white.withOpacity(0.15),
             width: 1.5,
           ),
         ),
@@ -546,7 +551,7 @@ class ScanNavItem extends StatelessWidget {
             width: ResponsiveHelper.iconSize(26),
             height: ResponsiveHelper.iconSize(26),
             colorFilter: const ColorFilter.mode(
-              Colors.white,
+              AppColors.white,
               BlendMode.srcIn,
             ),
           ),
@@ -555,3 +560,4 @@ class ScanNavItem extends StatelessWidget {
     );
   }
 }
+

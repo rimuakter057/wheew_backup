@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -34,7 +34,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         title.tr,
 
         style: GoogleFonts.poppins(
-          color: Colors.black,
+          color: AppColors.black,
 
           fontSize: ResponsiveHelper.fontSize(16),
 
@@ -71,7 +71,7 @@ class BackIconWidget extends StatelessWidget {
         },
         child: Container(
 
-          padding: EdgeInsets.all(12),
+          padding: ResponsiveHelper.all(12),
           decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: AppColors.white.withOpacity(0.5),
@@ -80,11 +80,13 @@ class BackIconWidget extends StatelessWidget {
           child:  Icon(
             Icons.arrow_back,
             size: ResponsiveHelper.iconSize(24),
-            color: Colors.black,
+            color: AppColors.black,
           ),
         ),
       ),
     );
   }
 }
+
+
 

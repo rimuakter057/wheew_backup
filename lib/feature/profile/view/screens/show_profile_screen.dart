@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 
@@ -11,10 +12,10 @@ class ShowProfileImageScreen extends StatelessWidget {
     final bool isNetwork = image.startsWith("http");
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: AppColors.black,
+        iconTheme: const IconThemeData(color: AppColors.white),
       ),
       body: Center(
         child: InteractiveViewer(
@@ -24,3 +25,4 @@ class ShowProfileImageScreen extends StatelessWidget {
     );
   }
 }
+

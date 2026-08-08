@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,7 +13,7 @@ void showCustomSnackBar(
     if (getXSnackBar) {
       Get.showSnackbar(
         GetSnackBar(
-          backgroundColor: isError ? Colors.red : Colors.green,
+          backgroundColor: isError ? AppColors.red : AppColors.green,
           message: message,
           duration: const Duration(seconds: 1),
           snackStyle: SnackStyle.FLOATING,
@@ -22,7 +23,7 @@ void showCustomSnackBar(
           dismissDirection: DismissDirection.horizontal,
           icon: Icon(
             isError ? Icons.error_outline : Icons.check_circle_outline,
-            color: Colors.white,
+            color: AppColors.white,
             size: 24,
           ),
         ),
@@ -34,7 +35,7 @@ void showCustomSnackBar(
             dismissDirection: DismissDirection.horizontal,
             margin: EdgeInsets.all(10),
             duration: const Duration(seconds: 1),
-            backgroundColor: isError ? Colors.red : Colors.green,
+            backgroundColor: isError ? AppColors.red : AppColors.green,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -43,7 +44,7 @@ void showCustomSnackBar(
               children: [
                 Icon(
                   isError ? Icons.error_outline : Icons.check_circle_outline,
-                  color: Colors.white,
+                  color: AppColors.white,
                   size: 20,
                 ),
                 SizedBox(width: 8),
@@ -61,8 +62,8 @@ void showCustomSnackBar(
 void toastMessage({required String message, bool isError = false}) {
   Fluttertoast.showToast(
     msg: message,
-    backgroundColor: isError ? Colors.red : Colors.green,
-    textColor: Colors.white,
+    backgroundColor: isError ? AppColors.red : AppColors.green,
+    textColor: AppColors.white,
     gravity: ToastGravity.BOTTOM,
     toastLength: Toast.LENGTH_LONG,
   );
@@ -104,7 +105,7 @@ void showLoadingDialog({String? message, BuildContext? context}) {
           child: Container(
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.white,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -135,7 +136,7 @@ void showLoadingDialog({String? message, BuildContext? context}) {
             child: Container(
               padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -218,14 +219,14 @@ void showWarningSnackBar(String message, {bool getXSnackBar = false}) {
   if (getXSnackBar) {
     Get.showSnackbar(
       GetSnackBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: AppColors.orange,
         message: message,
         duration: const Duration(seconds: 3),
         snackStyle: SnackStyle.FLOATING,
         margin: EdgeInsets.all(10),
         borderRadius: 8,
         isDismissible: true,
-        icon: Icon(Icons.warning_amber_outlined, color: Colors.white, size: 24),
+        icon: Icon(Icons.warning_amber_outlined, color: AppColors.white, size: 24),
       ),
     );
   } else {
@@ -234,12 +235,12 @@ void showWarningSnackBar(String message, {bool getXSnackBar = false}) {
         SnackBar(
           margin: EdgeInsets.all(10),
           duration: const Duration(seconds: 3),
-          backgroundColor: Colors.orange,
+          backgroundColor: AppColors.orange,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           content: Row(
             children: [
-              Icon(Icons.warning_amber_outlined, color: Colors.white, size: 20),
+              Icon(Icons.warning_amber_outlined, color: AppColors.white, size: 20),
               SizedBox(width: 8),
               Expanded(child: Text(message, style: TextStyle(fontSize: 14))),
             ],
@@ -255,14 +256,14 @@ void showInfoSnackBar(String message, {bool getXSnackBar = false}) {
   if (getXSnackBar) {
     Get.showSnackbar(
       GetSnackBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: AppColors.blue,
         message: message,
         duration: const Duration(seconds: 3),
         snackStyle: SnackStyle.FLOATING,
         margin: EdgeInsets.all(10),
         borderRadius: 8,
         isDismissible: true,
-        icon: Icon(Icons.info_outline, color: Colors.white, size: 24),
+        icon: Icon(Icons.info_outline, color: AppColors.white, size: 24),
       ),
     );
   } else {
@@ -271,12 +272,12 @@ void showInfoSnackBar(String message, {bool getXSnackBar = false}) {
         SnackBar(
           margin: EdgeInsets.all(10),
           duration: const Duration(seconds: 3),
-          backgroundColor: Colors.blue,
+          backgroundColor: AppColors.blue,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           content: Row(
             children: [
-              Icon(Icons.info_outline, color: Colors.white, size: 20),
+              Icon(Icons.info_outline, color: AppColors.white, size: 20),
               SizedBox(width: 8),
               Expanded(child: Text(message, style: TextStyle(fontSize: 14))),
             ],
@@ -286,3 +287,4 @@ void showInfoSnackBar(String message, {bool getXSnackBar = false}) {
     }
   }
 }
+

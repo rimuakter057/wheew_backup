@@ -1,4 +1,4 @@
-
+﻿
 import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
@@ -36,11 +36,11 @@ class ScannedUserSheet extends StatelessWidget {
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return SizedBox(
-      // ── ঠিক স্ক্রিনের অর্ধেক হাইট (fixed, full screen না হয়ে)
+      // â”€â”€ à¦ à¦¿à¦• à¦¸à§à¦•à§à¦°à¦¿à¦¨à§‡à¦° à¦…à¦°à§à¦§à§‡à¦• à¦¹à¦¾à¦‡à¦Ÿ (fixed, full screen à¦¨à¦¾ à¦¹à¦¯à¦¼à§‡)
       height: screenHeight * 0.5,
       child: Container(
         width: double.infinity,
-        // ── বেশি প্যাডিং সবদিকে, নিচে সেইফ এরিয়া যোগ করে যাতে বাটন এজে না লাগে
+        // â”€â”€ à¦¬à§‡à¦¶à¦¿ à¦ªà§à¦¯à¦¾à¦¡à¦¿à¦‚ à¦¸à¦¬à¦¦à¦¿à¦•à§‡, à¦¨à¦¿à¦šà§‡ à¦¸à§‡à¦‡à¦« à¦à¦°à¦¿à¦¯à¦¼à¦¾ à¦¯à§‹à¦— à¦•à¦°à§‡ à¦¯à¦¾à¦¤à§‡ à¦¬à¦¾à¦Ÿà¦¨ à¦à¦œà§‡ à¦¨à¦¾ à¦²à¦¾à¦—à§‡
         padding: EdgeInsets.fromLTRB(
           ResponsiveHelper.padding(24),
           ResponsiveHelper.padding(12),
@@ -57,7 +57,7 @@ class ScannedUserSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // ── Handle bar ───────────────────────────
+            // â”€â”€ Handle bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Container(
               width: 40,
               height: 4,
@@ -69,7 +69,7 @@ class ScannedUserSheet extends StatelessWidget {
 
             SizedBox(height: ResponsiveHelper.spacing(12)),
 
-            // ── Close button (top-right, পুরোপুরি ভিজিবল) ──
+            // â”€â”€ Close button (top-right, à¦ªà§à¦°à§‹à¦ªà§à¦°à¦¿ à¦­à¦¿à¦œà¦¿à¦¬à¦²) â”€â”€
             Row(
               children: [
                 const Spacer(),
@@ -91,12 +91,12 @@ class ScannedUserSheet extends StatelessWidget {
               ],
             ),
 
-            // ── বাকি কনটেন্ট মাঝখানে ──
+            // â”€â”€ à¦¬à¦¾à¦•à¦¿ à¦•à¦¨à¦Ÿà§‡à¦¨à§à¦Ÿ à¦®à¦¾à¦à¦–à¦¾à¦¨à§‡ â”€â”€
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // ── Avatar ───────────────────────────────
+                  // â”€â”€ Avatar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                   CircleAvatar(
                     radius: ResponsiveHelper.borderRadius(44),
                     backgroundImage: NetworkImage(
@@ -107,7 +107,7 @@ class ScannedUserSheet extends StatelessWidget {
 
                   SizedBox(height: ResponsiveHelper.spacing(18)),
 
-                  // ── Name ─────────────────────────────────
+                  // â”€â”€ Name â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                   Text(
                     nickName,
                     style: GoogleFonts.poppins(
@@ -119,11 +119,11 @@ class ScannedUserSheet extends StatelessWidget {
 
                   SizedBox(height: ResponsiveHelper.spacing(8)),
 
-                  // ── Rating ───────────────────────────────
+                  // â”€â”€ Rating â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.star_rounded, color: Colors.amber, size: ResponsiveHelper.iconSize(20)),
+                      Icon(Icons.star_rounded, color: AppColors.amber, size: ResponsiveHelper.iconSize(20)),
                       SizedBox(width: ResponsiveHelper.width(4)),
                       Text(
                         rating.toStringAsFixed(1),
@@ -141,7 +141,7 @@ class ScannedUserSheet extends StatelessWidget {
 
             SizedBox(height: ResponsiveHelper.spacing(20)),
 
-            // ── Buttons ───────────────────────────────
+            // â”€â”€ Buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             if (isExistingChat)
               _SheetButton(
                 label: AppStrings.openChat.tr,
@@ -193,7 +193,7 @@ class ScannedUserSheet extends StatelessWidget {
   }
 }
 
-/// ─── Sheet Button ─────────────────────────────────────────────────────────────
+/// â”€â”€â”€ Sheet Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _SheetButton extends StatelessWidget {
   final String label;
@@ -229,14 +229,14 @@ class _SheetButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: textColor ?? Colors.white, size: 20),
+            Icon(icon, color: textColor ?? AppColors.white, size: 20),
             SizedBox(width: ResponsiveHelper.spacing(8)),
             Text(
               label,
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(16),
                 fontWeight: FontWeight.w600,
-                color: textColor ?? Colors.white,
+                color: textColor ?? AppColors.white,
               ),
             ),
           ],
@@ -245,6 +245,8 @@ class _SheetButton extends StatelessWidget {
     );
   }
 }
+
+
 
 
 

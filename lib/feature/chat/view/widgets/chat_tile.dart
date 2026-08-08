@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -126,7 +126,7 @@ class ChatTile extends StatelessWidget {
                               vertical: ResponsiveHelper.padding(4),
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.blue.shade50,
+                              color: AppColors.blue,
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
@@ -146,7 +146,7 @@ class ChatTile extends StatelessWidget {
                             vertical: ResponsiveHelper.padding(4),
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.red.shade50,
+                            color: AppColors.red,
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -154,7 +154,7 @@ class ChatTile extends StatelessWidget {
                             style: GoogleFonts.poppins(
                               fontSize: ResponsiveHelper.fontSize(11),
                               fontWeight: FontWeight.w500,
-                              color: Colors.red.shade700,
+                              color: AppColors.red,
                             ),
                           ),
                         )
@@ -248,7 +248,7 @@ class ChatTile extends StatelessWidget {
                             style: GoogleFonts.poppins(
                               fontSize: ResponsiveHelper.fontSize(10),
                               fontWeight: FontWeight.w400,
-                              color: Colors.grey.shade600,
+                              color: AppColors.greyShade600,
                             ),
                           ),
                         ],
@@ -295,7 +295,7 @@ class ChatTile extends StatelessWidget {
                               child: Text(
                                 unreadCount! > 99 ? '99+' : '$unreadCount',
                                 style: GoogleFonts.poppins(
-                                  color: Colors.white,
+                                  color: AppColors.white,
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -314,13 +314,13 @@ class ChatTile extends StatelessWidget {
                             const Icon(
                               Icons.done_all,
                               size: 16,
-                              color: Colors.grey,
+                              color: AppColors.grey,
                             )
                           else
                             const Icon(
                               Icons.check,
                               size: 16,
-                              color: Colors.grey,
+                              color: AppColors.grey,
                             ),
                         ],
                       ],
@@ -334,3 +334,6 @@ class ChatTile extends StatelessWidget {
     );
   }
 }
+
+
+

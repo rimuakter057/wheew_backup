@@ -175,4 +175,61 @@ class AppColors {
   static const Color vehicleColorGrigioArgentoBorder = Color(0xFFCECFD1);
   static const Color vehicleColorBiancoBorder = Color(0xFFFFFFFF);
 
+  // Standard Flutter named color aliases
+  static const Color transparent = Colors.transparent;
+  static const Color pureBlack = Color(0xFF000000);
+  static const Color black87 = Colors.black87;
+  static const Color black54 = Colors.black54;
+  static const Color black45 = Colors.black45;
+  static const Color black38 = Colors.black38;
+  static const Color black26 = Colors.black26;
+  static const Color black12 = Colors.black12;
+  static const Color white70 = Colors.white70;
+  static const Color white60 = Colors.white60;
+  static const Color white54 = Colors.white54;
+  static const Color white38 = Colors.white38;
+  static const Color white30 = Colors.white30;
+  static const Color white24 = Colors.white24;
+  static const Color white12 = Colors.white12;
+  static const Color white10 = Colors.white10;
+
+  static const MaterialColor amber = Colors.amber;
+  static const Color starAmber = Color(0xFFFFC107);
+  static const Color amberAccent = Color(0xFFF59E0B);
+  static const MaterialColor orange = Colors.orange;
+  static const MaterialColor yellow = Colors.yellow;
+  static const MaterialColor green = Colors.green;
+  static const MaterialAccentColor greenAccent = Colors.greenAccent;
+  static const MaterialAccentColor redAccent = Colors.redAccent;
+  static const MaterialColor indigo = Colors.indigo;
+  static const MaterialColor purple = Colors.purple;
+  static const MaterialColor grey = Colors.grey;
+  static const MaterialColor materialBlue = Colors.blue;
+  static const MaterialColor materialRed = Colors.red;
+
+  // Material Grey Shades
+  static const Color greyShade50 = Color(0xFFFAFAFA);
+  static const Color greyShade100 = Color(0xFFF5F5F5);
+  static const Color greyShade200 = Color(0xFFEEEEEE);
+  static const Color greyShade300 = Color(0xFFE0E0E0);
+  static const Color greyShade400 = Color(0xFFBDBDBD);
+  static const Color greyShade500 = Color(0xFF9E9E9E);
+  static const Color greyShade600 = Color(0xFF757575);
+  static const Color greyShade700 = Color(0xFF616161);
+  static const Color greyShade800 = Color(0xFF424242);
+  static const Color greyShade900 = Color(0xFF212121);
+
+  // Common UI Hex tokens
+  static const Color darkSlate = Color(0xFF1E293B);
+  static const Color darkSlate2 = Color(0xFF1D2939);
+  static const Color slateLight = Color(0xFFF1F5F9);
+  static const Color slateBorder = Color(0xFFE5E7EB);
+  static const Color emeraldGreen = Color(0xFF10B981);
+  static const Color darkRedButton = Color(0xFFB02517);
+  static const Color deepRedBorder = Color(0xFF7A1C15);
+  static const Color brightBlueButton = Color(0xFF0062E0);
+  static const Color darkBlueButton = Color(0xFF014495);
+  static const Color inputFillBg = Color(0xFFDDE2ED);
+  static const Color deepRedBg = Color(0xFF4A0F0A);
+  static const Color darkNavy = Color(0xFF1A1A2E);
 }

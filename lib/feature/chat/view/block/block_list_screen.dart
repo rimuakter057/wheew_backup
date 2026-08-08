@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable
+﻿// ignore_for_file: unused_local_variable
 
 import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
@@ -50,21 +50,21 @@ class _BlockListScreenState extends State<BlockListScreen> {
         gradient: AppColors.primaryBackgroundGradient,
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.transparent,
           elevation: 0,
           centerTitle: true,
           leading: Padding(
             padding: const EdgeInsets.only(left: 16.0, top: 8.0, bottom: 8.0),
             child: Container(
               decoration: const BoxDecoration(
-                color: Colors.white,
+                color: AppColors.white,
                 shape: BoxShape.circle,
               ),
               child: IconButton(
                 padding: EdgeInsets.zero,
-                icon: const Icon(Icons.arrow_back, color: Colors.black87),
+                icon: const Icon(Icons.arrow_back, color: AppColors.black87),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
@@ -92,7 +92,7 @@ class _BlockListScreenState extends State<BlockListScreen> {
                 AppStrings.emptyBlockList.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(16),
-                  color: Colors.grey.shade500,
+                  color: AppColors.greyShade500,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -104,12 +104,12 @@ class _BlockListScreenState extends State<BlockListScreen> {
             child: Container(
               margin: EdgeInsets.all(ResponsiveHelper.padding(16)),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.9),
+                color: AppColors.white.withOpacity(0.9),
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.white.withOpacity(0.6)),
+                border: Border.all(color: AppColors.white.withOpacity(0.6)),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: AppColors.black.withOpacity(0.04),
                     blurRadius: 16,
                     offset: const Offset(0, 8),
                   )
@@ -123,7 +123,7 @@ class _BlockListScreenState extends State<BlockListScreen> {
                   padding: EdgeInsets.all(ResponsiveHelper.padding(16)),
                   itemCount: controller.userBlockList.length,
                   separatorBuilder: (context, index) => Divider(
-                    color: Colors.grey.shade100,
+                    color: AppColors.greyShade100,
                     height: 24,
                     thickness: 1,
                     indent: 60,
@@ -204,7 +204,7 @@ class _BlockListScreenState extends State<BlockListScreen> {
                             child: Text(
                               AppStrings.unblock.tr,
                               style: GoogleFonts.poppins(
-                                color: Colors.white,
+                                color: AppColors.white,
                                 fontSize: ResponsiveHelper.fontSize(12),
                                 fontWeight: FontWeight.w600,
                               ),
@@ -223,3 +223,6 @@ class _BlockListScreenState extends State<BlockListScreen> {
     );
   }
 }
+
+
+

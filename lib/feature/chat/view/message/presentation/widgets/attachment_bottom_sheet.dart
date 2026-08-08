@@ -1,4 +1,4 @@
-import 'package:file_picker/file_picker.dart';
+﻿import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
@@ -10,22 +10,22 @@ class AttachmentBottomSheet {
   }) {
     showDialog(
       context: context,
-      barrierColor: Colors.black26,
+      barrierColor: AppColors.black26,
       builder: (context) {
         return Align(
           alignment: Alignment.bottomCenter,
           child: Padding(
             padding: const EdgeInsets.only(bottom: 80, left: 16, right: 16),
             child: Material(
-              color: Colors.transparent,
+              color: AppColors.transparent,
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: AppColors.black.withOpacity(0.1),
                       blurRadius: 20,
                       offset: const Offset(0, 4),
                     ),
@@ -40,7 +40,7 @@ class AttachmentBottomSheet {
                       height: 4,
                       margin: const EdgeInsets.only(bottom: 16),
                       decoration: BoxDecoration(
-                        color: Colors.grey[300],
+                        color: AppColors.grey[300],
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -52,7 +52,7 @@ class AttachmentBottomSheet {
                         _AttachOption(
                           icon: Icons.camera_alt_rounded,
                           label: 'Camera',
-                          color: Colors.orange,
+                          color: AppColors.orange,
                           onTap: () async {
                             Navigator.pop(context);
                             final picker = ImagePicker();
@@ -70,7 +70,7 @@ class AttachmentBottomSheet {
                         _AttachOption(
                           icon: Icons.image_rounded,
                           label: 'Gallery',
-                          color: Colors.purple,
+                          color: AppColors.purple,
                           onTap: () async {
                             Navigator.pop(context);
                             final picker = ImagePicker();
@@ -88,7 +88,7 @@ class AttachmentBottomSheet {
                         _AttachOption(
                           icon: Icons.insert_drive_file_rounded,
                           label: 'Document',
-                          color: Colors.blue,
+                          color: AppColors.blue,
                           onTap: () async {
                             Navigator.pop(context);
                             final picker = ImagePicker();
@@ -145,7 +145,7 @@ class _AttachOption extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 12,
-              color: Colors.grey[700],
+              color: AppColors.grey[700],
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -154,3 +154,5 @@ class _AttachOption extends StatelessWidget {
     );
   }
 }
+
+

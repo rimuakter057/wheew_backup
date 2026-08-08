@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -181,7 +181,7 @@ class ParkingLocationCard extends StatelessWidget {
                           size: ResponsiveHelper.iconSize(18),
                           color: (double.tryParse(ratingLabel) ?? 0.0) > 0
                               ? const Color(0xFF1D4ED8)
-                              : Colors.grey,
+                              : AppColors.grey,
                         ),
                         SizedBox(width: ResponsiveHelper.spacing(4)),
                         Text(
@@ -256,7 +256,7 @@ class ParkingLocationCard extends StatelessWidget {
                 Container(
                   padding: ResponsiveHelper.symmetric(vertical: 8),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.04),
+                    color: AppColors.black.withOpacity(0.04),
                     borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
                   ),
                   child: Row(
@@ -333,3 +333,5 @@ class ParkingLocationCard extends StatelessWidget {
     );
   }
 }
+
+

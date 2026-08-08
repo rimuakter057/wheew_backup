@@ -1,10 +1,10 @@
-//
+﻿//
 // import 'package:flutter/material.dart';
 // import 'package:platchatapp/utils/color/app_colors.dart';
 //
 // class CustomSnackbar {
 //
-//   /// ✅ SUCCESS
+//   /// âœ… SUCCESS
 //   static void success({required BuildContext context,required String message}) {
 //
 //     ScaffoldMessenger.of(context)
@@ -15,7 +15,7 @@
 //
 //           content: Row(
 //             children: [
-//               const Icon(Icons.check_circle, color: Colors.white),
+//               const Icon(Icons.check_circle, color: AppColors.white),
 //               const SizedBox(width: 10),
 //               Expanded(child: Text(message)),
 //             ],
@@ -23,7 +23,7 @@
 //
 //           backgroundColor:AppColors.blueBox,
 //
-//           behavior: SnackBarBehavior.floating, // ✅ small letter
+//           behavior: SnackBarBehavior.floating, // âœ… small letter
 //
 //           margin: const EdgeInsets.all(12),
 //
@@ -40,7 +40,7 @@
 //   }
 //
 //
-//   /// ❌ ERROR
+//   /// âŒ ERROR
 //   static void error({required BuildContext context,required String message}) {
 //
 //     ScaffoldMessenger.of(context)
@@ -51,15 +51,15 @@
 //
 //           content: Row(
 //             children: [
-//               const Icon(Icons.error, color: Colors.white),
+//               const Icon(Icons.error, color: AppColors.white),
 //               const SizedBox(width: 10),
 //               Expanded(child: Text(message)),
 //             ],
 //           ),
 //
-//           backgroundColor: Colors.red,
+//           backgroundColor: AppColors.red,
 //
-//           behavior: SnackBarBehavior.floating, // ✅ small letter
+//           behavior: SnackBarBehavior.floating, // âœ… small letter
 //
 //           margin: const EdgeInsets.all(12),
 //
@@ -86,7 +86,7 @@ import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
 class CustomSnackbar {
-  /// ✅ SUCCESS
+  /// âœ… SUCCESS
   static void success({required BuildContext context, required String message}) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
@@ -94,7 +94,7 @@ class CustomSnackbar {
         SnackBar(
           content: Row(
             children: [
-              const Icon(Icons.check_circle, color: Colors.white),
+              const Icon(Icons.check_circle, color: AppColors.white),
               const SizedBox(width: 10),
               Expanded(child: Text(message)),
             ],
@@ -110,7 +110,7 @@ class CustomSnackbar {
       );
   }
 
-  /// ❌ ERROR
+  /// âŒ ERROR
   static void error({required BuildContext context, required String message}) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
@@ -118,12 +118,12 @@ class CustomSnackbar {
         SnackBar(
           content: Row(
             children: [
-              const Icon(Icons.error, color: Colors.white),
+              const Icon(Icons.error, color: AppColors.white),
               const SizedBox(width: 10),
               Expanded(child: Text(message)),
             ],
           ),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.red,
           behavior: SnackBarBehavior.floating,
           margin: const EdgeInsets.all(12),
           shape: RoundedRectangleBorder(
@@ -134,3 +134,4 @@ class CustomSnackbar {
       );
   }
 }
+

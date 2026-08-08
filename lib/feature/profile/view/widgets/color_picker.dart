@@ -1,4 +1,4 @@
-// import 'package:flutter/material.dart';
+﻿// import 'package:flutter/material.dart';
 // import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
 // import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 // import 'package:platchatapp/utils/color/app_colors.dart';
@@ -15,7 +15,7 @@
 //     {'name': 'Grigio', 'color': Color(0xFF6E7074)},
 //     {'name': 'Blu', 'color': Color(0xFF2C3E5C)},
 //     {'name': 'Rosso', 'color': Color(0xFFB11724)},
-//     {'name': 'Bianco2', 'color': Colors.white},
+//     {'name': 'Bianco2', 'color': AppColors.white},
 //   ];
 //
 //   @override
@@ -57,7 +57,7 @@
 //                   shape: BoxShape.circle,
 //                   color: c['color'],
 //                   border: Border.all(
-//                     color: isSelected ? AppColors.blue : Colors.grey.shade300,
+//                     color: isSelected ? AppColors.blue : AppColors.greyShade300,
 //                     width: isSelected ? 3 : 1,
 //                   ),
 //                   boxShadow: isSelected
@@ -75,7 +75,7 @@
 //                   Icons.check,
 //                   color: c['name'] == 'Bianco' || c['name'] == 'Bianco2'
 //                       ? AppColors.blue
-//                       : Colors.white,
+//                       : AppColors.white,
 //                   size: 18,
 //                 )
 //                     : null,
@@ -162,7 +162,7 @@ class VehicleColorPicker extends StatelessWidget {
                   shape: BoxShape.circle,
                   // সিলেকশন হাইলাইট বর্ডার এবং গ্লো শ্যাডো (নিজের কালারের ডিপ শেড)
                   border: Border.all(
-                    color: isSelected ? selectionColor : Colors.transparent,
+                    color: isSelected ? selectionColor : AppColors.transparent,
                     width: isSelected ? 1.5 : 0,
                   ),
                   boxShadow: isSelected
@@ -176,7 +176,7 @@ class VehicleColorPicker extends StatelessWidget {
                       : [
                     // ছবির মতো বাস্তবসম্মত ৩D আউটার শ্যাডো
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: AppColors.black.withOpacity(0.2),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -206,9 +206,9 @@ class VehicleColorPicker extends StatelessWidget {
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
-                              Colors.white.withOpacity(0.55), // ছবির মতো উপরের চমৎকার সাদা লাইট রিফ্লেকশন
-                              Colors.white.withOpacity(0.0),   // মাঝখানে ট্রান্সপারেন্ট
-                              Colors.black.withOpacity(0.15),  // নিচের অংশে গভীর ছায়া বা ডেপ্থ
+                              AppColors.white.withOpacity(0.55), // ছবির মতো উপরের চমৎকার সাদা লাইট রিফ্লেকশন
+                              AppColors.white.withOpacity(0.0),   // মাঝখানে ট্রান্সপারেন্ট
+                              AppColors.black.withOpacity(0.15),  // নিচের অংশে গভীর ছায়া বা ডেপ্থ
                             ],
                             stops: const [0.0, 0.45, 1.0],
                           ),
@@ -224,7 +224,7 @@ class VehicleColorPicker extends StatelessWidget {
                             color: (c['color'] as Color).computeLuminance() >
                                 0.6
                                 ? selectionColor
-                                : Colors.white,
+                                : AppColors.white,
                             size: 20,
                           ),
                         ),
@@ -246,6 +246,7 @@ class VehicleColorPicker extends StatelessWidget {
       return const Color(0xFFB0B0B0);
     }
 
-    return Color.lerp(color, Colors.black, 0.25)!;
+    return Color.lerp(color, AppColors.black, 0.25)!;
   }
 }
+

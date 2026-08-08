@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable
+﻿// ignore_for_file: unused_local_variable
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -134,7 +134,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           controller: authController.licenseController,
                           title: AppStrings.licensePlateOrNickName.tr,
                           hintText: AppStrings.enterLicensePlateOrNickName.tr,
-                          fillColor: Colors.white.withOpacity(0.55),
+                          fillColor: AppColors.white.withOpacity(0.55),
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: ResponsiveHelper.padding(16),
                             vertical: ResponsiveHelper.padding(16),
@@ -154,8 +154,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               height: ResponsiveHelper.iconSize(16),
                             ),
                           ),
-                          border: _fieldBorder(Colors.transparent, 1),
-                          enabledBorder: _fieldBorder(Colors.transparent, 1),
+                          border: _fieldBorder(AppColors.transparent, 1),
+                          enabledBorder: _fieldBorder(AppColors.transparent, 1),
                           focusedBorder: _fieldBorder(AppColors.blue, 1.5),
                           validator: (value) =>
                               (value == null || value.trim().isEmpty)
@@ -171,7 +171,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           title: AppStrings.password.tr,
                           hintText: AppStrings.enterYourPassword.tr,
                           isPassword: true,
-                          fillColor: Colors.white.withOpacity(0.55),
+                          fillColor: AppColors.white.withOpacity(0.55),
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: ResponsiveHelper.padding(16),
                             vertical: ResponsiveHelper.padding(16),
@@ -191,8 +191,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               height: ResponsiveHelper.iconSize(16),
                             ),
                           ),
-                          border: _fieldBorder(Colors.transparent, 1),
-                          enabledBorder: _fieldBorder(Colors.transparent, 1),
+                          border: _fieldBorder(AppColors.transparent, 1),
+                          enabledBorder: _fieldBorder(AppColors.transparent, 1),
                           focusedBorder: _fieldBorder(AppColors.blue, 1.5),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
@@ -392,7 +392,7 @@ padding: ResponsiveHelper.all(18),
           border: Border.all(color: AppColors.white),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: AppColors.black.withOpacity(0.08),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -409,3 +409,5 @@ padding: ResponsiveHelper.all(18),
     );
   }
 }
+
+

@@ -41,11 +41,11 @@ import '../repository/country_list.dart';
 Future<void> onSignupSuccess(String userId) async {
   final cryptoService = CryptoService();
 
-  // Key pair জেনারেট + secure storage-এ সেভ
+  // Key pair à¦œà§‡à¦¨à¦¾à¦°à§‡à¦Ÿ + secure storage-à¦ à¦¸à§‡à¦­
   final keyPair = await cryptoService.generateKeyPair();
   await cryptoService.savePrivateKey(keyPair);
 
-  // Console-এ দেখার জন্য দুটো key প্রিন্ট করা
+  // Console-à¦ à¦¦à§‡à¦–à¦¾à¦° à¦œà¦¨à§à¦¯ à¦¦à§à¦Ÿà§‹ key à¦ªà§à¦°à¦¿à¦¨à§à¦Ÿ à¦•à¦°à¦¾
   final privateKeyBytes = await keyPair.extractPrivateKeyBytes();
   final publicKey = await keyPair.extractPublicKey();
 
@@ -134,9 +134,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         vertical: ResponsiveHelper.padding(16),
       ),
       filled: true,
-      fillColor: Colors.white.withOpacity(0.55),
-      border: _fieldBorder(Colors.transparent, 1),
-      enabledBorder: _fieldBorder(Colors.transparent, 1),
+      fillColor: AppColors.white.withOpacity(0.55),
+      border: _fieldBorder(AppColors.transparent, 1),
+      enabledBorder: _fieldBorder(AppColors.transparent, 1),
       focusedBorder: _fieldBorder(AppColors.blue, 1.5),
     );
   }
@@ -174,9 +174,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: Container(
                             width: ResponsiveHelper.width(40),
                             height: ResponsiveHelper.height(40),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
                               shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.black12,
+                                  blurRadius: 4,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
                             ),
                             child: Icon(
                               Icons.arrow_back,
@@ -204,15 +211,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     controller: nicknameController,
                     title: AppStrings.nickName.tr,
                     hintText: AppStrings.typeHere1.tr,
-                    fillColor: Colors.white.withOpacity(0.55),
+                    fillColor: AppColors.white.withOpacity(0.55),
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: ResponsiveHelper.padding(16),
                       vertical: ResponsiveHelper.padding(16),
                     ),
                     prefixIconConstraints: _fieldIconConstraints,
                     prefixIcon: _fieldIcon(AssetsPath.profileLogin),
-                    border: _fieldBorder(Colors.transparent, 1),
-                    enabledBorder: _fieldBorder(Colors.transparent, 1),
+                    border: _fieldBorder(AppColors.transparent, 1),
+                    enabledBorder: _fieldBorder(AppColors.transparent, 1),
                     focusedBorder: _fieldBorder(AppColors.blue, 1.5),
                     inputFormatters: [
                       TextInputFormatter.withFunction((oldValue, newValue) {
@@ -234,25 +241,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     controller: licenseController,
                     title: AppStrings.licenseNumber.tr,
                     hintText: AppStrings.typeHere.tr,
-                    fillColor: Colors.white.withOpacity(0.55),
+                    fillColor: AppColors.white.withOpacity(0.55),
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: ResponsiveHelper.padding(16),
                       vertical: ResponsiveHelper.padding(16),
                     ),
                     prefixIconConstraints: _fieldIconConstraints,
                     prefixIcon: _fieldIcon(AssetsPath.licenseNumberSignUp),
-                    border: _fieldBorder(Colors.transparent, 1),
-                    enabledBorder: _fieldBorder(Colors.transparent, 1),
+                    border: _fieldBorder(AppColors.transparent, 1),
+                    enabledBorder: _fieldBorder(AppColors.transparent, 1),
                     focusedBorder: _fieldBorder(AppColors.blue, 1.5),
 
-                    // validator: (value) {
-                    //   if (value == null || value.trim().isEmpty) {
-                    //     return 'License number is required';
-                    //   } else if (value.trim().length < 7) {
-                    //     return AppStrings.licenseNumberMustBe.tr;
-                    //   }
-                    //   return null;
-                    // },
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return AppStrings.licenseNumberRequired.tr;
@@ -288,15 +287,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     title: AppStrings.email.tr + " (" + AppStrings.onlyForRecovery.tr + ")",
                     hintText: AppStrings.typeHere1.tr,
                     keyboardType: TextInputType.emailAddress,
-                    fillColor: Colors.white.withOpacity(0.55),
+                    fillColor: AppColors.white.withOpacity(0.55),
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: ResponsiveHelper.padding(16),
                       vertical: ResponsiveHelper.padding(16),
                     ),
                     prefixIconConstraints: _fieldIconConstraints,
                     prefixIcon: _fieldIcon(AssetsPath.emailSignUp),
-                    border: _fieldBorder(Colors.transparent, 1),
-                    enabledBorder: _fieldBorder(Colors.transparent, 1),
+                    border: _fieldBorder(AppColors.transparent, 1),
+                    enabledBorder: _fieldBorder(AppColors.transparent, 1),
                     focusedBorder: _fieldBorder(AppColors.blue, 1.5),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -359,13 +358,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     dropdownStyleData: DropdownStyleData(
                       maxHeight: ResponsiveHelper.height(160),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.white,
                         borderRadius: BorderRadius.circular(
                           ResponsiveHelper.borderRadius(12),
                         ),
-                        boxShadow: const [
+                        boxShadow: [
                           BoxShadow(
-                            color: Colors.black12,
+                            color: AppColors.black12,
                             blurRadius: 8,
                             offset: Offset(0, 4),
                           ),
@@ -439,7 +438,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           dropdownStyleData: DropdownStyleData(
                             maxHeight: 250,
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: AppColors.white,
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
@@ -456,13 +455,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: cityController,
                       title: "${AppStrings.city.tr} (${AppStrings.optional.tr})",
                       hintText: AppStrings.typeHere.tr,
-                      fillColor: Colors.white.withOpacity(0.55),
+                      fillColor: AppColors.white.withOpacity(0.55),
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: ResponsiveHelper.padding(16),
                         vertical: ResponsiveHelper.padding(16),
                       ),
-                      border: _fieldBorder(Colors.transparent, 1),
-                      enabledBorder: _fieldBorder(Colors.transparent, 1),
+                      border: _fieldBorder(AppColors.transparent, 1),
+                      enabledBorder: _fieldBorder(AppColors.transparent, 1),
                       focusedBorder: _fieldBorder(AppColors.blue, 1.5),
                     ),
                   ),
@@ -477,26 +476,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 title: AppStrings.password.tr,
                 hintText: AppStrings.password.tr,
                 isPassword: true,
-                fillColor: Colors.white.withOpacity(0.55),
+                fillColor: AppColors.white.withOpacity(0.55),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: ResponsiveHelper.padding(16),
                   vertical: ResponsiveHelper.padding(16),
                 ),
                 prefixIconConstraints: _fieldIconConstraints,
                 prefixIcon: _fieldIcon(AssetsPath.passwordLogin),
-                border: _fieldBorder(Colors.transparent, 1),
-                enabledBorder: _fieldBorder(Colors.transparent, 1),
+                border: _fieldBorder(AppColors.transparent, 1),
+                enabledBorder: _fieldBorder(AppColors.transparent, 1),
                 focusedBorder: _fieldBorder(AppColors.blue, 1.5),
 
-                // validator: (value) {
-                //   if (value == null || value.trim().isEmpty) {
-                //     return AppStrings.passwordIsRequired.tr;
-                //   } else if (value.trim().length < 6) {
-                //     return AppStrings.passwordMustBe6Characters.tr;
-                //   }
-                //
-                //   return null;
-                // },
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return AppStrings.passwordIsRequired.tr;
@@ -538,15 +528,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 title: AppStrings.confirmPassword.tr,
                 hintText: AppStrings.confirmPassword.tr,
                 isPassword: true,
-                fillColor: Colors.white.withOpacity(0.55),
+                fillColor: AppColors.white.withOpacity(0.55),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: ResponsiveHelper.padding(16),
                   vertical: ResponsiveHelper.padding(16),
                 ),
                 prefixIconConstraints: _fieldIconConstraints,
                 prefixIcon: _fieldIcon(AssetsPath.passwordLogin),
-                border: _fieldBorder(Colors.transparent, 1),
-                enabledBorder: _fieldBorder(Colors.transparent, 1),
+                border: _fieldBorder(AppColors.transparent, 1),
+                enabledBorder: _fieldBorder(AppColors.transparent, 1),
                 focusedBorder: _fieldBorder(AppColors.blue, 1.5),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -587,17 +577,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   Expanded(
                     child: RichText(
                       text: TextSpan(
-                        style: TextStyle(fontSize: 14, color: Colors.black),
+                        style: TextStyle(fontSize: ResponsiveHelper.fontSize(14), color: AppColors.black),
                         children: [
                           TextSpan(
                             text: AppStrings.iAgreeTo.tr + ' ',
                             style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w400,
-                              fontSize: 14,
-                              color: Colors.black,
+                              fontSize: ResponsiveHelper.fontSize(14),
+                              color: AppColors.black,
                             ),
                           ),
-
                           TextSpan(
                             text: AppStrings.termsAndConditions.tr,
                             style: GoogleFonts.poppins(
@@ -607,7 +596,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                // Privacy Policy link open
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -617,13 +605,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 );
                               },
                           ),
-
                           TextSpan(
                             text: AppStrings.and.tr,
                             style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w400,
-                              fontSize: 14,
-                              color: Colors.black,
+                              fontSize: ResponsiveHelper.fontSize(14),
+                              color: AppColors.black,
                             ),
                           ),
                           TextSpan(
@@ -635,7 +622,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                // Privacy Policy link open
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -720,7 +706,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ..showSnackBar(
                           const SnackBar(
                             content: Text('Registration successful'),
-                            backgroundColor: Colors.green,
+                            backgroundColor: AppColors.green,
                             behavior: SnackBarBehavior.floating,
                           ),
                         );
@@ -729,11 +715,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       final cryptoService = CryptoService();
 
-                      // Key pair জেনারেট + secure storage-এ সেভ
+                      // Key pair à¦œà§‡à¦¨à¦¾à¦°à§‡à¦Ÿ + secure storage-à¦ à¦¸à§‡à¦­
                       final keyPair = await cryptoService.generateKeyPair();
                       await cryptoService.savePrivateKey(keyPair);
 
-                      // Console-এ দেখার জন্য দুটো key প্রিন্ট করা
+                      // Console-à¦ à¦¦à§‡à¦–à¦¾à¦° à¦œà¦¨à§à¦¯ à¦¦à§à¦Ÿà§‹ key à¦ªà§à¦°à¦¿à¦¨à§à¦Ÿ à¦•à¦°à¦¾
                       final privateKeyBytes = await keyPair.extractPrivateKeyBytes();
                       final publicKey = await keyPair.extractPublicKey();
 
@@ -758,7 +744,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ..showSnackBar(
                         SnackBar(
                           content: Text(message),
-                          backgroundColor: Colors.red,
+                          backgroundColor: AppColors.red,
                           behavior: SnackBarBehavior.floating,
                           margin: const EdgeInsets.all(16),
                           shape: RoundedRectangleBorder(
@@ -778,7 +764,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           content: Text(
                             'Server is not responding. Please check your connection.',
                           ),
-                          backgroundColor: Colors.red,
+                          backgroundColor: AppColors.red,
                           behavior: SnackBarBehavior.floating,
                         ),
                       );
@@ -794,7 +780,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           content: Text(
                             'No internet connection. Please check your network.',
                           ),
-                          backgroundColor: Colors.red,
+                          backgroundColor: AppColors.red,
                           behavior: SnackBarBehavior.floating,
                         ),
                       );
@@ -808,7 +794,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ..showSnackBar(
                         const SnackBar(
                           content: Text('Unexpected server response.'),
-                          backgroundColor: Colors.red,
+                          backgroundColor: AppColors.red,
                           behavior: SnackBarBehavior.floating,
                         ),
                       );
@@ -827,7 +813,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           content: Text(
                             e.toString().replaceFirst('Exception: ', ''),
                           ),
-                          backgroundColor: Colors.red,
+                          backgroundColor: AppColors.red,
                           behavior: SnackBarBehavior.floating,
                           margin: const EdgeInsets.all(16),
                           shape: RoundedRectangleBorder(
@@ -879,44 +865,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  // void _handleSignUp() async {
-  //   if (!_formKey.currentState!.validate()) {
-  //     showErrorSnackBar('Please fill all fields');
-  //     return;
-  //   }
-
-  //   if (!agree) {
-  //     showErrorSnackBar('Please accept terms');
-  //     return;
-  //   }
-
-  //   final success = await authController.registerAndLogin(
-  //     context: context,
-  //     licenceId: licenseController.text.trim(),
-  //     nickName: nicknameController.text.trim(),
-  //     password: passwordController.text.trim(),
-  //     confirmPassword: confirmPasswordController.text.trim(),
-  //     designation: selectedDesignation!,
-  //   );
-
-  //   if (success && context.mounted) {
-  //     showSuccessToast('Registration successful!');
-  //     context.goNamed(RouteName.signIn);
-  //   }
-  // }
-
   void showWarningSnackBar(String s) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(s, style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.red,
+        content: Text(s, style: TextStyle(color: AppColors.white)),
+        backgroundColor: AppColors.red,
       ),
     );
   }
 
   Future<void> _registerDeviceKey(String publicKeyBase64) async {
     try {
-      print('🔑 Device Key Registration Started...');
+      print('ðŸ”‘ Device Key Registration Started...');
       final deviceInfo = DeviceInfoPlugin();
       String deviceId = 'unknown_device';
       if (Platform.isAndroid) {
@@ -927,8 +887,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         deviceId = iosInfo.identifierForVendor ?? 'unknown_ios';
       }
       
-      print('📱 Device ID: $deviceId');
-      print('🔑 Public Key Base64: $publicKeyBase64');
+      print('ðŸ“± Device ID: $deviceId');
+      print('ðŸ”‘ Public Key Base64: $publicKeyBase64');
 
       final response = await ApiClient.postData(
         uri: '/chat/e2ee/device-key',
@@ -938,11 +898,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         },
       );
 
-      print('📡 Device Key API Response Code: ${response.statusCode}');
-      print('📡 Device Key API Response Body: ${response.body}');
+      print('ðŸ“¡ Device Key API Response Code: ${response.statusCode}');
+      print('ðŸ“¡ Device Key API Response Body: ${response.body}');
     } catch (e, stackTrace) {
-      print('❌ Failed to register device key silently: $e');
+      print('âŒ Failed to register device key silently: $e');
       print(stackTrace);
     }
   }
 }
+
+

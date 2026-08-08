@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -126,7 +126,7 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
     }
   }
 
-  // ── Field mapping (real backend data, no design change) ──────────────────
+  // â”€â”€ Field mapping (real backend data, no design change) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   String _distanceLabel(Map<String, dynamic> location) {
     if (_userPosition == null) return '--';
@@ -177,7 +177,7 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
       return (
         label: 'Disable',
         icon: Icons.accessible_rounded,
-        color: Colors.grey,
+        color: AppColors.grey,
         asset: AssetsPath.electricCharging,
       );
     }
@@ -346,3 +346,5 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
     );
   }
 }
+
+

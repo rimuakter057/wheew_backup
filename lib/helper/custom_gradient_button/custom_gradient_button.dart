@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
@@ -66,7 +66,7 @@ class CustomGradientButton extends StatelessWidget {
 
           color: (!isButtonDisabled || keepGradientWhenDisabled)
               ? backgroundColor
-              : Colors.grey.shade400,
+              : AppColors.greyShade400,
 
           border:  Border(
             bottom: BorderSide(
@@ -77,7 +77,7 @@ class CustomGradientButton extends StatelessWidget {
         ),
         child: InkWell(
           onTap: isButtonDisabled ? null : onPressed,
-          splashColor: Colors.white24,
+          splashColor: AppColors.white24,
           child: Padding(
             padding: ResponsiveHelper.symmetric(horizontal: 4),
             child: Center(
@@ -86,7 +86,7 @@ class CustomGradientButton extends StatelessWidget {
                 height: 24,
                 width: 24,
                 child: CircularProgressIndicator(
-                  color: Colors.white,
+                  color: AppColors.white,
                   strokeWidth: 2.5,
                 ),
               )
@@ -106,7 +106,7 @@ class CustomGradientButton extends StatelessWidget {
                               label!,
                               maxLines: 1,
                               style: TextStyle(
-                                color: textColor ?? Colors.white,
+                                color: textColor ?? AppColors.white,
                                 fontSize: ResponsiveHelper.fontSize(15),
                                 fontWeight: FontWeight.w500,
                               ),

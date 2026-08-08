@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/auth/view/widgets/custom_devider_or.dart';
@@ -500,8 +500,8 @@ class _VehicleColorSummary extends StatelessWidget {
               height: ResponsiveHelper.iconSize(16),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _swatches[colorName] ?? Colors.grey,
-                border: Border.all(color: Colors.white, width: 1),
+                color: _swatches[colorName] ?? AppColors.grey,
+                border: Border.all(color: AppColors.white, width: 1),
               ),
             ),
             SizedBox(width: ResponsiveHelper.width(8)),
@@ -512,7 +512,7 @@ class _VehicleColorSummary extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: ResponsiveHelper.fontSize(14),
-                color: hasColor ? Colors.black87 : Colors.grey,
+                color: hasColor ? AppColors.black87 : AppColors.grey,
               ),
             ),
           ),
@@ -521,3 +521,5 @@ class _VehicleColorSummary extends StatelessWidget {
     );
   }
 }
+
+

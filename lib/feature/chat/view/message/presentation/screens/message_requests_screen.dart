@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -52,13 +52,13 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
   @override
   Widget build(BuildContext context) {
     final content = Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       appBar: widget.showAppBar
           ? AppBar(
-              backgroundColor: Colors.transparent,
+              backgroundColor: AppColors.transparent,
               elevation: 0,
               scrolledUnderElevation: 0,
-              surfaceTintColor: Colors.transparent,
+              surfaceTintColor: AppColors.transparent,
               leading: Center(
                 child: GestureDetector(
                   onTap: () => Navigator.of(context).pop(),
@@ -67,10 +67,10 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                     height: ResponsiveHelper.width(42),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white.withValues(alpha: 0.9),
+                      color: AppColors.white.withValues(alpha: 0.9),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
+                          color: AppColors.black.withValues(alpha: 0.05),
                           blurRadius: 10,
                           offset: const Offset(0, 3),
                         ),
@@ -87,7 +87,7 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
               title: Text(
                 'Received Requests',
                 style: GoogleFonts.poppins(
-                  color: Colors.black87,
+                  color: AppColors.black87,
                   fontWeight: FontWeight.w700,
                   fontSize: ResponsiveHelper.fontSize(18),
                 ),
@@ -111,7 +111,7 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(14),
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    color: AppColors.black87,
                   ),
                 ),
               ),
@@ -169,16 +169,16 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                       Text(
                         AppStrings.noPendingMessageRequests.tr,
                         style: GoogleFonts.poppins(
-                          color: Colors.black87,
+                          color: AppColors.black87,
                           fontSize: ResponsiveHelper.fontSize(16),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       SizedBox(height: ResponsiveHelper.spacing(6)),
                       Text(
-                        "New requests will show up here",
+                        AppStrings.newRequestsShowUpHere.tr,
                         style: GoogleFonts.poppins(
-                          color: Colors.grey.shade500,
+                          color: AppColors.greyShade500,
                           fontSize: ResponsiveHelper.fontSize(13),
                         ),
                       ),
@@ -240,12 +240,12 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                 child: Container(
                 padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
-                 // color: Colors.white.withValues(alpha: 0.85),
+                 // color: AppColors.white.withValues(alpha: 0.85),
                   gradient: AppColors.parkingContainerGradient,                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.8)),
+                  border: Border.all(color: AppColors.white.withValues(alpha: 0.8)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
+                      color: AppColors.black.withValues(alpha: 0.04),
                       blurRadius: 15,
                       offset: const Offset(0, 4),
                     )
@@ -280,7 +280,7 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(12),
-                                color: Colors.grey.shade600,
+                                color: AppColors.greyShade600,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -292,7 +292,7 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(12),
-                                color: Colors.grey.shade700,
+                                color: AppColors.greyShade700,
                                 fontStyle: FontStyle.italic,
                               ),
                             ),
@@ -306,8 +306,8 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                       onTap: () {
                         ActionConfirmDialog.show(
                           context,
-                          title: 'Reject request?',
-                          message: "Reject the message request from $name?",
+                          title: AppStrings.rejectRequestTitle.tr,
+                          message: AppStrings.rejectRequestFrom.tr.replaceAll('@name', name),
                           confirmLabel: AppStrings.reject.tr,
                           icon: Icons.cancel_outlined,
                           iconColor: const Color(0xFFB02517),
@@ -333,7 +333,7 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                         ),
                         child: const Icon(
                           Icons.close_rounded,
-                          color: Colors.white,
+                          color: AppColors.white,
                           size: 18,
                         ),
                       ),
@@ -344,9 +344,8 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                       onTap: () {
                         ActionConfirmDialog.show(
                           context,
-                          title: 'Accept request?',
-                          message:
-                              "Accept the message request from $name? You'll be able to message each other.",
+                          title: AppStrings.acceptRequestTitle.tr,
+                          message: AppStrings.acceptRequestFromDesc.tr.replaceAll('@name', name),
                           confirmLabel: AppStrings.accept.tr,
                           icon: Icons.check_circle_outline_rounded,
                           iconColor: AppColors.blue,
@@ -386,7 +385,7 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                         child: Text(
                           AppStrings.accept.tr,
                           style: GoogleFonts.poppins(
-                            color: Colors.white,
+                            color: AppColors.white,
                             fontWeight: FontWeight.w600,
                             fontSize: ResponsiveHelper.fontSize(13),
                           ),
@@ -402,3 +401,5 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
       );
   }
 }
+
+

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -77,7 +77,7 @@ class ProfileNavAppBar extends StatelessWidget
                           '$count',
                           style: const TextStyle(
                             fontSize: 8,
-                            color: Colors.white,
+                            color: AppColors.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -92,3 +92,4 @@ class ProfileNavAppBar extends StatelessWidget
     );
   }
 }
+

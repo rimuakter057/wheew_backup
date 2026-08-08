@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 
 import 'dart:convert';
 import 'package:platchatapp/utils/language/app_string.dart';
@@ -28,20 +29,20 @@ class ParkingReportController extends GetxController {
   void changeMapType(MapType type) {
     selectedMapType.value = type;
   }
-  // ── Form State ────────────────────────────────────────────────────────────
+  // â”€â”€ Form State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   final TextEditingController nameController = TextEditingController();
   final RxString parkingCost = 'FREE'.obs;
   final RxBool electricCharging = false.obs;
   final RxBool disabledFacility = false.obs;
   final Rx<DisabledLocation> disabledLocation = DisabledLocation.none.obs;
 
-  // ── UI State ──────────────────────────────────────────────────────────────
+  // â”€â”€ UI State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   final RxBool isLoading = false.obs;
   final RxString submitMessage = ''.obs;
   final RxBool submitSuccess = false.obs;
 
 
-  // ── Reset ─────────────────────────────────────────────────────────────────
+  // â”€â”€ Reset â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   void reset() {
     nameController.clear();
     parkingCost.value = 'FREE';
@@ -50,7 +51,7 @@ class ParkingReportController extends GetxController {
     disabledLocation.value = DisabledLocation.none;
   }
 
-  // ── Submit ────────────────────────────────────────────────────────────────
+  // â”€â”€ Submit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // Old flow — POST /parking-report/spot. Superseded by the /park-relay/
   // parking-areas call below; kept here, commented, for reference.
   // Future<bool> addParking({
@@ -167,7 +168,7 @@ class ParkingReportController extends GetxController {
     }
   }
 
-  // ─── Saved Parking State (New Feature) ────────────────────────────────────
+  // â”€â”€â”€ Saved Parking State (New Feature) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   final Rxn<SavedParkingModel> mySavedParking = Rxn<SavedParkingModel>();
   final RxBool isLoadingSaveParking = false.obs;
   final RxBool isLoadingGetSavedParking = false.obs;
@@ -198,8 +199,8 @@ class ParkingReportController extends GetxController {
         body: body,
       );
 
-      debugPrint('🟢 SAVE PARKING STATUS CODE: ${response.statusCode}');
-      debugPrint('🟢 SAVE PARKING BODY: ${response.body}');
+      debugPrint('ðŸŸ¢ SAVE PARKING STATUS CODE: ${response.statusCode}');
+      debugPrint('ðŸŸ¢ SAVE PARKING BODY: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         submitSuccess.value = true;
@@ -233,8 +234,8 @@ class ParkingReportController extends GetxController {
         uri: ApiUrl.getMySavedParking,
       );
 
-      debugPrint('🟢 GET MY SAVED PARKING STATUS CODE: ${response.statusCode}');
-      debugPrint('🟢 GET MY SAVED PARKING BODY: ${response.body}');
+      debugPrint('ðŸŸ¢ GET MY SAVED PARKING STATUS CODE: ${response.statusCode}');
+      debugPrint('ðŸŸ¢ GET MY SAVED PARKING BODY: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final decoded = jsonDecode(response.body);
@@ -255,8 +256,8 @@ class ParkingReportController extends GetxController {
                   'confidence': model.confidence ?? 0.9,
                 },
               );
-              debugPrint('🟢 PARKING MODE PARKED STATUS CODE: ${responseParked.statusCode}');
-              debugPrint('🟢 PARKING MODE PARKED BODY: ${responseParked.body}');
+              debugPrint('ðŸŸ¢ PARKING MODE PARKED STATUS CODE: ${responseParked.statusCode}');
+              debugPrint('ðŸŸ¢ PARKING MODE PARKED BODY: ${responseParked.body}');
             } catch (e) {
               mapDebug('parking mode parked POST: exception $e');
             }
@@ -276,11 +277,11 @@ class ParkingReportController extends GetxController {
     }
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   //  GET PARKING
-  // ═══════════════════════════════════════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-  // ─── State ────────────────────────────────────────────────────────────────
+  // â”€â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   final RxBool isLoadingShowDetails = false.obs;
   final RxString errorMessage = ''.obs;
   final RxList<Map<String, dynamic>> parkingList =
@@ -298,7 +299,7 @@ class ParkingReportController extends GetxController {
   // final RxSet<Polyline> areaPolylines = <Polyline>{}.obs;
   final RxSet<Polygon> areaPolygons = <Polygon>{}.obs;
 
-  // ── Build Markers ─────────────────────────────────────────────────────────
+  // â”€â”€ Build Markers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // Future<void> _buildMarkers() async {
   //   final Set<Marker> newMarkers = {};
   //
@@ -314,7 +315,7 @@ class ParkingReportController extends GetxController {
   //     final dynamic cost = parking['parking_cost'];
   //     final bool isPaid = _isPaid(cost);
   //
-  //     // ── Pin color ──────────────────────────────────────────────────────────
+  //     // â”€â”€ Pin color â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   //     final Color pinColor;
   //     if (isDisabled) {
   //       pinColor = AppColors.disableOrange;
@@ -335,12 +336,12 @@ class ParkingReportController extends GetxController {
   //     await _getLocationIcon(locationKey, pinColor);
   //
   //     // ✅ Offset নেই — exact lat/lng তে রাখো
-  //     // একই position-এ একাধিক marker থাকলে একটার উপর আরেকটা stack হবে
-  //     // MarkerId আলাদা রাখতে parking id বা index ব্যবহার করো
+  //     // à¦à¦•à¦‡ position-à¦ à¦à¦•à¦¾à¦§à¦¿à¦• marker à¦¥à¦¾à¦•à¦²à§‡ à¦à¦•à¦Ÿà¦¾à¦° à¦‰à¦ªà¦° à¦†à¦°à§‡à¦•à¦Ÿà¦¾ stack à¦¹à¦¬à§‡
+  //     // MarkerId à¦†à¦²à¦¾à¦¦à¦¾ à¦°à¦¾à¦–à¦¤à§‡ parking id à¦¬à¦¾ index à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦•à¦°à§‹
   //     newMarkers.add(
   //       Marker(
   //         markerId: MarkerId(parking['id']?.toString() ?? 'parking_$i'),
-  //         position: LatLng(lat, lng), // ← exact position, কোনো offset নেই
+  //         position: LatLng(lat, lng), // â† exact position, à¦•à§‹à¦¨à§‹ offset à¦¨à§‡à¦‡
   //         icon: icon,
   //         infoWindow: InfoWindow.noText,
   //         onTap: () => _onMarkerTap(parking),
@@ -352,7 +353,7 @@ class ParkingReportController extends GetxController {
   //   mapDebug('markers: built ${newMarkers.length} from parking list');
   // }
 
-  // ─── Location → Icon (cached) ─────────────────────────────────────────────
+  // â”€â”€â”€ Location â†’ Icon (cached) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 
 
@@ -371,10 +372,10 @@ class ParkingReportController extends GetxController {
     for (int i = 0; i < parkingList.length; i++) {
       final parking = parkingList[i];
 
-      // isActive == false → hide this area entirely (no marker, no polygon).
+      // isActive == false â†’ hide this area entirely (no marker, no polygon).
       if (parking['isActive'] == false) continue;
 
-      // ── Center marker (SVG pin at centerLat/centerLng) ──────────────────
+      // â”€â”€ Center marker (SVG pin at centerLat/centerLng) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       final double? lat = _toDouble(parking['latitude'] ?? parking['centerLat']);
       final double? lng = _toDouble(parking['longitude'] ?? parking['centerLng']);
       if (lat == null || lng == null) continue;
@@ -394,7 +395,7 @@ class ParkingReportController extends GetxController {
       // );
       final String areaId = parking['id']?.toString() ?? 'parking_$i';
 
-      // ── Blue polygon outline from polygon array ──────────────────────────
+      // â”€â”€ Blue polygon outline from polygon array â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       // Old version used a closed Polyline for the outline, but Polyline
       // has no tap support — only the center marker was tappable. Polygon
       // renders the same blue outline (transparent fill) and is tappable
@@ -445,7 +446,7 @@ class ParkingReportController extends GetxController {
               points: polyPoints,
               strokeColor: const Color(0xFF1E88E5), // blue
               strokeWidth: 2,
-              fillColor: Colors.transparent,
+              fillColor: AppColors.transparent,
               consumeTapEvents: true,
               onTap: () => _onMarkerTap(parking),
             ),
@@ -479,7 +480,7 @@ class ParkingReportController extends GetxController {
     return icon;
   }
 
-  /// API value → SVG asset path
+  /// API value â†’ SVG asset path
   String _assetForLocation(String location) {
     switch (location) {
       case 'ALL':
@@ -501,7 +502,7 @@ class ParkingReportController extends GetxController {
 
     final String rawSvg = await rootBundle.loadString(assetPath);
 
-    // ── Case 1: base64 PNG embedded ───────────────────────────────────────
+    // â”€â”€ Case 1: base64 PNG embedded â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     final RegExp regex =
     RegExp(r'(?:xlink:href|href)="data:image/png;base64,([^"]+)"');
     final match = regex.firstMatch(rawSvg);
@@ -543,7 +544,7 @@ class ParkingReportController extends GetxController {
       return BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
     }
 
-    // ── Case 2: Pure SVG ──────────────────────────────────────────────────
+    // â”€â”€ Case 2: Pure SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     try {
       final vg.PictureInfo pictureInfo = await vg.vg.loadPicture(
         vg.SvgStringLoader(rawSvg),
@@ -593,7 +594,7 @@ class ParkingReportController extends GetxController {
 //     );
 //   }
 
-  // ─── Helpers (UI) ─────────────────────────────────────────────────────────
+  // â”€â”€â”€ Helpers (UI) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   void _onMarkerTap(Map<String, dynamic> parking) {
     selectedReport.value = parking;
@@ -615,12 +616,12 @@ class ParkingReportController extends GetxController {
 
   void clearSelectedReport() => selectedReport.value = null;
 
-  // ─── Map Ready Callback ───────────────────────────────────────────────────
+  // â”€â”€â”€ Map Ready Callback â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   void onMapCreated(GoogleMapController controller) {
     mapController.value = controller;
   }
 
-  // ─── Type Helper ─────────────────────────────────────────────────────────
+  // â”€â”€â”€ Type Helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   double? _toDouble(dynamic value) {
     if (value == null) return null;
     if (value is double) return value;
@@ -629,11 +630,11 @@ class ParkingReportController extends GetxController {
     return null;
   }
 
-  // ── Pagination State ──────────────────────────────────────────────────────
+  // â”€â”€ Pagination State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   final RxInt totalParking = 0.obs;
   final RxInt currentPage = 1.obs;
 
-  // ─── Fetch Data ───────────────────────────────────────────────────────────
+  // â”€â”€â”€ Fetch Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Future<void> fetchParkingReport({
     required double latitude,
     required double  longitude,
@@ -707,7 +708,7 @@ class ParkingReportController extends GetxController {
 
 
 
-  // ── Single Spot Details ──────────────────────────────────────────
+  // â”€â”€ Single Spot Details â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   final Rxn<Map<String, dynamic>> spotDetails = Rxn<Map<String, dynamic>>();
   final RxBool isLoadingSpotDetails = false.obs;
   final RxBool isLeaving = false.obs;
@@ -718,7 +719,7 @@ class ParkingReportController extends GetxController {
       spotDetails.value = null;
 
       final response = await ApiClient.getData(
-        uri: ApiUrl.spotDetails(spotId: spotId), // ← '/parking-report/spot/$spotId'
+        uri: ApiUrl.spotDetails(spotId: spotId), // â† '/parking-report/spot/$spotId'
       );
 
       if (response.statusCode == 200) {
@@ -735,7 +736,7 @@ class ParkingReportController extends GetxController {
     }
   }
 
-// ── Leave Spot ────────────────────────────────────────────────────
+// â”€â”€ Leave Spot â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 
 
@@ -751,9 +752,9 @@ class ParkingReportController extends GetxController {
         body: {"spotId": spotId},
       );
 
-      // ← debugPrint add করা হলো
-      debugPrint('🟡 LEAVE STATUS CODE: ${response.statusCode}');
-      debugPrint('🟡 LEAVE BODY: ${response.body}');
+      // â† debugPrint add à¦•à¦°à¦¾ à¦¹à¦²à§‹
+      debugPrint('ðŸŸ¡ LEAVE STATUS CODE: ${response.statusCode}');
+      debugPrint('ðŸŸ¡ LEAVE BODY: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         mapDebug('leave spot: success $spotId');
@@ -763,7 +764,7 @@ class ParkingReportController extends GetxController {
         return false;
       }
     } catch (e) {
-      debugPrint('🔴 LEAVE EXCEPTION: $e'); // ← এটাও add করা হলো
+      debugPrint('ðŸ”´ LEAVE EXCEPTION: $e'); // â† à¦à¦Ÿà¦¾à¦“ add à¦•à¦°à¦¾ à¦¹à¦²à§‹
       mapDebug('leave spot: exception $e');
       return false;
     } finally {
@@ -784,14 +785,14 @@ class ParkingReportController extends GetxController {
 
 
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   //  PARK-RELAY: PARKING AREAS & HANDOFFS (Home tab)
   //  addParking() above already covers POST /park-relay/parking-areas.
   //  The GET endpoints below are callable API methods only; not yet wired
   //  into any marker/UI on the home tab (no design change).
-  // ═══════════════════════════════════════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-  // ─── Search nearby parking areas ──────────────────────────────────────────
+  // â”€â”€â”€ Search nearby parking areas â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   final RxList<Map<String, dynamic>> parkingAreaList = <Map<String, dynamic>>[].obs;
   final RxBool isLoadingParkingAreas = false.obs;
 
@@ -827,7 +828,7 @@ class ParkingReportController extends GetxController {
     }
   }
 
-  // ─── Nearby handoffs ───────────────────────────────────────────────────────
+  // â”€â”€â”€ Nearby handoffs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   final RxList<Map<String, dynamic>> handoffList = <Map<String, dynamic>>[].obs;
   final RxBool isLoadingHandoffs = false.obs;
 
@@ -863,7 +864,7 @@ class ParkingReportController extends GetxController {
     }
   }
 
-  // ─── Handoff details (show details) ────────────────────────────────────────
+  // â”€â”€â”€ Handoff details (show details) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   final Rxn<Map<String, dynamic>> handoffDetails = Rxn<Map<String, dynamic>>();
   final RxBool isLoadingHandoffDetails = false.obs;
 
@@ -903,10 +904,11 @@ class ParkingReportController extends GetxController {
   void toggleDisabledFacility() {
     disabledFacility.value = !disabledFacility.value;
     if (disabledFacility.value) {
-      parkingCost.value = 'FREE'; // disabled facility থাকলে auto FREE
+      parkingCost.value = 'FREE'; // disabled facility à¦¥à¦¾à¦•à¦²à§‡ auto FREE
     }
   }
 
 
 
 }
+

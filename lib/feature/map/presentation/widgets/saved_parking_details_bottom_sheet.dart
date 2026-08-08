@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -32,7 +33,7 @@ class SavedParkingDetailsBottomSheet extends StatelessWidget {
         Icon(
           icon,
           size: ResponsiveHelper.iconSize(20),
-          color: Colors.grey.shade600,
+          color: AppColors.greyShade600,
         ),
         SizedBox(width: ResponsiveHelper.spacing(12)),
         Text(
@@ -40,7 +41,7 @@ class SavedParkingDetailsBottomSheet extends StatelessWidget {
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(14),
             fontWeight: FontWeight.w500,
-            color: Colors.grey.shade600,
+            color: AppColors.greyShade600,
           ),
         ),
         const Spacer(),
@@ -154,7 +155,7 @@ class SavedParkingDetailsBottomSheet extends StatelessWidget {
               },
               icon: Icon(
                 Icons.directions_walk_rounded,
-                color: Colors.white,
+                color: AppColors.white,
                 size: ResponsiveHelper.iconSize(20),
               ),
               label: Text(
@@ -162,7 +163,7 @@ class SavedParkingDetailsBottomSheet extends StatelessWidget {
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(16),
                   fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  color: AppColors.white,
                 ),
               ),
               style: ElevatedButton.styleFrom(
@@ -179,3 +180,4 @@ class SavedParkingDetailsBottomSheet extends StatelessWidget {
     );
   }
 }
+

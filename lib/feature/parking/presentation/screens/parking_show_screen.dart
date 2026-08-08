@@ -1,4 +1,5 @@
-
+﻿
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -41,12 +42,13 @@ class ParkingShowScreen extends StatefulWidget {
 }
 
 class _ParkingShowScreenState extends State<ParkingShowScreen>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   GoogleMapController? _mapController;
   MapType _selectedMapType = MapType.normal;
 
   late final ParkingShowController _parkingShowCtrl;
 
+  late AnimationController _pulseController;
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -58,6 +60,13 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
     _parkingShowCtrl = Get.isRegistered<ParkingShowController>()
         ? Get.find<ParkingShowController>()
         : Get.put(ParkingShowController());
+
+    _parkingShowCtrl.clearSpotDetailsCard();
+
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..repeat();
 
     // Runs the full flow (approx map -> /parking-mode/me -> branch)
     // every time this screen is entered.
@@ -74,7 +83,9 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
     if (_parkingShowCtrl.mapController == _mapController) {
       _parkingShowCtrl.mapController = null;
     }
+    _parkingShowCtrl.clearSpotDetailsCard();
     _mapController?.dispose();
+    _pulseController.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -104,13 +115,14 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
     return PopScope(
       canPop: true,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         body: Stack(
           children: [
             Obx(() {
 
               final isLocating = _parkingShowCtrl.isLocating.value;
               final gpsPosition = _parkingShowCtrl.gpsPosition.value;
+              final showLocationPulse = _parkingShowCtrl.showLocationPulse.value;
               final isLoading = _parkingShowCtrl.isLoading.value;
               final status = _parkingShowCtrl.status.value;
               // Empty until /parking-mode/me resolves & not loading — treat that as
@@ -186,7 +198,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                             child: GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onTap: () {
-                                // ── enter search mode: show the floating button ──
+                                // â”€â”€ enter search mode: show the floating button â”€â”€
                                 showFindParkingButton.value = true;
 
                                 RadiusFilterSheet.show(
@@ -201,12 +213,12 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                                       // radius — parking areas use a fixed radius.
                                       _parkingShowCtrl.fetchNearbyHandoffsOnly(lat, lng);
                                     }
-                                    // ── sheet applied: hide the floating button ──
+                                    // â”€â”€ sheet applied: hide the floating button â”€â”€
                                     showFindParkingButton.value = false;
 
                                   },
                                 ).then((_) {
-                                  // ── sheet dismissed (swipe/tap outside): hide button ──
+                                  // â”€â”€ sheet dismissed (swipe/tap outside): hide button â”€â”€
                                   showFindParkingButton.value = false;
                                 });
                               },
@@ -220,11 +232,11 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                                       child: Container(
                                         height: barHeight,
                                         decoration: BoxDecoration(
-                                          color: Colors.white, // <-- alpha পুরোপুরি বাদ, solid সাদা
+                                          color: AppColors.white, // <-- alpha à¦ªà§à¦°à§‹à¦ªà§à¦°à¦¿ à¦¬à¦¾à¦¦, solid à¦¸à¦¾à¦¦à¦¾
                                           borderRadius: BorderRadius.circular(barHeight / 2),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Colors.black.withValues(alpha: 0.08),
+                                              color: AppColors.black.withValues(alpha: 0.08),
                                               blurRadius: 12,
                                               offset: const Offset(0, 4),
                                             ),
@@ -240,7 +252,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                                               hintText: AppStrings.searchHere.tr,
                                               hintStyle: TextStyle(
                                                 fontSize: ResponsiveHelper.fontSize(14),
-                                                color: Colors.grey,
+                                                color: AppColors.grey,
                                               ),
                                               prefixIcon: Icon(
                                                 Icons.search,
@@ -270,6 +282,33 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       ),
                     ),
 
+                  // Same solid pulsing frame as before (width breathes the
+                  // same way), just: (1) gradient-colored instead of solid
+                  // blue, (2) the stroke width waves irregularly around the
+                  // perimeter instead of being uniform, per the reference.
+                  if (showLocationPulse && gpsPosition != null)
+                    Positioned.fill(
+                      child: IgnorePointer(
+                        child: AnimatedBuilder(
+                          animation: _pulseController,
+                          builder: (context, child) {
+                            final t = _pulseController.value < 0.5
+                                ? _pulseController.value * 2
+                                : (1.0 - _pulseController.value) * 2;
+                            final wavePhase = _pulseController.value * 2 * pi;
+
+                            return CustomPaint(
+                              size: Size.infinite,
+                              painter: _WavyGradientBorderPainter(
+                                t: t,
+                                wavePhase: wavePhase,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+
                   if (isParked)
                     Positioned(
                       bottom: ResponsiveHelper.bottomNavOffset(context),
@@ -278,7 +317,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       child: Obx(() => ParkedSessionCard(
                         locationName: _parkingShowCtrl.parkedLocationName.value.isNotEmpty
                             ? _parkingShowCtrl.parkedLocationName.value
-                            : 'Your Parking Spot',
+                            : AppStrings.yourParkingSpot.tr,
                         spotCode: _parkingShowCtrl.parkedSpotCode.value,
                         onExitPressed: _showExitParkingConfirmation,
                       )),
@@ -301,7 +340,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                               SizedBox(width: ResponsiveHelper.width(4)),
                             ],
                             Text(
-                              isSearching ? "Stop Searching" : "Find Parking Spot",
+                             isSearching ? AppStrings.stopSearching.tr : AppStrings.findParkingSpot.tr,
                               style: context.bodyMedium.copyWith(color: AppColors.white),
                             ),
                           ],
@@ -309,7 +348,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       ),
                     ),
 
-                  /// ── Active spot details card overlay (floating above bottom nav) ──
+                  /// â”€â”€ Active spot details card overlay (floating above bottom nav) â”€â”€
                   Obx(() {
                     final cardData = _parkingShowCtrl.activeSpotDetailsCard.value;
                     if (cardData == null) return const SizedBox.shrink();
@@ -320,7 +359,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       right: ResponsiveHelper.padding(16),
                       child: ParkingLocationCard(
                         title: (cardData.title == null || cardData.title!.trim().isEmpty)
-                            ? "Unknown"
+                            ? AppStrings.unknown.tr
                             : cardData.title!,
                         subtitle: cardData.subtitle,
                         badgeLabel: cardData.badgeLabel,
@@ -419,7 +458,7 @@ class _NotificationBellButton extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.12),
+                    color: AppColors.black.withValues(alpha: 0.12),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -445,14 +484,14 @@ class _NotificationBellButton extends StatelessWidget {
                     color: Color(0xFF2F80ED),
                     shape: BoxShape.circle,
                     border: Border.fromBorderSide(
-                      BorderSide(color: Colors.white, width: 1.5),
+                      BorderSide(color: AppColors.white, width: 1.5),
                     ),
                   ),
                   child: Text(
                     '$count',
                     style: const TextStyle(
                       fontSize: 9,
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -464,4 +503,78 @@ class _NotificationBellButton extends StatelessWidget {
     );
   }
 }
+
+// â”€â”€ SEARCHING-mode glow frame: gradient-colored (blue â†’ white â†’ purple),
+//    stroke width waves irregularly around the perimeter and the wave
+//    travels over time — same base pulsing width/timing as the old solid
+//    Border.all() version, just not a uniform line anymore. â”€â”€
+class _WavyGradientBorderPainter extends CustomPainter {
+  final double t; // 0..1 "breathing" phase — same as the old glowWidth calc
+  final double wavePhase; // rotates the wave around the perimeter over time
+
+  const _WavyGradientBorderPainter({
+    required this.t,
+    required this.wavePhase,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final metrics = (Path()..addRect(rect)).computeMetrics().first;
+    final length = metrics.length;
+
+    final gradient = const SweepGradient(
+      colors: [
+        Color(0xFF1E88E5), // blue
+        AppColors.white,
+        Color(0xFF1E88E5), // back to blue
+        AppColors.white,
+        Color(0xFF1E88E5), // back to blue
+      ],
+      stops: [0.0, 0.25, 0.5, 0.75, 1.0],
+    );
+    final shader = gradient.createShader(rect);
+
+    // Modulated by a traveling sine wave so it's thicker/thinner at
+    // different points around the frame instead of uniform.
+    final baseWidth = 14.0 + (t * 10.0);
+    const waveAmplitude = 5.0;
+    const waveCount = 3; // how many "bulges" travel around the perimeter
+
+    const segments = 160;
+    for (int i = 0; i < segments; i++) {
+      final d0 = length * i / segments;
+      final d1 = length * (i + 1) / segments;
+      final segmentPath = metrics.extractPath(d0, d1);
+
+      final wave = sin((d0 / length) * 2 * pi * waveCount + wavePhase);
+      final strokeWidth = (baseWidth + wave * waveAmplitude).clamp(6.0, 30.0);
+
+      // Soft outer halo (blurred, wider) + a tighter, less-blurred core on
+      // top — this combo is what actually reads as "glow" instead of a
+      // crisp painted line, kept narrow so it hugs the edge.
+      final haloPaint = Paint()
+        ..shader = shader
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth * 1.4
+        ..strokeCap = StrokeCap.round
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, strokeWidth * 0.5);
+      canvas.drawPath(segmentPath, haloPaint);
+
+      final corePaint = Paint()
+        ..shader = shader
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth * 0.6
+        ..strokeCap = StrokeCap.round
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, strokeWidth * 0.15);
+      canvas.drawPath(segmentPath, corePaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _WavyGradientBorderPainter oldDelegate) =>
+      oldDelegate.t != t || oldDelegate.wavePhase != wavePhase;
+}
+
+
 

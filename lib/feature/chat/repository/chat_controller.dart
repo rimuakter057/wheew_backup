@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 // ignore_for_file: unnecessary_null_comparison, invalid_use_of_protected_member
 
 import 'dart:async';
@@ -1530,11 +1531,11 @@ class ChatController extends GetxController {
       showSnackBar(
         context,
         AppStrings.userBlockedSuccessfully.tr,
-        bgColor: Colors.green,
+        bgColor: AppColors.green,
       );
     } else {
       print("Block failed: ${response.statusCode}");
-      showSnackBar(context, AppStrings.failedToBlockUser.tr, bgColor: Colors.red);
+      showSnackBar(context, AppStrings.failedToBlockUser.tr, bgColor: AppColors.red);
     }
   }
 
@@ -1572,11 +1573,11 @@ class ChatController extends GetxController {
       showSnackBar(
         context,
         AppStrings.userUnblockedSuccessfully.tr,
-        bgColor: Colors.green,
+        bgColor: AppColors.green,
       );
     } else {
       debugPrint("Unblock failed: ${response.statusCode}");
-      showSnackBar(context, AppStrings.failedToUnblockUser.tr, bgColor: Colors.red);
+      showSnackBar(context, AppStrings.failedToUnblockUser.tr, bgColor: AppColors.red);
     }
   }
 
@@ -1584,7 +1585,7 @@ class ChatController extends GetxController {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: bgColor ?? Colors.black87,
+        backgroundColor: bgColor ?? AppColors.black87,
         duration: const Duration(seconds: 2),
       ),
     );
@@ -2320,3 +2321,6 @@ class ChatController extends GetxController {
     }
   }
 }
+
+
+

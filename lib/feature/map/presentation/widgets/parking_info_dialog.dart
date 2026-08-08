@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,8 +16,8 @@ import 'package:platchatapp/utils/language/app_string.dart';
 class ParkingInfoDialog extends StatelessWidget {
   final ParkingReportController controller;
   final VoidCallback onSubmit;
-  final LatLng? pickedLocation; // ⚠️ ম্যাপে পিক করা location (null হলে current GPS ব্যবহার হবে)
-  final VoidCallback onPickOnMap; // ⚠️ "Pick on map" চাপলে কল হবে
+  final LatLng? pickedLocation; // âš ï¸ à¦®à§à¦¯à¦¾à¦ªà§‡ à¦ªà¦¿à¦• à¦•à¦°à¦¾ location (null à¦¹à¦²à§‡ current GPS à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦¹à¦¬à§‡)
+  final VoidCallback onPickOnMap; // âš ï¸ "Pick on map" à¦šà¦¾à¦ªà¦²à§‡ à¦•à¦² à¦¹à¦¬à§‡
 
   const ParkingInfoDialog({
     super.key,
@@ -50,7 +50,7 @@ class ParkingInfoDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Drag handle ──────────────────────────────────────────
+              // â”€â”€ Drag handle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               Center(
                 child: Container(
                   width: ResponsiveHelper.width(40),
@@ -75,7 +75,7 @@ class ParkingInfoDialog extends StatelessWidget {
               ),
               SizedBox(height: ResponsiveHelper.spacing(18)),
 
-              // ── Location source row ──────────────────────────────────
+              // â”€â”€ Location source row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               GestureDetector(
                 onTap: onPickOnMap,
                 child: Container(
@@ -90,7 +90,7 @@ class ParkingInfoDialog extends StatelessWidget {
                     ),
                     border: Border.all(
                       color: pickedLocation == null
-                          ? Colors.transparent
+                          ? AppColors.transparent
                           : const Color(0xFF3D72E8).withValues(alpha: 0.4),
                     ),
                   ),
@@ -148,7 +148,7 @@ class ParkingInfoDialog extends StatelessWidget {
 
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
-              // ── Parking Name ──────────────────────────────────────────
+              // â”€â”€ Parking Name â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               Text(
                 'Parking Name',
                 style: GoogleFonts.poppins(
@@ -188,7 +188,7 @@ class ParkingInfoDialog extends StatelessWidget {
 
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
-              // ── Parking Cost ──────────────────────────────────────────
+              // â”€â”€ Parking Cost â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               Text(
                 AppStrings.mapParkingCost.tr,
                 style: GoogleFonts.poppins(
@@ -219,7 +219,7 @@ class ParkingInfoDialog extends StatelessWidget {
               ),
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
-              // ── Electric Charging + Disabled Facility (grouped card) ──
+              // â”€â”€ Electric Charging + Disabled Facility (grouped card) â”€â”€
               Container(
                 decoration: BoxDecoration(
                gradient: AppColors.containerGradient,
@@ -236,7 +236,7 @@ class ParkingInfoDialog extends StatelessWidget {
                       label: AppStrings.mapElectricCharging.tr,
                       value: controller.electricCharging.value,
                       onTap: () => controller.electricCharging.toggle(),
-                      subtitle: "Show location with electric charging",
+                      subtitle: AppStrings.showElectricCharging.tr,
                       showCard: false,
                     ),
                     Divider(
@@ -251,7 +251,7 @@ class ParkingInfoDialog extends StatelessWidget {
                       iconColor: const Color(0xFF10B981),
                       label: AppStrings.mapDisabledFacility.tr,
                       value: controller.disabledFacility.value,
-                      subtitle: "Show disabled parking spot",
+                      subtitle: AppStrings.showDisabledParking.tr,
                       onTap: controller.toggleDisabledFacility,
                       showCard: false,
                     ),
@@ -274,7 +274,7 @@ class ParkingInfoDialog extends StatelessWidget {
               ],
               SizedBox(height: ResponsiveHelper.spacing(24)),
 
-              // ── Drop Pin ──────────────────────────────────────────────
+              // â”€â”€ Drop Pin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               CustomGradientButton(
                 onPressed: onSubmit,
                 isLoading: controller.isLoading.value,
@@ -285,7 +285,7 @@ class ParkingInfoDialog extends StatelessWidget {
                     Icon(Icons.location_on_outlined, color: AppColors.white),
                     SizedBox(width: ResponsiveHelper.spacing(8)),
                     Text(
-                      "Drop Pin",
+                      AppStrings.dropPin.tr,
                       style: context.bodyMedium.copyWith(color: AppColors.white),
                     ),
                   ],
@@ -341,7 +341,7 @@ class _CostOption extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CustomImage(imageSrc: AssetsPath.dolar,
-            imageColor: selected ? Colors.white : AppColors.black,
+            imageColor: selected ? AppColors.white : AppColors.black,
             ),
             SizedBox(width: ResponsiveHelper.spacing(4)),
             Text(
@@ -349,7 +349,7 @@ class _CostOption extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(14),
                 fontWeight: FontWeight.w600,
-                color: selected ? Colors.white : const Color(0xFF6B7280),
+                color: selected ? AppColors.white : const Color(0xFF6B7280),
               ),
             ),
           ],
@@ -397,7 +397,7 @@ class DisabledLocationPicker extends StatelessWidget {
                 ),
                 border: Border.all(
                   color: selected
-                      ? Colors.transparent
+                      ? AppColors.transparent
                       : const Color(0xFFE5E7EB),
                 ),
               ),
@@ -409,7 +409,7 @@ class DisabledLocationPicker extends StatelessWidget {
                     width: ResponsiveHelper.iconSize(20),
                     height: ResponsiveHelper.iconSize(20),
                     colorFilter: ColorFilter.mode(
-                      selected ? Colors.white : AppColors.blue,
+                      selected ? AppColors.white : AppColors.blue,
                       BlendMode.srcIn,
                     ),
                   ),
@@ -419,7 +419,7 @@ class DisabledLocationPicker extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(12),
                       fontWeight: FontWeight.w600,
-                      color: selected ? Colors.white : const Color(0xFF6B7280),
+                      color: selected ? AppColors.white : const Color(0xFF6B7280),
                     ),
                   ),
                 ],
@@ -522,7 +522,7 @@ class ToggleRow extends StatelessWidget {
                     horizontal: ResponsiveHelper.spacing(3),
                   ),
                   decoration: const BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.white,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -534,3 +534,5 @@ class ToggleRow extends StatelessWidget {
     );
   }
 }
+
+

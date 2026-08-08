@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -45,7 +45,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     // working (see NotificationService.init's internal try/catch).
     NotificationService.instance.init();
 
-    // Socket connect করো যদি এখনো connected না থাকে
+    // Socket connect à¦•à¦°à§‹ à¦¯à¦¦à¦¿ à¦à¦–à¦¨à§‹ connected à¦¨à¦¾ à¦¥à¦¾à¦•à§‡
     if (!AppSocket.isConnected) {
       AppSocket.init(
         onSocketConnect: () {
@@ -87,7 +87,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
   void _showMessageRequestBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       isScrollControlled: true,
       builder: (ctx) => SafeArea(
         child: Container(
@@ -111,7 +111,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   width: ResponsiveHelper.width(40),
                   height: ResponsiveHelper.height(4),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade400,
+                    color: AppColors.greyShade400,
                     borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(2)),
                   ),
                 ),
@@ -169,7 +169,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                               'Requests others sent to you',
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(12),
-                                color: Colors.grey.shade600,
+                                color: AppColors.greyShade600,
                               ),
                             ),
                           ],
@@ -177,7 +177,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       ),
                       Icon(
                         Icons.chevron_right_rounded,
-                        color: Colors.grey.shade400,
+                        color: AppColors.greyShade400,
                         size: ResponsiveHelper.iconSize(22),
                       ),
                     ],
@@ -185,7 +185,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 ),
               ),
 
-              Divider(height: 1, thickness: 0.5, color: Colors.grey.shade300),
+              Divider(height: 1, thickness: 0.5, color: AppColors.greyShade300),
 
               // Sent Requests option
               InkWell(
@@ -227,7 +227,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                               'Requests you sent to others',
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(12),
-                                color: Colors.grey.shade600,
+                                color: AppColors.greyShade600,
                               ),
                             ),
                           ],
@@ -235,7 +235,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       ),
                       Icon(
                         Icons.chevron_right_rounded,
-                        color: Colors.grey.shade400,
+                        color: AppColors.greyShade400,
                         size: ResponsiveHelper.iconSize(22),
                       ),
                     ],
@@ -289,7 +289,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
           child: Text(
             title,
             style: GoogleFonts.poppins(
-              color: isActive ? Colors.white : const Color(0xFF6E7C8E),
+              color: isActive ? AppColors.white : const Color(0xFF6E7C8E),
               fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
               fontSize: ResponsiveHelper.fontSize(13),
             ),
@@ -302,7 +302,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // ── App Bar: logo + create group button ─────────────────
+      // â”€â”€ App Bar: logo + create group button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       appBar: ChatListAppBar(
 
         onCreateGroupTap: () =>
@@ -315,7 +315,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
             context: context,
             barrierDismissible: true,
             barrierLabel: 'Dismiss',
-            barrierColor: Colors.black.withOpacity(0.35),
+            barrierColor: AppColors.black.withOpacity(0.35),
             transitionDuration: const Duration(milliseconds: 200),
             pageBuilder: (dialogContext, animation, secondaryAnimation) {
               final double topPadding =
@@ -339,7 +339,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                             child: Container(
                               width: 14,
                               height: 8,
-                              color: Colors.white,
+                              color: AppColors.white,
                             ),
                           ),
                         ),
@@ -393,10 +393,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
           onRefresh: () => controller.fetchChatList(refresh: true),
           child: Column(
             children: [
-              // ── Search Bar: tap করলে search screen এ যায় ────
+              // â”€â”€ Search Bar: tap à¦•à¦°à¦²à§‡ search screen à¦ à¦¯à¦¾à¦¯à¦¼ â”€â”€â”€â”€
               //const ChatListSearchBar(),
 
-              // ── Message Center: Send Message / Receive Request tabs ──
+              // â”€â”€ Message Center: Send Message / Receive Request tabs â”€â”€
               // InkWell(
               //   onTap: () => context.pushNamed(RouteName.messageCenter),
               //   child: Padding(
@@ -417,7 +417,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
               //           style: GoogleFonts.poppins(
               //             fontWeight: FontWeight.w600,
               //             fontSize: ResponsiveHelper.fontSize(14),
-              //             color: Colors.black87,
+              //             color: AppColors.black87,
               //           ),
               //         ),
               //         SizedBox(width: ResponsiveHelper.width(8)),
@@ -434,7 +434,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
               //               '$count',
               //               style: const TextStyle(
               //                 fontSize: 11,
-              //                 color: Colors.white,
+              //                 color: AppColors.white,
               //                 fontWeight: FontWeight.bold,
               //               ),
               //             ),
@@ -443,7 +443,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
               //         const Spacer(),
               //         Icon(
               //           Icons.chevron_right,
-              //           color: Colors.grey.shade400,
+              //           color: AppColors.greyShade400,
               //           size: ResponsiveHelper.iconSize(20),
               //         ),
               //       ],
@@ -460,10 +460,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 ),
                 height: ResponsiveHelper.height(46),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.55),
+                  color: AppColors.white.withOpacity(0.55),
                   borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(30)),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.8),
+                    color: AppColors.white.withOpacity(0.8),
                     width: 1,
                   ),
                 ),
@@ -477,7 +477,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 ),
               ),
 
-              // ── Chat List ────────────────────────────────────
+              // â”€â”€ Chat List â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               Expanded(
             child: Obx(() {
 
@@ -494,7 +494,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                           ? controller.userChatList.where((room) => room.isGroup).toList()
                           : controller.userChatList);
 
-                  // কোনো chat না থাকলে empty state
+                  // à¦•à§‹à¦¨à§‹ chat à¦¨à¦¾ à¦¥à¦¾à¦•à¦²à§‡ empty state
                   if (displayChats.isEmpty) {
                     return ListView(
                       physics: const AlwaysScrollableScrollPhysics(),
@@ -543,7 +543,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color: AppColors.black.withOpacity(0.04),
                             blurRadius: 15,
                             spreadRadius: 1,
                             offset: const Offset(0, 4),
@@ -569,7 +569,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                               return const SizedBox.shrink();
                             },
                             itemBuilder: (context, index) {
-                              // List এর শেষে pagination loader
+                              // List à¦à¦° à¦¶à§‡à¦·à§‡ pagination loader
                               if (index == displayChats.length) {
                                 return controller.isLoadingMore.value
                                     ? Padding(
@@ -583,7 +583,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                               final bool isGroup = room.isGroup;
                               final bool isTyping = controller.inboxTypingMap[room.id] == true;
 
-                              // Latest message text তৈরি করো
+                              // Latest message text à¦¤à§ˆà¦°à¦¿ à¦•à¦°à§‹
                               final String lastMessage = isTyping
                                   ? AppStrings.typing.tr
                                   : _buildLastMessage(room, isGroup);
@@ -604,14 +604,14 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                         ),
                                   message: lastMessage,
 
-                                  // unread হলে bold
+                                  // unread à¦¹à¦²à§‡ bold
                                   fontWeight: room.latestMessage?.isUnread == true
                                       ? FontWeight.w700
                                       : FontWeight.w400,
                                   time: room.latestMessage?.createdAt != null
                                       ? formatTime(room.latestMessage!.createdAt!)
                                       : '',
-                                  // group chat এ block নেই
+                                  // group chat à¦ block à¦¨à§‡à¦‡
                                   isBlockedByMe: !isGroup && room.isBlockedByMe == true,
                                   isBlockedMe: !isGroup && room.isBlockedMe == true,
                                   onUnblock: () {
@@ -621,11 +621,11 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                   },
                                   isGroup: isGroup,
                                   plateNumber: room.otherUser?.licenceId,
-                                  // group এ rating নেই
+                                  // group à¦ rating à¦¨à§‡à¦‡
                                   // rating: isGroup ? null : ((room.otherUser?.rating ?? 0) > 0 ? (room.otherUser!.rating!).toDouble() : null),
                                   rating: isGroup ? null : (room.otherUser?.rating ?? 0).toDouble(),
                                   totalRating: isGroup ? null : (room.otherUser?.totalRatings ?? 0).toInt(),
-                                  ratingColor: (room.otherUser?.rating ?? 0) > 0 ? null : Colors.grey,
+                                  ratingColor: (room.otherUser?.rating ?? 0) > 0 ? null : AppColors.grey,
                                   // ✅ unread badge — নিজের message হলে 0 দেখাবে
                                   unreadCount: room.latestMessage?.isMine == true
                                       ? 0
@@ -654,7 +654,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     );
   }
 
-  /// Group হলে sender name prefix যোগ করে, না হলে plain message দেখায়
+  /// Group à¦¹à¦²à§‡ sender name prefix à¦¯à§‹à¦— à¦•à¦°à§‡, à¦¨à¦¾ à¦¹à¦²à§‡ plain message à¦¦à§‡à¦–à¦¾à¦¯à¦¼
   String _buildLastMessage(Rooms room, bool isGroup) {
     if (room.latestMessage?.message == null) {
       return isGroup ? AppStrings.noMessagesYet.tr : '';
@@ -693,7 +693,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
               width: ResponsiveHelper.width(40),
               height: ResponsiveHelper.height(4),
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: AppColors.greyShade300,
                 borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(2)),
               ),
             ),
@@ -703,7 +703,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
               padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 children: [
-                  const Icon(Icons.chat_bubble_outline, color: Colors.grey),
+                  const Icon(Icons.chat_bubble_outline, color: AppColors.grey),
                   SizedBox(width: ResponsiveHelper.spacing(12)),
                   Text(
                     room.displayName,
@@ -720,11 +720,11 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
             // Delete option
             ListTile(
-              leading: const Icon(Icons.delete_outline, color: Colors.red),
+              leading: const Icon(Icons.delete_outline, color: AppColors.red),
               title: Text(
                 AppStrings.deleteChat.tr,
                 style: GoogleFonts.poppins(
-                  color: Colors.red,
+                  color: AppColors.red,
                   fontWeight: FontWeight.w500,
                   fontSize: ResponsiveHelper.fontSize(16),
                 ),
@@ -774,7 +774,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.red,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
 
@@ -782,11 +782,11 @@ class _ChatListScreenState extends State<ChatListScreen> {
             ),
             onPressed: () {
               Navigator.pop(ctx);
-             // controller.deleteChat(room.id); // আপনার controller এ এই method থাকতে হবে
+             // controller.deleteChat(room.id); // à¦†à¦ªà¦¨à¦¾à¦° controller à¦ à¦à¦‡ method à¦¥à¦¾à¦•à¦¤à§‡ à¦¹à¦¬à§‡
             },
             child: Text(
               AppStrings.deleteMessage.tr,
-              style: GoogleFonts.poppins(color: Colors.white),
+              style: GoogleFonts.poppins(color: AppColors.white),
             ),
           ),
         ],
@@ -809,3 +809,6 @@ class _TopTriangleClipper extends CustomClipper<Path> {
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
+
+
+

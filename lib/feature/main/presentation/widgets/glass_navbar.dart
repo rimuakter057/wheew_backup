@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -36,13 +37,13 @@ class GlassNavBar extends StatelessWidget {
             /// Floating Shadow
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(.18),
+                color: AppColors.black.withOpacity(.18),
                 blurRadius: 35,
                 spreadRadius: 1,
                 offset: const Offset(0, 18),
               ),
               BoxShadow(
-                color: Colors.white.withOpacity(.35),
+                color: AppColors.white.withOpacity(.35),
                 blurRadius: 12,
                 offset: const Offset(-2, -2),
               ),
@@ -91,7 +92,7 @@ class GlassNavBar extends StatelessWidget {
                         color: const Color(0xff111111),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(.35),
+                            color: AppColors.black.withOpacity(.35),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
                           ),
@@ -99,7 +100,7 @@ class GlassNavBar extends StatelessWidget {
                       ),
                       child: Icon(
                         Icons.grid_view_rounded,
-                        color: Colors.white,
+                        color: AppColors.white,
                         size: ResponsiveHelper.iconSize(22),
                       ),
                     ),

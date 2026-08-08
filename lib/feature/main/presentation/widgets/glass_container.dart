@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -37,14 +38,14 @@ class GlassContainer extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white.withOpacity(.32),
-                  Colors.white.withOpacity(.18),
-                  Colors.white.withOpacity(.08),
+                  AppColors.white.withOpacity(.32),
+                  AppColors.white.withOpacity(.18),
+                  AppColors.white.withOpacity(.08),
                 ],
               ),
 
               border: Border.all(
-                color: Colors.white.withOpacity(.32),
+                color: AppColors.white.withOpacity(.32),
                 width: ResponsiveHelper.borderWidth(1.1),
               ),
             ),
@@ -63,8 +64,8 @@ class GlassContainer extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.white.withOpacity(.40),
-                    Colors.white.withOpacity(0),
+                    AppColors.white.withOpacity(.40),
+                    AppColors.white.withOpacity(0),
                   ],
                 ),
               ),
@@ -84,8 +85,8 @@ class GlassContainer extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.transparent,
-                    Colors.white.withOpacity(.10),
+                    AppColors.transparent,
+                    AppColors.white.withOpacity(.10),
                   ],
                 ),
               ),
@@ -99,7 +100,7 @@ class GlassContainer extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(radius - 2),
                 border: Border.all(
-                  color: Colors.white.withOpacity(.08),
+                  color: AppColors.white.withOpacity(.08),
                 ),
               ),
             ),

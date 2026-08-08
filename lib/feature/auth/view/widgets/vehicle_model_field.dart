@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/feature/auth/repository/country_list.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -22,12 +22,12 @@ class VehicleModelDropdown extends StatelessWidget {
       labelText: AppStrings.vehicleModel.tr,
       labelStyle: TextStyle(
         fontSize: ResponsiveHelper.fontSize(14),
-        color: Colors.grey[600],
+        color: AppColors.greyShade600,
       ),
 
-      prefixIcon: const Icon(Icons.directions_car_filled_rounded, color: Colors.grey, size: 22),
+      prefixIcon: const Icon(Icons.directions_car_filled_rounded, color: AppColors.grey, size: 22),
       filled: true,
-      fillColor: enabled ? const Color(0xFFDDE2ED) : AppColors.greyShade.withOpacity(0.3),
+      fillColor: enabled ? AppColors.inputFillBg : AppColors.greyShade.withOpacity(0.3),
       contentPadding: EdgeInsets.symmetric(
         horizontal: ResponsiveHelper.padding(20),
         vertical: ResponsiveHelper.padding(16),
@@ -35,11 +35,11 @@ class VehicleModelDropdown extends StatelessWidget {
 
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(30)),
-        borderSide: BorderSide(color: Colors.grey[300]!),
+        borderSide: const BorderSide(color: AppColors.greyShade300),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(30)),
-        borderSide: BorderSide(color: Colors.grey[200]!),
+        borderSide: const BorderSide(color: AppColors.greyShade200),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(30)),
@@ -59,9 +59,9 @@ class VehicleModelDropdown extends StatelessWidget {
         maxHeight: ResponsiveHelper.height(450),
         minHeight: ResponsiveHelper.height(350),
       ),
-      color: Colors.white,
+      color: AppColors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(14)),
       ),
       onSelected: onSelected,
       itemBuilder: (context) {
@@ -81,18 +81,18 @@ class VehicleModelDropdown extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                selectedModel.isEmpty ? "Enter vehicle model" : selectedModel, // ইমেজের টেক্সটের সাথে মিল রাখা হয়েছে
+                selectedModel.isEmpty ? AppStrings.enterVehicleModel.tr : selectedModel, // à¦‡à¦®à§‡à¦œà§‡à¦° à¦Ÿà§‡à¦•à§à¦¸à¦Ÿà§‡à¦° à¦¸à¦¾à¦¥à§‡ à¦®à¦¿à¦² à¦°à¦¾à¦–à¦¾ à¦¹à§Ÿà§‡à¦›à§‡
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: ResponsiveHelper.fontSize(14),
-                  color: selectedModel.isEmpty ? Colors.grey : Colors.black87,
+                  color: selectedModel.isEmpty ? AppColors.grey : AppColors.black87,
                   fontWeight: selectedModel.isEmpty ? FontWeight.normal : FontWeight.w500,
                 ),
               ),
             ),
             Icon(
               Icons.keyboard_arrow_down_rounded,
-              color: Colors.grey[600],
+              color: AppColors.greyShade600,
               size: ResponsiveHelper.iconSize(22),
             ),
           ],
@@ -101,3 +101,5 @@ class VehicleModelDropdown extends StatelessWidget {
     );
   }
 }
+
+

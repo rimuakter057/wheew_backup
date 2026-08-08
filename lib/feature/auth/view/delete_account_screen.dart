@@ -1,4 +1,4 @@
-// import 'package:flutter/material.dart';
+﻿// import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:platchatapp/utils/language/app_string.dart';
@@ -38,7 +38,7 @@
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-//       backgroundColor: Colors.white,
+//       backgroundColor: AppColors.white,
 //       appBar: CustomAppBar(title:AppStrings.deleteAccount.tr),
 //       body: GetBuilder<AuthController>(
 //         builder: (controller) {
@@ -57,9 +57,9 @@
 //                       width: double.infinity,
 //                       padding: EdgeInsets.all(ResponsiveHelper.padding(16)),
 //                       decoration: BoxDecoration(
-//                         color: Colors.red.shade50,
+//                         color: AppColors.red,
 //                         borderRadius: BorderRadius.circular(12),
-//                         border: Border.all(color: Colors.red.shade200),
+//                         border: Border.all(color: AppColors.red),
 //                       ),
 //                       child: Column(
 //                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,14 +68,14 @@
 //                             children: [
 //                               Icon(
 //                                 Icons.warning_amber_rounded,
-//                                 color: Colors.red,
+//                                 color: AppColors.red,
 //                                 size: ResponsiveHelper.fontSize(20),
 //                               ),
 //                               SizedBox(width: ResponsiveHelper.spacing(8)),
 //                               Text(
 //                                 AppStrings.warning.tr,
 //                                 style: GoogleFonts.poppins(
-//                                   color: Colors.red,
+//                                   color: AppColors.red,
 //                                   fontSize: ResponsiveHelper.fontSize(15),
 //                                   fontWeight: FontWeight.w600,
 //                                 ),
@@ -86,7 +86,7 @@
 //                           Text(
 //                             AppStrings.deleteAccountWarning.tr,
 //                             style: GoogleFonts.poppins(
-//                               color: Colors.red.shade700,
+//                               color: AppColors.red,
 //                               fontSize: ResponsiveHelper.fontSize(13),
 //                               fontWeight: FontWeight.w400,
 //                             ),
@@ -213,7 +213,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                           height: ResponsiveHelper.height(46),
                           width: ResponsiveHelper.width(46),
                           decoration: const BoxDecoration(
-                            color: Colors.white,
+                            color: AppColors.white,
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -374,7 +374,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                           title: AppStrings.currentPassword.tr,
                           hintText: AppStrings.enterYourPassword.tr,
                           isPassword: true,
-                          fillColor: Colors.white.withOpacity(0.55),
+                          fillColor: AppColors.white.withOpacity(0.55),
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: ResponsiveHelper.padding(16),
                             vertical: ResponsiveHelper.padding(16),
@@ -394,8 +394,8 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                               height: ResponsiveHelper.iconSize(16),
                             ),
                           ),
-                          // border: _fieldBorder(Colors.transparent, 1),
-                          // enabledBorder: _fieldBorder(Colors.transparent, 1),
+                          // border: _fieldBorder(AppColors.transparent, 1),
+                          // enabledBorder: _fieldBorder(AppColors.transparent, 1),
                           // focusedBorder: _fieldBorder(AppColors.blue, 1.5),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
@@ -458,10 +458,10 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                       onPressed: _handleDelete,
                       gradient: AppColors.redGradient,
                       borderColor: const Color(0xFF6B1607),
-                      shadowColor: Colors.black26,
+                      shadowColor: AppColors.black26,
                       prefixIcon: const Icon(
                         Icons.delete_outline,
-                        color: Colors.white,
+                        color: AppColors.white,
                         size: 19,
                       ),
                       label: AppStrings.deleteAccount.tr,
@@ -530,3 +530,6 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
     );
   }
 }
+
+
+

@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -40,7 +41,7 @@ class CustomNetworkImage extends StatelessWidget {
         width: width,
         decoration: BoxDecoration(
           border: border,
-          color: Colors.grey.withValues(alpha: 0.6),
+          color: AppColors.grey.withValues(alpha: 0.6),
           borderRadius: borderRadius,
           shape: boxShape,
         ),
@@ -55,7 +56,7 @@ class CustomNetworkImage extends StatelessWidget {
         decoration: BoxDecoration(
           border: border,
           borderRadius: borderRadius,
-          color: backgroundColor ?? Colors.grey.withValues(alpha: 0.2),
+          color: backgroundColor ?? AppColors.grey.withValues(alpha: 0.2),
           shape: boxShape,
         ),
         child: SvgPicture.network(
@@ -96,7 +97,7 @@ class CustomNetworkImage extends StatelessWidget {
               width: width,
               decoration: BoxDecoration(
                 border: border,
-                color: Colors.grey.withValues(alpha: 0.6),
+                color: AppColors.grey.withValues(alpha: 0.6),
                 borderRadius: borderRadius,
                 shape: boxShape,
               ),
@@ -106,3 +107,4 @@ class CustomNetworkImage extends StatelessWidget {
     );
   }
 }
+

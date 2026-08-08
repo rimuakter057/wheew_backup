@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -18,8 +19,8 @@ class ChatShimmer extends StatelessWidget {
         return Padding(
           padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.height(8)),
           child: Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: AppColors.grey[300]!,
+            highlightColor: AppColors.grey[100]!,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -88,9 +89,12 @@ class ChatShimmer extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(6)),
-        color: Colors.white,
+        color: AppColors.white,
         shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
       ),
     );
   }
 }
+
+
+

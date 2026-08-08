@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'dart:io';
 
@@ -314,7 +314,7 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
                   child: Icon(
                     Icons.close,
                     size: ResponsiveHelper.iconSize(20),
-                    color: Colors.red,
+                    color: AppColors.red,
                   ),
                 ),
               ],
@@ -338,21 +338,21 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
                   emojiSizeMax: 28,
                   verticalSpacing: 0,
                   horizontalSpacing: 0,
-                  backgroundColor: Colors.white,
+                  backgroundColor: AppColors.white,
                   noRecents: Text(
                     AppStrings.noRecentsYet.tr,
                     style: GoogleFonts.poppins(
                       fontSize: 20,
-                      color: Colors.black26,
+                      color: AppColors.black26,
                     ),
                   ),
                 ),
                 categoryViewConfig: CategoryViewConfig(
                   initCategory: Category.SMILEYS,
                   indicatorColor: AppColors.blue,
-                  iconColor: Colors.grey,
+                  iconColor: AppColors.grey,
                   iconColorSelected: AppColors.blue,
-                  backspaceColor: Colors.red,
+                  backspaceColor: AppColors.red,
                 ),
                 bottomActionBarConfig: BottomActionBarConfig(
                   showSearchViewButton: false,
@@ -387,12 +387,12 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
                 vertical: ResponsiveHelper.padding(4),
               ),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(
                   ResponsiveHelper.borderRadius(24),
                 ),
                 border: Border.all(
-                  color: Colors.grey.shade200,
+                  color: AppColors.greyShade200,
                   width: 1,
                 ),
               ),
@@ -407,7 +407,7 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
                     },
                     child: Icon(
                       Icons.sentiment_satisfied_alt_rounded,
-                      color: Colors.grey.shade600,
+                      color: AppColors.greyShade600,
                       size: ResponsiveHelper.iconSize(24),
                     ),
                   ),
@@ -430,10 +430,10 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
                         filled: true,
                         fillColor: AppColors.white,
                         hintText: _selectedFilePath != null
-                            ? 'Add caption...'
-                            : "Write here...",
+                            ? AppStrings.addCaption.tr
+                            : AppStrings.message.tr,
                         hintStyle: TextStyle(
-                          color: Colors.grey.shade400,
+                          color: AppColors.greyShade400,
                           fontSize: ResponsiveHelper.fontSize(15),
                         ),
                         border: InputBorder.none,
@@ -476,7 +476,7 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
                       angle: 0.7,
                       child: Icon(
                         Icons.attachment_rounded,
-                        color: Colors.grey.shade600,
+                        color: AppColors.greyShade600,
                         size: ResponsiveHelper.iconSize(24),
                       ),
                     ),
@@ -492,12 +492,12 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: AppColors.greyShade100,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.mic,
-                color: Colors.grey.shade700,
+                color: AppColors.greyShade700,
                 size: ResponsiveHelper.iconSize(22),
               ),
             ),
@@ -530,7 +530,7 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
               child: const Center(
                 child: Icon(
                   Icons.send_rounded,
-                  color: Colors.white,
+                  color: AppColors.white,
                   size: 22,
                 ),
               ),
@@ -561,7 +561,7 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
               child: Icon(
                 Icons.delete_outline,
                 size: ResponsiveHelper.iconSize(26),
-                color: Colors.red,
+                color: AppColors.red,
               ),
             ),
           ),
@@ -583,7 +583,7 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
                 children: [
                   Icon(
                     Icons.fiber_manual_record,
-                    color: Colors.red,
+                    color: AppColors.red,
                     size: ResponsiveHelper.iconSize(14),
                   ),
                   SizedBox(width: ResponsiveHelper.width(8)),
@@ -630,3 +630,5 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
     );
   }
 }
+
+

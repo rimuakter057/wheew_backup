@@ -1,4 +1,4 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
+﻿import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../utils/color/app_colors.dart';
@@ -108,7 +108,7 @@ class CustomDropdownField<T> extends StatelessWidget {
           color: AppColors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: AppColors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -124,3 +124,5 @@ class CustomDropdownField<T> extends StatelessWidget {
     );
   }
 }
+
+

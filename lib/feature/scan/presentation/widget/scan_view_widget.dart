@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
@@ -42,7 +42,7 @@ class ScanView extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        // ── Full-screen camera feed ─────────────────────────────────
+        // â”€â”€ Full-screen camera feed â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         MobileScanner(
           controller: scannerController,
           onDetect: onDetect,
@@ -53,7 +53,7 @@ class ScanView extends StatelessWidget {
           ),
         ),
 
-        // ── Frosted, tinted overlay everywhere except the cutout ────
+        // â”€â”€ Frosted, tinted overlay everywhere except the cutout â”€â”€â”€â”€
         ClipPath(
           clipper: _CutoutClipper(cutout: cutout, radius: radius),
           child: BackdropFilter(
@@ -73,7 +73,7 @@ class ScanView extends StatelessWidget {
           ),
         ),
 
-        // ── Corner markers ───────────────────────────────────────────
+        // â”€â”€ Corner markers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         Positioned.fromRect(
           rect: cutout,
           child: CustomPaint(
@@ -86,7 +86,7 @@ class ScanView extends StatelessWidget {
           ),
         ),
 
-        // ── Scanning line ─────────────────────────────────────────────
+        // â”€â”€ Scanning line â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if (!isScanned)
           Positioned.fromRect(
             rect: cutout,
@@ -106,11 +106,11 @@ class ScanView extends StatelessWidget {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                Colors.transparent,
+                                AppColors.transparent,
                                 AppColors.blue.withOpacity(0.8),
                                 AppColors.blue,
                                 AppColors.blue.withOpacity(0.8),
-                                Colors.transparent,
+                                AppColors.transparent,
                               ],
                             ),
                             boxShadow: [
@@ -130,13 +130,13 @@ class ScanView extends StatelessWidget {
             ),
           ),
 
-        // ── Loading overlay ───────────────────────────────────────────
+        // â”€â”€ Loading overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if (isLoading)
           Positioned.fromRect(
             rect: cutout,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.55),
+                color: AppColors.black.withOpacity(0.55),
                 borderRadius: BorderRadius.circular(radius),
               ),
               child: Center(
@@ -148,13 +148,13 @@ class ScanView extends StatelessWidget {
             ),
           ),
 
-        // ── Success overlay ───────────────────────────────────────────
+        // â”€â”€ Success overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if (isScanned && !isLoading)
           Positioned.fromRect(
             rect: cutout,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
+                color: AppColors.black.withOpacity(0.5),
                 borderRadius: BorderRadius.circular(radius),
               ),
               child: Center(
@@ -167,7 +167,7 @@ class ScanView extends StatelessWidget {
             ),
           ),
 
-        // ── Instructional hint below the cutout ──────────────────────
+        // â”€â”€ Instructional hint below the cutout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         Positioned(
           left: 0,
           right: 0,
@@ -213,3 +213,5 @@ class _CutoutClipper extends CustomClipper<Path> {
   bool shouldReclip(covariant _CutoutClipper oldClipper) =>
       oldClipper.cutout != cutout || oldClipper.radius != radius;
 }
+
+

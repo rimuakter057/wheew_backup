@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -55,7 +55,7 @@ class _GlassDropdown extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(18)),
-        side: BorderSide(color: Colors.white.withOpacity(0.35), width: 1),
+        side: BorderSide(color: AppColors.white.withOpacity(0.35), width: 1),
       ),
       position: RelativeRect.fromLTRB(
         offset.dx,
@@ -95,12 +95,12 @@ class _GlassDropdown extends StatelessWidget {
             style: TextStyle(
               fontSize: ResponsiveHelper.fontSize(14),
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-              color: Colors.black,
+              color: AppColors.black,
             ),
           ),
           if (isSelected) ...[
             const Spacer(),
-            Icon(Icons.check, size: ResponsiveHelper.iconSize(16), color: Colors.white),
+            Icon(Icons.check, size: ResponsiveHelper.iconSize(16), color: AppColors.white),
           ],
         ],
       ),
@@ -126,10 +126,10 @@ class _PillButton extends StatelessWidget {
             height: ResponsiveHelper.height(40),
             padding: ResponsiveHelper.symmetric(horizontal: 14),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.20),
+              color: AppColors.white.withOpacity(0.20),
               borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(30)),
               border: Border.all(
-                color: Colors.white.withOpacity(0.35),
+                color: AppColors.white.withOpacity(0.35),
                 width: 1,
               ),
             ),
@@ -166,3 +166,4 @@ class _PillButton extends StatelessWidget {
     );
   }
 }
+

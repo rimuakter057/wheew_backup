@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,15 +23,15 @@ class ScanOptionsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: AppColors.transparent,
       child: Container(
         padding: EdgeInsets.all(ResponsiveHelper.padding(8)),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
+              color: AppColors.black.withOpacity(0.15),
               blurRadius: 24,
               offset: const Offset(0, 10),
             ),
@@ -104,7 +104,7 @@ class _ScanOptionTile extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: highlighted
-                    ? Colors.white.withValues(alpha: 0.2)
+                    ? AppColors.white.withValues(alpha: 0.2)
                     : AppColors.blue.withValues(alpha: 0.1),
               ),
               child: Center(
@@ -113,7 +113,7 @@ class _ScanOptionTile extends StatelessWidget {
                   width: ResponsiveHelper.iconSize(18),
                   height: ResponsiveHelper.iconSize(18),
                   colorFilter: ColorFilter.mode(
-                    highlighted ? Colors.white : AppColors.blue,
+                    highlighted ? AppColors.white : AppColors.blue,
                     BlendMode.srcIn,
                   ),
                 ),
@@ -129,7 +129,7 @@ class _ScanOptionTile extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(14),
                       fontWeight: FontWeight.w600,
-                      color: highlighted ? Colors.white : AppColors.black,
+                      color: highlighted ? AppColors.white : AppColors.black,
                     ),
                   ),
                   SizedBox(height: ResponsiveHelper.spacing(2)),
@@ -138,8 +138,8 @@ class _ScanOptionTile extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(11.5),
                       color: highlighted
-                          ? Colors.white.withOpacity(0.85)
-                          : Colors.grey.shade600,
+                          ? AppColors.white.withOpacity(0.85)
+                          : AppColors.greyShade600,
                     ),
                   ),
                 ],
@@ -151,3 +151,5 @@ class _ScanOptionTile extends StatelessWidget {
     );
   }
 }
+
+

@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
@@ -45,7 +45,7 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
       widget.fileName ??
           widget.fileUrl.split('/').last.split('?').first;
 
-  // ── Save image to gallery using `gal` ──────────────────────────────────────
+  // â”€â”€ Save image to gallery using `gal` â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Future<void> _saveImage() async {
     final hasAccess = await Gal.hasAccess(toAlbum: false);
     if (!hasAccess) {
@@ -75,7 +75,7 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
         },
       );
 
-      await Gal.putImage(savePath); // Gallery তে save
+      await Gal.putImage(savePath); // Gallery à¦¤à§‡ save
 
       if (!mounted) return;
       setState(() => _isDownloading = false);
@@ -91,7 +91,7 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
     }
   }
 
-  // ── Download PDF then open with url_launcher ───────────────────────────────
+  // â”€â”€ Download PDF then open with url_launcher â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Future<void> _downloadAndOpenPdf() async {
     if (Platform.isAndroid) {
       final status = await Permission.storage.request();
@@ -132,12 +132,12 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
       if (!mounted) return;
       setState(() => _isDownloading = false);
 
-      // url_launcher দিয়ে file open করার চেষ্টা
+      // url_launcher à¦¦à¦¿à¦¯à¦¼à§‡ file open à¦•à¦°à¦¾à¦° à¦šà§‡à¦·à§à¦Ÿà¦¾
       final uri = Uri.file(savePath);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri);
       } else {
-        // fallback: browser এ web url দিয়ে open
+        // fallback: browser à¦ web url à¦¦à¦¿à¦¯à¦¼à§‡ open
         final webUri = Uri.parse(widget.fileUrl);
         if (await canLaunchUrl(webUri)) await launchUrl(webUri);
       }
@@ -145,8 +145,8 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
       Get.snackbar(
         AppStrings.saved.tr,
         '${AppStrings.savedTo.tr} Downloads',
-        backgroundColor: Colors.green.shade600,
-        colorText: Colors.white,
+        backgroundColor: AppColors.green,
+        colorText: AppColors.white,
         snackPosition: SnackPosition.BOTTOM,
       );
     } catch (e) {
@@ -160,8 +160,8 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
     Get.snackbar(
       AppStrings.error.tr,
       msg,
-      backgroundColor: Colors.red.shade400,
-      colorText: Colors.white,
+      backgroundColor: AppColors.red,
+      colorText: AppColors.white,
       snackPosition: SnackPosition.BOTTOM,
     );
   }
@@ -175,14 +175,14 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.black,
+        foregroundColor: AppColors.white,
         elevation: 0,
         title: Text(
           _displayName,
-          style: const TextStyle(fontSize: 14, color: Colors.white70),
+          style: const TextStyle(fontSize: 14, color: AppColors.white70),
           overflow: TextOverflow.ellipsis,
         ),
         actions: [
@@ -195,7 +195,7 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
                 child: CircularProgressIndicator(
                   value: _downloadProgress > 0 ? _downloadProgress : null,
                   strokeWidth: 2,
-                  color: Colors.white,
+                  color: AppColors.white,
                 ),
               ),
             )
@@ -205,7 +205,7 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
                 _isImage
                     ? Icons.save_alt_rounded
                     : Icons.download_rounded,
-                color: Colors.white,
+                color: AppColors.white,
               ),
               tooltip: _isImage ? AppStrings.saveToGallery.tr : AppStrings.download.tr,
               onPressed:
@@ -236,16 +236,16 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
               imageUrl: widget.fileUrl,
               fit: BoxFit.contain,
               placeholder: (_, __) => const Center(
-                child: CircularProgressIndicator(color: Colors.white),
+                child: CircularProgressIndicator(color: AppColors.white),
               ),
               errorWidget: (_, __, ___) => const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.broken_image_rounded,
-                      color: Colors.white54, size: 64),
+                      color: AppColors.white54, size: 64),
                   SizedBox(height: 12),
                   Text('Could not load image',
-                      style: TextStyle(color: Colors.white54)),
+                      style: TextStyle(color: AppColors.white54)),
                 ],
               ),
             ),
@@ -255,7 +255,7 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
     );
   }
 
-  // ── PDF viewer ─────────────────────────────────────────────────────────────
+  // â”€â”€ PDF viewer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildPdfViewer() {
     return Center(
@@ -265,25 +265,25 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.picture_as_pdf_rounded,
-                color: Colors.red.shade300, size: 80),
+                color: AppColors.red, size: 80),
             const SizedBox(height: 16),
             Text(
               _displayName,
               style:
-              const TextStyle(color: Colors.white70, fontSize: 15),
+              const TextStyle(color: AppColors.white70, fontSize: 15),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               AppStrings.tapDownloadToOpen.tr,
               style:
-              const TextStyle(color: Colors.white38, fontSize: 12),
+              const TextStyle(color: AppColors.white38, fontSize: 12),
             ),
             const SizedBox(height: 32),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.blue,
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.white,
                 padding: const EdgeInsets.symmetric(
                     horizontal: 28, vertical: 14),
                 shape: RoundedRectangleBorder(
@@ -297,7 +297,7 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
               const SizedBox(height: 24),
               LinearProgressIndicator(
                 value: _downloadProgress > 0 ? _downloadProgress : null,
-                backgroundColor: Colors.white12,
+                backgroundColor: AppColors.white12,
                 color: AppColors.blue,
                 borderRadius: BorderRadius.circular(4),
               ),
@@ -305,7 +305,7 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
               Text(
                 '${(_downloadProgress * 100).toStringAsFixed(0)}%',
                 style: const TextStyle(
-                    color: Colors.white54, fontSize: 12),
+                    color: AppColors.white54, fontSize: 12),
               ),
             ],
           ],
@@ -314,3 +314,6 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
     );
   }
 }
+
+
+

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:shimmer/shimmer.dart';
@@ -12,14 +12,14 @@ class MapInitialShimmer extends StatelessWidget {
       baseColor:AppColors.greyShade,
       highlightColor: AppColors.greyShade,
       child: Container(
-        color: Colors.black,
+        color: AppColors.black,
         child: Stack(
           children: [
             Positioned.fill(
               child: Container(
                 margin:  ResponsiveHelper.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16),),
                 ),
               ),
@@ -31,7 +31,7 @@ class MapInitialShimmer extends StatelessWidget {
               child: Container(
                 height: ResponsiveHelper.height(52),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(28)),
                 ),
               ),
@@ -43,7 +43,7 @@ class MapInitialShimmer extends StatelessWidget {
                 width: ResponsiveHelper.width(48),
                 height: ResponsiveHelper.height(48),
                 decoration: const BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.white,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -55,7 +55,7 @@ class MapInitialShimmer extends StatelessWidget {
                 width: ResponsiveHelper.width(48),
                 height: ResponsiveHelper.height(48),
                 decoration: const BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.white,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -66,3 +66,5 @@ class MapInitialShimmer extends StatelessWidget {
     );
   }
 }
+
+

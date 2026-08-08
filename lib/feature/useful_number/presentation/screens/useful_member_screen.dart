@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
@@ -106,14 +106,14 @@ class _UsefulMemberScreenState extends State<UsefulMemberScreen> {
           icon: Icon(
             Icons.arrow_back_ios,
             size: ResponsiveHelper.iconSize(20),
-            color: Colors.black,
+            color: AppColors.black,
           ),
           onPressed: () => context.pop(),
         ),
         title: Text(
           AppStrings.usefulNumber.tr,
           style: TextStyle(
-            color: Colors.black,
+            color: AppColors.black,
             fontSize: ResponsiveHelper.titleFontSize(18),
             fontWeight: FontWeight.w600,
           ),
@@ -132,14 +132,14 @@ class _UsefulMemberScreenState extends State<UsefulMemberScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                const Icon(Icons.error_outline, size: 48, color: AppColors.red),
                 const SizedBox(height: 12),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Text(
                     controller.error.value!,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.red),
+                    style: const TextStyle(color: AppColors.red),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -157,7 +157,7 @@ class _UsefulMemberScreenState extends State<UsefulMemberScreen> {
           return  Center(
             child: Text(
               AppStrings.noUsefulNumbersFound.tr,
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: AppColors.grey),
             ),
           );
         }
@@ -328,7 +328,7 @@ class _UsefulNumberTile extends StatelessWidget {
                     item.description,
                     style: TextStyle(
                       fontSize: ResponsiveHelper.fontSize(12),
-                      color: Colors.grey.shade600,
+                      color: AppColors.greyShade600,
                     ),
                   ),
                 ],
@@ -340,7 +340,7 @@ class _UsefulNumberTile extends StatelessWidget {
             onTap: () => _callNumber(context),
             child: Card(
               elevation: 8,
-              shadowColor: Colors.black,
+              shadowColor: AppColors.black,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(
                   ResponsiveHelper.borderRadius(20),
@@ -359,14 +359,14 @@ class _UsefulNumberTile extends StatelessWidget {
                     ResponsiveHelper.borderRadius(20),
                   ),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.15),
+                    color: AppColors.white.withOpacity(0.15),
                     width: 1,
                   ),
                 ),
                 child: Text(
                   'Call Now',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.white,
                     fontSize: ResponsiveHelper.fontSize(12),
                     fontWeight: FontWeight.w600,
                   ),
@@ -379,3 +379,5 @@ class _UsefulNumberTile extends StatelessWidget {
     );
   }
 }
+
+

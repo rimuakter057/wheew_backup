@@ -1,8 +1,9 @@
-
-
+﻿
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 import '../../../../utils/color/app_colors.dart';
 
@@ -57,7 +58,7 @@ class MapTypeLayersButton extends StatelessWidget {
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
+              color: AppColors.black.withValues(alpha: 0.12),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -74,7 +75,7 @@ class MapTypeLayersButton extends StatelessWidget {
   void _showMapTypeBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
@@ -100,7 +101,7 @@ class MapTypeLayersButton extends StatelessWidget {
                         width: ResponsiveHelper.width(50),
                         height: ResponsiveHelper.height(5),
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade300,
+                          color: AppColors.greyShade300,
                           borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
                         ),
                       ),
@@ -112,7 +113,7 @@ class MapTypeLayersButton extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Map type",
+                          AppStrings.mapType.tr,
                           style: TextStyle(
                             fontSize: ResponsiveHelper.fontSize(20),
                             fontWeight: FontWeight.w600,
@@ -120,7 +121,7 @@ class MapTypeLayersButton extends StatelessWidget {
                         ),
                         GestureDetector(
                           onTap: () => Navigator.pop(context),
-                          child: const Icon(Icons.close, color: Colors.grey),
+                          child: const Icon(Icons.close, color: AppColors.grey),
                         ),
                       ],
                     ),
@@ -131,7 +132,7 @@ class MapTypeLayersButton extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _mapTypeCard(
-                          title: "Default",
+                          title: AppStrings.defaultMapType.tr,
                           icon: Icons.map_outlined,
                           value: MapType.normal,
                           selectedType: currentType,
@@ -143,7 +144,7 @@ class MapTypeLayersButton extends StatelessWidget {
                           },
                         ),
                         _mapTypeCard(
-                          title: "Hybrid",
+                          title: AppStrings.hybrid.tr,
                           icon: Icons.map_outlined,
                           value: MapType.hybrid,
                           selectedType: currentType,
@@ -155,7 +156,7 @@ class MapTypeLayersButton extends StatelessWidget {
                           },
                         ),
                         _mapTypeCard(
-                          title: "Satellite",
+                          title: AppStrings.satellite.tr,
                           icon: Icons.satellite_alt_outlined,
                           value: MapType.satellite,
                           selectedType: currentType,
@@ -167,7 +168,7 @@ class MapTypeLayersButton extends StatelessWidget {
                           },
                         ),
                         _mapTypeCard(
-                          title: "Terrain",
+                          title: AppStrings.terrain.tr,
                           icon: Icons.terrain_outlined,
                           value: MapType.terrain,
                           selectedType: currentType,
@@ -215,11 +216,11 @@ class MapTypeLayersButton extends StatelessWidget {
               border: Border.all(
                 color: selected
                     ? const Color(0xFF185FA5)
-                    : Colors.transparent,
+                    : AppColors.transparent,
                 width: ResponsiveHelper.borderWidth(2.5),
               ),
             ),
-            // 👇 পরে এখানে image upload করলে এটা দিয়ে replace করবেন:
+            // ðŸ‘‡ à¦ªà¦°à§‡ à¦à¦–à¦¾à¦¨à§‡ image upload à¦•à¦°à¦²à§‡ à¦à¦Ÿà¦¾ à¦¦à¦¿à¦¯à¦¼à§‡ replace à¦•à¦°à¦¬à§‡à¦¨:
             // child: ClipRRect(
             //   borderRadius: BorderRadius.circular(14),
             //   child: Image.asset('assets/images/map_default.png', fit: BoxFit.cover),
@@ -229,7 +230,7 @@ class MapTypeLayersButton extends StatelessWidget {
               size: ResponsiveHelper.iconSize(32),
               color: selected
                   ? const Color(0xFF185FA5)
-                  : Colors.grey.shade500,
+                  : AppColors.greyShade500,
             ),
           ),
           SizedBox(height: ResponsiveHelper.spacing(8)),
@@ -238,7 +239,7 @@ class MapTypeLayersButton extends StatelessWidget {
             style: TextStyle(
               fontSize: ResponsiveHelper.fontSize(13),
               fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-              color: selected ? const Color(0xFF185FA5) : Colors.grey.shade700,
+              color: selected ? const Color(0xFF185FA5) : AppColors.greyShade700,
             ),
           ),
         ],
@@ -246,3 +247,5 @@ class MapTypeLayersButton extends StatelessWidget {
     );
   }
 }
+
+

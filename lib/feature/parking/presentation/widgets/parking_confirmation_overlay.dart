@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
@@ -28,7 +28,7 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 //       return GestureDetector(
 //         onTap: () => visible.value = false,
 //         child: Container(
-//           color: Colors.black.withValues(alpha: 0.4),
+//           color: AppColors.black.withValues(alpha: 0.4),
 //           child: Align(
 //             alignment: Alignment.bottomCenter,
 //             child: GestureDetector(
@@ -113,7 +113,7 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 //                                     },
 //                                     label: AppStrings.no.tr,
 //                                     backgroundColor: AppColors.blueShadeConBg,
-//                                     shadowColor: Colors.transparent,
+//                                     shadowColor: AppColors.transparent,
 //                                     textColor: AppColors.black,
 //                                     borderColor: AppColors.white,
 //                                   ),
@@ -184,7 +184,7 @@ class ParkingConfirmationDialog extends StatelessWidget {
     return showDialog(
       context: context,
       barrierDismissible: true,
-      barrierColor: Colors.black.withValues(alpha: 0.4),
+      barrierColor: AppColors.black.withValues(alpha: 0.4),
       builder: (_) => ParkingConfirmationDialog(
         onYes: onYes,
         onNo: onNo,
@@ -195,7 +195,7 @@ class ParkingConfirmationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       insetPadding: EdgeInsets.symmetric(
         horizontal: ResponsiveHelper.padding(24),
       ),
@@ -270,7 +270,7 @@ class ParkingConfirmationDialog extends StatelessWidget {
                           },
                           label: AppStrings.no.tr,
                           backgroundColor: AppColors.blueShadeConBg,
-                          shadowColor: Colors.transparent,
+                          shadowColor: AppColors.transparent,
                           textColor: AppColors.black,
                           borderColor: AppColors.white,
                         ),
@@ -318,3 +318,5 @@ class ParkingConfirmationDialog extends StatelessWidget {
     );
   }
 }
+
+

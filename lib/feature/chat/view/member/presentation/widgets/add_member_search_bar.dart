@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -17,13 +17,13 @@ class AddMemberSearchBar extends StatelessWidget {
       ),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(
             ResponsiveHelper.borderRadius(30),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: AppColors.black.withOpacity(0.04),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -39,11 +39,11 @@ class AddMemberSearchBar extends StatelessWidget {
             hintText: AppStrings.searchByName.tr,
             hintStyle: TextStyle(
               fontSize: ResponsiveHelper.fontSize(14),
-              color: Colors.grey,
+              color: AppColors.grey,
             ),
             prefixIcon: Icon(
               Icons.search,
-              color: Colors.grey,
+              color: AppColors.grey,
               size: ResponsiveHelper.iconSize(20),
             ),
             border: InputBorder.none,
@@ -56,3 +56,5 @@ class AddMemberSearchBar extends StatelessWidget {
     );
   }
 }
+
+

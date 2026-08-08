@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 
@@ -20,7 +21,7 @@ class _MessageScreenShimmerState extends State<MessageScreenShimmer>
   late AnimationController _controller;
   late Animation<double> _animation;
 
-  // bottom → top order (first item appears at bottom of screen)
+  // bottom â†’ top order (first item appears at bottom of screen)
   static const List<_BubbleConfig> bubbles = [
     _BubbleConfig(isMine: true, widthFactor: 0.55),
     _BubbleConfig(isMine: false, widthFactor: 0.48),
@@ -136,8 +137,8 @@ class _BubbleShimmer extends StatelessWidget {
   }
 
   LinearGradient _shimmerGradient() {
-    final base = Colors.grey.shade200;
-    final highlight = Colors.grey.shade100;
+    final base = AppColors.greyShade200;
+    final highlight = AppColors.greyShade100;
 
     return LinearGradient(
       begin: Alignment(-1.0 + progress * 3 - 1, 0),
@@ -147,3 +148,6 @@ class _BubbleShimmer extends StatelessWidget {
     );
   }
 }
+
+
+

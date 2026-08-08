@@ -1,8 +1,9 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data'; // ← এটা add করো file এর top এ
+import 'dart:typed_data'; // â† à¦à¦Ÿà¦¾ add à¦•à¦°à§‹ file à¦à¦° top à¦
 
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -41,7 +42,7 @@ class ApiService extends GetxService {
       return 'Network connection problem: ${errorMsg.replaceAll('ClientException: ', '')}';
     }
     if (errorMsg.contains('ClientException')) {
-      return 'Connection lost. Please check your internet and try again.';  // ← simple message
+      return 'Connection lost. Please check your internet and try again.';  // â† simple message
     }
     return errorMsg.isNotEmpty ? errorMsg : 'An unexpected error occurred.';
   }
@@ -102,7 +103,7 @@ class ApiService extends GetxService {
       return handleResponse(response, uri);
     } catch (e) {
       logger.e(
-        "❌ POST Error server:================================================ $e",
+        "âŒ POST Error server:================================================ $e",
       );
       return  Response(statusCode: 1, statusText: _parseError(e));
     }
@@ -132,7 +133,7 @@ class ApiService extends GetxService {
 
     try {
       logger.i(
-        "➡️ GET REQUEST=====================================\nURL:===================================== $uri\nHeaders:=========================================== ${headers ?? mainHeaders}",
+        "âž¡ï¸ GET REQUEST=====================================\nURL:===================================== $uri\nHeaders:=========================================== ${headers ?? mainHeaders}",
       );
 
       http.Response response = await client
@@ -141,13 +142,13 @@ class ApiService extends GetxService {
 
       return handleResponse(response, uri);
     } catch (e) {
-      logger.e("❌ GET Error:==================================== $e");
+      logger.e("âŒ GET Error:==================================== $e");
 
       Get.snackbar(
         'Connection Error',
         _parseError(e),
-        backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
+        backgroundColor: AppColors.red,
+        colorText: AppColors.red,
         snackPosition: SnackPosition.BOTTOM,
         duration: const Duration(seconds: 3),
       );
@@ -190,7 +191,7 @@ class ApiService extends GetxService {
 
     try {
       logger.i(
-        "➡️ PATCH REQUEST===============================================\nURL:=============================================== $uri\nHeaders:========================================== ${headers ?? mainHeaders}\nBody:================================== $body",
+        "âž¡ï¸ PATCH REQUEST===============================================\nURL:=============================================== $uri\nHeaders:========================================== ${headers ?? mainHeaders}\nBody:================================== $body",
       );
 
       http.Response response = await client
@@ -203,7 +204,7 @@ class ApiService extends GetxService {
 
       return handleResponse(response, uri);
     } catch (e) {
-      logger.e("❌ PATCH Error:============================================================== $e");
+      logger.e("âŒ PATCH Error:============================================================== $e");
       return Response(statusCode: 1, statusText: _parseError(e));
     }
   }
@@ -295,7 +296,7 @@ class ApiService extends GetxService {
       request.headers.addAll(headers);
 
       logger.i(
-        "➡️ MULTIPART POST==============================================================================\nURL:======================================================================== $uri\nBody Fields:============================================================= $body",
+        "âž¡ï¸ MULTIPART POST==============================================================================\nURL:======================================================================== $uri\nBody Fields:============================================================= $body",
       );
 
       // Attach Files
@@ -304,7 +305,7 @@ class ApiService extends GetxService {
           var mimeType = lookupMimeType(element.file.path) ?? "image/jpeg";
 
           logger.i(
-            "📎 File Attached:=========================== ${element.file.path} → ${element.key}",
+            "ðŸ“Ž File Attached:=========================== ${element.file.path} â†’ ${element.key}",
           );
 
           request.files.add(
@@ -321,7 +322,7 @@ class ApiService extends GetxService {
       final content = await response.stream.bytesToString();
 
       logger.i(
-        "⬅️ MULTIPART RESPONSE [$uri]:============================================ $content",
+        "â¬…ï¸ MULTIPART RESPONSE [$uri]:============================================ $content",
       );
 
       return Response(
@@ -331,7 +332,7 @@ class ApiService extends GetxService {
       );
     } catch (e) {
       logger.e(
-        "❌ MULTIPART POST Error:====================================================== $e",
+        "âŒ MULTIPART POST Error:====================================================== $e",
       );
       return  Response(statusCode: 1, statusText: _parseError(e));
     }
@@ -362,7 +363,7 @@ class ApiService extends GetxService {
 
     try {
       logger.i(
-        "➡️ PUT REQUEST========================================================\nURL:===================================================== $uri\nBody:===================================================== $body",
+        "âž¡ï¸ PUT REQUEST========================================================\nURL:===================================================== $uri\nBody:===================================================== $body",
       );
 
       http.Response response = await client
@@ -376,7 +377,7 @@ class ApiService extends GetxService {
       return handleResponse(response, uri);
     } catch (e) {
       logger.e(
-        "❌ PUT Error:===================================================================== $e",
+        "âŒ PUT Error:===================================================================== $e",
       );
       return  Response(statusCode: 1, statusText: _parseError(e));
     }
@@ -400,7 +401,7 @@ class ApiService extends GetxService {
 
     try {
       logger.i(
-        "🗑️ DELETE REQUEST==== URL: $uri",
+        "ðŸ—‘ï¸ DELETE REQUEST==== URL: $uri",
       );
 
       http.Response response = await client
@@ -413,7 +414,7 @@ class ApiService extends GetxService {
 
       return handleResponse(response, uri);
     } catch (e) {
-      logger.e("❌ DELETE Error: $e");
+      logger.e("âŒ DELETE Error: $e");
       return  Response(statusCode: 1, statusText: _parseError(e));
     }
   }
@@ -429,7 +430,7 @@ class ApiService extends GetxService {
     }
 
     logger.i(
-      "⬅️ RESPONSE FOR Server=============================== [$uri]\nStatus:============================================= ${response.statusCode}\nBody:===================================== ${response.body}",
+      "â¬…ï¸ RESPONSE FOR Server=============================== [$uri]\nStatus:============================================= ${response.statusCode}\nBody:===================================== ${response.body}",
     );
 
     return Response(
@@ -463,15 +464,15 @@ class ApiService extends GetxService {
           .get(Uri.parse(ApiUrl.baseUrl + uri), headers: headers)
           .timeout(const Duration(seconds: timeoutInSeconds));
 
-      logger.i("🔵 Binary GET [$uri] Status: ${response.statusCode}");
-      logger.i("🔵 Response: ${response.body.substring(0, min(200, response.body.length))}");
+      logger.i("ðŸ”µ Binary GET [$uri] Status: ${response.statusCode}");
+      logger.i("ðŸ”µ Response: ${response.body.substring(0, min(200, response.body.length))}");
 
       if (response.statusCode == 200) {
         return response.bodyBytes;
       }
       return null;
     } catch (e) {
-      logger.e("❌ GET Binary Error: $e");
+      logger.e("âŒ GET Binary Error: $e");
       return null;
     }
   }
@@ -486,6 +487,8 @@ class MultipartBody {
   File file;
   MultipartBody(this.key, this.file);
 }
+
+
 
 
 

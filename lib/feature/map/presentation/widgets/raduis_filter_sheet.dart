@@ -1,4 +1,4 @@
-// import 'package:flutter/material.dart';
+﻿// import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 //
@@ -20,7 +20,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //     return showModalBottomSheet(
 //       context: context,
 //       isScrollControlled: true,
-//       backgroundColor: Colors.transparent,
+//       backgroundColor: AppColors.transparent,
 //       builder: (_) => RadiusFilterSheet(
 //         initialRadiusMeter: initialRadiusMeter,
 //         onApply: onApply,
@@ -33,7 +33,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 // }
 //
 // class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
-//   late double _radius; // মিটারে, slider double লাগবে তাই double রাখা
+//   late double _radius; // à¦®à¦¿à¦Ÿà¦¾à¦°à§‡, slider double à¦²à¦¾à¦—à¦¬à§‡ à¦¤à¦¾à¦‡ double à¦°à¦¾à¦–à¦¾
 //   late TextEditingController _textCtrl;
 //
 //   static const double _minRadius = 100;   // 100 m
@@ -76,7 +76,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //       ),
 //       child: Container(
 //         decoration: const BoxDecoration(
-//           color: Colors.white,
+//           color: AppColors.white,
 //           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
 //         ),
 //         padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
@@ -84,20 +84,20 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //           mainAxisSize: MainAxisSize.min,
 //           crossAxisAlignment: CrossAxisAlignment.start,
 //           children: [
-//             // ── drag handle ─────────────────────────────
+//             // â”€â”€ drag handle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 //             Center(
 //               child: Container(
 //                 width: 40,
 //                 height: 4,
 //                 margin: const EdgeInsets.only(bottom: 16),
 //                 decoration: BoxDecoration(
-//                   color: Colors.grey.shade300,
+//                   color: AppColors.greyShade300,
 //                   borderRadius: BorderRadius.circular(4),
 //                 ),
 //               ),
 //             ),
 //
-//             // ── title row ───────────────────────────────
+//             // â”€â”€ title row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 //             Row(
 //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //               children: [
@@ -111,11 +111,11 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //             const SizedBox(height: 4),
 //             Text(
 //               'Show parking spots within this distance',
-//               style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+//               style: TextStyle(fontSize: 13, color: AppColors.greyShade600),
 //             ),
 //             const SizedBox(height: 20),
 //
-//             // ── radius value badge + manual input ──────
+//             // â”€â”€ radius value badge + manual input â”€â”€â”€â”€â”€â”€
 //             Row(
 //               children: [
 //                 Container(
@@ -166,7 +166,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //             ),
 //             const SizedBox(height: 12),
 //
-//             // ── slider ──────────────────────────────────
+//             // â”€â”€ slider â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 //             SliderTheme(
 //               data: SliderTheme.of(context).copyWith(
 //                 activeTrackColor: const Color(0xFF185FA5),
@@ -188,15 +188,15 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //                 children: [
 //                   Text('${_minRadius.toInt()} m',
-//                       style: TextStyle(fontSize: 11, color: Colors.grey.shade500)),
+//                       style: TextStyle(fontSize: 11, color: AppColors.greyShade500)),
 //                   Text('${(_maxRadius / 1000).toInt()} km',
-//                       style: TextStyle(fontSize: 11, color: Colors.grey.shade500)),
+//                       style: TextStyle(fontSize: 11, color: AppColors.greyShade500)),
 //                 ],
 //               ),
 //             ),
 //             const SizedBox(height: 20),
 //
-//             // ── apply button ────────────────────────────
+//             // â”€â”€ apply button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 //             ElevatedButton(
 //               style: ElevatedButton.styleFrom(
 //                 backgroundColor: const Color(0xFF185FA5),
@@ -212,7 +212,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //               child: Text(
 //                 'Apply (${_radius.round()} m)',
 //                 style: const TextStyle(
-//                   color: Colors.white,
+//                   color: AppColors.white,
 //                   fontWeight: FontWeight.w600,
 //                   fontSize: 15,
 //                 ),
@@ -234,7 +234,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //       child: Container(
 //         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
 //         decoration: BoxDecoration(
-//           color: selected ? const Color(0xFF185FA5) : Colors.grey.shade100,
+//           color: selected ? const Color(0xFF185FA5) : AppColors.greyShade100,
 //           borderRadius: BorderRadius.circular(8),
 //         ),
 //         child: Text(
@@ -242,7 +242,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //           style: TextStyle(
 //             fontSize: 12,
 //             fontWeight: FontWeight.w600,
-//             color: selected ? Colors.white : Colors.grey.shade700,
+//             color: selected ? AppColors.white : AppColors.greyShade700,
 //           ),
 //         ),
 //       ),
@@ -277,7 +277,7 @@ class RadiusFilterSheet extends StatefulWidget {
     return showTrackedBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (_) => RadiusFilterSheet(
         initialRadiusMeter: initialRadiusMeter,
         onApply: onApply,
@@ -290,9 +290,9 @@ class RadiusFilterSheet extends StatefulWidget {
 }
 
 class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
-  late double _radius; // মিটারে
+  late double _radius; // à¦®à¦¿à¦Ÿà¦¾à¦°à§‡
 
-  // ── অব্যবহৃত লজিক (কমেন্ট করে রাখা হলো) ──────────────────
+  // â”€â”€ à¦…à¦¬à§à¦¯à¦¬à¦¹à§ƒà¦¤ à¦²à¦œà¦¿à¦• (à¦•à¦®à§‡à¦¨à§à¦Ÿ à¦•à¦°à§‡ à¦°à¦¾à¦–à¦¾ à¦¹à¦²à§‹) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // late TextEditingController _textCtrl;
   // void _onTextChanged(String value) {
   //   final parsed = double.tryParse(value);
@@ -326,7 +326,7 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
     });
   }
 
-  // ভ্যালু ফরম্যাট করার জন্য হেল্পার ফাংশন (যেমন: 1000m -> 1 km)
+  // à¦­à§à¦¯à¦¾à¦²à§ à¦«à¦°à¦®à§à¦¯à¦¾à¦Ÿ à¦•à¦°à¦¾à¦° à¦œà¦¨à§à¦¯ à¦¹à§‡à¦²à§à¦ªà¦¾à¦° à¦«à¦¾à¦‚à¦¶à¦¨ (à¦¯à§‡à¦®à¦¨: 1000m -> 1 km)
   String _formatRadius(double value) {
     int meter = value.round();
     if (meter >= 1000) {
@@ -343,16 +343,16 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
       ),
       child: Container(
         decoration: BoxDecoration(
-          // ইমেজের মতো হালকা গ্রেডিয়েন্ট ব্যাকগ্রাউন্ড
+          // à¦‡à¦®à§‡à¦œà§‡à¦° à¦®à¦¤à§‹ à¦¹à¦¾à¦²à¦•à¦¾ à¦—à§à¦°à§‡à¦¡à¦¿à§Ÿà§‡à¦¨à§à¦Ÿ à¦¬à§à¦¯à¦¾à¦•à¦—à§à¦°à¦¾à¦‰à¦¨à§à¦¡
           gradient: LinearGradient(
-            colors: [Colors.grey.shade100, Colors.blue.shade50],
+            colors: [AppColors.greyShade100, AppColors.blue],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
           borderRadius: BorderRadius.vertical(top: Radius.circular(ResponsiveHelper.borderRadius(32))),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: AppColors.black.withOpacity(0.1),
               blurRadius: 20,
               spreadRadius: 5,
             )
@@ -368,20 +368,20 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── drag handle ─────────────────────────────
+            // â”€â”€ drag handle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Center(
               child: Container(
                 width: ResponsiveHelper.width(48),
                 height: ResponsiveHelper.height(5),
                 margin: EdgeInsets.only(bottom: ResponsiveHelper.padding(24)),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade400,
+                  color: AppColors.greyShade400,
                   borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
                 ),
               ),
             ),
 
-            // ── title & subtitle ────────────────────────
+            // â”€â”€ title & subtitle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
              Text(
               AppStrings.searchParkingSpotWithin.tr,
               style: context.bodyMedium.copyWith(color: AppColors.black)
@@ -392,19 +392,19 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
 
               style: TextStyle(
                 fontSize: ResponsiveHelper.fontSize(14),
-                color: Colors.grey.shade600,
+                color: AppColors.greyShade600,
                 fontWeight: FontWeight.w400,
               ),
             ),
-            SizedBox(height: ResponsiveHelper.spacing(48)), // স্লাইডার টুলটিপের জন্য একটু বেশি স্পেস রাখা হয়েছে
+            SizedBox(height: ResponsiveHelper.spacing(48)), // à¦¸à§à¦²à¦¾à¦‡à¦¡à¦¾à¦° à¦Ÿà§à¦²à¦Ÿà¦¿à¦ªà§‡à¦° à¦œà¦¨à§à¦¯ à¦à¦•à¦Ÿà§ à¦¬à§‡à¦¶à¦¿ à¦¸à§à¦ªà§‡à¦¸ à¦°à¦¾à¦–à¦¾ à¦¹à§Ÿà§‡à¦›à§‡
 
-            // ── slider with custom thumb & tooltip ──────
+            // â”€â”€ slider with custom thumb & tooltip â”€â”€â”€â”€â”€â”€
             SliderTheme(
               data: SliderTheme.of(context).copyWith(
                 trackHeight: ResponsiveHelper.height(6),
                 activeTrackColor: const Color(0xFF0066C4),
-                inactiveTrackColor: Colors.grey.shade200,
-                // কাস্টম থাম্ব শেপ যা ইমেজের মতো ভ্যালু দেখাবে
+                inactiveTrackColor: AppColors.greyShade200,
+                // à¦•à¦¾à¦¸à§à¦Ÿà¦® à¦¥à¦¾à¦®à§à¦¬ à¦¶à§‡à¦ª à¦¯à¦¾ à¦‡à¦®à§‡à¦œà§‡à¦° à¦®à¦¤à§‹ à¦­à§à¦¯à¦¾à¦²à§ à¦¦à§‡à¦–à¦¾à¦¬à§‡
                 thumbShape: CustomSliderThumbShape(
                   value: _formatRadius(_radius),
                   thumbRadius: ResponsiveHelper.width(10),
@@ -419,20 +419,20 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
               ),
             ),
 
-            // ── min & max labels ────────────────────────
+            // â”€â”€ min & max labels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Padding(
               padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 4),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('100 m', style: TextStyle(fontSize: ResponsiveHelper.fontSize(13), color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
-                  Text('20 km', style: TextStyle(fontSize: ResponsiveHelper.fontSize(13), color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
+                  Text('100 m', style: TextStyle(fontSize: ResponsiveHelper.fontSize(13), color: AppColors.greyShade600, fontWeight: FontWeight.w500)),
+                  Text('20 km', style: TextStyle(fontSize: ResponsiveHelper.fontSize(13), color: AppColors.greyShade600, fontWeight: FontWeight.w500)),
                 ],
               ),
             ),
             SizedBox(height: ResponsiveHelper.spacing(24)),
 
-            // ── Quick Select Section ────────────────────
+            // â”€â”€ Quick Select Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
              Text(
               AppStrings.quickSelect.tr,
               style: TextStyle(
@@ -443,7 +443,7 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
             ),
             SizedBox(height: ResponsiveHelper.spacing(16)),
 
-            // ইমেজের মতো ২ লাইনের গ্রিড লুক তৈরি করতে Wrap ব্যবহার করা হয়েছে
+            // à¦‡à¦®à§‡à¦œà§‡à¦° à¦®à¦¤à§‹ à§¨ à¦²à¦¾à¦‡à¦¨à§‡à¦° à¦—à§à¦°à¦¿à¦¡ à¦²à§à¦• à¦¤à§ˆà¦°à¦¿ à¦•à¦°à¦¤à§‡ Wrap à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦•à¦°à¦¾ à¦¹à§Ÿà§‡à¦›à§‡
             Wrap(
               spacing: ResponsiveHelper.spacing(12),
               runSpacing: ResponsiveHelper.spacing(12),
@@ -458,7 +458,7 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
             ),
             SizedBox(height: ResponsiveHelper.spacing(36)),
 
-            // ── apply button ────────────────────────────
+            // â”€â”€ apply button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Container(
               width: double.infinity,
               height: ResponsiveHelper.height(54),
@@ -478,7 +478,7 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
                 ],
               ),
               child: CustomGradientButton(
-                label: "Apply",
+                label: AppStrings.apply.tr,
                 onPressed: () {
                   Navigator.of(context).pop();
                   widget.onApply(_radius.round());
@@ -491,7 +491,7 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
     );
   }
 
-  // ── Quick Select Chips ──────────────────────────────
+  // â”€â”€ Quick Select Chips â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _quickChip(int meterValue) {
     final bool selected = _radius.round() == meterValue;
     final String label = _formatRadius(meterValue.toDouble());
@@ -502,10 +502,10 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
         duration: const Duration(milliseconds: 200),
         padding: ResponsiveHelper.symmetric(horizontal: 22, vertical: 12),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFF005DB3) : Colors.white.withOpacity(0.6),
+          color: selected ? const Color(0xFF005DB3) : AppColors.white.withOpacity(0.6),
           borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
           border: Border.all(
-            color: selected ? Colors.transparent : Colors.grey.shade300,
+            color: selected ? AppColors.transparent : AppColors.greyShade300,
             width: ResponsiveHelper.borderWidth(1),
           ),
           boxShadow: selected ? [
@@ -521,7 +521,7 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
           style: TextStyle(
             fontSize: ResponsiveHelper.fontSize(14),
             fontWeight: selected ? FontWeight.bold : FontWeight.w500,
-            color: selected ? Colors.white : Colors.grey.shade700,
+            color: selected ? AppColors.white : AppColors.greyShade700,
           ),
         ),
       ),
@@ -529,7 +529,7 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
   }
 }
 
-// ── Custom Slider Thumb Paint (ইমেজের মতো ব্ল্যাক বাবল ইফেক্ট) ──
+// â”€â”€ Custom Slider Thumb Paint (à¦‡à¦®à§‡à¦œà§‡à¦° à¦®à¦¤à§‹ à¦¬à§à¦²à§à¦¯à¦¾à¦• à¦¬à¦¾à¦¬à¦² à¦‡à¦«à§‡à¦•à§à¦Ÿ) â”€â”€
 class CustomSliderThumbShape extends SliderComponentShape {
   final double thumbRadius;
   final String value;
@@ -561,57 +561,57 @@ class CustomSliderThumbShape extends SliderComponentShape {
       }) {
     final Canvas canvas = context.canvas;
 
-    // ১. স্লাইডারের ভেতরের নীল রঙের থাম্ব/ডট আঁকা
+    // à§§. à¦¸à§à¦²à¦¾à¦‡à¦¡à¦¾à¦°à§‡à¦° à¦­à§‡à¦¤à¦°à§‡à¦° à¦¨à§€à¦² à¦°à¦™à§‡à¦° à¦¥à¦¾à¦®à§à¦¬/à¦¡à¦Ÿ à¦†à¦à¦•à¦¾
     final fillPaint = Paint()
       ..color = const Color(0xFF0066C4)
       ..style = PaintingStyle.fill;
 
     final borderPaint = Paint()
-      ..color = Colors.white
+      ..color = AppColors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3;
 
     canvas.drawCircle(center, thumbRadius, fillPaint);
     canvas.drawCircle(center, thumbRadius, borderPaint);
 
-    // ২. উপরের ব্ল্যাক টুলটিপ/বাবল আঁকা
+    // à§¨. à¦‰à¦ªà¦°à§‡à¦° à¦¬à§à¦²à§à¦¯à¦¾à¦• à¦Ÿà§à¦²à¦Ÿà¦¿à¦ª/à¦¬à¦¾à¦¬à¦² à¦†à¦à¦•à¦¾
     final boxPaint = Paint()
       ..color = const Color(0xFF1E1E1E)
       ..style = PaintingStyle.fill;
 
-    // টুলটিপ টেক্সট কনফিগারেশন
+    // à¦Ÿà§à¦²à¦Ÿà¦¿à¦ª à¦Ÿà§‡à¦•à§à¦¸à¦Ÿ à¦•à¦¨à¦«à¦¿à¦—à¦¾à¦°à§‡à¦¶à¦¨
     final textPainter = TextPainter(
       text: TextSpan(
         text: this.value,
         style: const TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
+          color: AppColors.white,
         ),
       ),
       textDirection: TextDirection.ltr,
     );
     textPainter.layout();
 
-    // টুলটিপ বক্সের সাইজ
+    // à¦Ÿà§à¦²à¦Ÿà¦¿à¦ª à¦¬à¦•à§à¦¸à§‡à¦° à¦¸à¦¾à¦‡à¦œ
     double boxWidth = textPainter.width + 24;
     double boxHeight = textPainter.height + 12;
 
-    // থাম্বের ঠিক উপরে পজিশন সেট করা
+    // à¦¥à¦¾à¦®à§à¦¬à§‡à¦° à¦ à¦¿à¦• à¦‰à¦ªà¦°à§‡ à¦ªà¦œà¦¿à¦¶à¦¨ à¦¸à§‡à¦Ÿ à¦•à¦°à¦¾
     Offset boxCenter = Offset(center.dx, center.dy - 35);
     RRect rRect = RRect.fromRectAndRadius(
       Rect.fromCenter(center: boxCenter, width: boxWidth, height: boxHeight),
       const Radius.circular(16),
     );
 
-    // টুলটিপের শ্যাডো ইফেক্ট
+    // à¦Ÿà§à¦²à¦Ÿà¦¿à¦ªà§‡à¦° à¦¶à§à¦¯à¦¾à¦¡à§‹ à¦‡à¦«à§‡à¦•à§à¦Ÿ
     final Path shadowPath = Path()..addRRect(rRect);
-    canvas.drawShadow(shadowPath, Colors.black, 6.0, true);
+    canvas.drawShadow(shadowPath, AppColors.black, 6.0, true);
 
-    // টুলটিপ বক্স ড্র করা
+    // à¦Ÿà§à¦²à¦Ÿà¦¿à¦ª à¦¬à¦•à§à¦¸ à¦¡à§à¦° à¦•à¦°à¦¾
     canvas.drawRRect(rRect, boxPaint);
 
-    // ছোট নিচের ট্রায়াঙ্গেল/তীর চিহ্ন আঁকা
+    // à¦›à§‹à¦Ÿ à¦¨à¦¿à¦šà§‡à¦° à¦Ÿà§à¦°à¦¾à§Ÿà¦¾à¦™à§à¦—à§‡à¦²/à¦¤à§€à¦° à¦šà¦¿à¦¹à§à¦¨ à¦†à¦à¦•à¦¾
     final arrowPath = Path()
       ..moveTo(center.dx - 6, boxCenter.dy + (boxHeight / 2))
       ..lineTo(center.dx + 6, boxCenter.dy + (boxHeight / 2))
@@ -619,7 +619,7 @@ class CustomSliderThumbShape extends SliderComponentShape {
       ..close();
     canvas.drawPath(arrowPath, boxPaint);
 
-    // বক্সের ভেতরে টেক্সট ড্র করা
+    // à¦¬à¦•à§à¦¸à§‡à¦° à¦­à§‡à¦¤à¦°à§‡ à¦Ÿà§‡à¦•à§à¦¸à¦Ÿ à¦¡à§à¦° à¦•à¦°à¦¾
     Offset textOffset = Offset(
       boxCenter.dx - (textPainter.width / 2),
       boxCenter.dy - (textPainter.height / 2),
@@ -627,3 +627,5 @@ class CustomSliderThumbShape extends SliderComponentShape {
     textPainter.paint(canvas, textOffset);
   }
 }
+
+

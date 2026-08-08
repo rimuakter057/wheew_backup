@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
@@ -28,7 +28,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ChatController chatController = Get.find<ChatController>();
 
-  // ── নতুন AddMemberController ──
+  // â”€â”€ à¦¨à¦¤à§à¦¨ AddMemberController â”€â”€
   late final GroupController _controller;
 
   @override
@@ -39,7 +39,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
     _controller = Get.put(GroupController());
     _controller.init(widget.groupRoomId);
 
-    // Search bar listener → controller এ pass করো
+    // Search bar listener â†’ controller à¦ pass à¦•à¦°à§‹
     _searchController.addListener(
           () => _controller.onSearchChanged(_searchController.text),
     );
@@ -62,7 +62,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
     return Container(
       decoration: BoxDecoration(gradient: AppColors.primaryBackgroundGradient),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         body: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +89,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
         children: [
           Container(
             decoration: const BoxDecoration(
-              color: Colors.white,
+              color: AppColors.white,
               shape: BoxShape.circle,
             ),
             child: IconButton(
@@ -165,10 +165,10 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
         borderRadius: BorderRadius.circular(
           ResponsiveHelper.borderRadius(20),
         ),
-        border: Border.all(color: Colors.white.withOpacity(0.6)),
+        border: Border.all(color: AppColors.white.withOpacity(0.6)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.black.withOpacity(0.04),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -184,7 +184,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
             _buildMemberTile(members[i]),
             if (i != members.length - 1)
               Divider(
-                color: Colors.grey.shade200,
+                color: AppColors.greyShade200,
                 height: 1,
                 indent: ResponsiveHelper.width(60),
               ),
@@ -216,7 +216,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
                     : AppStrings.noContactsFound.tr,
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(14),
-                  color: Colors.grey,
+                  color: AppColors.grey,
                 ),
               ),
             ),
@@ -288,3 +288,6 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
     );
   }
 }
+
+
+

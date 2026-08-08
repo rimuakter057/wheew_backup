@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -37,7 +37,7 @@ class MapTopBar extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // ── Search pill ────────────────────────────────────────────
+          // â”€â”€ Search pill â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Expanded(
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
@@ -52,11 +52,11 @@ class MapTopBar extends StatelessWidget {
                       child: Container(
                         height: barHeight,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AppColors.white,
                           borderRadius: BorderRadius.circular(barHeight / 2),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.08),
+                              color: AppColors.black.withValues(alpha: 0.08),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -74,7 +74,7 @@ class MapTopBar extends StatelessWidget {
                               hintText: AppStrings.searchHere.tr,
                               hintStyle: TextStyle(
                                 fontSize: ResponsiveHelper.fontSize(14),
-                                color: Colors.grey,
+                                color: AppColors.grey,
                               ),
                               prefixIcon: Icon(
                                 Icons.search,
@@ -102,7 +102,7 @@ class MapTopBar extends StatelessWidget {
 
           SizedBox(width: ResponsiveHelper.spacing(8)),
 
-          // ── Notification bell ──────────────────────────────────────
+          // â”€â”€ Notification bell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           _NotificationBellButton(),
         ],
       ),
@@ -134,7 +134,7 @@ class _NotificationBellButton extends StatelessWidget {
                 border: Border.all(color: AppColors.white),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.12),
+                    color: AppColors.black.withValues(alpha: 0.12),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -160,14 +160,14 @@ class _NotificationBellButton extends StatelessWidget {
                     color: Color(0xFF2F80ED),
                     shape: BoxShape.circle,
                     border: Border.fromBorderSide(
-                      BorderSide(color: Colors.white, width: 1.5),
+                      BorderSide(color: AppColors.white, width: 1.5),
                     ),
                   ),
                   child: Text(
                     '$count',
                     style: const TextStyle(
                       fontSize: 9,
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -179,3 +179,5 @@ class _NotificationBellButton extends StatelessWidget {
     );
   }
 }
+
+

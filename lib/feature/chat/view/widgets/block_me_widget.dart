@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,14 +16,14 @@ class BlockMeWidget extends StatelessWidget {
       margin: ResponsiveHelper.all(12),
 
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: AppColors.greyShade200,
 
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
       ),
 
       child: Row(
         children: [
-          Icon(Icons.lock, color: Colors.grey),
+          Icon(Icons.lock, color: AppColors.grey),
 
           SizedBox(width: ResponsiveHelper.spacing(10)),
 
@@ -44,3 +44,6 @@ class BlockMeWidget extends StatelessWidget {
     );
   }
 }
+
+
+

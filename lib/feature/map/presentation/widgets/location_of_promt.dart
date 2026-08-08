@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -21,7 +22,7 @@ class LocationOffPrompt extends StatelessWidget {
           margin: EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(32)),
           padding: ResponsiveHelper.all(24),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.white,
             borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
           ),
           child: Column(
@@ -48,7 +49,7 @@ class LocationOffPrompt extends StatelessWidget {
                 AppStrings.locationOffDesc.tr,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: ResponsiveHelper.fontSize(13), color: Colors.grey, height: 1.5),
+                    fontSize: ResponsiveHelper.fontSize(13), color: AppColors.grey, height: 1.5),
               ),
               SizedBox(height: ResponsiveHelper.spacing(20)),
               SizedBox(
@@ -63,7 +64,7 @@ class LocationOffPrompt extends StatelessWidget {
                   onPressed: onEnableLocation,
                   child: Text(
                     AppStrings.enableLocation.tr,
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: AppColors.white),
                   ),
                 ),
               ),
@@ -74,3 +75,4 @@ class LocationOffPrompt extends StatelessWidget {
     );
   }
 }
+

@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -48,7 +48,7 @@ class InAppNavigationController extends GetxController {
   }
 
   Future<void> _speak(String text) async {
-    _logger.i('🔊 [TTS] speak() called: "$text" (isVoiceOn=${isVoiceOn.value}, ready=$_ttsReady)');
+    _logger.i('ðŸ”Š [TTS] speak() called: "$text" (isVoiceOn=${isVoiceOn.value}, ready=$_ttsReady)');
     if (!isVoiceOn.value || !_ttsReady) return;
     await _tts.stop();
     await _tts.speak(text);
@@ -69,7 +69,7 @@ class InAppNavigationController extends GetxController {
   /// its index in allRoutes — rendered once per fetch, not on every build.
   final RxMap<int, BitmapDescriptor> routeLabels = <int, BitmapDescriptor>{}.obs;
 
-  /// Mode-icon + duration pill for the selected route (e.g. "🚶 7 min"),
+  /// Mode-icon + duration pill for the selected route (e.g. "ðŸš¶ 7 min"),
   /// shown along the walking route the way Google Maps does.
   final Rxn<BitmapDescriptor> primaryRouteBadge = Rxn<BitmapDescriptor>();
 
@@ -379,15 +379,15 @@ class InAppNavigationController extends GetxController {
       info.durationText,
       icon: selectedMode.value.icon,
       background: AppColors.blue,
-      foreground: Colors.white,
+      foreground: AppColors.white,
     );
   }
 
   Future<BitmapDescriptor> _renderPillBitmap(
     String text, {
     IconData? icon,
-    Color background = Colors.white,
-    Color foreground = Colors.black87,
+    Color background = AppColors.white,
+    Color foreground = AppColors.black87,
     Color? border,
   }) async {
     final dpr = ui.PlatformDispatcher.instance.views.first.devicePixelRatio;
@@ -466,3 +466,5 @@ class InAppNavigationController extends GetxController {
     super.onClose();
   }
 }
+
+

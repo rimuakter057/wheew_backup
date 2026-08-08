@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'dart:convert';
 
@@ -72,7 +72,7 @@ class ParkingShowController extends GetxController {
     activeSpotDetailsCard.value = null;
   }
 
-  // ── SavePark, ParkMode, and Parktime States ──────────────────────
+  // â”€â”€ SavePark, ParkMode, and Parktime States â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   final Rxn<LatLng> savedParkingLocation = Rxn<LatLng>();
   final RxInt confidenceLevel = 98.obs;
   final RxBool isParkModeActive = false.obs;
@@ -153,6 +153,7 @@ class ParkingShowController extends GetxController {
     circles.clear();
     markers.removeWhere((m) => m.markerId.value != 'saved_car_location');
     currentParkingAreaId.value = null;
+    clearSpotDetailsCard();
     if (setIdleStatus) {
       status.value = 'IDLE';
     } else {
@@ -753,14 +754,14 @@ class ParkingShowController extends GetxController {
     showDialog(
       context: ctx,
       barrierDismissible: false,
-      barrierColor: Colors.black.withValues(alpha: 0.4),
+      barrierColor: AppColors.black.withValues(alpha: 0.4),
       builder: (_) => PopScope(
         canPop: false,
         child: Center(
           child: Container(
             padding: ResponsiveHelper.all(28),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.white,
               borderRadius: BorderRadius.circular(
                 ResponsiveHelper.borderRadius(20),
               ),
@@ -787,11 +788,11 @@ class ParkingShowController extends GetxController {
     }
   }
 
-  // ── Post-exit parking experience rating. Submits via
+  // â”€â”€ Post-exit parking experience rating. Submits via
   //    POST /park-relay/parking-areas/{parkingAreaId}/ratings when a real
   //    parkingAreaId was captured (see currentParkingAreaId) — no review
   //    text field exists in the UI yet, so review is sent empty. Falls
-  //    back to the old "just acknowledge" behavior when no id is known. ──
+  //    back to the old "just acknowledge" behavior when no id is known. â”€â”€
   Future<void> _submitRating(String? parkingAreaId, double rating) async {
     if (parkingAreaId == null || parkingAreaId.isEmpty) {
       _showMessage(AppStrings.ratingSubmitted.tr, isError: false);
@@ -837,17 +838,17 @@ class ParkingShowController extends GetxController {
     showDialog(
       context: ctx,
       barrierDismissible: true,
-      barrierColor: Colors.black.withValues(alpha: 0.4),
+      barrierColor: AppColors.black.withValues(alpha: 0.4),
       builder: (dialogContext) => StatefulBuilder(
         builder: (dialogContext, setState) => Dialog(
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.transparent,
           insetPadding: EdgeInsets.symmetric(
             horizontal: ResponsiveHelper.padding(24),
           ),
           child: Container(
             padding: ResponsiveHelper.symmetric(horizontal: 24, vertical: 28),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.white,
               borderRadius: BorderRadius.circular(
                 ResponsiveHelper.borderRadius(24),
               ),
@@ -887,8 +888,8 @@ class ParkingShowController extends GetxController {
                         child: Icon(
                           filled ? Icons.star_rounded : Icons.star_outline_rounded,
                           color: filled
-                              ? Colors.amber
-                              : Colors.black.withValues(alpha: 0.25),
+                              ? AppColors.amber
+                              : AppColors.black.withValues(alpha: 0.25),
                           size: ResponsiveHelper.iconSize(36),
                         ),
                       ),
@@ -926,7 +927,7 @@ class ParkingShowController extends GetxController {
                         onPressed: () => Navigator.of(dialogContext).pop(),
                         label: AppStrings.skip.tr,
                         backgroundColor: AppColors.blueShadeConBg,
-                        shadowColor: Colors.transparent,
+                        shadowColor: AppColors.transparent,
                         textColor: AppColors.black,
                         borderColor: AppColors.white,
                       ),
@@ -1146,7 +1147,7 @@ class ParkingShowController extends GetxController {
     return null;
   }
 
-  // ── SavePark, ParkMode, and Parktime Operations ──────────────────
+  // â”€â”€ SavePark, ParkMode, and Parktime Operations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   void toggleParkMode() {
     showLocationPulse.value = !showLocationPulse.value;
     if (showLocationPulse.value) {
@@ -1256,11 +1257,11 @@ class ParkingShowController extends GetxController {
       isScrollControlled: true,
       isDismissible: false,
       enableDrag: false,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (dialogContext) {
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.white,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(ResponsiveHelper.borderRadius(24)),
             ),
@@ -1278,7 +1279,7 @@ class ParkingShowController extends GetxController {
                       bottom: ResponsiveHelper.spacing(16),
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.grey[350],
+                      color: AppColors.grey[350],
                       borderRadius: BorderRadius.circular(
                         ResponsiveHelper.borderRadius(10),
                       ),
@@ -1288,13 +1289,13 @@ class ParkingShowController extends GetxController {
                 Container(
                   padding: ResponsiveHelper.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
+                    color: AppColors.blue,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.local_parking,
                     size: ResponsiveHelper.iconSize(40),
-                    color: Colors.blue.shade700,
+                    color: AppColors.blue,
                   ),
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(20)),
@@ -1311,7 +1312,7 @@ class ParkingShowController extends GetxController {
                   AppStrings.isItAFreeSpotOrIsItAPaidSpot.tr,
                   style: TextStyle(
                     fontSize: ResponsiveHelper.fontSize(14),
-                    color: Colors.grey,
+                    color: AppColors.grey,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -1364,7 +1365,7 @@ class ParkingShowController extends GetxController {
                         child: Text(
                           AppStrings.paidSpot.tr,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -1389,11 +1390,11 @@ class ParkingShowController extends GetxController {
       isScrollControlled: true,
       isDismissible: false,
       enableDrag: false,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (dialogContext) {
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.white,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(ResponsiveHelper.borderRadius(24)),
             ),
@@ -1411,7 +1412,7 @@ class ParkingShowController extends GetxController {
                       bottom: ResponsiveHelper.spacing(16),
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.grey[350],
+                      color: AppColors.grey[350],
                       borderRadius: BorderRadius.circular(
                         ResponsiveHelper.borderRadius(10),
                       ),
@@ -1430,7 +1431,7 @@ class ParkingShowController extends GetxController {
                   AppStrings.forHowLongIsTheUserStayingInThatSpot.tr,
                   style: TextStyle(
                     fontSize: ResponsiveHelper.fontSize(14),
-                    color: Colors.grey,
+                    color: AppColors.grey,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -1450,15 +1451,15 @@ class ParkingShowController extends GetxController {
                           startParkingTimer(mins);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey.shade100,
-                          foregroundColor: Colors.black87,
+                          backgroundColor: AppColors.greyShade100,
+                          foregroundColor: AppColors.black87,
                           elevation: 0,
                           padding: ResponsiveHelper.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
                               ResponsiveHelper.borderRadius(10),
                             ),
-                            side: BorderSide(color: Colors.grey.shade300),
+                            side: BorderSide(color: AppColors.greyShade300),
                           ),
                         ),
                         child: Text(
@@ -1474,7 +1475,7 @@ class ParkingShowController extends GetxController {
                   onPressed: () => Navigator.of(dialogContext).pop(),
                   child: Text(
                     AppStrings.cancel.tr,
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(color: AppColors.grey),
                   ),
                 ),
               ],
@@ -1494,11 +1495,11 @@ class ParkingShowController extends GetxController {
       isScrollControlled: true,
       isDismissible: false,
       enableDrag: false,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (dialogContext) {
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.white,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(ResponsiveHelper.borderRadius(24)),
             ),
@@ -1516,7 +1517,7 @@ class ParkingShowController extends GetxController {
                       bottom: ResponsiveHelper.spacing(16),
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.grey[350],
+                      color: AppColors.grey[350],
                       borderRadius: BorderRadius.circular(
                         ResponsiveHelper.borderRadius(10),
                       ),
@@ -1526,13 +1527,13 @@ class ParkingShowController extends GetxController {
                 Container(
                   padding: ResponsiveHelper.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.amber.shade50,
+                    color: AppColors.amber.shade50,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.warning_amber_rounded,
                     size: ResponsiveHelper.iconSize(40),
-                    color: Colors.amber,
+                    color: AppColors.amber,
                   ),
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(20)),
@@ -1550,7 +1551,7 @@ class ParkingShowController extends GetxController {
                       .tr,
                   style: TextStyle(
                     fontSize: ResponsiveHelper.fontSize(14),
-                    color: Colors.grey,
+                    color: AppColors.grey,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -1592,7 +1593,7 @@ class ParkingShowController extends GetxController {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.amber.shade700,
+                          backgroundColor: AppColors.amber.shade700,
                           padding: ResponsiveHelper.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
@@ -1603,7 +1604,7 @@ class ParkingShowController extends GetxController {
                         child: Text(
                           AppStrings.yesLeaving.tr,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -1619,7 +1620,7 @@ class ParkingShowController extends GetxController {
     );
   }
 
-  // ── Handoff Details Dialog: Status, Expires At, Navigate only ──
+  // â”€â”€ Handoff Details Dialog: Status, Expires At, Navigate only â”€â”€
   Future<void> showHandoffDetails(Map<String, dynamic> handoff) async {
     final id = handoff['id']?.toString();
     if (id == null || id.isEmpty) {
@@ -1741,7 +1742,7 @@ class ParkingShowController extends GetxController {
   // ── Distance label shared by the handoff and parking-area detail sheets —
   //    the backend occasionally returns distanceMeters in the millions
   //    (bad seed/test data), so convert to km past 1000m to keep it readable
-  //    instead of printing a raw absurd meter count. ──
+  //    instead of printing a raw absurd meter count. â”€â”€
   String _formatDistance(dynamic distanceMeters) {
     final meters = distanceMeters is num
         ? distanceMeters.toDouble()
@@ -1754,7 +1755,7 @@ class ParkingShowController extends GetxController {
 
   // ── Badge (label/icon/color) derived from parkingArea.parkingAreaTypes —
   //    mirrors the same Electric/Accessible/Standard classification used on
-  //    the Saved Parkings list. ──
+  //    the Saved Parkings list. â”€â”€
   ({String label, IconData icon, Color color, String? asset}) _areaTypeBadge(
     Map<String, dynamic>? area,
   ) {
@@ -1773,7 +1774,7 @@ class ParkingShowController extends GetxController {
     }
     if (types.contains('DISABLED_FACILITY')) {
       return (
-        label: 'Accessible',
+        label: 'Disable',
         icon: Icons.accessible_rounded,
         color: AppColors.disableOrange,
         asset: AssetsPath.disabledFacility,
@@ -1787,8 +1788,8 @@ class ParkingShowController extends GetxController {
     );
   }
 
-  // ── Parking Area Details: card view (title/badge/distance/rating +
-  //    spots/price) with a Save Park action. ──
+  // â”€â”€ Parking Area Details: card view (title/badge/distance/rating +
+  //    spots/price) with a Save Park action. â”€â”€
   void showParkingAreaDetails(Map<String, dynamic> area) {
     final name = area['name']?.toString() ?? '';
     final description = area['description']?.toString() ?? '';
@@ -1946,7 +1947,7 @@ class ParkingShowController extends GetxController {
 
   // ── Duration prompt for PAID areas — mirrors the home tab's Save My
   //    Parking dialog validation (>=15 min) since this "Save Park" flow
-  //    from a parking area's details doesn't have its own duration field. ──
+  //    from a parking area's details doesn't have its own duration field. â”€â”€
   void _showDurationInputDialog({
     required void Function(int durationMin) onConfirm,
     String? feeLabel,
@@ -1961,17 +1962,17 @@ class ParkingShowController extends GetxController {
     showDialog(
       context: ctx,
       barrierDismissible: true,
-      barrierColor: Colors.black.withValues(alpha: 0.4),
+      barrierColor: AppColors.black.withValues(alpha: 0.4),
       builder: (dialogContext) => StatefulBuilder(
         builder: (dialogContext, setState) => Dialog(
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.transparent,
           insetPadding: EdgeInsets.symmetric(
             horizontal: ResponsiveHelper.padding(24),
           ),
           child: Container(
             padding: ResponsiveHelper.symmetric(horizontal: 24, vertical: 28),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.white,
               borderRadius: BorderRadius.circular(
                 ResponsiveHelper.borderRadius(24),
               ),
@@ -2069,7 +2070,7 @@ class ParkingShowController extends GetxController {
                         onPressed: () => Navigator.of(dialogContext).pop(),
                         label: AppStrings.cancel.tr,
                         backgroundColor: AppColors.blueShadeConBg,
-                        shadowColor: Colors.transparent,
+                        shadowColor: AppColors.transparent,
                         textColor: AppColors.black,
                         borderColor: AppColors.white,
                       ),
@@ -2120,7 +2121,7 @@ class ParkingShowController extends GetxController {
   // ── Shared "found spot" details bottom sheet — same card design used
   //    on the Saved Parkings screen. [onSavePark] is supplied by the
   //    caller so only IDLE (parking areas) and SEARCHING (handoffs) get
-  //    a working save action, each wired to the right endpoint. ──
+  //    a working save action, each wired to the right endpoint. â”€â”€
   void _showSpotDetailsCardSheet({
     required String title,
     required String subtitle,
@@ -2228,11 +2229,11 @@ class ParkingShowController extends GetxController {
     showModalBottomSheet(
       context: ctx,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (sheetContext) => StatefulBuilder(
         builder: (sheetContext, setState) => Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.white,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(ResponsiveHelper.borderRadius(24)),
             ),
@@ -2251,7 +2252,7 @@ class ParkingShowController extends GetxController {
                     height: ResponsiveHelper.height(5),
                     margin: EdgeInsets.only(bottom: ResponsiveHelper.spacing(16)),
                     decoration: BoxDecoration(
-                      color: Colors.grey[350],
+                      color: AppColors.grey[350],
                       borderRadius: BorderRadius.circular(
                         ResponsiveHelper.borderRadius(10),
                       ),
@@ -2270,13 +2271,13 @@ class ParkingShowController extends GetxController {
                   'How long will you park here?',
                   style: TextStyle(
                     fontSize: ResponsiveHelper.fontSize(14),
-                    color: Colors.grey,
+                    color: AppColors.grey,
                   ),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(20)),
 
-                // ── Custom minutes input ──
+                // â”€â”€ Custom minutes input â”€â”€
                 TextField(
                   controller: durationController,
                   keyboardType: TextInputType.number,
@@ -2290,7 +2291,7 @@ class ParkingShowController extends GetxController {
                     suffixText: 'min',
                     errorText: hasError ? errorText : null,
                     filled: true,
-                    fillColor: Colors.grey.shade100,
+                    fillColor: AppColors.greyShade100,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(
                         ResponsiveHelper.borderRadius(12),
@@ -2310,7 +2311,7 @@ class ParkingShowController extends GetxController {
                   style: TextStyle(
                     fontSize: ResponsiveHelper.fontSize(12),
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey.shade600,
+                    color: AppColors.greyShade600,
                   ),
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(8)),
@@ -2333,18 +2334,18 @@ class ParkingShowController extends GetxController {
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
+                          color: AppColors.greyShade100,
                           borderRadius: BorderRadius.circular(
                             ResponsiveHelper.borderRadius(20),
                           ),
-                          border: Border.all(color: Colors.grey.shade300),
+                          border: Border.all(color: AppColors.greyShade300),
                         ),
                         child: Text(
                           label,
                           style: TextStyle(
                             fontSize: ResponsiveHelper.fontSize(12),
                             fontWeight: FontWeight.w600,
-                            color: Colors.black87,
+                            color: AppColors.black87,
                           ),
                         ),
                       ),
@@ -2380,7 +2381,7 @@ class ParkingShowController extends GetxController {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF185FA5),
-                      foregroundColor: Colors.white,
+                      foregroundColor: AppColors.white,
                       elevation: 0,
                       padding: ResponsiveHelper.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
@@ -2403,7 +2404,7 @@ class ParkingShowController extends GetxController {
                   onPressed: () => Navigator.of(sheetContext).pop(),
                   child: Text(
                     AppStrings.cancel.tr,
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(color: AppColors.grey),
                   ),
                 ),
               ],
@@ -2421,11 +2422,11 @@ class ParkingShowController extends GetxController {
     showModalBottomSheet(
       context: ctx,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (context) {
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.white,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(ResponsiveHelper.borderRadius(24)),
             ),
@@ -2440,7 +2441,7 @@ class ParkingShowController extends GetxController {
                   width: ResponsiveHelper.width(40),
                   height: ResponsiveHelper.height(5),
                   decoration: BoxDecoration(
-                    color: Colors.grey[350],
+                    color: AppColors.grey[350],
                     borderRadius: BorderRadius.circular(
                       ResponsiveHelper.borderRadius(10),
                     ),
@@ -2453,7 +2454,7 @@ class ParkingShowController extends GetxController {
                 style: TextStyle(
                   fontSize: ResponsiveHelper.fontSize(20),
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: AppColors.black87,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -2479,10 +2480,10 @@ class ParkingShowController extends GetxController {
                   Navigator.pop(context);
                   launchSavedParkingRoute();
                 },
-                icon: const Icon(Icons.directions_walk, color: Colors.white),
+                icon: const Icon(Icons.directions_walk, color: AppColors.white),
                 label: Text(
                   AppStrings.walkBackToCar.tr,
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: AppColors.white),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF185FA5),
@@ -2500,14 +2501,14 @@ class ParkingShowController extends GetxController {
                   Navigator.pop(context);
                   clearSavedParkingLocation();
                 },
-                icon: const Icon(Icons.delete_outline, color: Colors.red),
+                icon: const Icon(Icons.delete_outline, color: AppColors.red),
                 label: Text(
                   AppStrings.removeSpot.tr,
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: AppColors.red),
                 ),
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(
-                    color: Colors.red,
+                    color: AppColors.red,
                     width: ResponsiveHelper.borderWidth(1),
                   ),
                   padding: ResponsiveHelper.symmetric(vertical: 14),
@@ -2545,14 +2546,14 @@ class ParkingShowController extends GetxController {
     showModalBottomSheet(
       context: ctx,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (dialogContext) {
         return Container(
           constraints: BoxConstraints(
             maxHeight: MediaQuery.of(dialogContext).size.height * 0.85,
           ),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.white,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(ResponsiveHelper.borderRadius(24)),
             ),
@@ -2571,7 +2572,7 @@ class ParkingShowController extends GetxController {
                       bottom: ResponsiveHelper.spacing(16),
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.grey[350],
+                      color: AppColors.grey[350],
                       borderRadius: BorderRadius.circular(
                         ResponsiveHelper.borderRadius(10),
                       ),
@@ -2583,7 +2584,7 @@ class ParkingShowController extends GetxController {
                   style: TextStyle(
                     fontSize: ResponsiveHelper.fontSize(20),
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: AppColors.black87,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -2622,11 +2623,11 @@ class ParkingShowController extends GetxController {
                               onPressed: () => _launchURL(valStr),
                               icon: const Icon(
                                 Icons.directions,
-                                color: Colors.white,
+                                color: AppColors.white,
                               ),
                               label: Text(
                                 AppStrings.navigate.tr,
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(color: AppColors.white),
                               ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF185FA5),
@@ -2654,7 +2655,7 @@ class ParkingShowController extends GetxController {
                   child: Text(
                     AppStrings.close.tr,
                     style: TextStyle(
-                      color: Colors.grey,
+                      color: AppColors.grey,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -2679,7 +2680,7 @@ class ParkingShowController extends GetxController {
               key,
               style: TextStyle(
                 fontSize: ResponsiveHelper.fontSize(14),
-                color: Colors.grey[600],
+                color: AppColors.grey[600],
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -2691,7 +2692,7 @@ class ParkingShowController extends GetxController {
               value,
               style: TextStyle(
                 fontSize: ResponsiveHelper.fontSize(14),
-                color: Colors.black87,
+                color: AppColors.black87,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -2780,3 +2781,6 @@ class SpotDetailsCardData {
     this.onSavePark,
   });
 }
+
+
+

@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomContainer extends StatelessWidget {
@@ -41,16 +42,16 @@ class CustomContainer extends StatelessWidget {
       height: height,
       margin: margin,
       decoration: BoxDecoration(
-        color: backgroundColor ?? Colors.white,
+        color: backgroundColor ?? AppColors.white,
         borderRadius: borderRadius ?? BorderRadius.circular(radius ?? 8),
         border: allSides
             ? Border.all(
-                color: borderColor ?? Colors.transparent,
+                color: borderColor ?? AppColors.transparent,
                 width: boarderWidth ?? 1,
               )
             : Border(
                 bottom: BorderSide(
-                  color: borderColor ?? Colors.transparent,
+                  color: borderColor ?? AppColors.transparent,
                   width: boarderWidth ?? 1,
                 ),
               ),
@@ -59,3 +60,4 @@ class CustomContainer extends StatelessWidget {
     );
   }
 }
+

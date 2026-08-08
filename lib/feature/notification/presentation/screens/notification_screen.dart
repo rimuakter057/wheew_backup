@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -60,7 +60,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
   }
 
-  // ── Group notifications by date (Today / Yesterday / d-M-yyyy) ─
+  // â”€â”€ Group notifications by date (Today / Yesterday / d-M-yyyy) â”€
   String _sectionLabel(String sentAt) {
     try {
       final dt = DateTime.parse(sentAt).toLocal();
@@ -85,7 +85,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return map.entries.toList();
   }
 
-  // ── Delete all confirmation ───────────────────────────────────
+  // â”€â”€ Delete all confirmation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   void _showDeleteAllDialog() {
     showDialog(
       context: context,
@@ -104,7 +104,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           AppStrings.deleteAllNotifications.tr,
           style: GoogleFonts.inter(
             fontSize: ResponsiveHelper.fontSize(14),
-            color: Colors.grey.shade600,
+            color: AppColors.greyShade600,
           ),
         ),
         actions: [
@@ -124,11 +124,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 ? const SizedBox(
               width: 16,
               height: 16,
-              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.red),
+              child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.red),
             )
                 : Text(
               AppStrings.deleteNotifications.tr,
-              style: const TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
+              style: const TextStyle(color: AppColors.red, fontWeight: FontWeight.w600),
             ),
           )),
         ],
@@ -141,7 +141,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return Container(
       decoration: const BoxDecoration(color: AppColors.notificationBg),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         body: SafeArea(
           child: Column(
             children: [
@@ -196,7 +196,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               border: Border.all(color: AppColors.notificationBoxBorder),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.04),
+                                  color: AppColors.black.withOpacity(0.04),
                                   blurRadius: 16,
                                   offset: const Offset(0, 8),
                                 ),
@@ -221,7 +221,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                   if (i != group.value.length - 1)
                                     Divider(
                                       height: 1,
-                                      color: Colors.grey.shade200,
+                                      color: AppColors.greyShade200,
                                       indent: ResponsiveHelper.width(16),
                                       endIndent: ResponsiveHelper.width(16),
                                     ),
@@ -256,7 +256,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         children: [
           Container(
             decoration: const BoxDecoration(
-              color: Colors.white,
+              color: AppColors.white,
               shape: BoxShape.circle,
             ),
             child: IconButton(
@@ -285,7 +285,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             }
             return Container(
               decoration: const BoxDecoration(
-                color: Colors.white,
+                color: AppColors.white,
                 shape: BoxShape.circle,
               ),
               child: PopupMenuButton<String>(
@@ -312,7 +312,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       value: 'deleteAll',
                       child: Text(
                         AppStrings.deleteNotifications.tr,
-                        style: GoogleFonts.inter(color: Colors.red),
+                        style: GoogleFonts.inter(color: AppColors.red),
                       ),
                     ),
                 ],
@@ -332,14 +332,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
           Icon(
             Icons.notifications_none_rounded,
             size: ResponsiveHelper.iconSize(64),
-            color: Colors.grey.shade400,
+            color: AppColors.greyShade400,
           ),
           SizedBox(height: ResponsiveHelper.spacing(16)),
           Text(
             AppStrings.notificationNotYet.tr,
             style: GoogleFonts.inter(
               fontSize: ResponsiveHelper.fontSize(16),
-              color: Colors.grey.shade500,
+              color: AppColors.greyShade500,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -349,7 +349,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 }
 
-// ── Notification Card ─────────────────────────────────────────
+// â”€â”€ Notification Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _NotificationCard extends StatelessWidget {
   final NotificationEvent notification;
   final String formattedTime;
@@ -374,8 +374,8 @@ class _NotificationCard extends StatelessWidget {
       background: Container(
         alignment: Alignment.centerRight,
         padding: EdgeInsets.only(right: ResponsiveHelper.spacing(20)),
-        color: Colors.red.shade400,
-        child: const Icon(Icons.delete_outline_rounded, color: Colors.white, size: 24),
+        color: AppColors.red,
+        child: const Icon(Icons.delete_outline_rounded, color: AppColors.white, size: 24),
       ),
       child: GestureDetector(
         onTap: unread ? onMarkRead : null,
@@ -398,7 +398,7 @@ class _NotificationCard extends StatelessWidget {
                       style: GoogleFonts.inter(
                         fontSize: ResponsiveHelper.fontSize(14),
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: AppColors.black87,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -422,7 +422,7 @@ class _NotificationCard extends StatelessWidget {
                         formattedTime,
                         style: GoogleFonts.inter(
                           fontSize: ResponsiveHelper.fontSize(11),
-                          color: Colors.grey.shade500,
+                          color: AppColors.greyShade500,
                         ),
                       ),
                     ],
@@ -434,7 +434,7 @@ class _NotificationCard extends StatelessWidget {
                 notification.message,
                 style: GoogleFonts.inter(
                   fontSize: ResponsiveHelper.fontSize(13),
-                  color: Colors.grey.shade600,
+                  color: AppColors.greyShade600,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -446,3 +446,6 @@ class _NotificationCard extends StatelessWidget {
     );
   }
 }
+
+
+

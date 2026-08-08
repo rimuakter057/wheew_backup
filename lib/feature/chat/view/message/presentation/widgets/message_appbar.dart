@@ -1,4 +1,4 @@
-// // widgets/message_app_bar.dart
+﻿// // widgets/message_app_bar.dart
 //
 // import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/custom_image/custom_image.dart';
@@ -27,7 +27,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //   final String receiverId;
 //   final ChatController chatController;
 //   final VoidCallback onRateTap;
-//   final VoidCallback onProfileTap; // ✅ add করো
+//   final VoidCallback onProfileTap; // âœ… add à¦•à¦°à§‹
 //
 //   const MessageAppBar({
 //     super.key,
@@ -48,7 +48,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //       child: Row(
 //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //         children: [
-//           // ── Back + Avatar + Name ────────────────────────
+//           // â”€â”€ Back + Avatar + Name â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 //           Row(
 //             children: [
 //               IconButton(
@@ -91,7 +91,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //                       style: GoogleFonts.poppins(
 //                         fontSize: ResponsiveHelper.fontSize(12),
 //                         fontWeight: FontWeight.w400,
-//                         color: isTyping ? AppColors.blue : Colors.grey,
+//                         color: isTyping ? AppColors.blue : AppColors.grey,
 //                       ),
 //                     );
 //                   }),
@@ -100,7 +100,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //             ],
 //           ),
 //
-//           // ── Popup Menu ──────────────────────────────────
+//           // â”€â”€ Popup Menu â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 //           PopupMenuButton<String>(
 //             icon: Icon(Icons.more_vert, color: AppColors.black),
 //             onSelected: (value) async {
@@ -134,7 +134,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //                 value: "Rate",
 //                 child: Row(
 //                   children: [
-//                     Icon(Icons.star_rate_outlined, color: Colors.black),
+//                     Icon(Icons.star_rate_outlined, color: AppColors.black),
 //                     SizedBox(width: ResponsiveHelper.spacing(8)),
 //                     Text(AppStrings.rateUser.tr),
 //                   ],
@@ -213,7 +213,7 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.isVerified,
   });
 
-  // ✅ AppBar হিসেবে ব্যবহার করতে PreferredSize দরকার
+  // âœ… AppBar à¦¹à¦¿à¦¸à§‡à¦¬à§‡ à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦•à¦°à¦¤à§‡ PreferredSize à¦¦à¦°à¦•à¦¾à¦°
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight + 18);
 
@@ -287,7 +287,7 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(12),
                       fontWeight: FontWeight.w400,
-                      color: Colors.grey.shade600,
+                      color: AppColors.greyShade600,
                     ),
                   )
                 else
@@ -303,7 +303,7 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                       style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(12),
                         fontWeight: FontWeight.w400,
-                        color: isTyping ? AppColors.blue : Colors.grey.shade600,
+                        color: isTyping ? AppColors.blue : AppColors.greyShade600,
                       ),
                     );
                   }),
@@ -316,7 +316,7 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
         PopupMenuButton<String>(
           padding: EdgeInsets.only(right: ResponsiveHelper.width(8)),
           icon: Icon(Icons.more_vert, color: AppColors.black),
-          color: Colors.transparent,
+          color: AppColors.transparent,
           elevation: 0,
           offset: Offset(0, ResponsiveHelper.height(40)),
           itemBuilder: (context) => [
@@ -326,11 +326,11 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: Container(
                 width: 170,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.96),
+                  color: AppColors.white.withOpacity(0.96),
                   borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.12),
+                      color: AppColors.black.withOpacity(0.12),
                       blurRadius: 16,
                       offset: const Offset(0, 6),
                     ),
@@ -340,7 +340,7 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // ── View Profile ──────────────────────────────
+                    // â”€â”€ View Profile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     InkWell(
                       onTap: () {
                         Navigator.pop(context);
@@ -370,7 +370,7 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
 
-                    // ── Rate / User Rate ──────────────────────────
+                    // â”€â”€ Rate / User Rate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     InkWell(
                       onTap: () {
                         Navigator.pop(context);
@@ -400,7 +400,7 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
 
-                    // ── Block / Unblock ──────────────────────────────
+                    // â”€â”€ Block / Unblock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     Obx(
                       () => InkWell(
                         onTap: () {
@@ -455,3 +455,5 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
+
+

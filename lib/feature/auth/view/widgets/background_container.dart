@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 // import 'dart:ui';
 // import 'package:flutter/material.dart';
 //
@@ -9,28 +10,28 @@
 //   @override
 //   Widget build(BuildContext context) {
 //     return ClipRRect(
-//       borderRadius: BorderRadius.circular(32.0), // কন্টেইনারের রাউন্ডেড কর্নার
+//       borderRadius: BorderRadius.circular(32.0), // à¦•à¦¨à§à¦Ÿà§‡à¦‡à¦¨à¦¾à¦°à§‡à¦° à¦°à¦¾à¦‰à¦¨à§à¦¡à§‡à¦¡ à¦•à¦°à§à¦¨à¦¾à¦°
 //       child: BackdropFilter(
-//         // ব্যাকগ্রাউন্ড ব্লার করার জন্য (Frosted Glass Effect)
+//         // à¦¬à§à¦¯à¦¾à¦•à¦—à§à¦°à¦¾à¦‰à¦¨à§à¦¡ à¦¬à§à¦²à¦¾à¦° à¦•à¦°à¦¾à¦° à¦œà¦¨à§à¦¯ (Frosted Glass Effect)
 //         filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
 //         child: Container(
 //           padding: const EdgeInsets.all(24.0),
 //           decoration: BoxDecoration(
-//             // হালকা সাদাটে ও স্বচ্ছ ব্যাকগ্রাউন্ড কালার
+//             // à¦¹à¦¾à¦²à¦•à¦¾ à¦¸à¦¾à¦¦à¦¾à¦Ÿà§‡ à¦“ à¦¸à§à¦¬à¦šà§à¦› à¦¬à§à¦¯à¦¾à¦•à¦—à§à¦°à¦¾à¦‰à¦¨à§à¦¡ à¦•à¦¾à¦²à¦¾à¦°
 //             color: Color(0xFFCDD6E5),
 //             borderRadius: BorderRadius.circular(32.0),
-//       border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
+//       border: Border.all(color: AppColors.white.withOpacity(0.6), width: 1.5),
 //
-//             // হালকা শ্যাডো ইফেক্ট
+//             // à¦¹à¦¾à¦²à¦•à¦¾ à¦¶à§à¦¯à¦¾à¦¡à§‹ à¦‡à¦«à§‡à¦•à§à¦Ÿ
 //             boxShadow: [
 //               BoxShadow(
-//                 color: Colors.black.withOpacity(0.05),
+//                 color: AppColors.black.withOpacity(0.05),
 //                 blurRadius: 20,
 //                 offset: const Offset(0, 10),
 //               ),
 //             ],
 //           ),
-//           child: child, // এর ভেতরে আপনার Vehicle Model এবং Colors এর উইজেটগুলো বসবে
+//           child: child, // à¦à¦° à¦­à§‡à¦¤à¦°à§‡ à¦†à¦ªà¦¨à¦¾à¦° Vehicle Model à¦à¦¬à¦‚ Colors à¦à¦° à¦‰à¦‡à¦œà§‡à¦Ÿà¦—à§à¦²à§‹ à¦¬à¦¸à¦¬à§‡
 //         ),
 //       ),
 //     );
@@ -57,13 +58,13 @@ class CustomBackgroundContainer extends StatelessWidget {
         child: Card(
           margin: EdgeInsets.zero,
           elevation: 10,
-          shadowColor: Colors.black.withOpacity(0.1),
+          shadowColor: AppColors.black.withOpacity(0.1),
           color: const Color(0xFFCDD6E5),
           shape: RoundedRectangleBorder(
             borderRadius: borderRadius,
-            // ভুলটি এখানে সংশোধন করা হয়েছে: Border.all এর বদলে BorderSide ব্যবহার করা হয়েছে
+            // à¦­à§à¦²à¦Ÿà¦¿ à¦à¦–à¦¾à¦¨à§‡ à¦¸à¦‚à¦¶à§‹à¦§à¦¨ à¦•à¦°à¦¾ à¦¹à§Ÿà§‡à¦›à§‡: Border.all à¦à¦° à¦¬à¦¦à¦²à§‡ BorderSide à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦•à¦°à¦¾ à¦¹à§Ÿà§‡à¦›à§‡
             side: BorderSide(
-              color: Colors.white.withOpacity(0.6),
+              color: AppColors.white.withOpacity(0.6),
               width: 1.5,
             ),
           ),

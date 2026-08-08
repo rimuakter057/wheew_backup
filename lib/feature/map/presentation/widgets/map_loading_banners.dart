@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,9 +21,9 @@ class LocatingBanner extends StatelessWidget {
             vertical: ResponsiveHelper.padding(8),
           ),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.white,
             borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.12), blurRadius: 8)],
+            boxShadow: [BoxShadow(color: AppColors.black.withValues(alpha: 0.12), blurRadius: 8)],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -67,9 +68,9 @@ class FetchingParkingBanner extends StatelessWidget {
             vertical: ResponsiveHelper.padding(8),
           ),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.white,
             borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.12), blurRadius: 8)],
+            boxShadow: [BoxShadow(color: AppColors.black.withValues(alpha: 0.12), blurRadius: 8)],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -97,3 +98,4 @@ class FetchingParkingBanner extends StatelessWidget {
     );
   }
 }
+

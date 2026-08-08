@@ -317,6 +317,10 @@ AppStrings.findAnswersBelow:'Find Answers Below',
 
   AppStrings.mapParkingReportSubmitted: "Parking report submitted!",
   AppStrings.mapFailedToSubmitParkingReport: "Failed to submit parking report",
+  AppStrings.mapParkingAddedSuccessTitle: "Parking Added Successfully!",
+  AppStrings.mapParkingAddedSuccessMessage:
+      "Your parking spot has been submitted and is pending admin approval. It will appear on the map once approved.",
+  AppStrings.ok: "OK",
 
   AppStrings.mapParkingPin: "Parking Pin",
   AppStrings.mapPaidParking: "Paid Parking",
@@ -820,4 +824,52 @@ AppStrings.group:"Group",
   AppStrings.navModeDriving: "Driving",
 
   AppStrings.verifyAccountBecomeWheewer: "Verify your account to become a verified Wheewer user.",
+
+  // -------- Parking Screen --------
+  AppStrings.youreParked: "You're Parked",
+  AppStrings.exitParking: "Exit Parking",
+  AppStrings.yourParkingSpot: "Your Parking Spot",
+  AppStrings.stopSearching: "Stop Searching",
+  AppStrings.findParkingSpot: "Find Parking Spot",
+  AppStrings.active: "Active",
+
+  // -------- Vehicle Info Screen --------
+  AppStrings.addYourVehicleSubtitle: "Tell us about your vehicle so we can personalize your experience.",
+  AppStrings.enterVehicleModel: "Enter vehicle model",
+
+  // -------- Message / Request Screens --------
+  AppStrings.pendingReview: "Pending Review",
+  AppStrings.withdrawRequestLabel: "Withdraw Request",
+  AppStrings.youreNotFollowing: "You're not following this person",
+  AppStrings.sendRequestDesc: "Send a request to start a conversation.\nThey'll review your request before you can message each other.",
+  AppStrings.requestSentDesc: "Your request has been sent to @name. They will review it before you can start messaging.",
+  AppStrings.withdrawRequestQuestion: "Withdraw your message request to @name?",
+  AppStrings.withdrawRequestTitle: "Withdraw request?",
+  AppStrings.acceptRequestFrom: "Accept request from @name?",
+  AppStrings.acceptRequestDesc: "If you accept, they will also be able to message you and see info, such as your activity status and when you've read messages.",
+  AppStrings.blockUserTitle: "Block @name?",
+  AppStrings.blockUserDesc: "They won't be able to message you or find your profile again.",
+  AppStrings.rejectRequestTitle: "Reject request?",
+  AppStrings.rejectRequestFrom: "Reject the message request from @name?",
+  AppStrings.acceptRequestTitle: "Accept request?",
+  AppStrings.acceptRequestFromDesc: "Accept the message request from @name? You'll be able to message each other.",
+  AppStrings.sendRequestTo: "Send a request to @name?",
+  AppStrings.requestAcceptedDesc: "Accepted. You can now message each other.",
+
+  // -------- Map / Parking Info --------
+  AppStrings.defaultMapType: "Default",
+  AppStrings.showElectricCharging: "Show location with electric charging",
+  AppStrings.showDisabledParking: "Show disabled parking spot",
+  AppStrings.dropPin: "Drop Pin",
+  AppStrings.apply: "Apply",
+  AppStrings.bookParkingSpot: "Book Parking Spot",
+  AppStrings.location: "Location",
+
+  // -------- Chat / Group --------
+  AppStrings.leaveSuccessGroup: "Successfully left the group",
+  AppStrings.fieldIsRequired: "Field is required",
+
+  // -------- Auth --------
+  AppStrings.loginSuccessful: "Login Successful",
 };
+

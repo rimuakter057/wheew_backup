@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/feature/auth/repository/auth_controller.dart';
@@ -31,7 +31,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       appBar: CustomAppBar(
         title: AppStrings.helpSupport.tr,
          bgColor: AppColors.lightBlue,
@@ -76,7 +76,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
 
                     /// Title
                     Text(
-                      "Contact us at",
+                      AppStrings.contactUsAt.tr,
                       style: context.bodyLarge.copyWith(
                         fontWeight: FontWeight.w600,
                         color: AppColors.black,
@@ -102,10 +102,10 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                           vertical: ResponsiveHelper.height(14),
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(.45),
+                          color: AppColors.white.withOpacity(.45),
                           borderRadius: BorderRadius.circular(50),
                           border: Border.all(
-                            color: Colors.white.withOpacity(.6),
+                            color: AppColors.white.withOpacity(.6),
                             width: 1,
                           ),
                         ),
@@ -192,7 +192,8 @@ Future<void> _launchEmail(String email) async {
       trimmed,
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: AppColors.blue,
-      colorText: Colors.white,
+      colorText: AppColors.white,
     );
   }
 }
+

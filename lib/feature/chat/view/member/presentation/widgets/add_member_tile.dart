@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
@@ -34,13 +34,13 @@ class AddMemberTile extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: ResponsiveHelper.borderRadius(24),
-              backgroundColor: Colors.grey.shade300,
+              backgroundColor: AppColors.greyShade300,
               backgroundImage:
               avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : null,
               child: avatarUrl.isEmpty
                   ? Icon(
                 Icons.person,
-                color: Colors.white,
+                color: AppColors.white,
                 size: ResponsiveHelper.iconSize(24),
               )
                   : null,
@@ -64,7 +64,7 @@ class AddMemberTile extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.star_rounded,
-                          color: Colors.amber,
+                          color: AppColors.amber,
                           size: ResponsiveHelper.iconSize(16),
                         ),
                         SizedBox(width: ResponsiveHelper.spacing(4)),
@@ -72,7 +72,7 @@ class AddMemberTile extends StatelessWidget {
                           rating!.toStringAsFixed(1),
                           style: GoogleFonts.poppins(
                             fontSize: ResponsiveHelper.fontSize(12),
-                            color: Colors.grey.shade600,
+                            color: AppColors.greyShade600,
                           ),
                         ),
                       ],
@@ -95,11 +95,11 @@ class AddMemberTile extends StatelessWidget {
                           end: Alignment.bottomCenter,
                         )
                       : null,
-                  color: isSelected ? null : Colors.transparent,
+                  color: isSelected ? null : AppColors.transparent,
                   border: Border.all(
                     color: isSelected
                         ? AppColors.blue
-                        : Colors.grey.shade400,
+                        : AppColors.greyShade400,
                     width: 1.5,
                   ),
                   boxShadow: isSelected
@@ -116,7 +116,7 @@ class AddMemberTile extends StatelessWidget {
                     ? Icon(
                         Icons.check,
                         size: ResponsiveHelper.iconSize(14),
-                        color: Colors.white,
+                        color: AppColors.white,
                       )
                     : null,
               ),
@@ -127,3 +127,5 @@ class AddMemberTile extends StatelessWidget {
     );
   }
 }
+
+

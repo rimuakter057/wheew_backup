@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/profile/model/user_document.dart';
@@ -23,7 +23,7 @@ class CustomUploadCard extends StatelessWidget {
   final String? iconPath;
   final bool isOwner;
 
-  /// false → renders just the row (no border/background/rounded corners),
+  /// false â†’ renders just the row (no border/background/rounded corners),
   /// so several of these can sit inside one shared grouped container.
   final bool showCard;
 
@@ -67,7 +67,7 @@ class CustomUploadCard extends StatelessWidget {
   }
 }
 
-// ─── Internal shell ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Internal shell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _CardShell extends StatelessWidget {
   final _CardState   state;
@@ -105,7 +105,7 @@ class _CardShell extends StatelessWidget {
 
   Color get _bgColor {
     switch (state) {
-      case _CardState.empty:    return Colors.white;
+      case _CardState.empty:    return AppColors.white;
       case _CardState.uploaded: return const Color(0xFFEFF6FF);
       case _CardState.expired:  return const Color(0xFFFFF5F5);
     }
@@ -117,7 +117,7 @@ class _CardShell extends StatelessWidget {
     showUploadDocumentSheet(
       context,
       documentType: documentType,
-      existingDoc: doc,   // null → POST, non-null → PATCH
+      existingDoc: doc,   // null â†’ POST, non-null â†’ PATCH
       isOwner: isOwner,
     );
   }
@@ -167,7 +167,7 @@ class _CardShell extends StatelessWidget {
 
             SizedBox(width: ResponsiveHelper.spacing(14)),
 
-            // ── Text ──
+            // â”€â”€ Text â”€â”€
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -188,7 +188,7 @@ class _CardShell extends StatelessWidget {
 
             SizedBox(width: ResponsiveHelper.spacing(8)),
 
-            // ── Right action ──
+            // â”€â”€ Right action â”€â”€
             _buildTrailing(context),
           ],
         ),
@@ -220,7 +220,7 @@ class _CardShell extends StatelessWidget {
                 color:    const Color(0xFF6B7280),
               ),
             ),
-            // ✅ FIX: isOwner হলে Expires line hide
+            // âœ… FIX: isOwner à¦¹à¦²à§‡ Expires line hide
             if (!isOwner)
               Text(
                 '${AppStrings.expires.tr}: ${ctrl.toDisplayDate(doc!.expiryDate)}  •  ${doc!.daysUntilExpiry} ${AppStrings.daysLeft.tr}',
@@ -343,7 +343,7 @@ class _CardShell extends StatelessWidget {
           children: [
             CustomImage(
               imageSrc: AssetsPath.upload,
-              imageColor: Colors.white,
+              imageColor: AppColors.white,
               width: ResponsiveHelper.iconSize(14),
               height: ResponsiveHelper.iconSize(14),
             ),
@@ -353,7 +353,7 @@ class _CardShell extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontSize:   ResponsiveHelper.fontSize(12),
                 fontWeight: FontWeight.w600,
-                color:      Colors.white,
+                color:      AppColors.white,
               ),
             ),
           ],
@@ -362,3 +362,4 @@ class _CardShell extends StatelessWidget {
     );
   }
 }
+

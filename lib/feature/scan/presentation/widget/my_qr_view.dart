@@ -1,4 +1,4 @@
-
+﻿
 import 'dart:convert';
 import 'package:platchatapp/utils/language/app_string.dart';
 
@@ -40,7 +40,7 @@ class MyQrView extends StatelessWidget {
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: AppColors.black.withOpacity(0.08),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),
@@ -50,7 +50,7 @@ class MyQrView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // ── Avatar ─────────────────────────────────
+          // â”€â”€ Avatar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 
 Text("My QR Code",style: context.bodyMedium.copyWith(color: AppColors.black),),
@@ -59,30 +59,30 @@ Text("My QR Code",style: context.bodyMedium.copyWith(color: AppColors.black),),
 
           SizedBox(height: ResponsiveHelper.spacing(12)),
 
-          // ── Name ───────────────────────────────────
+          // â”€â”€ Name â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Text(
             name?.isNotEmpty == true ? name! : '---',
             style: GoogleFonts.poppins(
               fontSize: ResponsiveHelper.fontSize(18),
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: AppColors.black87,
             ),
           ),
 
           SizedBox(height: ResponsiveHelper.spacing(6)),
 
-          // ── Rating + Location ─────────────────────
+          // â”€â”€ Rating + Location â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.star, color: Colors.amber, size: ResponsiveHelper.iconSize(16)),
+              Icon(Icons.star, color: AppColors.amber, size: ResponsiveHelper.iconSize(16)),
               SizedBox(width: ResponsiveHelper.spacing(4)),
               Text(
                 rating != null ? rating!.toStringAsFixed(1) : '0.0',
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveHelper.fontSize(13),
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: AppColors.black87,
                 ),
               ),
               SizedBox(width: ResponsiveHelper.spacing(10)),
@@ -93,7 +93,7 @@ Text("My QR Code",style: context.bodyMedium.copyWith(color: AppColors.black),),
 
           SizedBox(height: ResponsiveHelper.spacing(24)),
 
-          // ── QR Box ─────────────────────────────────
+          // â”€â”€ QR Box â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Obx(() {
             if (scanController.isLoadingQr.value) {
               return Container(
@@ -140,7 +140,7 @@ Text("My QR Code",style: context.bodyMedium.copyWith(color: AppColors.black),),
                     borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
                   ),
                   color: AppColors.black,
-                  clipBehavior: Clip.antiAlias, // ⬅️ এটা দিলে ভেতরের Image-ও radius অনুযায়ী কাটা যাবে
+                  clipBehavior: Clip.antiAlias, // â¬…ï¸ à¦à¦Ÿà¦¾ à¦¦à¦¿à¦²à§‡ à¦­à§‡à¦¤à¦°à§‡à¦° Image-à¦“ radius à¦…à¦¨à§à¦¯à¦¾à¦¯à¦¼à§€ à¦•à¦¾à¦Ÿà¦¾ à¦¯à¦¾à¦¬à§‡
                   child: Image.memory(base64Decode(base64Str), fit: BoxFit.contain),
                 ),
               );
@@ -162,7 +162,7 @@ Text("My QR Code",style: context.bodyMedium.copyWith(color: AppColors.black),),
                   children: [
                     Icon(
                       Icons.refresh_rounded,
-                      color: Colors.grey.shade400,
+                      color: AppColors.greyShade400,
                       size: 36,
                     ),
                     SizedBox(height: ResponsiveHelper.spacing(8)),
@@ -170,7 +170,7 @@ Text("My QR Code",style: context.bodyMedium.copyWith(color: AppColors.black),),
                       AppStrings.tapToRetry.tr,
                       style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(13),
-                        color: Colors.grey.shade400,
+                        color: AppColors.greyShade400,
                       ),
                     ),
                   ],
@@ -181,13 +181,13 @@ Text("My QR Code",style: context.bodyMedium.copyWith(color: AppColors.black),),
 
           SizedBox(height: ResponsiveHelper.spacing(24)),
 
-          // ── Caption ────────────────────────────────
+          // â”€â”€ Caption â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Text(
             AppStrings.letOthersScan.tr,
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               fontSize: ResponsiveHelper.fontSize(13),
-              color: Colors.grey.shade500,
+              color: AppColors.greyShade500,
             ),
           ),
         ],
@@ -195,3 +195,4 @@ Text("My QR Code",style: context.bodyMedium.copyWith(color: AppColors.black),),
     );
   }
 }
+

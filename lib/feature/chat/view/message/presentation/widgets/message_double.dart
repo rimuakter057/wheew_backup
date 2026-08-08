@@ -1,4 +1,4 @@
-
+﻿
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
@@ -19,14 +19,14 @@ class MessageBubble extends StatelessWidget {
   final bool isMine;
   final String? type;
   final String? fileUrl;
-  final String? fileName;      // ← API: file_name
-  final String? fileMimeType;  // ← API: file_mime_type
-  final int? fileSize;         // ← API: file_size
+  final String? fileName;      // â† API: file_name
+  final String? fileMimeType;  // â† API: file_mime_type
+  final int? fileSize;         // â† API: file_size
   final bool? isRead;
   final bool? isDelivered;
-  final num? durationSeconds;  // ← API: durationSeconds (voice)
-  final String? time;          // ← Timestamp (e.g. 7:29 PM)
-  final String? avatarUrl;     // ← Receiver avatar
+  final num? durationSeconds;  // â† API: durationSeconds (voice)
+  final String? time;          // â† Timestamp (e.g. 7:29 PM)
+  final String? avatarUrl;     // â† Receiver avatar
 
   const MessageBubble({
     super.key,
@@ -45,9 +45,9 @@ class MessageBubble extends StatelessWidget {
   });
 
 
-  // ── type detection ──────────────────────────────────────────────────────────
+  // â”€â”€ type detection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-  // Server থেকে type: 'FILE', 'VOICE', 'AUDIO' যেকোনো আসতে পারে
+  // Server à¦¥à§‡à¦•à§‡ type: 'FILE', 'VOICE', 'AUDIO' à¦¯à§‡à¦•à§‹à¦¨à§‹ à¦†à¦¸à¦¤à§‡ à¦ªà¦¾à¦°à§‡
   bool get _isVoiceType => type == 'VOICE' || type == 'AUDIO';
 
   bool get _isFileMessage =>
@@ -58,7 +58,7 @@ class MessageBubble extends StatelessWidget {
       _isFileMessage && !_isVoiceType && !_isAudio;
 
   bool get _isImage {
-    if (_isVoiceType) return false; // voice কে কখনো image হিসেবে treat করো না
+    if (_isVoiceType) return false; // voice à¦•à§‡ à¦•à¦–à¦¨à§‹ image à¦¹à¦¿à¦¸à§‡à¦¬à§‡ treat à¦•à¦°à§‹ à¦¨à¦¾
     if (fileMimeType != null && fileMimeType!.startsWith('image/')) return true;
     final url = (fileUrl ?? '').toLowerCase();
     return url.endsWith('.png') || url.endsWith('.jpg') ||
@@ -73,7 +73,7 @@ class MessageBubble extends StatelessWidget {
   }
 
   bool get _isAudio {
-    // type field directly বলছে VOICE/AUDIO
+    // type field directly à¦¬à¦²à¦›à§‡ VOICE/AUDIO
     if (_isVoiceType) return true;
     if (fileMimeType != null && fileMimeType!.startsWith('audio/')) return true;
     final url = (fileUrl ?? '').toLowerCase();
@@ -106,7 +106,7 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
-  // ── build ───────────────────────────────────────────────────────────────────
+  // â”€â”€ build â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   @override
   Widget build(BuildContext context) {
@@ -140,9 +140,9 @@ class MessageBubble extends StatelessWidget {
                           horizontal: ResponsiveHelper.width(14),
                         ),
                   decoration: BoxDecoration(
-                    color: _isImage ? Colors.transparent : Colors.white,
+                    color: _isImage ? AppColors.transparent : AppColors.white,
                     border: Border.all(
-                      color: _isImage ? Colors.transparent : Colors.grey.shade200,
+                      color: _isImage ? AppColors.transparent : AppColors.greyShade200,
                     ),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(ResponsiveHelper.borderRadius(18)),
@@ -154,7 +154,7 @@ class MessageBubble extends StatelessWidget {
                         ? []
                         : [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.03),
+                              color: AppColors.black.withOpacity(0.03),
                               blurRadius: 4,
                               offset: const Offset(0, 2),
                             ),
@@ -185,9 +185,9 @@ class MessageBubble extends StatelessWidget {
                     horizontal: ResponsiveHelper.width(14),
                   ),
             decoration: BoxDecoration(
-              color: _isImage ? Colors.transparent : const Color(0xFFD6E4F0),
+              color: _isImage ? AppColors.transparent : const Color(0xFFD6E4F0),
               border: Border.all(
-                color: _isImage ? Colors.transparent : const Color(0xFFC4D7E8),
+                color: _isImage ? AppColors.transparent : const Color(0xFFC4D7E8),
               ),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(ResponsiveHelper.borderRadius(18)),
@@ -220,7 +220,7 @@ class MessageBubble extends StatelessWidget {
                 Text(
                   time!,
                   style: GoogleFonts.poppins(
-                    color: Colors.grey.shade600,
+                    color: AppColors.greyShade600,
                     fontSize: ResponsiveHelper.fontSize(10),
                     fontWeight: FontWeight.w400,
                   ),
@@ -261,7 +261,7 @@ class MessageBubble extends StatelessWidget {
                 Text(
                   time!,
                   style: GoogleFonts.poppins(
-                    color: Colors.grey.shade600,
+                    color: AppColors.greyShade600,
                     fontSize: ResponsiveHelper.fontSize(10),
                     fontWeight: FontWeight.w400,
                   ),
@@ -278,7 +278,7 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
-  // ── file content router ─────────────────────────────────────────────────────
+  // â”€â”€ file content router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildFileContent() {
     if (_isImage) return _buildImageBubble();
@@ -287,7 +287,7 @@ class MessageBubble extends StatelessWidget {
     return _buildFileBubble();
   }
 
-  // ── image ───────────────────────────────────────────────────────────────────
+  // â”€â”€ image â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildImageBubble() {
     return Stack(
@@ -311,7 +311,7 @@ class MessageBubble extends StatelessWidget {
                         progress.expectedTotalBytes!
                         : null,
                     strokeWidth: ResponsiveHelper.borderWidth(2),
-                    color: Colors.white70,
+                    color: AppColors.white70,
                   ),
                 ),
               );
@@ -326,18 +326,18 @@ class MessageBubble extends StatelessWidget {
           child: Container(
             padding: ResponsiveHelper.symmetric(horizontal: 6, vertical: 3),
             decoration: BoxDecoration(
-              color: Colors.black45,
+              color: AppColors.black45,
               borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(8)),
             ),
             child:  Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.zoom_out_map_rounded, color: Colors.white, size: ResponsiveHelper.iconSize(12)),
+                Icon(Icons.zoom_out_map_rounded, color: AppColors.white, size: ResponsiveHelper.iconSize(12)),
                 SizedBox(width: ResponsiveHelper.spacing(3)),
                 Text(AppStrings.viewDocument.tr,
 
 
-                    style: TextStyle(color: Colors.white, fontSize: ResponsiveHelper.fontSize(10))),
+                    style: TextStyle(color: AppColors.white, fontSize: ResponsiveHelper.fontSize(10))),
               ],
             ),
           ),
@@ -346,14 +346,14 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
-  // ── video ───────────────────────────────────────────────────────────────────
+  // â”€â”€ video â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildVideoBubble() {
     return Container(
       width: ResponsiveHelper.width(220),
       height: ResponsiveHelper.height(130),
       decoration: BoxDecoration(
-        color: Colors.black87,
+        color: AppColors.black87,
         borderRadius:
         BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
       ),
@@ -362,7 +362,7 @@ class MessageBubble extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Colors.black54,
+              color: AppColors.black54,
               borderRadius:
               BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
             ),
@@ -370,11 +370,11 @@ class MessageBubble extends StatelessWidget {
           Container(
             padding: ResponsiveHelper.all(12),
             decoration: BoxDecoration(
-              color: Colors.white24,
+              color: AppColors.white24,
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.play_arrow_rounded,
-                color: Colors.white, size: ResponsiveHelper.iconSize(36)),
+                color: AppColors.white, size: ResponsiveHelper.iconSize(36)),
           ),
           Positioned(
             bottom: ResponsiveHelper.padding(8),
@@ -382,19 +382,19 @@ class MessageBubble extends StatelessWidget {
             child: Container(
               padding: ResponsiveHelper.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.black54,
+                color: AppColors.black54,
                 borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(4)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.videocam_rounded,
-                      color: Colors.white70, size: ResponsiveHelper.iconSize(12)),
+                      color: AppColors.white70, size: ResponsiveHelper.iconSize(12)),
                   SizedBox(width: ResponsiveHelper.spacing(4)),
                   Text(
                     _formatSize(fileSize),
                     style: TextStyle(
-                        color: Colors.white70, fontSize: ResponsiveHelper.fontSize(10)),
+                        color: AppColors.white70, fontSize: ResponsiveHelper.fontSize(10)),
                   ),
                 ],
               ),
@@ -405,7 +405,7 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
-  // ── audio ───────────────────────────────────────────────────────────────────
+  // â”€â”€ audio â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildAudioBubble() {
     return _VoiceBubble(
@@ -416,7 +416,7 @@ class MessageBubble extends StatelessWidget {
   }
 
 
-  // ── generic file ────────────────────────────────────────────────────────────
+  // â”€â”€ generic file â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 
   Widget _buildFileBubble() {
@@ -456,7 +456,7 @@ class MessageBubble extends StatelessWidget {
                 Text(
                   _formatSize(fileSize),
                   style: TextStyle(
-                    color: isMine ? Colors.white60 : Colors.black38,
+                    color: isMine ? AppColors.white60 : AppColors.black38,
                     fontSize: ResponsiveHelper.fontSize(11),
                   ),
                 ),
@@ -466,27 +466,27 @@ class MessageBubble extends StatelessWidget {
         SizedBox(width: ResponsiveHelper.width(6)),
         Icon(
           Icons.arrow_forward_ios_rounded,
-          color: isMine ? Colors.white54 : Colors.black26,
+          color: isMine ? AppColors.white54 : AppColors.black26,
           size: ResponsiveHelper.iconSize(13),
         ),
       ],
     );
   }
 
-  // ── read receipt ────────────────────────────────────────────────────────────
+  // â”€â”€ read receipt â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildReadReceipt() {
     if (isRead == true) {
       return Icon(Icons.done_all, size: ResponsiveHelper.iconSize(15), color: AppColors.blue);
     } else if (isDelivered == true) {
-      return Icon(Icons.done_all, size: ResponsiveHelper.iconSize(15), color: Colors.grey.shade400);
+      return Icon(Icons.done_all, size: ResponsiveHelper.iconSize(15), color: AppColors.greyShade400);
     } else {
-      return Icon(Icons.done, size: ResponsiveHelper.iconSize(15), color: Colors.grey.shade400);
+      return Icon(Icons.done, size: ResponsiveHelper.iconSize(15), color: AppColors.greyShade400);
     }
   }
 }
 
-// ── Voice Bubble ─────────────────────────────────────────────────────────────
+// â”€â”€ Voice Bubble â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _VoiceBubble extends StatefulWidget {
   final String audioUrl;
@@ -591,7 +591,7 @@ class _VoiceBubbleState extends State<_VoiceBubble> {
           setState(() => _duration = dur);
         }
       }).catchError((e) {
-        debugPrint('🎵 VoiceBubble setSource error: $e');
+        debugPrint('ðŸŽµ VoiceBubble setSource error: $e');
       });
     }
   }
@@ -646,7 +646,7 @@ class _VoiceBubbleState extends State<_VoiceBubble> {
         await _player.play(UrlSource(widget.audioUrl));
       }
     } catch (e) {
-      debugPrint('🎵 VoiceBubble play error: $e');
+      debugPrint('ðŸŽµ VoiceBubble play error: $e');
       if (mounted) setState(() { _isLoading = false; _hasError = true; });
     }
   }
@@ -659,12 +659,12 @@ class _VoiceBubbleState extends State<_VoiceBubble> {
 
   @override
   Widget build(BuildContext context) {
-    final Color accent = widget.isMine ? Colors.white : AppColors.blue;
+    final Color accent = widget.isMine ? AppColors.white : AppColors.blue;
     final Color muted = widget.isMine
-        ? Colors.white.withValues(alpha: 0.5)
-        : Colors.black.withValues(alpha: 0.35);
+        ? AppColors.white.withValues(alpha: 0.5)
+        : AppColors.black.withValues(alpha: 0.35);
     final Color btnBg = widget.isMine
-        ? Colors.white.withValues(alpha: 0.20)
+        ? AppColors.white.withValues(alpha: 0.20)
         : AppColors.blue.withValues(alpha: 0.12);
 
     final double progress = (_duration.inMilliseconds > 0)
@@ -677,7 +677,7 @@ class _VoiceBubbleState extends State<_VoiceBubble> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
 
-          // ── Play / Pause / Loading button ──────────────────────
+          // â”€â”€ Play / Pause / Loading button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           GestureDetector(
             onTap: _togglePlayPause,
             child: AnimatedContainer(
@@ -701,7 +701,7 @@ class _VoiceBubbleState extends State<_VoiceBubble> {
                       ),
                     )
                   : _hasError
-                      ? Icon(Icons.error_outline, color: Colors.red.shade300, size: ResponsiveHelper.iconSize(22))
+                      ? Icon(Icons.error_outline, color: AppColors.red, size: ResponsiveHelper.iconSize(22))
                       : Icon(
                           _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
                           color: accent,
@@ -712,7 +712,7 @@ class _VoiceBubbleState extends State<_VoiceBubble> {
 
           SizedBox(width: ResponsiveHelper.spacing(10)),
 
-          // ── Waveform + time ────────────────────────────────────
+          // â”€â”€ Waveform + time â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -831,5 +831,9 @@ class _VoiceBubbleState extends State<_VoiceBubble> {
     );
   }
 }
+
+
+
+
 
 

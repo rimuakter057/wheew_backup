@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:get/get.dart';
@@ -255,7 +255,7 @@ class _MessageScreenState extends State<MessageScreen> {
       ),
       child: Scaffold(
         resizeToAvoidBottomInset: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
 
         appBar: MessageAppBar(
           otherUserName: widget.otherUserName,
@@ -285,7 +285,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 final profile = _groupController.viewedProfile.value;
                 final isLoading = _groupController.isLoadingProfile.value;
                 return Dialog(
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: AppColors.transparent,
                   child: isLoading
                       ? const Center(child: CircularProgressIndicator())
                       : profile == null
@@ -346,7 +346,7 @@ class _MessageScreenState extends State<MessageScreen> {
                             child: Center(
                               child: Text(
                                 AppStrings.noMessagesYet.tr,
-                                style: const TextStyle(color: Colors.grey),
+                                style: const TextStyle(color: AppColors.grey),
                               ),
                             ),
                           ),
@@ -487,7 +487,7 @@ class _MessageScreenState extends State<MessageScreen> {
             Container(
               padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(ResponsiveHelper.borderRadius(15)),
                   topRight: Radius.circular(ResponsiveHelper.borderRadius(15)),
@@ -534,7 +534,7 @@ class _MessageScreenState extends State<MessageScreen> {
           AppStrings.areYouSureDeleteMessage.tr,
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(14),
-            color: Colors.grey.shade600,
+            color: AppColors.greyShade600,
           ),
         ),
         actions: [
@@ -544,7 +544,7 @@ class _MessageScreenState extends State<MessageScreen> {
               AppStrings.cancel.tr,
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(14),
-                color: Colors.grey,
+                color: AppColors.grey,
               ),
             ),
           ),
@@ -564,13 +564,13 @@ class _MessageScreenState extends State<MessageScreen> {
                 ? const SizedBox(
                     width: 16,
                     height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.red),
+                    child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.red),
                   )
                 : Text(
                     AppStrings.delete.tr,
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(14),
-                      color: Colors.red,
+                      color: AppColors.red,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -586,9 +586,9 @@ class _MessageScreenState extends State<MessageScreen> {
         gradient: AppColors.primaryBackgroundGradient,
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.transparent,
           elevation: 0,
           scrolledUnderElevation: 0,
           leading: Center(
@@ -599,9 +599,9 @@ class _MessageScreenState extends State<MessageScreen> {
                 height: 36,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.9),
+                  color: AppColors.white.withValues(alpha: 0.9),
                 ),
-                child: const Icon(Icons.chevron_left, color: Colors.black87, size: 22),
+                child: const Icon(Icons.chevron_left, color: AppColors.black87, size: 22),
               ),
             ),
           ),
@@ -621,7 +621,7 @@ class _MessageScreenState extends State<MessageScreen> {
                             _effectiveOtherUserName,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.poppins(
-                              color: Colors.black87,
+                              color: AppColors.black87,
                               fontWeight: FontWeight.w700,
                               fontSize: 15,
                             ),
@@ -640,7 +640,7 @@ class _MessageScreenState extends State<MessageScreen> {
                     if (_effectiveLicenceId != null && _effectiveLicenceId!.isNotEmpty)
                       Text(
                         _effectiveLicenceId!,
-                        style: GoogleFonts.poppins(color: Colors.grey.shade600, fontSize: 11),
+                        style: GoogleFonts.poppins(color: AppColors.greyShade600, fontSize: 11),
                       ),
                   ],
                 ),
@@ -686,14 +686,14 @@ class _MessageScreenState extends State<MessageScreen> {
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.6),
+                                color: AppColors.white.withValues(alpha: 0.6),
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: Text(
-                                "Today",
+                                AppStrings.today.tr,
                                 style: GoogleFonts.poppins(
                                   fontSize: 12,
-                                  color: Colors.grey.shade700,
+                                  color: AppColors.greyShade700,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -728,21 +728,21 @@ class _MessageScreenState extends State<MessageScreen> {
                       UserAvatar(imagePath: _effectiveOtherUserAvatar ?? AppConst.unknown, radius: 54),
                       const SizedBox(height: 16),
                       Text(
-                        "You're not following this person",
+                        AppStrings.youreNotFollowing.tr,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.poppins(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
-                          color: Colors.black87,
+                          color: AppColors.black87,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        "Send a request to start a conversation.\nThey'll review your request before you can message each other.",
+                        AppStrings.sendRequestDesc.tr,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.poppins(
                           fontSize: 12.5,
-                          color: Colors.grey.shade600,
+                          color: AppColors.greyShade600,
                           height: 1.4,
                         ),
                       ),
@@ -775,10 +775,10 @@ class _MessageScreenState extends State<MessageScreen> {
                               child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                                 decoration: BoxDecoration(
-                                  color: isSelected ? AppColors.blue.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.8),
+                                  color: isSelected ? AppColors.blue.withValues(alpha: 0.15) : AppColors.white.withValues(alpha: 0.8),
                                   borderRadius: BorderRadius.circular(24),
                                   border: Border.all(
-                                    color: isSelected ? AppColors.blue : Colors.white.withValues(alpha: 0.8),
+                                    color: isSelected ? AppColors.blue : AppColors.white.withValues(alpha: 0.8),
                                     width: 1.2,
                                   ),
                                 ),
@@ -787,7 +787,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                   style: GoogleFonts.poppins(
                                     fontSize: 12.5,
                                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                                    color: isSelected ? AppColors.blue : Colors.black87,
+                                    color: isSelected ? AppColors.blue : AppColors.black87,
                                   ),
                                 ),
                               ),
@@ -817,7 +817,7 @@ class _MessageScreenState extends State<MessageScreen> {
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
+                        color: AppColors.black.withValues(alpha: 0.05),
                         blurRadius: 20,
                         offset: const Offset(0, -4),
                       ),
@@ -827,20 +827,20 @@ class _MessageScreenState extends State<MessageScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        "Request Sent",
+                        AppStrings.requestSent.tr,
                         style: GoogleFonts.poppins(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                          color: Colors.black87,
+                          color: AppColors.black87,
                         ),
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        "Your request has been sent to $_effectiveOtherUserName. They will review it before you can start messaging.",
+                        AppStrings.requestSentDesc.tr.replaceAll('@name', _effectiveOtherUserName),
                         textAlign: TextAlign.center,
                         style: GoogleFonts.poppins(
                           fontSize: 12,
-                          color: Colors.grey.shade600,
+                          color: AppColors.greyShade600,
                           height: 1.35,
                         ),
                       ),
@@ -851,7 +851,7 @@ class _MessageScreenState extends State<MessageScreen> {
                         gradient: AppColors.buttonGradient,
                         borderColor: const Color(0xFFF59E0B).withValues(alpha: 0.4),
                         prefixIcon: const Icon(Icons.access_time_rounded, color: AppColors.white, size: 18),
-                        label: "Pending Review",
+                        label: AppStrings.pendingReview.tr,
                         textColor: AppColors.white,
                       ),
                       if (_effectiveRequestId.isNotEmpty) ...[
@@ -859,13 +859,12 @@ class _MessageScreenState extends State<MessageScreen> {
                         CustomGradientButton(
                           gradient: AppColors.redGradient,
                           borderColor: const Color(0xFF7A1C15),
-                          label: "Withdraw Request",
+                          label: AppStrings.withdrawRequestLabel.tr,
                           onPressed: () {
                             ActionConfirmDialog.show(
                               context,
-                              title: 'Withdraw request?',
-                              message:
-                                  "Withdraw your message request to $_effectiveOtherUserName?",
+                              title: AppStrings.withdrawRequestTitle.tr,
+                              message: AppStrings.withdrawRequestQuestion.tr.replaceAll('@name', _effectiveOtherUserName),
                               confirmLabel: AppStrings.withdraw.tr,
                               icon: Icons.undo_rounded,
                               iconColor: const Color(0xFFB02517),
@@ -895,7 +894,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
+                      color: AppColors.black.withValues(alpha: 0.05),
                       blurRadius: 20,
                       offset: const Offset(0, -4),
                     ),
@@ -905,20 +904,20 @@ class _MessageScreenState extends State<MessageScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "Send a request to $_effectiveOtherUserName?",
+                      AppStrings.sendRequestTo.tr.replaceAll('@name', _effectiveOtherUserName),
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
-                        color: Colors.black87,
+                        color: AppColors.black87,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      "$_effectiveOtherUserName will review your request. If accepted, you'll be able to message each other and see activity status and read receipts.",
+                      AppStrings.requestSentDesc.tr.replaceAll('@name', _effectiveOtherUserName),
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: Colors.grey.shade600,
+                        color: AppColors.greyShade600,
                         height: 1.35,
                       ),
                     ),
@@ -937,9 +936,9 @@ class _MessageScreenState extends State<MessageScreen> {
                               ),
                             ),
                             child: Text(
-                              "Cancel",
+                              AppStrings.cancel.tr,
                               style: GoogleFonts.poppins(
-                                color: Colors.black87,
+                                color: AppColors.black87,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
                               ),
@@ -977,8 +976,8 @@ class _MessageScreenState extends State<MessageScreen> {
                                       }
                                     },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
+                                backgroundColor: AppColors.transparent,
+                                shadowColor: AppColors.transparent,
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),
@@ -989,14 +988,14 @@ class _MessageScreenState extends State<MessageScreen> {
                                       width: 20,
                                       height: 20,
                                       child: CircularProgressIndicator(
-                                        color: Colors.white,
+                                        color: AppColors.white,
                                         strokeWidth: 2,
                                       ),
                                     )
                                   : Text(
-                                      "Send Request",
+                                      AppStrings.sendRequest.tr,
                                       style: GoogleFonts.poppins(
-                                        color: Colors.white,
+                                        color: AppColors.white,
                                         fontWeight: FontWeight.w600,
                                         fontSize: 14,
                                       ),
@@ -1022,9 +1021,9 @@ class _MessageScreenState extends State<MessageScreen> {
         gradient: AppColors.primaryBackgroundGradient,
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.transparent,
           elevation: 0,
           scrolledUnderElevation: 0,
           leading: Center(
@@ -1035,9 +1034,9 @@ class _MessageScreenState extends State<MessageScreen> {
                 height: 36,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.9),
+                  color: AppColors.white.withValues(alpha: 0.9),
                 ),
-                child: const Icon(Icons.chevron_left, color: Colors.black87, size: 22),
+                child: const Icon(Icons.chevron_left, color: AppColors.black87, size: 22),
               ),
             ),
           ),
@@ -1057,7 +1056,7 @@ class _MessageScreenState extends State<MessageScreen> {
                             _effectiveOtherUserName,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.poppins(
-                              color: Colors.black87,
+                              color: AppColors.black87,
                               fontWeight: FontWeight.w700,
                               fontSize: 15,
                             ),
@@ -1076,7 +1075,7 @@ class _MessageScreenState extends State<MessageScreen> {
                     if (_effectiveLicenceId != null && _effectiveLicenceId!.isNotEmpty)
                       Text(
                         _effectiveLicenceId!,
-                        style: GoogleFonts.poppins(color: Colors.grey.shade600, fontSize: 11),
+                        style: GoogleFonts.poppins(color: AppColors.greyShade600, fontSize: 11),
                       ),
                   ],
                 ),
@@ -1108,14 +1107,14 @@ class _MessageScreenState extends State<MessageScreen> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.6),
+                              color: AppColors.white.withValues(alpha: 0.6),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Text(
-                              "Today",
+                              AppStrings.today.tr,
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
-                                color: Colors.grey.shade700,
+                                color: AppColors.greyShade700,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -1148,11 +1147,11 @@ class _MessageScreenState extends State<MessageScreen> {
             Container(
               padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.92),
+                color: AppColors.white.withValues(alpha: 0.92),
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
+                    color: AppColors.black.withValues(alpha: 0.05),
                     blurRadius: 20,
                     offset: const Offset(0, -4),
                   ),
@@ -1162,20 +1161,20 @@ class _MessageScreenState extends State<MessageScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Accept request from $_effectiveOtherUserName?",
+                    AppStrings.acceptRequestFrom.tr.replaceAll('@name', _effectiveOtherUserName),
                     style: GoogleFonts.poppins(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
-                      color: Colors.black87,
+                      color: AppColors.black87,
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    "If you accept, they will also be able to message you and see info, such as your activity status and when you've read messages.",
+                    AppStrings.acceptRequestDesc.tr,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
                       fontSize: 12,
-                      color: Colors.grey.shade600,
+                      color: AppColors.greyShade600,
                       height: 1.35,
                     ),
                   ),
@@ -1188,9 +1187,9 @@ class _MessageScreenState extends State<MessageScreen> {
                           onPressed: () {
                             ActionConfirmDialog.show(
                               context,
-                              title: 'Block $_effectiveOtherUserName?',
+                              title: AppStrings.blockUserTitle.tr.replaceAll('@name', _effectiveOtherUserName),
                               message:
-                                  "They won't be able to message you or find your profile again.",
+                                      AppStrings.blockUserDesc.tr,
                               confirmLabel: AppStrings.block.tr,
                               icon: Icons.block_rounded,
                               iconColor: const Color(0xFF7A1C15),
@@ -1220,9 +1219,9 @@ class _MessageScreenState extends State<MessageScreen> {
                             ),
                           ),
                           child: Text(
-                            "Block",
+                            AppStrings.block.tr,
                             style: GoogleFonts.poppins(
-                              color: Colors.white,
+                              color: AppColors.white,
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -1237,9 +1236,8 @@ class _MessageScreenState extends State<MessageScreen> {
                           onPressed: () {
                             ActionConfirmDialog.show(
                               context,
-                              title: 'Reject request?',
-                              message:
-                                  "Reject the message request from $_effectiveOtherUserName?",
+                              title: AppStrings.rejectRequestTitle.tr,
+                              message: AppStrings.rejectRequestFrom.tr.replaceAll('@name', _effectiveOtherUserName),
                               confirmLabel: AppStrings.reject.tr,
                               icon: Icons.cancel_outlined,
                               iconColor: const Color(0xFFB02517),
@@ -1267,9 +1265,9 @@ class _MessageScreenState extends State<MessageScreen> {
                             ),
                           ),
                           child: Text(
-                            "Reject",
+                            AppStrings.reject.tr,
                             style: GoogleFonts.poppins(
-                              color: Colors.white,
+                              color: AppColors.white,
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -1293,9 +1291,8 @@ class _MessageScreenState extends State<MessageScreen> {
                             onPressed: () {
                               ActionConfirmDialog.show(
                                 context,
-                                title: 'Accept request?',
-                                message:
-                                    "Accept the message request from $_effectiveOtherUserName? You'll be able to message each other.",
+                                title: AppStrings.acceptRequestTitle.tr,
+                                message: AppStrings.acceptRequestFromDesc.tr.replaceAll('@name', _effectiveOtherUserName),
                                 confirmLabel: AppStrings.accept.tr,
                                 icon: Icons.check_circle_outline_rounded,
                                 iconColor: AppColors.blue,
@@ -1318,17 +1315,17 @@ class _MessageScreenState extends State<MessageScreen> {
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
+                              backgroundColor: AppColors.transparent,
+                              shadowColor: AppColors.transparent,
                               padding: const EdgeInsets.symmetric(vertical: 13),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
                             ),
                             child: Text(
-                              "Accept",
+                              AppStrings.accept.tr,
                               style: GoogleFonts.poppins(
-                                color: Colors.white,
+                                color: AppColors.white,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
                               ),
@@ -1403,4 +1400,7 @@ class _AnimatedDotState extends State<_AnimatedDot> with SingleTickerProviderSta
     );
   }
 }
+
+
+
 

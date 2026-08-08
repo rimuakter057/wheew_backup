@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -21,7 +21,7 @@ import '../../../../terms_condition/web_view_screen.dart';
 import '../../../repository/profile_controller.dart';
 import '../share_link_dialog.dart';
 
-/// ── Account & Settings ──────────────────────────────────────────────────
+/// â”€â”€ Account & Settings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Widget buildAccountSettingsItems({
   required BuildContext context,
   required ProfileController profileController,
@@ -58,7 +58,7 @@ Widget buildAccountSettingsItems({
   );
 }
 
-/// ── Support & Legal ─────────────────────────────────────────────────────
+/// â”€â”€ Support & Legal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Widget buildSupportLegalItems({required BuildContext context}) {
   final List<Map<String, dynamic>> items = [
     {
@@ -132,7 +132,7 @@ Widget buildSupportLegalItems({required BuildContext context}) {
   return Column(children: _buildItemTiles(items, showLastDivider: false));
 }
 
-/// ── Account Actions ─────────────────────────────────────────────────────
+/// â”€â”€ Account Actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Widget buildAccountActionsItems({required BuildContext context}) {
   final List<Map<String, dynamic>> items = [
     {
@@ -197,7 +197,7 @@ List<Widget> _buildItemTiles(
     final item = items[index];
     final bool isLast = index == items.length - 1;
     final Color iconColor = item['iconColor'] ?? const Color(0xFF005CB1);
-    final Color titleColor = item['titleColor'] ?? Colors.black87;
+    final Color titleColor = item['titleColor'] ?? AppColors.black87;
 
     return Column(
       children: [
@@ -293,7 +293,7 @@ void _showLanguageBottomSheet(BuildContext context) {
 
   showModalBottomSheet(
     context: context,
-    backgroundColor: Colors.transparent,
+    backgroundColor: AppColors.transparent,
     isScrollControlled: true,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(
@@ -434,7 +434,7 @@ void _showLanguageBottomSheet(BuildContext context) {
                             if (isSelected)
                               const Icon(
                                 Icons.check,
-                                color: Colors.white,
+                                color: AppColors.white,
                               ),
                           ],
                         ),
@@ -455,3 +455,5 @@ void _showLanguageBottomSheet(BuildContext context) {
     },
   );
 }
+
+

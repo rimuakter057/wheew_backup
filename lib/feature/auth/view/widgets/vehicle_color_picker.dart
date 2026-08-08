@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 
@@ -28,10 +29,10 @@ class VehicleColorPicker extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFE3E8F0),
         borderRadius: BorderRadius.circular(40),
-        border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
+        border: Border.all(color: AppColors.white.withOpacity(0.6), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: AppColors.black.withOpacity(0.05),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -90,12 +91,12 @@ class VehicleColorPicker extends StatelessWidget {
                               color: color,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.25),
+                                  color: AppColors.black.withOpacity(0.25),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
                                 BoxShadow(
-                                  color: Colors.white.withOpacity(0.2),
+                                  color: AppColors.white.withOpacity(0.2),
                                   blurRadius: 2,
                                   offset: const Offset(0, -1),
                                 ),
@@ -104,7 +105,7 @@ class VehicleColorPicker extends StatelessWidget {
                             child: Icon(
                               Icons.check,
                               size: 14,
-                              color: isLight ? Colors.black87 : Colors.white,
+                              color: isLight ? AppColors.black87 : AppColors.white,
                             ),
                           )
                         : null,
@@ -118,3 +119,5 @@ class VehicleColorPicker extends StatelessWidget {
     );
   }
 }
+
+

@@ -333,6 +333,10 @@ final Map<String, String> italian = {
   AppStrings.mapLeft: "SINISTRA",
   AppStrings.mapNone: "NESSUNO",
 
+  AppStrings.mapParkingAddedSuccessTitle: "Parcheggio aggiunto con successo!",
+  AppStrings.mapParkingAddedSuccessMessage:
+      "Il tuo parcheggio è stato inviato ed è in attesa di approvazione dell'amministratore. Apparirà sulla mappa una volta approvato.",
+  AppStrings.ok: "OK",
   AppStrings.mapParkingReportSubmitted: "Segnalazione parcheggio inviata!",
   AppStrings.mapFailedToSubmitParkingReport:
   "Invio segnalazione parcheggio non riuscito",
@@ -845,4 +849,52 @@ final Map<String, String> italian = {
   AppStrings.navModeDriving: "In auto",
 
   AppStrings.verifyAccountBecomeWheewer: "Verifica il tuo account e diventa utente Wheewer verificato.",
+
+  // -------- Parking Screen --------
+  AppStrings.youreParked: "Sei parcheggiato",
+  AppStrings.exitParking: "Esci dal parcheggio",
+  AppStrings.yourParkingSpot: "Il tuo posto auto",
+  AppStrings.stopSearching: "Interrompi ricerca",
+  AppStrings.findParkingSpot: "Trova parcheggio",
+  AppStrings.active: "Attivo",
+
+  // -------- Vehicle Info Screen --------
+  AppStrings.addYourVehicleSubtitle: "Dicci del tuo veicolo per personalizzare la tua esperienza.",
+  AppStrings.enterVehicleModel: "Inserisci modello veicolo",
+
+  // -------- Message / Request Screens --------
+  AppStrings.pendingReview: "In attesa di revisione",
+  AppStrings.withdrawRequestLabel: "Ritira richiesta",
+  AppStrings.youreNotFollowing: "Non stai seguendo questa persona",
+  AppStrings.sendRequestDesc: "Invia una richiesta per iniziare una conversazione.\nEsamineranno la tua richiesta prima che possiate messaggiarvi.",
+  AppStrings.requestSentDesc: "La tua richiesta è stata inviata a @name. La esamineranno prima che tu possa iniziare a messaggiare.",
+  AppStrings.withdrawRequestQuestion: "Ritirare la richiesta di messaggio a @name?",
+  AppStrings.withdrawRequestTitle: "Ritirare la richiesta?",
+  AppStrings.acceptRequestFrom: "Accettare la richiesta di @name?",
+  AppStrings.acceptRequestDesc: "Se accetti, potranno anche messaggiarti e vedere informazioni come il tuo stato di attività e quando hai letto i messaggi.",
+  AppStrings.blockUserTitle: "Bloccare @name?",
+  AppStrings.blockUserDesc: "Non potranno più messaggiarti o trovare il tuo profilo.",
+  AppStrings.rejectRequestTitle: "Rifiutare la richiesta?",
+  AppStrings.rejectRequestFrom: "Rifiutare la richiesta di messaggio da @name?",
+  AppStrings.acceptRequestTitle: "Accettare la richiesta?",
+  AppStrings.acceptRequestFromDesc: "Accettare la richiesta di messaggio da @name? Potrete messaggiarvi.",
+  AppStrings.sendRequestTo: "Inviare una richiesta a @name?",
+  AppStrings.requestAcceptedDesc: "Accettato. Ora potete messaggiarvi.",
+
+  // -------- Map / Parking Info --------
+  AppStrings.defaultMapType: "Predefinita",
+  AppStrings.showElectricCharging: "Mostra posizione con ricarica elettrica",
+  AppStrings.showDisabledParking: "Mostra parcheggio disabili",
+  AppStrings.dropPin: "Segna posizione",
+  AppStrings.apply: "Applica",
+  AppStrings.bookParkingSpot: "Prenota posto auto",
+  AppStrings.location: "Posizione",
+
+  // -------- Chat / Group --------
+  AppStrings.leaveSuccessGroup: "Uscito dal gruppo con successo",
+  AppStrings.fieldIsRequired: "Campo obbligatorio",
+
+  // -------- Auth --------
+  AppStrings.loginSuccessful: "Accesso riuscito",
 };
+

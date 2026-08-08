@@ -1,4 +1,7 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 import '../../../../helper/responsive_helper/responsive_helper.dart';
 
@@ -25,7 +28,7 @@ class NavItem extends StatelessWidget {
         horizontal: ResponsiveHelper.spacing(2),
       ),
       child: Material(
-        color: Colors.transparent,
+        color: AppColors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(
             ResponsiveHelper.borderRadius(30),
@@ -60,15 +63,15 @@ class NavItem extends StatelessWidget {
               )
                   : LinearGradient(
                 colors: [
-                  Colors.white.withOpacity(.22),
-                  Colors.white.withOpacity(.08),
+                  AppColors.white.withOpacity(.22),
+                  AppColors.white.withOpacity(.08),
                 ],
               ),
 
               border: Border.all(
                 color: selected
-                    ? Colors.white.withOpacity(.20)
-                    : Colors.white.withOpacity(.30),
+                    ? AppColors.white.withOpacity(.20)
+                    : AppColors.white.withOpacity(.30),
                 width: ResponsiveHelper.borderWidth(1),
               ),
 
@@ -82,7 +85,7 @@ class NavItem extends StatelessWidget {
               ]
                   : [
                 BoxShadow(
-                  color: Colors.white.withOpacity(.20),
+                  color: AppColors.white.withOpacity(.20),
                   blurRadius: 5,
                   offset: const Offset(-1, -1),
                 ),
@@ -97,7 +100,7 @@ class NavItem extends StatelessWidget {
                 children: [
                   Icon(
                     icon,
-                    color: Colors.white,
+                    color: AppColors.white,
                     size: ResponsiveHelper.iconSize(21),
                   ),
 
@@ -109,7 +112,7 @@ class NavItem extends StatelessWidget {
                     Text(
                       _label(index),
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.white,
                         fontWeight: FontWeight.w600,
                         fontSize: ResponsiveHelper.fontSize(13),
                       ),
@@ -127,16 +130,16 @@ class NavItem extends StatelessWidget {
   String _label(int index) {
     switch (index) {
       case 0:
-        return "Home";
+        return AppStrings.home.tr;
 
       case 1:
-        return "Location";
+        return AppStrings.location.tr;
 
       case 2:
-        return "Chat";
+        return AppStrings.chat.tr;
 
       case 3:
-        return "Profile";
+        return AppStrings.profile.tr;
 
       default:
         return "";

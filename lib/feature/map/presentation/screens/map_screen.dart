@@ -1,4 +1,4 @@
-import 'dart:math';
+﻿import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -13,6 +13,7 @@ import 'package:platchatapp/feature/map/controller/map_controller.dart';
 import 'package:platchatapp/feature/map/model/saved_parking_model.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_initial_shimmer.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_loading_banners.dart';
+import 'package:platchatapp/feature/map/presentation/widgets/parking_added_success_dialog.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/parking_info_dialog.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/parking_report_dropdown.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
@@ -78,8 +79,8 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     _parkingCtrl = Get.isRegistered<ParkingReportController>()
         ? Get.find<ParkingReportController>()
         : Get.put(ParkingReportController());
-    mapDebug('screen init → resolve GPS and fetch parking');
-    _loadCustomMarkerIcon();   // 👈 নতুন
+    mapDebug('screen init â†’ resolve GPS and fetch parking');
+    _loadCustomMarkerIcon();   // ðŸ‘ˆ à¦¨à¦¤à§à¦¨
     _initializeMap();
 
 
@@ -234,10 +235,10 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     }
   }
 
-  // ══════════════════════════════════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   // FLOW 1 — "Report a parking spot" (ParkingInfoDialog: free/paid/electric/
-  //          disabled facility) → GET fetchParkingReport / POST addParking
-  // ══════════════════════════════════════════════════════════════════════
+  //          disabled facility) â†’ GET fetchParkingReport / POST addParking
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
   void _toggleParkingPin() {
     HapticFeedback.mediumImpact();
@@ -247,7 +248,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     _showParkingDialog();
   }
 
-  // ── "Add Parking" button → choose between the two existing flows ───────
+  // â”€â”€ "Add Parking" button â†’ choose between the two existing flows â”€â”€â”€â”€â”€â”€â”€
   // (FLOW 1 report-a-spot / FLOW 2 save-my-parking) instead of the old
   // always-visible two-pill layout.
   // ignore: unused_element
@@ -256,7 +257,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     showTrackedBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (sheetContext) {
         return Container(
           decoration: BoxDecoration(
@@ -288,7 +289,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
               CustomGradientButton(
                 prefixIcon: const Icon(
                   Icons.add_location_alt_rounded,
-                  color: Colors.white,
+                  color: AppColors.white,
                 ),
                 label: AppStrings.addParkingSpot.tr,
                 onPressed: () {
@@ -300,7 +301,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
               CustomGradientButton(
                 prefixIcon: const Icon(
                   Icons.add_circle_outline,
-                  color: Colors.white,
+                  color: AppColors.white,
                 ),
                 label: AppStrings.parkMyCar.tr,
                 onPressed: () {
@@ -325,7 +326,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     showTrackedBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (_) => ParkingInfoDialog(
         controller: _parkingCtrl,
         pickedLocation: _pickedLocation,
@@ -352,12 +353,8 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
           );
           if (!mounted) return;
           if (success) {
-            showCustomSnackBar(
-              _parkingCtrl.submitMessage.value.isNotEmpty
-                  ? _parkingCtrl.submitMessage.value
-                  : AppStrings.mapParkingReportSubmitted.tr,
-              isError: false,
-            );
+            await ParkingAddedSuccessDialog.show(context);
+            if (!mounted) return;
             await _parkingCtrl.fetchParkingReport(
               latitude: useLocation.latitude,
               longitude: useLocation.longitude,
@@ -385,10 +382,10 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     });
   }
 
-  // ══════════════════════════════════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   // FLOW 2 — "Save my parking" (bottom sheet: FREE/PAID + duration) →
   //          GET fetchMySavedParking / POST saveMyParking
-  // ══════════════════════════════════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
   void _showSavedParkingDetailsSheet(SavedParkingModel parking) {
     showTrackedBottomSheet(
@@ -398,7 +395,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
           top: Radius.circular(ResponsiveHelper.borderRadius(24)),
         ),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       builder: (context) {
         return SavedParkingDetailsBottomSheet(
           parking: parking,
@@ -413,7 +410,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     showTrackedBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (context) {
         return SaveParkingDialog(
           pickedLocation: _pickedLocation,
@@ -446,9 +443,9 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     );
   }
 
-  // ══════════════════════════════════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   // Shared "pick a location on the map" mechanics (used by both flows)
-  // ══════════════════════════════════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
   void _startPickingLocation({required _PickingPurpose purpose}) {
     if (!mounted) return;
@@ -646,10 +643,10 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
         return true;
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         body: Stack(
           children: [
-            /// ── Map ──────────────────────────────────────────────────────
+            /// â”€â”€ Map â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             if (!_isLocating && _gpsPosition == null)
               LocationOffPrompt(
                 onEnableLocation: () async {
@@ -717,20 +714,20 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                 );
               }),
 
-            /// ── GPS locating banner ───────────────────────────────────────
+            /// â”€â”€ GPS locating banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             if (_isLocating) const LocatingBanner(),
 
-            /// ── Pick location mode banner ─────────────────────────────────
+            /// â”€â”€ Pick location mode banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             if (_isPickingLocation) const PickingLocationBanner(),
 
-            /// ── Parking fetching indicator ────────────────────────────────
+            /// â”€â”€ Parking fetching indicator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Obx(
                   () => _parkingCtrl.isLoadingShowDetails.value
                   ? const FetchingParkingBanner()
                   : const SizedBox.shrink(),
             ),
 
-            /// ── Selected reported parking info card ─────────────────────
+            /// â”€â”€ Selected reported parking info card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Obx(() {
               final selected = _parkingCtrl.selectedReport.value;
               if (selected == null) return const SizedBox.shrink();
@@ -749,14 +746,14 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
               );
             }),
 
-            /// ── Top-bar: search pill + notification bell ─────────────────
+            /// â”€â”€ Top-bar: search pill + notification bell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             if (_gpsPosition != null)
               MapTopBar(
                 searchController: _searchController,
                 onSearchTap: _showRadiusFilterSheet,
               ),
 
-            /// ── Side controls: map type + current location ────────────────
+            /// â”€â”€ Side controls: map type + current location â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             if (_gpsPosition != null)
               Obx(() => MapSideControls(
                 selectedMapType: _parkingCtrl.selectedMapType.value,
@@ -765,7 +762,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
               )),
 
 
-            /// ── Action buttons cluster (Report Spot / Save My Parking) ─────
+            /// â”€â”€ Action buttons cluster (Report Spot / Save My Parking) â”€â”€â”€â”€â”€
             /// Bottom-centered above the nav bar, always — same position
             /// whether or not a bottom sheet is open.
             BottomSheetAwarePositioned(
@@ -778,7 +775,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _ActionPillButton(
-                    label: "Add Parking",
+                    label: AppStrings.addParking.tr,
                     icon: "assets/icons/add_circle.svg",
 
                     onPressed: _toggleParkingPin,
@@ -842,7 +839,7 @@ class _ActionPillButton extends StatelessWidget {
               Text(
                 label,
                 style: GoogleFonts.poppins(
-                  color: Colors.white,
+                  color: AppColors.white,
                   fontWeight: FontWeight.w700,
                   fontSize: ResponsiveHelper.fontSize(13),
                   letterSpacing: 0.1,
@@ -855,4 +852,6 @@ class _ActionPillButton extends StatelessWidget {
     );
   }
 }
+
+
 

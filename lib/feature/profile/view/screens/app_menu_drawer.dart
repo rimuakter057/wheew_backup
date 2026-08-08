@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/service/api_url.dart';
@@ -194,7 +194,7 @@ class AppMenuDrawer extends StatelessWidget {
     required IconData icon,
     required String title,
     required VoidCallback onTap,
-    Color? iconColor, // ← add this
+    Color? iconColor, // â† add this
   }) {
     return Padding(
       padding: EdgeInsets.only(bottom: ResponsiveHelper.spacing(8)),
@@ -202,7 +202,7 @@ class AppMenuDrawer extends StatelessWidget {
         leading: Icon(
           icon,
           size: ResponsiveHelper.iconSize(24),
-          color: iconColor ?? AppColors.black, // ← add this
+          color: iconColor ?? AppColors.black, // â† add this
         ),
         title: Text(
           title,
@@ -250,7 +250,7 @@ void _showLanguageBottomSheet(BuildContext context) {
                 return ListTile(
                   title: Text(language),
                   trailing: isSelected
-                      ? const Icon(Icons.check, color: Colors.blue)
+                      ? const Icon(Icons.check, color: AppColors.blue)
                       : null,
                   onTap: () async {
                     await controller.saveLanguage(language);
@@ -434,7 +434,7 @@ void _showLanguageBottomSheet(BuildContext context) {
             return ListTile(
               leading: Icon(
                 Icons.check,
-                color: isSelected ? Colors.blue : Colors.transparent,
+                color: isSelected ? AppColors.blue : AppColors.transparent,
               ),
               title: Text(language),
               onTap: () {
@@ -449,3 +449,5 @@ void _showLanguageBottomSheet(BuildContext context) {
   );
 }
 */
+
+

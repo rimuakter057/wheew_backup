@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 
@@ -47,7 +48,7 @@ class _ChatListShimmerState extends State<ChatListShimmer>
           //   height: 1,
           //   indent: ResponsiveHelper.padding(72),
           //   endIndent: ResponsiveHelper.padding(16),
-          //   color: Colors.grey.shade200,
+          //   color: AppColors.greyShade200,
           // ),
           itemBuilder: (context, index) {
             return _ChatTileShimmer(shimmerValue: _animation.value);
@@ -65,8 +66,8 @@ class _ChatTileShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseColor = Colors.grey.shade200;
-    final highlightColor = Colors.grey.shade50;
+    final baseColor = AppColors.greyShade200;
+    final highlightColor = AppColors.greyShade50;
 
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -196,3 +197,6 @@ class _ShimmerBox extends StatelessWidget {
 
   double _clamp(double val) => val.clamp(0.0, 1.0);
 }
+
+
+

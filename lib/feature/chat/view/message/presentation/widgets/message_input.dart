@@ -1,4 +1,4 @@
-
+﻿
 import 'dart:async';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'dart:io';
@@ -346,7 +346,7 @@ class _MessageInputState extends State<MessageInput> {
                   child: Icon(
                     Icons.close,
                     size: ResponsiveHelper.iconSize(20),
-                    color: Colors.red,
+                    color: AppColors.red,
                   ),
                 ),
               ],
@@ -370,21 +370,21 @@ class _MessageInputState extends State<MessageInput> {
                   emojiSizeMax: 28,
                   verticalSpacing: 0,
                   horizontalSpacing: 0,
-                  backgroundColor: Colors.white,
+                  backgroundColor: AppColors.white,
                   noRecents: Text(
                     AppStrings.noRecentsYet.tr,
                     style: GoogleFonts.poppins(
                       fontSize: 20,
-                      color: Colors.black26,
+                      color: AppColors.black26,
                     ),
                   ),
                 ),
                 categoryViewConfig: CategoryViewConfig(
                   initCategory: Category.SMILEYS,
                   indicatorColor: AppColors.blue,
-                  iconColor: Colors.grey,
+                  iconColor: AppColors.grey,
                   iconColorSelected: AppColors.blue,
-                  backspaceColor: Colors.red,
+                  backspaceColor: AppColors.red,
                 ),
                 bottomActionBarConfig: BottomActionBarConfig(
                   showSearchViewButton: false,
@@ -419,12 +419,12 @@ class _MessageInputState extends State<MessageInput> {
                 vertical: ResponsiveHelper.padding(4),
               ),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(
                   ResponsiveHelper.borderRadius(24),
                 ),
                 border: Border.all(
-                  color: Colors.grey.shade200,
+                  color: AppColors.greyShade200,
                   width: 1,
                 ),
               ),
@@ -439,7 +439,7 @@ class _MessageInputState extends State<MessageInput> {
                     },
                     child: Icon(
                       Icons.sentiment_satisfied_alt_rounded,
-                      color: Colors.grey.shade600,
+                      color: AppColors.greyShade600,
                       size: ResponsiveHelper.iconSize(24),
                     ),
                   ),
@@ -465,9 +465,9 @@ class _MessageInputState extends State<MessageInput> {
                fillColor: AppColors.white,
                         hintText: _selectedFilePath != null
                             ? AppStrings.addCaption.tr
-                            : "Have a nice day!",
+                            : "Message",
                         hintStyle: TextStyle(
-                          color: Colors.grey.shade400,
+                          color: AppColors.greyShade400,
                           fontSize: ResponsiveHelper.fontSize(15),
                         ),
                         border: InputBorder.none,
@@ -500,7 +500,7 @@ class _MessageInputState extends State<MessageInput> {
                       angle: 0.7,
                       child: Icon(
                         Icons.attachment_rounded,
-                        color: Colors.grey.shade600,
+                        color: AppColors.greyShade600,
                         size: ResponsiveHelper.iconSize(24),
                       ),
                     ),
@@ -518,12 +518,12 @@ class _MessageInputState extends State<MessageInput> {
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: AppColors.greyShade100,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.mic,
-                color: Colors.grey.shade700,
+                color: AppColors.greyShade700,
                 size: ResponsiveHelper.iconSize(22),
               ),
             ),
@@ -556,7 +556,7 @@ class _MessageInputState extends State<MessageInput> {
               child: const Center(
                 child: Icon(
                   Icons.send_rounded,
-                  color: Colors.white,
+                  color: AppColors.white,
                   size: 22,
                 ),
               ),
@@ -587,7 +587,7 @@ class _MessageInputState extends State<MessageInput> {
               child: Icon(
                 Icons.delete_outline,
                 size: ResponsiveHelper.iconSize(26),
-                color: Colors.red,
+                color: AppColors.red,
               ),
             ),
           ),
@@ -609,7 +609,7 @@ class _MessageInputState extends State<MessageInput> {
                 children: [
                   Icon(
                     Icons.fiber_manual_record,
-                    color: Colors.red,
+                    color: AppColors.red,
                     size: ResponsiveHelper.iconSize(14),
                   ),
                   SizedBox(width: ResponsiveHelper.width(8)),
@@ -665,17 +665,17 @@ void showTopSnackBar(BuildContext context, String message) {
       left: 16,
       right: 16,
       child: Material(
-        color: Colors.transparent,
+        color: AppColors.transparent,
         child: Container(
           padding: ResponsiveHelper.all(16),
           decoration: BoxDecoration(
-            color: Colors.red.shade700,
+            color: AppColors.red,
             borderRadius: BorderRadius.circular(
               ResponsiveHelper.borderRadius(12),
             ),
             boxShadow: const [
               BoxShadow(
-                color: Colors.black26,
+                color: AppColors.black26,
                 blurRadius: 6,
                 offset: Offset(0, 3),
               ),
@@ -683,13 +683,13 @@ void showTopSnackBar(BuildContext context, String message) {
           ),
           child: Row(
             children: [
-              const Icon(Icons.error_outline, color: Colors.white),
+              const Icon(Icons.error_outline, color: AppColors.white),
               SizedBox(width: ResponsiveHelper.padding(12)),
               Expanded(
                 child: Text(
                   message,
                   style: GoogleFonts.poppins(
-                    color: Colors.white,
+                    color: AppColors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: ResponsiveHelper.fontSize(16),
                   ),
@@ -705,3 +705,6 @@ void showTopSnackBar(BuildContext context, String message) {
   Overlay.of(context).insert(overlayEntry);
   Future.delayed(const Duration(seconds: 3)).then((_) => overlayEntry.remove());
 }
+
+
+

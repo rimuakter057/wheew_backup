@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:platchatapp/feature/auth/repository/vehicle_type_info.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
@@ -120,3 +120,5 @@ class _VehicleTypeCard extends StatelessWidget {
     );
   }
 }
+
+

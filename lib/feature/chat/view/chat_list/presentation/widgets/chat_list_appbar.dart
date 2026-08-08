@@ -1,4 +1,4 @@
-//
+﻿//
 //
 // import 'package:flutter/material.dart';
 // import 'package:flutter_svg/svg.dart';
@@ -98,7 +98,7 @@
 //         //                   '$count',
 //         //                   style: const TextStyle(
 //         //                     fontSize: 8,
-//         //                     color: Colors.white,
+//         //                     color: AppColors.white,
 //         //                     fontWeight: FontWeight.bold,
 //         //                   ),
 //         //                 ),
@@ -334,7 +334,7 @@ class IconBgContainer extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color(0xFF2F80ED),
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 1.5),
+                border: Border.all(color: AppColors.white, width: 1.5),
               ),
               alignment: Alignment.center,
               child: Text(
@@ -342,7 +342,7 @@ class IconBgContainer extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 9,
-                  color: Colors.white,
+                  color: AppColors.white,
                   fontWeight: FontWeight.bold,
                   height: 1,
                 ),
@@ -360,12 +360,12 @@ class IconBgContainer extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: AppColors.buttonGradient,
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2),
+                border: Border.all(color: AppColors.white, width: 2),
               ),
               child: Icon(
                 Icons.add,
                 size: ResponsiveHelper.iconSize(12),
-                color: Colors.white,
+                color: AppColors.white,
               ),
             ),
           ),
@@ -373,3 +373,5 @@ class IconBgContainer extends StatelessWidget {
     );
   }
 }
+
+

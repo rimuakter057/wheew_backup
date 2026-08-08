@@ -1,4 +1,4 @@
-// widgets/group_preset_messages.dart
+﻿// widgets/group_preset_messages.dart
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,7 +21,7 @@ class _GroupPresetMessagesState extends State<GroupPresetMessages> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // ── Shimmer loading state ──────────────────────────
+      // â”€â”€ Shimmer loading state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       if (widget.controller.isPresetLoading.value) {
         return SizedBox(
           height: ResponsiveHelper.height(40),
@@ -38,12 +38,12 @@ class _GroupPresetMessagesState extends State<GroupPresetMessages> {
         );
       }
 
-      // ── Empty state ────────────────────────────────────
+      // â”€â”€ Empty state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       if (widget.controller.presetMessages.isEmpty) {
         return const SizedBox.shrink();
       }
 
-      // ── Preset chips ───────────────────────────────────
+      // â”€â”€ Preset chips â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       return SizedBox(
         height: ResponsiveHelper.height(40),
         child: ListView.separated(
@@ -60,7 +60,7 @@ class _GroupPresetMessagesState extends State<GroupPresetMessages> {
             final isItalian = Get.locale?.languageCode == 'it';
             final text = isItalian ? preset.messageIt : preset.message;
 
-            final Color baseColor = isAlert ? Colors.red : AppColors.blue;
+            final Color baseColor = isAlert ? AppColors.red : AppColors.blue;
             final IconData icon = isAlert ? Icons.warning_amber_rounded : Icons.message_outlined;
 
             return GestureDetector(
@@ -116,7 +116,7 @@ class _GroupPresetMessagesState extends State<GroupPresetMessages> {
   }
 }
 
-// ── Shimmer Chip ──────────────────────────────────────────────
+// â”€â”€ Shimmer Chip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _ShimmerChip extends StatelessWidget {
   final VoidCallback onEnd;
 
@@ -146,3 +146,5 @@ class _ShimmerChip extends StatelessWidget {
     );
   }
 }
+
+

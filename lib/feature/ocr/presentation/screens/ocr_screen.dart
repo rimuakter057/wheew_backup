@@ -1,4 +1,4 @@
-
+﻿
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -92,7 +92,7 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
       barrierDismissible: false,
       builder: (_) => const Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.greenAccent),
+          valueColor: AlwaysStoppedAnimation<Color>(AppColors.greenAccent),
         ),
       ),
     );
@@ -111,7 +111,7 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (_) => ScannedUserSheet(data: data),
     );
   }
@@ -184,10 +184,10 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
   Widget build(BuildContext context) {
     if (_loading) {
       return const Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.black,
         body: Center(
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.greenAccent),
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.greenAccent),
           ),
         ),
       );
@@ -200,14 +200,14 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
     final top = (size.height - scanH) / 2;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.black,
       body: Stack(
         children: [
           // 1. Full-screen Camera Preview
           Positioned.fill(
             child: controller.cameraController!.value.isInitialized
                 ? CameraPreview(controller.cameraController!)
-                : Container(color: Colors.black),
+                : Container(color: AppColors.black),
           ),
 
           // 2. Custom Scanner Overlay
@@ -253,8 +253,8 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.black.withOpacity(0.7),
-                    Colors.transparent,
+                    AppColors.black.withOpacity(0.7),
+                    AppColors.transparent,
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -264,7 +264,7 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.12),
+                      color: AppColors.white.withOpacity(0.12),
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
@@ -297,14 +297,14 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
             child: Container(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.85),
+                color: AppColors.black.withOpacity(0.85),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(32),
                   topRight: Radius.circular(32),
                 ),
                 border: Border(
                   top: BorderSide(
-                    color: Colors.white.withOpacity(0.1),
+                    color: AppColors.white.withOpacity(0.1),
                     width: 1.5,
                   ),
                 ),
@@ -322,7 +322,7 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
                            Text(
                             AppStrings.automaticDetection.tr,
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors.white,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -333,7 +333,7 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
                                 ? AppStrings.autoScanningInProgress.tr
                                 : AppStrings.manualScanModeActive.tr,
                             style: TextStyle(
-                              color: _autoScan ? Colors.greenAccent : Colors.grey,
+                              color: _autoScan ? AppColors.greenAccent : AppColors.grey,
                               fontSize: 14,
                             ),
                           ),
@@ -341,8 +341,8 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
                       ),
                       Switch(
                         value: _autoScan,
-                        activeColor: Colors.greenAccent,
-                        activeTrackColor: Colors.greenAccent.withOpacity(0.3),
+                        activeColor: AppColors.greenAccent,
+                        activeTrackColor: AppColors.greenAccent.withOpacity(0.3),
                         onChanged: (value) {
                           _toggleAutoScan();
                         },
@@ -365,7 +365,7 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
-                        color: _autoScan ? Colors.grey.shade700 : null,
+                        color: _autoScan ? AppColors.greyShade700 : null,
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: _autoScan
                             ? null
@@ -382,13 +382,13 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
                         children: [
                           Icon(
                             Icons.camera_alt,
-                            color: _autoScan ? Colors.grey.shade400 : Colors.white,
+                            color: _autoScan ? AppColors.greyShade400 : AppColors.white,
                           ),
                           const SizedBox(width: 8),
                           Text(
                             AppStrings.scanNow.tr,
                             style: TextStyle(
-                              color: _autoScan ? Colors.grey.shade400 : Colors.white,
+                              color: _autoScan ? AppColors.greyShade400 : AppColors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.1,
@@ -424,7 +424,7 @@ class ScannerOverlayPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.black.withOpacity(0.7);
+    final paint = Paint()..color = AppColors.black.withOpacity(0.7);
 
     // Outer mask
     final outerPath = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
@@ -515,9 +515,9 @@ class _ScanLineState extends State<ScanLine> with SingleTickerProviderStateMixin
               ],
               gradient: const LinearGradient(
                 colors: [
-                  Colors.transparent,
+                  AppColors.transparent,
                   AppColors.blue,
-                  Colors.transparent,
+                  AppColors.transparent,
                 ],
               ),
             ),
@@ -527,6 +527,8 @@ class _ScanLineState extends State<ScanLine> with SingleTickerProviderStateMixin
     );
   }
 }
+
+
 
 
 

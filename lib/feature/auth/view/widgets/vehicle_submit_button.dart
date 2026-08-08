@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
@@ -47,7 +47,7 @@ class VehicleSubmitButton extends StatelessWidget {
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
-          color: isButtonDisabled ? Colors.grey.shade400 : null,
+          color: isButtonDisabled ? AppColors.greyShade400 : null,
           border: Border(
 
             bottom:  BorderSide(
@@ -58,7 +58,7 @@ class VehicleSubmitButton extends StatelessWidget {
         ),
         child: InkWell(
           onTap: isButtonDisabled ? null : onPressed,
-          splashColor: Colors.white24,
+          splashColor: AppColors.white24,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Center(
@@ -67,7 +67,7 @@ class VehicleSubmitButton extends StatelessWidget {
                 height: 24,
                 width: 24,
                 child: CircularProgressIndicator(
-                  color: Colors.white,
+                  color: AppColors.white,
                   strokeWidth: 2.5,
                 ),
               )
@@ -77,7 +77,7 @@ class VehicleSubmitButton extends StatelessWidget {
                   Text(
                     label,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontSize: ResponsiveHelper.fontSize(16),
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.5,
@@ -86,7 +86,7 @@ class VehicleSubmitButton extends StatelessWidget {
                   const SizedBox(width: 8),
                   const Icon(
                     Icons.arrow_forward_rounded,
-                    color: Colors.white,
+                    color: AppColors.white,
                     size: 20,
                   ),
                 ],

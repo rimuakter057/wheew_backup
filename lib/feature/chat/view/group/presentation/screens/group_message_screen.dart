@@ -1,4 +1,4 @@
-// import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+﻿// import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
@@ -106,7 +106,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //           'Are you sure you want to leave "${widget.groupName}"?',
 //           style: GoogleFonts.poppins(
 //             fontSize: ResponsiveHelper.fontSize(14),
-//             color: Colors.grey.shade600,
+//             color: AppColors.greyShade600,
 //           ),
 //         ),
 //         actions: [
@@ -116,7 +116,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //               AppStrings.cancel.tr,
 //               style: GoogleFonts.poppins(
 //                 fontSize: ResponsiveHelper.fontSize(14),
-//                 color: Colors.grey,
+//                 color: AppColors.grey,
 //               ),
 //             ),
 //           ),
@@ -138,14 +138,14 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //                 height: 16,
 //                 child: CircularProgressIndicator(
 //                   strokeWidth: 2,
-//                   color: Colors.red,
+//                   color: AppColors.red,
 //                 ),
 //               )
 //                   : Text(
 //                 'Leave',
 //                 style: GoogleFonts.poppins(
 //                   fontSize: ResponsiveHelper.fontSize(14),
-//                   color: Colors.red,
+//                   color: AppColors.red,
 //                   fontWeight: FontWeight.w600,
 //                 ),
 //               ),
@@ -205,7 +205,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //                           '${widget.groupMembers.length} ${AppStrings.members.tr}',
 //                           style: GoogleFonts.poppins(
 //                             fontSize: ResponsiveHelper.fontSize(12),
-//                             color: Colors.grey,
+//                             color: AppColors.grey,
 //                           ),
 //                         ),
 //                       ],
@@ -248,19 +248,19 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //                     PopupMenuItem<String>(
 //                       enabled: false,
 //                       height: 1,
-//                       child: Divider(height: 1, color: Colors.grey.shade200),
+//                       child: Divider(height: 1, color: AppColors.greyShade200),
 //                     ),
 //                     PopupMenuItem<String>(
 //                       value: "LeaveGroup",
 //                       child: Row(
 //                         children: [
-//                           Icon(Icons.exit_to_app_outlined, color: Colors.red),
+//                           Icon(Icons.exit_to_app_outlined, color: AppColors.red),
 //                           SizedBox(width: 8),
 //                           Text(
 //                             'Leave Group',
 //                             style: GoogleFonts.poppins(
 //                               fontSize: ResponsiveHelper.fontSize(14),
-//                               color: Colors.red,
+//                               color: AppColors.red,
 //                             ),
 //                           ),
 //                         ],
@@ -288,7 +288,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //                     AppStrings.noMessages.tr,
 //                     style: GoogleFonts.poppins(
 //                       fontSize: ResponsiveHelper.fontSize(16),
-//                       color: Colors.grey,
+//                       color: AppColors.grey,
 //                     ),
 //                   ),
 //                 );
@@ -377,7 +377,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //                                         style: GoogleFonts.poppins(
 //                                           fontSize:
 //                                           ResponsiveHelper.fontSize(11),
-//                                           color: Colors.grey,
+//                                           color: AppColors.grey,
 //                                           fontWeight: FontWeight.w500,
 //                                         ),
 //                                       ),
@@ -630,21 +630,21 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //                   emojiSizeMax: 28,
 //                   verticalSpacing: 0,
 //                   horizontalSpacing: 0,
-//                   backgroundColor: Colors.white,
+//                   backgroundColor: AppColors.white,
 //                   noRecents: Text(
 //                     'No recents yet',
 //                     style: GoogleFonts.poppins(
 //                       fontSize: 20,
-//                       color: Colors.black26,
+//                       color: AppColors.black26,
 //                     ),
 //                   ),
 //                 ),
 //                 categoryViewConfig: CategoryViewConfig(
 //                   initCategory: Category.SMILEYS,
 //                   indicatorColor: AppColors.blueClient,
-//                   iconColor: Colors.grey,
+//                   iconColor: AppColors.grey,
 //                   iconColorSelected: AppColors.blueClient,
-//                   backspaceColor: Colors.red,
+//                   backspaceColor: AppColors.red,
 //                 ),
 //                 bottomActionBarConfig: BottomActionBarConfig(
 //                   showSearchViewButton: false,
@@ -778,7 +778,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
       ),
       child: Scaffold(
         resizeToAvoidBottomInset: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         appBar: GroupMessageAppBar(
           roomId: widget.roomId,
           groupName: widget.groupName,
@@ -806,7 +806,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
                         AppStrings.noMessages.tr,
                         style: GoogleFonts.poppins(
                           fontSize: ResponsiveHelper.fontSize(16),
-                          color: Colors.grey,
+                          color: AppColors.grey,
                         ),
                       ),
                     );
@@ -898,14 +898,14 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
           children: [
             CircleAvatar(
               radius: ResponsiveHelper.borderRadius(16),
-              backgroundColor: Colors.grey.shade300,
-              child: const Icon(Icons.group, size: 18, color: Colors.grey),
+              backgroundColor: AppColors.greyShade300,
+              child: const Icon(Icons.group, size: 18, color: AppColors.grey),
             ),
             const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: const BoxDecoration(
-                color: Colors.white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),
@@ -952,7 +952,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
           AppStrings.areYouSureDeleteMessage.tr,
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(14),
-            color: Colors.grey.shade600,
+            color: AppColors.greyShade600,
           ),
         ),
         actions: [
@@ -962,7 +962,7 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
               AppStrings.cancel.tr,
               style: GoogleFonts.poppins(
                 fontSize: ResponsiveHelper.fontSize(14),
-                color: Colors.grey,
+                color: AppColors.grey,
               ),
             ),
           ),
@@ -984,13 +984,13 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
                 ? const SizedBox(
                     width: 16,
                     height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.red),
+                    child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.red),
                   )
                 : Text(
                     AppStrings.delete.tr,
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(14),
-                      color: Colors.red,
+                      color: AppColors.red,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -1056,5 +1056,8 @@ class _GroupAnimatedDotState extends State<_GroupAnimatedDot> with SingleTickerP
     );
   }
 }
+
+
+
 
 

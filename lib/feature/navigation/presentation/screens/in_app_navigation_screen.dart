@@ -1,4 +1,4 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -99,15 +99,15 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 0,
-        surfaceTintColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.black87),
+        surfaceTintColor: AppColors.white,
+        iconTheme: const IconThemeData(color: AppColors.black87),
         title: Text(
           widget.destinationLabel ?? AppStrings.inAppNavigation.tr,
-          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600, fontSize: ResponsiveHelper.fontSize(16)),
+          style: TextStyle(color: AppColors.black87, fontWeight: FontWeight.w600, fontSize: ResponsiveHelper.fontSize(16)),
         ),
       ),
       body: Obx(() {
@@ -140,7 +140,7 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
                 SizedBox(height: ResponsiveHelper.height(12)),
                 Text(
                   AppStrings.loadingRoute.tr,
-                  style: TextStyle(color: Colors.grey.shade600),
+                  style: TextStyle(color: AppColors.greyShade600),
                 ),
               ],
             ),
@@ -205,7 +205,7 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
                     Polyline(
                       polylineId: PolylineId('route_$i'),
                       points: controller.allRoutes[i].polylinePoints,
-                      color: Colors.grey.shade500,
+                      color: AppColors.greyShade500,
                       width: ResponsiveHelper.borderWidth(4).round(),
                       consumeTapEvents: true,
                       onTap: () => controller.selectRoute(i),
@@ -282,7 +282,7 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
             borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
+                color: AppColors.black.withValues(alpha: 0.15),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -290,7 +290,7 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
           ),
           child: Row(
             children: [
-              Icon(_maneuverIcon(step.maneuver), color: Colors.white, size: ResponsiveHelper.iconSize(32)),
+              Icon(_maneuverIcon(step.maneuver), color: AppColors.white, size: ResponsiveHelper.iconSize(32)),
               SizedBox(width: ResponsiveHelper.width(12)),
               Expanded(
                 child: Column(
@@ -300,14 +300,14 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
                     if (controller.distanceToTurnMeters.value > 0)
                       Text(
                         _formatMeters(controller.distanceToTurnMeters.value),
-                        style: TextStyle(color: Colors.white70, fontSize: ResponsiveHelper.fontSize(12)),
+                        style: TextStyle(color: AppColors.white70, fontSize: ResponsiveHelper.fontSize(12)),
                       ),
                     Text(
                       step.instruction,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.white,
                         fontWeight: FontWeight.w700,
                         fontSize: ResponsiveHelper.fontSize(17),
                       ),
@@ -330,14 +330,14 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
               vertical: ResponsiveHelper.height(6),
             ),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.white,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(ResponsiveHelper.borderRadius(12)),
                 bottomRight: Radius.circular(ResponsiveHelper.borderRadius(12)),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
+                  color: AppColors.black.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -373,14 +373,14 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
         vertical: ResponsiveHelper.height(14),
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(ResponsiveHelper.borderRadius(20)),
           topRight: Radius.circular(ResponsiveHelper.borderRadius(20)),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: AppColors.black.withValues(alpha: 0.1),
             blurRadius: 12,
             offset: const Offset(0, -4),
           ),
@@ -394,8 +394,8 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
               onTap: () => Navigator.pop(context),
               child: CircleAvatar(
                 radius: ResponsiveHelper.borderRadius(22),
-                backgroundColor: Colors.grey.shade200,
-                child: const Icon(Icons.close, color: Colors.black87),
+                backgroundColor: AppColors.greyShade200,
+                child: const Icon(Icons.close, color: AppColors.black87),
               ),
             ),
             Expanded(
@@ -408,7 +408,7 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
                   SizedBox(height: ResponsiveHelper.height(2)),
                   Text(
                     eta != null ? '${info.distanceText} • $eta' : info.distanceText,
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: ResponsiveHelper.fontSize(13)),
+                    style: TextStyle(color: AppColors.greyShade600, fontSize: ResponsiveHelper.fontSize(13)),
                   ),
                 ],
               ),
@@ -417,8 +417,8 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
               onTap: controller.fitRouteBounds,
               child: CircleAvatar(
                 radius: ResponsiveHelper.borderRadius(22),
-                backgroundColor: Colors.grey.shade200,
-                child: const Icon(Icons.alt_route, color: Colors.black87),
+                backgroundColor: AppColors.greyShade200,
+                child: const Icon(Icons.alt_route, color: AppColors.black87),
               ),
             ),
           ],
@@ -442,7 +442,7 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
     );
   }
 
-  /// North-up → small "N" compass face; rotated map → red arrow rotated to
+  /// North-up â†’ small "N" compass face; rotated map â†’ red arrow rotated to
   /// keep pointing at true north. Tapping either resets to north-up.
   Widget _buildCompassButton() {
     return Obx(() {
@@ -455,11 +455,11 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
           width: ResponsiveHelper.width(44),
           height: ResponsiveHelper.width(44),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.white,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
+                color: AppColors.black.withValues(alpha: 0.15),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -474,15 +474,15 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
                       style: TextStyle(
                         fontSize: ResponsiveHelper.fontSize(9),
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: AppColors.black87,
                       ),
                     ),
-                    Icon(Icons.arrow_drop_up, color: Colors.redAccent, size: ResponsiveHelper.iconSize(16)),
+                    Icon(Icons.arrow_drop_up, color: AppColors.redAccent, size: ResponsiveHelper.iconSize(16)),
                   ],
                 )
               : Transform.rotate(
                   angle: -bearing * (math.pi / 180),
-                  child: Icon(Icons.navigation, color: Colors.redAccent, size: ResponsiveHelper.iconSize(22)),
+                  child: Icon(Icons.navigation, color: AppColors.redAccent, size: ResponsiveHelper.iconSize(22)),
                 ),
         ),
       );
@@ -497,12 +497,12 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
         width: ResponsiveHelper.width(56),
         height: ResponsiveHelper.width(56),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.grey.shade300, width: 1.5),
+          border: Border.all(color: AppColors.greyShade300, width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: AppColors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -517,7 +517,7 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
             ),
             Text(
               'km/h',
-              style: TextStyle(fontSize: ResponsiveHelper.fontSize(9), color: Colors.grey.shade600),
+              style: TextStyle(fontSize: ResponsiveHelper.fontSize(9), color: AppColors.greyShade600),
             ),
           ],
         ),
@@ -529,11 +529,11 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
     return Container(
       padding: EdgeInsets.all(ResponsiveHelper.padding(6)),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: AppColors.black.withValues(alpha: 0.1),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -550,7 +550,7 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
                 margin: EdgeInsets.symmetric(horizontal: ResponsiveHelper.width(4)),
                 padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.height(8)),
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.blue : Colors.transparent,
+                  color: isSelected ? AppColors.blue : AppColors.transparent,
                   borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
                 ),
                 child: Column(
@@ -558,7 +558,7 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
                   children: [
                     Icon(
                       mode.icon,
-                      color: isSelected ? Colors.white : Colors.grey.shade600,
+                      color: isSelected ? AppColors.white : AppColors.greyShade600,
                       size: ResponsiveHelper.iconSize(20),
                     ),
                     SizedBox(height: ResponsiveHelper.height(2)),
@@ -566,7 +566,7 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
                       mode.label,
                       style: TextStyle(
                         fontSize: ResponsiveHelper.fontSize(11),
-                        color: isSelected ? Colors.white : Colors.grey.shade600,
+                        color: isSelected ? AppColors.white : AppColors.greyShade600,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -594,12 +594,12 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: ResponsiveHelper.iconSize(56), color: Colors.grey.shade400),
+            Icon(icon, size: ResponsiveHelper.iconSize(56), color: AppColors.greyShade400),
             SizedBox(height: ResponsiveHelper.height(16)),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey.shade700, fontSize: ResponsiveHelper.fontSize(15)),
+              style: TextStyle(color: AppColors.greyShade700, fontSize: ResponsiveHelper.fontSize(15)),
             ),
             SizedBox(height: ResponsiveHelper.height(20)),
             ElevatedButton(
@@ -609,7 +609,7 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12))),
                 padding: ResponsiveHelper.symmetric(horizontal: 24, vertical: 12),
               ),
-              child: Text(actionLabel, style: const TextStyle(color: Colors.white)),
+              child: Text(actionLabel, style: const TextStyle(color: AppColors.white)),
             ),
             if (secondaryLabel != null && onSecondaryAction != null) ...[
               SizedBox(height: ResponsiveHelper.height(8)),
@@ -683,11 +683,11 @@ class _PulsingVoiceButtonState extends State<_PulsingVoiceButton>
           width: ResponsiveHelper.width(44),
           height: ResponsiveHelper.width(44),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.white,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
+                color: AppColors.black.withValues(alpha: 0.15),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -695,7 +695,7 @@ class _PulsingVoiceButtonState extends State<_PulsingVoiceButton>
           ),
           child: Icon(
             widget.isOn ? Icons.record_voice_over : Icons.voice_over_off,
-            color: widget.isOn ? AppColors.blue : Colors.black87,
+            color: widget.isOn ? AppColors.blue : AppColors.black87,
             size: ResponsiveHelper.iconSize(20),
           ),
         ),
@@ -703,3 +703,5 @@ class _PulsingVoiceButtonState extends State<_PulsingVoiceButton>
     );
   }
 }
+
+

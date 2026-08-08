@@ -356,6 +356,10 @@ class AppStrings {
   static const String mapParkingReportSubmitted = 'map_parking_report_submitted';
   static const String mapFailedToSubmitParkingReport = 'map_failed_to_submit_parking_report';
 
+  static const String mapParkingAddedSuccessTitle = 'map_parking_added_success_title';
+  static const String mapParkingAddedSuccessMessage = 'map_parking_added_success_message';
+  static const String ok = 'ok';
+
   static const String mapParkingPin = 'map_parking_pin';
   static const String mapPaidParking = 'map_paid_parking';
   static const String mapFreeParking = 'map_free_parking';
@@ -875,4 +879,51 @@ class AppStrings {
   static const String similarEta = 'similar_eta';
 
   static const String verifyAccountBecomeWheewer = 'verify_account_become_wheewer';
+
+  // -------- Parking Screen --------
+  static const String youreParked = 'youre_parked';
+  static const String exitParking = 'exit_parking';
+  static const String yourParkingSpot = 'your_parking_spot';
+  static const String stopSearching = 'stop_searching';
+  static const String findParkingSpot = 'find_parking_spot';
+  static const String active = 'active';
+
+  // -------- Vehicle Info Screen --------
+  static const String addYourVehicleSubtitle = 'add_your_vehicle_subtitle';
+  static const String enterVehicleModel = 'enter_vehicle_model';
+
+  // -------- Message / Request Screens --------
+  static const String pendingReview = 'pending_review';
+  static const String withdrawRequestLabel = 'withdraw_request_label';
+  static const String youreNotFollowing = 'youre_not_following';
+  static const String sendRequestDesc = 'send_request_desc';
+  static const String requestSentDesc = 'request_sent_desc';
+  static const String withdrawRequestQuestion = 'withdraw_request_question';
+  static const String withdrawRequestTitle = 'withdraw_request_title';
+  static const String acceptRequestFrom = 'accept_request_from';
+  static const String acceptRequestDesc = 'accept_request_desc';
+  static const String blockUserTitle = 'block_user_title';
+  static const String blockUserDesc = 'block_user_desc';
+  static const String rejectRequestTitle = 'reject_request_title';
+  static const String rejectRequestFrom = 'reject_request_from';
+  static const String acceptRequestTitle = 'accept_request_title';
+  static const String acceptRequestFromDesc = 'accept_request_from_desc';
+  static const String sendRequestTo = 'send_request_to';
+  static const String requestAcceptedDesc = 'request_accepted_desc';
+
+  // -------- Map / Parking Info --------
+  static const String defaultMapType = 'default_map_type';
+  static const String showElectricCharging = 'show_electric_charging';
+  static const String showDisabledParking = 'show_disabled_parking';
+  static const String dropPin = 'drop_pin';
+  static const String apply = 'apply';
+  static const String bookParkingSpot = 'book_parking_spot';
+  static const String location = 'location';
+
+  // -------- Chat / Group --------
+  static const String leaveSuccessGroup = 'leave_success_group';
+  static const String fieldIsRequired = 'field_is_required';
+
+  // -------- Auth --------
+  static const String loginSuccessful = 'login_successful';
 }

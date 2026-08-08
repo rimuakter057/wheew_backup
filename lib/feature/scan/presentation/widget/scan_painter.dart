@@ -1,10 +1,11 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-/// ─── Corner Painter ───────────────────────────────────────────────────────────
+/// â”€â”€â”€ Corner Painter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class CornerPainter extends CustomPainter {
   final Color color;
@@ -83,7 +84,7 @@ class CornerPainter extends CustomPainter {
           old.strokeWidth != strokeWidth;
 }
 
-/// ─── Camera Error Widget ──────────────────────────────────────────────────────
+/// â”€â”€â”€ Camera Error Widget â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class CameraErrorWidget extends StatelessWidget {
   final double boxSize;
@@ -120,7 +121,7 @@ class CameraErrorWidget extends StatelessWidget {
         children: [
           Icon(
             Icons.camera_alt_outlined,
-            color: Colors.white.withOpacity(0.2),
+            color: AppColors.white.withOpacity(0.2),
             size: 48,
           ),
           const SizedBox(height: 12),
@@ -129,7 +130,7 @@ class CameraErrorWidget extends StatelessWidget {
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               fontSize: 12,
-              color: Colors.white.withOpacity(0.4),
+              color: AppColors.white.withOpacity(0.4),
               height: 1.6,
             ),
           ),
@@ -138,3 +139,4 @@ class CameraErrorWidget extends StatelessWidget {
     );
   }
 }
+

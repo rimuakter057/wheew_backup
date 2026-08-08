@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -72,7 +72,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
           '"$memberName" ${AppStrings.removeMemberConfirmation.tr}?',
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(14),
-            color: Colors.grey.shade600,
+            color: AppColors.greyShade600,
           ),
         ),
         actions: [
@@ -80,7 +80,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
             onPressed: () => Navigator.pop(ctx),
             child: Text(
               'Cancel',
-              style: GoogleFonts.poppins(color: Colors.grey),
+              style: GoogleFonts.poppins(color: AppColors.grey),
             ),
           ),
           Obx(
@@ -101,13 +101,13 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
                       height: 16,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.red,
+                        color: AppColors.red,
                       ),
                     )
                   : Text(
                 AppStrings.removeMember.tr,
                       style: GoogleFonts.poppins(
-                        color: Colors.red,
+                        color: AppColors.red,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -132,9 +132,9 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
         gradient: AppColors.primaryBackgroundGradient,
       ),
       child: Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
@@ -150,7 +150,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
         ),
         actions: [
           if (isAdmin)
-          // ── Dropdown Menu ─────────────────────────────
+          // â”€â”€ Dropdown Menu â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           PopupMenuButton<String>(
             icon: Icon(Icons.more_vert, color: AppColors.black),
             onSelected: (value) {
@@ -158,7 +158,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
                 context
                     .pushNamed(RouteName.addMemberScreen, extra: widget.roomId)
                     .then((_) {
-                      // Add করার পর refresh
+                      // Add à¦•à¦°à¦¾à¦° à¦ªà¦° refresh
                       groupController.fetchGroupMembers(roomId: widget.roomId);
                     });
               } else if (value == 'LeaveGroup') {
@@ -186,13 +186,13 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
               PopupMenuItem(
                 enabled: false,
                 height: 1,
-                child: Divider(height: 1, color: Colors.grey.shade200),
+                child: Divider(height: 1, color: AppColors.greyShade200),
               ),
               PopupMenuItem(
                 value: 'LeaveGroup',
                 child: Row(
                   children: [
-              //      const Icon(Icons.exit_to_app_outlined, color: Colors.red),
+              //      const Icon(Icons.exit_to_app_outlined, color: AppColors.red),
 
                     CustomImage(imageSrc: "assets/icons/leave_group.svg"),
                     const SizedBox(width: 8),
@@ -200,7 +200,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
                       AppStrings.leaveGroup.tr,
                       style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(14),
-                        color: Colors.red,
+                        color: AppColors.red,
                       ),
                     ),
                   ],
@@ -212,23 +212,23 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
       ),
 
       body: Obx(() {
-        // ── Loading ──────────────────────────────────────
+        // â”€â”€ Loading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if (groupController.isLoadingMembers.value) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        // ── Empty ────────────────────────────────────────
+        // â”€â”€ Empty â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if (groupController.groupMemberList.isEmpty) {
           return Center(
             child: Text(
               AppStrings.noMembersFound.tr,
-              style: GoogleFonts.poppins(color: Colors.grey),
+              style: GoogleFonts.poppins(color: AppColors.grey),
             ),
           );
         }
 
         // ── Member List — admin(s) get their own card up top, the rest
-        //    are grouped together under a "Group Members" section ──────
+        //    are grouped together under a "Group Members" section â”€â”€â”€â”€â”€â”€
         final admins = groupController.groupMemberList
             .where((m) => m.groupRole == 'GROUP_ADMIN')
             .toList();
@@ -263,7 +263,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
   }
 
   // ── Grouped card — one or more member rows, divided by thin dividers.
-  //    Same gradient card style as the Add Member screen. ──
+  //    Same gradient card style as the Add Member screen. â”€â”€
   Widget _buildMemberCard(List<GroupMemberModel> members, {required bool canManage}) {
     return Container(
       decoration: BoxDecoration(
@@ -276,10 +276,10 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
           ],
         ),
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.6)),
+        border: Border.all(color: AppColors.white.withValues(alpha: 0.6)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: AppColors.black.withValues(alpha: 0.04),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -291,7 +291,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
           for (var i = 0; i < members.length; i++) ...[
             _buildMemberRow(members[i], canManage: canManage),
             if (i != members.length - 1)
-              Divider(color: Colors.grey.shade200, height: 1),
+              Divider(color: AppColors.greyShade200, height: 1),
           ],
         ],
       ),
@@ -327,7 +327,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
         member.licenceId,
         style: GoogleFonts.poppins(
           fontSize: ResponsiveHelper.fontSize(12),
-          color: Colors.grey,
+          color: AppColors.grey,
         ),
       ),
       trailing: isAdmin
@@ -353,7 +353,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
             )
           : (canManage
               ? PopupMenuButton<String>(
-                  icon: Icon(Icons.more_vert, color: Colors.grey),
+                  icon: Icon(Icons.more_vert, color: AppColors.grey),
                   onSelected: (value) {
                     if (value == 'Remove') {
                       _showRemoveDialog(member.userId, member.nickName);
@@ -366,12 +366,12 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
                         children: [
                           const Icon(
                             Icons.person_remove_outlined,
-                            color: Colors.red,
+                            color: AppColors.red,
                           ),
                           const SizedBox(width: 8),
                           Text(
                             AppStrings.remove.tr,
-                            style: GoogleFonts.poppins(color: Colors.red),
+                            style: GoogleFonts.poppins(color: AppColors.red),
                           ),
                         ],
                       ),
@@ -403,7 +403,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
           '${AppStrings.leaveGroupConfirmation.tr} "${widget.groupName}"?',
           style: GoogleFonts.poppins(
             fontSize: ResponsiveHelper.fontSize(14),
-            color: Colors.grey.shade600,
+            color: AppColors.greyShade600,
           ),
         ),
         actions: [
@@ -411,7 +411,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
             onPressed: () => Navigator.pop(ctx),
             child: Text(
               AppStrings.cancel.tr,
-              style: GoogleFonts.poppins(color: Colors.grey),
+              style: GoogleFonts.poppins(color: AppColors.grey),
             ),
           ),
           Obx(
@@ -432,13 +432,13 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
                       height: 16,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.red,
+                        color: AppColors.red,
                       ),
                     )
                   : Text(
                 AppStrings.leave.tr,
                       style: GoogleFonts.poppins(
-                        color: Colors.red,
+                        color: AppColors.red,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -449,3 +449,6 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
     );
   }
 }
+
+
+

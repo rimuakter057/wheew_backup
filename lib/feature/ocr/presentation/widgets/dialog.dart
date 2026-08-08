@@ -1,4 +1,4 @@
-//
+﻿//
 // import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 // import 'package:get/get.dart';
@@ -339,7 +339,7 @@ class PlateDialog {
                     ),
                     SizedBox(height: ResponsiveHelper.spacing(16)),
                     Text(
-                      "Checking plate...",
+                      AppStrings.checkingPlate.tr,
                       style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(14),
                         color: AppColors.secondaryText,
@@ -371,7 +371,7 @@ class PlateDialog {
                   ),
                   SizedBox(height: ResponsiveHelper.spacing(16)),
                   Text(
-                    "Plate Not Found",
+                    AppStrings.plateNotFound.tr,
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(16),
                       fontWeight: FontWeight.w600,
@@ -399,7 +399,7 @@ class PlateDialog {
                         ),
                       ),
                       child: Text(
-                        "Close",
+                        AppStrings.close.tr,
                         style: GoogleFonts.poppins(
                           fontSize: ResponsiveHelper.fontSize(16),
                           color: AppColors.secondaryText,
@@ -443,7 +443,7 @@ class PlateDialog {
 
                 // Nick name
                 Text(
-                  nickName.isNotEmpty ? nickName : "Unknown User",
+                  nickName.isNotEmpty ? nickName : AppStrings.unknownUser.tr,
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(18),
                     color: AppColors.black,
@@ -456,7 +456,7 @@ class PlateDialog {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.star_rounded, color: Colors.amber, size: ResponsiveHelper.iconSize(18)),
+                    Icon(Icons.star_rounded, color: AppColors.amber, size: ResponsiveHelper.iconSize(18)),
                     SizedBox(width: ResponsiveHelper.width(4)),
                     Text(
                       rating.toStringAsFixed(1),
@@ -503,7 +503,7 @@ class PlateDialog {
                       borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(8)),
                     ),
                     child: Text(
-                      "This user is blocked",
+                      AppStrings.thisUserIsBlocked.tr,
                       style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(13),
                         color: AppColors.red,
@@ -529,7 +529,7 @@ class PlateDialog {
                           ),
                         ),
                         child: Text(
-                          "Cancel",
+                          AppStrings.cancel.tr,
                           style: GoogleFonts.poppins(
                             fontSize: ResponsiveHelper.fontSize(16),
                             color: AppColors.secondaryText,
@@ -562,7 +562,7 @@ class PlateDialog {
                           ),
                         ),
                         child: Text(
-                          isExistingChat ? "Open Chat" : "Start Chat",
+                          isExistingChat ? AppStrings.openChat.tr : AppStrings.startChat.tr,
                           style: GoogleFonts.poppins(
                             fontSize: ResponsiveHelper.fontSize(16),
                             color: AppColors.white,
@@ -581,6 +581,8 @@ class PlateDialog {
     );
   }
 }
+
+
 
 
 

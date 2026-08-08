@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -31,7 +31,7 @@ class _ScanScreenState extends State<ScanScreen>
   late Animation<double> _lineAnimation;
   late MobileScannerController _scannerController;
 
-  // ── Lifecycle ────────────────────────────────────────────────────────────────
+  // â”€â”€ Lifecycle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   @override
   void initState() {
@@ -74,7 +74,7 @@ class _ScanScreenState extends State<ScanScreen>
     super.dispose();
   }
 
-  // ── QR detected ──────────────────────────────────────────────────────────────
+  // â”€â”€ QR detected â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   void _onDetect(BarcodeCapture capture) async {
     if (_scanned) return;
@@ -103,7 +103,7 @@ class _ScanScreenState extends State<ScanScreen>
     setState(() => _isLoading = false);
   }
 
-  // ── Back navigation ─────────────────────────────────────────────────────────
+  // â”€â”€ Back navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // Reached either via a pushed GoRouter route (chat list's scan icon) or via
   // the bottom nav's Scan tab, which just swaps mainNavIndex without pushing
   // a route — so there may be nothing for GoRouter to pop back to.
@@ -116,13 +116,13 @@ class _ScanScreenState extends State<ScanScreen>
     }
   }
 
-  // ── Bottom sheet ─────────────────────────────────────────────────────────────
+  // â”€â”€ Bottom sheet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Future<void> _showScannedUserSheet(Map<String, dynamic> data) async {
     await showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withOpacity(0.6),
+      backgroundColor: AppColors.transparent,
+      barrierColor: AppColors.black.withOpacity(0.6),
       isScrollControlled: true,
       builder: (_) => ScannedUserSheet(data: data),
     );
@@ -132,12 +132,12 @@ class _ScanScreenState extends State<ScanScreen>
     _scannerController.start();
   }
 
-  // ── Build ─────────────────────────────────────────────────────────────────────
+  // â”€â”€ Build â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       body: Container(
         decoration: const BoxDecoration(gradient: AppColors.primaryBackgroundGradient),
         child: Stack(
@@ -168,7 +168,7 @@ class _ScanScreenState extends State<ScanScreen>
     );
   }
 
-  // ── Header: circular back button + centered title ────────────────────────
+  // â”€â”€ Header: circular back button + centered title â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildHeader() {
     return Padding(
@@ -180,7 +180,7 @@ class _ScanScreenState extends State<ScanScreen>
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.7),
+              color: AppColors.white.withOpacity(0.7),
               shape: BoxShape.circle,
             ),
             child: IconButton(
@@ -207,7 +207,7 @@ class _ScanScreenState extends State<ScanScreen>
     );
   }
 
-  // ── Bottom controls: torch / rescan / flip camera ─────────────────────────
+  // â”€â”€ Bottom controls: torch / rescan / flip camera â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildBottomControls() {
     return Padding(
@@ -239,7 +239,7 @@ class _ScanScreenState extends State<ScanScreen>
               padding: EdgeInsets.all(ResponsiveHelper.width(4)),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.35),
+                color: AppColors.white.withOpacity(0.35),
               ),
               child: Container(
                 decoration: BoxDecoration(
@@ -247,11 +247,11 @@ class _ScanScreenState extends State<ScanScreen>
                   gradient: const LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Colors.white, Color(0xFFDCE2E9)],
+                    colors: [AppColors.white, Color(0xFFDCE2E9)],
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: AppColors.black.withOpacity(0.2),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -270,7 +270,7 @@ class _ScanScreenState extends State<ScanScreen>
   }
 }
 
-// ─── Small circular icon button used in the bottom control bar ───────────────
+// â”€â”€â”€ Small circular icon button used in the bottom control bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _CircleIconButton extends StatelessWidget {
   final IconData icon;
@@ -286,7 +286,7 @@ class _CircleIconButton extends StatelessWidget {
         width: ResponsiveHelper.width(48),
         height: ResponsiveHelper.width(48),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.7),
+          color: AppColors.white.withOpacity(0.7),
           shape: BoxShape.circle,
         ),
         child: Icon(icon, color: AppColors.black, size: ResponsiveHelper.iconSize(22)),
@@ -294,3 +294,5 @@ class _CircleIconButton extends StatelessWidget {
     );
   }
 }
+
+

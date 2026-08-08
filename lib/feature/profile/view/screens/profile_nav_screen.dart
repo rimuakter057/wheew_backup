@@ -1,4 +1,4 @@
-
+﻿
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
@@ -118,5 +118,7 @@ class _ProfileNavScreenState extends State<ProfileNavScreen> {
   }
 
 }
+
+
 
 

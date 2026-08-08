@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
@@ -66,8 +66,8 @@ class VehicleOwnershipStatusWidget extends StatelessWidget {
     } else {
       return StatusConfig(
         message: AppStrings.notVerifiedSubmitDoc.tr,
-        color: Colors.red,
-        bgColor: Colors.red.withOpacity(0.1),
+        color: AppColors.red,
+        bgColor: AppColors.red.withOpacity(0.1),
         icon: Icons.info_outline,
       );
     }
@@ -88,3 +88,4 @@ class StatusConfig {
     required this.icon,
   });
 }
+

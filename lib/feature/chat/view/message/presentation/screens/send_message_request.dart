@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -52,13 +52,13 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
   @override
   Widget build(BuildContext context) {
     final content = Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       appBar: widget.showAppBar
           ? AppBar(
-              backgroundColor: Colors.transparent,
+              backgroundColor: AppColors.transparent,
               elevation: 0,
               scrolledUnderElevation: 0,
-              surfaceTintColor: Colors.transparent,
+              surfaceTintColor: AppColors.transparent,
               leading: Center(
                 child: GestureDetector(
                   onTap: () => Navigator.of(context).pop(),
@@ -67,10 +67,10 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                     height: ResponsiveHelper.width(42),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white.withValues(alpha: 0.9),
+                      color: AppColors.white.withValues(alpha: 0.9),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
+                          color: AppColors.black.withValues(alpha: 0.05),
                           blurRadius: 10,
                           offset: const Offset(0, 3),
                         ),
@@ -87,7 +87,7 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
               title: Text(
                 'Sent Requests',
                 style: GoogleFonts.poppins(
-                  color: Colors.black87,
+                  color: AppColors.black87,
                   fontWeight: FontWeight.w700,
                   fontSize: ResponsiveHelper.fontSize(18),
                 ),
@@ -115,7 +115,7 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(14),
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    color: AppColors.black87,
                   ),
                 ),
               ),
@@ -145,7 +145,7 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
           );
         }
 
-        // ✅ শুধু PENDING request গুলো ফিল্টার করা হচ্ছে
+        // âœ… à¦¶à§à¦§à§ PENDING request à¦—à§à¦²à§‹ à¦«à¦¿à¦²à§à¦Ÿà¦¾à¦° à¦•à¦°à¦¾ à¦¹à¦šà§à¦›à§‡
         final pendingRequests = messageController.sentRequests
             .where((r) => (r['status'] ?? 'PENDING').toString().toUpperCase() == 'PENDING')
             .toList();
@@ -178,16 +178,16 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                       Text(
                         AppStrings.noSentRequests.tr,
                         style: GoogleFonts.poppins(
-                          color: Colors.black87,
+                          color: AppColors.black87,
                           fontSize: ResponsiveHelper.fontSize(16),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       SizedBox(height: ResponsiveHelper.spacing(6)),
                       Text(
-                        "Requests you send will show up here",
+                        AppStrings.requestsYouSendShowUpHere.tr,
                         style: GoogleFonts.poppins(
-                          color: Colors.grey.shade500,
+                          color: AppColors.greyShade500,
                           fontSize: ResponsiveHelper.fontSize(13),
                         ),
                       ),
@@ -211,7 +211,7 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
               ResponsiveHelper.padding(16),
               ResponsiveHelper.padding(16),
             ),
-            // ✅ pendingRequests.length ব্যবহার করা হচ্ছে, পুরো list না
+            // âœ… pendingRequests.length à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦•à¦°à¦¾ à¦¹à¦šà§à¦›à§‡, à¦ªà§à¦°à§‹ list à¦¨à¦¾
             itemCount: pendingRequests.length + (messageController.hasMoreSent.value ? 1 : 0),
             separatorBuilder: (_, __) => SizedBox(height: ResponsiveHelper.spacing(6)),
             itemBuilder: (context, index) {
@@ -224,7 +224,7 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                 );
               }
 
-              // ✅ filtered list থেকে item নেওয়া হচ্ছে
+              // âœ… filtered list à¦¥à§‡à¦•à§‡ item à¦¨à§‡à¦“à¦¯à¦¼à¦¾ à¦¹à¦šà§à¦›à§‡
               final request = pendingRequests[index];
               final receiver = request['receiver'] ?? {};
               final name = receiver['nick_name'] ?? 'Plate User';
@@ -253,10 +253,10 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                 decoration: BoxDecoration(
                   gradient: AppColors.containerGradient,
                   borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.8)),
+                  border: Border.all(color: AppColors.white.withValues(alpha: 0.8)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
+                      color: AppColors.black.withValues(alpha: 0.04),
                       blurRadius: 15,
                       offset: const Offset(0, 4),
                     )
@@ -291,7 +291,7 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(12),
-                                color: Colors.grey.shade600,
+                                color: AppColors.greyShade600,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -306,7 +306,7 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                           vertical: ResponsiveHelper.padding(6),
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AppColors.white,
                           borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
                           border: Border.all(
                             color: const Color(0xFF0062E0),
@@ -367,7 +367,7 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                           child: Text(
                             'Message',
                             style: GoogleFonts.poppins(
-                              color: Colors.white,
+                              color: AppColors.white,
                               fontWeight: FontWeight.w600,
                               fontSize: ResponsiveHelper.fontSize(13),
                             ),
@@ -383,3 +383,5 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
       );
   }
 }
+
+

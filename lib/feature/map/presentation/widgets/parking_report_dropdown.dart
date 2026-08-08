@@ -1,4 +1,4 @@
-//
+﻿//
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 // import 'package:go_router/go_router.dart';
@@ -41,7 +41,7 @@
 //     return isPaid ? AppStrings.paidParking.tr : AppStrings.freeParking.tr;
 //   }
 //
-//   /// Free parking হলে icon/text কালো দেখাবে কারণ background white
+//   /// Free parking à¦¹à¦²à§‡ icon/text à¦•à¦¾à¦²à§‹ à¦¦à§‡à¦–à¦¾à¦¬à§‡ à¦•à¦¾à¦°à¦£ background white
 //   bool get _isFree {
 //     if (report['disabled_facility'] == true) return false;
 //     if (report['electric_charging'] == true) return false;
@@ -49,7 +49,7 @@
 //     return cost == null || cost == '' || cost == '0' || cost == 'FREE';
 //   }
 //
-//   /// ── Open in-app navigation (real route drawn on our own map) ──
+//   /// â”€â”€ Open in-app navigation (real route drawn on our own map) â”€â”€
 //   void _openNavigation(BuildContext context) {
 //     final dynamic rawLat = report['latitude'];
 //     final dynamic rawLng = report['longitude'];
@@ -80,13 +80,13 @@
 //     final statusColor = _getStatusColor();
 //     final pinLabel = _getPinLabel();
 //
-//     // Free হলে icon ও badge text কালো দেখাবে (white bg-তে contrast এর জন্য)
+//     // Free à¦¹à¦²à§‡ icon à¦“ badge text à¦•à¦¾à¦²à§‹ à¦¦à§‡à¦–à¦¾à¦¬à§‡ (white bg-à¦¤à§‡ contrast à¦à¦° à¦œà¦¨à§à¦¯)
 //     final Color iconAndBadgeTextColor = _isFree ? const Color(0xFF1E293B) : statusColor;
 //
-//     const Color cardBgColor = Colors.white;
+//     const Color cardBgColor = AppColors.white;
 //     const Color titleColor = Color(0xFF0F172A);
 //     final Color borderColor = _isFree
-//         ? const Color(0xFFE2E8F0) // Free হলে light slate border
+//         ? const Color(0xFFE2E8F0) // Free à¦¹à¦²à§‡ light slate border
 //         : statusColor.withOpacity(0.3);
 //
 //     const Color textDark = Color(0xFF1E293B);
@@ -160,7 +160,7 @@
 //                             ? const Color(0xFFF1F5F9)
 //                             : statusColor.withOpacity(0.1),
 //                         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(6)),
-//                         // Free হলে border দিলে badge আলাদা বোঝা যায়
+//                         // Free à¦¹à¦²à§‡ border à¦¦à¦¿à¦²à§‡ badge à¦†à¦²à¦¾à¦¦à¦¾ à¦¬à§‹à¦à¦¾ à¦¯à¦¾à¦¯à¦¼
 //                         border: _isFree
 //                             ? Border.all(color: const Color(0xFFE2E8F0))
 //                             : null,
@@ -193,7 +193,7 @@
 //                   //     if (success) {
 //                   //       CustomSnackbar.success(context: context, message: AppStrings.leaveSuccess.tr);
 //                   //       controller.clearSelectedReport();
-//                   //       // map refresh করতে চাইলে fetchParkingReport আবার call করো
+//                   //       // map refresh à¦•à¦°à¦¤à§‡ à¦šà¦¾à¦‡à¦²à§‡ fetchParkingReport à¦†à¦¬à¦¾à¦° call à¦•à¦°à§‹
 //                   //     } else {
 //                   //       CustomSnackbar.error(context: context, message: AppStrings.failedToLeave.tr);
 //                   //     }
@@ -449,7 +449,7 @@ class ParkingReportDropdown extends StatelessWidget {
     return report['distance']?.toString() ?? '';
   }
 
-  // rating == null → show '0.0' with a grey star (see [ratingColor]).
+  // rating == null â†’ show '0.0' with a grey star (see [ratingColor]).
   // reviewCount, when > 0, is appended as "4.5 (12)".
   String get displayRating {
     final dynamic ratingVal = report['rating'];
@@ -473,7 +473,7 @@ class ParkingReportDropdown extends StatelessWidget {
   Color get ratingColor =>
       report['rating'] == null ? AppColors.greyText : AppColors.blue;
 
-  // totalSpots == null → show 0.
+  // totalSpots == null â†’ show 0.
   String get displaySpots {
     final dynamic totalSpots = report['totalSpots'];
     final int spots = totalSpots is num
@@ -501,7 +501,7 @@ class ParkingReportDropdown extends StatelessWidget {
         cost == 'FREE';
   }
 
-  // paid + parkingFee present → show the fee; otherwise fall back to 'Paid'.
+  // paid + parkingFee present â†’ show the fee; otherwise fall back to 'Paid'.
   String get displayPrice {
     if (_isFree) return 'Free';
     final dynamic fee = report['parkingFee'];
@@ -635,3 +635,4 @@ class ParkingReportDropdown extends StatelessWidget {
     );
   }
 }
+

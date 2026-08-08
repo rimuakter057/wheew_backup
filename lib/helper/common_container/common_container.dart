@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../utils/color/app_colors.dart';
 import '../responsive_helper/responsive_helper.dart';
@@ -37,3 +37,4 @@ class CommonContainer extends StatelessWidget {
     );
   }
 }
+

@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 // // import 'package:flutter/material.dart';
 // // import 'package:flutter/services.dart';
 // // import 'package:get/get.dart';
@@ -23,8 +24,8 @@
 // //     context: context,
 // //     isScrollControlled: true,
 // //     useRootNavigator: true,
-// //     backgroundColor: Colors.transparent,
-// //     barrierColor: Colors.black.withOpacity(0.4),
+// //     backgroundColor: AppColors.transparent,
+// //     barrierColor: AppColors.black.withOpacity(0.4),
 // //     shape: const RoundedRectangleBorder(
 // //       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
 // //     ),
@@ -218,7 +219,7 @@
 // //
 // //     return Container(
 // //       decoration: BoxDecoration(
-// //         color: Colors.white,
+// //         color: AppColors.white,
 // //         borderRadius: BorderRadius.vertical(
 // //           top: Radius.circular(ResponsiveHelper.borderRadius(24)),
 // //         ),
@@ -429,7 +430,7 @@
 // //             //         width: ResponsiveHelper.iconSize(22),
 // //             //         height: ResponsiveHelper.iconSize(22),
 // //             //         child: const CircularProgressIndicator(
-// //             //           color: Colors.white,
+// //             //           color: AppColors.white,
 // //             //           strokeWidth: 2.5,
 // //             //         ),
 // //             //       )
@@ -438,7 +439,7 @@
 // //             //         style: GoogleFonts.poppins(
 // //             //           fontSize: ResponsiveHelper.fontSize(16),
 // //             //           fontWeight: FontWeight.w600,
-// //             //           color: Colors.white,
+// //             //           color: AppColors.white,
 // //             //         ),
 // //             //       ),
 // //             //     ),
@@ -463,7 +464,7 @@
 // //                 ),
 // //                 // child: _loading
 // //                 //     ? const CircularProgressIndicator(
-// //                 //   color: Colors.white,
+// //                 //   color: AppColors.white,
 // //                 //   strokeWidth: 2.5,
 // //                 // )
 // //                 //     : Text(
@@ -477,7 +478,7 @@
 // //                     width: 22,
 // //                     height: 22,
 // //                     child: CircularProgressIndicator(
-// //                       color: Colors.white,
+// //                       color: AppColors.white,
 // //                       strokeWidth: 2.5,
 // //                     ),
 // //                   ),
@@ -674,8 +675,8 @@
 //     context: context,
 //     isScrollControlled: true,
 //     useRootNavigator: true,
-//     backgroundColor: Colors.transparent,
-//     barrierColor: Colors.black.withOpacity(0.4),
+//     backgroundColor: AppColors.transparent,
+//     barrierColor: AppColors.black.withOpacity(0.4),
 //     shape: const RoundedRectangleBorder(
 //       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
 //     ),
@@ -738,7 +739,7 @@
 //   Future<void> _pickFile() async {
 //     final choice = await showModalBottomSheet<int>(
 //       context: context,
-//       backgroundColor: Colors.white,
+//       backgroundColor: AppColors.white,
 //       shape: const RoundedRectangleBorder(
 //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
 //       ),
@@ -972,7 +973,7 @@
 //
 //     return Container(
 //       decoration: BoxDecoration(
-//         color: Colors.white,
+//         color: AppColors.white,
 //         borderRadius: BorderRadius.vertical(
 //           top: Radius.circular(ResponsiveHelper.borderRadius(24)),
 //         ),
@@ -1162,7 +1163,7 @@
 //                     width: 22,
 //                     height: 22,
 //                     child: CircularProgressIndicator(
-//                       color: Colors.white,
+//                       color: AppColors.white,
 //                       strokeWidth: 2.5,
 //                     ),
 //                   ),
@@ -1363,14 +1364,14 @@ Future<void> showUploadDocumentSheet(
     context: context,
     isScrollControlled: true,
     useRootNavigator: true,
-    backgroundColor: Colors.transparent,
-    barrierColor: Colors.black.withOpacity(0.4),
+    backgroundColor: AppColors.transparent,
+    barrierColor: AppColors.black.withOpacity(0.4),
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
     builder: (_) => ScaffoldMessenger(
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         body: Align(
           alignment: Alignment.bottomCenter,   // ✅ এটা যোগ করুন
           child: UploadDocumentSheet(
@@ -1434,7 +1435,7 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
   Future<void> _pickFile() async {
     final choice = await showModalBottomSheet<int>(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -1717,7 +1718,7 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(ResponsiveHelper.borderRadius(24)),
         ),
@@ -1927,7 +1928,7 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
                     width: 22,
                     height: 22,
                     child: CircularProgressIndicator(
-                      color: Colors.white,
+                      color: AppColors.white,
                       strokeWidth: 2.5,
                     ),
                   ),

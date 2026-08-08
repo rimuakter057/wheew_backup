@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../utils/color/app_colors.dart';
 
@@ -34,19 +34,19 @@ class AppDialog {
     switch (type) {
       case AppDialogType.success:
         defaultIcon = Icons.check_circle;
-        typeColor = Colors.green.shade600;
+        typeColor = AppColors.successColor;
         break;
       case AppDialogType.error:
         defaultIcon = Icons.error;
-        typeColor = Colors.red.shade600;
+        typeColor = AppColors.errorColor;
         break;
       case AppDialogType.warning:
         defaultIcon = Icons.warning_amber_rounded;
-        typeColor = Colors.orange.shade700;
+        typeColor = AppColors.orange;
         break;
       case AppDialogType.info:
         defaultIcon = Icons.info_outline;
-        typeColor = Colors.blue.shade600;
+        typeColor = AppColors.blue;
         break;
       case AppDialogType.custom:
         defaultIcon = Icons.circle;
@@ -201,3 +201,5 @@ class AppDialog {
     );
   }
 }
+
+

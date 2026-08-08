@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -70,7 +70,7 @@ class CustomParkingDetailsDialog extends StatelessWidget {
               ResponsiveHelper.borderRadius(32),
             ),
             border: Border.all(
-              color: Colors.white,
+              color: AppColors.white,
               width: 1.5,
             ),
             boxShadow: [
@@ -224,7 +224,7 @@ class CustomParkingDetailsDialog extends StatelessWidget {
                     ),
 
                     // ================= TAG =================
-                    // parkingAreaTypes == [] → tag/tagIcon/tagColor are all
+                    // parkingAreaTypes == [] â†’ tag/tagIcon/tagColor are all
                     // null, so the badge is skipped entirely.
 
                     if (tag != null && tagIcon != null && tagColor != null) ...[
@@ -271,7 +271,7 @@ class CustomParkingDetailsDialog extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.45),
+                          color: AppColors.white.withOpacity(0.45),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -328,7 +328,7 @@ class CustomParkingDetailsDialog extends StatelessWidget {
                     Container(
                       height: 22,
                       width: 1,
-                      color: Colors.white.withOpacity(0.5),
+                      color: AppColors.white.withOpacity(0.5),
                     ),
 
                     Expanded(
@@ -364,3 +364,4 @@ class CustomParkingDetailsDialog extends StatelessWidget {
     );
   }
 }
+

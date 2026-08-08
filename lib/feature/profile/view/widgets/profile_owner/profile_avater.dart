@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
@@ -50,11 +50,11 @@ class ProfileAvatarWidget extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.all(ResponsiveHelper.padding(6)),
                       decoration:  BoxDecoration(
-                        color: Colors.white.withOpacity(0.6),
+                        color: AppColors.white.withOpacity(0.6),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black26,
+                            color: AppColors.black26,
                             blurRadius: 4,
                             offset: Offset(0, 2),
                           ),
@@ -111,3 +111,4 @@ class ProfileAvatarWidget extends StatelessWidget {
     );
   }
 }
+

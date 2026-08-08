@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,7 +23,7 @@ class BlockByMeWidget extends StatelessWidget {
       margin: ResponsiveHelper.all(12),
 
       decoration: BoxDecoration(
-        color: Colors.blue.shade50,
+        color: AppColors.blue,
 
         borderRadius: BorderRadius.circular(12),
 
@@ -56,7 +56,7 @@ class BlockByMeWidget extends StatelessWidget {
             style: GoogleFonts.poppins(
               fontSize: ResponsiveHelper.fontSize(14),
               fontWeight: FontWeight.w400,
-              color: Colors.grey[600],
+              color: AppColors.grey[600],
             ),
           ),
           SizedBox(height: ResponsiveHelper.spacing(12)),
@@ -79,3 +79,7 @@ class BlockByMeWidget extends StatelessWidget {
     );
   }
 }
+
+
+
+

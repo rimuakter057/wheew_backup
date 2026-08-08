@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 /// Shown instead of the "Find Parking Spot" button whenever the user's
 /// parking-mode status is PARKED — displays the active session (location +
@@ -9,7 +11,7 @@ import 'package:platchatapp/utils/color/app_colors.dart';
 class ParkedSessionCard extends StatelessWidget {
   final String locationName;
   final String spotCode;
-  final String statusLabel;
+  final String? statusLabel;
   final VoidCallback onExitPressed;
 
   const ParkedSessionCard({
@@ -17,19 +19,19 @@ class ParkedSessionCard extends StatelessWidget {
     required this.locationName,
     required this.spotCode,
     required this.onExitPressed,
-    this.statusLabel = 'Active',
-  });
+    String? statusLabel,
+  }) : statusLabel = statusLabel;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: ResponsiveHelper.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.12),
+            color: AppColors.black.withValues(alpha: 0.12),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -48,7 +50,7 @@ class ParkedSessionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "You're Parked",
+                      AppStrings.youreParked.tr,
                       style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(12),
                         fontWeight: FontWeight.w500,
@@ -98,7 +100,7 @@ class ParkedSessionCard extends StatelessWidget {
                     ),
                     SizedBox(width: ResponsiveHelper.spacing(6)),
                     Text(
-                      statusLabel,
+                      statusLabel ?? AppStrings.active.tr,
                       style: GoogleFonts.poppins(
                         fontSize: ResponsiveHelper.fontSize(12),
                         fontWeight: FontWeight.w600,
@@ -125,11 +127,11 @@ class ParkedSessionCard extends StatelessWidget {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  'Exit Parking',
+                  AppStrings.exitParking.tr,
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(15),
                     fontWeight: FontWeight.w700,
-                    color: Colors.white,
+                    color: AppColors.white,
                   ),
                 ),
               ),
@@ -140,3 +142,5 @@ class ParkedSessionCard extends StatelessWidget {
     );
   }
 }
+
+

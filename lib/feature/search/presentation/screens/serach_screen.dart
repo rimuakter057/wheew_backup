@@ -72,7 +72,7 @@ class _SearchListScreenState extends State<SearchListScreen> {
     return Container(
       decoration: BoxDecoration(gradient: AppColors.primaryBackgroundGradient),
       child: Scaffold(
-           backgroundColor: Colors.transparent,
+           backgroundColor: AppColors.transparent,
         body: GetBuilder<ChatController>(
           init: Get.find<ChatController>(),
           builder: (controller) {
@@ -156,12 +156,12 @@ class _SearchListScreenState extends State<SearchListScreen> {
                               hintText: AppStrings.searchByNameOrVehicleCode.tr,
                               hintStyle: TextStyle(
                                 fontSize: ResponsiveHelper.fontSize(15),
-                                color: Colors.grey[400],
+                                color: AppColors.grey[400],
                               ),
                               prefixIcon: Icon(
                                 Icons.search,
                                 size: ResponsiveHelper.iconSize(22),
-                                color: Colors.grey[500],
+                                color: AppColors.grey[500],
                               ),
                               // ✅ Clear (X) icon — শুধু text থাকলেই দেখাবে
                               suffixIcon: _controller.text.isNotEmpty
@@ -174,12 +174,12 @@ class _SearchListScreenState extends State<SearchListScreen> {
                                 child: Icon(
                                   Icons.close_rounded,
                                   size: ResponsiveHelper.iconSize(20),
-                                  color: Colors.grey[500],
+                                  color: AppColors.grey[500],
                                 ),
                               )
                                   : null,
                               filled: true,
-                              fillColor: Colors.transparent,
+                              fillColor: AppColors.transparent,
                               contentPadding: EdgeInsets.symmetric(
                                 vertical: ResponsiveHelper.height(14),
                                 horizontal: ResponsiveHelper.width(4),
@@ -205,7 +205,7 @@ class _SearchListScreenState extends State<SearchListScreen> {
                         : controller.searchResults.isEmpty
                         ? Center(
                             child: Text(
-                              "No users found",
+                              AppStrings.noUsersFound.tr,
                               style: context.bodySmall.copyWith(
                                 color: AppColors.black,
                               ),
@@ -348,7 +348,7 @@ class _SearchListScreenState extends State<SearchListScreen> {
                                                       14,
                                                     ),
                                                 fontWeight: FontWeight.w500,
-                                                color: Colors.grey[500],
+                                                color: AppColors.grey[500],
                                               ),
                                             ),
                                           ],
@@ -509,7 +509,7 @@ class _SearchListScreenState extends State<SearchListScreen> {
                                                                 ResponsiveHelper.iconSize(
                                                                   12,
                                                                 ),
-                                                            color: Colors.white,
+                                                            color: AppColors.white,
                                                           ),
                                                           SizedBox(
                                                             width:
@@ -523,7 +523,7 @@ class _SearchListScreenState extends State<SearchListScreen> {
                                                                 .tr,
                                                             style: TextStyle(
                                                               color:
-                                                                  Colors.white,
+                                                                  AppColors.white,
                                                               fontSize:
                                                                   ResponsiveHelper.fontSize(
                                                                     12,
@@ -553,4 +553,6 @@ class _SearchListScreenState extends State<SearchListScreen> {
     );
   }
 }
+
+
 

@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +10,7 @@ import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
-// ── Group Message Bubble ──────────────────────────────────────────────────────
+// â”€â”€ Group Message Bubble â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class GroupMessageBubble extends StatelessWidget {
   final GroupMessageResponseModel msg;
@@ -74,7 +74,7 @@ class GroupMessageBubble extends StatelessWidget {
                         senderName,
                         style: GoogleFonts.poppins(
                           fontSize: ResponsiveHelper.fontSize(11),
-                          color: Colors.grey,
+                          color: AppColors.grey,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -92,7 +92,7 @@ class GroupMessageBubble extends StatelessWidget {
   }
 }
 
-// ── Internal Bubble ───────────────────────────────────────────────────────────
+// â”€â”€ Internal Bubble â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _Bubble extends StatelessWidget {
   final GroupMessageResponseModel msg;
@@ -107,7 +107,7 @@ class _Bubble extends StatelessWidget {
     required this.text,
   });
 
-  // ── type helpers ────────────────────────────────────────────────────────────
+  // â”€â”€ type helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   bool get _isVoiceType => msg.type == 'VOICE' || msg.type == 'AUDIO';
 
@@ -154,7 +154,7 @@ class _Bubble extends StatelessWidget {
     return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
   }
 
-  // ── build ───────────────────────────────────────────────────────────────────
+  // â”€â”€ build â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   @override
   Widget build(BuildContext context) {
@@ -182,13 +182,13 @@ class _Bubble extends StatelessWidget {
               ),
         decoration: BoxDecoration(
           color: _isImage
-              ? Colors.transparent
+              ? AppColors.transparent
               : isMine
                   ? AppColors.blue
                   : AppColors.white,
           border: Border.all(
             color: _isImage
-                ? Colors.transparent
+                ? AppColors.transparent
                 : isMine
                     ? AppColors.blue
                     : AppColors.greyBorder,
@@ -211,7 +211,7 @@ class _Bubble extends StatelessWidget {
     );
   }
 
-  // ── text ────────────────────────────────────────────────────────────────────
+  // â”€â”€ text â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildTextContent() {
     return Column(
@@ -239,7 +239,7 @@ class _Bubble extends StatelessWidget {
     );
   }
 
-  // ── file router ─────────────────────────────────────────────────────────────
+  // â”€â”€ file router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildFileContent() {
     if (_isImage) return _buildImageBubble();
@@ -248,7 +248,7 @@ class _Bubble extends StatelessWidget {
     return _buildFileBubble();
   }
 
-  // ── image ───────────────────────────────────────────────────────────────────
+  // â”€â”€ image â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildImageBubble() {
     return ClipRRect(
@@ -262,7 +262,7 @@ class _Bubble extends StatelessWidget {
           return SizedBox(
             width: ResponsiveHelper.width(220),
             height: ResponsiveHelper.height(160),
-            child: const Center(child: CircularProgressIndicator(color: Colors.white70)),
+            child: const Center(child: CircularProgressIndicator(color: AppColors.white70)),
           );
         },
         errorBuilder: (_, __, ___) => _buildFileBubble(),
@@ -270,14 +270,14 @@ class _Bubble extends StatelessWidget {
     );
   }
 
-  // ── video ───────────────────────────────────────────────────────────────────
+  // â”€â”€ video â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildVideoBubble() {
     return Container(
       width: ResponsiveHelper.width(220),
       height: ResponsiveHelper.height(130),
       decoration: BoxDecoration(
-        color: Colors.black87,
+        color: AppColors.black87,
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
       ),
       child: Stack(
@@ -285,17 +285,17 @@ class _Bubble extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Colors.black54,
+              color: AppColors.black54,
               borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
             ),
           ),
           Container(
             padding: ResponsiveHelper.all(12),
             decoration: const BoxDecoration(
-              color: Colors.white24,
+              color: AppColors.white24,
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.play_arrow_rounded, color: Colors.white, size: ResponsiveHelper.iconSize(36)),
+            child: Icon(Icons.play_arrow_rounded, color: AppColors.white, size: ResponsiveHelper.iconSize(36)),
           ),
           Positioned(
             bottom: ResponsiveHelper.padding(8),
@@ -303,17 +303,17 @@ class _Bubble extends StatelessWidget {
             child: Container(
               padding: ResponsiveHelper.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.black54,
+                color: AppColors.black54,
                 borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(4)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.videocam_rounded, color: Colors.white70, size: ResponsiveHelper.iconSize(12)),
+                  Icon(Icons.videocam_rounded, color: AppColors.white70, size: ResponsiveHelper.iconSize(12)),
                   SizedBox(width: ResponsiveHelper.spacing(4)),
                   Text(
                     _formatSize(msg.fileSize),
-                    style: TextStyle(color: Colors.white70, fontSize: ResponsiveHelper.fontSize(10)),
+                    style: TextStyle(color: AppColors.white70, fontSize: ResponsiveHelper.fontSize(10)),
                   ),
                 ],
               ),
@@ -324,7 +324,7 @@ class _Bubble extends StatelessWidget {
     );
   }
 
-  // ── audio ───────────────────────────────────────────────────────────────────
+  // â”€â”€ audio â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildAudioBubble() {
     return _GroupVoiceBubble(
@@ -334,7 +334,7 @@ class _Bubble extends StatelessWidget {
     );
   }
 
-  // ── generic file ─────────────────────────────────────────────────────────────
+  // â”€â”€ generic file â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildFileBubble() {
     IconData icon = Icons.insert_drive_file_rounded;
@@ -373,7 +373,7 @@ class _Bubble extends StatelessWidget {
                 Text(
                   _formatSize(msg.fileSize),
                   style: TextStyle(
-                    color: isMine ? Colors.white60 : Colors.black38,
+                    color: isMine ? AppColors.white60 : AppColors.black38,
                     fontSize: ResponsiveHelper.fontSize(11),
                   ),
                 ),
@@ -383,7 +383,7 @@ class _Bubble extends StatelessWidget {
         SizedBox(width: ResponsiveHelper.width(6)),
         Icon(
           Icons.arrow_forward_ios_rounded,
-          color: isMine ? Colors.white54 : Colors.black26,
+          color: isMine ? AppColors.white54 : AppColors.black26,
           size: ResponsiveHelper.iconSize(13),
         ),
       ],
@@ -391,7 +391,7 @@ class _Bubble extends StatelessWidget {
   }
 }
 
-// ── Group Voice Bubble (same logic as 1-on-1 _VoiceBubble) ──────────────────
+// â”€â”€ Group Voice Bubble (same logic as 1-on-1 _VoiceBubble) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _GroupVoiceBubble extends StatefulWidget {
   final String audioUrl;
@@ -490,7 +490,7 @@ class _GroupVoiceBubbleState extends State<_GroupVoiceBubble> {
           setState(() => _duration = dur);
         }
       }).catchError((e) {
-        debugPrint('🎵 GroupVoiceBubble setSource error: $e');
+        debugPrint('ðŸŽµ GroupVoiceBubble setSource error: $e');
       });
     }
   }
@@ -543,7 +543,7 @@ class _GroupVoiceBubbleState extends State<_GroupVoiceBubble> {
         await _player.play(UrlSource(widget.audioUrl));
       }
     } catch (e) {
-      debugPrint('🎵 GroupVoiceBubble play error: $e');
+      debugPrint('ðŸŽµ GroupVoiceBubble play error: $e');
       if (mounted) setState(() { _isLoading = false; _hasError = true; });
     }
   }
@@ -556,12 +556,12 @@ class _GroupVoiceBubbleState extends State<_GroupVoiceBubble> {
 
   @override
   Widget build(BuildContext context) {
-    final Color accent = widget.isMine ? Colors.white : AppColors.blue;
+    final Color accent = widget.isMine ? AppColors.white : AppColors.blue;
     final Color muted = widget.isMine
-        ? Colors.white.withValues(alpha: 0.5)
-        : Colors.black.withValues(alpha: 0.35);
+        ? AppColors.white.withValues(alpha: 0.5)
+        : AppColors.black.withValues(alpha: 0.35);
     final Color btnBg = widget.isMine
-        ? Colors.white.withValues(alpha: 0.20)
+        ? AppColors.white.withValues(alpha: 0.20)
         : AppColors.blue.withValues(alpha: 0.12);
 
     final double progress = (_duration.inMilliseconds > 0)
@@ -574,7 +574,7 @@ class _GroupVoiceBubbleState extends State<_GroupVoiceBubble> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
 
-          // ── Play / Pause / Loading button ──────────────────────
+          // â”€â”€ Play / Pause / Loading button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           GestureDetector(
             onTap: _togglePlayPause,
             child: AnimatedContainer(
@@ -595,7 +595,7 @@ class _GroupVoiceBubbleState extends State<_GroupVoiceBubble> {
                       child: CircularProgressIndicator(strokeWidth: ResponsiveHelper.borderWidth(2), color: accent),
                     )
                   : _hasError
-                      ? Icon(Icons.error_outline, color: Colors.red.shade300, size: ResponsiveHelper.iconSize(22))
+                      ? Icon(Icons.error_outline, color: AppColors.red, size: ResponsiveHelper.iconSize(22))
                       : Icon(
                           _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
                           color: accent,
@@ -606,7 +606,7 @@ class _GroupVoiceBubbleState extends State<_GroupVoiceBubble> {
 
           SizedBox(width: ResponsiveHelper.spacing(10)),
 
-          // ── Waveform + time ────────────────────────────────────
+          // â”€â”€ Waveform + time â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -730,3 +730,6 @@ class _GroupVoiceBubbleState extends State<_GroupVoiceBubble> {
     );
   }
 }
+
+
+

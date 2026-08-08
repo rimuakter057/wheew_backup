@@ -1,14 +1,15 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 
 Color getPinColor(Map<String, dynamic> report) {
   // 1st check: disabled_facility
   if (report['disabled_facility'] == true) {
-    return Colors.orange; // Disabled Parking
+    return AppColors.orange; // Disabled Parking
   }
 
   // 2nd check: electric_charging
   if (report['electric_charging'] == true) {
-    return Colors.green; // Electric Charging
+    return AppColors.green; // Electric Charging
   }
 
   // 3rd check: paid or free
@@ -16,8 +17,8 @@ Color getPinColor(Map<String, dynamic> report) {
   final isPaid = cost != null && cost != 0 && cost != '0' && cost != '';
 
   if (isPaid) {
-    return Colors.blue; // Paid Parking
+    return AppColors.blue; // Paid Parking
   }
 
-  return Colors.white; // Free Parking
+  return AppColors.white; // Free Parking
 }

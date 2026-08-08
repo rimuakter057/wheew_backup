@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomDividerOr extends StatelessWidget {
@@ -9,7 +10,7 @@ class CustomDividerOr extends StatelessWidget {
     super.key,
     this.text = "OR",
     this.dividerColor = const Color(0xFFD9D9D9),
-    this.textColor = Colors.grey,
+    this.textColor = AppColors.grey,
   });
 
   @override

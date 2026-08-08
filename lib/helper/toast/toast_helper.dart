@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../utils/enum/app_enum.dart';
 
 class AppToast {
@@ -18,13 +19,13 @@ class AppToast {
     final Color defaultBgColor =
         backgroundColor ??
         switch (type) {
-          AppToastType.success => Colors.green.shade600,
-          AppToastType.error => Colors.red.shade600,
-          AppToastType.warning => Colors.orange.shade700,
-          AppToastType.info => Colors.blue.shade600,
+          AppToastType.success => AppColors.green[600]!,
+          AppToastType.error => AppColors.materialRed[600]!,
+          AppToastType.warning => AppColors.orange[700]!,
+          AppToastType.info => AppColors.materialBlue[600]!,
         };
 
-    final Color effectiveTextColor = textColor ?? Colors.white;
+    final Color effectiveTextColor = textColor ?? AppColors.white;
 
     if (Get.isSnackbarOpen) Get.closeAllSnackbars();
 
@@ -40,11 +41,11 @@ class AppToast {
       icon: switch (type) {
         AppToastType.success => const Icon(
           Icons.check_circle,
-          color: Colors.white,
+          color: AppColors.white,
         ),
-        AppToastType.error => const Icon(Icons.error, color: Colors.white),
-        AppToastType.warning => const Icon(Icons.warning, color: Colors.white),
-        AppToastType.info => const Icon(Icons.info, color: Colors.white),
+        AppToastType.error => const Icon(Icons.error, color: AppColors.white),
+        AppToastType.warning => const Icon(Icons.warning, color: AppColors.white),
+        AppToastType.info => const Icon(Icons.info, color: AppColors.white),
       },
       shouldIconPulse: false,
       animationDuration: const Duration(milliseconds: 250),

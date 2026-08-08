@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/chat/view/message/presentation/screens/message_requests_screen.dart';
@@ -43,17 +43,17 @@ class _MessageCenterScreenState extends State<MessageCenterScreen>
         gradient: AppColors.primaryBackgroundGradient,
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.transparent,
           elevation: 0,
           scrolledUnderElevation: 0,
-          surfaceTintColor: Colors.transparent,
-          iconTheme: const IconThemeData(color: Colors.black87),
+          surfaceTintColor: AppColors.transparent,
+          iconTheme: const IconThemeData(color: AppColors.black87),
           title: Text(
             AppStrings.messageRequests.tr,
             style: GoogleFonts.poppins(
-              color: Colors.black87,
+              color: AppColors.black87,
               fontWeight: FontWeight.w700,
               fontSize: 18,
             ),
@@ -61,7 +61,7 @@ class _MessageCenterScreenState extends State<MessageCenterScreen>
           bottom: TabBar(
             controller: _tabController,
             labelColor: AppColors.blue,
-            unselectedLabelColor: Colors.grey.shade500,
+            unselectedLabelColor: AppColors.greyShade500,
             indicatorColor: AppColors.blue,
             labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14),
             unselectedLabelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 14),
@@ -82,3 +82,6 @@ class _MessageCenterScreenState extends State<MessageCenterScreen>
     );
   }
 }
+
+
+

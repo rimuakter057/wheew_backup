@@ -1,4 +1,4 @@
-
+﻿
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -60,7 +60,7 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -123,32 +123,32 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
             width: ResponsiveHelper.width(40),
             height: ResponsiveHelper.height(40),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.white,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
+                  color: AppColors.black.withValues(alpha: 0.08),
                   blurRadius: 8,
                   offset: const Offset(0, 3),
                 ),
               ],
             ),
-            child: const Icon(Icons.arrow_back_rounded, color: Colors.black87),
+            child: const Icon(Icons.arrow_back_rounded, color: AppColors.black87),
           ),
         ),
         TextButton(
           onPressed: () => context.go(RoutePath.mainNavScreen),
           style: TextButton.styleFrom(
-            backgroundColor: Colors.white.withValues(alpha: 0.6),
+            backgroundColor: AppColors.white.withValues(alpha: 0.6),
             padding: ResponsiveHelper.symmetric(horizontal: 18, vertical: 10),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
             ),
           ),
           child: Text(
-            "Skip",
+            AppStrings.skip.tr,
             style: context.bodyMedium.copyWith(
-              color: Colors.black54,
+              color: AppColors.black54,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -163,15 +163,15 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Add Your Vehicle",
-          style: context.titleLarge.copyWith(
-            color: AppColors.black,
-            fontWeight: FontWeight.w400,
+          AppStrings.addYourVehicle.tr,
+            style: context.titleLarge.copyWith(
+              color: AppColors.black,
+              fontWeight: FontWeight.w400,
+            ),
           ),
-        ),
-        SizedBox(height: ResponsiveHelper.height(6)),
-        Text(
-          "Tell us about your vehicle so we can personalize your experience.",
+          SizedBox(height: ResponsiveHelper.height(6)),
+          Text(
+            AppStrings.addYourVehicleSubtitle.tr,
           style: context.bodyMedium.copyWith(
             fontWeight: FontWeight.w400,
             color: AppColors.black.withValues(alpha: 0.55),
@@ -242,3 +242,4 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
     );
   }
 }
+

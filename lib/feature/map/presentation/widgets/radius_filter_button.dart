@@ -1,3 +1,4 @@
+﻿import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 
@@ -17,7 +18,7 @@ class RadiusFilterButton extends StatelessWidget {
       top: ResponsiveHelper.padding(80),
       child: FloatingActionButton(
         heroTag: 'filterRadiusBtn',
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 3,
         onPressed: onPressed,
         child: const Icon(Icons.tune, color: Color(0xFF185FA5)),

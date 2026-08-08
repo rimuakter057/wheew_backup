@@ -1,4 +1,4 @@
-
+﻿
 import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
@@ -30,7 +30,7 @@ class ProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // profile.avatar কে priority দাও, না থাকলে fallback হিসেবে passed image ব্যবহার করো
+    // profile.avatar à¦•à§‡ priority à¦¦à¦¾à¦“, à¦¨à¦¾ à¦¥à¦¾à¦•à¦²à§‡ fallback à¦¹à¦¿à¦¸à§‡à¦¬à§‡ passed image à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦•à¦°à§‹
     final avatarPath = (profile.avatar != null && profile.avatar!.isNotEmpty)
         ? profile.avatar
         : image;
@@ -57,13 +57,13 @@ class ProfileCard extends StatelessWidget {
         width: ResponsiveHelper.width(320),
         padding: ResponsiveHelper.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(
             ResponsiveHelper.borderRadius(28),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.12),
+              color: AppColors.black.withOpacity(0.12),
               blurRadius: 16,
               offset: const Offset(0, 8),
             ),
@@ -72,7 +72,7 @@ class ProfileCard extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // ── Close button ─────────────────────────────
+            // â”€â”€ Close button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -80,11 +80,11 @@ class ProfileCard extends StatelessWidget {
                   onTap: () => context.pop(),
                   child: CircleAvatar(
                     radius: ResponsiveHelper.iconSize(16),
-                    backgroundColor: Colors.grey[100],
+                    backgroundColor: AppColors.grey[100],
                     child: Icon(
                       Icons.close,
                       size: ResponsiveHelper.iconSize(16),
-                      color: Colors.black,
+                      color: AppColors.black,
                     ),
                   ),
                 ),
@@ -93,13 +93,13 @@ class ProfileCard extends StatelessWidget {
 
             SizedBox(height: ResponsiveHelper.spacing(8)),
 
-            // ── Avatar + verified badge ──────────────────
+            // â”€â”€ Avatar + verified badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Stack(
               clipBehavior: Clip.none,
               children: [
                 CircleAvatar(
                   radius: ResponsiveHelper.width(48),
-                  backgroundColor: Colors.blue[50],
+                  backgroundColor: AppColors.materialBlue[50],
                   backgroundImage: NetworkImage(
                     ImageHandler.imagesHandle(avatarPath, isProfile: true),
                   ),
@@ -111,7 +111,7 @@ class ProfileCard extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(3),
                       decoration: const BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.white,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -126,7 +126,7 @@ class ProfileCard extends StatelessWidget {
 
             SizedBox(height: ResponsiveHelper.spacing(12)),
 
-            // ── Name ──────────────────────────────────────
+            // â”€â”€ Name â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Text(
               displayName,
               style: context.bodyMedium.copyWith(
@@ -135,7 +135,7 @@ class ProfileCard extends StatelessWidget {
               ),
             ),
 
-            // ── Designation ───────────────────────────────
+            // â”€â”€ Designation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             if (profile.designation != null && profile.designation!.isNotEmpty) ...[
               SizedBox(height: ResponsiveHelper.spacing(4)),
               Container(
@@ -161,15 +161,15 @@ class ProfileCard extends StatelessWidget {
 
             SizedBox(height: ResponsiveHelper.spacing(10)),
 
-            // ── Rating + Location row ─────────────────────
+            // â”€â”€ Rating + Location row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.star,
                   color: profile.totalRatings > 0
-                      ? Colors.orange
-                      : Colors.grey,
+                      ? AppColors.orange
+                      : AppColors.grey,
                   size: ResponsiveHelper.iconSize(18),
                 ),
                 const SizedBox(width: 4),
@@ -182,7 +182,7 @@ class ProfileCard extends StatelessWidget {
                   Text(
                     '(${profile.totalRatings})',
                     style: context.bodySmall.copyWith(
-                      color: Colors.grey,
+                      color: AppColors.grey,
                     ),
                   ),
                 ],
@@ -206,18 +206,18 @@ class ProfileCard extends StatelessWidget {
               ],
             ),
 
-            // ── Vehicle info card ──────────────────────────
+            // â”€â”€ Vehicle info card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             if (hasVehicleInfo) ...[
               SizedBox(height: ResponsiveHelper.spacing(16)),
               Container(
                 width: double.infinity,
                 padding: ResponsiveHelper.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.grey[50],
+                  color: AppColors.grey[50],
                   borderRadius: BorderRadius.circular(
                     ResponsiveHelper.borderRadius(14),
                   ),
-                  border: Border.all(color: Colors.grey.withOpacity(0.15)),
+                  border: Border.all(color: AppColors.grey.withOpacity(0.15)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,13 +244,13 @@ class ProfileCard extends StatelessWidget {
                               Icon(
                                 Icons.check_circle,
                                 size: ResponsiveHelper.iconSize(14),
-                                color: Colors.green,
+                                color: AppColors.green,
                               ),
                               const SizedBox(width: 2),
                               Text(
                                 AppStrings.verified.tr,
                                 style: context.bodySmall.copyWith(
-                                  color: Colors.green,
+                                  color: AppColors.green,
                                   fontSize: ResponsiveHelper.fontSize(11),
                                 ),
                               ),
@@ -287,7 +287,7 @@ class ProfileCard extends StatelessWidget {
 
             SizedBox(height: ResponsiveHelper.spacing(20)),
 
-            // ── Start Chat / Rate Button ──────────────────
+            // â”€â”€ Start Chat / Rate Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             SizedBox(
               width: double.infinity,
               height: ResponsiveHelper.buttonHeight(55),
@@ -310,7 +310,7 @@ class ProfileCard extends StatelessWidget {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.blue,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(
                       ResponsiveHelper.borderRadius(15),
@@ -329,26 +329,26 @@ class ProfileCard extends StatelessWidget {
   Color _colorFromName(String name) {
     switch (name.toLowerCase().trim()) {
       case 'red':
-        return Colors.red;
+        return AppColors.red;
       case 'blue':
-        return Colors.blue;
+        return AppColors.blue;
       case 'green':
-        return Colors.green;
+        return AppColors.green;
       case 'black':
-        return Colors.black;
+        return AppColors.black;
       case 'white':
-        return Colors.grey.shade300;
+        return AppColors.greyShade300;
       case 'yellow':
-        return Colors.yellow.shade700;
+        return AppColors.yellow.shade700;
       case 'orange':
-        return Colors.orange;
+        return AppColors.orange;
       case 'grey':
       case 'gray':
-        return Colors.grey;
+        return AppColors.grey;
       case 'silver':
-        return Colors.grey.shade400;
+        return AppColors.greyShade400;
       default:
-        return Colors.grey;
+        return AppColors.grey;
     }
   }
 }
@@ -367,9 +367,9 @@ class _InfoChip extends StatelessWidget {
         vertical: ResponsiveHelper.height(5),
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
-        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+        border: Border.all(color: AppColors.grey.withOpacity(0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -381,7 +381,7 @@ class _InfoChip extends StatelessWidget {
               decoration: BoxDecoration(
                 color: dotColor,
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.grey.withOpacity(0.3)),
+                border: Border.all(color: AppColors.grey.withOpacity(0.3)),
               ),
             ),
             const SizedBox(width: 5),
@@ -415,7 +415,7 @@ class _StatTile extends StatelessWidget {
     return Container(
       padding: ResponsiveHelper.all(10),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: AppColors.grey[50],
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
       ),
       child: Column(
@@ -429,7 +429,7 @@ class _StatTile extends StatelessWidget {
           Text(
             label,
             style: context.bodySmall.copyWith(
-              color: Colors.grey,
+              color: AppColors.grey,
               fontSize: ResponsiveHelper.fontSize(10),
             ),
           ),
@@ -438,3 +438,4 @@ class _StatTile extends StatelessWidget {
     );
   }
 }
+

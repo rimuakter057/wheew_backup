@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -93,7 +93,7 @@ class ProfileHeaderCard extends StatelessWidget {
         vertical: ResponsiveHelper.padding(10),
       ),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.6),
+        color: AppColors.white.withOpacity(0.6),
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(14)),
       ),
       child: Row(
@@ -230,7 +230,7 @@ class ProfileHeaderCard extends StatelessWidget {
                   vertical: ResponsiveHelper.padding(8),
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(14)),
                 ),
                 child: Row(
@@ -305,11 +305,11 @@ class ProfileHeaderCard extends StatelessWidget {
                   Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white24, width: 2),
+                      border: Border.all(color: AppColors.white24, width: 2),
                     ),
                     child: CircleAvatar(
                       radius: ResponsiveHelper.width(40),
-                      backgroundColor: Colors.white.withOpacity(0.15),
+                      backgroundColor: AppColors.white.withOpacity(0.15),
                       backgroundImage: NetworkImage(
                         (avatarUrl != null && avatarUrl.isNotEmpty)
                             ? avatarUrl
@@ -321,7 +321,7 @@ class ProfileHeaderCard extends StatelessWidget {
                     Positioned.fill(
                       child: Container(
                         decoration: const BoxDecoration(
-                          color: Colors.black38,
+                          color: AppColors.black38,
                           shape: BoxShape.circle,
                         ),
                         child: const Center(
@@ -330,7 +330,7 @@ class ProfileHeaderCard extends StatelessWidget {
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.white,
+                              color: AppColors.white,
                             ),
                           ),
                         ),
@@ -427,7 +427,7 @@ class ProfileHeaderCard extends StatelessWidget {
                                               children: [
                                                 Icon(
                                                   Icons.refresh_rounded,
-                                                  color: Colors.grey.shade400,
+                                                  color: AppColors.greyShade400,
                                                   size: 36,
                                                 ),
                                                 SizedBox(
@@ -443,7 +443,7 @@ class ProfileHeaderCard extends StatelessWidget {
                                                         ResponsiveHelper.fontSize(
                                                           13,
                                                         ),
-                                                    color: Colors.grey.shade400,
+                                                    color: AppColors.greyShade400,
                                                   ),
                                                 ),
                                               ],
@@ -509,12 +509,12 @@ class ProfileHeaderCard extends StatelessWidget {
                                                 child:
                                                     CircularProgressIndicator(
                                                       strokeWidth: 2,
-                                                      color: Colors.white,
+                                                      color: AppColors.white,
                                                     ),
                                               )
                                             : const Icon(
                                                 Icons.download_rounded,
-                                                color: Colors.white,
+                                                color: AppColors.white,
                                               ),
                                         label: Text(
                                           scanController.isDownloadingQr.value
@@ -525,7 +525,7 @@ class ProfileHeaderCard extends StatelessWidget {
                                               15,
                                             ),
                                             fontWeight: FontWeight.w600,
-                                            color: Colors.white,
+                                            color: AppColors.white,
                                           ),
                                         ),
                                         style: ElevatedButton.styleFrom(
@@ -584,3 +584,5 @@ class ProfileHeaderCard extends StatelessWidget {
     );
   }
 }
+
+

@@ -1,6 +1,6 @@
-// widgets/create_group_dialog.dart
-// ── দায়িত্ব: Group তৈরির dialog দেখায় ──
-//              Group name validate করে controller.createGroup() call করে
+﻿// widgets/create_group_dialog.dart
+// â”€â”€ à¦¦à¦¾à¦¯à¦¼à¦¿à¦¤à§à¦¬: Group à¦¤à§ˆà¦°à¦¿à¦° dialog à¦¦à§‡à¦–à¦¾à¦¯à¦¼ â”€â”€
+//              Group name validate à¦•à¦°à§‡ controller.createGroup() call à¦•à¦°à§‡
 
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -14,8 +14,8 @@ import 'package:platchatapp/utils/extension/base_extension.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
-/// Chat list screen থেকে call করা হয়
-/// Group name নিয়ে controller.createGroup() trigger করে
+/// Chat list screen à¦¥à§‡à¦•à§‡ call à¦•à¦°à¦¾ à¦¹à¦¯à¦¼
+/// Group name à¦¨à¦¿à¦¯à¦¼à§‡ controller.createGroup() trigger à¦•à¦°à§‡
 void showCreateGroupDialog({
   required BuildContext context,
   required ChatController controller,
@@ -27,7 +27,7 @@ void showCreateGroupDialog({
   showDialog(
     context: context,
     barrierDismissible: true,
-    barrierColor: Colors.black.withOpacity(0.5),
+    barrierColor: AppColors.black.withOpacity(0.5),
     builder: (_) => StatefulBuilder(
       builder: (ctx, setState) {
         Future<void> pickImage() async {
@@ -47,7 +47,7 @@ void showCreateGroupDialog({
         }
 
         return Dialog(
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.transparent,
           insetPadding: EdgeInsets.symmetric(
             horizontal: ResponsiveHelper.spacing(24),
           ),
@@ -59,7 +59,7 @@ void showCreateGroupDialog({
               bottom: ResponsiveHelper.spacing(24),
             ),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.white,
               borderRadius: BorderRadius.circular(
                 ResponsiveHelper.borderRadius(24),
               ),
@@ -69,7 +69,7 @@ void showCreateGroupDialog({
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // ── Close button ────────────────────────────
+                  // â”€â”€ Close button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                   Align(
                     alignment: Alignment.topRight,
                     child: GestureDetector(
@@ -79,13 +79,13 @@ void showCreateGroupDialog({
                           ResponsiveHelper.spacing(4),
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
+                          color: AppColors.greyShade100,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.close,
                           size: ResponsiveHelper.iconSize(16),
-                          color: Colors.grey.shade600,
+                          color: AppColors.greyShade600,
                         ),
                       ),
                     ),
@@ -105,7 +105,7 @@ void showCreateGroupDialog({
                   Text(
                     AppStrings.groupChatSubtitle.tr,
                     style: ctx.bodySmall.copyWith(
-                      color: Colors.grey.shade500,
+                      color: AppColors.greyShade500,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -116,7 +116,7 @@ void showCreateGroupDialog({
                     AppStrings.profilePicture.tr,
                     style: ctx.bodySmall.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade600,
+                      color: AppColors.greyShade600,
                     ),
                   ),
                   SizedBox(height: ResponsiveHelper.spacing(8)),
@@ -131,8 +131,8 @@ void showCreateGroupDialog({
                           height: 80,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.grey.shade100,
-                            border: Border.all(color: Colors.grey.shade200, width: 2),
+                            color: AppColors.greyShade100,
+                            border: Border.all(color: AppColors.greyShade200, width: 2),
                             image: pickedImageFile != null
                                 ? DecorationImage(
                               image: FileImage(pickedImageFile!),
@@ -144,7 +144,7 @@ void showCreateGroupDialog({
                               ? Icon(
                             Icons.groups,
                             size: 40,
-                            color: Colors.grey.shade400,
+                            color: AppColors.greyShade400,
                           )
                               : null,
                         ),
@@ -154,11 +154,11 @@ void showCreateGroupDialog({
                           child: Container(
                             padding: const EdgeInsets.all(4),
                             decoration: const BoxDecoration(
-                              color: Colors.white,
+                              color: AppColors.white,
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black12,
+                                  color: AppColors.black12,
                                   blurRadius: 4,
                                   offset: Offset(0, 2),
                                 )
@@ -167,7 +167,7 @@ void showCreateGroupDialog({
                             child: const Icon(
                               Icons.camera_alt_rounded,
                               size: 14,
-                              color: Colors.grey,
+                              color: AppColors.grey,
                             ),
                           ),
                         ),
@@ -183,7 +183,7 @@ void showCreateGroupDialog({
                       AppStrings.groupName.tr,
                       style: ctx.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: Colors.grey.shade600,
+                        color: AppColors.greyShade600,
                       ),
                     ),
                   ),
@@ -206,7 +206,7 @@ void showCreateGroupDialog({
                     },
                     decoration: InputDecoration(
                       hintText: AppStrings.groupNameHint.tr,
-                      hintStyle: GoogleFonts.poppins(color: Colors.grey.shade400, fontSize: 14),
+                      hintStyle: GoogleFonts.poppins(color: AppColors.greyShade400, fontSize: 14),
                       filled: true,
                       fillColor: const Color(0xFFF5F6F8),
                       border: OutlineInputBorder(
@@ -275,3 +275,5 @@ void showCreateGroupDialog({
     ),
   );
 }
+
+

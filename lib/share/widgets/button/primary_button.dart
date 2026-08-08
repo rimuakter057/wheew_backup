@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import '../../../helper/responsive_helper/responsive_helper.dart';
@@ -16,7 +16,7 @@ class PrimaryButton extends StatelessWidget {
     required this.title,
     required this.onTap,
     this.backgroundColor = AppColors.blue,
-    this.textColor = Colors.white,
+    this.textColor = AppColors.white,
     this.height = 52,
     this.borderRadius = 16,
   });
@@ -34,14 +34,14 @@ class PrimaryButton extends StatelessWidget {
           foregroundColor: textColor,
           minimumSize: Size(
             double.infinity,
-            ResponsiveHelper.buttonHeight(height!), // ✅ match SizedBox height
+            ResponsiveHelper.buttonHeight(height!), // âœ… match SizedBox height
           ),
           padding: EdgeInsets.symmetric(
             horizontal: ResponsiveHelper.padding(16),
-            vertical: 0, // ✅ no vertical padding conflict
+            vertical: 0, // âœ… no vertical padding conflict
           ),
           tapTargetSize:
-              MaterialTapTargetSize.shrinkWrap, // ✅ removes extra tap area
+              MaterialTapTargetSize.shrinkWrap, // âœ… removes extra tap area
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(
               ResponsiveHelper.borderRadius(borderRadius!),
@@ -49,7 +49,7 @@ class PrimaryButton extends StatelessWidget {
           ),
         ),
         child: FittedBox(
-          // ✅ prevents text clipping
+          // âœ… prevents text clipping
           fit: BoxFit.scaleDown,
           child: Text(
             title,
@@ -80,7 +80,7 @@ class PrimaryButton extends StatelessWidget {
     required this.title,
     required this.onTap,
     this.backgroundColor = AppColors.blue,
-    this.textColor = Colors.white,
+    this.textColor = AppColors.white,
     this.height = 52,
     this.borderRadius = 16,
   });
@@ -94,7 +94,7 @@ class PrimaryButton extends StatelessWidget {
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
-          foregroundColor: textColor, // ✅ fixes ripple + icon color
+          foregroundColor: textColor, // âœ… fixes ripple + icon color
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(
               ResponsiveHelper.borderRadius(borderRadius!),
@@ -124,3 +124,5 @@ class PrimaryButton extends StatelessWidget {
   }
 }
 */
+
+
