@@ -1450,6 +1450,7 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
               onTap: () => Navigator.pop(ctx, 0),
             ),
             ListTile(
+
               leading: const Icon(Icons.photo_library_outlined, color: Color(0xFF2563EB)),
               title: Text(AppStrings.chooseFromGallery.tr),
               onTap: () => Navigator.pop(ctx, 1),

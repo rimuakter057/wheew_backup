@@ -1046,5 +1046,71 @@ AppStrings.group:"Group",
 
   // -------- Auth --------
   AppStrings.loginSuccessful: "Login Successful",
+
+  AppStrings.locationNotAvailable:
+  "Location not available",
+
+  AppStrings.tapMapToSelectLocation:
+  "Tap on the map to select a location",
+
+  AppStrings.mySavedParking:
+  "My Saved Parking",
+
+  AppStrings.tapToViewDetailsRoute:
+  "Tap to view details & route",
+
+  AppStrings.savePark: "Save Park",
+
+  AppStrings.parkingSpotSaved: "Parking spot saved",
+  AppStrings.failedToSaveParkingSpot: "Failed to save parking spot",
+  AppStrings.duration: "Duration",
+  AppStrings.mins: "mins",
+  AppStrings.sessionStatus: "Session Status",
+  AppStrings.na: "N/A",
+  AppStrings.navigationLocationNotAvailable:
+  "Navigation location not available",
+  AppStrings.startWalkingNavigation:
+  "Start Walking Navigation",
+
+  AppStrings.youHaveArrived:
+  "You have arrived",
+
+  AppStrings.minSlower:
+  "min slower",
+
+  AppStrings.minFaster:
+  "min faster",
+  'kmh': 'km/h',
+  AppStrings.licensePlateNotFound: 'License plate not found',
+  AppStrings.noSavedParkingsYet: 'No saved parkings yet',
+  AppStrings.saveParking: 'Save Parking',
+  AppStrings.failedToLoadSavedParkings:
+  'Failed to load saved parkings',
+  AppStrings.couldNotOpenLink: 'Could not open link',
+  AppStrings.noAppCanOpenThisLink: 'No app can open this link',
+
+
+  AppStrings.invalidRequest: 'Invalid request. Please check your information.',
+  AppStrings.unauthorizedPleaseSignInAgain: 'Unauthorized. Please sign in again.',
+  AppStrings.noPermissionToPerformAction:
+  'You do not have permission to perform this action.',
+  AppStrings.requestedResourceNotFound:
+  'The requested resource was not found.',
+  AppStrings.documentAlreadyExists: 'This document already exists.',
+  AppStrings.checkInformationAndTryAgain:
+  'Please check the entered information and try again.',
+  AppStrings.internalServerError:
+  'Internal server error. Please try again later.',
+  AppStrings.serverTemporarilyUnavailable:
+  'Server is temporarily unavailable. Please try again later.',
+  AppStrings.failedToLoadQrCard: 'Failed to load QR card',
+  AppStrings.somethingWentWrongWhileLoadingQrCard:
+  'Something went wrong while loading QR card',
+  AppStrings.invalidPlateNumber: 'Invalid Plate Number',
+
+  AppStrings.qrCardNotReady:
+  'QR card is not ready yet. Please try again.',
+
+  AppStrings.couldNotLaunchDialer: 'Could not launch dialer.',
 };
 

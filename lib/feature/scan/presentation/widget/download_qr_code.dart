@@ -8,6 +8,8 @@ import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 
+import '../../../../utils/language/app_string.dart';
+
 final GlobalKey qrCardKey = GlobalKey();
 
 Future<void> downloadQrCard(BuildContext context) async {
@@ -21,7 +23,10 @@ Future<void> downloadQrCard(BuildContext context) async {
       if (!granted) {
 
         debugPrint("Please allow gallery access to download'");
-        CustomSnackbar.error(context: context, message: 'Please allow gallery access to download');
+        CustomSnackbar.error(
+          context: context,
+          message: AppStrings.pleaseAllowGalleryAccessToDownload.tr,
+        );
 
 
         return;
@@ -43,7 +48,10 @@ Future<void> downloadQrCard(BuildContext context) async {
     if (boundary == null) {
 
       debugPrint("boundary error=====================");
-      CustomSnackbar.error(context: context, message: 'QR card is not ready yet. Please try again.');
+      CustomSnackbar.error(
+        context: context,
+        message: AppStrings.qrCardNotReady.tr,
+      );
 
       return;
     }
@@ -62,14 +70,20 @@ Future<void> downloadQrCard(BuildContext context) async {
     );
 
     if (context.mounted) {
-      CustomSnackbar.success(context: context, message: 'download successfully complete');
+      CustomSnackbar.success(
+        context: context,
+        message: AppStrings.downloadSuccessfullyComplete.tr,
+      );
     }
     debugPrint("success================================");
 
   } catch (e) {
 
     if (context.mounted) {
-      CustomSnackbar.error(context: context, message: 'Failed to download QR card');
+      CustomSnackbar.error(
+        context: context,
+        message: AppStrings.failedToDownloadQrCard.tr,
+      );
     }
     Logger().e("❌ Download QR Card Error: $e");
   }

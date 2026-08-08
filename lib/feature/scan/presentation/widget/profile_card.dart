@@ -72,7 +72,7 @@ class ProfileCard extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // â”€â”€ Close button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // -- Close button -----------------------------
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -93,7 +93,7 @@ class ProfileCard extends StatelessWidget {
 
             SizedBox(height: ResponsiveHelper.spacing(8)),
 
-            // â”€â”€ Avatar + verified badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // -- Avatar + verified badge ------------------
             Stack(
               clipBehavior: Clip.none,
               children: [
@@ -126,7 +126,7 @@ class ProfileCard extends StatelessWidget {
 
             SizedBox(height: ResponsiveHelper.spacing(12)),
 
-            // â”€â”€ Name â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // -- Name --------------------------------------
             Text(
               displayName,
               style: context.bodyMedium.copyWith(
@@ -135,7 +135,7 @@ class ProfileCard extends StatelessWidget {
               ),
             ),
 
-            // â”€â”€ Designation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // -- Designation -------------------------------
             if (profile.designation != null && profile.designation!.isNotEmpty) ...[
               SizedBox(height: ResponsiveHelper.spacing(4)),
               Container(
@@ -161,7 +161,7 @@ class ProfileCard extends StatelessWidget {
 
             SizedBox(height: ResponsiveHelper.spacing(10)),
 
-            // â”€â”€ Rating + Location row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // -- Rating + Location row ---------------------
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -206,7 +206,7 @@ class ProfileCard extends StatelessWidget {
               ],
             ),
 
-            // â”€â”€ Vehicle info card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // -- Vehicle info card --------------------------
             if (hasVehicleInfo) ...[
               SizedBox(height: ResponsiveHelper.spacing(16)),
               Container(
@@ -287,7 +287,7 @@ class ProfileCard extends StatelessWidget {
 
             SizedBox(height: ResponsiveHelper.spacing(20)),
 
-            // â”€â”€ Start Chat / Rate Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // -- Start Chat / Rate Button ------------------
             SizedBox(
               width: double.infinity,
               height: ResponsiveHelper.buttonHeight(55),

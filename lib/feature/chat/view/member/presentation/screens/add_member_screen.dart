@@ -28,7 +28,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ChatController chatController = Get.find<ChatController>();
 
-  // â”€â”€ à¦¨à¦¤à§à¦¨ AddMemberController â”€â”€
+  // -- à¦¨à¦¤à§à¦¨ AddMemberController --
   late final GroupController _controller;
 
   @override

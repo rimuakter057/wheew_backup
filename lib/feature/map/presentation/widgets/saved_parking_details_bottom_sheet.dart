@@ -1,4 +1,5 @@
-﻿import 'package:platchatapp/utils/color/app_colors.dart';
+﻿import 'package:get/get.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/map/model/saved_parking_model.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 class SavedParkingDetailsBottomSheet extends StatelessWidget {
   final SavedParkingModel parking;
@@ -84,7 +86,7 @@ class SavedParkingDetailsBottomSheet extends StatelessWidget {
                   ),
                   SizedBox(width: ResponsiveHelper.spacing(12)),
                   Text(
-                    'My Saved Parking',
+                   AppStrings.mySavedParking.tr,
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(18),
                       fontWeight: FontWeight.w700,
@@ -106,31 +108,35 @@ class SavedParkingDetailsBottomSheet extends StatelessWidget {
 
           _buildDetailRow(
             Icons.attach_money_rounded,
-            'Parking Type',
+            AppStrings.parkingType.tr,
             parking.costType ?? parking.parkingSession?.costType ?? 'FREE',
           ),
           SizedBox(height: ResponsiveHelper.spacing(12)),
           _buildDetailRow(
             Icons.timer_rounded,
-            'Duration',
+            AppStrings.duration.tr,
             (parking.durationMin ?? parking.parkingSession?.durationMin) != null
-                ? '${parking.durationMin ?? parking.parkingSession!.durationMin} mins'
-                : 'N/A',
+                ? '${parking.durationMin ?? parking.parkingSession!.durationMin} ${AppStrings.mins.tr}'
+                : AppStrings.na.tr,
           ),
           SizedBox(height: ResponsiveHelper.spacing(12)),
           _buildDetailRow(
             Icons.info_outline_rounded,
-            'Session Status',
-            parking.parkingSession?.status ?? ((parking.costType ?? parking.parkingSession?.costType) == 'PAID' ? 'ACTIVE' : 'N/A'),
+            AppStrings.sessionStatus.tr,
+            parking.parkingSession?.status ??
+                ((parking.costType ?? parking.parkingSession?.costType) == 'PAID'
+                    ? 'ACTIVE'
+                    : AppStrings.na.tr),
           ),
           SizedBox(height: ResponsiveHelper.spacing(12)),
           _buildDetailRow(
             Icons.event_busy_rounded,
-            'Expires At',
+            AppStrings.expiresAt.tr,
             (parking.expiresAt ?? parking.parkingSession?.expiresAt) != null
-                ? _formatDateTime(parking.expiresAt ?? parking.parkingSession!.expiresAt!)
-
-                : 'N/A',
+                ? _formatDateTime(
+              parking.expiresAt ?? parking.parkingSession!.expiresAt!,
+            )
+                : AppStrings.na.tr,
           ),
 
           SizedBox(height: ResponsiveHelper.spacing(24)),
@@ -149,8 +155,10 @@ class SavedParkingDetailsBottomSheet extends StatelessWidget {
                     extra: {'destination': LatLng(lat, lng)},
                   );
                 } else {
-                  showCustomSnackBar('Navigation location not available',
-                      isError: true);
+                  showCustomSnackBar(
+                    AppStrings.navigationLocationNotAvailable.tr,
+                    isError: true,
+                  );
                 }
               },
               icon: Icon(
@@ -158,14 +166,14 @@ class SavedParkingDetailsBottomSheet extends StatelessWidget {
                 color: AppColors.white,
                 size: ResponsiveHelper.iconSize(20),
               ),
-              label: Text(
-                'Start Walking Navigation',
-                style: GoogleFonts.poppins(
-                  fontSize: ResponsiveHelper.fontSize(16),
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.white,
-                ),
+          label: Text(
+              AppStrings.startWalkingNavigation.tr,
+              style: GoogleFonts.poppins(
+                fontSize: ResponsiveHelper.fontSize(16),
+                fontWeight: FontWeight.w600,
+                color: AppColors.white,
               ),
+            ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF3D72E8),
                 shape: RoundedRectangleBorder(

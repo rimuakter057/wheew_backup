@@ -50,7 +50,7 @@ class MyQrView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // â”€â”€ Avatar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // -- Avatar ---------------------------------
 
 
 Text("My QR Code",style: context.bodyMedium.copyWith(color: AppColors.black),),
@@ -59,7 +59,7 @@ Text("My QR Code",style: context.bodyMedium.copyWith(color: AppColors.black),),
 
           SizedBox(height: ResponsiveHelper.spacing(12)),
 
-          // â”€â”€ Name â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // -- Name -----------------------------------
           Text(
             name?.isNotEmpty == true ? name! : '---',
             style: GoogleFonts.poppins(
@@ -71,7 +71,7 @@ Text("My QR Code",style: context.bodyMedium.copyWith(color: AppColors.black),),
 
           SizedBox(height: ResponsiveHelper.spacing(6)),
 
-          // â”€â”€ Rating + Location â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // -- Rating + Location ---------------------
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -93,7 +93,7 @@ Text("My QR Code",style: context.bodyMedium.copyWith(color: AppColors.black),),
 
           SizedBox(height: ResponsiveHelper.spacing(24)),
 
-          // â”€â”€ QR Box â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // -- QR Box ---------------------------------
           Obx(() {
             if (scanController.isLoadingQr.value) {
               return Container(
@@ -181,7 +181,7 @@ Text("My QR Code",style: context.bodyMedium.copyWith(color: AppColors.black),),
 
           SizedBox(height: ResponsiveHelper.spacing(24)),
 
-          // â”€â”€ Caption â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // -- Caption --------------------------------
           Text(
             AppStrings.letOthersScan.tr,
             textAlign: TextAlign.center,

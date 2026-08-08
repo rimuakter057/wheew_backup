@@ -36,11 +36,11 @@ class ScannedUserSheet extends StatelessWidget {
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return SizedBox(
-      // â”€â”€ à¦ à¦¿à¦• à¦¸à§à¦•à§à¦°à¦¿à¦¨à§‡à¦° à¦…à¦°à§à¦§à§‡à¦• à¦¹à¦¾à¦‡à¦Ÿ (fixed, full screen à¦¨à¦¾ à¦¹à¦¯à¦¼à§‡)
+      // -- à¦ à¦¿à¦• à¦¸à§à¦•à§à¦°à¦¿à¦¨à§‡à¦° à¦…à¦°à§à¦§à§‡à¦• à¦¹à¦¾à¦‡à¦Ÿ (fixed, full screen à¦¨à¦¾ à¦¹à¦¯à¦¼à§‡)
       height: screenHeight * 0.5,
       child: Container(
         width: double.infinity,
-        // â”€â”€ à¦¬à§‡à¦¶à¦¿ à¦ªà§à¦¯à¦¾à¦¡à¦¿à¦‚ à¦¸à¦¬à¦¦à¦¿à¦•à§‡, à¦¨à¦¿à¦šà§‡ à¦¸à§‡à¦‡à¦« à¦à¦°à¦¿à¦¯à¦¼à¦¾ à¦¯à§‹à¦— à¦•à¦°à§‡ à¦¯à¦¾à¦¤à§‡ à¦¬à¦¾à¦Ÿà¦¨ à¦à¦œà§‡ à¦¨à¦¾ à¦²à¦¾à¦—à§‡
+        // -- à¦¬à§‡à¦¶à¦¿ à¦ªà§à¦¯à¦¾à¦¡à¦¿à¦‚ à¦¸à¦¬à¦¦à¦¿à¦•à§‡, à¦¨à¦¿à¦šà§‡ à¦¸à§‡à¦‡à¦« à¦à¦°à¦¿à¦¯à¦¼à¦¾ à¦¯à§‹à¦— à¦•à¦°à§‡ à¦¯à¦¾à¦¤à§‡ à¦¬à¦¾à¦Ÿà¦¨ à¦à¦œà§‡ à¦¨à¦¾ à¦²à¦¾à¦—à§‡
         padding: EdgeInsets.fromLTRB(
           ResponsiveHelper.padding(24),
           ResponsiveHelper.padding(12),
@@ -57,7 +57,7 @@ class ScannedUserSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // â”€â”€ Handle bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // -- Handle bar ---------------------------
             Container(
               width: 40,
               height: 4,
@@ -69,7 +69,7 @@ class ScannedUserSheet extends StatelessWidget {
 
             SizedBox(height: ResponsiveHelper.spacing(12)),
 
-            // â”€â”€ Close button (top-right, à¦ªà§à¦°à§‹à¦ªà§à¦°à¦¿ à¦­à¦¿à¦œà¦¿à¦¬à¦²) â”€â”€
+            // -- Close button (top-right, à¦ªà§à¦°à§‹à¦ªà§à¦°à¦¿ à¦­à¦¿à¦œà¦¿à¦¬à¦²) --
             Row(
               children: [
                 const Spacer(),
@@ -91,12 +91,12 @@ class ScannedUserSheet extends StatelessWidget {
               ],
             ),
 
-            // â”€â”€ à¦¬à¦¾à¦•à¦¿ à¦•à¦¨à¦Ÿà§‡à¦¨à§à¦Ÿ à¦®à¦¾à¦à¦–à¦¾à¦¨à§‡ â”€â”€
+            // -- à¦¬à¦¾à¦•à¦¿ à¦•à¦¨à¦Ÿà§‡à¦¨à§à¦Ÿ à¦®à¦¾à¦à¦–à¦¾à¦¨à§‡ --
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // â”€â”€ Avatar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                  // -- Avatar -------------------------------
                   CircleAvatar(
                     radius: ResponsiveHelper.borderRadius(44),
                     backgroundImage: NetworkImage(
@@ -107,7 +107,7 @@ class ScannedUserSheet extends StatelessWidget {
 
                   SizedBox(height: ResponsiveHelper.spacing(18)),
 
-                  // â”€â”€ Name â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                  // -- Name ---------------------------------
                   Text(
                     nickName,
                     style: GoogleFonts.poppins(
@@ -119,7 +119,7 @@ class ScannedUserSheet extends StatelessWidget {
 
                   SizedBox(height: ResponsiveHelper.spacing(8)),
 
-                  // â”€â”€ Rating â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                  // -- Rating -------------------------------
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -141,7 +141,7 @@ class ScannedUserSheet extends StatelessWidget {
 
             SizedBox(height: ResponsiveHelper.spacing(20)),
 
-            // â”€â”€ Buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // -- Buttons -------------------------------
             if (isExistingChat)
               _SheetButton(
                 label: AppStrings.openChat.tr,
@@ -193,7 +193,7 @@ class ScannedUserSheet extends StatelessWidget {
   }
 }
 
-/// â”€â”€â”€ Sheet Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/// --- Sheet Button -------------------------------------------------------------
 
 class _SheetButton extends StatelessWidget {
   final String label;

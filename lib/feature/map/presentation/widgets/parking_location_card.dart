@@ -1,10 +1,12 @@
 ﻿import 'dart:ui';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 
 class ParkingLocationCard extends StatelessWidget {
@@ -238,7 +240,7 @@ class ParkingLocationCard extends StatelessWidget {
                             ),
                             SizedBox(width: ResponsiveHelper.spacing(4)),
                             Text(
-                              'Navigate',
+                              AppStrings.navigate.tr,
                               style: TextStyle(
                                 fontSize: ResponsiveHelper.fontSize(13),
                                 fontWeight: FontWeight.w600,
@@ -320,7 +322,7 @@ class ParkingLocationCard extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: CustomGradientButton(
-                      label: 'Save Park',
+                      label: AppStrings.savePark.tr,
                       onPressed: onSavePark,
                     ),
                   ),

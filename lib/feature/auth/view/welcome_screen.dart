@@ -845,7 +845,7 @@
 //           child: Column(
 //             crossAxisAlignment: CrossAxisAlignment.stretch,
 //             children: [
-//               // â”€â”€â”€ Language Toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//               // --- Language Toggle ---------------------------------------
 //               Align(
 //                 alignment: Alignment.topRight,
 //                 child: Padding(
@@ -859,7 +859,7 @@
 //
 //               SizedBox(height: ResponsiveHelper.spacing(20)),
 //
-//               // â”€â”€â”€ Everything inside one padding â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//               // --- Everything inside one padding -------------------------
 //               Padding(
 //                 padding: EdgeInsets.symmetric(
 //                   horizontal: ResponsiveHelper.padding(24),
@@ -974,7 +974,7 @@
 //   }
 // }
 //
-// // â”€â”€â”€ Age Confirmation Dialog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// // --- Age Confirmation Dialog ---------------------------------------------------
 //
 // void _showAgeConfirmationDialog(BuildContext context) {
 //   showDialog(

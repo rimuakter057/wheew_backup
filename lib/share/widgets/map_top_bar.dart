@@ -37,7 +37,7 @@ class MapTopBar extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // â”€â”€ Search pill â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // -- Search pill --------------------------------------------
           Expanded(
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
@@ -102,7 +102,7 @@ class MapTopBar extends StatelessWidget {
 
           SizedBox(width: ResponsiveHelper.spacing(8)),
 
-          // â”€â”€ Notification bell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // -- Notification bell --------------------------------------
           _NotificationBellButton(),
         ],
       ),

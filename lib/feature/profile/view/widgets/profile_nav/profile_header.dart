@@ -352,7 +352,7 @@ class ProfileHeaderCard extends StatelessWidget {
                   return InkWell(
                     onTap: () {
                       if (scanController.qrCardHtml.value.isEmpty) {
-                        scanController.getQrCode();
+                        scanController.getQrCode(context: context);
                       }
 
                       debugPrint(
@@ -420,7 +420,7 @@ class ProfileHeaderCard extends StatelessWidget {
                                         return Center(
                                           child: GestureDetector(
                                             onTap: () =>
-                                                scanController.getQrCode(),
+                                                scanController.getQrCode(context: context),
                                             child: Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,

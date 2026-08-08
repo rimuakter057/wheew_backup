@@ -225,12 +225,12 @@ class ProfileController extends GetxController {
           sourcePath: picked.path,
           uiSettings: [
             AndroidUiSettings(
-              toolbarTitle: 'Crop Image',
+              toolbarTitle: AppStrings.cropImage.tr,
               toolbarColor: AppColors.blue,
               toolbarWidgetColor: AppColors.white,
               lockAspectRatio: false,
             ),
-            IOSUiSettings(title: 'Crop Image'),
+            IOSUiSettings(title: AppStrings.cropImage.tr,),
           ],
         );
 

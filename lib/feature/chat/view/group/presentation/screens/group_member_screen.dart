@@ -150,7 +150,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
         ),
         actions: [
           if (isAdmin)
-          // â”€â”€ Dropdown Menu â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // -- Dropdown Menu -----------------------------
           PopupMenuButton<String>(
             icon: Icon(Icons.more_vert, color: AppColors.black),
             onSelected: (value) {
@@ -212,12 +212,12 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
       ),
 
       body: Obx(() {
-        // â”€â”€ Loading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Loading --------------------------------------
         if (groupController.isLoadingMembers.value) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        // â”€â”€ Empty â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Empty ----------------------------------------
         if (groupController.groupMemberList.isEmpty) {
           return Center(
             child: Text(
@@ -228,7 +228,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
         }
 
         // ── Member List — admin(s) get their own card up top, the rest
-        //    are grouped together under a "Group Members" section â”€â”€â”€â”€â”€â”€
+        //    are grouped together under a "Group Members" section ------
         final admins = groupController.groupMemberList
             .where((m) => m.groupRole == 'GROUP_ADMIN')
             .toList();
@@ -263,7 +263,7 @@ class _GroupMemberScreenState extends State<GroupMemberScreen> {
   }
 
   // ── Grouped card — one or more member rows, divided by thin dividers.
-  //    Same gradient card style as the Add Member screen. â”€â”€
+  //    Same gradient card style as the Add Member screen. --
   Widget _buildMemberCard(List<GroupMemberModel> members, {required bool canManage}) {
     return Container(
       decoration: BoxDecoration(

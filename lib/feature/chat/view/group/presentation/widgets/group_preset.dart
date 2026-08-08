@@ -21,7 +21,7 @@ class _GroupPresetMessagesState extends State<GroupPresetMessages> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // â”€â”€ Shimmer loading state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // -- Shimmer loading state --------------------------
       if (widget.controller.isPresetLoading.value) {
         return SizedBox(
           height: ResponsiveHelper.height(40),
@@ -38,12 +38,12 @@ class _GroupPresetMessagesState extends State<GroupPresetMessages> {
         );
       }
 
-      // â”€â”€ Empty state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // -- Empty state ------------------------------------
       if (widget.controller.presetMessages.isEmpty) {
         return const SizedBox.shrink();
       }
 
-      // â”€â”€ Preset chips â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // -- Preset chips -----------------------------------
       return SizedBox(
         height: ResponsiveHelper.height(40),
         child: ListView.separated(

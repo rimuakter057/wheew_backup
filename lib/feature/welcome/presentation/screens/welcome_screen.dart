@@ -34,7 +34,7 @@ class WelcomeScreen extends StatelessWidget {
         child: SafeArea(
           child: Stack(
             children: [
-              // â”€â”€â”€ TOP ROW: Logo + Language Toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // --- TOP ROW: Logo + Language Toggle -----------------------
               Positioned(
                 top: ResponsiveHelper.height(20),
                 left: ResponsiveHelper.padding(20),
@@ -52,7 +52,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
 
-              // â”€â”€â”€ HEADLINE + DIVIDER + SUBTITLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // --- HEADLINE + DIVIDER + SUBTITLE --------------------------
               Positioned(
                 top: size.height * 0.15,
                 left: ResponsiveHelper.padding(24),
@@ -83,7 +83,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
 
-              // â”€â”€â”€ GET STARTED + SIGN IN (pinned to bottom) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // --- GET STARTED + SIGN IN (pinned to bottom) ---------------
               Positioned(
                 left: ResponsiveHelper.padding(24),
                 right: ResponsiveHelper.padding(24),

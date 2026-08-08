@@ -120,7 +120,7 @@ class _MainNavScreenState extends State<MainNavScreen> {
 }
 
 
-// â”€â”€â”€ Scan chooser overlay (OCR Scanner / Scan QR Code) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- Scan chooser overlay (OCR Scanner / Scan QR Code) ------------------------
 // Lives inside the body Stack (not a modal route) so the floating bottom nav
 // stays crisp on top while the current tab dims/blurs behind the card.
 
@@ -162,7 +162,7 @@ class _ScanOptionsOverlay extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€ Bottom Navigation Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- Bottom Navigation Bar ----------------------------------------------------
 
 class _AppBottomNav extends StatelessWidget {
   final int currentIndex;
@@ -360,7 +360,7 @@ class _AppBottomNav extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€ Regular Nav Item â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- Regular Nav Item ---------------------------------------------------------
 
 class _NavItem extends StatelessWidget {
   final String icon;
@@ -428,7 +428,7 @@ class _NavItem extends StatelessWidget {
                   ),
                   onTap: () => onTap(index),
                   child: ConstrainedBox(
-                    // â”€â”€ overflow fix: active/inactive à¦…à¦¨à§à¦¯à¦¾à¦¯à¦¼à§€ max width à¦¬à§‡à¦à¦§à§‡ à¦¦à§‡à¦“à¦¯à¦¼à¦¾ â”€â”€
+                    // -- overflow fix: active/inactive à¦…à¦¨à§à¦¯à¦¾à¦¯à¦¼à§€ max width à¦¬à§‡à¦à¦§à§‡ à¦¦à§‡à¦“à¦¯à¦¼à¦¾ --
                     constraints: BoxConstraints(
                       maxWidth: isActive
                           ? ResponsiveHelper.width(120)
@@ -486,7 +486,7 @@ class _NavItem extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€ Scan Nav Item (Standalone Floating Black Button) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- Scan Nav Item (Standalone Floating Black Button) -------------------------
 
 class ScanNavItem extends StatelessWidget {
   final String icon;

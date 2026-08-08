@@ -42,7 +42,7 @@ class ScanView extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        // â”€â”€ Full-screen camera feed â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Full-screen camera feed ---------------------------------
         MobileScanner(
           controller: scannerController,
           onDetect: onDetect,
@@ -53,7 +53,7 @@ class ScanView extends StatelessWidget {
           ),
         ),
 
-        // â”€â”€ Frosted, tinted overlay everywhere except the cutout â”€â”€â”€â”€
+        // -- Frosted, tinted overlay everywhere except the cutout ----
         ClipPath(
           clipper: _CutoutClipper(cutout: cutout, radius: radius),
           child: BackdropFilter(
@@ -73,7 +73,7 @@ class ScanView extends StatelessWidget {
           ),
         ),
 
-        // â”€â”€ Corner markers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Corner markers -------------------------------------------
         Positioned.fromRect(
           rect: cutout,
           child: CustomPaint(
@@ -86,7 +86,7 @@ class ScanView extends StatelessWidget {
           ),
         ),
 
-        // â”€â”€ Scanning line â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Scanning line ---------------------------------------------
         if (!isScanned)
           Positioned.fromRect(
             rect: cutout,
@@ -130,7 +130,7 @@ class ScanView extends StatelessWidget {
             ),
           ),
 
-        // â”€â”€ Loading overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Loading overlay -------------------------------------------
         if (isLoading)
           Positioned.fromRect(
             rect: cutout,
@@ -141,6 +141,7 @@ class ScanView extends StatelessWidget {
               ),
               child: Center(
                 child: CircularProgressIndicator(
+
                   color: AppColors.blue,
                   strokeWidth: 2.5,
                 ),
@@ -148,7 +149,7 @@ class ScanView extends StatelessWidget {
             ),
           ),
 
-        // â”€â”€ Success overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Success overlay -------------------------------------------
         if (isScanned && !isLoading)
           Positioned.fromRect(
             rect: cutout,
@@ -167,7 +168,7 @@ class ScanView extends StatelessWidget {
             ),
           ),
 
-        // â”€â”€ Instructional hint below the cutout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Instructional hint below the cutout ----------------------
         Positioned(
           left: 0,
           right: 0,

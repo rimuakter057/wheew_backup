@@ -61,7 +61,7 @@ class MapSideControls extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // â”€â”€ Map-type layers button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                // -- Map-type layers button -------------------------
                 MapTypeLayersButton(
                   selectedType: selectedMapType,
                   onChanged: onMapTypeChanged,
@@ -69,7 +69,7 @@ class MapSideControls extends StatelessWidget {
 
                 SizedBox(height: ResponsiveHelper.height(4)),
 
-                // â”€â”€ Current-location button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                // -- Current-location button -----------------------
                 GestureDetector(
                   onTap: onLocationTap,
                   child: Container(

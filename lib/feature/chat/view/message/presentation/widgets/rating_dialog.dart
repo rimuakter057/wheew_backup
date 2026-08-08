@@ -57,7 +57,7 @@ void showRatingDialog({
             mainAxisSize: MainAxisSize.min,
 
             children: [
-              // â”€â”€ Close Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // -- Close Button ----------------------------
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -95,7 +95,7 @@ void showRatingDialog({
 
               SizedBox(height: ResponsiveHelper.spacing(4)),
 
-              // â”€â”€ Avatar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // -- Avatar ----------------------------------
               CircleAvatar(
                 radius: ResponsiveHelper.borderRadius(30),
                 backgroundImage: NetworkImage(
@@ -181,8 +181,8 @@ void showRatingDialog({
 
               SizedBox(height: ResponsiveHelper.spacing(10)),
 
-              // â”€â”€ Name + verified badge (same asset/condition as the
-              //    chat app bar's _effectiveIsVehicleVerified) â”€â”€â”€â”€â”€
+              // -- Name + verified badge (same asset/condition as the
+              //    chat app bar's _effectiveIsVehicleVerified) -----
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -218,7 +218,7 @@ void showRatingDialog({
 
               SizedBox(height: ResponsiveHelper.spacing(18)),
 
-              // â”€â”€ Star Rating â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // -- Star Rating ------------------------------
               SizedBox(
                 height: ResponsiveHelper.iconSize(50),
                 child: Row(
@@ -280,7 +280,7 @@ void showRatingDialog({
   );
 }
 
-// â”€â”€ Star icon builder â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Star icon builder -----------------------------------------
 Widget _buildStarIcon(int starIndex, double rating) {
   final double value = rating - starIndex;
   final IconData icon;
@@ -304,7 +304,7 @@ Widget _buildStarIcon(int starIndex, double rating) {
   );
 }
 
-// â”€â”€ Rating label â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Rating label ----------------------------------------------
 String _ratingLabel(double rating) {
   if (rating == 0) return '';
   if (rating <= 1.0) return AppStrings.ratingPoor.tr;

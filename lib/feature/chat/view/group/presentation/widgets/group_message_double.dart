@@ -10,7 +10,7 @@ import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
-// â”€â”€ Group Message Bubble â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Group Message Bubble ------------------------------------------------------
 
 class GroupMessageBubble extends StatelessWidget {
   final GroupMessageResponseModel msg;
@@ -562,7 +562,7 @@ class _GroupVoiceBubbleState extends State<_GroupVoiceBubble> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
 
-          // â”€â”€ Play / Pause / Loading button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // -- Play / Pause / Loading button ----------------------
           GestureDetector(
             onTap: _togglePlayPause,
             child: AnimatedContainer(
@@ -594,7 +594,7 @@ class _GroupVoiceBubbleState extends State<_GroupVoiceBubble> {
 
           SizedBox(width: ResponsiveHelper.spacing(10)),
 
-          // â”€â”€ Waveform + time â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // -- Waveform + time ------------------------------------
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

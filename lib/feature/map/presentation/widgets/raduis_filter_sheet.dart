@@ -84,7 +84,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //           mainAxisSize: MainAxisSize.min,
 //           crossAxisAlignment: CrossAxisAlignment.start,
 //           children: [
-//             // â”€â”€ drag handle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//             // -- drag handle -----------------------------
 //             Center(
 //               child: Container(
 //                 width: 40,
@@ -97,7 +97,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //               ),
 //             ),
 //
-//             // â”€â”€ title row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//             // -- title row -------------------------------
 //             Row(
 //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //               children: [
@@ -115,7 +115,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //             ),
 //             const SizedBox(height: 20),
 //
-//             // â”€â”€ radius value badge + manual input â”€â”€â”€â”€â”€â”€
+//             // -- radius value badge + manual input ------
 //             Row(
 //               children: [
 //                 Container(
@@ -166,7 +166,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //             ),
 //             const SizedBox(height: 12),
 //
-//             // â”€â”€ slider â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//             // -- slider ----------------------------------
 //             SliderTheme(
 //               data: SliderTheme.of(context).copyWith(
 //                 activeTrackColor: const Color(0xFF185FA5),
@@ -196,7 +196,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //             ),
 //             const SizedBox(height: 20),
 //
-//             // â”€â”€ apply button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//             // -- apply button ----------------------------
 //             ElevatedButton(
 //               style: ElevatedButton.styleFrom(
 //                 backgroundColor: const Color(0xFF185FA5),
@@ -292,7 +292,7 @@ class RadiusFilterSheet extends StatefulWidget {
 class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
   late double _radius; // à¦®à¦¿à¦Ÿà¦¾à¦°à§‡
 
-  // â”€â”€ à¦…à¦¬à§à¦¯à¦¬à¦¹à§ƒà¦¤ à¦²à¦œà¦¿à¦• (à¦•à¦®à§‡à¦¨à§à¦Ÿ à¦•à¦°à§‡ à¦°à¦¾à¦–à¦¾ à¦¹à¦²à§‹) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // -- à¦…à¦¬à§à¦¯à¦¬à¦¹à§ƒà¦¤ à¦²à¦œà¦¿à¦• (à¦•à¦®à§‡à¦¨à§à¦Ÿ à¦•à¦°à§‡ à¦°à¦¾à¦–à¦¾ à¦¹à¦²à§‹) ------------------
   // late TextEditingController _textCtrl;
   // void _onTextChanged(String value) {
   //   final parsed = double.tryParse(value);
@@ -368,7 +368,7 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // â”€â”€ drag handle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // -- drag handle -----------------------------
             Center(
               child: Container(
                 width: ResponsiveHelper.width(48),
@@ -381,7 +381,7 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
               ),
             ),
 
-            // â”€â”€ title & subtitle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // -- title & subtitle ------------------------
              Text(
               AppStrings.searchParkingSpotWithin.tr,
               style: context.bodyMedium.copyWith(color: AppColors.black)
@@ -398,7 +398,7 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
             ),
             SizedBox(height: ResponsiveHelper.spacing(48)), // à¦¸à§à¦²à¦¾à¦‡à¦¡à¦¾à¦° à¦Ÿà§à¦²à¦Ÿà¦¿à¦ªà§‡à¦° à¦œà¦¨à§à¦¯ à¦à¦•à¦Ÿà§ à¦¬à§‡à¦¶à¦¿ à¦¸à§à¦ªà§‡à¦¸ à¦°à¦¾à¦–à¦¾ à¦¹à§Ÿà§‡à¦›à§‡
 
-            // â”€â”€ slider with custom thumb & tooltip â”€â”€â”€â”€â”€â”€
+            // -- slider with custom thumb & tooltip ------
             SliderTheme(
               data: SliderTheme.of(context).copyWith(
                 trackHeight: ResponsiveHelper.height(6),
@@ -419,7 +419,7 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
               ),
             ),
 
-            // â”€â”€ min & max labels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // -- min & max labels ------------------------
             Padding(
               padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 4),
               child: Row(
@@ -432,7 +432,7 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
             ),
             SizedBox(height: ResponsiveHelper.spacing(24)),
 
-            // â”€â”€ Quick Select Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // -- Quick Select Section --------------------
              Text(
               AppStrings.quickSelect.tr,
               style: TextStyle(
@@ -458,7 +458,7 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
             ),
             SizedBox(height: ResponsiveHelper.spacing(36)),
 
-            // â”€â”€ apply button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // -- apply button ----------------------------
             Container(
               width: double.infinity,
               height: ResponsiveHelper.height(54),
@@ -491,7 +491,7 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
     );
   }
 
-  // â”€â”€ Quick Select Chips â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // -- Quick Select Chips ------------------------------
   Widget _quickChip(int meterValue) {
     final bool selected = _radius.round() == meterValue;
     final String label = _formatRadius(meterValue.toDouble());
@@ -529,7 +529,7 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
   }
 }
 
-// â”€â”€ Custom Slider Thumb Paint (à¦‡à¦®à§‡à¦œà§‡à¦° à¦®à¦¤à§‹ à¦¬à§à¦²à§à¦¯à¦¾à¦• à¦¬à¦¾à¦¬à¦² à¦‡à¦«à§‡à¦•à§à¦Ÿ) â”€â”€
+// -- Custom Slider Thumb Paint (à¦‡à¦®à§‡à¦œà§‡à¦° à¦®à¦¤à§‹ à¦¬à§à¦²à§à¦¯à¦¾à¦• à¦¬à¦¾à¦¬à¦² à¦‡à¦«à§‡à¦•à§à¦Ÿ) --
 class CustomSliderThumbShape extends SliderComponentShape {
   final double thumbRadius;
   final String value;

@@ -21,7 +21,7 @@ import '../../../../terms_condition/web_view_screen.dart';
 import '../../../repository/profile_controller.dart';
 import '../share_link_dialog.dart';
 
-/// â”€â”€ Account & Settings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/// -- Account & Settings --------------------------------------------------
 Widget buildAccountSettingsItems({
   required BuildContext context,
   required ProfileController profileController,
@@ -58,7 +58,7 @@ Widget buildAccountSettingsItems({
   );
 }
 
-/// â”€â”€ Support & Legal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/// -- Support & Legal -----------------------------------------------------
 Widget buildSupportLegalItems({required BuildContext context}) {
   final List<Map<String, dynamic>> items = [
     {
@@ -69,6 +69,7 @@ Widget buildSupportLegalItems({required BuildContext context}) {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => HelpSupportScreen()),
+
         );
       },
     },
@@ -132,7 +133,7 @@ Widget buildSupportLegalItems({required BuildContext context}) {
   return Column(children: _buildItemTiles(items, showLastDivider: false));
 }
 
-/// â”€â”€ Account Actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/// -- Account Actions -----------------------------------------------------
 Widget buildAccountActionsItems({required BuildContext context}) {
   final List<Map<String, dynamic>> items = [
     {

@@ -42,7 +42,7 @@ class _MessagePresetChipsState extends State<MessagePresetChips> {
         return const SizedBox.shrink();
       }
 
-      // â”€â”€ Chips â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // -- Chips ---------------------------------------
       return SizedBox(
         height: ResponsiveHelper.height(40),
         child: ListView.separated(
@@ -116,7 +116,7 @@ class _MessagePresetChipsState extends State<MessagePresetChips> {
   }
 }
 
-// â”€â”€ Shimmer Chip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Shimmer Chip ----------------------------------------------
 class _ShimmerChip extends StatelessWidget {
   final VoidCallback onEnd;
 

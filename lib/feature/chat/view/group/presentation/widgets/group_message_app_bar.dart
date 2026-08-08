@@ -441,7 +441,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // â”€â”€ See Members â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                    // -- See Members ------------------------------
                     InkWell(
                       onTap: () {
                         Navigator.pop(context);
@@ -474,7 +474,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                       ),
                     ),
 
-                    // â”€â”€ Add Members â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                    // -- Add Members ------------------------------
                     InkWell(
                       onTap: () {
                         Navigator.pop(context);
@@ -504,7 +504,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                       ),
                     ),
 
-                    // â”€â”€ Edit Group â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                    // -- Edit Group -------------------------------
                     InkWell(
                       onTap: () {
                         Navigator.pop(context);
@@ -534,7 +534,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                       ),
                     ),
 
-                    // â”€â”€ Leave Group â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                    // -- Leave Group ------------------------------
                     InkWell(
                       onTap: () {
                         Navigator.pop(context);
@@ -602,7 +602,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
         //     }
         //   },
         //   itemBuilder: (context) => [
-        //     // â”€â”€ See Members â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        //     // -- See Members ------------------------------
         //     PopupMenuItem<String>(
         //       value: "SeeMembers",
         //       height: ResponsiveHelper.height(44),
@@ -621,7 +621,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
         //       ),
         //     ),
         //
-        //     // â”€â”€ Add Members â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        //     // -- Add Members ------------------------------
         //     PopupMenuItem<String>(
         //       value: "AddMembers",
         //       height: ResponsiveHelper.height(44),
@@ -640,7 +640,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
         //       ),
         //     ),
         //
-        //     // â”€â”€ Edit Group â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        //     // -- Edit Group -------------------------------
         //     PopupMenuItem<String>(
         //       value: "EditGroup",
         //       height: ResponsiveHelper.height(44),
@@ -659,7 +659,7 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
         //       ),
         //     ),
         //
-        //     // â”€â”€ Leave Group â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        //     // -- Leave Group ------------------------------
         //     PopupMenuItem<String>(
         //       value: "LeaveGroup",
         //       height: ResponsiveHelper.height(44),

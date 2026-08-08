@@ -28,6 +28,7 @@ class ProfileNavAppBar extends StatelessWidget
         style: GoogleFonts.poppins(
           color: const Color(0xFF1A1D20),
           fontWeight: FontWeight.w600,
+
           fontSize: ResponsiveHelper.titleFontSize(18),
         ),
       ),

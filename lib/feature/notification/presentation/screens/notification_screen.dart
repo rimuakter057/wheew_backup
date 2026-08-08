@@ -60,7 +60,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
   }
 
-  // â”€â”€ Group notifications by date (Today / Yesterday / d-M-yyyy) â”€
+  // -- Group notifications by date (Today / Yesterday / d-M-yyyy) -
   String _sectionLabel(String sentAt) {
     try {
       final dt = DateTime.parse(sentAt).toLocal();
@@ -85,7 +85,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return map.entries.toList();
   }
 
-  // â”€â”€ Delete all confirmation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // -- Delete all confirmation -----------------------------------
   void _showDeleteAllDialog() {
     showDialog(
       context: context,
@@ -349,7 +349,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 }
 
-// â”€â”€ Notification Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Notification Card -----------------------------------------
 class _NotificationCard extends StatelessWidget {
   final NotificationEvent notification;
   final String formattedTime;
@@ -402,6 +402,7 @@ class _NotificationCard extends StatelessWidget {
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
+
                     ),
                   ),
                   SizedBox(width: ResponsiveHelper.spacing(8)),

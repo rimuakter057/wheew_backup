@@ -1,13 +1,14 @@
 import 'package:http/http.dart' as http;
 import 'package:platchatapp/core/service/api_client.dart';
+import 'package:platchatapp/core/service/api_url.dart';
 
 class ParkingRepository {
   Future<http.Response> getParkingModeMe() async {
-    return await ApiClient.getData(uri: '/park-relay/parking-mode/me');
+    return await ApiClient.getData(uri: ApiUrl.parkingMode);
   }
 
   Future<http.Response> getSavedParkingMe() async {
-    return await ApiClient.getData(uri: '/park-relay/saved-parking/me');
+    return await ApiClient.getData(uri: ApiUrl.saveParkingRelay);
   }
 
   Future<http.Response> getNearbyHandoffs({
@@ -16,7 +17,7 @@ class ParkingRepository {
     required int radiusMeters,
   }) async {
     return await ApiClient.getData(
-      uri: '/park-relay/handoffs/nearby',
+      uri: ApiUrl.handOfNearby,
 
       queryParams: {
         'latitude': latitude.toString(),
@@ -42,7 +43,7 @@ class ParkingRepository {
     //   },
     // );
     return await ApiClient.getData(
-      uri: '/park-relay/parking-areas/search',
+      uri: ApiUrl.searchGetArea,
       queryParams: {
         'latitude': latitude.toString(),
         'longitude': longitude.toString(),
@@ -57,7 +58,7 @@ class ParkingRepository {
     String? spotId,
   }) async {
     return await ApiClient.postData(
-      uri: '/park-relay/handoffs',
+      uri:ApiUrl.createHandoff ,
       body: {
         'latitude': latitude,
         'longitude': longitude,
@@ -72,7 +73,7 @@ class ParkingRepository {
     required String review,
   }) async {
     return await ApiClient.postData(
-      uri: '/park-relay/parking-areas/$parkingAreaId/ratings',
+      uri: ApiUrl.submitParkingArea(parkingAreaId),
       body: {
         'rating': rating,
         'review': review,
@@ -81,7 +82,7 @@ class ParkingRepository {
   }
 
   Future<http.Response> getHandoffById({required String handoffId}) async {
-    final uri = '/park-relay/handoffs/$handoffId';
+    final uri =ApiUrl.getHandOff(handoffId:handoffId);
     print("GET_HANDOFF_BY_ID_URL: $uri (handoffId=$handoffId)");
     return await ApiClient.getData(uri: uri);
   }
@@ -97,7 +98,7 @@ class ParkingRepository {
     String? spotId,
     int? durationMin,
   }) async {
-    final uri = '/park-relay/saved-parking';
+    final uri = ApiUrl.saveMyParking;
     print("SAVE_MY_PARKING_URL: $uri (lat=$latitude, lng=$longitude, parkingType=$parkingType, spotId=$spotId, durationMin=$durationMin)");
     return await ApiClient.postData(
       uri: uri,
@@ -115,7 +116,7 @@ class ParkingRepository {
   }
 
   Future<http.Response> acceptAndParkHandoff({required String handoffId}) async {
-    final uri = '/park-relay/handoffs/$handoffId/accept-and-park';
+    final uri = ApiUrl.acceptAndParkHandOff(handoffId: handoffId);
     print("ACCEPT_AND_PARK_URL: $uri (handoffId=$handoffId)");
     return await ApiClient.postData(
       uri: uri,
@@ -127,7 +128,7 @@ class ParkingRepository {
     required double longitude,
   }) async {
     return await ApiClient.postData(
-      uri: '/park-relay/parking-mode/searching',
+      uri: ApiUrl.parkingSearching,
       body: {
         'latitude': latitude,
         'longitude': longitude,
@@ -140,7 +141,7 @@ class ParkingRepository {
     required double longitude,
   }) async {
     return await ApiClient.postData(
-      uri: '/park-relay/parking-mode/idle',
+      uri: ApiUrl.statusIdle,
       body: {
         'latitude': latitude,
         'longitude': longitude,

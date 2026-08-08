@@ -31,7 +31,7 @@ class _ScanScreenState extends State<ScanScreen>
   late Animation<double> _lineAnimation;
   late MobileScannerController _scannerController;
 
-  // â”€â”€ Lifecycle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // -- Lifecycle ----------------------------------------------------------------
 
   @override
   void initState() {
@@ -74,7 +74,7 @@ class _ScanScreenState extends State<ScanScreen>
     super.dispose();
   }
 
-  // â”€â”€ QR detected â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // -- QR detected --------------------------------------------------------------
 
   void _onDetect(BarcodeCapture capture) async {
     if (_scanned) return;
@@ -103,7 +103,7 @@ class _ScanScreenState extends State<ScanScreen>
     setState(() => _isLoading = false);
   }
 
-  // â”€â”€ Back navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // -- Back navigation ---------------------------------------------------------
   // Reached either via a pushed GoRouter route (chat list's scan icon) or via
   // the bottom nav's Scan tab, which just swaps mainNavIndex without pushing
   // a route — so there may be nothing for GoRouter to pop back to.
@@ -116,7 +116,7 @@ class _ScanScreenState extends State<ScanScreen>
     }
   }
 
-  // â”€â”€ Bottom sheet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // -- Bottom sheet -------------------------------------------------------------
 
   Future<void> _showScannedUserSheet(Map<String, dynamic> data) async {
     await showModalBottomSheet(
@@ -132,7 +132,7 @@ class _ScanScreenState extends State<ScanScreen>
     _scannerController.start();
   }
 
-  // â”€â”€ Build â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // -- Build ---------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +168,7 @@ class _ScanScreenState extends State<ScanScreen>
     );
   }
 
-  // â”€â”€ Header: circular back button + centered title â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // -- Header: circular back button + centered title ------------------------
 
   Widget _buildHeader() {
     return Padding(
@@ -207,7 +207,7 @@ class _ScanScreenState extends State<ScanScreen>
     );
   }
 
-  // â”€â”€ Bottom controls: torch / rescan / flip camera â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // -- Bottom controls: torch / rescan / flip camera -------------------------
 
   Widget _buildBottomControls() {
     return Padding(
@@ -270,7 +270,7 @@ class _ScanScreenState extends State<ScanScreen>
   }
 }
 
-// â”€â”€â”€ Small circular icon button used in the bottom control bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- Small circular icon button used in the bottom control bar ---------------
 
 class _CircleIconButton extends StatelessWidget {
   final IconData icon;

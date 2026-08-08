@@ -5,20 +5,11 @@ import 'package:logger/logger.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_service.dart';
 import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
+
+import '../../../utils/language/app_string.dart';
 
 class ScanQrResult {
-
-
-
-
-
-
-
-
-
-
-
-
 
   final bool isSuccess;
   final Map<String, dynamic>? data;
@@ -97,7 +88,7 @@ class ScanController extends GetxController {
   var qrCardHtml = ''.obs;
 
 
-  Future<void> getQrCode() async {
+  Future<void> getQrCode({required BuildContext context}) async {
     try {
       isLoadingQr.value = true;
 
@@ -106,11 +97,21 @@ class ScanController extends GetxController {
       if (response.statusCode == 200) {
         qrCardHtml.value = response.bodyString ?? response.body.toString();
       } else {
-        Get.snackbar('Error', response.statusText ?? 'Failed to load QR card');
+
+
+
+        CustomSnackbar.error(
+          context: context,
+          message: AppStrings.failedToLoadQrCard.tr,
+        );
       }
     } catch (e) {
       Logger().e("❌ getQrCode Error: $e");
-      Get.snackbar('Error', 'Something went wrong while loading QR card');
+
+      CustomSnackbar.error(
+        context: context,
+        message: AppStrings.somethingWentWrongWhileLoadingQrCard.tr,
+      );
     } finally {
       isLoadingQr.value = false;
     }
@@ -184,7 +185,7 @@ Future<void> getScanQrCode() async {
           data: mapped,
         );
       } else {
-        String message = 'Invalid Plate Number';
+        String message = AppStrings.invalidPlateNumber;
         try {
           final decoded = jsonDecode(response.body);
           if (decoded is Map && decoded['message'] != null) {

@@ -1071,5 +1071,78 @@ final Map<String, String> italian = {
 
   // -------- Auth --------
   AppStrings.loginSuccessful: "Accesso riuscito",
+
+
+  AppStrings.locationNotAvailable:
+  "Posizione non disponibile",
+
+  AppStrings.tapMapToSelectLocation:
+  "Tocca la mappa per selezionare una posizione",
+
+  AppStrings.mySavedParking:
+  "Il mio parcheggio salvato",
+
+  AppStrings.tapToViewDetailsRoute:
+  "Tocca per visualizzare i dettagli e il percorso",
+
+  AppStrings.savePark: "Salva parcheggio",
+
+  AppStrings.parkingSpotSaved: "Parcheggio salvato",
+  AppStrings.failedToSaveParkingSpot: "Impossibile salvare il parcheggio",
+  AppStrings.duration: "Durata",
+  AppStrings.mins: "min",
+  AppStrings.sessionStatus: "Stato della sessione",
+  AppStrings.na: "N/D",
+  AppStrings.navigationLocationNotAvailable:
+  "Posizione di navigazione non disponibile",
+  AppStrings.startWalkingNavigation:
+  "Avvia navigazione a piedi",
+
+  AppStrings.youHaveArrived:
+  "Sei arrivato",
+
+  AppStrings.minSlower:
+  "min più lento",
+
+  AppStrings.minFaster:
+  "min più veloce",
+
+  'kmh': 'km/h',
+  AppStrings.licensePlateNotFound: 'Targa non trovata',
+
+
+  AppStrings.noSavedParkingsYet: 'Nessun parcheggio salvato ancora',
+  AppStrings.saveParking: 'Salva parcheggio',
+  AppStrings.failedToLoadSavedParkings:
+  'Impossibile caricare i parcheggi salvati',
+  AppStrings.couldNotOpenLink: 'Impossibile aprire il link',
+  AppStrings.noAppCanOpenThisLink: 'Nessuna app può aprire questo link',
+
+  AppStrings.invalidRequest:
+  'Richiesta non valida. Controlla le informazioni.',
+  AppStrings.unauthorizedPleaseSignInAgain:
+  'Non autorizzato. Accedi nuovamente.',
+  AppStrings.noPermissionToPerformAction:
+  'Non hai il permesso di eseguire questa azione.',
+  AppStrings.requestedResourceNotFound:
+  'La risorsa richiesta non è stata trovata.',
+  AppStrings.documentAlreadyExists:
+  'Questo documento esiste già.',
+  AppStrings.checkInformationAndTryAgain:
+  'Controlla le informazioni inserite e riprova.',
+  AppStrings.internalServerError:
+  'Errore interno del server. Riprova più tardi.',
+  AppStrings.serverTemporarilyUnavailable:
+  'Il server è temporaneamente non disponibile. Riprova più tardi.',
+  AppStrings.failedToLoadQrCard: 'Impossibile caricare la scheda QR',
+  AppStrings.somethingWentWrongWhileLoadingQrCard:
+  'Si è verificato un errore durante il caricamento della scheda QR',
+  AppStrings.invalidPlateNumber: 'Numero di targa non valido',
+  AppStrings.qrCardNotReady:
+  'La scheda QR non è ancora pronta. Riprova.',
+
+  AppStrings.couldNotLaunchDialer: 'Impossibile avviare il dialer.',
+
+
 };
 

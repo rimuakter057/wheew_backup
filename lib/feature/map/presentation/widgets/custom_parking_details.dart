@@ -1,9 +1,11 @@
 ﻿import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 
 class CustomParkingDetailsDialog extends StatelessWidget {
   final String title;
@@ -209,7 +211,7 @@ class CustomParkingDetailsDialog extends StatelessWidget {
                         ),
                         const SizedBox(width: 3),
                         Text(
-                          'Navigate',
+                        AppStrings.navigate.tr,
                           style: context.bodyMedium.copyWith(color: AppColors.blue)
                         ),
                       ],

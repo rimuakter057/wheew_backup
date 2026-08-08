@@ -72,7 +72,7 @@ class ParkingShowController extends GetxController {
     activeSpotDetailsCard.value = null;
   }
 
-  // â”€â”€ SavePark, ParkMode, and Parktime States â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // -- SavePark, ParkMode, and Parktime States ----------------------
   final Rxn<LatLng> savedParkingLocation = Rxn<LatLng>();
   final RxInt confidenceLevel = 98.obs;
   final RxBool isParkModeActive = false.obs;
@@ -241,6 +241,7 @@ class ParkingShowController extends GetxController {
         'body: ${response.body}',
       );
       if (response.statusCode == 200) {
+
         final data = _asMap(jsonDecode(response.body));
         final String modeStatus =
             data?['status']?.toString().toUpperCase() ?? 'IDLE';
@@ -788,11 +789,11 @@ class ParkingShowController extends GetxController {
     }
   }
 
-  // â”€â”€ Post-exit parking experience rating. Submits via
+  // -- Post-exit parking experience rating. Submits via
   //    POST /park-relay/parking-areas/{parkingAreaId}/ratings when a real
   //    parkingAreaId was captured (see currentParkingAreaId) — no review
   //    text field exists in the UI yet, so review is sent empty. Falls
-  //    back to the old "just acknowledge" behavior when no id is known. â”€â”€
+  //    back to the old "just acknowledge" behavior when no id is known. --
   Future<void> _submitRating(String? parkingAreaId, double rating) async {
     if (parkingAreaId == null || parkingAreaId.isEmpty) {
       _showMessage(AppStrings.ratingSubmitted.tr, isError: false);
@@ -1147,7 +1148,7 @@ class ParkingShowController extends GetxController {
     return null;
   }
 
-  // â”€â”€ SavePark, ParkMode, and Parktime Operations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // -- SavePark, ParkMode, and Parktime Operations ------------------
   void toggleParkMode() {
     showLocationPulse.value = !showLocationPulse.value;
     if (showLocationPulse.value) {
@@ -1620,7 +1621,7 @@ class ParkingShowController extends GetxController {
     );
   }
 
-  // â”€â”€ Handoff Details Dialog: Status, Expires At, Navigate only â”€â”€
+  // -- Handoff Details Dialog: Status, Expires At, Navigate only --
   Future<void> showHandoffDetails(Map<String, dynamic> handoff) async {
     final id = handoff['id']?.toString();
     if (id == null || id.isEmpty) {
@@ -1742,7 +1743,7 @@ class ParkingShowController extends GetxController {
   // ── Distance label shared by the handoff and parking-area detail sheets —
   //    the backend occasionally returns distanceMeters in the millions
   //    (bad seed/test data), so convert to km past 1000m to keep it readable
-  //    instead of printing a raw absurd meter count. â”€â”€
+  //    instead of printing a raw absurd meter count. --
   String _formatDistance(dynamic distanceMeters) {
     final meters = distanceMeters is num
         ? distanceMeters.toDouble()
@@ -1755,7 +1756,7 @@ class ParkingShowController extends GetxController {
 
   // ── Badge (label/icon/color) derived from parkingArea.parkingAreaTypes —
   //    mirrors the same Electric/Accessible/Standard classification used on
-  //    the Saved Parkings list. â”€â”€
+  //    the Saved Parkings list. --
   ({String label, IconData icon, Color color, String? asset}) _areaTypeBadge(
     Map<String, dynamic>? area,
   ) {
@@ -1788,8 +1789,8 @@ class ParkingShowController extends GetxController {
     );
   }
 
-  // â”€â”€ Parking Area Details: card view (title/badge/distance/rating +
-  //    spots/price) with a Save Park action. â”€â”€
+  // -- Parking Area Details: card view (title/badge/distance/rating +
+  //    spots/price) with a Save Park action. --
   void showParkingAreaDetails(Map<String, dynamic> area) {
     final name = area['name']?.toString() ?? '';
     final description = area['description']?.toString() ?? '';
@@ -1947,7 +1948,7 @@ class ParkingShowController extends GetxController {
 
   // ── Duration prompt for PAID areas — mirrors the home tab's Save My
   //    Parking dialog validation (>=15 min) since this "Save Park" flow
-  //    from a parking area's details doesn't have its own duration field. â”€â”€
+  //    from a parking area's details doesn't have its own duration field. --
   void _showDurationInputDialog({
     required void Function(int durationMin) onConfirm,
     String? feeLabel,
@@ -2121,7 +2122,7 @@ class ParkingShowController extends GetxController {
   // ── Shared "found spot" details bottom sheet — same card design used
   //    on the Saved Parkings screen. [onSavePark] is supplied by the
   //    caller so only IDLE (parking areas) and SEARCHING (handoffs) get
-  //    a working save action, each wired to the right endpoint. â”€â”€
+  //    a working save action, each wired to the right endpoint. --
   void _showSpotDetailsCardSheet({
     required String title,
     required String subtitle,
@@ -2277,7 +2278,7 @@ class ParkingShowController extends GetxController {
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(20)),
 
-                // â”€â”€ Custom minutes input â”€â”€
+                // -- Custom minutes input --
                 TextField(
                   controller: durationController,
                   keyboardType: TextInputType.number,

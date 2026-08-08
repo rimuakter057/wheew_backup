@@ -1,4 +1,712 @@
-﻿import 'dart:math' as math;
+﻿// import 'dart:math' as math;
+//
+// import 'package:flutter/material.dart';
+// import 'package:geolocator/geolocator.dart';
+// import 'package:get/get.dart';
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:intl/intl.dart';
+// import 'package:platchatapp/feature/map/presentation/widgets/map_type_dropdown.dart';
+// import 'package:platchatapp/feature/map/utils/marker_icon_loader.dart';
+// import 'package:platchatapp/feature/navigation/controller/in_app_navigation_controller.dart';
+// import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+// import 'package:platchatapp/utils/color/app_colors.dart';
+// import 'package:platchatapp/utils/language/app_string.dart';
+//
+// /// Maps a Google Directions `maneuver` value to a turn icon — falls back to
+// /// a plain straight arrow for the depart step (which has no maneuver) or
+// /// any maneuver type not explicitly mapped.
+// IconData _maneuverIcon(String? maneuver) {
+//   switch (maneuver) {
+//     case 'turn-left':
+//       return Icons.turn_left;
+//     case 'turn-right':
+//       return Icons.turn_right;
+//     case 'turn-sharp-left':
+//       return Icons.turn_sharp_left;
+//     case 'turn-sharp-right':
+//       return Icons.turn_sharp_right;
+//     case 'turn-slight-left':
+//       return Icons.turn_slight_left;
+//     case 'turn-slight-right':
+//       return Icons.turn_slight_right;
+//     case 'uturn-left':
+//       return Icons.u_turn_left;
+//     case 'uturn-right':
+//       return Icons.u_turn_right;
+//     case 'merge':
+//       return Icons.merge;
+//     case 'fork-left':
+//       return Icons.fork_left;
+//     case 'fork-right':
+//       return Icons.fork_right;
+//     case 'ramp-left':
+//       return Icons.ramp_left;
+//     case 'ramp-right':
+//       return Icons.ramp_right;
+//     case 'roundabout-left':
+//     case 'roundabout-clockwise':
+//       return Icons.roundabout_left;
+//     case 'roundabout-right':
+//     case 'roundabout-counterclockwise':
+//       return Icons.roundabout_right;
+//     default:
+//       return Icons.straight;
+//   }
+// }
+//
+// String _formatMeters(int meters) {
+//   if (meters < 1000) return '$meters m';
+//   return '${(meters / 1000).toStringAsFixed(1)} km';
+// }
+//
+// class InAppNavigationScreen extends StatefulWidget {
+//   final LatLng destination;
+//   final String? destinationLabel;
+//
+//   const InAppNavigationScreen({
+//     super.key,
+//     required this.destination,
+//     this.destinationLabel,
+//   });
+//
+//   @override
+//   State<InAppNavigationScreen> createState() => _InAppNavigationScreenState();
+// }
+//
+// class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
+//   late final InAppNavigationController controller;
+//   MapType _selectedMapType = MapType.normal;
+//   BitmapDescriptor? _destinationIcon;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     controller = Get.put(InAppNavigationController());
+//     WidgetsBinding.instance.addPostFrameCallback((_) {
+//       controller.init(destination: widget.destination);
+//     });
+//     MapMarkerIcons.parkingPin().then((icon) {
+//       if (mounted) setState(() => _destinationIcon = icon);
+//     });
+//   }
+//
+//   @override
+//   void dispose() {
+//     Get.delete<InAppNavigationController>();
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: AppColors.white,
+//       appBar: AppBar(
+//         backgroundColor: AppColors.white,
+//         elevation: 0,
+//         surfaceTintColor: AppColors.white,
+//         iconTheme: const IconThemeData(color: AppColors.black87),
+//         title: Text(
+//           widget.destinationLabel ?? AppStrings.inAppNavigation.tr,
+//           style: TextStyle(color: AppColors.black87, fontWeight: FontWeight.w600, fontSize: ResponsiveHelper.fontSize(16)),
+//         ),
+//       ),
+//       body: Obx(() {
+//         if (controller.isLocationPermissionDenied.value) {
+//           return _buildMessageState(
+//             icon: Icons.location_off_outlined,
+//             message: AppStrings.locationPermissionRequiredForNavigation.tr,
+//             actionLabel: AppStrings.openSettings.tr,
+//             onAction: () => Geolocator.openAppSettings(),
+//             secondaryLabel: AppStrings.retry.tr,
+//             onSecondaryAction: controller.retry,
+//           );
+//         }
+//
+//         if (controller.hasRouteError.value) {
+//           return _buildMessageState(
+//             icon: Icons.error_outline,
+//             message: AppStrings.couldNotLoadRoute.tr,
+//             actionLabel: AppStrings.retry.tr,
+//             onAction: controller.retry,
+//           );
+//         }
+//
+//         if (controller.isLoadingRoute.value) {
+//           return Center(
+//             child: Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 const CircularProgressIndicator(color: AppColors.blue),
+//                 SizedBox(height: ResponsiveHelper.height(12)),
+//                 Text(
+//                   AppStrings.loadingRoute.tr,
+//                   style: TextStyle(color: AppColors.greyShade600),
+//                 ),
+//               ],
+//             ),
+//           );
+//         }
+//
+//         final userPosition = controller.liveUserPosition.value;
+//         final origin = controller.origin.value ?? widget.destination;
+//         final selectedIndex = controller.selectedRouteIndex.value;
+//
+//         return Stack(
+//           children: [
+//             GoogleMap(
+//               mapType: _selectedMapType,
+//               onMapCreated: controller.onMapCreated,
+//               onCameraMove: controller.onCameraMove,
+//               initialCameraPosition: CameraPosition(target: origin, zoom: 16),
+//               myLocationEnabled: true,
+//               myLocationButtonEnabled: false,
+//               zoomControlsEnabled: false,
+//               markers: {
+//                 Marker(
+//                   markerId: const MarkerId('destination'),
+//                   position: widget.destination,
+//                   icon: _destinationIcon ??
+//                       BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+//                 ),
+//                 if (userPosition != null)
+//                   Marker(
+//                     markerId: const MarkerId('current_position'),
+//                     position: userPosition,
+//                     icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+//                   ),
+//                 // "Similar ETA" / "+X min" pill for every alternate route.
+//                 for (var i = 0; i < controller.allRoutes.length; i++)
+//                   if (i != selectedIndex && controller.routeLabels[i] != null)
+//                     Marker(
+//                       markerId: MarkerId('route_label_$i'),
+//                       position: controller.allRoutes[i]
+//                           .polylinePoints[controller.allRoutes[i].polylinePoints.length ~/ 2],
+//                       icon: controller.routeLabels[i]!,
+//                       anchor: const Offset(0.5, 0.5),
+//                       onTap: () => controller.selectRoute(i),
+//                     ),
+//                 // Mode-icon + duration badge on the selected route while walking.
+//                 if (controller.selectedMode.value == TravelMode.walking &&
+//                     controller.primaryRouteBadge.value != null &&
+//                     controller.routePoints.isNotEmpty)
+//                   Marker(
+//                     markerId: const MarkerId('primary_route_badge'),
+//                     position: controller.routePoints[controller.routePoints.length ~/ 2],
+//                     icon: controller.primaryRouteBadge.value!,
+//                     anchor: const Offset(0.5, 0.5),
+//                     zIndexInt: 2,
+//                   ),
+//               },
+//               polylines: {
+//                 // Alternates drawn first (thin grey, tappable) so the
+//                 // selected route always renders on top of them.
+//                 for (var i = 0; i < controller.allRoutes.length; i++)
+//                   if (i != selectedIndex)
+//                     Polyline(
+//                       polylineId: PolylineId('route_$i'),
+//                       points: controller.allRoutes[i].polylinePoints,
+//                       color: AppColors.greyShade500,
+//                       width: ResponsiveHelper.borderWidth(4).round(),
+//                       consumeTapEvents: true,
+//                       onTap: () => controller.selectRoute(i),
+//                     ),
+//                 Polyline(
+//                   polylineId: const PolylineId('route_selected'),
+//                   points: controller.routePoints,
+//                   color: AppColors.blue,
+//                   width: ResponsiveHelper.borderWidth(5).round(),
+//                   // Google Maps renders walking routes as a dotted line and
+//                   // driving routes as solid — the plugin doesn't support an
+//                   // animated dash offset, so this is the static equivalent.
+//                   patterns: controller.selectedMode.value == TravelMode.walking
+//                       ? [PatternItem.dot, PatternItem.gap(ResponsiveHelper.width(14))]
+//                       : const [],
+//                 ),
+//               },
+//             ),
+//             Positioned(
+//               left: ResponsiveHelper.width(16),
+//               right: ResponsiveHelper.width(16),
+//               top: ResponsiveHelper.height(16),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   if (controller.currentStep != null) _buildTurnBanner(),
+//                   SizedBox(height: ResponsiveHelper.height(12)),
+//                   _buildModeSelector(),
+//                 ],
+//               ),
+//             ),
+//             MapTypeDropdown(
+//               selectedType: _selectedMapType,
+//               onChanged: (type) => setState(() => _selectedMapType = type),
+//             ),
+//             Positioned(
+//               right: ResponsiveHelper.width(16),
+//               bottom: ResponsiveHelper.height(110),
+//               child: _buildSideControls(),
+//             ),
+//             Positioned(
+//               left: ResponsiveHelper.width(16),
+//               bottom: ResponsiveHelper.height(110),
+//               child: _buildSpeedBadge(),
+//             ),
+//             if (controller.routeInfo.value != null)
+//               Positioned(
+//                 left: 0,
+//                 right: 0,
+//                 bottom: 0,
+//                 child: _buildBottomBar(),
+//               ),
+//           ],
+//         );
+//       }),
+//     );
+//   }
+//
+//   Widget _buildTurnBanner() {
+//     final step = controller.currentStep;
+//     if (step == null) return const SizedBox.shrink();
+//     final next = controller.nextStep;
+//
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Container(
+//           padding: EdgeInsets.symmetric(
+//             horizontal: ResponsiveHelper.width(16),
+//             vertical: ResponsiveHelper.height(14),
+//           ),
+//           decoration: BoxDecoration(
+//             color: const Color(0xFF00695C),
+//             borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
+//             boxShadow: [
+//               BoxShadow(
+//                 color: AppColors.black.withValues(alpha: 0.15),
+//                 blurRadius: 12,
+//                 offset: const Offset(0, 4),
+//               ),
+//             ],
+//           ),
+//           child: Row(
+//             children: [
+//               Icon(_maneuverIcon(step.maneuver), color: AppColors.white, size: ResponsiveHelper.iconSize(32)),
+//               SizedBox(width: ResponsiveHelper.width(12)),
+//               Expanded(
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     if (controller.distanceToTurnMeters.value > 0)
+//                       Text(
+//                         _formatMeters(controller.distanceToTurnMeters.value),
+//                         style: TextStyle(color: AppColors.white70, fontSize: ResponsiveHelper.fontSize(12)),
+//                       ),
+//                     Text(
+//                       step.instruction,
+//                       maxLines: 2,
+//                       overflow: TextOverflow.ellipsis,
+//                       style: TextStyle(
+//                         color: AppColors.white,
+//                         fontWeight: FontWeight.w700,
+//                         fontSize: ResponsiveHelper.fontSize(17),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//         /// then instruction==================================================================
+//         if (next != null)
+//           Container(
+//             margin: EdgeInsets.only(
+//               left: ResponsiveHelper.width(16),
+//             top:ResponsiveHelper.width(16),
+//             ),
+//             padding: EdgeInsets.symmetric(
+//               horizontal: ResponsiveHelper.width(12),
+//               vertical: ResponsiveHelper.height(6),
+//             ),
+//             decoration: BoxDecoration(
+//               color: AppColors.white,
+//               borderRadius: BorderRadius.only(
+//                 bottomLeft: Radius.circular(ResponsiveHelper.borderRadius(12)),
+//                 bottomRight: Radius.circular(ResponsiveHelper.borderRadius(12)),
+//               ),
+//               boxShadow: [
+//                 BoxShadow(
+//                   color: AppColors.black.withValues(alpha: 0.1),
+//                   blurRadius: 8,
+//                   offset: const Offset(0, 2),
+//                 ),
+//               ],
+//             ),
+//             child: Row(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 Text(
+//                   AppStrings.then.tr,
+//                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: ResponsiveHelper.fontSize(12),color: AppColors.black),
+//                 ),
+//                 SizedBox(width: ResponsiveHelper.width(4)),
+//                 Icon(_maneuverIcon(next.maneuver), size: ResponsiveHelper.iconSize(16)),
+//               ],
+//             ),
+//           ),
+//       ],
+//     );
+//   }
+//
+//   Widget _buildBottomBar() {
+//     final info = controller.routeInfo.value;
+//     if (info == null) return const SizedBox.shrink();
+//
+//     final eta = info.durationSeconds != null
+//         ? DateFormat('h:mm a').format(DateTime.now().add(Duration(seconds: info.durationSeconds!)))
+//         : null;
+//
+//     return Container(
+//       padding: EdgeInsets.symmetric(
+//         horizontal: ResponsiveHelper.width(20),
+//         vertical: ResponsiveHelper.height(14),
+//       ),
+//       decoration: BoxDecoration(
+//         color: AppColors.white,
+//         borderRadius: BorderRadius.only(
+//           topLeft: Radius.circular(ResponsiveHelper.borderRadius(20)),
+//           topRight: Radius.circular(ResponsiveHelper.borderRadius(20)),
+//         ),
+//         boxShadow: [
+//           BoxShadow(
+//             color: AppColors.black.withValues(alpha: 0.1),
+//             blurRadius: 12,
+//             offset: const Offset(0, -4),
+//           ),
+//         ],
+//       ),
+//       child: SafeArea(
+//         top: false,
+//         child: Row(
+//           children: [
+//             GestureDetector(
+//               onTap: () => Navigator.pop(context),
+//               child: CircleAvatar(
+//                 radius: ResponsiveHelper.borderRadius(22),
+//                 backgroundColor: AppColors.greyShade200,
+//                 child: const Icon(Icons.close, color: AppColors.black87),
+//               ),
+//             ),
+//             Expanded(
+//               child: Column(
+//                 children: [
+//                   Text(
+//                     info.durationText,
+//                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: ResponsiveHelper.fontSize(20)),
+//                   ),
+//                   SizedBox(height: ResponsiveHelper.height(2)),
+//                   Text(
+//                     eta != null ? '${info.distanceText} • $eta' : info.distanceText,
+//                     style: TextStyle(color: AppColors.greyShade600, fontSize: ResponsiveHelper.fontSize(13)),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             GestureDetector(
+//               onTap: controller.fitRouteBounds,
+//               child: CircleAvatar(
+//                 radius: ResponsiveHelper.borderRadius(22),
+//                 backgroundColor: AppColors.greyShade200,
+//                 child: const Icon(Icons.alt_route, color: AppColors.black87),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildSideControls() {
+//     return Column(
+//       children: [
+//         _buildCompassButton(),
+//         SizedBox(height: ResponsiveHelper.height(10)),
+//         Obx(
+//           () => _PulsingVoiceButton(
+//             isOn: controller.isVoiceOn.value,
+//             onTap: controller.toggleVoice,
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+//
+//   /// North-up â†’ small "N" compass face; rotated map â†’ red arrow rotated to
+//   /// keep pointing at true north. Tapping either resets to north-up.
+//   Widget _buildCompassButton() {
+//     return Obx(() {
+//       final bearing = controller.cameraBearing.value;
+//       final isNorthUp = bearing.abs() < 1;
+//
+//       return GestureDetector(
+//         onTap: controller.recenterNorth,
+//         child: Container(
+//           width: ResponsiveHelper.width(44),
+//           height: ResponsiveHelper.width(44),
+//           decoration: BoxDecoration(
+//             color: AppColors.white,
+//             shape: BoxShape.circle,
+//             boxShadow: [
+//               BoxShadow(
+//                 color: AppColors.black.withValues(alpha: 0.15),
+//                 blurRadius: 8,
+//                 offset: const Offset(0, 2),
+//               ),
+//             ],
+//           ),
+//           child: isNorthUp
+//               ? Column(
+//                   mainAxisAlignment: MainAxisAlignment.center,
+//                   children: [
+//                     Text(
+//                       'N',
+//                       style: TextStyle(
+//                         fontSize: ResponsiveHelper.fontSize(9),
+//                         fontWeight: FontWeight.bold,
+//                         color: AppColors.black87,
+//                       ),
+//                     ),
+//                     Icon(Icons.arrow_drop_up, color: AppColors.redAccent, size: ResponsiveHelper.iconSize(16)),
+//                   ],
+//                 )
+//               : Transform.rotate(
+//                   angle: -bearing * (math.pi / 180),
+//                   child: Icon(Icons.navigation, color: AppColors.redAccent, size: ResponsiveHelper.iconSize(22)),
+//                 ),
+//         ),
+//       );
+//     });
+//   }
+//
+//   ///speed=============================
+//   Widget _buildSpeedBadge() {
+//     return Obx(() {
+//       final speed = controller.speedKmh.value.round();
+//       return Container(
+//         width: ResponsiveHelper.width(56),
+//         height: ResponsiveHelper.width(56),
+//         decoration: BoxDecoration(
+//           color: AppColors.white,
+//           shape: BoxShape.circle,
+//           border: Border.all(color: AppColors.greyShade300, width: 1.5),
+//           boxShadow: [
+//             BoxShadow(
+//               color: AppColors.black.withValues(alpha: 0.1),
+//               blurRadius: 8,
+//               offset: const Offset(0, 2),
+//             ),
+//           ],
+//         ),
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             Text(
+//               '$speed',
+//               style: TextStyle(fontWeight: FontWeight.bold, fontSize: ResponsiveHelper.fontSize(16),color: AppColors.black),
+//             ),
+//             Text(
+//               'km/h',
+//               style: TextStyle(fontSize: ResponsiveHelper.fontSize(9), color: AppColors.greyShade600),
+//             ),
+//           ],
+//         ),
+//       );
+//     });
+//   }
+//
+//   Widget _buildModeSelector() {
+//     return Container(
+//       padding: EdgeInsets.all(ResponsiveHelper.padding(6)),
+//       decoration: BoxDecoration(
+//         color: AppColors.white,
+//         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
+//         boxShadow: [
+//           BoxShadow(
+//             color: AppColors.black.withValues(alpha: 0.1),
+//             blurRadius: 12,
+//             offset: const Offset(0, 4),
+//           ),
+//         ],
+//       ),
+//       child: Row(
+//         mainAxisSize: MainAxisSize.min,
+//         children: TravelMode.values.map((mode) {
+//           final isSelected = controller.selectedMode.value == mode;
+//           return Expanded(
+//             child: GestureDetector(
+//               onTap: () => controller.changeMode(mode),
+//               child: Container(
+//                 margin: EdgeInsets.symmetric(horizontal: ResponsiveHelper.width(4)),
+//                 padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.height(8)),
+//                 decoration: BoxDecoration(
+//                   color: isSelected ? AppColors.blue : AppColors.transparent,
+//                   borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+//                 ),
+//                 child: Column(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     Icon(
+//                       mode.icon,
+//                       color: isSelected ? AppColors.white : AppColors.greyShade600,
+//                       size: ResponsiveHelper.iconSize(20),
+//                     ),
+//                     SizedBox(height: ResponsiveHelper.height(2)),
+//                     Text(
+//                       mode.label,
+//                       style: TextStyle(
+//                         fontSize: ResponsiveHelper.fontSize(11),
+//                         color: isSelected ? AppColors.white : AppColors.greyShade600,
+//                         fontWeight: FontWeight.w600,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           );
+//         }).toList(),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildMessageState({
+//     required IconData icon,
+//     required String message,
+//     required String actionLabel,
+//     required VoidCallback onAction,
+//     String? secondaryLabel,
+//     VoidCallback? onSecondaryAction,
+//   }) {
+//     return Center(
+//       child: Padding(
+//         padding: EdgeInsets.all(ResponsiveHelper.padding(24)),
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             Icon(icon, size: ResponsiveHelper.iconSize(56), color: AppColors.greyShade400),
+//             SizedBox(height: ResponsiveHelper.height(16)),
+//             Text(
+//               message,
+//               textAlign: TextAlign.center,
+//               style: TextStyle(color: AppColors.greyShade700, fontSize: ResponsiveHelper.fontSize(15)),
+//             ),
+//             SizedBox(height: ResponsiveHelper.height(20)),
+//             ElevatedButton(
+//               onPressed: onAction,
+//               style: ElevatedButton.styleFrom(
+//                 backgroundColor: AppColors.blue,
+//                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12))),
+//                 padding: ResponsiveHelper.symmetric(horizontal: 24, vertical: 12),
+//               ),
+//               child: Text(actionLabel, style: const TextStyle(color: AppColors.white)),
+//             ),
+//             if (secondaryLabel != null && onSecondaryAction != null) ...[
+//               SizedBox(height: ResponsiveHelper.height(8)),
+//               TextButton(
+//                 onPressed: onSecondaryAction,
+//                 child: Text(secondaryLabel, style: const TextStyle(color: AppColors.blue)),
+//               ),
+//             ],
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// /// Voice-guidance toggle button — pulses gently while on, same as the
+// /// speaker button's "listening" state in Google Maps navigation.
+// class _PulsingVoiceButton extends StatefulWidget {
+//   final bool isOn;
+//   final VoidCallback onTap;
+//
+//   const _PulsingVoiceButton({required this.isOn, required this.onTap});
+//
+//   @override
+//   State<_PulsingVoiceButton> createState() => _PulsingVoiceButtonState();
+// }
+//
+// class _PulsingVoiceButtonState extends State<_PulsingVoiceButton>
+//     with SingleTickerProviderStateMixin {
+//   late final AnimationController _controller = AnimationController(
+//     vsync: this,
+//     duration: const Duration(milliseconds: 900),
+//   );
+//   late final Animation<double> _scale =
+//       Tween(begin: 1.0, end: 1.18).chain(CurveTween(curve: Curves.easeInOut)).animate(_controller);
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     if (widget.isOn) _controller.repeat(reverse: true);
+//   }
+//
+//   @override
+//   void didUpdateWidget(covariant _PulsingVoiceButton oldWidget) {
+//     super.didUpdateWidget(oldWidget);
+//     if (widget.isOn && !_controller.isAnimating) {
+//       _controller.repeat(reverse: true);
+//     } else if (!widget.isOn) {
+//       _controller.stop();
+//       _controller.value = 0;
+//     }
+//   }
+//
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: widget.onTap,
+//       child: AnimatedBuilder(
+//         animation: _scale,
+//         builder: (context, child) => Transform.scale(
+//           scale: widget.isOn ? _scale.value : 1.0,
+//           child: child,
+//         ),
+//         child: Container(
+//           width: ResponsiveHelper.width(44),
+//           height: ResponsiveHelper.width(44),
+//           decoration: BoxDecoration(
+//             color: AppColors.white,
+//             shape: BoxShape.circle,
+//             boxShadow: [
+//               BoxShadow(
+//                 color: AppColors.black.withValues(alpha: 0.15),
+//                 blurRadius: 8,
+//                 offset: const Offset(0, 2),
+//               ),
+//             ],
+//           ),
+//           child: Icon(
+//             widget.isOn ? Icons.record_voice_over : Icons.voice_over_off,
+//             color: widget.isOn ? AppColors.blue : AppColors.black87,
+//             size: ResponsiveHelper.iconSize(20),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+//
+
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -12,9 +720,6 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
-/// Maps a Google Directions `maneuver` value to a turn icon — falls back to
-/// a plain straight arrow for the depart step (which has no maneuver) or
-/// any maneuver type not explicitly mapped.
 IconData _maneuverIcon(String? maneuver) {
   switch (maneuver) {
     case 'turn-left':
@@ -55,7 +760,10 @@ IconData _maneuverIcon(String? maneuver) {
 }
 
 String _formatMeters(int meters) {
-  if (meters < 1000) return '$meters m';
+  if (meters < 1000) {
+    return '$meters m';
+  }
+
   return '${(meters / 1000).toStringAsFixed(1)} km';
 }
 
@@ -75,18 +783,26 @@ class InAppNavigationScreen extends StatefulWidget {
 
 class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
   late final InAppNavigationController controller;
+
   MapType _selectedMapType = MapType.normal;
   BitmapDescriptor? _destinationIcon;
 
   @override
   void initState() {
     super.initState();
+
     controller = Get.put(InAppNavigationController());
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.init(destination: widget.destination);
     });
+
     MapMarkerIcons.parkingPin().then((icon) {
-      if (mounted) setState(() => _destinationIcon = icon);
+      if (!mounted) return;
+
+      setState(() {
+        _destinationIcon = icon;
+      });
     });
   }
 
@@ -107,7 +823,11 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
         iconTheme: const IconThemeData(color: AppColors.black87),
         title: Text(
           widget.destinationLabel ?? AppStrings.inAppNavigation.tr,
-          style: TextStyle(color: AppColors.black87, fontWeight: FontWeight.w600, fontSize: ResponsiveHelper.fontSize(16)),
+          style: TextStyle(
+            color: AppColors.black87,
+            fontWeight: FontWeight.w600,
+            fontSize: ResponsiveHelper.fontSize(16),
+          ),
         ),
       ),
       body: Obx(() {
@@ -132,98 +852,23 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
         }
 
         if (controller.isLoadingRoute.value) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const CircularProgressIndicator(color: AppColors.blue),
-                SizedBox(height: ResponsiveHelper.height(12)),
-                Text(
-                  AppStrings.loadingRoute.tr,
-                  style: TextStyle(color: AppColors.greyShade600),
-                ),
-              ],
-            ),
-          );
+          return _buildLoadingState();
         }
 
         final userPosition = controller.liveUserPosition.value;
+
         final origin = controller.origin.value ?? widget.destination;
+
         final selectedIndex = controller.selectedRouteIndex.value;
 
         return Stack(
           children: [
-            GoogleMap(
-              mapType: _selectedMapType,
-              onMapCreated: controller.onMapCreated,
-              onCameraMove: controller.onCameraMove,
-              initialCameraPosition: CameraPosition(target: origin, zoom: 16),
-              myLocationEnabled: true,
-              myLocationButtonEnabled: false,
-              zoomControlsEnabled: false,
-              markers: {
-                Marker(
-                  markerId: const MarkerId('destination'),
-                  position: widget.destination,
-                  icon: _destinationIcon ??
-                      BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-                ),
-                if (userPosition != null)
-                  Marker(
-                    markerId: const MarkerId('current_position'),
-                    position: userPosition,
-                    icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-                  ),
-                // "Similar ETA" / "+X min" pill for every alternate route.
-                for (var i = 0; i < controller.allRoutes.length; i++)
-                  if (i != selectedIndex && controller.routeLabels[i] != null)
-                    Marker(
-                      markerId: MarkerId('route_label_$i'),
-                      position: controller.allRoutes[i]
-                          .polylinePoints[controller.allRoutes[i].polylinePoints.length ~/ 2],
-                      icon: controller.routeLabels[i]!,
-                      anchor: const Offset(0.5, 0.5),
-                      onTap: () => controller.selectRoute(i),
-                    ),
-                // Mode-icon + duration badge on the selected route while walking.
-                if (controller.selectedMode.value == TravelMode.walking &&
-                    controller.primaryRouteBadge.value != null &&
-                    controller.routePoints.isNotEmpty)
-                  Marker(
-                    markerId: const MarkerId('primary_route_badge'),
-                    position: controller.routePoints[controller.routePoints.length ~/ 2],
-                    icon: controller.primaryRouteBadge.value!,
-                    anchor: const Offset(0.5, 0.5),
-                    zIndexInt: 2,
-                  ),
-              },
-              polylines: {
-                // Alternates drawn first (thin grey, tappable) so the
-                // selected route always renders on top of them.
-                for (var i = 0; i < controller.allRoutes.length; i++)
-                  if (i != selectedIndex)
-                    Polyline(
-                      polylineId: PolylineId('route_$i'),
-                      points: controller.allRoutes[i].polylinePoints,
-                      color: AppColors.greyShade500,
-                      width: ResponsiveHelper.borderWidth(4).round(),
-                      consumeTapEvents: true,
-                      onTap: () => controller.selectRoute(i),
-                    ),
-                Polyline(
-                  polylineId: const PolylineId('route_selected'),
-                  points: controller.routePoints,
-                  color: AppColors.blue,
-                  width: ResponsiveHelper.borderWidth(5).round(),
-                  // Google Maps renders walking routes as a dotted line and
-                  // driving routes as solid — the plugin doesn't support an
-                  // animated dash offset, so this is the static equivalent.
-                  patterns: controller.selectedMode.value == TravelMode.walking
-                      ? [PatternItem.dot, PatternItem.gap(ResponsiveHelper.width(14))]
-                      : const [],
-                ),
-              },
+            _buildGoogleMap(
+              origin: origin,
+              userPosition: userPosition,
+              selectedIndex: selectedIndex,
             ),
+
             Positioned(
               left: ResponsiveHelper.width(16),
               right: ResponsiveHelper.width(16),
@@ -232,25 +877,35 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (controller.currentStep != null) _buildTurnBanner(),
+
                   SizedBox(height: ResponsiveHelper.height(12)),
+
                   _buildModeSelector(),
                 ],
               ),
             ),
+
             MapTypeDropdown(
               selectedType: _selectedMapType,
-              onChanged: (type) => setState(() => _selectedMapType = type),
+              onChanged: (type) {
+                setState(() {
+                  _selectedMapType = type;
+                });
+              },
             ),
+
             Positioned(
               right: ResponsiveHelper.width(16),
               bottom: ResponsiveHelper.height(110),
               child: _buildSideControls(),
             ),
+
             Positioned(
               left: ResponsiveHelper.width(16),
               bottom: ResponsiveHelper.height(110),
               child: _buildSpeedBadge(),
             ),
+
             if (controller.routeInfo.value != null)
               Positioned(
                 left: 0,
@@ -264,22 +919,139 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
     );
   }
 
+  Widget _buildLoadingState() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const CircularProgressIndicator(color: AppColors.blue),
+          SizedBox(height: ResponsiveHelper.height(12)),
+          Text(
+            AppStrings.loadingRoute.tr,
+            style: TextStyle(
+              color: AppColors.greyShade600,
+              fontSize: ResponsiveHelper.fontSize(14),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGoogleMap({
+    required LatLng origin,
+    required LatLng? userPosition,
+    required int selectedIndex,
+  }) {
+    return GoogleMap(
+      mapType: _selectedMapType,
+      onMapCreated: controller.onMapCreated,
+      onCameraMove: controller.onCameraMove,
+      initialCameraPosition: CameraPosition(target: origin, zoom: 16),
+      myLocationEnabled: true,
+      myLocationButtonEnabled: false,
+      zoomControlsEnabled: false,
+
+      markers: {
+        Marker(
+          markerId: const MarkerId('destination'),
+          position: widget.destination,
+          icon:
+              _destinationIcon ??
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        ),
+
+        if (userPosition != null)
+          Marker(
+            markerId: const MarkerId('current_position'),
+            position: userPosition,
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueAzure,
+            ),
+          ),
+
+        // Alternative route labels.
+        for (var i = 0; i < controller.allRoutes.length; i++)
+          if (i != selectedIndex &&
+              controller.routeLabels[i] != null &&
+              controller.allRoutes[i].polylinePoints.isNotEmpty)
+            Marker(
+              markerId: MarkerId('route_label_$i'),
+              position:
+                  controller.allRoutes[i].polylinePoints[controller
+                          .allRoutes[i]
+                          .polylinePoints
+                          .length ~/
+                      2],
+              icon: controller.routeLabels[i]!,
+              anchor: const Offset(0.5, 0.5),
+              onTap: () => controller.selectRoute(i),
+            ),
+
+        // Selected walking route duration badge.
+        if (controller.selectedMode.value == TravelMode.walking &&
+            controller.primaryRouteBadge.value != null &&
+            controller.routePoints.isNotEmpty)
+          Marker(
+            markerId: const MarkerId('primary_route_badge'),
+            position:
+                controller.routePoints[controller.routePoints.length ~/ 2],
+            icon: controller.primaryRouteBadge.value!,
+            anchor: const Offset(0.5, 0.5),
+            zIndexInt: 2,
+          ),
+      },
+
+      polylines: {
+        // Alternative routes.
+        for (var i = 0; i < controller.allRoutes.length; i++)
+          if (i != selectedIndex)
+            Polyline(
+              polylineId: PolylineId('route_$i'),
+              points: controller.allRoutes[i].polylinePoints,
+              color: AppColors.greyShade500,
+              width: ResponsiveHelper.borderWidth(4).round(),
+              consumeTapEvents: true,
+              onTap: () => controller.selectRoute(i),
+            ),
+
+        // Selected route.
+        Polyline(
+          polylineId: const PolylineId('route_selected'),
+          points: controller.routePoints,
+          color: AppColors.blue,
+          width: ResponsiveHelper.borderWidth(5).round(),
+          patterns: controller.selectedMode.value == TravelMode.walking
+              ? [PatternItem.dot, PatternItem.gap(ResponsiveHelper.width(14))]
+              : const [],
+        ),
+      },
+    );
+  }
+
   Widget _buildTurnBanner() {
     final step = controller.currentStep;
-    if (step == null) return const SizedBox.shrink();
+
+    if (step == null) {
+      return const SizedBox.shrink();
+    }
+
     final next = controller.nextStep;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
+          width: double.infinity,
           padding: EdgeInsets.symmetric(
             horizontal: ResponsiveHelper.width(16),
             vertical: ResponsiveHelper.height(14),
           ),
           decoration: BoxDecoration(
             color: const Color(0xFF00695C),
-            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
+            borderRadius: BorderRadius.circular(
+              ResponsiveHelper.borderRadius(16),
+            ),
             boxShadow: [
               BoxShadow(
                 color: AppColors.black.withValues(alpha: 0.15),
@@ -290,18 +1062,38 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
           ),
           child: Row(
             children: [
-              Icon(_maneuverIcon(step.maneuver), color: AppColors.white, size: ResponsiveHelper.iconSize(32)),
+              Container(
+                width: ResponsiveHelper.width(46),
+                height: ResponsiveHelper.width(46),
+                decoration: BoxDecoration(
+                  color: AppColors.white.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  _maneuverIcon(step.maneuver),
+                  color: AppColors.white,
+                  size: ResponsiveHelper.iconSize(28),
+                ),
+              ),
+
               SizedBox(width: ResponsiveHelper.width(12)),
+
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     if (controller.distanceToTurnMeters.value > 0)
                       Text(
                         _formatMeters(controller.distanceToTurnMeters.value),
-                        style: TextStyle(color: AppColors.white70, fontSize: ResponsiveHelper.fontSize(12)),
+                        style: TextStyle(
+                          color: AppColors.white70,
+                          fontSize: ResponsiveHelper.fontSize(12),
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
+
+                    SizedBox(height: ResponsiveHelper.height(3)),
+
                     Text(
                       step.instruction,
                       maxLines: 2,
@@ -309,7 +1101,7 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
                       style: TextStyle(
                         color: AppColors.white,
                         fontWeight: FontWeight.w700,
-                        fontSize: ResponsiveHelper.fontSize(17),
+                        fontSize: ResponsiveHelper.fontSize(16),
                       ),
                     ),
                   ],
@@ -318,16 +1110,13 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
             ],
           ),
         ),
-        /// then instruction==================================================================
+
         if (next != null)
           Container(
-            margin: EdgeInsets.only(
-              left: ResponsiveHelper.width(16),
-            top:ResponsiveHelper.width(16),
-            ),
+            margin: EdgeInsets.only(left: ResponsiveHelper.width(16)),
             padding: EdgeInsets.symmetric(
               horizontal: ResponsiveHelper.width(12),
-              vertical: ResponsiveHelper.height(6),
+              vertical: ResponsiveHelper.height(7),
             ),
             decoration: BoxDecoration(
               color: AppColors.white,
@@ -337,7 +1126,7 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.black.withValues(alpha: 0.1),
+                  color: AppColors.black.withValues(alpha: 0.10),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -348,10 +1137,20 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
               children: [
                 Text(
                   AppStrings.then.tr,
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: ResponsiveHelper.fontSize(12),color: AppColors.black),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: ResponsiveHelper.fontSize(12),
+                    color: AppColors.black87,
+                  ),
                 ),
-                SizedBox(width: ResponsiveHelper.width(4)),
-                Icon(_maneuverIcon(next.maneuver), size: ResponsiveHelper.iconSize(16)),
+
+                SizedBox(width: ResponsiveHelper.width(5)),
+
+                Icon(
+                  _maneuverIcon(next.maneuver),
+                  size: ResponsiveHelper.iconSize(16),
+                  color: AppColors.black87,
+                ),
               ],
             ),
           ),
@@ -361,10 +1160,15 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
 
   Widget _buildBottomBar() {
     final info = controller.routeInfo.value;
-    if (info == null) return const SizedBox.shrink();
+
+    if (info == null) {
+      return const SizedBox.shrink();
+    }
 
     final eta = info.durationSeconds != null
-        ? DateFormat('h:mm a').format(DateTime.now().add(Duration(seconds: info.durationSeconds!)))
+        ? DateFormat(
+            'h:mm a',
+          ).format(DateTime.now().add(Duration(seconds: info.durationSeconds!)))
         : null;
 
     return Container(
@@ -380,7 +1184,7 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.1),
+            color: AppColors.black.withValues(alpha: 0.10),
             blurRadius: 12,
             offset: const Offset(0, -4),
           ),
@@ -398,21 +1202,34 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
                 child: const Icon(Icons.close, color: AppColors.black87),
               ),
             ),
+
             Expanded(
               child: Column(
                 children: [
                   Text(
                     info.durationText,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: ResponsiveHelper.fontSize(20)),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: ResponsiveHelper.fontSize(20),
+                      color: AppColors.black87,
+                    ),
                   ),
+
                   SizedBox(height: ResponsiveHelper.height(2)),
+
                   Text(
-                    eta != null ? '${info.distanceText} • $eta' : info.distanceText,
-                    style: TextStyle(color: AppColors.greyShade600, fontSize: ResponsiveHelper.fontSize(13)),
+                    eta != null
+                        ? '${info.distanceText} • $eta'
+                        : info.distanceText,
+                    style: TextStyle(
+                      color: AppColors.greyShade600,
+                      fontSize: ResponsiveHelper.fontSize(13),
+                    ),
                   ),
                 ],
               ),
             ),
+
             GestureDetector(
               onTap: controller.fitRouteBounds,
               child: CircleAvatar(
@@ -431,7 +1248,9 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
     return Column(
       children: [
         _buildCompassButton(),
+
         SizedBox(height: ResponsiveHelper.height(10)),
+
         Obx(
           () => _PulsingVoiceButton(
             isOn: controller.isVoiceOn.value,
@@ -442,11 +1261,10 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
     );
   }
 
-  /// North-up â†’ small "N" compass face; rotated map â†’ red arrow rotated to
-  /// keep pointing at true north. Tapping either resets to north-up.
   Widget _buildCompassButton() {
     return Obx(() {
       final bearing = controller.cameraBearing.value;
+
       final isNorthUp = bearing.abs() < 1;
 
       return GestureDetector(
@@ -477,22 +1295,30 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
                         color: AppColors.black87,
                       ),
                     ),
-                    Icon(Icons.arrow_drop_up, color: AppColors.redAccent, size: ResponsiveHelper.iconSize(16)),
+                    Icon(
+                      Icons.arrow_drop_up,
+                      color: AppColors.redAccent,
+                      size: ResponsiveHelper.iconSize(16),
+                    ),
                   ],
                 )
               : Transform.rotate(
                   angle: -bearing * (math.pi / 180),
-                  child: Icon(Icons.navigation, color: AppColors.redAccent, size: ResponsiveHelper.iconSize(22)),
+                  child: Icon(
+                    Icons.navigation,
+                    color: AppColors.redAccent,
+                    size: ResponsiveHelper.iconSize(22),
+                  ),
                 ),
         ),
       );
     });
   }
 
-  ///speed=============================
   Widget _buildSpeedBadge() {
     return Obx(() {
       final speed = controller.speedKmh.value.round();
+
       return Container(
         width: ResponsiveHelper.width(56),
         height: ResponsiveHelper.width(56),
@@ -502,7 +1328,7 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
           border: Border.all(color: AppColors.greyShade300, width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: AppColors.black.withValues(alpha: 0.1),
+              color: AppColors.black.withValues(alpha: 0.10),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -513,11 +1339,18 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
           children: [
             Text(
               '$speed',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: ResponsiveHelper.fontSize(16),color: AppColors.black),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: ResponsiveHelper.fontSize(16),
+                color: AppColors.black87,
+              ),
             ),
             Text(
-              'km/h',
-              style: TextStyle(fontSize: ResponsiveHelper.fontSize(9), color: AppColors.greyShade600),
+              AppStrings.kmh.tr,
+              style: TextStyle(
+                fontSize: ResponsiveHelper.fontSize(9),
+                color: AppColors.greyShade600,
+              ),
             ),
           ],
         ),
@@ -526,56 +1359,71 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
   }
 
   Widget _buildModeSelector() {
-    return Container(
-      padding: EdgeInsets.all(ResponsiveHelper.padding(6)),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+    return Obx(
+      () => Container(
+        padding: EdgeInsets.all(ResponsiveHelper.padding(6)),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(
+            ResponsiveHelper.borderRadius(16),
           ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: TravelMode.values.map((mode) {
-          final isSelected = controller.selectedMode.value == mode;
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => controller.changeMode(mode),
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: ResponsiveHelper.width(4)),
-                padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.height(8)),
-                decoration: BoxDecoration(
-                  color: isSelected ? AppColors.blue : AppColors.transparent,
-                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      mode.icon,
-                      color: isSelected ? AppColors.white : AppColors.greyShade600,
-                      size: ResponsiveHelper.iconSize(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.black.withValues(alpha: 0.10),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: TravelMode.values.map((mode) {
+            final isSelected = controller.selectedMode.value == mode;
+
+            return Expanded(
+              child: GestureDetector(
+                onTap: () => controller.changeMode(mode),
+                child: Container(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: ResponsiveHelper.width(4),
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    vertical: ResponsiveHelper.height(8),
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected ? AppColors.blue : AppColors.transparent,
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.borderRadius(12),
                     ),
-                    SizedBox(height: ResponsiveHelper.height(2)),
-                    Text(
-                      mode.label,
-                      style: TextStyle(
-                        fontSize: ResponsiveHelper.fontSize(11),
-                        color: isSelected ? AppColors.white : AppColors.greyShade600,
-                        fontWeight: FontWeight.w600,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        mode.icon,
+                        color: isSelected
+                            ? AppColors.white
+                            : AppColors.greyShade600,
+                        size: ResponsiveHelper.iconSize(20),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: ResponsiveHelper.height(2)),
+                      Text(
+                        mode.label,
+                        style: TextStyle(
+                          fontSize: ResponsiveHelper.fontSize(11),
+                          color: isSelected
+                              ? AppColors.white
+                              : AppColors.greyShade600,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        }).toList(),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
@@ -594,28 +1442,53 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: ResponsiveHelper.iconSize(56), color: AppColors.greyShade400),
+            Icon(
+              icon,
+              size: ResponsiveHelper.iconSize(56),
+              color: AppColors.greyShade400,
+            ),
+
             SizedBox(height: ResponsiveHelper.height(16)),
+
             Text(
               message,
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.greyShade700, fontSize: ResponsiveHelper.fontSize(15)),
+              style: TextStyle(
+                color: AppColors.greyShade700,
+                fontSize: ResponsiveHelper.fontSize(15),
+              ),
             ),
+
             SizedBox(height: ResponsiveHelper.height(20)),
+
             ElevatedButton(
               onPressed: onAction,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.blue,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12))),
-                padding: ResponsiveHelper.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveHelper.borderRadius(12),
+                  ),
+                ),
+                padding: ResponsiveHelper.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
-              child: Text(actionLabel, style: const TextStyle(color: AppColors.white)),
+              child: Text(
+                actionLabel,
+                style: const TextStyle(color: AppColors.white),
+              ),
             ),
+
             if (secondaryLabel != null && onSecondaryAction != null) ...[
               SizedBox(height: ResponsiveHelper.height(8)),
               TextButton(
                 onPressed: onSecondaryAction,
-                child: Text(secondaryLabel, style: const TextStyle(color: AppColors.blue)),
+                child: Text(
+                  secondaryLabel,
+                  style: const TextStyle(color: AppColors.blue),
+                ),
               ),
             ],
           ],
@@ -625,8 +1498,6 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
   }
 }
 
-/// Voice-guidance toggle button — pulses gently while on, same as the
-/// speaker button's "listening" state in Google Maps navigation.
 class _PulsingVoiceButton extends StatefulWidget {
   final bool isOn;
   final VoidCallback onTap;
@@ -643,18 +1514,25 @@ class _PulsingVoiceButtonState extends State<_PulsingVoiceButton>
     vsync: this,
     duration: const Duration(milliseconds: 900),
   );
-  late final Animation<double> _scale =
-      Tween(begin: 1.0, end: 1.18).chain(CurveTween(curve: Curves.easeInOut)).animate(_controller);
+
+  late final Animation<double> _scale = Tween<double>(
+    begin: 1.0,
+    end: 1.18,
+  ).chain(CurveTween(curve: Curves.easeInOut)).animate(_controller);
 
   @override
   void initState() {
     super.initState();
-    if (widget.isOn) _controller.repeat(reverse: true);
+
+    if (widget.isOn) {
+      _controller.repeat(reverse: true);
+    }
   }
 
   @override
   void didUpdateWidget(covariant _PulsingVoiceButton oldWidget) {
     super.didUpdateWidget(oldWidget);
+
     if (widget.isOn && !_controller.isAnimating) {
       _controller.repeat(reverse: true);
     } else if (!widget.isOn) {
@@ -675,10 +1553,12 @@ class _PulsingVoiceButtonState extends State<_PulsingVoiceButton>
       onTap: widget.onTap,
       child: AnimatedBuilder(
         animation: _scale,
-        builder: (context, child) => Transform.scale(
-          scale: widget.isOn ? _scale.value : 1.0,
-          child: child,
-        ),
+        builder: (context, child) {
+          return Transform.scale(
+            scale: widget.isOn ? _scale.value : 1.0,
+            child: child,
+          );
+        },
         child: Container(
           width: ResponsiveHelper.width(44),
           height: ResponsiveHelper.width(44),
@@ -703,5 +1583,3 @@ class _PulsingVoiceButtonState extends State<_PulsingVoiceButton>
     );
   }
 }
-
-

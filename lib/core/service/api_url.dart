@@ -68,6 +68,17 @@ class ApiUrl {
 
 
   static const String register = '/auth/register';
+  static const String parkingMode = '/park-relay/parking-mode/me';
+  static const String saveParkingRelay = '/park-relay/saved-parking/me';
+  static const String handOfNearby = '/park-relay/handoffs/nearby';
+  static const String searchGetArea = '/park-relay/parking-areas/search';
+  static const String createHandoff = '/park-relay/handoffs';
+  static const String saveMyParking = '/park-relay/saved-parking';
+  static const String parkingSearching = '/park-relay/parking-mode/searching';
+  static const String statusIdle = '/park-relay/parking-mode/idle';
+  static  String submitParkingArea(String parkingAreaId) => '/park-relay/parking-areas/$parkingAreaId/ratings';
+  static  String getHandOff( {required String handoffId}) =>  '/park-relay/handoffs/$handoffId';
+  static  String acceptAndParkHandOff({required String handoffId}) =>  '/park-relay/handoffs/$handoffId/accept-and-park';
   static const String login = '/auth/signin';
   static const String chatList = '/auth/me';
   // Chat rooms pagination

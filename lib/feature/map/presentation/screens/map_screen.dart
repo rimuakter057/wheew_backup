@@ -161,7 +161,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
         setState(() => _isLocating = false);
 
         showCustomSnackBar(
-          'Please enable location service',
+          AppStrings.pleaseEnableLocationService.tr,
           isError: true,
         );
         return;
@@ -182,7 +182,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
         setState(() => _isLocating = false);
 
         showCustomSnackBar(
-          'Location permission denied',
+          AppStrings.locationPermissionDenied.tr,
           isError: true,
         );
         return;
@@ -235,10 +235,6 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     }
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-  // FLOW 1 — "Report a parking spot" (ParkingInfoDialog: free/paid/electric/
-  //          disabled facility) â†’ GET fetchParkingReport / POST addParking
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
   void _toggleParkingPin() {
     HapticFeedback.mediumImpact();
@@ -248,7 +244,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     _showParkingDialog();
   }
 
-  // â”€â”€ "Add Parking" button â†’ choose between the two existing flows â”€â”€â”€â”€â”€â”€â”€
+  // -- "Add Parking" button â†’ choose between the two existing flows -------
   // (FLOW 1 report-a-spot / FLOW 2 save-my-parking) instead of the old
   // always-visible two-pill layout.
   // ignore: unused_element
@@ -341,7 +337,10 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
           _stopPickingLocation();
 
           if (_pickedLocation == null && _gpsPosition == null) {
-            showCustomSnackBar('Location not available', isError: true);
+            showCustomSnackBar(
+              AppStrings.locationNotAvailable.tr,
+              isError: true,
+            );
             return;
           }
 
@@ -457,7 +456,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     });
 
     showCustomSnackBar(
-      'Tap on the map to select a location',
+      AppStrings.tapMapToSelectLocation.tr,
       isError: false,
     );
   }
@@ -646,7 +645,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
         backgroundColor: AppColors.white,
         body: Stack(
           children: [
-            /// â”€â”€ Map â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            /// -- Map ------------------------------------------------------
             if (!_isLocating && _gpsPosition == null)
               LocationOffPrompt(
                 onEnableLocation: () async {
@@ -682,9 +681,9 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                       icon: _parkedCarIcon ??
                           BitmapDescriptor.defaultMarkerWithHue(
                               BitmapDescriptor.hueAzure),
-                      infoWindow: const InfoWindow(
-                        title: 'My Saved Parking',
-                        snippet: 'Tap to view details & route',
+                      infoWindow: InfoWindow(
+                        title: AppStrings.mySavedParking.tr,
+                        snippet: AppStrings.tapToViewDetailsRoute.tr,
                       ),
                       onTap: () {
                         _showSavedParkingDetailsSheet(mySaved);
@@ -714,20 +713,20 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                 );
               }),
 
-            /// â”€â”€ GPS locating banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            /// -- GPS locating banner ---------------------------------------
             if (_isLocating) const LocatingBanner(),
 
-            /// â”€â”€ Pick location mode banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            /// -- Pick location mode banner ---------------------------------
             if (_isPickingLocation) const PickingLocationBanner(),
 
-            /// â”€â”€ Parking fetching indicator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            /// -- Parking fetching indicator --------------------------------
             Obx(
                   () => _parkingCtrl.isLoadingShowDetails.value
                   ? const FetchingParkingBanner()
                   : const SizedBox.shrink(),
             ),
 
-            /// â”€â”€ Selected reported parking info card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            /// -- Selected reported parking info card ---------------------
             Obx(() {
               final selected = _parkingCtrl.selectedReport.value;
               if (selected == null) return const SizedBox.shrink();
@@ -746,14 +745,14 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
               );
             }),
 
-            /// â”€â”€ Top-bar: search pill + notification bell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            /// -- Top-bar: search pill + notification bell -----------------
             if (_gpsPosition != null)
               MapTopBar(
                 searchController: _searchController,
                 onSearchTap: _showRadiusFilterSheet,
               ),
 
-            /// â”€â”€ Side controls: map type + current location â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            /// -- Side controls: map type + current location ----------------
             if (_gpsPosition != null)
               Obx(() => MapSideControls(
                 selectedMapType: _parkingCtrl.selectedMapType.value,
@@ -762,7 +761,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
               )),
 
 
-            /// â”€â”€ Action buttons cluster (Report Spot / Save My Parking) â”€â”€â”€â”€â”€
+            /// -- Action buttons cluster (Report Spot / Save My Parking) -----
             /// Bottom-centered above the nav bar, always — same position
             /// whether or not a bottom sheet is open.
             BottomSheetAwarePositioned(

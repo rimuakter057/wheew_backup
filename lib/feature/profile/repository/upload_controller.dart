@@ -676,6 +676,8 @@ import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/feature/profile/model/user_document.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 
+import '../../../utils/language/app_string.dart';
+
 class UploadDocumentController extends GetxController {
   // ─────────────────────────────────────────────
   // STATE MAPS (SCALABLE)
@@ -733,7 +735,7 @@ class UploadDocumentController extends GetxController {
       if (context.mounted) {
         CustomSnackbar.error(
           context: context,
-          message: 'Failed to load documents: $e',
+          message: '${AppStrings.failedToLoadDocuments.tr}$e',
         );
       }
     } finally {
@@ -789,9 +791,8 @@ class UploadDocumentController extends GetxController {
 
         if (!context.mounted) return;
         CustomSnackbar.success(
-
           context: context,
-          message: 'Document uploaded successfully',
+          message: AppStrings.documentUploadedSuccessfully.tr,
         );
 
         context.pop();
@@ -803,7 +804,7 @@ class UploadDocumentController extends GetxController {
       if (context.mounted) {
         CustomSnackbar.error(
           context: context,
-          message: 'Upload failed: $e',
+          message: '${AppStrings.uploadFailed.tr}$e',
         );
       }
     } finally {
@@ -859,7 +860,7 @@ class UploadDocumentController extends GetxController {
         if (!context.mounted) return;
         CustomSnackbar.success(
           context: context,
-          message: 'Document updated successfully',
+          message: AppStrings.documentUpdatedSuccessfully.tr,
         );
 
         context.pop();
@@ -871,7 +872,7 @@ class UploadDocumentController extends GetxController {
       if (context.mounted) {
         CustomSnackbar.error(
           context: context,
-          message: 'Update failed: $e',
+          message: '${AppStrings.uploadFailed.tr}$e',
         );
       }
     } finally {
@@ -983,25 +984,25 @@ class UploadDocumentController extends GetxController {
   String _fallbackMessage(int statusCode) {
     switch (statusCode) {
       case 400:
-        return 'Invalid request. Please check your information.';
+        return AppStrings.invalidRequest.tr;
       case 401:
-        return 'Unauthorized. Please sign in again.';
+        return AppStrings.unauthorizedPleaseSignInAgain.tr;
       case 403:
-        return 'You do not have permission to perform this action.';
+        return AppStrings.noPermissionToPerformAction.tr;
       case 404:
-        return 'The requested resource was not found.';
+        return AppStrings.requestedResourceNotFound.tr;
       case 409:
-        return 'This document already exists.';
+        return AppStrings.documentAlreadyExists.tr;
       case 422:
-        return 'Please check the entered information and try again.';
+        return AppStrings.checkInformationAndTryAgain.tr;
       case 500:
-        return 'Internal server error. Please try again later.';
+        return AppStrings.internalServerError.tr;
       case 502:
       case 503:
       case 504:
-        return 'Server is temporarily unavailable. Please try again later.';
+        return AppStrings.serverTemporarilyUnavailable.tr;
       default:
-        return 'Something went wrong. Please try again.';
+        return AppStrings.somethingWentWrong.tr;
     }
   }
 }

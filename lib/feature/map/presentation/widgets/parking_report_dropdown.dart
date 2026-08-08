@@ -49,7 +49,7 @@
 //     return cost == null || cost == '' || cost == '0' || cost == 'FREE';
 //   }
 //
-//   /// â”€â”€ Open in-app navigation (real route drawn on our own map) â”€â”€
+//   /// -- Open in-app navigation (real route drawn on our own map) --
 //   void _openNavigation(BuildContext context) {
 //     final dynamic rawLat = report['latitude'];
 //     final dynamic rawLng = report['longitude'];
@@ -604,13 +604,17 @@ class ParkingReportDropdown extends StatelessWidget {
       );
       if (success) {
         onClose();
-        CustomSnackbar.success(context: context, message: 'Parking spot saved');
+
+        CustomSnackbar.success(
+          context: context,
+          message: AppStrings.parkingSpotSaved.tr,
+        );
       } else {
         CustomSnackbar.error(
           context: context,
           message: ctrl.submitMessage.value.isNotEmpty
               ? ctrl.submitMessage.value
-              : 'Failed to save parking spot',
+              : AppStrings.failedToSaveParkingSpot.tr,
         );
       }
     }

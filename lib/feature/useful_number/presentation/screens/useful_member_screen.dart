@@ -282,15 +282,22 @@ class _UsefulNumberTile extends StatelessWidget {
 
   Future<void> _callNumber(BuildContext context) async {
     final uri = Uri(scheme: 'tel', path: item.phone);
+
     try {
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri);
       } else if (context.mounted) {
-        CustomSnackbar.error(context: context, message: 'Could not launch dialer.');
+        CustomSnackbar.error(
+          context: context,
+          message: AppStrings.couldNotLaunchDialer.tr,
+        );
       }
     } catch (e) {
       if (context.mounted) {
-        CustomSnackbar.error(context: context, message: 'Could not launch dialer.');
+        CustomSnackbar.error(
+          context: context,
+          message: AppStrings.couldNotLaunchDialer.tr,
+        );
       }
     }
   }

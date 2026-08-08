@@ -1,5 +1,8 @@
 class AppStrings {
 
+
+
+
   static const String noFaqsFound = 'noFaqsFound';
 
   static const String couldNotLoadImage = 'couldNotLoadImage';
@@ -1092,4 +1095,71 @@ class AppStrings {
 
   // -------- Auth --------
   static const String loginSuccessful = 'login_successful';
+
+
+
+  static const String locationNotAvailable =
+      'locationNotAvailable';
+
+  static const String tapMapToSelectLocation =
+      'tapMapToSelectLocation';
+
+  static const String mySavedParking =
+      'mySavedParking';
+
+  static const String tapToViewDetailsRoute =
+      'tapToViewDetailsRoute';
+  static const String savePark = 'savePark';
+
+  static const String parkingSpotSaved = 'parkingSpotSaved';
+  static const String failedToSaveParkingSpot = 'failedToSaveParkingSpot';
+
+
+
+
+  static const String duration = 'duration';
+  static const String mins = 'mins';
+  static const String sessionStatus = 'sessionStatus';
+
+  static const String na = 'na';
+  static const String navigationLocationNotAvailable =
+      'navigationLocationNotAvailable';
+  static const String startWalkingNavigation =
+      'startWalkingNavigation';
+
+  static const String youHaveArrived = 'youHaveArrived';
+  static const String minSlower = 'minSlower';
+  static const String minFaster = 'minFaster';
+  static const kmh = 'kmh';
+  static const String licensePlateNotFound = 'licensePlateNotFound';
+
+  static const String noSavedParkingsYet = 'noSavedParkingsYet';
+  static const String saveParking = 'saveParking';
+  static const String failedToLoadSavedParkings = 'failedToLoadSavedParkings';
+  static const String couldNotOpenLink = 'couldNotOpenLink';
+  static const String noAppCanOpenThisLink = 'noAppCanOpenThisLink';
+
+
+
+
+  static const String invalidRequest = 'invalidRequest';
+  static const String unauthorizedPleaseSignInAgain = 'unauthorizedPleaseSignInAgain';
+  static const String noPermissionToPerformAction = 'noPermissionToPerformAction';
+  static const String requestedResourceNotFound = 'requestedResourceNotFound';
+  static const String documentAlreadyExists = 'documentAlreadyExists';
+  static const String checkInformationAndTryAgain = 'checkInformationAndTryAgain';
+  static const String internalServerError = 'internalServerError';
+  static const String serverTemporarilyUnavailable = 'serverTemporarilyUnavailable';
+  static const String failedToLoadQrCard = 'failedToLoadQrCard';
+  static const String somethingWentWrongWhileLoadingQrCard =
+      'somethingWentWrongWhileLoadingQrCard';
+  static const String invalidPlateNumber = 'invalidPlateNumber';
+
+
+
+  static const String qrCardNotReady =
+      'qrCardNotReady';
+
+  static const String couldNotLaunchDialer = 'couldNotLaunchDialer';
+
 }

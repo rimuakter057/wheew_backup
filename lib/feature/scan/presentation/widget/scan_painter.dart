@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-/// â”€â”€â”€ Corner Painter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/// --- Corner Painter -----------------------------------------------------------
 
 class CornerPainter extends CustomPainter {
   final Color color;
@@ -84,7 +84,7 @@ class CornerPainter extends CustomPainter {
           old.strokeWidth != strokeWidth;
 }
 
-/// â”€â”€â”€ Camera Error Widget â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/// --- Camera Error Widget ------------------------------------------------------
 
 class CameraErrorWidget extends StatelessWidget {
   final double boxSize;

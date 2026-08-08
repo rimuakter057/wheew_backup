@@ -39,21 +39,30 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
 
 
 
-            CustomSnackbar.error(context: context, message: 'Could not open link',);
+            CustomSnackbar.error(
+              context: context,
+              message: AppStrings.couldNotOpenLink.tr,
+            );
 
 
           }
         } else if (mounted) {
 
 
-          CustomSnackbar.error(context: context, message:     'No app can open this link',);
+          CustomSnackbar.error(
+            context: context,
+            message: AppStrings.noAppCanOpenThisLink.tr,
+          );
 
         }
       } catch (_) {
         if (mounted) {
 
 
-          CustomSnackbar.error(context: context, message: 'Could not open link',);
+          CustomSnackbar.error(
+            context: context,
+            message: AppStrings.couldNotOpenLink.tr,
+          );
 
         }
       }

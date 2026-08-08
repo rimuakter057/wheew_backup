@@ -67,7 +67,7 @@ class CustomUploadCard extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€ Internal shell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- Internal shell -----------------------------------------------------------
 
 class _CardShell extends StatelessWidget {
   final _CardState   state;
@@ -92,6 +92,7 @@ class _CardShell extends StatelessWidget {
     this.iconPath,
     this.isOwner = false,
     this.showCard = true,
+
   });
 
   // colours per state
@@ -129,7 +130,7 @@ class _CardShell extends StatelessWidget {
     if (!ok && context.mounted) {
 
 
-      CustomSnackbar.error(context: context, message:  'Could not open document',);
+      CustomSnackbar.error(context: context, message:  AppStrings.couldNotOpenDocument.tr);
 
     }
   }
@@ -167,7 +168,7 @@ class _CardShell extends StatelessWidget {
 
             SizedBox(width: ResponsiveHelper.spacing(14)),
 
-            // â”€â”€ Text â”€â”€
+            // -- Text --
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -188,7 +189,7 @@ class _CardShell extends StatelessWidget {
 
             SizedBox(width: ResponsiveHelper.spacing(8)),
 
-            // â”€â”€ Right action â”€â”€
+            // -- Right action --
             _buildTrailing(context),
           ],
         ),

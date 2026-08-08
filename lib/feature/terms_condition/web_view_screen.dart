@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/share/widgets/custom_appbar/custom_appbar.dart';
@@ -29,31 +30,35 @@ class _WebViewScreenState extends State<WebViewScreen> {
         s == 'geo';
   }
 
+
+
+
   void _launchExternal(Uri uri) {
-    Future<void> run() async {
+    Future run() async {
       try {
         if (await canLaunchUrl(uri)) {
-          final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+          final ok = await launchUrl(
+            uri,
+            mode: LaunchMode.externalApplication,
+          );
+
           if (!ok && mounted) {
-            Get.snackbar(
-              'Error',
-              'Could not open link',
-              snackPosition: SnackPosition.BOTTOM,
+            CustomSnackbar.error(
+              context: context,
+              message: AppStrings.couldNotOpenLink.tr,
             );
           }
         } else if (mounted) {
-          Get.snackbar(
-            'Error',
-            'No app can open this link',
-            snackPosition: SnackPosition.BOTTOM,
+          CustomSnackbar.error(
+            context: context,
+            message: AppStrings.noAppCanOpenThisLink.tr,
           );
         }
       } catch (_) {
         if (mounted) {
-          Get.snackbar(
-            'Error',
-            'Could not open link',
-            snackPosition: SnackPosition.BOTTOM,
+          CustomSnackbar.error(
+            context: context,
+            message: AppStrings.couldNotOpenLink.tr,
           );
         }
       }

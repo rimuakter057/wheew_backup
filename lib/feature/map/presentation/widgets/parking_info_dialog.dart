@@ -50,7 +50,7 @@ class ParkingInfoDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // â”€â”€ Drag handle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // -- Drag handle ------------------------------------------
               Center(
                 child: Container(
                   width: ResponsiveHelper.width(40),
@@ -75,7 +75,7 @@ class ParkingInfoDialog extends StatelessWidget {
               ),
               SizedBox(height: ResponsiveHelper.spacing(18)),
 
-              // â”€â”€ Location source row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // -- Location source row ----------------------------------
               GestureDetector(
                 onTap: onPickOnMap,
                 child: Container(
@@ -148,7 +148,7 @@ class ParkingInfoDialog extends StatelessWidget {
 
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
-              // â”€â”€ Parking Name â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // -- Parking Name ------------------------------------------
               Text(
                 'Parking Name',
                 style: GoogleFonts.poppins(
@@ -188,7 +188,7 @@ class ParkingInfoDialog extends StatelessWidget {
 
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
-              // â”€â”€ Parking Cost â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // -- Parking Cost ------------------------------------------
               Text(
                 AppStrings.mapParkingCost.tr,
                 style: GoogleFonts.poppins(
@@ -219,7 +219,7 @@ class ParkingInfoDialog extends StatelessWidget {
               ),
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
-              // â”€â”€ Electric Charging + Disabled Facility (grouped card) â”€â”€
+              // -- Electric Charging + Disabled Facility (grouped card) --
               Container(
                 decoration: BoxDecoration(
                gradient: AppColors.containerGradient,
@@ -274,7 +274,7 @@ class ParkingInfoDialog extends StatelessWidget {
               ],
               SizedBox(height: ResponsiveHelper.spacing(24)),
 
-              // â”€â”€ Drop Pin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // -- Drop Pin ----------------------------------------------
               CustomGradientButton(
                 onPressed: onSubmit,
                 isLoading: controller.isLoading.value,

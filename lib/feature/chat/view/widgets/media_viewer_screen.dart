@@ -45,7 +45,7 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
       widget.fileName ??
           widget.fileUrl.split('/').last.split('?').first;
 
-  // â”€â”€ Save image to gallery using `gal` â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // -- Save image to gallery using `gal` --------------------------------------
   Future<void> _saveImage() async {
     final hasAccess = await Gal.hasAccess(toAlbum: false);
     if (!hasAccess) {
@@ -91,7 +91,7 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
     }
   }
 
-  // â”€â”€ Download PDF then open with url_launcher â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // -- Download PDF then open with url_launcher -------------------------------
   Future<void> _downloadAndOpenPdf() async {
     if (Platform.isAndroid) {
       final status = await Permission.storage.request();
@@ -249,7 +249,7 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
     );
   }
 
-  // â”€â”€ PDF viewer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // -- PDF viewer -------------------------------------------------------------
 
   Widget _buildPdfViewer() {
     return Center(

@@ -48,7 +48,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //       child: Row(
 //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //         children: [
-//           // â”€â”€ Back + Avatar + Name â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//           // -- Back + Avatar + Name ------------------------
 //           Row(
 //             children: [
 //               IconButton(
@@ -100,7 +100,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 //             ],
 //           ),
 //
-//           // â”€â”€ Popup Menu â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//           // -- Popup Menu ----------------------------------
 //           PopupMenuButton<String>(
 //             icon: Icon(Icons.more_vert, color: AppColors.black),
 //             onSelected: (value) async {
@@ -340,7 +340,7 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // â”€â”€ View Profile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                    // -- View Profile ------------------------------
                     InkWell(
                       onTap: () {
                         Navigator.pop(context);

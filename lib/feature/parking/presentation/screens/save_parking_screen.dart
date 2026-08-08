@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
@@ -11,6 +12,7 @@ import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
+import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SaveParkingScreen extends StatefulWidget {
@@ -109,7 +111,7 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
       } else if (mounted) {
         CustomSnackbar.error(
           context: context,
-          message: 'Failed to load saved parkings (${response.statusCode})',
+          message: '${AppStrings.failedToLoadSavedParkings.tr} (${response.statusCode})',
         );
       }
     } catch (e) {
@@ -126,7 +128,7 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
     }
   }
 
-  // â”€â”€ Field mapping (real backend data, no design change) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // -- Field mapping (real backend data, no design change) ------------------
 
   String _distanceLabel(Map<String, dynamic> location) {
     if (_userPosition == null) return '--';
@@ -278,7 +280,7 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
                   children: [
                     Center(
                       child: Text(
-                        'Saved Parkings',
+                        AppStrings.saveParking.tr,
                         style: context.titleMedium.copyWith(color: AppColors.black),
                       ),
                     ),
@@ -288,7 +290,8 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
                         padding: ResponsiveHelper.symmetric(vertical: 40),
                         child: Center(
                           child: Text(
-                            'No saved parkings yet',
+                        AppStrings.noSavedParkingsYet.tr,
+
                             style: GoogleFonts.poppins(
                               color: AppColors.black.withValues(alpha: 0.6),
                             ),

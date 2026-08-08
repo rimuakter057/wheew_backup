@@ -198,7 +198,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                             child: GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onTap: () {
-                                // â”€â”€ enter search mode: show the floating button â”€â”€
+                                // -- enter search mode: show the floating button --
                                 showFindParkingButton.value = true;
 
                                 RadiusFilterSheet.show(
@@ -213,12 +213,12 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                                       // radius — parking areas use a fixed radius.
                                       _parkingShowCtrl.fetchNearbyHandoffsOnly(lat, lng);
                                     }
-                                    // â”€â”€ sheet applied: hide the floating button â”€â”€
+                                    // -- sheet applied: hide the floating button --
                                     showFindParkingButton.value = false;
 
                                   },
                                 ).then((_) {
-                                  // â”€â”€ sheet dismissed (swipe/tap outside): hide button â”€â”€
+                                  // -- sheet dismissed (swipe/tap outside): hide button --
                                   showFindParkingButton.value = false;
                                 });
                               },
@@ -348,7 +348,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       ),
                     ),
 
-                  /// â”€â”€ Active spot details card overlay (floating above bottom nav) â”€â”€
+                  /// -- Active spot details card overlay (floating above bottom nav) --
                   Obx(() {
                     final cardData = _parkingShowCtrl.activeSpotDetailsCard.value;
                     if (cardData == null) return const SizedBox.shrink();
@@ -504,10 +504,10 @@ class _NotificationBellButton extends StatelessWidget {
   }
 }
 
-// â”€â”€ SEARCHING-mode glow frame: gradient-colored (blue â†’ white â†’ purple),
+// -- SEARCHING-mode glow frame: gradient-colored (blue â†’ white â†’ purple),
 //    stroke width waves irregularly around the perimeter and the wave
 //    travels over time — same base pulsing width/timing as the old solid
-//    Border.all() version, just not a uniform line anymore. â”€â”€
+//    Border.all() version, just not a uniform line anymore. --
 class _WavyGradientBorderPainter extends CustomPainter {
   final double t; // 0..1 "breathing" phase — same as the old glowWidth calc
   final double wavePhase; // rotates the wave around the perimeter over time
@@ -568,6 +568,7 @@ class _WavyGradientBorderPainter extends CustomPainter {
         ..strokeCap = StrokeCap.round
         ..maskFilter = MaskFilter.blur(BlurStyle.normal, strokeWidth * 0.15);
       canvas.drawPath(segmentPath, corePaint);
+
     }
   }
 

@@ -475,7 +475,7 @@ class MessageBubble extends StatelessWidget {
   }
 }
 
-// â”€â”€ Voice Bubble â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Voice Bubble -------------------------------------------------------------
 
 class _VoiceBubble extends StatefulWidget {
   final String audioUrl;
@@ -701,7 +701,7 @@ class _VoiceBubbleState extends State<_VoiceBubble> {
 
           SizedBox(width: ResponsiveHelper.spacing(10)),
 
-          // â”€â”€ Waveform + time â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // -- Waveform + time ------------------------------------
 
           Expanded(
             child: Column(

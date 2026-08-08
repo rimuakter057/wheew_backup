@@ -1,5 +1,5 @@
 ﻿// widgets/create_group_dialog.dart
-// â”€â”€ à¦¦à¦¾à¦¯à¦¼à¦¿à¦¤à§à¦¬: Group à¦¤à§ˆà¦°à¦¿à¦° dialog à¦¦à§‡à¦–à¦¾à¦¯à¦¼ â”€â”€
+// -- à¦¦à¦¾à¦¯à¦¼à¦¿à¦¤à§à¦¬: Group à¦¤à§ˆà¦°à¦¿à¦° dialog à¦¦à§‡à¦–à¦¾à¦¯à¦¼ --
 //              Group name validate à¦•à¦°à§‡ controller.createGroup() call à¦•à¦°à§‡
 
 import 'dart:io';
@@ -69,7 +69,7 @@ void showCreateGroupDialog({
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // â”€â”€ Close button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                  // -- Close button ----------------------------
                   Align(
                     alignment: Alignment.topRight,
                     child: GestureDetector(

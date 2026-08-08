@@ -302,7 +302,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // â”€â”€ App Bar: logo + create group button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // -- App Bar: logo + create group button -----------------
       appBar: ChatListAppBar(
 
         onCreateGroupTap: () =>
@@ -393,10 +393,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
           onRefresh: () => controller.fetchChatList(refresh: true),
           child: Column(
             children: [
-              // â”€â”€ Search Bar: tap à¦•à¦°à¦²à§‡ search screen à¦ à¦¯à¦¾à¦¯à¦¼ â”€â”€â”€â”€
+              // -- Search Bar: tap à¦•à¦°à¦²à§‡ search screen à¦ à¦¯à¦¾à¦¯à¦¼ ----
               //const ChatListSearchBar(),
 
-              // â”€â”€ Message Center: Send Message / Receive Request tabs â”€â”€
+              // -- Message Center: Send Message / Receive Request tabs --
               // InkWell(
               //   onTap: () => context.pushNamed(RouteName.messageCenter),
               //   child: Padding(
@@ -477,7 +477,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 ),
               ),
 
-              // â”€â”€ Chat List â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // -- Chat List ------------------------------------
               Expanded(
             child: Obx(() {
 
