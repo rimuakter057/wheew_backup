@@ -85,7 +85,7 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                 ),
               ),
               title: Text(
-                'Sent Requests',
+                AppStrings.sentRequests.tr,
                 style: GoogleFonts.poppins(
                   color: AppColors.black87,
                   fontWeight: FontWeight.w700,
@@ -110,8 +110,8 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                 ),
                 child: Text(
                   pendingRequests.isNotEmpty
-                      ? 'Sent(${pendingRequests.length.toString().padLeft(2, '0')})'
-                      : 'Sent',
+                      ? '${AppStrings.sent.tr}(${pendingRequests.length.toString().padLeft(2, '0')})'
+                      : AppStrings.sent.tr,
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(14),
                     fontWeight: FontWeight.w600,
@@ -227,10 +227,10 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
               // âœ… filtered list à¦¥à§‡à¦•à§‡ item à¦¨à§‡à¦“à¦¯à¦¼à¦¾ à¦¹à¦šà§à¦›à§‡
               final request = pendingRequests[index];
               final receiver = request['receiver'] ?? {};
-              final name = receiver['nick_name'] ?? 'Plate User';
+              final name = receiver['nick_name'] ?? AppStrings.unknown.tr;
               final avatar = receiver['avatar'] ?? '';
               final message = request['firstMessage'] ?? '';
-              final status = request['status'] ?? 'PENDING';
+              final status = request['status'] ??   AppStrings.pending.tr;
 
               return GestureDetector(
                 onTap: () {
@@ -365,7 +365,7 @@ class _SentMessageRequestsScreenState extends State<SentMessageRequestsScreen> {
                             ],
                           ),
                           child: Text(
-                            'Message',
+                            AppStrings.message.tr,
                             style: GoogleFonts.poppins(
                               color: AppColors.white,
                               fontWeight: FontWeight.w600,

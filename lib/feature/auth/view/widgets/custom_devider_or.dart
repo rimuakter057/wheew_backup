@@ -1,14 +1,17 @@
-﻿import 'package:platchatapp/utils/color/app_colors.dart';
+﻿import 'package:get/get.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../utils/language/app_string.dart';
+
 class CustomDividerOr extends StatelessWidget {
-  final String text;
+  final String? text;
   final Color dividerColor;
   final Color textColor;
 
   const CustomDividerOr({
     super.key,
-    this.text = "OR",
+    this.text,
     this.dividerColor = const Color(0xFFD9D9D9),
     this.textColor = AppColors.grey,
   });
@@ -26,7 +29,7 @@ class CustomDividerOr extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
-            text,
+            text ?? AppStrings.or.tr,
             style: TextStyle(
               color: textColor,
               fontWeight: FontWeight.w500,

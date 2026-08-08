@@ -150,7 +150,7 @@ class ChatTile extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            'Blocked',
+                           AppStrings.blocked.tr,
                             style: GoogleFonts.poppins(
                               fontSize: ResponsiveHelper.fontSize(11),
                               fontWeight: FontWeight.w500,

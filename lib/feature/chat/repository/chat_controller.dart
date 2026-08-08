@@ -118,30 +118,42 @@ class ChatController extends GetxController {
       );
 
       final statusCode = response.statusCode;
-      if (statusCode == 200 || statusCode == 201) {
 
+      if (statusCode == 200 || statusCode == 201) {
         CustomSnackbar.success(
           context: context,
-          message: 'Member added successfully',
+          message: AppStrings.memberAddedSuccessfully.tr,
         );
+
         fetchChatList(refresh: true);
         return true;
       } else {
-        String errorMessage = 'Member could not be added';
+        String errorMessage = AppStrings.memberCouldNotBeAdded.tr;
+
         try {
           final decoded = jsonDecode(response.body);
-          errorMessage = decoded['message'] ?? decoded['error'] ?? errorMessage;
+
+          errorMessage =
+              decoded['message'] ??
+                  decoded['error'] ??
+                  errorMessage;
         } catch (_) {}
 
-        CustomSnackbar.error(context: context, message: errorMessage);
+        CustomSnackbar.error(
+          context: context,
+          message: errorMessage,
+        );
+
         return false;
       }
     } catch (e) {
       debugPrint('addGroupMember error: $e');
+
       CustomSnackbar.error(
         context: context,
-        message: 'Failed to add member. Try again.',
+        message: AppStrings.failedToAddMember.tr,
       );
+
       return false;
     } finally {
       isAddingMember.value = false;
@@ -917,11 +929,11 @@ class ChatController extends GetxController {
 
         CustomSnackbar.success(
           context: context,
-          message: 'Message deleted successfully',
+          message: AppStrings.messageDeletedSuccessfully.tr,
         );
         return true;
       } else {
-        String errMsg = 'Failed to delete message';
+        String errMsg = AppStrings.failedToDeleteMessage.tr;
         try {
           errMsg = response['data']['message'] ?? errMsg;
         } catch (_) {}
@@ -930,7 +942,10 @@ class ChatController extends GetxController {
       }
     } catch (e) {
       debugPrint('deleteMessageApi error: $e');
-      CustomSnackbar.error(context: context, message: 'An error occurred while deleting the message');
+      CustomSnackbar.error(
+        context: context,
+        message: AppStrings.errorDeletingMessage.tr,
+      );
       return false;
     } finally {
       isDeletingMessage.value = false;
@@ -1888,11 +1903,11 @@ class ChatController extends GetxController {
 
       CustomSnackbar.success(
         context: context,
-        message: "Successfully  Leave This Group",
+        message: AppStrings.successfullyLeftThisGroup.tr,
       );
     } else {
       final message =
-          response['message'] ?? response['message'] ?? 'Something went wrong';
+          response['message'] ?? AppStrings.somethingWentWrong.tr;
       if (context.mounted) {
         ScaffoldMessenger.of(
           context,
@@ -1910,7 +1925,7 @@ class ChatController extends GetxController {
     final Response response = await _repo.searchUsers(
       query: query,
       page: 1,
-      limit: 10,
+      limit: 20,
     );
 
     if (response.statusCode == 200) {
@@ -2243,10 +2258,13 @@ class ChatController extends GetxController {
           searchResults[index] = u;
           searchResults.refresh();
         }
-        CustomSnackbar.success(context: context, message: 'Message request sent successfully!');
+        CustomSnackbar.success(
+          context: context,
+          message: AppStrings.messageRequestSentSuccessfully.tr,
+        );
         return true;
       } else {
-        String errMsg = 'Failed to send message request';
+        String errMsg = AppStrings.failedToSendMessageRequest.tr;
         try {
           final decoded = jsonDecode(response.body);
           errMsg = decoded['message'] ?? decoded['error'] ?? errMsg;
@@ -2256,7 +2274,10 @@ class ChatController extends GetxController {
       }
     } catch (e) {
       debugPrint('createMessageRequest error: $e');
-      CustomSnackbar.error(context: context, message: 'Failed to connect. Please try again.');
+      CustomSnackbar.error(
+        context: context,
+        message: AppStrings.failedToConnect.tr,
+      );
       return false;
     }
   }
@@ -2272,12 +2293,12 @@ class ChatController extends GetxController {
         body: {},
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
-        CustomSnackbar.success(context: context, message: 'Request accepted!');
+        CustomSnackbar.success(context: context, message: AppStrings.requestAccepted.tr);
         fetchMessageRequestInbox(refresh: true);
         fetchChatList(refresh: true);
         return true;
       } else {
-        String errMsg = 'Failed to accept message request';
+        String errMsg = AppStrings.failedToAcceptMessageRequest.tr;
         try {
           final decoded = jsonDecode(response.body);
           errMsg = decoded['message'] ?? decoded['error'] ?? errMsg;
@@ -2287,7 +2308,10 @@ class ChatController extends GetxController {
       }
     } catch (e) {
       debugPrint('acceptMessageRequest error: $e');
-      CustomSnackbar.error(context: context, message: 'Failed to accept request.');
+      CustomSnackbar.error(
+        context: context,
+        message: AppStrings.failedToAcceptRequest.tr,
+      );
       return false;
     }
   }
@@ -2302,11 +2326,15 @@ class ChatController extends GetxController {
         body: {},
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
-        CustomSnackbar.success(context: context, message: 'Request declined.');
+        CustomSnackbar.success(
+          context: context,
+          message: AppStrings.requestDeclined.tr,
+        );
         fetchMessageRequestInbox(refresh: true);
         return true;
       } else {
-        String errMsg = 'Failed to decline message request';
+        String errMsg =
+            AppStrings.failedToDeclineMessageRequest.tr;
         try {
           final decoded = jsonDecode(response.body);
           errMsg = decoded['message'] ?? decoded['error'] ?? errMsg;
@@ -2316,7 +2344,10 @@ class ChatController extends GetxController {
       }
     } catch (e) {
       debugPrint('declineMessageRequest error: $e');
-      CustomSnackbar.error(context: context, message: 'Failed to decline request.');
+      CustomSnackbar.error(
+        context: context,
+        message: AppStrings.failedToDeclineRequest.tr,
+      );
       return false;
     }
   }

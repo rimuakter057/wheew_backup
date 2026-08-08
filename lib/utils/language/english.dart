@@ -1,6 +1,139 @@
 import 'package:platchatapp/utils/language/app_string.dart';
 
 final Map<String, String> english = {
+  AppStrings.noFaqsFound: "No FAQs found",
+  AppStrings.couldNotLoadImage: "Could not load image",
+
+  AppStrings.downloads: "Downloads",
+
+  AppStrings.ratingRequestPendingInfo:
+  "You have rated this request. Waiting for admin to review and update the final status.",
+
+  AppStrings.ratingRequestCompleteInfo:
+  "This request has been completed and approved by the admin.",
+
+  AppStrings.ratingRequestNoStatusInfo:
+  "No status yet. Once you submit a rating, the status will update automatically.",
+
+  AppStrings.camera: "Camera",
+  AppStrings.document: "Document",
+
+  AppStrings.sent: "Sent",
+  AppStrings.plateUser: "Plate User",
+  AppStrings.pending: "Pending",
+  AppStrings.requests: "Requests",
+
+
+  AppStrings.requestAccepted:
+  "Request accepted!",
+
+  AppStrings.failedToAcceptMessageRequest:
+  "Failed to accept message request",
+
+  AppStrings.failedToAcceptRequest:
+  "Failed to accept request.",
+
+  AppStrings.requestRejected:
+  "Request rejected.",
+
+  AppStrings.failedToRejectMessageRequest:
+  "Failed to reject message request",
+
+  AppStrings.failedToRejectRequest:
+  "Failed to reject request.",
+
+  AppStrings.userBlocked:
+  "User blocked.",
+
+  AppStrings.failedToBlock:
+  "Failed to block",
+
+  AppStrings.requestWithdrawn:
+  "Request withdrawn.",
+
+  AppStrings.failedToWithdrawMessageRequest:
+  "Failed to withdraw message request",
+
+  AppStrings.failedToWithdrawRequest:
+  "Failed to withdraw request.",
+
+
+  AppStrings.failedToUpdateGroup:
+  "Failed to update group",
+
+  AppStrings.groupNameCannotBeEmpty:
+  "Group name cannot be empty",
+
+  AppStrings.groupUpdatedSuccessfully:
+  "Group updated successfully",
+
+  AppStrings.errorUpdatingGroup:
+  "An error occurred while updating group",
+
+  AppStrings.memberRemovedSuccessfully:
+  "Member removed successfully",
+
+  AppStrings.couldNotRemoveMember:
+  "Could not remove member",
+
+  AppStrings.failedToRemoveMember:
+  "Failed to remove member",
+
+  AppStrings.all:
+  "All",
+
+  AppStrings.individual:
+  "Individual",
+  AppStrings.failedToSendMessageRequest:
+  "Failed to send message request",
+  AppStrings.messageDeletedSuccessfully:
+  "Message deleted successfully",
+
+  AppStrings.failedToDeleteMessage:
+  "Failed to delete message",
+
+  AppStrings.errorDeletingMessage:
+  "An error occurred while deleting the message",
+
+  // Group
+  AppStrings.successfullyLeftThisGroup:
+  "Successfully left this group",
+
+
+
+  // Message Request
+  AppStrings.messageRequestSentSuccessfully:
+  "Message request sent successfully!",
+
+  AppStrings.failedToConnect:
+  "Failed to connect. Please try again.",
+
+  // AppStrings.requestAccepted:
+  // "Request accepted!",
+  //
+  // AppStrings.failedToAcceptMessageRequest:
+  // "Failed to accept message request",
+  //
+  // AppStrings.failedToAcceptRequest:
+  // "Failed to accept request.",
+
+  AppStrings.requestDeclined:
+  "Request declined.",
+
+  AppStrings.failedToDeclineMessageRequest:
+  "Failed to decline message request",
+
+  AppStrings.failedToDeclineRequest:
+  "Failed to decline request.",
+
+  AppStrings.memberAddedSuccessfully:
+  "Member added successfully",
+
+  AppStrings.memberCouldNotBeAdded:
+  "Member could not be added",
+
+  AppStrings.failedToAddMember:
+  "Failed to add member. Try again.",
 
   AppStrings.deleteAccount: "Delete Account",
   AppStrings.warning: "Warning",

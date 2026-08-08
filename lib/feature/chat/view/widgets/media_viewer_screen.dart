@@ -142,12 +142,10 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
         if (await canLaunchUrl(webUri)) await launchUrl(webUri);
       }
 
-      Get.snackbar(
-        AppStrings.saved.tr,
-        '${AppStrings.savedTo.tr} Downloads',
-        backgroundColor: AppColors.green,
-        colorText: AppColors.white,
-        snackPosition: SnackPosition.BOTTOM,
+      CustomSnackbar.success(
+       message:
+        '${AppStrings.savedTo.tr} ${AppStrings.downloads.tr}',
+     context: context
       );
     } catch (e) {
       if (!mounted) return;
@@ -157,13 +155,7 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
   }
 
   void _showSnackError(String msg) {
-    Get.snackbar(
-      AppStrings.error.tr,
-      msg,
-      backgroundColor: AppColors.red,
-      colorText: AppColors.white,
-      snackPosition: SnackPosition.BOTTOM,
-    );
+ CustomSnackbar.error(context: context, message:    msg,);
   }
 
   @override
@@ -238,13 +230,15 @@ class _MediaViewerScreenState extends State<MediaViewerScreen> {
               placeholder: (_, __) => const Center(
                 child: CircularProgressIndicator(color: AppColors.white),
               ),
-              errorWidget: (_, __, ___) => const Column(
+              errorWidget: (_, __, ___) =>  Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.broken_image_rounded,
                       color: AppColors.white54, size: 64),
                   SizedBox(height: 12),
-                  Text('Could not load image',
+
+
+                  Text(  AppStrings.couldNotLoadImage.tr,
                       style: TextStyle(color: AppColors.white54)),
                 ],
               ),

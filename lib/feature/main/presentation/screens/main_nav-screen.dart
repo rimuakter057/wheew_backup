@@ -243,7 +243,7 @@ class _AppBottomNav extends StatelessWidget {
                         ),
                         SizedBox(width: ResponsiveHelper.spacing(6)),
                         Text(
-                          'Find Parking Spot',
+                          AppStrings.findParkingSpot.tr,
                           style: GoogleFonts.poppins(
                             color: AppColors.white,
                             fontWeight: FontWeight.w600,

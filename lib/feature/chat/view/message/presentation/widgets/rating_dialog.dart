@@ -169,7 +169,7 @@ void showRatingDialog({
                     ),
                   ),
                   child: Text(
-                    status.isEmpty ? 'None' : status,
+                    status.isEmpty ? AppStrings.none.tr : status,
                     style: GoogleFonts.poppins(
                       fontSize: ResponsiveHelper.fontSize(11),
                       fontWeight: FontWeight.w600,
@@ -315,15 +315,16 @@ String _ratingLabel(double rating) {
 }
 
 
-
 String _getStatusInfo(String status) {
   switch (status.toUpperCase()) {
     case 'PENDING':
-      return 'You have rated this request. Waiting for admin to review and update the final status.';
+      return AppStrings.ratingRequestPendingInfo.tr;
+
     case 'COMPLETE':
-      return 'This request has been completed and approved by the admin.';
-    default: // empty / none
-      return 'No status yet. Once you submit a rating, the status will update automatically.';
+      return AppStrings.ratingRequestCompleteInfo.tr;
+
+    default:
+      return AppStrings.ratingRequestNoStatusInfo.tr;
   }
 }
 

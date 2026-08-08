@@ -1,7 +1,10 @@
 ﻿import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
+
+import '../../../../../../utils/language/app_string.dart';
 
 class AttachmentBottomSheet {
   static void show({
@@ -51,7 +54,7 @@ class AttachmentBottomSheet {
                         // Camera
                         _AttachOption(
                           icon: Icons.camera_alt_rounded,
-                          label: 'Camera',
+                          label: AppStrings.camera.tr,
                           color: AppColors.orange,
                           onTap: () async {
                             Navigator.pop(context);
@@ -69,7 +72,7 @@ class AttachmentBottomSheet {
                         // Gallery
                         _AttachOption(
                           icon: Icons.image_rounded,
-                          label: 'Gallery',
+                          label: AppStrings.gallery.tr,
                           color: AppColors.purple,
                           onTap: () async {
                             Navigator.pop(context);
@@ -87,7 +90,7 @@ class AttachmentBottomSheet {
                         // Document
                         _AttachOption(
                           icon: Icons.insert_drive_file_rounded,
-                          label: 'Document',
+                          label: AppStrings.document.tr,
                           color: AppColors.blue,
                           onTap: () async {
                             Navigator.pop(context);

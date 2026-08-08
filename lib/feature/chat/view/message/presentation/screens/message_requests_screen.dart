@@ -107,7 +107,9 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
                   vertical: ResponsiveHelper.padding(4),
                 ),
                 child: Text(
-                  count > 0 ? 'Requests(${count.toString().padLeft(2, '0')})' : 'Requests',
+                  count > 0
+                      ? '${AppStrings.requests.tr}(${count.toString().padLeft(2, '0')})'
+                      : AppStrings.requests.tr,
                   style: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(14),
                     fontWeight: FontWeight.w600,

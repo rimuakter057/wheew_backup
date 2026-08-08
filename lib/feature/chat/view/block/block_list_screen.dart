@@ -159,7 +159,7 @@ class _BlockListScreenState extends State<BlockListScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                user?.nickName ?? "Unknown",
+                                user?.nickName ?? AppStrings.unknown,
                                 style: GoogleFonts.poppins(
                                   fontSize: ResponsiveHelper.fontSize(16),
                                   fontWeight: FontWeight.w600,

@@ -1,5 +1,133 @@
 class AppStrings {
 
+  static const String noFaqsFound = 'noFaqsFound';
+
+  static const String couldNotLoadImage = 'couldNotLoadImage';
+  static const String downloads = 'downloads';
+  static const String ratingRequestPendingInfo =
+      'ratingRequestPendingInfo';
+
+  static const String ratingRequestCompleteInfo =
+      'ratingRequestCompleteInfo';
+
+  static const String ratingRequestNoStatusInfo =
+      'ratingRequestNoStatusInfo';
+
+  static const String camera = 'camera';
+
+  static const String document = 'document';
+
+  static const String sent = 'sent';
+  static const String plateUser = 'plateUser';
+  static const String pending = 'pending';
+
+
+  static const String requests = 'requests';
+  static const String requestAccepted = 'requestAccepted';
+  static const String failedToAcceptMessageRequest =
+      'failedToAcceptMessageRequest';
+  static const String failedToAcceptRequest =
+      'failedToAcceptRequest';
+
+  static const String requestRejected = 'requestRejected';
+  static const String failedToRejectMessageRequest =
+      'failedToRejectMessageRequest';
+  static const String failedToRejectRequest =
+      'failedToRejectRequest';
+
+  static const String userBlocked = 'userBlocked';
+  static const String failedToBlock = 'failedToBlock';
+
+  static const String requestWithdrawn = 'requestWithdrawn';
+  static const String failedToWithdrawMessageRequest =
+      'failedToWithdrawMessageRequest';
+  static const String failedToWithdrawRequest =
+      'failedToWithdrawRequest';
+
+
+
+
+  static const String failedToUpdateGroup =
+      'failedToUpdateGroup';
+
+  static const String groupNameCannotBeEmpty =
+      'groupNameCannotBeEmpty';
+
+  static const String groupUpdatedSuccessfully =
+      'groupUpdatedSuccessfully';
+
+  static const String errorUpdatingGroup =
+      'errorUpdatingGroup';
+
+  static const String memberRemovedSuccessfully =
+      'memberRemovedSuccessfully';
+
+  static const String couldNotRemoveMember =
+      'couldNotRemoveMember';
+
+  static const String failedToRemoveMember =
+      'failedToRemoveMember';
+
+  static const String all =
+      'all';
+
+  static const String individual =
+      'individual';
+
+
+  static const String failedToSendMessageRequest =
+      'failedToSendMessageRequest';
+  static const String messageDeletedSuccessfully =
+      'messageDeletedSuccessfully';
+
+  static const String failedToDeleteMessage =
+      'failedToDeleteMessage';
+
+  static const String errorDeletingMessage =
+      'errorDeletingMessage';
+
+  // Group
+  static const String successfullyLeftThisGroup =
+      'successfullyLeftThisGroup';
+
+  static const String somethingWentWrong =
+      'somethingWentWrong';
+
+  // Message Request
+  static const String messageRequestSentSuccessfully =
+      'messageRequestSentSuccessfully';
+
+  static const String failedToConnect =
+      'failedToConnect';
+
+  // static const String requestAccepted =
+  //     'requestAccepted';
+  //
+  // static const String failedToAcceptMessageRequest =
+  //     'failedToAcceptMessageRequest';
+  //
+  // static const String failedToAcceptRequest =
+  //     'failedToAcceptRequest';
+
+  static const String requestDeclined =
+      'requestDeclined';
+
+  static const String failedToDeclineMessageRequest =
+      'failedToDeclineMessageRequest';
+
+  static const String failedToDeclineRequest =
+      'failedToDeclineRequest';
+
+  static const String memberAddedSuccessfully =
+      'memberAddedSuccessfully';
+
+  static const String memberCouldNotBeAdded =
+      'memberCouldNotBeAdded';
+
+  static const String failedToAddMember =
+      'failedToAddMember';
+
+
   static const String deleteAccount = 'deleteAccount';
   static const String warning = 'warning';
   static const String deleteAccountWarning = 'deleteAccountWarning';
@@ -256,7 +384,7 @@ class AppStrings {
   static const String pleaseEnterValidEmail = 'please_enter_valid_email';
 
   static const String otpVerifySuccess = 'otp_verify_success';
-  static const String somethingWentWrong = 'something_went_wrong';
+
   static const String userNotFound = 'user_not_found';
 
   static const String otpSendSuccess = 'otp_send_success';

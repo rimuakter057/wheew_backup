@@ -1,7 +1,139 @@
 import 'app_string.dart';
 
 final Map<String, String> italian = {
+  AppStrings.noFaqsFound: "Nessuna FAQ trovata",
+  AppStrings.couldNotLoadImage: "Impossibile caricare l'immagine",
 
+  AppStrings.downloads: "Download",
+
+  AppStrings.ratingRequestPendingInfo:
+  "Hai valutato questa richiesta. In attesa che l'amministratore esamini e aggiorni lo stato finale.",
+
+  AppStrings.ratingRequestCompleteInfo:
+  "Questa richiesta è stata completata e approvata dall'amministratore.",
+
+  AppStrings.ratingRequestNoStatusInfo:
+  "Nessuno stato disponibile. Dopo aver inviato una valutazione, lo stato verrà aggiornato automaticamente.",
+
+  AppStrings.camera: "Fotocamera",
+  AppStrings.document: "Documento",
+
+  AppStrings.sent: "Inviate",
+  AppStrings.plateUser: "Utente Plate",
+  AppStrings.pending: "In sospeso",
+  AppStrings.requests: "Richieste",
+  AppStrings.requestAccepted:
+  "Richiesta accettata!",
+
+  AppStrings.failedToAcceptMessageRequest:
+  "Impossibile accettare la richiesta di messaggio",
+
+  AppStrings.failedToAcceptRequest:
+  "Impossibile accettare la richiesta.",
+
+  AppStrings.requestRejected:
+  "Richiesta rifiutata.",
+
+  AppStrings.failedToRejectMessageRequest:
+  "Impossibile rifiutare la richiesta di messaggio",
+
+  AppStrings.failedToRejectRequest:
+  "Impossibile rifiutare la richiesta.",
+
+  AppStrings.userBlocked:
+  "Utente bloccato.",
+
+  AppStrings.failedToBlock:
+  "Impossibile bloccare l'utente",
+
+  AppStrings.requestWithdrawn:
+  "Richiesta ritirata.",
+
+  AppStrings.failedToWithdrawMessageRequest:
+  "Impossibile ritirare la richiesta di messaggio",
+
+  AppStrings.failedToWithdrawRequest:
+  "Impossibile ritirare la richiesta.",
+
+
+  AppStrings.failedToUpdateGroup:
+  "Impossibile aggiornare il gruppo",
+  AppStrings.groupNameCannotBeEmpty:
+  "Il nome del gruppo non può essere vuoto",
+
+  AppStrings.groupUpdatedSuccessfully:
+  "Gruppo aggiornato con successo",
+
+  AppStrings.errorUpdatingGroup:
+  "Si è verificato un errore durante l'aggiornamento del gruppo",
+
+  AppStrings.memberRemovedSuccessfully:
+  "Membro rimosso con successo",
+
+  AppStrings.couldNotRemoveMember:
+  "Impossibile rimuovere il membro",
+
+  AppStrings.failedToRemoveMember:
+  "Impossibile rimuovere il membro",
+
+  AppStrings.all:
+  "Tutti",
+
+  AppStrings.individual:
+  "Individuale",
+  AppStrings.failedToSendMessageRequest:
+  "Impossibile inviare la richiesta di messaggio",
+
+  // Message
+  AppStrings.messageDeletedSuccessfully:
+  "Messaggio eliminato con successo",
+
+  AppStrings.failedToDeleteMessage:
+  "Impossibile eliminare il messaggio",
+
+  AppStrings.errorDeletingMessage:
+  "Si è verificato un errore durante l'eliminazione del messaggio",
+
+  // Group
+  AppStrings.successfullyLeftThisGroup:
+  "Hai lasciato il gruppo con successo",
+
+
+
+  // Message Request
+  AppStrings.messageRequestSentSuccessfully:
+  "Richiesta di messaggio inviata con successo!",
+
+  AppStrings.failedToConnect:
+  "Connessione non riuscita. Riprova.",
+
+  // AppStrings.requestAccepted:
+  // "Richiesta accettata!",
+  //
+  // AppStrings.failedToAcceptMessageRequest:
+  // "Impossibile accettare la richiesta di messaggio",
+  //
+  // AppStrings.failedToAcceptRequest:
+  // "Impossibile accettare la richiesta.",
+
+  AppStrings.requestDeclined:
+  "Richiesta rifiutata.",
+
+  AppStrings.failedToDeclineMessageRequest:
+  "Impossibile rifiutare la richiesta di messaggio",
+
+  AppStrings.failedToDeclineRequest:
+  "Impossibile rifiutare la richiesta.",
+
+
+  AppStrings.memberAddedSuccessfully:
+  "Membro aggiunto con successo",
+
+  AppStrings.memberCouldNotBeAdded:
+  "Impossibile aggiungere il membro",
+
+  AppStrings.failedToAddMember:
+  "Impossibile aggiungere il membro. Riprova.",
 
   AppStrings.deleteAccount: "Elimina account",
   AppStrings.warning: "Attenzione",

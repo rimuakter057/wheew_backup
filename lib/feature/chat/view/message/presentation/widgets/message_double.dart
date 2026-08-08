@@ -45,9 +45,7 @@ class MessageBubble extends StatelessWidget {
   });
 
 
-  // â”€â”€ type detection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-  // Server à¦¥à§‡à¦•à§‡ type: 'FILE', 'VOICE', 'AUDIO' à¦¯à§‡à¦•à§‹à¦¨à§‹ à¦†à¦¸à¦¤à§‡ à¦ªà¦¾à¦°à§‡
   bool get _isVoiceType => type == 'VOICE' || type == 'AUDIO';
 
   bool get _isFileMessage =>
@@ -58,7 +56,7 @@ class MessageBubble extends StatelessWidget {
       _isFileMessage && !_isVoiceType && !_isAudio;
 
   bool get _isImage {
-    if (_isVoiceType) return false; // voice à¦•à§‡ à¦•à¦–à¦¨à§‹ image à¦¹à¦¿à¦¸à§‡à¦¬à§‡ treat à¦•à¦°à§‹ à¦¨à¦¾
+    if (_isVoiceType) return false;
     if (fileMimeType != null && fileMimeType!.startsWith('image/')) return true;
     final url = (fileUrl ?? '').toLowerCase();
     return url.endsWith('.png') || url.endsWith('.jpg') ||
@@ -105,8 +103,6 @@ class MessageBubble extends StatelessWidget {
       ),
     );
   }
-
-  // â”€â”€ build â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   @override
   Widget build(BuildContext context) {
@@ -278,7 +274,6 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
-  // â”€â”€ file content router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildFileContent() {
     if (_isImage) return _buildImageBubble();
@@ -287,7 +282,6 @@ class MessageBubble extends StatelessWidget {
     return _buildFileBubble();
   }
 
-  // â”€â”€ image â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildImageBubble() {
     return Stack(
@@ -346,7 +340,6 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
-  // â”€â”€ video â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildVideoBubble() {
     return Container(
@@ -405,7 +398,6 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
-  // â”€â”€ audio â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildAudioBubble() {
     return _VoiceBubble(
@@ -415,8 +407,6 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
-
-  // â”€â”€ generic file â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 
   Widget _buildFileBubble() {
@@ -473,7 +463,6 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
-  // â”€â”€ read receipt â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildReadReceipt() {
     if (isRead == true) {
@@ -677,7 +666,7 @@ class _VoiceBubbleState extends State<_VoiceBubble> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
 
-          // â”€â”€ Play / Pause / Loading button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
           GestureDetector(
             onTap: _togglePlayPause,
             child: AnimatedContainer(
@@ -713,6 +702,7 @@ class _VoiceBubbleState extends State<_VoiceBubble> {
           SizedBox(width: ResponsiveHelper.spacing(10)),
 
           // â”€â”€ Waveform + time â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

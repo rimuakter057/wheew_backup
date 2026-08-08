@@ -116,7 +116,6 @@ class _GroupPresetMessagesState extends State<GroupPresetMessages> {
   }
 }
 
-// â”€â”€ Shimmer Chip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _ShimmerChip extends StatelessWidget {
   final VoidCallback onEnd;
 

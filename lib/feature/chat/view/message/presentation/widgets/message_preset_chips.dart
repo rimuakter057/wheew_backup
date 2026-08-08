@@ -20,7 +20,7 @@ class _MessagePresetChipsState extends State<MessagePresetChips> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // â”€â”€ Shimmer loading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
       if (widget.chatController.isPresetLoading.value) {
         return SizedBox(
           height: ResponsiveHelper.height(40),
@@ -38,8 +38,7 @@ class _MessagePresetChipsState extends State<MessagePresetChips> {
         );
       }
 
-      // â”€â”€ Empty â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-      if (widget.chatController.presetMessages.isEmpty) {
+     if (widget.chatController.presetMessages.isEmpty) {
         return const SizedBox.shrink();
       }
 

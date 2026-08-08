@@ -370,8 +370,7 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
 
-                    // â”€â”€ Rate / User Rate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                    InkWell(
+               InkWell(
                       onTap: () {
                         Navigator.pop(context);
                         onRateTap();
@@ -400,8 +399,7 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
 
-                    // â”€â”€ Block / Unblock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                    Obx(
+                Obx(
                       () => InkWell(
                         onTap: () {
                           Navigator.pop(context);

@@ -227,6 +227,7 @@ class ApiUrl {
 
 
   static const String sendGroup = '/group/message/file';
+  static const String chatRoom = '/chat/rooms';
   static const String sendUser = '/chat/message/file';
 
   // ── Postman Messaging - Uploads ───────────────────────────────

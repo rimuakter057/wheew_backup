@@ -16,6 +16,8 @@ import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 // ✅ এটা দাও
 import 'package:platchatapp/feature/chat/view/group/model/group_member.dart';
 
+import '../../../../../utils/language/app_string.dart';
+
 class GroupController extends GetxController {
   // --- Group Update Fields ---
   final Rx<File?> groupImageFile = Rx<File?>(null);
@@ -44,7 +46,10 @@ class GroupController extends GetxController {
   }) async {
     final newName = groupNameController.text.trim();
     if (newName.isEmpty) {
-      CustomSnackbar.error(context: context, message: 'Group name cannot be empty');
+      CustomSnackbar.error(
+        context: context,
+        message: AppStrings.groupNameCannotBeEmpty.tr,
+      );
       return null;
     }
 
@@ -85,18 +90,26 @@ class GroupController extends GetxController {
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        CustomSnackbar.success(context: context, message: 'Group updated successfully');
+        CustomSnackbar.success(
+          context: context,
+          message: AppStrings.groupUpdatedSuccessfully.tr,
+        );
         groupImageFile.value = null;
         chatController.fetchChatList(refresh: true);
         return data;
       } else {
-        final message = data['message'] ?? 'Failed to update group';
+        final message =
+            data['message'] ?? AppStrings.failedToUpdateGroup.tr;
         CustomSnackbar.error(context: context, message: message);
         return null;
       }
     } catch (e) {
       debugPrint('updateGroup error: $e');
-      CustomSnackbar.error(context: context, message: 'An error occurred while updating group');
+     // CustomSnackbar.error(context: context, message: 'An error occurred while updating group');
+      CustomSnackbar.error(
+        context: context,
+        message: AppStrings.errorUpdatingGroup.tr,
+      );
       return null;
     } finally {
       isUpdatingGroup.value = false;
@@ -205,7 +218,7 @@ class GroupController extends GetxController {
     isLoadingMembers.value = true;
     try {
       final response = await ApiClient.getData(
-        uri: '/chat/rooms',
+        uri: ApiUrl.chatRoom,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -247,19 +260,27 @@ class GroupController extends GetxController {
       if (statusCode == 200 || statusCode == 201) {
         // ✅ Local list থেকে সরাও
         groupMemberList.removeWhere((m) => m.userId == memberId);
-        CustomSnackbar.success(context: context, message: 'Member removed successfully');
+        CustomSnackbar.success(
+          context: context,
+          message: AppStrings.memberRemovedSuccessfully.tr,
+        );
              chatController.fetchChatList(refresh: true);
 
 
         return true;
       } else {
-        final message = response['data']?['message'] ?? 'Could not remove member';
+        final message =
+            response['data']?['message'] ??
+                AppStrings.couldNotRemoveMember.tr;
         CustomSnackbar.error(context: context, message: message);
         return false;
       }
     } catch (e) {
       debugPrint('removeGroupMember error: $e');
-      CustomSnackbar.error(context: context, message: 'Failed to remove member');
+      CustomSnackbar.error(
+        context: context,
+        message: AppStrings.failedToRemoveMember.tr,
+      );
       return false;
     } finally {
       isRemovingMember.value = false;

@@ -41,7 +41,7 @@ class FaqScreen extends StatelessWidget {
                   alignment: Alignment.center,
                   children: [
                     Text(
-                      "FAQ",
+                      AppStrings.faq.tr,
                       style: GoogleFonts.inter(
                         color: titleColor,
                         fontWeight: FontWeight.w400,
@@ -103,7 +103,7 @@ class FaqScreen extends StatelessWidget {
                   if (controller.faqs.isEmpty) {
                     return Center(
                       child: Text(
-                        'No FAQs found',
+                        AppStrings.noFaqsFound.tr,
                         style: GoogleFonts.poppins(color: subtitleColor),
                       ),
                     );

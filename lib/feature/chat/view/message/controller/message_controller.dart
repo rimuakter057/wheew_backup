@@ -5,6 +5,8 @@ import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 
+import '../../../../../utils/language/app_string.dart';
+
 class MessageController extends GetxController {
   // Received Requests
   final RxList<dynamic> messageRequests = <dynamic>[].obs;
@@ -161,7 +163,10 @@ class MessageController extends GetxController {
         body: {},
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
-        CustomSnackbar.success(context: context, message: 'Request accepted!');
+        CustomSnackbar.success(
+          context: context,
+          message: AppStrings.requestAccepted.tr,
+        );
         messageRequests.removeWhere((req) => req['id']?.toString() == requestId);
         totalRequestsCount.value = (totalRequestsCount.value - 1).clamp(0, 999999);
 
@@ -172,7 +177,8 @@ class MessageController extends GetxController {
         } catch (_) {}
         return roomId.isNotEmpty ? roomId : '';
       } else {
-        String errMsg = 'Failed to accept message request';
+        String errMsg =
+            AppStrings.failedToAcceptMessageRequest.tr;
         try {
           final decoded = jsonDecode(response.body);
           errMsg = decoded['message'] ?? decoded['error'] ?? errMsg;
@@ -182,7 +188,10 @@ class MessageController extends GetxController {
       }
     } catch (e) {
       debugPrint('acceptMessageRequest error: $e');
-      CustomSnackbar.error(context: context, message: 'Failed to accept request.');
+      CustomSnackbar.error(
+        context: context,
+        message: AppStrings.failedToAcceptRequest.tr,
+      );
       return null;
     }
   }
@@ -197,12 +206,16 @@ class MessageController extends GetxController {
         body: {},
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
-        CustomSnackbar.success(context: context, message: 'Request rejected.');
+        CustomSnackbar.success(
+          context: context,
+          message: AppStrings.requestRejected.tr,
+        );
         messageRequests.removeWhere((req) => req['id']?.toString() == requestId);
         totalRequestsCount.value = (totalRequestsCount.value - 1).clamp(0, 999999);
         return true;
       } else {
-        String errMsg = 'Failed to reject message request';
+        String errMsg =
+            AppStrings.failedToAcceptMessageRequest.tr;
         try {
           final decoded = jsonDecode(response.body);
           errMsg = decoded['message'] ?? decoded['error'] ?? errMsg;
@@ -212,7 +225,10 @@ class MessageController extends GetxController {
       }
     } catch (e) {
       debugPrint('rejectMessageRequest error: $e');
-      CustomSnackbar.error(context: context, message: 'Failed to reject request.');
+      CustomSnackbar.success(
+        context: context,
+        message: AppStrings.requestRejected.tr,
+      );
       return false;
     }
   }
@@ -227,12 +243,15 @@ class MessageController extends GetxController {
         body: {},
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
-        CustomSnackbar.success(context: context, message: 'User blocked.');
+        CustomSnackbar.success(
+          context: context,
+          message: AppStrings.userBlocked.tr,
+        );
         messageRequests.removeWhere((req) => req['id']?.toString() == requestId);
         totalRequestsCount.value = (totalRequestsCount.value - 1).clamp(0, 999999);
         return true;
       } else {
-        String errMsg = 'Failed to block';
+        String errMsg = AppStrings.failedToBlock.tr;
         try {
           final decoded = jsonDecode(response.body);
           errMsg = decoded['message'] ?? decoded['error'] ?? errMsg;
@@ -242,7 +261,10 @@ class MessageController extends GetxController {
       }
     } catch (e) {
       debugPrint('blockMessageRequest error: $e');
-      CustomSnackbar.error(context: context, message: 'Failed to block.');
+      CustomSnackbar.error(
+        context: context,
+        message: AppStrings.failedToBlock.tr,
+      );
       return false;
     }
   }
@@ -262,7 +284,8 @@ class MessageController extends GetxController {
         totalSentRequestsCount.value = (totalSentRequestsCount.value - 1).clamp(0, 999999);
         return true;
       } else {
-        String errMsg = 'Failed to withdraw message request';
+        String errMsg =
+            AppStrings.failedToWithdrawMessageRequest.tr;
         try {
           final decoded = jsonDecode(response.body);
           errMsg = decoded['message'] ?? decoded['error'] ?? errMsg;
@@ -272,7 +295,10 @@ class MessageController extends GetxController {
       }
     } catch (e) {
       debugPrint('withdrawMessageRequest error: $e');
-      CustomSnackbar.error(context: context, message: 'Failed to withdraw request.');
+      CustomSnackbar.error(
+        context: context,
+        message: AppStrings.failedToWithdrawRequest.tr,
+      );
       return false;
     }
   }

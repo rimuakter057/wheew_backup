@@ -166,7 +166,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                             ),
                             SizedBox(height: ResponsiveHelper.spacing(2)),
                             Text(
-                              'Requests others sent to you',
+                              AppStrings.requestsOthersSentToYou.tr,
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(12),
                                 color: AppColors.greyShade600,
@@ -224,7 +224,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                             ),
                             SizedBox(height: ResponsiveHelper.spacing(2)),
                             Text(
-                              'Requests you sent to others',
+                              AppStrings.requestsYouSentToOthers.tr,
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(12),
                                 color: AppColors.greyShade600,
@@ -314,7 +314,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
           final result = await showGeneralDialog<String>(
             context: context,
             barrierDismissible: true,
-            barrierLabel: 'Dismiss',
+            barrierLabel: AppStrings.dismiss.tr,
             barrierColor: AppColors.black.withOpacity(0.35),
             transitionDuration: const Duration(milliseconds: 200),
             pageBuilder: (dialogContext, animation, secondaryAnimation) {
@@ -470,9 +470,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 padding: const EdgeInsets.all(4),
                 child: Row(
                   children: [
-                    _buildTabItem(0, 'All'),
-                    _buildTabItem(1, 'Individual'),
-                    _buildTabItem(2, 'Group'),
+                    _buildTabItem(0, AppStrings.all.tr),
+                    _buildTabItem(1, AppStrings.individual.tr),
+                    _buildTabItem(2, AppStrings.group.tr),
                   ],
                 ),
               ),

@@ -406,7 +406,7 @@ class _MessageScreenState extends State<MessageScreen> {
                             fileMimeType: msg.fileMimeType,
                             durationSeconds: msg.durationSeconds,
                             isDelivered: msg.isDelivered,
-                            time: formattedTime.isNotEmpty ? formattedTime : '7:30 PM',
+                            time: formattedTime.isNotEmpty ? formattedTime : '0:00 PM',
                             avatarUrl: widget.otherUserAvatar,
                           ),
                         );
