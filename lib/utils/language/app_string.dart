@@ -1161,5 +1161,6 @@ class AppStrings {
       'qrCardNotReady';
 
   static const String couldNotLaunchDialer = 'couldNotLaunchDialer';
+  static const String callNow = 'callNow';
 
 }

@@ -1112,5 +1112,7 @@ AppStrings.group:"Group",
   'QR card is not ready yet. Please try again.',
 
   AppStrings.couldNotLaunchDialer: 'Could not launch dialer.',
+  AppStrings.callNow: 'Call Now',
+
 };
 

@@ -1142,6 +1142,7 @@ final Map<String, String> italian = {
   'La scheda QR non è ancora pronta. Riprova.',
 
   AppStrings.couldNotLaunchDialer: 'Impossibile avviare il dialer.',
+  AppStrings.callNow: 'Chiama ora',
 
 
 };

@@ -371,7 +371,7 @@ class _UsefulNumberTile extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'Call Now',
+                AppStrings.callNow.tr,
                   style: TextStyle(
                     color: AppColors.white,
                     fontSize: ResponsiveHelper.fontSize(12),
