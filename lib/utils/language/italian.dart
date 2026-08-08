@@ -2,6 +2,48 @@ import 'app_string.dart';
 
 final Map<String, String> italian = {
 
+
+  AppStrings.deleteAccount: "Elimina account",
+  AppStrings.warning: "Attenzione",
+  AppStrings.deleteAccountWarning:
+  "L'eliminazione del tuo account è permanente e non può essere annullata.",
+
+  AppStrings.currentPassword: "Password attuale",
+  AppStrings.enterYourPassword: "Inserisci la tua password",
+  AppStrings.passwordIsRequired: "La password è obbligatoria",
+  AppStrings.passwordMust6Character:
+  "La password deve contenere almeno 6 caratteri",
+
+  AppStrings.whatHappensWhenYouDelete:
+  "Cosa succede quando elimini l'account",
+
+  AppStrings.personalInformation:
+  "Informazioni personali",
+
+  AppStrings.personalInformationErased:
+  "Il tuo profilo e le tue informazioni personali verranno eliminati",
+
+  AppStrings.accountRecovery:
+  "Recupero dell'account",
+
+  AppStrings.accountRecoveryWarning:
+  "Non potrai più accedere al tuo account",
+
+  AppStrings.deleteAccountSecurityInfo:
+  "Per motivi di sicurezza, inserisci la tua password per confermare l'eliminazione dell'account.",
+
+  AppStrings.allFieldsRequired: "Tutti i campi sono obbligatori",
+  AppStrings.vehicleInfoSaved: "Informazioni del veicolo salvate",
+  AppStrings.failedSaved: "Salvataggio non riuscito",
+
+  AppStrings.locationServicesDisabled:
+  "I servizi di localizzazione sono disattivati.",
+
+
+
+  AppStrings.locationPermissionPermanentlyDenied:
+  "Autorizzazione alla posizione negata permanentemente.",
+
   AppStrings.home: "Home",
   AppStrings.parking: "Parcheggio",
   AppStrings.chatNav: "Chat",
@@ -56,10 +98,10 @@ final Map<String, String> italian = {
   AppStrings.enterLicensePlateOrNickName: 'Inserisci la targa o il nickname',
 
   AppStrings.password: 'Password',
-  AppStrings.currentPassword: 'password attuale',
-  AppStrings.enterYourPassword: 'Inserisci la tua password',
-  AppStrings.passwordIsRequired: 'La password è obbligatoria',
-  AppStrings.passwordMust6Character: 'La password deve contenere almeno 6 caratteri',
+  // AppStrings.currentPassword: 'password attuale',
+  // AppStrings.enterYourPassword: 'Inserisci la tua password',
+  // AppStrings.passwordIsRequired: 'La password è obbligatoria',
+  // AppStrings.passwordMust6Character: 'La password deve contenere almeno 6 caratteri',
   AppStrings.forgotPassword: 'Password dimenticata',
 
   AppStrings.licensePlateOrNicknameRequired: "Targa o Nickname obbligatori",
@@ -228,9 +270,10 @@ final Map<String, String> italian = {
   AppStrings.failedToBlockUser: "Impossibile bloccare l'utente",
 
   AppStrings.delete: "Elimina account",
-  AppStrings.deleteAccount: "Elimina account",
-  AppStrings.warning: "Questa azione è irreversibile.",
-  AppStrings.deleteAccountWarning: "Una volta eliminato il tuo account, tutti i tuoi dati, le prenotazioni, le preferenze e la cronologia verranno cancellati definitivamente e non potranno essere recuperati.",
+  // AppStrings.deleteAccount: "Elimina account",
+  // AppStrings.warning: "Questa azione è irreversibile.",
+  // AppStrings.deleteAccountWarning: "Una volta eliminato il tuo account, tutti i tuoi dati, le prenotazioni, le preferenze e la cronologia verranno cancellati definitivamente e non potranno essere recuperati.",
+  //
   AppStrings.deleteAccountSuccessfully: "Account eliminato con successo",
   AppStrings.failedDeleteAccount: "Impossibile eliminare l'account",
 

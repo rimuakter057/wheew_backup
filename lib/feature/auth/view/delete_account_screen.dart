@@ -297,7 +297,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                         ),
 
                         Text(
-                          'What happens when you delete',
+                          AppStrings.whatHappensWhenYouDelete.tr,
                           style: GoogleFonts.poppins(
                             fontSize: ResponsiveHelper.fontSize(16),
                             fontWeight: FontWeight.w600,
@@ -347,18 +347,16 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                                   );
                                 },
                                 child: _buildDeleteInfo(
-                                  icon: AssetsPath.personal,
-                                  title: 'Personal Information',
-                                  subtitle:
-                                  'Your profile and personal information will be erased',
+                                  icon: AssetsPath.accountRecovery,
+                                  title: AppStrings.accountRecovery.tr,
+                                  subtitle: AppStrings.accountRecoveryWarning.tr,
                                 ),
                               ),
                               _buildDivider(),
                               _buildDeleteInfo(
                                 icon: AssetsPath.accountRecovery,
-                                title: 'Account Recovery',
-                                subtitle:
-                                'You won’t be able to access your account again',
+                                title: AppStrings.accountRecovery.tr,
+                                subtitle: AppStrings.accountRecoveryWarning.tr,
                               ),
                             ],
                           ),
@@ -426,8 +424,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                             ),
                             Expanded(
                               child: Text(
-                                'For security reasons, please enter your password to confirm account deletion.',
-                                style: GoogleFonts.poppins(
+                                AppStrings.deleteAccountSecurityInfo.tr,style: GoogleFonts.poppins(
                                   color: AppColors.blue,
                                   fontSize: ResponsiveHelper.fontSize(14),
                                 fontWeight: FontWeight.w400

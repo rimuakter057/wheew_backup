@@ -192,7 +192,7 @@ class AuthController extends GetxController {
               context.goNamed(RouteName.mainNavScreen);
 
 
-              CustomSnackbar.success(context: context, message: "Login Successful");
+              CustomSnackbar.success(context: context, message: AppStrings.loginSuccessful.tr);
 
               Future.delayed(const Duration(milliseconds: 300), () {
                 licenseController.clear();

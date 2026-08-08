@@ -1,5 +1,43 @@
 class AppStrings {
 
+  static const String deleteAccount = 'deleteAccount';
+  static const String warning = 'warning';
+  static const String deleteAccountWarning = 'deleteAccountWarning';
+
+  static const String currentPassword = 'currentPassword';
+  static const String enterYourPassword = 'enterYourPassword';
+  static const String passwordIsRequired = 'passwordIsRequired';
+  static const String passwordMust6Character = 'passwordMust6Character';
+
+  static const String whatHappensWhenYouDelete =
+      'whatHappensWhenYouDelete';
+
+  static const String personalInformation =
+      'personalInformation';
+
+  static const String personalInformationErased =
+      'personalInformationErased';
+
+  static const String accountRecovery =
+      'accountRecovery';
+
+  static const String accountRecoveryWarning =
+      'accountRecoveryWarning';
+
+  static const String deleteAccountSecurityInfo =
+      'deleteAccountSecurityInfo';
+
+
+  static const String allFieldsRequired = 'allFieldsRequired';
+  static const String vehicleInfoSaved = 'vehicleInfoSaved';
+  static const String failedSaved = 'failedSaved';
+
+  static const String locationServicesDisabled =
+      'locationServicesDisabled';
+
+  static const String locationPermissionPermanentlyDenied =
+      'locationPermissionPermanentlyDenied';
+
   static const String home = 'home';
   static const String parking = 'parking';
   static const String chatNav = 'chat_nav';
@@ -57,10 +95,10 @@ class AppStrings {
       'enter_license_plate_or_nick_name';
 
   static const String password = 'password';
-  static const String currentPassword = 'current_password';
-  static const String enterYourPassword = 'enter_your_password';
-  static const String passwordIsRequired = 'password_is_required';
-  static const String passwordMust6Character = 'password_must_6_character';
+  // static const String currentPassword = 'current_password';
+  // static const String enterYourPassword = 'enter_your_password';
+  // static const String passwordIsRequired = 'password_is_required';
+  // static const String passwordMust6Character = 'password_must_6_character';
 
   static const String forgotPassword = 'forgot_password';
 
@@ -253,10 +291,10 @@ class AppStrings {
 
   static const String delete = 'delete';
   static const String supportRequest = 'support_request';
-
-  static const String deleteAccount = 'delete_account';
-  static const String warning = 'warning';
-  static const String deleteAccountWarning = 'delete_account_warning';
+  //
+  // static const String deleteAccount = 'delete_account';
+  // static const String warning = 'warning';
+  // static const String deleteAccountWarning = 'delete_account_warning';
 
   static const String deleteAccountSuccessfully =
       'delete_account_successfully';

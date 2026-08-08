@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'dart:async';
 import 'package:platchatapp/core/service/api_client.dart';
 
+import '../../../utils/language/app_string.dart';
+
 // ─── Debug Helper ─────────────────────────────────────────────────────────────
 void _log(String emoji, String section, String msg) {
   debugPrint('$emoji [LocationController][$section] $msg');
@@ -15,7 +17,6 @@ void _divider() {
 
 // ─── Controller ───────────────────────────────────────────────────────────────
 class UserLocationController extends GetxController {
-
   // ─── Location Stream ──────────────────────────────────────
   StreamSubscription<Position>? _locationSubscription;
 
@@ -43,12 +44,18 @@ class UserLocationController extends GetxController {
       final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      _log('📍', 'initLocationTracking', 'Initial position — lat: ${position.latitude}, lng: ${position.longitude}');
-      await _postLocation(latitude: position.latitude, longitude: position.longitude);
+      _log(
+        '📍',
+        'initLocationTracking',
+        'Initial position — lat: ${position.latitude}, lng: ${position.longitude}',
+      );
+      await _postLocation(
+        latitude: position.latitude,
+        longitude: position.longitude,
+      );
 
       // তারপর tracking শুরু করো
       _startLocationTracking();
-
     } catch (e, stack) {
       _divider();
       _log('💥', 'initLocationTracking', 'ERROR: $e');
@@ -64,7 +71,7 @@ class UserLocationController extends GetxController {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       _log('❌', 'permission', 'Location service is OFF');
-      throw Exception('Location services are disabled.');
+      throw Exception(AppStrings.locationServicesDisabled.tr);
     }
 
     LocationPermission permission = await Geolocator.checkPermission();
@@ -72,13 +79,13 @@ class UserLocationController extends GetxController {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         _log('❌', 'permission', 'Permission denied by user');
-        throw Exception('Location permission denied.');
+        throw Exception(AppStrings.locationPermissionDenied.tr);
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
       _log('❌', 'permission', 'Permission permanently denied');
-      throw Exception('Location permission permanently denied.');
+      throw Exception(AppStrings.locationPermissionDenied.tr);
     }
 
     _log('✅', 'permission', 'Permission granted');
@@ -98,10 +105,7 @@ class UserLocationController extends GetxController {
     try {
       final response = await ApiClient.postData(
         uri: '/users/location',
-        body: {
-          'latitude': latitude,
-          'longitude': longitude,
-        },
+        body: {'latitude': latitude, 'longitude': longitude},
       );
 
       _divider();
@@ -133,29 +137,28 @@ class UserLocationController extends GetxController {
       distanceFilter: 1, // ← 1 মিটার সরলে fire হবে
     );
 
-    _locationSubscription = Geolocator.getPositionStream(
-      locationSettings: locationSettings,
-    ).listen(
+    _locationSubscription =
+        Geolocator.getPositionStream(locationSettings: locationSettings).listen(
           (Position position) async {
-        _divider();
-        _log('📍', 'trackingUpdate', 'User moved!');
-        _log('📍', 'trackingUpdate', 'Latitude  : ${position.latitude}');
-        _log('📍', 'trackingUpdate', 'Longitude : ${position.longitude}');
-        _log('📍', 'trackingUpdate', 'Accuracy  : ${position.accuracy}m');
-        _divider();
+            _divider();
+            _log('📍', 'trackingUpdate', 'User moved!');
+            _log('📍', 'trackingUpdate', 'Latitude  : ${position.latitude}');
+            _log('📍', 'trackingUpdate', 'Longitude : ${position.longitude}');
+            _log('📍', 'trackingUpdate', 'Accuracy  : ${position.accuracy}m');
+            _divider();
 
-        await _postLocation(
-          latitude: position.latitude,
-          longitude: position.longitude,
+            await _postLocation(
+              latitude: position.latitude,
+              longitude: position.longitude,
+            );
+          },
+          onError: (e, stack) {
+            _divider();
+            _log('💥', 'trackingUpdate', 'Stream ERROR: $e');
+            _log('💥', 'trackingUpdate', 'StackTrace:\n$stack');
+            _divider();
+          },
         );
-      },
-      onError: (e, stack) {
-        _divider();
-        _log('💥', 'trackingUpdate', 'Stream ERROR: $e');
-        _log('💥', 'trackingUpdate', 'StackTrace:\n$stack');
-        _divider();
-      },
-    );
 
     _log('✅', 'startTracking', 'Location stream is now active');
   }

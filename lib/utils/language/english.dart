@@ -2,6 +2,48 @@ import 'package:platchatapp/utils/language/app_string.dart';
 
 final Map<String, String> english = {
 
+  AppStrings.deleteAccount: "Delete Account",
+  AppStrings.warning: "Warning",
+  AppStrings.deleteAccountWarning:
+  "Deleting your account is permanent and cannot be undone.",
+
+  AppStrings.currentPassword: "Current Password",
+  AppStrings.enterYourPassword: "Enter your password",
+  AppStrings.passwordIsRequired: "Password is required",
+  AppStrings.passwordMust6Character:
+  "Password must be at least 6 characters",
+
+  AppStrings.whatHappensWhenYouDelete:
+  "What happens when you delete",
+
+  AppStrings.personalInformation:
+  "Personal Information",
+
+  AppStrings.personalInformationErased:
+  "Your profile and personal information will be erased",
+
+  AppStrings.accountRecovery:
+  "Account Recovery",
+
+  AppStrings.accountRecoveryWarning:
+  "You won’t be able to access your account again",
+
+  AppStrings.deleteAccountSecurityInfo:
+  "For security reasons, please enter your password to confirm account deletion.",
+
+
+  AppStrings.allFieldsRequired: "All fields are required",
+  AppStrings.vehicleInfoSaved: "Vehicle info saved",
+  AppStrings.failedSaved: "Failed Saved",
+
+
+  AppStrings.locationServicesDisabled:
+  "Location services are disabled.",
+
+
+  AppStrings.locationPermissionPermanentlyDenied:
+  "Location permission permanently denied.",
+
   AppStrings.home: "Home",
   AppStrings.parking: "Parking",
   AppStrings.chatNav: "Chat",
@@ -46,10 +88,10 @@ final Map<String, String> english = {
   AppStrings.enterLicensePlateOrNickName: 'Enter License Plate or Nickname',
 
   AppStrings.password: 'Password',
-  AppStrings.currentPassword: 'Current Password',
-  AppStrings.enterYourPassword: 'Enter your password',
-  AppStrings.passwordIsRequired: 'Password is required',
-  AppStrings.passwordMust6Character: 'Password must be at least 6 characters',
+  // AppStrings.currentPassword: 'Current Password',
+  // AppStrings.enterYourPassword: 'Enter your password',
+  // AppStrings.passwordIsRequired: 'Password is required',
+  // AppStrings.passwordMust6Character: 'Password must be at least 6 characters',
 
   AppStrings.forgotPassword: 'Forgot Password',
   AppStrings.licensePlateOrNicknameRequired: 'License plate or Nickname required',
@@ -224,9 +266,9 @@ final Map<String, String> english = {
   AppStrings.delete: 'Delete account',
   AppStrings.supportRequest: 'Support Request',
 
-  AppStrings.deleteAccount: 'Delete Account',
-  AppStrings.warning: 'This action is permanent',
-  AppStrings.deleteAccountWarning: 'Once you delete your account, all your data, bookings,preferences, and history will be permanently deleted and can’t be recovered.',
+  // AppStrings.deleteAccount: 'Delete Account',
+  // AppStrings.warning: 'This action is permanent',
+  // AppStrings.deleteAccountWarning: 'Once you delete your account, all your data, bookings,preferences, and history will be permanently deleted and can’t be recovered.',
 
   AppStrings.deleteAccountSuccessfully: 'Account deleted successfully',
   AppStrings.failedDeleteAccount: 'Failed to delete account',

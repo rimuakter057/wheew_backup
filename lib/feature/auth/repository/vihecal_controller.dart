@@ -73,6 +73,8 @@ import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/feature/auth/repository/vehicle_type_info.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 
+import '../../../utils/language/app_string.dart';
+
 
 
 
@@ -111,7 +113,7 @@ class VehicleController extends GetxController {
 
       CustomSnackbar.error(
         context: context,
-        message: 'All fields are required',
+      message: AppStrings.allFieldsRequired.tr,
       );
       return;
     }
@@ -136,14 +138,14 @@ class VehicleController extends GetxController {
       if (res.statusCode == 200 || res.statusCode == 201) {
         CustomSnackbar.success(
           context: context,
-          message: 'Vehicle info saved',
+          message: AppStrings.vehicleInfoSaved.tr,
         );
 
         context.go(RoutePath.mainNavScreen);
       } else {
         CustomSnackbar.error(
           context: context,
-          message: 'Failed Saved',
+          message: AppStrings.failedSaved.tr,
         );
       }
     } catch (e) {
