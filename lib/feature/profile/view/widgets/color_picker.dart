@@ -105,7 +105,12 @@ class VehicleColorPicker extends StatelessWidget {
   const VehicleColorPicker({super.key, required this.controller});
 
   // immagine 2.png অনুযায়ী কালার লিস্ট
-  static const List<Map<String, dynamic>> _colorOptions = [
+  static const List<Map<String, dynamic>> _colorOptions = colorOptions;
+
+  /// Vehicle color name -> swatch, shared with anything else that needs to
+  /// render or tint UI to match the vehicle's selected color (e.g. the
+  /// vehicle type icon summary).
+  static const List<Map<String, dynamic>> colorOptions = [
     {'name': 'Bianco', 'color': AppColors.bianco},
     {'name': 'Nero', 'color':  AppColors.nero},
     {'name': 'Grigio / Argento', 'color':  AppColors.grigioArgento},
@@ -114,6 +119,13 @@ class VehicleColorPicker extends StatelessWidget {
     {'name': 'Verde', 'color':  AppColors.verde},
     {'name': 'Marrone / Bronzo', 'color':  AppColors.marroneBronzo},
   ];
+
+  static Color? colorForName(String name) {
+    for (final option in colorOptions) {
+      if (option['name'] == name) return option['color'] as Color;
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {

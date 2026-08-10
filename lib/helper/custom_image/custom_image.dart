@@ -6,6 +6,7 @@ enum ImageType { png, svg }
 class CustomImage extends StatefulWidget {
   final String imageSrc;
   final Color? imageColor;
+  final BlendMode? colorBlendMode;
   final double? height;
   final double? scale;
   final double? width;
@@ -19,6 +20,7 @@ class CustomImage extends StatefulWidget {
   const CustomImage({
     required this.imageSrc,
     this.imageColor,
+    this.colorBlendMode,
     this.sizeWidth,
     this.imageType = ImageType.svg,
     super.key,
@@ -53,6 +55,7 @@ class _CustomImageState extends State<CustomImage> {
         widget.imageSrc,
         fit: widget.fit,
         color: widget.imageColor,
+        colorBlendMode: widget.colorBlendMode,
         height: widget.height,
         width: widget.width,
         scale: widget.scale ?? 1,

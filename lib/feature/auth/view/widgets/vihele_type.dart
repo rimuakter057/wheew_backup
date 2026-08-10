@@ -11,11 +11,16 @@ class VehicleTypeWheel extends StatefulWidget {
   final VehicleType? selected;
   final ValueChanged<VehicleType> onSelected;
 
+  /// Tint applied to the centered/selected vehicle image so it matches the
+  /// chosen vehicle color. Null keeps the original blue artwork.
+  final Color? selectedColorTint;
+
   const VehicleTypeWheel({
     super.key,
     required this.types,
     required this.selected,
     required this.onSelected,
+    this.selectedColorTint,
 
   });
 
@@ -75,6 +80,7 @@ class _VehicleTypeWheelState extends State<VehicleTypeWheel> {
                   child: _VehicleTypeCard(
                     type: widget.types[index],
                     isCenter: distance < 0.5,
+                    colorTint: widget.selectedColorTint,
                   ),
                 ),
               );
@@ -89,11 +95,28 @@ class _VehicleTypeWheelState extends State<VehicleTypeWheel> {
 class _VehicleTypeCard extends StatelessWidget {
   final VehicleType type;
   final bool isCenter;
+  final Color? colorTint;
 
-  const _VehicleTypeCard({required this.type, required this.isCenter});
+  const _VehicleTypeCard({
+    required this.type,
+    required this.isCenter,
+    this.colorTint,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final bool tinted = isCenter && colorTint != null;
+
+    // The white PNG's body is near-neutral gray (R≈G≈B per pixel), so
+    // BlendMode.modulate multiplies it by the tint to recolor just the car
+    // body while keeping its shading — and, unlike BlendMode.color, it
+    // multiplies alpha too, so fully-transparent background pixels (alpha 0)
+    // stay transparent instead of getting painted solid.
+    final Widget image = Image.asset(
+      isCenter && !tinted ? type.imageBlue : type.imageWhite,
+      fit: BoxFit.contain,
+    );
+
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -101,10 +124,12 @@ class _VehicleTypeCard extends StatelessWidget {
           SizedBox(
             width: ResponsiveHelper.width(140),
             height: ResponsiveHelper.height(140),
-            child: Image.asset(
-              isCenter ? type.imageBlue : type.imageWhite,
-              fit: BoxFit.contain,
-            ),
+            child: tinted
+                ? ColorFiltered(
+                    colorFilter: ColorFilter.mode(colorTint!, BlendMode.modulate),
+                    child: image,
+                  )
+                : image,
           ),
           SizedBox(height: ResponsiveHelper.spacing(10)),
           Text(

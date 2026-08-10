@@ -467,16 +467,6 @@ class _VehicleColorSummary extends StatelessWidget {
 
   const _VehicleColorSummary({required this.colorName});
 
-  static const Map<String, Color> _swatches = {
-    'Bianco': AppColors.bianco,
-    'Nero': AppColors.nero,
-    'Grigio / Argento': AppColors.grigioArgento,
-    'Blu': AppColors.blu,
-    'Rosso': AppColors.rosso,
-    'Verde': AppColors.verde,
-    'Marrone / Bronzo': AppColors.marroneBronzo,
-  };
-
   @override
   Widget build(BuildContext context) {
     final bool hasColor = colorName.isNotEmpty;
@@ -500,7 +490,7 @@ class _VehicleColorSummary extends StatelessWidget {
               height: ResponsiveHelper.iconSize(16),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _swatches[colorName] ?? AppColors.grey,
+                color: VehicleColorPicker.colorForName(colorName) ?? AppColors.grey,
                 border: Border.all(color: AppColors.white, width: 1),
               ),
             ),

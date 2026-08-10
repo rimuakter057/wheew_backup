@@ -189,8 +189,18 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
         types: controller.vehicleTypes,
         selected: controller.selectedType.value,
         onSelected: (type) => controller.selectedType.value = type,
+        selectedColorTint: _selectedColorValue(),
       ),
     );
+  }
+
+  /// Looks up the [Color] behind the currently selected color name so the
+  /// vehicle image can be tinted to match.
+  Color? _selectedColorValue() {
+    final name = controller.selectedColor.value;
+    if (name.isEmpty) return null;
+    final match = colorOptions.firstWhereOrNull((c) => c['name'] == name);
+    return match?['color'] as Color?;
   }
 
 

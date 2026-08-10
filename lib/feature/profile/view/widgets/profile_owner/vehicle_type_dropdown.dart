@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/feature/auth/repository/vehicle_type_info.dart';
 import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
+import 'package:platchatapp/feature/profile/view/widgets/color_picker.dart';
 import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
@@ -32,6 +33,11 @@ class VehicleTypeDropdown extends StatelessWidget {
 
     // Locked once already set; otherwise editable while in edit mode.
     final bool isFieldEnabled = controller.isEditing && !controller.isVehicleTypeLocked;
+
+    // Tints the icon to match the vehicle's own selected color, same as the
+    // "● Blu" swatch shown next to Vehicle Color below.
+    final Color? colorTint =
+        VehicleColorPicker.colorForName(controller.vehicleColorController.text);
 
     return PopupMenuButton<VehicleType>(
       enabled: isFieldEnabled,
@@ -102,7 +108,14 @@ class VehicleTypeDropdown extends StatelessWidget {
                   : Row(
                 children: [
                   CustomImage(
-                    imageSrc: currentType.imageBlue,
+                    // The white PNG's body is near-neutral gray, so
+                    // BlendMode.modulate multiplies it by colorTint to
+                    // recolor the car while keeping its shading (and, unlike
+                    // BlendMode.color, it also multiplies alpha, so the
+                    // transparent background isn't painted solid).
+                    imageSrc: colorTint != null ? currentType.imageWhite : currentType.imageBlue,
+                    imageColor: colorTint,
+                    colorBlendMode: colorTint != null ? BlendMode.modulate : null,
                     width: 20,
                     height: 20,
                   ),
