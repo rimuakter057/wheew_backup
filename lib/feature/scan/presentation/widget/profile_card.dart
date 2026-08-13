@@ -69,258 +69,260 @@ class ProfileCard extends StatelessWidget {
             ),
           ],
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // -- Close button -----------------------------
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                GestureDetector(
-                  onTap: () => context.pop(),
-                  child: CircleAvatar(
-                    radius: ResponsiveHelper.iconSize(16),
-                    backgroundColor: AppColors.grey[100],
-                    child: Icon(
-                      Icons.close,
-                      size: ResponsiveHelper.iconSize(16),
-                      color: AppColors.black,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: ResponsiveHelper.spacing(8)),
-
-            // -- Avatar + verified badge ------------------
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                CircleAvatar(
-                  radius: ResponsiveHelper.width(48),
-                  backgroundColor: AppColors.materialBlue[50],
-                  backgroundImage: NetworkImage(
-                    ImageHandler.imagesHandle(avatarPath, isProfile: true),
-                  ),
-                ),
-                if (profile.emailVerified)
-                  Positioned(
-                    right: -2,
-                    bottom: -2,
-                    child: Container(
-                      padding: const EdgeInsets.all(3),
-                      decoration: const BoxDecoration(
-                        color: AppColors.white,
-                        shape: BoxShape.circle,
-                      ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // -- Close button -----------------------------
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () => context.pop(),
+                    child: CircleAvatar(
+                      radius: ResponsiveHelper.iconSize(16),
+                      backgroundColor: AppColors.grey[100],
                       child: Icon(
-                        Icons.verified,
-                        size: ResponsiveHelper.iconSize(18),
-                        color: AppColors.blue,
+                        Icons.close,
+                        size: ResponsiveHelper.iconSize(16),
+                        color: AppColors.black,
                       ),
-                    ),
-                  ),
-              ],
-            ),
-
-            SizedBox(height: ResponsiveHelper.spacing(12)),
-
-            // -- Name --------------------------------------
-            Text(
-              displayName,
-              style: context.bodyMedium.copyWith(
-                color: AppColors.black,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-
-            // -- Designation -------------------------------
-            if (profile.designation != null && profile.designation!.isNotEmpty) ...[
-              SizedBox(height: ResponsiveHelper.spacing(4)),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: ResponsiveHelper.width(10),
-                  vertical: ResponsiveHelper.height(3),
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.blue.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(
-                    ResponsiveHelper.borderRadius(20),
-                  ),
-                ),
-                child: Text(
-                  profile.designation!.capitalizeFirst ?? profile.designation!,
-                  style: context.bodySmall.copyWith(
-                    color: AppColors.blue,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-
-            SizedBox(height: ResponsiveHelper.spacing(10)),
-
-            // -- Rating + Location row ---------------------
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.star,
-                  color: profile.totalRatings > 0
-                      ? AppColors.orange
-                      : AppColors.grey,
-                  size: ResponsiveHelper.iconSize(18),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  rating.toStringAsFixed(1),
-                  style: context.bodySmall,
-                ),
-                if (profile.totalRatings > 0) ...[
-                  const SizedBox(width: 4),
-                  Text(
-                    '(${profile.totalRatings})',
-                    style: context.bodySmall.copyWith(
-                      color: AppColors.grey,
                     ),
                   ),
                 ],
-
-                  SizedBox(width: ResponsiveHelper.width(10)),
-                  Icon(
-                    Icons.location_on_outlined,
-                    color: AppColors.black,
-                    size: ResponsiveHelper.iconSize(16),
+              ),
+          
+              SizedBox(height: ResponsiveHelper.spacing(8)),
+          
+              // -- Avatar + verified badge ------------------
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  CircleAvatar(
+                    radius: ResponsiveHelper.width(48),
+                    backgroundColor: AppColors.materialBlue[50],
+                    backgroundImage: NetworkImage(
+                      ImageHandler.imagesHandle(avatarPath, isProfile: true),
+                    ),
                   ),
-                  const SizedBox(width: 2),
-
-                Flexible(
-                  child: Text(
-                    location.isEmpty ? 'N/A' : location,
-                    style: context.bodySmall,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-
-              ],
-            ),
-
-            // -- Vehicle info card --------------------------
-            if (hasVehicleInfo) ...[
-              SizedBox(height: ResponsiveHelper.spacing(16)),
-              Container(
-                width: double.infinity,
-                padding: ResponsiveHelper.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.grey[50],
-                  borderRadius: BorderRadius.circular(
-                    ResponsiveHelper.borderRadius(14),
-                  ),
-                  border: Border.all(color: AppColors.grey.withOpacity(0.15)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.directions_car_filled_outlined,
-                          size: ResponsiveHelper.iconSize(16),
+                  if (profile.emailVerified)
+                    Positioned(
+                      right: -2,
+                      bottom: -2,
+                      child: Container(
+                        padding: const EdgeInsets.all(3),
+                        decoration: const BoxDecoration(
+                          color: AppColors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.verified,
+                          size: ResponsiveHelper.iconSize(18),
                           color: AppColors.blue,
                         ),
-                        SizedBox(width: ResponsiveHelper.width(6)),
-                        Text(
-                          AppStrings.vehicleDetails.tr,
-                          style: context.bodySmall.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.black,
-                          ),
-                        ),
-                        const Spacer(),
-                        if (profile.isVehicleVerified)
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.check_circle,
-                                size: ResponsiveHelper.iconSize(14),
-                                color: AppColors.green,
-                              ),
-                              const SizedBox(width: 2),
-                              Text(
-                                AppStrings.verified.tr,
-                                style: context.bodySmall.copyWith(
-                                  color: AppColors.green,
-                                  fontSize: ResponsiveHelper.fontSize(11),
-                                ),
-                              ),
-                            ],
-                          ),
-                      ],
+                      ),
                     ),
-                    SizedBox(height: ResponsiveHelper.spacing(8)),
-                    Wrap(
-                      spacing: ResponsiveHelper.width(8),
-                      runSpacing: ResponsiveHelper.height(6),
-                      children: [
-                        if (profile.vehicleType != null && profile.vehicleType!.isNotEmpty)
-                          _InfoChip(
-                            label: profile.vehicleType!,
-                          ),
-                        if (profile.vehicleModel != null && profile.vehicleModel!.isNotEmpty)
-                          _InfoChip(
-                            label: profile.vehicleModel!,
-                          ),
-                        if (profile.vehicleColor != null && profile.vehicleColor!.isNotEmpty)
-                          _InfoChip(
-                            label: profile.vehicleColor!,
-                            dotColor: _colorFromName(profile.vehicleColor!),
-                          ),
-                      ],
+                ],
+              ),
+          
+              SizedBox(height: ResponsiveHelper.spacing(12)),
+          
+              // -- Name --------------------------------------
+              Text(
+                displayName,
+                style: context.bodyMedium.copyWith(
+                  color: AppColors.black,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+          
+              // -- Designation -------------------------------
+              if (profile.designation != null && profile.designation!.isNotEmpty) ...[
+                SizedBox(height: ResponsiveHelper.spacing(4)),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveHelper.width(10),
+                    vertical: ResponsiveHelper.height(3),
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.blue.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.borderRadius(20),
+                    ),
+                  ),
+                  child: Text(
+                    profile.designation!.capitalizeFirst ?? profile.designation!,
+                    style: context.bodySmall.copyWith(
+                      color: AppColors.blue,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+          
+              SizedBox(height: ResponsiveHelper.spacing(10)),
+          
+              // -- Rating + Location row ---------------------
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.star,
+                    color: profile.totalRatings > 0
+                        ? AppColors.orange
+                        : AppColors.grey,
+                    size: ResponsiveHelper.iconSize(18),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    rating.toStringAsFixed(1),
+                    style: context.bodySmall,
+                  ),
+                  if (profile.totalRatings > 0) ...[
+                    const SizedBox(width: 4),
+                    Text(
+                      '(${profile.totalRatings})',
+                      style: context.bodySmall.copyWith(
+                        color: AppColors.grey,
+                      ),
                     ),
                   ],
+          
+                    SizedBox(width: ResponsiveHelper.width(10)),
+                    Icon(
+                      Icons.location_on_outlined,
+                      color: AppColors.black,
+                      size: ResponsiveHelper.iconSize(16),
+                    ),
+                    const SizedBox(width: 2),
+          
+                  Flexible(
+                    child: Text(
+                      location.isEmpty ? 'N/A' : location,
+                      style: context.bodySmall,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+          
+                ],
+              ),
+          
+              // -- Vehicle info card --------------------------
+              if (hasVehicleInfo) ...[
+                SizedBox(height: ResponsiveHelper.spacing(16)),
+                Container(
+                  width: double.infinity,
+                  padding: ResponsiveHelper.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.grey[50],
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.borderRadius(14),
+                    ),
+                    border: Border.all(color: AppColors.grey.withOpacity(0.15)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.directions_car_filled_outlined,
+                            size: ResponsiveHelper.iconSize(16),
+                            color: AppColors.blue,
+                          ),
+                          SizedBox(width: ResponsiveHelper.width(6)),
+                          Text(
+                            AppStrings.vehicleDetails.tr,
+                            style: context.bodySmall.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.black,
+                            ),
+                          ),
+                          const Spacer(),
+                          if (profile.isVehicleVerified)
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.check_circle,
+                                  size: ResponsiveHelper.iconSize(14),
+                                  color: AppColors.green,
+                                ),
+                                const SizedBox(width: 2),
+                                Text(
+                                  AppStrings.verified.tr,
+                                  style: context.bodySmall.copyWith(
+                                    color: AppColors.green,
+                                    fontSize: ResponsiveHelper.fontSize(11),
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                      SizedBox(height: ResponsiveHelper.spacing(8)),
+                      Wrap(
+                        spacing: ResponsiveHelper.width(8),
+                        runSpacing: ResponsiveHelper.height(6),
+                        children: [
+                          if (profile.vehicleType != null && profile.vehicleType!.isNotEmpty)
+                            _InfoChip(
+                              label: profile.vehicleType!,
+                            ),
+                          if (profile.vehicleModel != null && profile.vehicleModel!.isNotEmpty)
+                            _InfoChip(
+                              label: profile.vehicleModel!,
+                            ),
+                          if (profile.vehicleColor != null && profile.vehicleColor!.isNotEmpty)
+                            _InfoChip(
+                              label: profile.vehicleColor!,
+                              dotColor: _colorFromName(profile.vehicleColor!),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+          
+          
+          
+              SizedBox(height: ResponsiveHelper.spacing(20)),
+          
+              // -- Start Chat / Rate Button ------------------
+              SizedBox(
+                width: double.infinity,
+                height: ResponsiveHelper.buttonHeight(55),
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    if (showRating) {
+                      onRatingTap?.call();
+                    }
+                  },
+                  icon: Icon(
+                    showRating ? Icons.star_outline : Icons.chat_bubble_outline,
+                    size: ResponsiveHelper.iconSize(20),
+                  ),
+                  label: Text(
+                    showRating ? AppStrings.giveRating.tr : AppStrings.startChat.tr,
+                    style: TextStyle(
+                      fontSize: ResponsiveHelper.fontSize(18),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.blue,
+                    foregroundColor: AppColors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveHelper.borderRadius(15),
+                      ),
+                    ),
+                    elevation: 0,
+                  ),
                 ),
               ),
             ],
-
-
-
-            SizedBox(height: ResponsiveHelper.spacing(20)),
-
-            // -- Start Chat / Rate Button ------------------
-            SizedBox(
-              width: double.infinity,
-              height: ResponsiveHelper.buttonHeight(55),
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  if (showRating) {
-                    onRatingTap?.call();
-                  }
-                },
-                icon: Icon(
-                  showRating ? Icons.star_outline : Icons.chat_bubble_outline,
-                  size: ResponsiveHelper.iconSize(20),
-                ),
-                label: Text(
-                  showRating ? AppStrings.giveRating.tr : AppStrings.startChat.tr,
-                  style: TextStyle(
-                    fontSize: ResponsiveHelper.fontSize(18),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.blue,
-                  foregroundColor: AppColors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                      ResponsiveHelper.borderRadius(15),
-                    ),
-                  ),
-                  elevation: 0,
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

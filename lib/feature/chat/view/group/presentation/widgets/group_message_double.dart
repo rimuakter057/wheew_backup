@@ -1,4 +1,5 @@
 ﻿import 'dart:async';
+import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -137,7 +138,8 @@ class _Bubble extends StatelessWidget {
     return url.endsWith('.mp4') || url.endsWith('.mov') || url.endsWith('.avi');
   }
 
-  bool get _canOpenViewer => _isFileMessage && !_isVoiceType && !_isAudio;
+  bool get _canOpenViewer =>
+      _isFileMessage && !_isVoiceType && !_isAudio && !msg.isSending;
 
   String get _fullUrl => ApiUrl.baseUrl + (msg.fileUrl ?? '');
 
@@ -201,9 +203,70 @@ class _Bubble extends StatelessWidget {
           ),
         ),
         child: IntrinsicWidth(
-          child: _isFileMessage ? _buildFileContent() : _buildTextContent(),
+          child: _isFileMessage ? _buildFileMessageContent() : _buildTextContent(),
         ),
       ),
+    );
+  }
+
+  Widget _buildFileMessageContent() {
+    Widget fileContent = _buildFileContent();
+    if (msg.isSending) {
+      fileContent = Stack(
+        alignment: Alignment.center,
+        children: [
+          Opacity(opacity: 0.55, child: fileContent),
+          SizedBox(
+            width: ResponsiveHelper.iconSize(26),
+            height: ResponsiveHelper.iconSize(26),
+            child: CircularProgressIndicator(
+              strokeWidth: ResponsiveHelper.borderWidth(2.4),
+              color: isMine ? AppColors.white : AppColors.blue,
+            ),
+          ),
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment:
+          isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        fileContent,
+        if (text.trim().isNotEmpty)
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              _isImage || _isVideo ? ResponsiveHelper.width(10) : 0,
+              ResponsiveHelper.height(6),
+              _isImage || _isVideo ? ResponsiveHelper.width(10) : 0,
+              0,
+            ),
+            child: Text(
+              text,
+              // Image/video bubbles sit on a transparent background (not the
+              // isMine-colored bubble), so the caption always needs a dark,
+              // page-appropriate color instead of the white/black pairing
+              // used for the colored text bubble below.
+              style: GoogleFonts.inter(
+                color: (_isImage || _isVideo)
+                    ? const Color(0xFF1E293B)
+                    : (isMine ? AppColors.white : AppColors.black),
+                fontSize: ResponsiveHelper.fontSize(15),
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+        SizedBox(height: ResponsiveHelper.height(4)),
+        Text(
+          time,
+          style: GoogleFonts.inter(
+            color: isMine ? AppColors.white : AppColors.black,
+            fontSize: ResponsiveHelper.fontSize(10),
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ],
     );
   }
 
@@ -243,22 +306,37 @@ class _Bubble extends StatelessWidget {
 
 
   Widget _buildImageBubble() {
+    final bool useLocalPreview = msg.isSending && msg.localFilePath != null;
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
-      child: Image.network(
-        _fullUrl,
-        width: ResponsiveHelper.width(220),
-        fit: BoxFit.cover,
-        loadingBuilder: (context, child, progress) {
-          if (progress == null) return child;
-          return SizedBox(
-            width: ResponsiveHelper.width(220),
-            height: ResponsiveHelper.height(160),
-            child: const Center(child: CircularProgressIndicator(color: AppColors.white70)),
-          );
-        },
-        errorBuilder: (_, __, ___) => _buildFileBubble(),
-      ),
+      child: useLocalPreview
+          ? Image.file(
+              File(msg.localFilePath!),
+              width: ResponsiveHelper.width(220),
+              height: ResponsiveHelper.height(220),
+              fit: BoxFit.cover,
+            )
+          : Image.network(
+              _fullUrl,
+              width: ResponsiveHelper.width(220),
+              // Bounded height — without this, a tall/portrait photo has no
+              // height cap and renders at its full aspect-ratio height,
+              // making the bubble look like a giant blank rectangle instead
+              // of a normal-sized photo.
+              height: ResponsiveHelper.height(220),
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, progress) {
+                if (progress == null) return child;
+                return Container(
+                  width: ResponsiveHelper.width(220),
+                  height: ResponsiveHelper.height(220),
+                  color: AppColors.greyShade200,
+                  child: const Center(child: CircularProgressIndicator(color: AppColors.blue)),
+                );
+              },
+              errorBuilder: (_, __, ___) => _buildFileBubble(),
+            ),
     );
   }
 

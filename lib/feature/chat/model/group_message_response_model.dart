@@ -93,6 +93,12 @@ class GroupMessageResponseModel {
   String? deletedAt;
   String? deletedById;
 
+  // Client-only optimistic-UI state — never present in API JSON. Set on a
+  // temporary message while a picked file is still uploading so the bubble
+  // can show a local preview + progress instead of waiting for the server.
+  bool isSending = false;
+  String? localFilePath;
+
   GroupMessageResponseModel({
     this.id,
     this.groupChatRoomId,

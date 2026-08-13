@@ -29,6 +29,7 @@ import '../model/preset_message.dart';
 import '../view/message/controller/message_controller.dart';
 import 'chat_repository.dart';
 import 'package:http/http.dart' as http;
+import 'package:platchatapp/helper/toast/toast_helper.dart';
 
 
 
@@ -2021,6 +2022,19 @@ class ChatController extends GetxController {
     }
   }
 
+  /// Guesses a mime type from a file's extension, purely so a locally
+  /// picked file can be shown as an image/video preview in the optimistic
+  /// "sending" bubble before the server has confirmed the upload and
+  /// returned a real `file_mime_type`.
+  String? _guessFileMime(String path) {
+    final ext = path.split('.').last.toLowerCase();
+    const imageExts = {'png', 'jpg', 'jpeg', 'webp', 'gif'};
+    const videoExts = {'mp4', 'mov', 'avi'};
+    if (imageExts.contains(ext)) return 'image/$ext';
+    if (videoExts.contains(ext)) return 'video/$ext';
+    return null;
+  }
+
   Future<void> sendMediaMessage({
 
     required String receiverId,
@@ -2036,6 +2050,29 @@ class ChatController extends GetxController {
     debugPrint('💬 caption: $caption');
     debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
+    // ── Optimistic bubble — shown immediately so the user can see the
+    // upload is in progress instead of staring at nothing until the
+    // (potentially slow) multipart upload finishes. ──
+    final tempId = 'temp_${DateTime.now().millisecondsSinceEpoch}';
+    final tempMsg = Messages(
+      id: tempId,
+      receiverId: receiverId,
+      senderId: '',
+      message: caption ?? '',
+      createdAt: DateTime.now().toIso8601String(),
+      isMine: true,
+      isDelivered: false,
+      type: 'FILE',
+      chatRoomId: roomID.value,
+      fileName: filePath.split('/').last,
+      fileMimeType: _guessFileMime(filePath),
+    )
+      ..isSending = true
+      ..localFilePath = filePath;
+
+    userMessageList.insert(0, tempMsg);
+    updateChatRoomInListOptimistic(tempMsg);
+
     try {
       final file = await http.MultipartFile.fromPath('file', filePath);
       debugPrint('✅ MultipartFile created: ${file.filename}');
@@ -2048,13 +2085,6 @@ class ChatController extends GetxController {
 
       debugPrint('📦 Fields: $fields');
 
-      // final response = await ApiClient.multipartRequest(
-      //   uri: ApiUrl.sendUser,
-      //   method: 'POST',
-      //   fields: fields,
-      //   files: [file],
-      // );
-
       final response = await ApiClient.multipartRequest(
         uri: ApiUrl.sendUser,
         method: 'POST',
@@ -2065,8 +2095,8 @@ class ChatController extends GetxController {
       debugPrint('📥 sendMediaMessage RESPONSE');
       debugPrint('Status Code: ${response.statusCode}');
       debugPrint('Body: ${response.body}');
+      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
-// ✅ নতুন অংশ — response থেকে সরাসরি message বানিয়ে list এ ঢোকাও
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         final newMsg = Messages.fromJson(data);
@@ -2077,21 +2107,27 @@ class ChatController extends GetxController {
           roomID.value = data['chatRoom_id'].toString();
         }
 
-        final alreadyExists = userMessageList.any((m) => m.id == newMsg.id);
-        if (!alreadyExists && newMsg.chatRoomId?.toString() == roomID.value.toString()) {
-          userMessageList.insert(0, newMsg);
+        final tempIndex = userMessageList.indexWhere((m) => m.id == tempId);
+        if (tempIndex != -1) {
+          userMessageList[tempIndex] = newMsg;
+          userMessageList.refresh();
+        } else {
+          final alreadyExists = userMessageList.any((m) => m.id == newMsg.id);
+          if (!alreadyExists && newMsg.chatRoomId?.toString() == roomID.value.toString()) {
+            userMessageList.insert(0, newMsg);
+          }
         }
         updateChatRoomInListOptimistic(newMsg);
+      } else {
+        userMessageList.removeWhere((m) => m.id == tempId);
+        AppToast.error(message: AppStrings.uploadFailed.tr);
       }
-
-      debugPrint('📥 sendMediaMessage RESPONSE');
-      debugPrint('Status Code: ${response.statusCode}');
-      debugPrint('Body: ${response.body}');
-      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     } catch (e, stackTrace) {
       debugPrint('❌ sendMediaMessage ERROR: $e');
       debugPrint('StackTrace: $stackTrace');
       debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      userMessageList.removeWhere((m) => m.id == tempId);
+      AppToast.error(message: AppStrings.uploadFailed.tr);
     }
   }
 
@@ -2106,6 +2142,28 @@ class ChatController extends GetxController {
     debugPrint('📁 filePath: $filePath');
     debugPrint('💬 caption: $caption');
     debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+    // ── Optimistic bubble — shown immediately; the real message replaces
+    // it once the backend broadcasts it back via the 'group-new-message'
+    // socket event (see listenGroupMessages, which already matches a
+    // pending temp_ entry by message text). ──
+    final tempId = 'temp_${DateTime.now().millisecondsSinceEpoch}';
+    final tempMsg = GroupMessageResponseModel(
+      id: tempId,
+      groupChatRoomId: roomId,
+      senderId: '',
+      message: caption ?? '',
+      type: 'FILE',
+      createdAt: DateTime.now().toIso8601String(),
+      updatedAt: DateTime.now().toIso8601String(),
+      isMine: true,
+      fileName: filePath.split('/').last,
+      fileMimeType: _guessFileMime(filePath),
+    )
+      ..isSending = true
+      ..localFilePath = filePath;
+
+    groupMessageList.insert(0, tempMsg);
 
     try {
       final file = await http.MultipartFile.fromPath('file', filePath);
@@ -2129,10 +2187,17 @@ class ChatController extends GetxController {
       debugPrint('Status Code: ${response.statusCode}');
       debugPrint('Body: ${response.body}');
       debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        groupMessageList.removeWhere((m) => m.id == tempId);
+        AppToast.error(message: AppStrings.uploadFailed.tr);
+      }
     } catch (e, stackTrace) {
       debugPrint('❌ sendGroupMediaMessage ERROR: $e');
       debugPrint('StackTrace: $stackTrace');
       debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      groupMessageList.removeWhere((m) => m.id == tempId);
+      AppToast.error(message: AppStrings.uploadFailed.tr);
     }
   }
 

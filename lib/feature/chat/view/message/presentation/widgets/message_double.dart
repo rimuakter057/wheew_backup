@@ -1,5 +1,6 @@
 ﻿
 import 'dart:async';
+import 'dart:io';
 import 'package:get/get.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -24,6 +25,8 @@ class MessageBubble extends StatelessWidget {
   final int? fileSize;         // â† API: file_size
   final bool? isRead;
   final bool? isDelivered;
+  final bool isSending;        // Optimistic upload still in progress
+  final String? localFilePath; // Local file to preview while uploading
   final num? durationSeconds;  // â† API: durationSeconds (voice)
   final String? time;          // â† Timestamp (e.g. 7:29 PM)
   final String? avatarUrl;     // â† Receiver avatar
@@ -42,6 +45,8 @@ class MessageBubble extends StatelessWidget {
     this.durationSeconds,
     this.time,
     this.avatarUrl,
+    this.isSending = false,
+    this.localFilePath,
   });
 
 
@@ -53,7 +58,7 @@ class MessageBubble extends StatelessWidget {
       (fileUrl != null && fileUrl!.isNotEmpty);
 
   bool get _canOpenViewer =>
-      _isFileMessage && !_isVoiceType && !_isAudio;
+      _isFileMessage && !_isVoiceType && !_isAudio && !isSending;
 
   bool get _isImage {
     if (_isVoiceType) return false;
@@ -201,11 +206,47 @@ class MessageBubble extends StatelessWidget {
 
   Widget _buildBubbleContent() {
     if (_isFileMessage) {
+      Widget fileContent = _buildFileContent();
+      if (isSending) {
+        fileContent = Stack(
+          alignment: Alignment.center,
+          children: [
+            Opacity(opacity: 0.55, child: fileContent),
+            SizedBox(
+              width: ResponsiveHelper.iconSize(26),
+              height: ResponsiveHelper.iconSize(26),
+              child: CircularProgressIndicator(
+                strokeWidth: ResponsiveHelper.borderWidth(2.4),
+                color: isMine ? AppColors.white : AppColors.blue,
+              ),
+            ),
+          ],
+        );
+      }
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildFileContent(),
+          fileContent,
+          if (message.trim().isNotEmpty)
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                _isImage || _isVideo ? ResponsiveHelper.width(10) : 0,
+                ResponsiveHelper.height(6),
+                _isImage || _isVideo ? ResponsiveHelper.width(10) : 0,
+                0,
+              ),
+              child: Text(
+                message,
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF1E293B),
+                  fontSize: ResponsiveHelper.fontSize(14),
+                  fontWeight: FontWeight.w400,
+                  height: 1.35,
+                ),
+              ),
+            ),
           if (time != null && time!.isNotEmpty) ...[
             const SizedBox(height: 4),
             Row(
@@ -284,58 +325,74 @@ class MessageBubble extends StatelessWidget {
 
 
   Widget _buildImageBubble() {
+    final bool useLocalPreview = isSending && localFilePath != null;
+
     return Stack(
       children: [
         ClipRRect(
           borderRadius:
           BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
-          child: Image.network(
-            _fullUrl,
-            width: ResponsiveHelper.width(220),
-            fit: BoxFit.cover,
-            loadingBuilder: (context, child, progress) {
-              if (progress == null) return child;
-              return SizedBox(
-                width: ResponsiveHelper.width(220),
-                height: ResponsiveHelper.height(160),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    value: progress.expectedTotalBytes != null
-                        ? progress.cumulativeBytesLoaded /
-                        progress.expectedTotalBytes!
-                        : null,
-                    strokeWidth: ResponsiveHelper.borderWidth(2),
-                    color: AppColors.white70,
-                  ),
+          child: useLocalPreview
+              ? Image.file(
+                  File(localFilePath!),
+                  width: ResponsiveHelper.width(220),
+                  height: ResponsiveHelper.height(220),
+                  fit: BoxFit.cover,
+                )
+              : Image.network(
+                  _fullUrl,
+                  width: ResponsiveHelper.width(220),
+                  // Bounded height — without this, a tall/portrait photo has
+                  // no height cap and renders at its full aspect-ratio
+                  // height (easily 500-700+ px), making the bubble look like
+                  // a giant blank rectangle instead of a normal-sized photo.
+                  height: ResponsiveHelper.height(220),
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, progress) {
+                    if (progress == null) return child;
+                    return Container(
+                      width: ResponsiveHelper.width(220),
+                      height: ResponsiveHelper.height(220),
+                      color: AppColors.greyShade200,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          value: progress.expectedTotalBytes != null
+                              ? progress.cumulativeBytesLoaded /
+                              progress.expectedTotalBytes!
+                              : null,
+                          strokeWidth: ResponsiveHelper.borderWidth(2),
+                          color: AppColors.blue,
+                        ),
+                      ),
+                    );
+                  },
+                  errorBuilder: (_, __, ___) => _buildFileBubble(),
                 ),
-              );
-            },
-            errorBuilder: (_, __, ___) => _buildFileBubble(),
-          ),
         ),
-        // tap indicator overlay
-        Positioned(
-          bottom: ResponsiveHelper.padding(6),
-          right: ResponsiveHelper.padding(6),
-          child: Container(
-            padding: ResponsiveHelper.symmetric(horizontal: 6, vertical: 3),
-            decoration: BoxDecoration(
-              color: AppColors.black45,
-              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(8)),
-            ),
-            child:  Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.zoom_out_map_rounded, color: AppColors.white, size: ResponsiveHelper.iconSize(12)),
-                SizedBox(width: ResponsiveHelper.spacing(3)),
-                Text(AppStrings.viewDocument.tr,
+        // tap indicator overlay — hidden while still uploading (not tappable yet)
+        if (!useLocalPreview)
+          Positioned(
+            bottom: ResponsiveHelper.padding(6),
+            right: ResponsiveHelper.padding(6),
+            child: Container(
+              padding: ResponsiveHelper.symmetric(horizontal: 6, vertical: 3),
+              decoration: BoxDecoration(
+                color: AppColors.black45,
+                borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(8)),
+              ),
+              child:  Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.zoom_out_map_rounded, color: AppColors.white, size: ResponsiveHelper.iconSize(12)),
+                  SizedBox(width: ResponsiveHelper.spacing(3)),
+                  Text(AppStrings.viewDocument.tr,
 
 
-                    style: TextStyle(color: AppColors.white, fontSize: ResponsiveHelper.fontSize(10))),
-              ],
+                      style: TextStyle(color: AppColors.white, fontSize: ResponsiveHelper.fontSize(10))),
+                ],
+              ),
             ),
           ),
-        ),
       ],
     );
   }

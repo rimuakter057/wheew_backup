@@ -394,7 +394,7 @@ class _MessageInputState extends State<MessageInput> {
           ),
         ),
 
-        SizedBox(height: ResponsiveHelper.height(16)),
+        SizedBox(height: ResponsiveHelper.height(4)),
       ],
     );
   }

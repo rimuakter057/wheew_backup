@@ -50,7 +50,6 @@ class MessageScreen extends StatefulWidget {
     super.key,
     this.roomId,
     required this.otherUserName,
-
     this.otherUserAvatar,
     required this.receiverId,
     this.isBlockedByMe,
@@ -75,6 +74,7 @@ class _MessageScreenState extends State<MessageScreen> {
   final GroupController _groupController = Get.find<GroupController>();
   final ChatController chatController = Get.find<ChatController>();
   final MessageController messageController = Get.find<MessageController>();
+
   late String _currentRoomId;
 
   final RxInt _selectedPresetIndex = (-1).obs;
@@ -82,24 +82,57 @@ class _MessageScreenState extends State<MessageScreen> {
   final RxBool _isSendingRequest = false.obs;
   final RxBool _isRequestSent = false.obs;
 
-  // Flips to true the moment the receiver accepts a message request, so the
-  // same screen switches straight into the normal chat (message list + input
-  // field) instead of navigating away and requiring a fresh screen.
   final RxBool _requestAccepted = false.obs;
 
-  // Canonical request state from GET /chat/message-requests/{id}/thread —
-  // used to decide sender-vs-receiver view from the real `actions` array
-  // instead of trusting the isReceivedRequest/isSendRequest route extras.
-  final Rxn<Map<String, dynamic>> _threadData = Rxn<Map<String, dynamic>>();
+  final Rxn<Map<String, dynamic>> _threadData =
+  Rxn<Map<String, dynamic>>();
+
   final RxBool _isLoadingThread = false.obs;
+
+  // ------------------------------------------------------------
+  // Responsive helpers
+  // ------------------------------------------------------------
+
+  bool _isLandscape(BuildContext context) {
+    return MediaQuery.of(context).orientation == Orientation.landscape;
+  }
+
+  double _requestAvatarRadius(BuildContext context) {
+    return _isLandscape(context) ? 38 : 54;
+  }
+
+  double _requestTopSpacing(BuildContext context) {
+    return _isLandscape(context) ? 8 : 20;
+  }
+
+  double _requestSectionSpacing(BuildContext context) {
+    return _isLandscape(context) ? 6 : 16;
+  }
+
+  double _actionCardTopPadding(BuildContext context) {
+    return _isLandscape(context) ? 12 : 20;
+  }
+
+  double _actionCardBottomPadding(BuildContext context) {
+    return _isLandscape(context) ? 14 : 28;
+  }
+
+  double _actionCardVerticalSpacing(BuildContext context) {
+    return _isLandscape(context) ? 10 : 20;
+  }
 
   @override
   void initState() {
     super.initState();
+
     _currentRoomId = widget.roomId ?? '';
 
-    chatController.isBlockedByMe.value = widget.isBlockedByMe ?? false;
-    chatController.isBlockedMe.value = widget.isBlockedMe ?? false;
+    chatController.isBlockedByMe.value =
+        widget.isBlockedByMe ?? false;
+
+    chatController.isBlockedMe.value =
+        widget.isBlockedMe ?? false;
+
     chatController.fetchPresetMessages();
 
     if (widget.requestId != null &&
@@ -108,116 +141,152 @@ class _MessageScreenState extends State<MessageScreen> {
     }
 
     _initChat();
+
     _scrollController.addListener(_onScroll);
   }
 
   Future<void> _loadThread() async {
     _isLoadingThread.value = true;
-    final data = await messageController.fetchMessageRequestThread(widget.requestId!);
+
+    final data = await messageController
+        .fetchMessageRequestThread(widget.requestId!);
+
     if (!mounted) return;
+
     if (data != null) {
       _threadData.value = data;
     }
+
     _isLoadingThread.value = false;
   }
 
-  /// Actions the backend says are valid for this request (e.g. ["ACCEPT",
-  /// "REJECT","BLOCK"] for the receiver, ["WITHDRAW"] for the sender).
-  /// Falls back to the route-extra flags while the thread is still loading
-  /// or if the fetch failed, so the screen never gets stuck blank.
   List<String>? get _threadActions =>
       (_threadData.value?['actions'] as List?)?.cast<String>();
 
   bool get _isReceiverView =>
-      _threadActions?.contains('ACCEPT') ?? widget.isReceivedRequest;
+      _threadActions?.contains('ACCEPT') ??
+          widget.isReceivedRequest;
 
   String get _effectiveRequestId =>
-      _threadData.value?['request']?['id']?.toString() ?? widget.requestId ?? '';
+      _threadData.value?['request']?['id']?.toString() ??
+          widget.requestId ??
+          '';
 
   String get _effectiveOtherUserName =>
-      _threadData.value?['otherUser']?['nick_name']?.toString() ?? widget.otherUserName;
+      _threadData.value?['otherUser']?['nick_name']?.toString() ??
+          widget.otherUserName;
 
   String? get _effectiveOtherUserAvatar =>
-      _threadData.value?['otherUser']?['avatar']?.toString() ?? widget.otherUserAvatar;
+      _threadData.value?['otherUser']?['avatar']?.toString() ??
+          widget.otherUserAvatar;
 
   String? get _effectiveLicenceId =>
-      _threadData.value?['otherUser']?['licence_id']?.toString() ?? widget.licenceId;
+      _threadData.value?['otherUser']?['licence_id']?.toString() ??
+          widget.licenceId;
 
   bool get _effectiveIsVehicleVerified =>
       _threadData.value?['otherUser']?['is_vehicle_verified'] as bool? ??
-      widget.isVehicleVerified ??
-      false;
+          widget.isVehicleVerified ??
+          false;
 
   String get _effectiveFirstMessage {
-    final messages = _threadData.value?['messages'] as List?;
+    final messages =
+    _threadData.value?['messages'] as List?;
+
     if (messages != null && messages.isNotEmpty) {
-      final firstText = messages.first?['message']?.toString();
-      if (firstText != null && firstText.isNotEmpty) return firstText;
+      final firstText =
+      messages.first?['message']?.toString();
+
+      if (firstText != null && firstText.isNotEmpty) {
+        return firstText;
+      }
     }
+
     return widget.firstMessage ?? '';
   }
 
-  // Whether the preview message was sent by the current user — read from
-  // the real thread's `is_mine` flag once loaded so the bubble position
-  // matches the actual message screen, not a per-screen assumption. Falls
-  // back to the receiver/sender route flag while the thread is still
-  // loading.
   bool get _effectiveIsMine {
-    final messages = _threadData.value?['messages'] as List?;
+    final messages =
+    _threadData.value?['messages'] as List?;
+
     if (messages != null && messages.isNotEmpty) {
-      final isMineRaw = messages.first?['is_mine'];
-      if (isMineRaw is bool) return isMineRaw;
+      final isMineRaw =
+      messages.first?['is_mine'];
+
+      if (isMineRaw is bool) {
+        return isMineRaw;
+      }
     }
+
     return !_isReceiverView;
   }
 
   Future<void> _initChat() async {
     await Future.delayed(Duration.zero);
+
     chatController.userMessageList.clear();
     chatController.page.value = 1;
-    chatController.roomID.value = widget.roomId ?? '';
+    chatController.roomID.value =
+        widget.roomId ?? '';
 
     AppSocket.ensureConnected();
     chatController.initSocketListeners();
 
     if (_currentRoomId.isNotEmpty) {
-      // fetchInboxMessage এর ভেতরেই message-read socket emit হয়
-      // messages load হওয়ার পরে — তাই এখানে আলাদা markMessagesAsRead() দরকার নেই
-      chatController.fetchInboxMessage(roomId: _currentRoomId, refresh: true);
+      chatController.fetchInboxMessage(
+        roomId: _currentRoomId,
+        refresh: true,
+      );
     }
 
-    // ── Voice auto-send ──
     if (widget.voiceAutoSend &&
         widget.voiceMessage != null &&
         widget.voiceMessage!.isNotEmpty) {
-      await Future.delayed(const Duration(milliseconds: 800));
+      await Future.delayed(
+        const Duration(milliseconds: 800),
+      );
+
       chatController.sendNewEmitMessage(
         receiverId: widget.receiverId,
         message: widget.voiceMessage!,
         roomId: _currentRoomId,
       );
-      // roomId update after first message
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (_currentRoomId.isEmpty && chatController.roomID.value.isNotEmpty) {
-          if (mounted) {
-            setState(() => _currentRoomId = chatController.roomID.value);
+
+      Future.delayed(
+        const Duration(milliseconds: 500),
+            () {
+          if (_currentRoomId.isEmpty &&
+              chatController.roomID.value.isNotEmpty) {
+            if (mounted) {
+              setState(
+                    () => _currentRoomId =
+                    chatController.roomID.value,
+              );
+            }
           }
-        }
-      });
+        },
+      );
     }
   }
 
   void _onScroll() {
     if (!_scrollController.hasClients) return;
+
     final pos = _scrollController.position;
-    if (pos.pixels >= pos.maxScrollExtent - 200 &&
+
+    if (pos.pixels >=
+        pos.maxScrollExtent - 200 &&
         chatController.hasMoreMessage &&
         !chatController.isLoadingMoreMessage.value) {
-      final roomId = _currentRoomId.isNotEmpty
+      final roomId =
+      _currentRoomId.isNotEmpty
           ? _currentRoomId
           : chatController.roomID.value;
+
       if (roomId.isNotEmpty) {
-        chatController.fetchInboxMessage(roomId: roomId);
+        chatController.fetchInboxMessage(
+          roomId: roomId,
+        );
       }
     }
   }
@@ -226,27 +295,33 @@ class _MessageScreenState extends State<MessageScreen> {
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
+
     chatController.roomID.value = '';
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.isReceivedRequest || widget.isSendRequest) {
+    if (widget.isReceivedRequest ||
+        widget.isSendRequest) {
       return Obx(() {
-        // Once the receiver accepts, drop straight into the normal chat
-        // (message list + input) on this same screen instead of the
-        // request views.
-        if (_requestAccepted.value) return _buildChatScaffold(context);
+        if (_requestAccepted.value) {
+          return _buildChatScaffold(context);
+        }
 
-        // While the canonical /thread fetch is in flight, keep rendering
-        // using the route-extra flags so the screen never sits blank.
-        return _isReceiverView ? _buildReceiveRequestView() : _buildSendRequestView();
+        return _isReceiverView
+            ? _buildReceiveRequestView()
+            : _buildSendRequestView();
       });
     }
 
     return _buildChatScaffold(context);
   }
+
+  // ============================================================
+  // NORMAL CHAT
+  // ============================================================
 
   Widget _buildChatScaffold(BuildContext context) {
     return Container(
@@ -256,7 +331,6 @@ class _MessageScreenState extends State<MessageScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         backgroundColor: AppColors.transparent,
-
         appBar: MessageAppBar(
           otherUserName: widget.otherUserName,
           otherUserAvatar: widget.otherUserAvatar,
@@ -265,88 +339,160 @@ class _MessageScreenState extends State<MessageScreen> {
           licenceId: widget.licenceId,
           isVerified: widget.isVehicleVerified,
           onRateTap: () async {
-            await chatController.fetchMyRating(widget.receiverId);
+            await chatController.fetchMyRating(
+              widget.receiverId,
+            );
+
             if (!context.mounted) return;
+
             showRatingDialog(
               context: context,
-              status: chatController.myRatingForRatee.value?.status ?? '',
+              status:
+              chatController.myRatingForRatee.value
+                  ?.status ??
+                  '',
               image: widget.otherUserAvatar ?? '',
               name: widget.otherUserName,
               receiverId: widget.receiverId,
-              isVerified: _effectiveIsVehicleVerified,
+              isVerified:
+              _effectiveIsVehicleVerified,
             );
           },
           onProfileTap: () async {
-            await _groupController.fetchUserProfile(widget.receiverId);
+            await _groupController.fetchUserProfile(
+              widget.receiverId,
+            );
+
             if (!context.mounted) return;
+
             showDialog(
               context: context,
-              builder: (dialogContext) => Obx(() {
-                final profile = _groupController.viewedProfile.value;
-                final isLoading = _groupController.isLoadingProfile.value;
-                return Dialog(
-                  backgroundColor: AppColors.transparent,
-                  child: isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : profile == null
-                      ? Center(child: Text(AppStrings.profileNotFound.tr))
-                      : ProfileCard(
-                    profile: profile,
-                    name: profile.nickName ?? "",
-                    rating: profile.rating,
-                    image: widget.otherUserAvatar ?? '',
-                    showRating: true,
-                    onRatingTap: () async {
-                      Navigator.pop(dialogContext);
-                      await chatController.fetchMyRating(widget.receiverId);
-                      if (!context.mounted) return;
-                      showRatingDialog(
-                        context: context,
-                        status:
-                        chatController.myRatingForRatee.value?.status ??
+              builder: (dialogContext) =>
+                  Obx(() {
+                    final profile =
+                        _groupController
+                            .viewedProfile
+                            .value;
+
+                    final isLoading =
+                        _groupController
+                            .isLoadingProfile
+                            .value;
+
+                    return Dialog(
+                      backgroundColor:
+                      AppColors.transparent,
+                      child: isLoading
+                          ? const Center(
+                        child:
+                        CircularProgressIndicator(),
+                      )
+                          : profile == null
+                          ? Center(
+                        child: Text(
+                          AppStrings
+                              .profileNotFound
+                              .tr,
+                        ),
+                      )
+                          : ProfileCard(
+                        profile: profile,
+                        name:
+                        profile.nickName ??
+                            "",
+                        rating: profile.rating,
+                        image:
+                        widget.otherUserAvatar ??
                             '',
-                        image: widget.otherUserAvatar ?? '',
-                        name: widget.otherUserName,
-                        receiverId: widget.receiverId,
-                        isVerified: _effectiveIsVehicleVerified,
-                      );
-                    },
-                  ),
-                );
-              }),
+                        showRating: true,
+                        onRatingTap:
+                            () async {
+                          Navigator.pop(
+                            dialogContext,
+                          );
+
+                          await chatController
+                              .fetchMyRating(
+                            widget.receiverId,
+                          );
+
+                          if (!context
+                              .mounted) {
+                            return;
+                          }
+
+                          showRatingDialog(
+                            context: context,
+                            status: chatController
+                                .myRatingForRatee
+                                .value
+                                ?.status ??
+                                '',
+                            image:
+                            widget.otherUserAvatar ??
+                                '',
+                            name:
+                            widget.otherUserName,
+                            receiverId:
+                            widget.receiverId,
+                            isVerified:
+                            _effectiveIsVehicleVerified,
+                          );
+                        },
+                      ),
+                    );
+                  }),
             );
           },
         ),
-
-        // ── Body: Column with message list and bottom input ──────
         body: SafeArea(
           top: true,
           bottom: false,
           child: Column(
             children: [
-              // ── Message list ────────────────────────────────
               Expanded(
                 child: Obx(() {
-                  final messages = chatController.userMessageList;
-                  final bool showTyping = chatController.isTyping.value;
+                  final messages =
+                      chatController.userMessageList;
 
-                  if (chatController.isLoadingMessage.value && messages.isEmpty) {
+                  final bool showTyping =
+                      chatController.isTyping.value;
+
+                  if (chatController
+                      .isLoadingMessage
+                      .value &&
+                      messages.isEmpty) {
                     return MessageScreenShimmer();
                   }
 
-                  if (messages.isEmpty && !showTyping) {
+                  if (messages.isEmpty &&
+                      !showTyping) {
                     return RefreshIndicator(
                       onRefresh: () =>
-                          chatController.fetchInboxMessage(roomId: widget.roomId),
+                          chatController
+                              .fetchInboxMessage(
+                            roomId: widget.roomId,
+                          ),
                       child: ListView(
-                        physics: const AlwaysScrollableScrollPhysics(),
+                        physics:
+                        const AlwaysScrollableScrollPhysics(),
                         children: [
                           SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.4,
+                            height:
+                            MediaQuery.of(context)
+                                .size
+                                .height *
+                                0.4,
                             child: Center(
                               child: Text(
-                                AppStrings.noMessagesYet.tr,
-                                style: const TextStyle(color: AppColors.grey),
+                                AppStrings
+                                    .noMessagesYet
+                                    .tr,
+                                style:
+                                const TextStyle(
+                                  color:
+                                  AppColors.grey,
+                                ),
                               ),
                             ),
                           ),
@@ -357,57 +503,113 @@ class _MessageScreenState extends State<MessageScreen> {
 
                   return RefreshIndicator(
                     onRefresh: () =>
-                        chatController.fetchInboxMessage(roomId: widget.roomId),
+                        chatController
+                            .fetchInboxMessage(
+                          roomId: widget.roomId,
+                        ),
                     child: ListView.builder(
-                      controller: _scrollController,
+                      controller:
+                      _scrollController,
                       reverse: true,
-                      padding: ResponsiveHelper.symmetric(
-                        horizontal: ResponsiveHelper.width(16),
-                        vertical: ResponsiveHelper.height(8),
+                      padding:
+                      ResponsiveHelper.symmetric(
+                        horizontal:
+                        ResponsiveHelper.width(
+                          16,
+                        ),
+                        vertical:
+                        ResponsiveHelper.height(
+                          8,
+                        ),
                       ),
-                      itemCount: messages.length +
-                          (chatController.hasMoreMessage ? 1 : 0) +
+                      itemCount:
+                      messages.length +
+                          (chatController
+                              .hasMoreMessage
+                              ? 1
+                              : 0) +
                           (showTyping ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (showTyping && index == 0) {
+                      itemBuilder:
+                          (context, index) {
+                        if (showTyping &&
+                            index == 0) {
                           return _buildTypingIndicatorBubble();
                         }
-                        final msgIndex = showTyping ? index - 1 : index;
 
-                        if (msgIndex == messages.length) {
+                        final msgIndex =
+                        showTyping
+                            ? index - 1
+                            : index;
+
+                        if (msgIndex ==
+                            messages.length) {
                           return Obx(
-                                () => chatController.isLoadingMoreMessage.value
+                                () =>
+                            chatController
+                                .isLoadingMoreMessage
+                                .value
                                 ? Padding(
-                              padding: ResponsiveHelper.all(12),
-                              child: const Center(child: CircularProgressIndicator()),
+                              padding:
+                              ResponsiveHelper
+                                  .all(
+                                12,
+                              ),
+                              child:
+                              const Center(
+                                child:
+                                CircularProgressIndicator(),
+                              ),
                             )
-                                : const SizedBox.shrink(),
+                                : const SizedBox
+                                .shrink(),
                           );
                         }
 
-                        final msg = messages[msgIndex];
-                        final bool isMine = msg.isMine == true;
-                        final String formattedTime = formatTime(msg.createdAt ?? '');
+                        final msg =
+                        messages[msgIndex];
+
+                        final bool isMine =
+                            msg.isMine == true;
+
+                        final String
+                        formattedTime =
+                        formatTime(
+                          msg.createdAt ?? '',
+                        );
 
                         return GestureDetector(
                           onLongPress: () {
-                            if (isMine && msg.id != null) {
-                              _showDeleteMessageDialog(context, msg.id!);
+                            if (isMine &&
+                                msg.id != null) {
+                              _showDeleteMessageDialog(
+                                context,
+                                msg.id!,
+                              );
                             }
                           },
                           child: MessageBubble(
-                            message: msg.message ?? '',
+                            message:
+                            msg.message ?? '',
                             isMine: isMine,
                             type: msg.type,
                             fileUrl: msg.fileUrl,
                             isRead: msg.isRead,
                             fileName: msg.fileName,
                             fileSize: msg.fileSize,
-                            fileMimeType: msg.fileMimeType,
-                            durationSeconds: msg.durationSeconds,
-                            isDelivered: msg.isDelivered,
-                            time: formattedTime.isNotEmpty ? formattedTime : '0:00 PM',
-                            avatarUrl: widget.otherUserAvatar,
+                            fileMimeType:
+                            msg.fileMimeType,
+                            durationSeconds:
+                            msg.durationSeconds,
+                            isDelivered:
+                            msg.isDelivered,
+                            time: formattedTime
+                                .isNotEmpty
+                                ? formattedTime
+                                : '0:00 PM',
+                            avatarUrl:
+                            widget.otherUserAvatar,
+                            isSending: msg.isSending,
+                            localFilePath: msg.localFilePath,
                           ),
                         );
                       },
@@ -417,43 +619,69 @@ class _MessageScreenState extends State<MessageScreen> {
               ),
 
               Obx(() {
-                if (chatController.isBlockedByMe.value ||
-                    chatController.isBlockedMe.value) {
+                if (chatController
+                    .isBlockedByMe.value ||
+                    chatController
+                        .isBlockedMe.value) {
                   return const SizedBox.shrink();
                 }
+
                 return Padding(
-                  padding: EdgeInsets.only(bottom: ResponsiveHelper.padding(8)),
-                  child: MessagePresetChips(chatController: chatController),
+                  padding: EdgeInsets.only(
+                    bottom:
+                    ResponsiveHelper.padding(
+                      8,
+                    ),
+                  ),
+                  child: MessagePresetChips(
+                    chatController:
+                    chatController,
+                  ),
                 );
               }),
 
-              // ── Bottom: Input / Block Widgets ──────────────────────
               Container(
                 color: const Color(0xFFF1F5F9),
                 child: SafeArea(
                   top: false,
                   bottom: true,
                   child: Obx(() {
-                    if (chatController.isBlockedByMe.value) {
+                    if (chatController
+                        .isBlockedByMe.value) {
                       return BlockByMeWidget(
-                        name: widget.otherUserName,
+                        name:
+                        widget.otherUserName,
                         onUnblock: () {
-                          chatController.unBlock(widget.receiverId, context);
-                          chatController.isBlockedByMe.value = false;
+                          chatController.unBlock(
+                            widget.receiverId,
+                            context,
+                          );
+
+                          chatController
+                              .isBlockedByMe
+                              .value = false;
                         },
                       );
-                    } else if (chatController.isBlockedMe.value) {
+                    } else if (chatController
+                        .isBlockedMe.value) {
                       return const BlockMeWidget();
-                    } else {
-                      return MessageInput(
-                        chatController: chatController,
-                        currentRoomId: _currentRoomId,
-                        receiverId: widget.receiverId,
-                        onRoomIdUpdate: (newId) {
-                          setState(() => _currentRoomId = newId);
-                        },
-                      );
                     }
+
+                    return MessageInput(
+                      chatController:
+                      chatController,
+                      currentRoomId:
+                      _currentRoomId,
+                      receiverId:
+                      widget.receiverId,
+                      onRoomIdUpdate:
+                          (newId) {
+                        setState(
+                              () => _currentRoomId =
+                              newId,
+                        );
+                      },
+                    );
                   }),
                 ),
               ),
@@ -462,20 +690,29 @@ class _MessageScreenState extends State<MessageScreen> {
         ),
       ),
     );
-
-
   }
+
+  // ============================================================
+  // TYPING INDICATOR
+  // ============================================================
 
   Widget _buildTypingIndicatorBubble() {
     return Align(
       alignment: Alignment.centerLeft,
       child: Padding(
-        padding: ResponsiveHelper.symmetric(vertical: 6.0),
+        padding:
+        ResponsiveHelper.symmetric(
+          vertical: 6.0,
+        ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment:
+          CrossAxisAlignment.end,
           children: [
             CircleAvatar(
-              radius: ResponsiveHelper.borderRadius(16),
+              radius:
+              ResponsiveHelper.borderRadius(
+                16,
+              ),
               backgroundImage: NetworkImage(
                 ImageHandler.imagesHandle(
                   widget.otherUserAvatar,
@@ -483,24 +720,53 @@ class _MessageScreenState extends State<MessageScreen> {
                 ),
               ),
             ),
-            SizedBox(width: ResponsiveHelper.spacing(8)),
+            SizedBox(
+              width:
+              ResponsiveHelper.spacing(
+                8,
+              ),
+            ),
             Container(
-              padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 12),
+              padding:
+              ResponsiveHelper.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
               decoration: BoxDecoration(
                 color: AppColors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(ResponsiveHelper.borderRadius(15)),
-                  topRight: Radius.circular(ResponsiveHelper.borderRadius(15)),
-                  bottomRight: Radius.circular(ResponsiveHelper.borderRadius(15)),
+                borderRadius:
+                BorderRadius.only(
+                  topLeft: Radius.circular(
+                    ResponsiveHelper
+                        .borderRadius(15),
+                  ),
+                  topRight: Radius.circular(
+                    ResponsiveHelper
+                        .borderRadius(15),
+                  ),
+                  bottomRight:
+                  Radius.circular(
+                    ResponsiveHelper
+                        .borderRadius(15),
+                  ),
                 ),
               ),
               child: Row(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize:
+                MainAxisSize.min,
                 children: [
                   _buildDot(0),
-                  SizedBox(width: ResponsiveHelper.spacing(3)),
+                  SizedBox(
+                    width:
+                    ResponsiveHelper
+                        .spacing(3),
+                  ),
                   _buildDot(1),
-                  SizedBox(width: ResponsiveHelper.spacing(3)),
+                  SizedBox(
+                    width:
+                    ResponsiveHelper
+                        .spacing(3),
+                  ),
                   _buildDot(2),
                 ],
               ),
@@ -512,135 +778,250 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   Widget _buildDot(int index) {
-    return _AnimatedDot(delayMs: index * 150);
+    return _AnimatedDot(
+      delayMs: index * 150,
+    );
   }
 
-  void _showDeleteMessageDialog(BuildContext context, String messageId) {
+  // ============================================================
+  // DELETE MESSAGE
+  // ============================================================
+
+  void _showDeleteMessageDialog(
+      BuildContext context,
+      String messageId,
+      ) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
+        shape:
+        RoundedRectangleBorder(
+          borderRadius:
+          BorderRadius.circular(
+            ResponsiveHelper
+                .borderRadius(16),
+          ),
         ),
         title: Text(
           AppStrings.deleteMessage.tr,
           style: GoogleFonts.poppins(
-            fontSize: ResponsiveHelper.fontSize(16),
-            fontWeight: FontWeight.w600,
+            fontSize:
+            ResponsiveHelper.fontSize(
+              16,
+            ),
+            fontWeight:
+            FontWeight.w600,
             color: AppColors.black,
           ),
         ),
         content: Text(
-          AppStrings.areYouSureDeleteMessage.tr,
+          AppStrings
+              .areYouSureDeleteMessage
+              .tr,
           style: GoogleFonts.poppins(
-            fontSize: ResponsiveHelper.fontSize(14),
-            color: AppColors.greyShade600,
+            fontSize:
+            ResponsiveHelper.fontSize(
+              14,
+            ),
+            color:
+            AppColors.greyShade600,
           ),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(ctx),
+            onPressed: () =>
+                Navigator.pop(ctx),
             child: Text(
               AppStrings.cancel.tr,
               style: GoogleFonts.poppins(
-                fontSize: ResponsiveHelper.fontSize(14),
+                fontSize:
+                ResponsiveHelper
+                    .fontSize(14),
                 color: AppColors.grey,
               ),
             ),
           ),
-          Obx(() => TextButton(
-            onPressed: chatController.isDeletingMessage.value
-                ? null
-                : () async {
-                    final success = await chatController.deleteMessageApi(
-                      messageId: messageId,
-                      context: context,
-                    );
-                    if (success) {
-                      Navigator.pop(ctx);
-                    }
-                  },
-            child: chatController.isDeletingMessage.value
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.red),
-                  )
-                : Text(
-                    AppStrings.delete.tr,
-                    style: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.fontSize(14),
-                      color: AppColors.red,
-                      fontWeight: FontWeight.w600,
-                    ),
+          Obx(
+                () => TextButton(
+              onPressed: chatController
+                  .isDeletingMessage
+                  .value
+                  ? null
+                  : () async {
+                final success =
+                await chatController
+                    .deleteMessageApi(
+                  messageId:
+                  messageId,
+                  context:
+                  context,
+                );
+
+                if (success) {
+                  Navigator.pop(
+                    ctx,
+                  );
+                }
+              },
+              child: chatController
+                  .isDeletingMessage
+                  .value
+                  ? const SizedBox(
+                width: 16,
+                height: 16,
+                child:
+                CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color:
+                  AppColors.red,
+                ),
+              )
+                  : Text(
+                AppStrings.delete.tr,
+                style:
+                GoogleFonts.poppins(
+                  fontSize:
+                  ResponsiveHelper
+                      .fontSize(
+                    14,
                   ),
-          )),
+                  color:
+                  AppColors.red,
+                  fontWeight:
+                  FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
+  // ============================================================
+  // SEND REQUEST VIEW
+  // ============================================================
+
   Widget _buildSendRequestView() {
+    final landscape = _isLandscape(context);
+
     return Container(
       decoration: const BoxDecoration(
-        gradient: AppColors.primaryBackgroundGradient,
+        gradient:
+        AppColors.primaryBackgroundGradient,
       ),
       child: Scaffold(
-        backgroundColor: AppColors.transparent,
+        backgroundColor:
+        AppColors.transparent,
         appBar: AppBar(
-          backgroundColor: AppColors.transparent,
+          backgroundColor:
+          AppColors.transparent,
           elevation: 0,
           scrolledUnderElevation: 0,
           leading: Center(
             child: GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
+              onTap: () =>
+                  Navigator.of(context)
+                      .pop(),
               child: Container(
                 width: 36,
                 height: 36,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.white.withValues(alpha: 0.9),
+                decoration:
+                BoxDecoration(
+                  shape:
+                  BoxShape.circle,
+                  color: AppColors.white
+                      .withValues(
+                    alpha: 0.9,
+                  ),
                 ),
-                child: const Icon(Icons.chevron_left, color: AppColors.black87, size: 22),
+                child: const Icon(
+                  Icons.chevron_left,
+                  color:
+                  AppColors.black87,
+                  size: 22,
+                ),
               ),
             ),
           ),
           title: Row(
             children: [
-              UserAvatar(imagePath: _effectiveOtherUserAvatar ?? AppConst.unknown, radius: 18),
-              const SizedBox(width: 8),
+              UserAvatar(
+                imagePath:
+                _effectiveOtherUserAvatar ??
+                    AppConst.unknown,
+                radius: landscape
+                    ? 16
+                    : 18,
+              ),
+              const SizedBox(
+                width: 8,
+              ),
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment:
+                  CrossAxisAlignment.start,
+                  mainAxisSize:
+                  MainAxisSize.min,
                   children: [
                     Row(
                       children: [
                         Flexible(
                           child: Text(
                             _effectiveOtherUserName,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.poppins(
-                              color: AppColors.black87,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
+                            overflow:
+                            TextOverflow
+                                .ellipsis,
+                            style:
+                            GoogleFonts.poppins(
+                              color:
+                              AppColors.black87,
+                              fontWeight:
+                              FontWeight.w700,
+                              fontSize:
+                              landscape
+                                  ? 14
+                                  : 15,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(
+                          width: 4,
+                        ),
                         Image.asset(
                           _effectiveIsVehicleVerified
-                              ? AssetsPath.verified
-                              : AssetsPath.unverified,
-                          width: ResponsiveHelper.iconSize(16),
-                          height: ResponsiveHelper.iconSize(16),
+                              ? AssetsPath
+                              .verified
+                              : AssetsPath
+                              .unverified,
+                          width:
+                          ResponsiveHelper
+                              .iconSize(
+                            16,
+                          ),
+                          height:
+                          ResponsiveHelper
+                              .iconSize(
+                            16,
+                          ),
                         ),
                       ],
                     ),
-                    if (_effectiveLicenceId != null && _effectiveLicenceId!.isNotEmpty)
+                    if (_effectiveLicenceId !=
+                        null &&
+                        _effectiveLicenceId!
+                            .isNotEmpty)
                       Text(
                         _effectiveLicenceId!,
-                        style: GoogleFonts.poppins(color: AppColors.greyShade600, fontSize: 11),
+                        style:
+                        GoogleFonts.poppins(
+                          color: AppColors
+                              .greyShade600,
+                          fontSize:
+                          landscape
+                              ? 10
+                              : 11,
+                        ),
                       ),
                   ],
                 ),
@@ -648,67 +1029,165 @@ class _MessageScreenState extends State<MessageScreen> {
             ],
           ),
         ),
+
+        // --------------------------------------------------------
+        // IMPORTANT:
+        // Bottom action card is Flexible + ScrollView.
+        // This prevents landscape RenderFlex overflow.
+        // --------------------------------------------------------
+
         body: Column(
           children: [
             Expanded(
               child: Obx(() {
                 final bool isAlreadySent =
-                    _isRequestSent.value || _effectiveRequestId.isNotEmpty;
+                    _isRequestSent.value ||
+                        _effectiveRequestId
+                            .isNotEmpty;
 
                 if (isAlreadySent) {
-                  // Real-message-like positioning: pin the preview near the
-                  // bottom, right above the action sheet — like an actual
-                  // conversation — instead of stacking it at the top with a
-                  // big empty gap below.
-                  final presets = chatController.presetMessages
-                      .where((p) => p.type.toUpperCase() == 'ALERT')
+                  final presets =
+                  chatController
+                      .presetMessages
+                      .where(
+                        (p) => p.type
+                        .toUpperCase() ==
+                        'ALERT',
+                  )
                       .toList();
-                  final String sentText = _effectiveFirstMessage.isNotEmpty
-                      ? _effectiveFirstMessage
-                      : (_selectedPresetIndex.value >= 0 &&
-                              _selectedPresetIndex.value < presets.length
-                          ? (Get.locale?.languageCode == 'it'
-                              ? presets[_selectedPresetIndex.value].messageIt
-                              : presets[_selectedPresetIndex.value].message)
-                          : '');
-                  if (sentText.isEmpty) return const SizedBox.shrink();
 
-                  final bool isMine = _effectiveIsMine;
+                  final String sentText =
+                  _effectiveFirstMessage
+                      .isNotEmpty
+                      ? _effectiveFirstMessage
+                      : (_selectedPresetIndex
+                      .value >=
+                      0 &&
+                      _selectedPresetIndex
+                          .value <
+                          presets.length
+                      ? (Get.locale
+                      ?.languageCode ==
+                      'it'
+                      ? presets[
+                  _selectedPresetIndex
+                      .value]
+                      .messageIt
+                      : presets[
+                  _selectedPresetIndex
+                      .value]
+                      .message)
+                      : '');
+
+                  if (sentText.isEmpty) {
+                    return const SizedBox
+                        .shrink();
+                  }
+
+                  final bool isMine =
+                      _effectiveIsMine;
 
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    padding:
+                    EdgeInsets.symmetric(
+                      horizontal:
+                      landscape
+                          ? 16
+                          : 24,
+                      vertical:
+                      landscape
+                          ? 8
+                          : 16,
+                    ),
                     child: Align(
-                      alignment: Alignment.bottomCenter,
+                      alignment:
+                      Alignment.bottomCenter,
                       child: Column(
-                        mainAxisSize: MainAxisSize.min,
+                        mainAxisSize:
+                        MainAxisSize.min,
                         children: [
                           Center(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: AppColors.white.withValues(alpha: 0.6),
-                                borderRadius: BorderRadius.circular(16),
+                            child:
+                            Container(
+                              padding:
+                              const EdgeInsets
+                                  .symmetric(
+                                horizontal:
+                                14,
+                                vertical:
+                                4,
+                              ),
+                              decoration:
+                              BoxDecoration(
+                                color: AppColors
+                                    .white
+                                    .withValues(
+                                  alpha: 0.6,
+                                ),
+                                borderRadius:
+                                BorderRadius
+                                    .circular(
+                                  16,
+                                ),
                               ),
                               child: Text(
-                                AppStrings.today.tr,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 12,
-                                  color: AppColors.greyShade700,
-                                  fontWeight: FontWeight.w500,
+                                AppStrings
+                                    .today
+                                    .tr,
+                                style:
+                                GoogleFonts
+                                    .poppins(
+                                  fontSize:
+                                  12,
+                                  color: AppColors
+                                      .greyShade700,
+                                  fontWeight:
+                                  FontWeight
+                                      .w500,
                                 ),
                               ),
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(
+                            height:
+                            landscape
+                                ? 8
+                                : 16,
+                          ),
                           if (isMine)
-                            MessageBubble(message: sentText, isMine: true)
+                            MessageBubble(
+                              message:
+                              sentText,
+                              isMine: true,
+                            )
                           else
                             Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                              crossAxisAlignment:
+                              CrossAxisAlignment
+                                  .end,
                               children: [
-                                UserAvatar(imagePath: _effectiveOtherUserAvatar ?? AppConst.unknown, radius: 16),
-                                const SizedBox(width: 8),
-                                Flexible(child: MessageBubble(message: sentText, isMine: false)),
+                                UserAvatar(
+                                  imagePath:
+                                  _effectiveOtherUserAvatar ??
+                                      AppConst
+                                          .unknown,
+                                  radius:
+                                  landscape
+                                      ? 14
+                                      : 16,
+                                ),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                Flexible(
+                                  child:
+                                  MessageBubble(
+                                    message:
+                                    sentText,
+                                    isMine:
+                                    false,
+                                  ),
+                                ),
                               ],
                             ),
                         ],
@@ -717,82 +1196,231 @@ class _MessageScreenState extends State<MessageScreen> {
                   );
                 }
 
-                // Compose state: header stays top-anchored, but the preset
-                // picker is pushed down to sit just above the bottom sheet —
-                // matching the Figma "Send" reference layout.
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  padding:
+                  EdgeInsets.symmetric(
+                    horizontal:
+                    landscape ? 16 : 24,
+                    vertical:
+                    landscape ? 6 : 16,
+                  ),
                   child: Column(
                     children: [
-                      const SizedBox(height: 20),
-                      UserAvatar(imagePath: _effectiveOtherUserAvatar ?? AppConst.unknown, radius: 54),
-                      const SizedBox(height: 16),
-                      Text(
-                        AppStrings.youreNotFollowing.tr,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.black87,
+                      SizedBox(
+                        height:
+                        _requestTopSpacing(
+                          context,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        AppStrings.sendRequestDesc.tr,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.poppins(
-                          fontSize: 12.5,
-                          color: AppColors.greyShade600,
-                          height: 1.4,
+
+                      UserAvatar(
+                        imagePath:
+                        _effectiveOtherUserAvatar ??
+                            AppConst.unknown,
+                        radius:
+                        _requestAvatarRadius(
+                          context,
                         ),
                       ),
+
+                      SizedBox(
+                        height:
+                        _requestSectionSpacing(
+                          context,
+                        ),
+                      ),
+
+                      Text(
+                        AppStrings
+                            .youreNotFollowing
+                            .tr,
+                        textAlign:
+                        TextAlign.center,
+                        style:
+                        GoogleFonts.poppins(
+                          fontSize:
+                          landscape
+                              ? 17
+                              : 20,
+                          fontWeight:
+                          FontWeight.w700,
+                          color:
+                          AppColors.black87,
+                        ),
+                      ),
+
+                      SizedBox(
+                        height:
+                        landscape
+                            ? 4
+                            : 8,
+                      ),
+
+                      Text(
+                        AppStrings
+                            .sendRequestDesc
+                            .tr,
+                        textAlign:
+                        TextAlign.center,
+                        style:
+                        GoogleFonts.poppins(
+                          fontSize:
+                          landscape
+                              ? 11
+                              : 12.5,
+                          color:
+                          AppColors
+                              .greyShade600,
+                          height:
+                          1.35,
+                        ),
+                      ),
+
                       const Spacer(),
+
                       Obx(() {
-                        final presets = chatController.presetMessages
-                            .where((p) => p.type.toUpperCase() == 'ALERT')
+                        final presets =
+                        chatController
+                            .presetMessages
+                            .where(
+                              (p) =>
+                          p.type
+                              .toUpperCase() ==
+                              'ALERT',
+                        )
                             .toList();
-                        if (presets.isEmpty) return const SizedBox.shrink();
+
+                        if (presets.isEmpty) {
+                          return const SizedBox
+                              .shrink();
+                        }
 
                         return Wrap(
-                          spacing: 8,
-                          runSpacing: 10,
-                          alignment: WrapAlignment.center,
-                          children: List.generate(presets.length, (index) {
-                            final preset = presets[index];
-                            final text = Get.locale?.languageCode == 'it' ? preset.messageIt : preset.message;
-                            final isSelected = _selectedPresetIndex.value == index;
+                          spacing:
+                          landscape
+                              ? 6
+                              : 8,
+                          runSpacing:
+                          landscape
+                              ? 6
+                              : 10,
+                          alignment:
+                          WrapAlignment
+                              .center,
+                          children:
+                          List.generate(
+                            presets.length,
+                                (index) {
+                              final preset =
+                              presets[index];
 
-                            return GestureDetector(
-                              onTap: () {
-                                if (_selectedPresetIndex.value == index) {
-                                  _selectedPresetIndex.value = -1;
-                                  _selectedPresetId.value = '';
-                                } else {
-                                  _selectedPresetIndex.value = index;
-                                  _selectedPresetId.value = preset.id;
-                                }
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                                decoration: BoxDecoration(
-                                  color: isSelected ? AppColors.blue.withValues(alpha: 0.15) : AppColors.white.withValues(alpha: 0.8),
-                                  borderRadius: BorderRadius.circular(24),
-                                  border: Border.all(
-                                    color: isSelected ? AppColors.blue : AppColors.white.withValues(alpha: 0.8),
-                                    width: 1.2,
+                              final text =
+                              Get.locale
+                                  ?.languageCode ==
+                                  'it'
+                                  ? preset
+                                  .messageIt
+                                  : preset
+                                  .message;
+
+                              final isSelected =
+                                  _selectedPresetIndex
+                                      .value ==
+                                      index;
+
+                              return GestureDetector(
+                                onTap: () {
+                                  if (_selectedPresetIndex
+                                      .value ==
+                                      index) {
+                                    _selectedPresetIndex
+                                        .value = -1;
+
+                                    _selectedPresetId
+                                        .value = '';
+                                  } else {
+                                    _selectedPresetIndex
+                                        .value = index;
+
+                                    _selectedPresetId
+                                        .value =
+                                        preset.id;
+                                  }
+                                },
+                                child:
+                                Container(
+                                  padding:
+                                  EdgeInsets.symmetric(
+                                    horizontal:
+                                    landscape
+                                        ? 12
+                                        : 16,
+                                    vertical:
+                                    landscape
+                                        ? 7
+                                        : 10,
+                                  ),
+                                  decoration:
+                                  BoxDecoration(
+                                    color: isSelected
+                                        ? AppColors
+                                        .blue
+                                        .withValues(
+                                      alpha:
+                                      0.15,
+                                    )
+                                        : AppColors
+                                        .white
+                                        .withValues(
+                                      alpha:
+                                      0.8,
+                                    ),
+                                    borderRadius:
+                                    BorderRadius
+                                        .circular(
+                                      24,
+                                    ),
+                                    border:
+                                    Border.all(
+                                      color: isSelected
+                                          ? AppColors
+                                          .blue
+                                          : AppColors
+                                          .white
+                                          .withValues(
+                                        alpha:
+                                        0.8,
+                                      ),
+                                      width: 1.2,
+                                    ),
+                                  ),
+                                  child:
+                                  Text(
+                                    text,
+                                    style:
+                                    GoogleFonts
+                                        .poppins(
+                                      fontSize:
+                                      landscape
+                                          ? 11
+                                          : 12.5,
+                                      fontWeight:
+                                      isSelected
+                                          ? FontWeight
+                                          .w600
+                                          : FontWeight
+                                          .w500,
+                                      color: isSelected
+                                          ? AppColors
+                                          .blue
+                                          : AppColors
+                                          .black87,
+                                    ),
                                   ),
                                 ),
-                                child: Text(
-                                  text,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 12.5,
-                                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                                    color: isSelected ? AppColors.blue : AppColors.black87,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
+                              );
+                            },
+                          ),
                         );
                       }),
                     ],
@@ -801,281 +1429,564 @@ class _MessageScreenState extends State<MessageScreen> {
               }),
             ),
 
-            // Bottom action card matching Image 1
-            Obx(() {
-              // A requestId means we opened an existing (already-sent) request
-              // from the Sent Requests list — not a fresh compose from search,
-              // which starts with no requestId at all.
-              final bool isAlreadySent =
-                  _isRequestSent.value || _effectiveRequestId.isNotEmpty;
+            // ==================================================
+            // FIX:
+            // Flexible prevents bottom card from forcing
+            // the parent Column beyond available height.
+            // SingleChildScrollView handles short landscape.
+            // ==================================================
 
-              if (isAlreadySent) {
-                return Container(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-                  decoration: BoxDecoration(
-                    gradient: AppColors.containerGradient,
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.black.withValues(alpha: 0.05),
-                        blurRadius: 20,
-                        offset: const Offset(0, -4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        AppStrings.requestSent.tr,
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        AppStrings.requestSentDesc.tr.replaceAll('@name', _effectiveOtherUserName),
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          color: AppColors.greyShade600,
-                          height: 1.35,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      CustomGradientButton(
-                        onPressed: null,
-                        keepGradientWhenDisabled: true,
-                        gradient: AppColors.buttonGradient,
-                        borderColor: const Color(0xFFF59E0B).withValues(alpha: 0.4),
-                        prefixIcon: const Icon(Icons.access_time_rounded, color: AppColors.white, size: 18),
-                        label: AppStrings.pendingReview.tr,
-                        textColor: AppColors.white,
-                      ),
-                      if (_effectiveRequestId.isNotEmpty) ...[
-                        const SizedBox(height: 14),
-                        CustomGradientButton(
-                          gradient: AppColors.redGradient,
-                          borderColor: const Color(0xFF7A1C15),
-                          label: AppStrings.withdrawRequestLabel.tr,
-                          onPressed: () {
-                            ActionConfirmDialog.show(
-                              context,
-                              title: AppStrings.withdrawRequestTitle.tr,
-                              message: AppStrings.withdrawRequestQuestion.tr.replaceAll('@name', _effectiveOtherUserName),
-                              confirmLabel: AppStrings.withdraw.tr,
-                              icon: Icons.undo_rounded,
-                              iconColor: const Color(0xFFB02517),
-                              confirmGradient: AppColors.redGradient,
-                              onConfirm: () async {
-                                final success = await messageController.withdrawMessageRequest(
-                                  requestId: _effectiveRequestId,
-                                  context: context,
-                                );
-                                if (success && context.mounted) {
-                                  Navigator.of(context).pop();
-                                }
-                              },
-                            );
-                          },
-                        ),
-                      ],
-                    ],
-                  ),
-                );
-              }
+            Flexible(
+              fit: FlexFit.loose,
+              child: SingleChildScrollView(
+                physics:
+                const ClampingScrollPhysics(),
+                child: Obx(() {
+                  final bool isAlreadySent =
+                      _isRequestSent.value ||
+                          _effectiveRequestId
+                              .isNotEmpty;
 
-              return Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-                decoration: BoxDecoration(
-                  gradient: AppColors.containerGradient,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.black.withValues(alpha: 0.05),
-                      blurRadius: 20,
-                      offset: const Offset(0, -4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      AppStrings.sendRequestTo.tr.replaceAll('@name', _effectiveOtherUserName),
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.black87,
+                  return Container(
+                    padding:
+                    EdgeInsets.fromLTRB(
+                      20,
+                      _actionCardTopPadding(
+                        context,
+                      ),
+                      20,
+                      _actionCardBottomPadding(
+                        context,
                       ),
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      AppStrings.requestSentDesc.tr.replaceAll('@name', _effectiveOtherUserName),
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: AppColors.greyShade600,
-                        height: 1.35,
+                    decoration:
+                    BoxDecoration(
+                      gradient:
+                      AppColors
+                          .containerGradient,
+                      borderRadius:
+                      const BorderRadius
+                          .vertical(
+                        top:
+                        Radius.circular(
+                          28,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () => Navigator.pop(context),
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor: const Color(0xFFF1F5F9),
-                              side: BorderSide.none,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            child: Text(
-                              AppStrings.cancel.tr,
-                              style: GoogleFonts.poppins(
-                                color: AppColors.black87,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                              ),
-                            ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors
+                              .black
+                              .withValues(
+                            alpha: 0.05,
+                          ),
+                          blurRadius: 20,
+                          offset:
+                          const Offset(
+                            0,
+                            -4,
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFF0062E0), Color(0xFF014495)],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                              borderRadius: BorderRadius.circular(30),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize:
+                      MainAxisSize.min,
+                      children: [
+                        Text(
+                          isAlreadySent
+                              ? AppStrings
+                              .requestSent
+                              .tr
+                              : AppStrings
+                              .sendRequestTo
+                              .tr
+                              .replaceAll(
+                            '@name',
+                            _effectiveOtherUserName,
+                          ),
+                          textAlign:
+                          TextAlign.center,
+                          style:
+                          GoogleFonts.poppins(
+                            fontSize:
+                            landscape
+                                ? 14
+                                : 16,
+                            fontWeight:
+                            FontWeight.w700,
+                            color:
+                            AppColors.black87,
+                          ),
+                        ),
+
+                        SizedBox(
+                          height:
+                          landscape
+                              ? 4
+                              : 6,
+                        ),
+
+                        Text(
+                          isAlreadySent
+                              ? AppStrings
+                              .requestSentDesc
+                              .tr
+                              .replaceAll(
+                            '@name',
+                            _effectiveOtherUserName,
+                          )
+                              : AppStrings
+                              .requestSentDesc
+                              .tr
+                              .replaceAll(
+                            '@name',
+                            _effectiveOtherUserName,
+                          ),
+                          textAlign:
+                          TextAlign.center,
+                          style:
+                          GoogleFonts.poppins(
+                            fontSize:
+                            landscape
+                                ? 10.5
+                                : 12,
+                            color:
+                            AppColors
+                                .greyShade600,
+                            height:
+                            1.3,
+                          ),
+                        ),
+
+                        SizedBox(
+                          height:
+                          _actionCardVerticalSpacing(
+                            context,
+                          ),
+                        ),
+
+                        if (isAlreadySent) ...[
+                          CustomGradientButton(
+                            onPressed: null,
+                            keepGradientWhenDisabled:
+                            true,
+                            gradient:
+                            AppColors
+                                .buttonGradient,
+                            borderColor:
+                            const Color(
+                              0xFFF59E0B,
+                            ).withValues(
+                              alpha: 0.4,
                             ),
-                            child: ElevatedButton(
-                              onPressed: _isSendingRequest.value
-                                  ? null
-                                  : () async {
-                                      _isSendingRequest.value = true;
+                            prefixIcon:
+                            const Icon(
+                              Icons
+                                  .access_time_rounded,
+                              color:
+                              AppColors
+                                  .white,
+                              size: 18,
+                            ),
+                            label: AppStrings
+                                .pendingReview
+                                .tr,
+                            textColor:
+                            AppColors.white,
+                          ),
 
-                                      final success = await chatController.createMessageRequest(
-                                        receiverId: widget.receiverId,
-                                        presetMessageId: _selectedPresetId.value.isNotEmpty
-                                            ? _selectedPresetId.value
-                                            : null,
-                                        context: context,
-                                      );
-
-                                      _isSendingRequest.value = false;
-                                      if (success) {
-                                        _isRequestSent.value = true;
-                                      }
-                                    },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.transparent,
-                                shadowColor: AppColors.transparent,
-                                padding: const EdgeInsets.symmetric(vertical: 14),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
+                          if (_effectiveRequestId
+                              .isNotEmpty) ...[
+                            SizedBox(
+                              height:
+                              landscape
+                                  ? 8
+                                  : 14,
+                            ),
+                            CustomGradientButton(
+                              gradient:
+                              AppColors
+                                  .redGradient,
+                              borderColor:
+                              const Color(
+                                0xFF7A1C15,
                               ),
-                              child: _isSendingRequest.value
-                                  ? const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        color: AppColors.white,
-                                        strokeWidth: 2,
+                              label: AppStrings
+                                  .withdrawRequestLabel
+                                  .tr,
+                              onPressed: () {
+                                ActionConfirmDialog
+                                    .show(
+                                  context,
+                                  title: AppStrings
+                                      .withdrawRequestTitle
+                                      .tr,
+                                  message:
+                                  AppStrings
+                                      .withdrawRequestQuestion
+                                      .tr
+                                      .replaceAll(
+                                    '@name',
+                                    _effectiveOtherUserName,
+                                  ),
+                                  confirmLabel:
+                                  AppStrings
+                                      .withdraw
+                                      .tr,
+                                  icon: Icons
+                                      .undo_rounded,
+                                  iconColor:
+                                  const Color(
+                                    0xFFB02517,
+                                  ),
+                                  confirmGradient:
+                                  AppColors
+                                      .redGradient,
+                                  onConfirm:
+                                      () async {
+                                    final success =
+                                    await messageController
+                                        .withdrawMessageRequest(
+                                      requestId:
+                                      _effectiveRequestId,
+                                      context:
+                                      context,
+                                    );
+
+                                    if (success &&
+                                        context
+                                            .mounted) {
+                                      Navigator.of(
+                                        context,
+                                      ).pop();
+                                    }
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ] else ...[
+                          Row(
+                            children: [
+                              Expanded(
+                                child:
+                                OutlinedButton(
+                                  onPressed:
+                                      () =>
+                                      Navigator.pop(
+                                        context,
                                       ),
-                                    )
-                                  : Text(
-                                      AppStrings.sendRequest.tr,
-                                      style: GoogleFonts.poppins(
-                                        color: AppColors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
+                                  style:
+                                  OutlinedButton
+                                      .styleFrom(
+                                    backgroundColor:
+                                    const Color(
+                                      0xFFF1F5F9,
+                                    ),
+                                    side:
+                                    BorderSide
+                                        .none,
+                                    padding:
+                                    EdgeInsets.symmetric(
+                                      vertical:
+                                      landscape
+                                          ? 10
+                                          : 14,
+                                    ),
+                                    shape:
+                                    RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius
+                                          .circular(
+                                        30,
                                       ),
                                     ),
-                            ),
+                                  ),
+                                  child:
+                                  Text(
+                                    AppStrings
+                                        .cancel
+                                        .tr,
+                                    style:
+                                    GoogleFonts
+                                        .poppins(
+                                      color:
+                                      AppColors
+                                          .black87,
+                                      fontWeight:
+                                      FontWeight
+                                          .w600,
+                                      fontSize:
+                                      landscape
+                                          ? 12
+                                          : 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(
+                                width: 12,
+                              ),
+
+                              Expanded(
+                                child:
+                                Container(
+                                  decoration:
+                                  BoxDecoration(
+                                    gradient:
+                                    const LinearGradient(
+                                      colors: [
+                                        Color(
+                                          0xFF0062E0,
+                                        ),
+                                        Color(
+                                          0xFF014495,
+                                        ),
+                                      ],
+                                      begin:
+                                      Alignment
+                                          .topCenter,
+                                      end:
+                                      Alignment
+                                          .bottomCenter,
+                                    ),
+                                    borderRadius:
+                                    BorderRadius
+                                        .circular(
+                                      30,
+                                    ),
+                                  ),
+                                  child:
+                                  ElevatedButton(
+                                    onPressed:
+                                    _isSendingRequest
+                                        .value
+                                        ? null
+                                        : () async {
+                                      _isSendingRequest
+                                          .value = true;
+
+                                      final success =
+                                      await chatController
+                                          .createMessageRequest(
+                                        receiverId:
+                                        widget.receiverId,
+                                        presetMessageId:
+                                        _selectedPresetId.value.isNotEmpty
+                                            ? _selectedPresetId.value
+                                            : null,
+                                        context:
+                                        context,
+                                      );
+
+                                      _isSendingRequest
+                                          .value = false;
+
+                                      if (success) {
+                                        _isRequestSent
+                                            .value = true;
+                                      }
+                                    },
+                                    style:
+                                    ElevatedButton
+                                        .styleFrom(
+                                      backgroundColor:
+                                      AppColors
+                                          .transparent,
+                                      shadowColor:
+                                      AppColors
+                                          .transparent,
+                                      padding:
+                                      EdgeInsets.symmetric(
+                                        vertical:
+                                        landscape
+                                            ? 10
+                                            : 14,
+                                      ),
+                                      shape:
+                                      RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius
+                                            .circular(
+                                          30,
+                                        ),
+                                      ),
+                                    ),
+                                    child:
+                                    _isSendingRequest
+                                        .value
+                                        ? const SizedBox(
+                                      width:
+                                      20,
+                                      height:
+                                      20,
+                                      child:
+                                      CircularProgressIndicator(
+                                        color:
+                                        AppColors.white,
+                                        strokeWidth:
+                                        2,
+                                      ),
+                                    )
+                                        : Text(
+                                      AppStrings
+                                          .sendRequest
+                                          .tr,
+                                      style:
+                                      GoogleFonts
+                                          .poppins(
+                                        color:
+                                        AppColors.white,
+                                        fontWeight:
+                                        FontWeight.w600,
+                                        fontSize:
+                                        landscape
+                                            ? 12
+                                            : 14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
+                        ],
                       ],
                     ),
-                  ],
-                ),
-              );
-            }),
+                  );
+                }),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
+  // ============================================================
+  // RECEIVE REQUEST VIEW
+  // ============================================================
+
   Widget _buildReceiveRequestView() {
+    final landscape = _isLandscape(context);
+
     return Container(
       decoration: const BoxDecoration(
-        gradient: AppColors.primaryBackgroundGradient,
+        gradient:
+        AppColors.primaryBackgroundGradient,
       ),
       child: Scaffold(
-        backgroundColor: AppColors.transparent,
+        backgroundColor:
+        AppColors.transparent,
         appBar: AppBar(
-          backgroundColor: AppColors.transparent,
+          backgroundColor:
+          AppColors.transparent,
           elevation: 0,
           scrolledUnderElevation: 0,
           leading: Center(
             child: GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
+              onTap: () =>
+                  Navigator.of(context)
+                      .pop(),
               child: Container(
                 width: 36,
                 height: 36,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.white.withValues(alpha: 0.9),
+                decoration:
+                BoxDecoration(
+                  shape:
+                  BoxShape.circle,
+                  color: AppColors.white
+                      .withValues(
+                    alpha: 0.9,
+                  ),
                 ),
-                child: const Icon(Icons.chevron_left, color: AppColors.black87, size: 22),
+                child: const Icon(
+                  Icons.chevron_left,
+                  color:
+                  AppColors.black87,
+                  size: 22,
+                ),
               ),
             ),
           ),
           title: Row(
             children: [
-              UserAvatar(imagePath: _effectiveOtherUserAvatar ?? AppConst.unknown, radius: 18),
-              const SizedBox(width: 8),
+              UserAvatar(
+                imagePath:
+                _effectiveOtherUserAvatar ??
+                    AppConst.unknown,
+                radius:
+                landscape ? 16 : 18,
+              ),
+              const SizedBox(
+                width: 8,
+              ),
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment:
+                  CrossAxisAlignment.start,
+                  mainAxisSize:
+                  MainAxisSize.min,
                   children: [
                     Row(
                       children: [
                         Flexible(
                           child: Text(
                             _effectiveOtherUserName,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.poppins(
-                              color: AppColors.black87,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
+                            overflow:
+                            TextOverflow
+                                .ellipsis,
+                            style:
+                            GoogleFonts.poppins(
+                              color:
+                              AppColors.black87,
+                              fontWeight:
+                              FontWeight.w700,
+                              fontSize:
+                              landscape
+                                  ? 14
+                                  : 15,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(
+                          width: 4,
+                        ),
                         Image.asset(
                           _effectiveIsVehicleVerified
-                              ? AssetsPath.verified
-                              : AssetsPath.unverified,
-                          width: ResponsiveHelper.iconSize(16),
-                          height: ResponsiveHelper.iconSize(16),
+                              ? AssetsPath
+                              .verified
+                              : AssetsPath
+                              .unverified,
+                          width:
+                          ResponsiveHelper
+                              .iconSize(
+                            16,
+                          ),
+                          height:
+                          ResponsiveHelper
+                              .iconSize(
+                            16,
+                          ),
                         ),
                       ],
                     ),
-                    if (_effectiveLicenceId != null && _effectiveLicenceId!.isNotEmpty)
+                    if (_effectiveLicenceId !=
+                        null &&
+                        _effectiveLicenceId!
+                            .isNotEmpty)
                       Text(
                         _effectiveLicenceId!,
-                        style: GoogleFonts.poppins(color: AppColors.greyShade600, fontSize: 11),
+                        style:
+                        GoogleFonts.poppins(
+                          color: AppColors
+                              .greyShade600,
+                          fontSize:
+                          landscape
+                              ? 10
+                              : 11,
+                        ),
                       ),
                   ],
                 ),
@@ -1083,57 +1994,116 @@ class _MessageScreenState extends State<MessageScreen> {
             ],
           ),
         ),
+
         body: Column(
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                // Real-message-like positioning: pin the preview near the
-                // bottom, right above the action sheet, instead of
-                // stacking it at the top with a big empty gap below.
-                // Nothing renders at all when there's no actual message —
-                // no fallback placeholder text.
-                child: Builder(builder: (context) {
-                  if (_effectiveFirstMessage.isEmpty) return const SizedBox.shrink();
+                padding:
+                EdgeInsets.symmetric(
+                  horizontal:
+                  landscape ? 12 : 16,
+                  vertical:
+                  landscape ? 8 : 16,
+                ),
+                child:
+                Builder(builder: (context) {
+                  if (_effectiveFirstMessage
+                      .isEmpty) {
+                    return const SizedBox
+                        .shrink();
+                  }
 
-                  final bool isMine = _effectiveIsMine;
+                  final bool isMine =
+                      _effectiveIsMine;
 
                   return Align(
-                    alignment: Alignment.bottomCenter,
+                    alignment:
+                    Alignment.bottomCenter,
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisSize:
+                      MainAxisSize.min,
                       children: [
                         Center(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: AppColors.white.withValues(alpha: 0.6),
-                              borderRadius: BorderRadius.circular(16),
+                          child:
+                          Container(
+                            padding:
+                            const EdgeInsets
+                                .symmetric(
+                              horizontal: 14,
+                              vertical: 4,
+                            ),
+                            decoration:
+                            BoxDecoration(
+                              color: AppColors
+                                  .white
+                                  .withValues(
+                                alpha: 0.6,
+                              ),
+                              borderRadius:
+                              BorderRadius
+                                  .circular(
+                                16,
+                              ),
                             ),
                             child: Text(
-                              AppStrings.today.tr,
-                              style: GoogleFonts.poppins(
+                              AppStrings
+                                  .today
+                                  .tr,
+                              style: GoogleFonts
+                                  .poppins(
                                 fontSize: 12,
-                                color: AppColors.greyShade700,
-                                fontWeight: FontWeight.w500,
+                                color: AppColors
+                                    .greyShade700,
+                                fontWeight:
+                                FontWeight
+                                    .w500,
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 16),
 
-                        // Message Bubble — position/color driven by the
-                        // real `is_mine` flag, same as the actual message
-                        // screen.
+                        SizedBox(
+                          height:
+                          landscape
+                              ? 8
+                              : 16,
+                        ),
+
                         if (isMine)
-                          MessageBubble(message: _effectiveFirstMessage, isMine: true)
+                          MessageBubble(
+                            message:
+                            _effectiveFirstMessage,
+                            isMine: true,
+                          )
                         else
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                            crossAxisAlignment:
+                            CrossAxisAlignment
+                                .end,
                             children: [
-                              UserAvatar(imagePath: _effectiveOtherUserAvatar ?? AppConst.unknown, radius: 16),
-                              const SizedBox(width: 8),
-                              Flexible(child: MessageBubble(message: _effectiveFirstMessage, isMine: false)),
+                              UserAvatar(
+                                imagePath:
+                                _effectiveOtherUserAvatar ??
+                                    AppConst
+                                        .unknown,
+                                radius:
+                                landscape
+                                    ? 14
+                                    : 16,
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Flexible(
+                                child:
+                                MessageBubble(
+                                  message:
+                                  _effectiveFirstMessage,
+                                  isMine:
+                                  false,
+                                ),
+                              ),
                             ],
                           ),
                       ],
@@ -1143,199 +2113,504 @@ class _MessageScreenState extends State<MessageScreen> {
               ),
             ),
 
-            // Bottom action card matching Image 2
-            Container(
-              padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
-              decoration: BoxDecoration(
-                color: AppColors.white.withValues(alpha: 0.92),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.black.withValues(alpha: 0.05),
-                    blurRadius: 20,
-                    offset: const Offset(0, -4),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    AppStrings.acceptRequestFrom.tr.replaceAll('@name', _effectiveOtherUserName),
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.black87,
+            // ==================================================
+            // FIX:
+            // Flexible + ScrollView prevents landscape
+            // overflow of the bottom action panel.
+            // ==================================================
+
+            Flexible(
+              fit: FlexFit.loose,
+              child: SingleChildScrollView(
+                physics:
+                const ClampingScrollPhysics(),
+                child: Container(
+                  padding:
+                  EdgeInsets.fromLTRB(
+                    16,
+                    _actionCardTopPadding(
+                      context,
+                    ),
+                    16,
+                    _actionCardBottomPadding(
+                      context,
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    AppStrings.acceptRequestDesc.tr,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                      fontSize: 12,
-                      color: AppColors.greyShade600,
-                      height: 1.35,
+                  decoration:
+                  BoxDecoration(
+                    color: AppColors.white
+                        .withValues(
+                      alpha: 0.92,
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      // Block button
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            ActionConfirmDialog.show(
-                              context,
-                              title: AppStrings.blockUserTitle.tr.replaceAll('@name', _effectiveOtherUserName),
-                              message:
-                                      AppStrings.blockUserDesc.tr,
-                              confirmLabel: AppStrings.block.tr,
-                              icon: Icons.block_rounded,
-                              iconColor: const Color(0xFF7A1C15),
-                              confirmGradient: const LinearGradient(
-                                colors: [Color(0xFF7A1C15), Color(0xFF4A0F0A)],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                              onConfirm: () async {
-                                if (_effectiveRequestId.isNotEmpty) {
-                                  await messageController.blockMessageRequest(
-                                    requestId: _effectiveRequestId,
-                                    context: context,
-                                  );
-                                } else {
-                                  await chatController.block(widget.receiverId, context);
-                                }
-                                if (context.mounted) Navigator.pop(context);
-                              },
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF7A1C15),
-                            padding: const EdgeInsets.symmetric(vertical: 13),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          child: Text(
-                            AppStrings.block.tr,
-                            style: GoogleFonts.poppins(
-                              color: AppColors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
+                    borderRadius:
+                    const BorderRadius
+                        .vertical(
+                      top:
+                      Radius.circular(
+                        28,
                       ),
-                      const SizedBox(width: 8),
-
-                      // Reject button
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            ActionConfirmDialog.show(
-                              context,
-                              title: AppStrings.rejectRequestTitle.tr,
-                              message: AppStrings.rejectRequestFrom.tr.replaceAll('@name', _effectiveOtherUserName),
-                              confirmLabel: AppStrings.reject.tr,
-                              icon: Icons.cancel_outlined,
-                              iconColor: const Color(0xFFB02517),
-                              confirmGradient: const LinearGradient(
-                                colors: [Color(0xFFB02517), Color(0xFF7A1C15)],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                              onConfirm: () async {
-                                if (_effectiveRequestId.isNotEmpty) {
-                                  await messageController.rejectMessageRequest(
-                                    requestId: _effectiveRequestId,
-                                    context: context,
-                                  );
-                                }
-                                if (context.mounted) Navigator.pop(context);
-                              },
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFB02517),
-                            padding: const EdgeInsets.symmetric(vertical: 13),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          child: Text(
-                            AppStrings.reject.tr,
-                            style: GoogleFonts.poppins(
-                              color: AppColors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                          ),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors
+                            .black
+                            .withValues(
+                          alpha: 0.05,
                         ),
-                      ),
-                      const SizedBox(width: 8),
-
-                      // Accept button
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFF0062E0), Color(0xFF014495)],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              ActionConfirmDialog.show(
-                                context,
-                                title: AppStrings.acceptRequestTitle.tr,
-                                message: AppStrings.acceptRequestFromDesc.tr.replaceAll('@name', _effectiveOtherUserName),
-                                confirmLabel: AppStrings.accept.tr,
-                                icon: Icons.check_circle_outline_rounded,
-                                iconColor: AppColors.blue,
-                                onConfirm: () async {
-                                  if (_effectiveRequestId.isEmpty) return;
-
-                                  final roomId = await messageController.acceptMessageRequest(
-                                    requestId: _effectiveRequestId,
-                                    context: context,
-                                  );
-                                  if (roomId == null) return;
-
-                                  // Drop straight into the normal chat on
-                                  // this same screen — no navigation needed.
-                                  _currentRoomId = roomId;
-                                  chatController.roomID.value = roomId;
-                                  chatController.fetchInboxMessage(roomId: roomId, refresh: true);
-                                  _requestAccepted.value = true;
-                                },
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.transparent,
-                              shadowColor: AppColors.transparent,
-                              padding: const EdgeInsets.symmetric(vertical: 13),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            child: Text(
-                              AppStrings.accept.tr,
-                              style: GoogleFonts.poppins(
-                                color: AppColors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
+                        blurRadius: 20,
+                        offset:
+                        const Offset(
+                          0,
+                          -4,
                         ),
                       ),
                     ],
                   ),
-                ],
+                  child: Column(
+                    mainAxisSize:
+                    MainAxisSize.min,
+                    children: [
+                      Text(
+                        AppStrings
+                            .acceptRequestFrom
+                            .tr
+                            .replaceAll(
+                          '@name',
+                          _effectiveOtherUserName,
+                        ),
+                        textAlign:
+                        TextAlign.center,
+                        style:
+                        GoogleFonts.poppins(
+                          fontSize:
+                          landscape
+                              ? 14
+                              : 16,
+                          fontWeight:
+                          FontWeight.w700,
+                          color:
+                          AppColors.black87,
+                        ),
+                      ),
+
+                      SizedBox(
+                        height:
+                        landscape
+                            ? 4
+                            : 6,
+                      ),
+
+                      Text(
+                        AppStrings
+                            .acceptRequestDesc
+                            .tr,
+                        textAlign:
+                        TextAlign.center,
+                        style:
+                        GoogleFonts.poppins(
+                          fontSize:
+                          landscape
+                              ? 10.5
+                              : 12,
+                          color: AppColors
+                              .greyShade600,
+                          height: 1.3,
+                        ),
+                      ),
+
+                      SizedBox(
+                        height:
+                        _actionCardVerticalSpacing(
+                          context,
+                        ),
+                      ),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child:
+                            ElevatedButton(
+                              onPressed: () {
+                                ActionConfirmDialog
+                                    .show(
+                                  context,
+                                  title: AppStrings
+                                      .blockUserTitle
+                                      .tr
+                                      .replaceAll(
+                                    '@name',
+                                    _effectiveOtherUserName,
+                                  ),
+                                  message:
+                                  AppStrings
+                                      .blockUserDesc
+                                      .tr,
+                                  confirmLabel:
+                                  AppStrings
+                                      .block
+                                      .tr,
+                                  icon: Icons
+                                      .block_rounded,
+                                  iconColor:
+                                  const Color(
+                                    0xFF7A1C15,
+                                  ),
+                                  confirmGradient:
+                                  const LinearGradient(
+                                    colors: [
+                                      Color(
+                                        0xFF7A1C15,
+                                      ),
+                                      Color(
+                                        0xFF4A0F0A,
+                                      ),
+                                    ],
+                                    begin:
+                                    Alignment
+                                        .topCenter,
+                                    end:
+                                    Alignment
+                                        .bottomCenter,
+                                  ),
+                                  onConfirm:
+                                      () async {
+                                    if (_effectiveRequestId
+                                        .isNotEmpty) {
+                                      await messageController
+                                          .blockMessageRequest(
+                                        requestId:
+                                        _effectiveRequestId,
+                                        context:
+                                        context,
+                                      );
+                                    } else {
+                                      await chatController
+                                          .block(
+                                        widget
+                                            .receiverId,
+                                        context,
+                                      );
+                                    }
+
+                                    if (context
+                                        .mounted) {
+                                      Navigator.pop(
+                                        context,
+                                      );
+                                    }
+                                  },
+                                );
+                              },
+                              style:
+                              ElevatedButton
+                                  .styleFrom(
+                                backgroundColor:
+                                const Color(
+                                  0xFF7A1C15,
+                                ),
+                                padding:
+                                EdgeInsets.symmetric(
+                                  vertical:
+                                  landscape
+                                      ? 10
+                                      : 13,
+                                ),
+                                shape:
+                                RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius
+                                      .circular(
+                                    30,
+                                  ),
+                                ),
+                              ),
+                              child: Text(
+                                AppStrings
+                                    .block
+                                    .tr,
+                                style:
+                                GoogleFonts
+                                    .poppins(
+                                  color:
+                                  AppColors
+                                      .white,
+                                  fontWeight:
+                                  FontWeight
+                                      .w600,
+                                  fontSize:
+                                  landscape
+                                      ? 12
+                                      : 14,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(
+                            width: 8,
+                          ),
+
+                          Expanded(
+                            child:
+                            ElevatedButton(
+                              onPressed: () {
+                                ActionConfirmDialog
+                                    .show(
+                                  context,
+                                  title: AppStrings
+                                      .rejectRequestTitle
+                                      .tr,
+                                  message: AppStrings
+                                      .rejectRequestFrom
+                                      .tr
+                                      .replaceAll(
+                                    '@name',
+                                    _effectiveOtherUserName,
+                                  ),
+                                  confirmLabel:
+                                  AppStrings
+                                      .reject
+                                      .tr,
+                                  icon: Icons
+                                      .cancel_outlined,
+                                  iconColor:
+                                  const Color(
+                                    0xFFB02517,
+                                  ),
+                                  confirmGradient:
+                                  const LinearGradient(
+                                    colors: [
+                                      Color(
+                                        0xFFB02517,
+                                      ),
+                                      Color(
+                                        0xFF7A1C15,
+                                      ),
+                                    ],
+                                    begin:
+                                    Alignment
+                                        .topCenter,
+                                    end:
+                                    Alignment
+                                        .bottomCenter,
+                                  ),
+                                  onConfirm:
+                                      () async {
+                                    if (_effectiveRequestId
+                                        .isNotEmpty) {
+                                      await messageController
+                                          .rejectMessageRequest(
+                                        requestId:
+                                        _effectiveRequestId,
+                                        context:
+                                        context,
+                                      );
+                                    }
+
+                                    if (context
+                                        .mounted) {
+                                      Navigator.pop(
+                                        context,
+                                      );
+                                    }
+                                  },
+                                );
+                              },
+                              style:
+                              ElevatedButton
+                                  .styleFrom(
+                                backgroundColor:
+                                const Color(
+                                  0xFFB02517,
+                                ),
+                                padding:
+                                EdgeInsets.symmetric(
+                                  vertical:
+                                  landscape
+                                      ? 10
+                                      : 13,
+                                ),
+                                shape:
+                                RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius
+                                      .circular(
+                                    30,
+                                  ),
+                                ),
+                              ),
+                              child: Text(
+                                AppStrings
+                                    .reject
+                                    .tr,
+                                style:
+                                GoogleFonts
+                                    .poppins(
+                                  color:
+                                  AppColors
+                                      .white,
+                                  fontWeight:
+                                  FontWeight
+                                      .w600,
+                                  fontSize:
+                                  landscape
+                                      ? 12
+                                      : 14,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(
+                            width: 8,
+                          ),
+
+                          Expanded(
+                            child:
+                            Container(
+                              decoration:
+                              BoxDecoration(
+                                gradient:
+                                const LinearGradient(
+                                  colors: [
+                                    Color(
+                                      0xFF0062E0,
+                                    ),
+                                    Color(
+                                      0xFF014495,
+                                    ),
+                                  ],
+                                  begin:
+                                  Alignment
+                                      .topCenter,
+                                  end:
+                                  Alignment
+                                      .bottomCenter,
+                                ),
+                                borderRadius:
+                                BorderRadius
+                                    .circular(
+                                  30,
+                                ),
+                              ),
+                              child:
+                              ElevatedButton(
+                                onPressed: () {
+                                  ActionConfirmDialog
+                                      .show(
+                                    context,
+                                    title: AppStrings
+                                        .acceptRequestTitle
+                                        .tr,
+                                    message: AppStrings
+                                        .acceptRequestFromDesc
+                                        .tr
+                                        .replaceAll(
+                                      '@name',
+                                      _effectiveOtherUserName,
+                                    ),
+                                    confirmLabel:
+                                    AppStrings
+                                        .accept
+                                        .tr,
+                                    icon: Icons
+                                        .check_circle_outline_rounded,
+                                    iconColor:
+                                    AppColors
+                                        .blue,
+                                    onConfirm:
+                                        () async {
+                                      if (_effectiveRequestId
+                                          .isEmpty) {
+                                        return;
+                                      }
+
+                                      final roomId =
+                                      await messageController
+                                          .acceptMessageRequest(
+                                        requestId:
+                                        _effectiveRequestId,
+                                        context:
+                                        context,
+                                      );
+
+                                      if (roomId ==
+                                          null) {
+                                        return;
+                                      }
+
+                                      _currentRoomId =
+                                          roomId;
+
+                                      chatController
+                                          .roomID
+                                          .value = roomId;
+
+                                      chatController
+                                          .fetchInboxMessage(
+                                        roomId:
+                                        roomId,
+                                        refresh:
+                                        true,
+                                      );
+
+                                      _requestAccepted
+                                          .value = true;
+                                    },
+                                  );
+                                },
+                                style:
+                                ElevatedButton
+                                    .styleFrom(
+                                  backgroundColor:
+                                  AppColors
+                                      .transparent,
+                                  shadowColor:
+                                  AppColors
+                                      .transparent,
+                                  padding:
+                                  EdgeInsets.symmetric(
+                                    vertical:
+                                    landscape
+                                        ? 10
+                                        : 13,
+                                  ),
+                                  shape:
+                                  RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius
+                                        .circular(
+                                      30,
+                                    ),
+                                  ),
+                                ),
+                                child: Text(
+                                  AppStrings
+                                      .accept
+                                      .tr,
+                                  style:
+                                  GoogleFonts
+                                      .poppins(
+                                    color:
+                                    AppColors
+                                        .white,
+                                    fontWeight:
+                                    FontWeight
+                                        .w600,
+                                    fontSize:
+                                    landscape
+                                        ? 12
+                                        : 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],
@@ -1345,35 +2620,61 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 }
 
+// ============================================================
+// ANIMATED DOT
+// ============================================================
+
 class _AnimatedDot extends StatefulWidget {
   final int delayMs;
-  const _AnimatedDot({required this.delayMs});
+
+  const _AnimatedDot({
+    required this.delayMs,
+  });
 
   @override
-  State<_AnimatedDot> createState() => _AnimatedDotState();
+  State<_AnimatedDot> createState() =>
+      _AnimatedDotState();
 }
 
-class _AnimatedDotState extends State<_AnimatedDot> with SingleTickerProviderStateMixin {
+class _AnimatedDotState
+    extends State<_AnimatedDot>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
+
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600),
+      duration:
+      const Duration(milliseconds: 600),
     );
 
-    _animation = Tween<double>(begin: 0.4, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation =
+        Tween<double>(
+          begin: 0.4,
+          end: 1.0,
+        ).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: Curves.easeInOut,
+          ),
+        );
 
-    Future.delayed(Duration(milliseconds: widget.delayMs), () {
-      if (mounted) {
-        _controller.repeat(reverse: true);
-      }
-    });
+    Future.delayed(
+      Duration(
+        milliseconds: widget.delayMs,
+      ),
+          () {
+        if (mounted) {
+          _controller.repeat(
+            reverse: true,
+          );
+        }
+      },
+    );
   }
 
   @override
@@ -1391,7 +2692,8 @@ class _AnimatedDotState extends State<_AnimatedDot> with SingleTickerProviderSta
         child: Container(
           width: 6,
           height: 6,
-          decoration: const BoxDecoration(
+          decoration:
+          const BoxDecoration(
             color: Color(0xFF6A6969),
             shape: BoxShape.circle,
           ),
@@ -1400,7 +2702,3 @@ class _AnimatedDotState extends State<_AnimatedDot> with SingleTickerProviderSta
     );
   }
 }
-
-
-
-
