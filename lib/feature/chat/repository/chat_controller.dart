@@ -1390,6 +1390,14 @@ class ChatController extends GetxController {
       userChatList.clear();
     }
 
+    // Cache-first — show whatever was cached last time instantly (skips
+    // the loading shimmer), then the network call below quietly replaces
+    // it with fresh data. Only applies to the first page load.
+    final bool isFirstChatPage = page.value == 1 && !loadMore;
+    if (isFirstChatPage && userChatList.isEmpty) {
+      await _loadCachedChatList();
+    }
+
     // ✅ আর data নেই তাহলে skip
     if (loadMore && !hasMore) return;
 
@@ -1429,6 +1437,10 @@ class ChatController extends GetxController {
               onlineUsersMap[otherUserId] = room.otherUser?.isOnline == true;
             }
           }
+
+          if (isFirstChatPage) {
+            await _saveCachedChatList();
+          }
         }
       } else {
         if (refresh) userChatList.clear();
@@ -1439,6 +1451,36 @@ class ChatController extends GetxController {
       isLoadingChat.value = false;
       isLoadingMore.value = false;
       _isFetching = false;
+    }
+  }
+
+  static const int _cachedChatListSize = 30;
+
+  Future<void> _loadCachedChatList() async {
+    try {
+      final raw = await SharePrefsHelper.getString('chat_list_cache');
+      if (raw.isEmpty) return;
+      final List decoded = jsonDecode(raw);
+      final cached = decoded
+          .map((e) => Rooms.fromJson(e as Map<String, dynamic>))
+          .toList();
+      if (cached.isNotEmpty) {
+        userChatList.value = cached;
+      }
+    } catch (e) {
+      debugPrint('Warning: _loadCachedChatList failed: $e');
+    }
+  }
+
+  Future<void> _saveCachedChatList() async {
+    try {
+      final toCache = userChatList
+          .take(_cachedChatListSize)
+          .map((r) => r.toJson())
+          .toList();
+      await SharePrefsHelper.setString('chat_list_cache', jsonEncode(toCache));
+    } catch (e) {
+      debugPrint('Warning: _saveCachedChatList failed: $e');
     }
   }
 

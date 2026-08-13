@@ -392,8 +392,16 @@ class ApiClient {
     developer.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
     try {
-      final streamedResponse = await request.send();
-      final response = await http.Response.fromStream(streamedResponse);
+      // Unlike every other method in this class, this had no timeout at
+      // all — if the server hung or silently dropped the connection, the
+      // upload button would spin forever since neither the calling
+      // controller's catch nor its finally (which turns the spinner off)
+      // would ever run.
+      final streamedResponse = await request
+          .send()
+          .timeout(const Duration(seconds: 60));
+      final response = await http.Response.fromStream(streamedResponse)
+          .timeout(const Duration(seconds: 60));
 
       // 📥 LOG RESPONSE
       developer.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');

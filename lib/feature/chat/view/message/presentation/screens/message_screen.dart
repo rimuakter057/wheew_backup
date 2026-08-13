@@ -1442,13 +1442,23 @@ class _MessageScreenState extends State<MessageScreen> {
 
             // ==================================================
             // FIX:
-            // Flexible prevents bottom card from forcing
-            // the parent Column beyond available height.
-            // SingleChildScrollView handles short landscape.
+            // A Flexible(loose) here — competing for flex space with
+            // the Expanded above — gets a pre-allocated 50/50 share of
+            // the free space regardless of how much the card actually
+            // needs; whatever this card doesn't use is NOT handed back
+            // to the Expanded sibling (Flutter's flex layout is single-
+            // pass), so it shows up as dead space below the card
+            // instead. A ConstrainedBox instead sizes to the card's own
+            // natural height (so Expanded gets everything the card
+            // isn't using), while still capping it so it can't overflow
+            // on short/landscape screens — SingleChildScrollView lets
+            // it scroll if content ever exceeds that cap.
             // ==================================================
 
-            Flexible(
-              fit: FlexFit.loose,
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.6,
+              ),
               child: SingleChildScrollView(
                 physics:
                 const ClampingScrollPhysics(),
@@ -2126,12 +2136,22 @@ class _MessageScreenState extends State<MessageScreen> {
 
             // ==================================================
             // FIX:
-            // Flexible + ScrollView prevents landscape
-            // overflow of the bottom action panel.
+            // A Flexible(loose) here competes for flex space 50/50
+            // with the Expanded above regardless of actual content
+            // need, leaving dead space below the card when it doesn't
+            // use its share (Flutter's flex layout is single-pass, so
+            // unused loose-child space isn't handed back). A
+            // ConstrainedBox sizes to the card's own natural height
+            // instead (so Expanded gets everything it isn't using),
+            // while still capping it so it can't overflow on
+            // short/landscape screens — SingleChildScrollView lets it
+            // scroll if content ever exceeds that cap.
             // ==================================================
 
-            Flexible(
-              fit: FlexFit.loose,
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.6,
+              ),
               child: SingleChildScrollView(
                 physics:
                 const ClampingScrollPhysics(),

@@ -1631,6 +1631,9 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
     final uniqueId = _uniqueNumberCtrl.text.trim();
     final expiryDate = _expireDateCtrl.text.trim();
 
+    debugPrint('🟢 [SUBMIT] widget.documentType=${widget.documentType}');
+    debugPrint('🟢 [SUBMIT] widget.existingDoc?.id=${widget.existingDoc?.id}');
+    debugPrint('🟢 [SUBMIT] widget.existingDoc?.documentType=${widget.existingDoc?.documentType}');
     debugPrint('🟢 [SUBMIT] isOwner=${widget.isOwner}');
     debugPrint('🟢 [SUBMIT] isEdit=$_isEdit');
     debugPrint('🟢 [SUBMIT] uniqueId="$uniqueId"');
@@ -1838,6 +1841,11 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
                 controller: _uniqueNumberCtrl,
                 hint: '123456789',
                 keyboardType: TextInputType.text,
+                // Backend rejects unique_id on PATCH ("property unique_id
+                // should not exist") — it can only be set once at
+                // creation, so once a document exists this is read-only
+                // rather than silently ignoring whatever the user types.
+                enabled: !_isEdit,
               ),
               SizedBox(height: ResponsiveHelper.spacing(16)),
             ],
@@ -1964,14 +1972,16 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
     TextInputType keyboardType = TextInputType.text,
     List<TextInputFormatter>? inputFormatters,
     Widget? suffixIcon,
+    bool enabled = true,
   }) =>
       TextField(
         controller: controller,
         keyboardType: keyboardType,
         inputFormatters: inputFormatters,
+        enabled: enabled,
         style: TextStyle(
           fontSize: ResponsiveHelper.fontSize(15),
-          color: const Color(0xFF111827),
+          color: enabled ? const Color(0xFF111827) : const Color(0xFF9CA3AF),
         ),
         decoration: InputDecoration(
           hintText: hint,
@@ -1980,7 +1990,7 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
             fontSize: ResponsiveHelper.fontSize(15),
           ),
           filled: true,
-          fillColor: const Color(0xFFF3F4F6),
+          fillColor: enabled ? const Color(0xFFF3F4F6) : const Color(0xFFE5E7EB),
           suffixIcon: suffixIcon,
           contentPadding: EdgeInsets.symmetric(
             horizontal: ResponsiveHelper.padding(16),
@@ -2000,6 +2010,11 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
             borderRadius:
             BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
             borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius:
+            BorderRadius.circular(ResponsiveHelper.borderRadius(10)),
+            borderSide: BorderSide.none,
           ),
         ),
       );

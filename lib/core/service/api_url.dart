@@ -10,6 +10,7 @@ class ApiUrl {
 
   // // live url
   static const String baseUrl = 'http://54.198.239.101:8003';
+
    static const baseSocketUrl = 'ws://54.198.239.101:8003';
 
 

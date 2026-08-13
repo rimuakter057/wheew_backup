@@ -115,6 +115,13 @@ class _CardShell extends StatelessWidget {
 
 
   void _openSheet(BuildContext context) {
+    debugPrint('🟣 [CARD] _openSheet() tapped');
+    debugPrint('🟣 [CARD] documentType=$documentType');
+    debugPrint('🟣 [CARD] isOwner=$isOwner');
+    debugPrint('🟣 [CARD] doc (existingDoc)=$doc');
+    debugPrint('🟣 [CARD] doc?.id=${doc?.id}');
+    debugPrint('🟣 [CARD] → will call ${doc == null ? "POST (upload)" : "PATCH (update)"}');
+
     showUploadDocumentSheet(
       context,
       documentType: documentType,
