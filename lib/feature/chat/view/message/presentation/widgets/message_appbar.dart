@@ -324,7 +324,11 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
               padding: EdgeInsets.zero,
               enabled: false,
               child: Container(
-                width: 170,
+                // Scaled via ResponsiveHelper like its children (icon size,
+                // spacing, font size) — a raw 170px stayed fixed while the
+                // content inside scaled up on larger/high-density screens,
+                // overflowing the row (same bug as the group chat menu).
+                width: ResponsiveHelper.width(170),
                 decoration: BoxDecoration(
                   color: AppColors.white.withOpacity(0.96),
                   borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
@@ -357,12 +361,15 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                               height: ResponsiveHelper.iconSize(22),
                             ),
                             SizedBox(width: ResponsiveHelper.spacing(12)),
-                            Text(
-                              AppStrings.viewProfile.tr,
-                              style: GoogleFonts.poppins(
-                                fontSize: ResponsiveHelper.fontSize(14),
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF1E293B),
+                            Flexible(
+                              child: Text(
+                                AppStrings.viewProfile.tr,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.poppins(
+                                  fontSize: ResponsiveHelper.fontSize(14),
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF1E293B),
+                                ),
                               ),
                             ),
                           ],
@@ -386,12 +393,15 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                               height: ResponsiveHelper.iconSize(22),
                             ),
                             SizedBox(width: ResponsiveHelper.spacing(12)),
-                            Text(
-                              AppStrings.rateUser.tr,
-                              style: GoogleFonts.poppins(
-                                fontSize: ResponsiveHelper.fontSize(14),
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF1E293B),
+                            Flexible(
+                              child: Text(
+                                AppStrings.rateUser.tr,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.poppins(
+                                  fontSize: ResponsiveHelper.fontSize(14),
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF1E293B),
+                                ),
                               ),
                             ),
                           ],
@@ -428,14 +438,17 @@ class MessageAppBar extends StatelessWidget implements PreferredSizeWidget {
                                       height: ResponsiveHelper.iconSize(22),
                                     ),
                               SizedBox(width: ResponsiveHelper.spacing(12)),
-                              Text(
-                                chatController.isBlockedByMe.value
-                                    ? AppStrings.unblock.tr
-                                    : AppStrings.blockUserAction.tr,
-                                style: GoogleFonts.poppins(
-                                  fontSize: ResponsiveHelper.fontSize(14),
-                                  fontWeight: FontWeight.w500,
-                                  color: const Color(0xFF1E293B),
+                              Flexible(
+                                child: Text(
+                                  chatController.isBlockedByMe.value
+                                      ? AppStrings.unblock.tr
+                                      : AppStrings.blockUserAction.tr,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: ResponsiveHelper.fontSize(14),
+                                    fontWeight: FontWeight.w500,
+                                    color: const Color(0xFF1E293B),
+                                  ),
                                 ),
                               ),
                             ],

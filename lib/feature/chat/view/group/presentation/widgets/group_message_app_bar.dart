@@ -425,7 +425,11 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
               padding: EdgeInsets.zero,
               enabled: false, // à¦ªà§à¦°à§‹ item à¦à¦° tap à¦¬à¦¨à§à¦§, à¦­à§‡à¦¤à¦°à§‡à¦° InkWell à¦—à§à¦²à§‹ à¦•à¦¾à¦œ à¦•à¦°à¦¬à§‡
               child: Container(
-                width: 175,
+                // Scaled via ResponsiveHelper like its children (icon size,
+                // spacing, font size) — a raw 175px stayed fixed while the
+                // content inside scaled up on larger/high-density screens,
+                // overflowing the row by tens of pixels.
+                width: ResponsiveHelper.width(175),
                 decoration: BoxDecoration(
                   color: AppColors.white.withOpacity(0.96),
                   borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(20)),
@@ -461,12 +465,15 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                               height: ResponsiveHelper.iconSize(22),
                             ),
                             SizedBox(width: ResponsiveHelper.spacing(12)),
-                            Text(
-                              AppStrings.seeMembers.tr,
-                              style: GoogleFonts.poppins(
-                                fontSize: ResponsiveHelper.fontSize(14),
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF1E293B),
+                            Flexible(
+                              child: Text(
+                                AppStrings.seeMembers.tr,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.poppins(
+                                  fontSize: ResponsiveHelper.fontSize(14),
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF1E293B),
+                                ),
                               ),
                             ),
                           ],
@@ -491,12 +498,15 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                               height: ResponsiveHelper.iconSize(22),
                             ),
                             SizedBox(width: ResponsiveHelper.spacing(12)),
-                            Text(
-                              AppStrings.addMembers.tr,
-                              style: GoogleFonts.poppins(
-                                fontSize: ResponsiveHelper.fontSize(14),
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF1E293B),
+                            Flexible(
+                              child: Text(
+                                AppStrings.addMembers.tr,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.poppins(
+                                  fontSize: ResponsiveHelper.fontSize(14),
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF1E293B),
+                                ),
                               ),
                             ),
                           ],
@@ -521,12 +531,15 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                               height: ResponsiveHelper.iconSize(22),
                             ),
                             SizedBox(width: ResponsiveHelper.spacing(12)),
-                            Text(
-                              AppStrings.editGroup.tr,
-                              style: GoogleFonts.poppins(
-                                fontSize: ResponsiveHelper.fontSize(14),
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF1E293B),
+                            Flexible(
+                              child: Text(
+                                AppStrings.editGroup.tr,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.poppins(
+                                  fontSize: ResponsiveHelper.fontSize(14),
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF1E293B),
+                                ),
                               ),
                             ),
                           ],
@@ -551,12 +564,15 @@ class _GroupMessageAppBarState extends State<GroupMessageAppBar> {
                               height: ResponsiveHelper.iconSize(22),
                             ),
                             SizedBox(width: ResponsiveHelper.spacing(12)),
-                            Text(
-                              AppStrings.leaveGroup.tr,
-                              style: GoogleFonts.poppins(
-                                fontSize: ResponsiveHelper.fontSize(14),
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFFE53E3E),
+                            Flexible(
+                              child: Text(
+                                AppStrings.leaveGroup.tr,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.poppins(
+                                  fontSize: ResponsiveHelper.fontSize(14),
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFFE53E3E),
+                                ),
                               ),
                             ),
                           ],

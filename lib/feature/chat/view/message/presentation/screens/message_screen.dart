@@ -296,6 +296,17 @@ class _MessageScreenState extends State<MessageScreen> {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
 
+    // Snapshot the current messages (including anything sent/received
+    // during this session) to the local cache before leaving, so re-
+    // entering this room later shows them instantly instead of a stale
+    // cache flash that only self-corrects after the network fetch lands.
+    final roomId = _currentRoomId.isNotEmpty
+        ? _currentRoomId
+        : chatController.roomID.value;
+    if (roomId.isNotEmpty) {
+      chatController.persistMessageCache(roomId);
+    }
+
     chatController.roomID.value = '';
 
     super.dispose();

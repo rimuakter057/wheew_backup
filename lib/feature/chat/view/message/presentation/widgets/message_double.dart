@@ -551,6 +551,11 @@ class _VoiceBubble extends StatefulWidget {
 
 class _VoiceBubbleState extends State<_VoiceBubble> {
   final AudioPlayer _player = AudioPlayer();
+  // Used instead of LayoutBuilder to read the waveform's width for the
+  // drag-to-seek math — LayoutBuilder can't sit inside the IntrinsicWidth
+  // that wraps every message bubble (Flutter explicitly disallows a
+  // LayoutBuilder reporting intrinsic dimensions).
+  final GlobalKey _waveformKey = GlobalKey();
 
   bool _isPlaying = false;
   bool _isLoading = false;
@@ -705,13 +710,13 @@ class _VoiceBubbleState extends State<_VoiceBubble> {
 
   @override
   Widget build(BuildContext context) {
-    final Color accent = widget.isMine ? AppColors.white : AppColors.blue;
-    final Color muted = widget.isMine
-        ? AppColors.white.withValues(alpha: 0.5)
-        : AppColors.black.withValues(alpha: 0.35);
-    final Color btnBg = widget.isMine
-        ? AppColors.white.withValues(alpha: 0.20)
-        : AppColors.blue.withValues(alpha: 0.12);
+    // Both sent (light blue 0xFFD6E4F0) and received (white) bubble
+    // backgrounds in this app are light, so a white accent (meant for a
+    // dark "sent" bubble like most chat apps use) was nearly invisible —
+    // always use the dark/blue scheme instead, regardless of isMine.
+    final Color accent = AppColors.blue;
+    final Color muted = AppColors.black.withValues(alpha: 0.35);
+    final Color btnBg = AppColors.blue.withValues(alpha: 0.12);
 
     final double progress = (_duration.inMilliseconds > 0)
         ? (_position.inMilliseconds / _duration.inMilliseconds).clamp(0.0, 1.0)
@@ -768,19 +773,23 @@ class _VoiceBubbleState extends State<_VoiceBubble> {
 
                 // Waveform bars with colour-split progress
                 SizedBox(
+                  key: _waveformKey,
                   height: ResponsiveHelper.height(28),
-                  child: LayoutBuilder(builder: (_, constraints) {
-                    return GestureDetector(
-                      onHorizontalDragUpdate: (details) async {
-                        if (_duration == Duration.zero) return;
-                        final frac = (details.localPosition.dx / constraints.maxWidth).clamp(0.0, 1.0);
-                        final target = Duration(
-                          milliseconds: (frac * _duration.inMilliseconds).toInt(),
-                        );
-                        await _player.seek(target);
-                        if (mounted) setState(() => _position = target);
-                      },
-                      child: Stack(
+                  child: GestureDetector(
+                    onHorizontalDragUpdate: (details) async {
+                      if (_duration == Duration.zero) return;
+                      final renderBox = _waveformKey.currentContext
+                          ?.findRenderObject() as RenderBox?;
+                      final width = renderBox?.size.width;
+                      if (width == null || width <= 0) return;
+                      final frac = (details.localPosition.dx / width).clamp(0.0, 1.0);
+                      final target = Duration(
+                        milliseconds: (frac * _duration.inMilliseconds).toInt(),
+                      );
+                      await _player.seek(target);
+                      if (mounted) setState(() => _position = target);
+                    },
+                    child: Stack(
                         alignment: Alignment.center,
                         children: [
 
@@ -825,9 +834,8 @@ class _VoiceBubbleState extends State<_VoiceBubble> {
 
                         ],
                       ),
-                    );
-                  }),
-                ),
+                    ),
+                  ),
 
                 SizedBox(height: ResponsiveHelper.spacing(5)),
 

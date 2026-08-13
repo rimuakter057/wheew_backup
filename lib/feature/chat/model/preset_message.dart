@@ -23,4 +23,12 @@ class PresetMessage {
       isActive: json['isActive'] ?? true,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'message': message,
+        'message_it': messageIt,
+        'type': type,
+        'isActive': isActive,
+      };
 }

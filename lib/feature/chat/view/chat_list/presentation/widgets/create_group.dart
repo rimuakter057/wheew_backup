@@ -66,7 +66,8 @@ void showCreateGroupDialog({
             ),
             child: Form(
               key: formKey,
-              child: Column(
+              child: SingleChildScrollView(
+                child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // -- Close button ----------------------------
@@ -267,6 +268,7 @@ void showCreateGroupDialog({
                     ),
                   ),
                 ],
+                ),
               ),
             ),
           ),

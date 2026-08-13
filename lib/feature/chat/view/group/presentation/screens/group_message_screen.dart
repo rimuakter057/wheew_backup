@@ -763,6 +763,17 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
 
   @override
   void dispose() {
+    // Snapshot current messages to the local cache before leaving, so
+    // re-entering this room later shows anything sent/received this
+    // session instantly instead of a stale cache flash — see
+    // persistGroupMessageCache.
+    final roomId = widget.roomId.isNotEmpty
+        ? widget.roomId
+        : controller.groupRoomID.value;
+    if (roomId.isNotEmpty) {
+      controller.persistGroupMessageCache(roomId);
+    }
+
     controller.groupRoomID.value = '';
     controller.isTyping.value = false;
     _scrollController.dispose();

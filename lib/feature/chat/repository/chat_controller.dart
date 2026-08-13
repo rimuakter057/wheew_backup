@@ -346,6 +346,13 @@ class ChatController extends GetxController {
 
   Future<void> fetchPresetMessages() async
   {
+    // Cache-first — presets rarely change and this is fetched on every chat
+    // screen open, so show whatever was cached last time instantly instead
+    // of a blank preset-chip row until the network call lands.
+    if (presetMessages.isEmpty) {
+      await _loadCachedPresetMessages();
+    }
+
     try {
       isPresetLoading.value = true;
 
@@ -391,6 +398,10 @@ class ChatController extends GetxController {
         }
 
         print('📊 [PRESET] Total preset count: ${presetMessages.length}');
+
+        if (presetMessages.isNotEmpty) {
+          await _saveCachedPresetMessages();
+        }
       } else {
         print('❌ [PRESET] Failed! Status: ${response.statusCode}');
       }
@@ -405,6 +416,31 @@ class ChatController extends GetxController {
       if (kDebugMode) {
         print('🏁 [PRESET] presetMessages = ${presetMessages.value}');
       }
+    }
+  }
+
+  Future<void> _loadCachedPresetMessages() async {
+    try {
+      final raw = await SharePrefsHelper.getString('preset_message_cache');
+      if (raw.isEmpty) return;
+      final List decoded = jsonDecode(raw);
+      final cached = decoded
+          .map((e) => PresetMessage.fromJson(e as Map<String, dynamic>))
+          .toList();
+      if (cached.isNotEmpty) {
+        presetMessages.value = cached;
+      }
+    } catch (e) {
+      debugPrint('Warning: _loadCachedPresetMessages failed: $e');
+    }
+  }
+
+  Future<void> _saveCachedPresetMessages() async {
+    try {
+      final toCache = presetMessages.map((p) => p.toJson()).toList();
+      await SharePrefsHelper.setString('preset_message_cache', jsonEncode(toCache));
+    } catch (e) {
+      debugPrint('Warning: _saveCachedPresetMessages failed: $e');
     }
   }
 
@@ -517,6 +553,15 @@ class ChatController extends GetxController {
       userMessageList.clear(); // ✅ শুধু refresh এ clear
     }
 
+    // Cache-first: on first entry to this room, show whatever was cached
+    // locally last time instantly (skips the shimmer), then the network
+    // call below quietly refreshes it. Skipped for pagination (page > 1)
+    // or when the list is already populated.
+    final bool isFirstPageLoad = pageCount == 1;
+    if (isFirstPageLoad && userMessageList.isEmpty) {
+      await _loadCachedMessages(roomID.value);
+    }
+
     // ✅ Already loading থাকলে skip
     if (pageCount == 1 && isLoadingMessage.value) return;
     if (pageCount > 1 && isLoadingMoreMessage.value) return;
@@ -546,23 +591,54 @@ class ChatController extends GetxController {
         totalCount = data.total ?? 0;
 
         if (data.messages != null && data.messages!.isNotEmpty) {
-          for (final msg in data.messages!) {
-            if (msg.isDeletedForEveryone == true) {
-
-
-              continue;
-
+          if (isFirstPageLoad) {
+            // Page 1 is always the newest messages, newest-first. If a
+            // cache-primed list is already sitting in userMessageList (see
+            // isFirstPageLoad above), those cached items are OLDER than
+            // anything on this page, so the fresh ones must go at the FRONT
+            // (index 0 = bottom = newest, since the list renders reverse:
+            // true) — not appended at the end, which would push genuinely
+            // new messages up to the top and make the whole thread look
+            // out of order.
+            final fresh = <Messages>[];
+            for (final msg in data.messages!) {
+              if (msg.isDeletedForEveryone == true) continue;
+              msg.isMine = msg.isMine == true;
+              fresh.add(msg);
             }
-            // A socket 'new-message' event can land in the gap between the
-            // clear() above and this REST response coming back (e.g. right
-            // after accepting a request, whose delivered message arrives via
-            // socket almost immediately) — skip it here instead of adding a
-            // duplicate on top of what the socket handler already inserted.
-            if (userMessageList.any((m) => m.id == msg.id)) continue;
-            msg.isMine = msg.isMine == true;
-            userMessageList.add(msg);
+            // Build the merged result as a plain list and commit it with a
+            // single assignAll — removeWhere()+insertAll() as two separate
+            // RxList mutations each fire their own rebuild, and a ListView
+            // caught mid-layout between those two rebuilds crashes with
+            // "RenderBox was not laid out" (sliver child-count mismatch).
+            final freshIds = fresh.map((m) => m.id).toSet();
+            final merged = <Messages>[
+              ...fresh,
+              ...userMessageList.where((m) => !freshIds.contains(m.id)),
+            ];
+            userMessageList.assignAll(merged);
+          } else {
+            // Pagination ("load more" on scroll-up) — these pages are
+            // strictly older history, so appending at the end (toward the
+            // top of the reversed list) is correct here.
+            for (final msg in data.messages!) {
+              if (msg.isDeletedForEveryone == true) continue;
+              // A socket 'new-message' event can land in the gap between
+              // the clear() above and this REST response coming back —
+              // skip it here instead of adding a duplicate on top of what
+              // the socket handler already inserted.
+              if (userMessageList.any((m) => m.id == msg.id)) continue;
+              msg.isMine = msg.isMine == true;
+              userMessageList.add(msg);
+            }
           }
           pageCount++;
+        }
+
+        // Refresh the local cache so the next time this room is opened it
+        // shows instantly (see isFirstPageLoad above).
+        if (isFirstPageLoad) {
+          await _saveCachedMessages(roomID.value);
         }
 
         // ✅ Backend fetch হলে local UI-তেও unread badge সরিয়ে দিচ্ছি
@@ -573,6 +649,45 @@ class ChatController extends GetxController {
     } finally {
       isLoadingMessage.value = false;
       isLoadingMoreMessage.value = false;
+    }
+  }
+
+  /// Snapshots whatever is currently in [userMessageList] to the local
+  /// cache. Called when leaving the chat screen so messages sent/received
+  /// during the session (which don't otherwise touch the cache — only a
+  /// fresh page-1 fetch does) aren't missing/stale the next time this room
+  /// is opened.
+  Future<void> persistMessageCache(String roomId) => _saveCachedMessages(roomId);
+
+  static const int _cachedMessagePageSize = 30;
+
+  Future<void> _loadCachedMessages(String roomId) async {
+    if (roomId.isEmpty) return;
+    try {
+      final raw = await SharePrefsHelper.getString('msg_cache_$roomId');
+      if (raw.isEmpty) return;
+      final List decoded = jsonDecode(raw);
+      final cached = decoded
+          .map((e) => Messages.fromJson(e as Map<String, dynamic>))
+          .toList();
+      if (cached.isNotEmpty) {
+        userMessageList.assignAll(cached);
+      }
+    } catch (e) {
+      debugPrint('Warning: _loadCachedMessages failed: $e');
+    }
+  }
+
+  Future<void> _saveCachedMessages(String roomId) async {
+    if (roomId.isEmpty) return;
+    try {
+      final toCache = userMessageList
+          .take(_cachedMessagePageSize)
+          .map((m) => m.toJson())
+          .toList();
+      await SharePrefsHelper.setString('msg_cache_$roomId', jsonEncode(toCache));
+    } catch (e) {
+      debugPrint('Warning: _saveCachedMessages failed: $e');
     }
   }
 
@@ -1646,6 +1761,14 @@ class ChatController extends GetxController {
       groupMessageList.clear();
     }
 
+    // Cache-first: on first entry to this room, show whatever was cached
+    // locally last time instantly (skips the shimmer), then the network
+    // call below quietly refreshes it.
+    final bool isFirstGroupPageLoad = groupPageCount == 1;
+    if (isFirstGroupPageLoad && groupMessageList.isEmpty) {
+      await _loadCachedGroupMessages(groupRoomID.value);
+    }
+
     // ✅ Already loading থাকলে skip
     if (groupPageCount == 1 && isLoadingGroupMessage.value) return;
     if (groupPageCount > 1 && isLoadingMoreGroupMessage.value) return;
@@ -1675,14 +1798,40 @@ class ChatController extends GetxController {
         groupTotalCount = data.total ?? 0;
 
         if (data.messages != null && data.messages!.isNotEmpty) {
-          for (final msg in data.messages!) {
-
-            if (msg.isDeletedForEveryone == true) {
-              continue;
+          if (isFirstGroupPageLoad) {
+            // Same reasoning as fetchInboxMessage: page 1 is the newest
+            // messages, so they must go at the FRONT of the (reverse:
+            // true) list, ahead of anything cache-primed there — not
+            // appended at the end.
+            final fresh = <GroupMessageResponseModel>[];
+            for (final msg in data.messages!) {
+              if (msg.isDeletedForEveryone == true) continue;
+              fresh.add(msg);
             }
-            groupMessageList.add(msg);
+            // Single atomic assignAll — see fetchInboxMessage for why
+            // removeWhere()+insertAll() as two separate mutations can crash
+            // a ListView caught mid-layout between them.
+            final freshIds = fresh.map((m) => m.id).toSet();
+            final merged = <GroupMessageResponseModel>[
+              ...fresh,
+              ...groupMessageList.where((m) => !freshIds.contains(m.id)),
+            ];
+            groupMessageList.assignAll(merged);
+          } else {
+            // Pagination ("load more") — older history, append at the end.
+            for (final msg in data.messages!) {
+              if (msg.isDeletedForEveryone == true) continue;
+              if (groupMessageList.any((m) => m.id == msg.id)) continue;
+              groupMessageList.add(msg);
+            }
           }
           groupPageCount++;
+        }
+
+        // Refresh the local cache so the next time this room is opened it
+        // shows instantly (see isFirstGroupPageLoad above).
+        if (isFirstGroupPageLoad) {
+          await _saveCachedGroupMessages(groupRoomID.value);
         }
       }
     } catch (e) {
@@ -1690,6 +1839,41 @@ class ChatController extends GetxController {
     } finally {
       isLoadingGroupMessage.value = false;
       isLoadingMoreGroupMessage.value = false;
+    }
+  }
+
+  /// Snapshots whatever is currently in [groupMessageList] to the local
+  /// cache — see persistMessageCache for why this is needed.
+  Future<void> persistGroupMessageCache(String roomId) =>
+      _saveCachedGroupMessages(roomId);
+
+  Future<void> _loadCachedGroupMessages(String roomId) async {
+    if (roomId.isEmpty) return;
+    try {
+      final raw = await SharePrefsHelper.getString('group_msg_cache_$roomId');
+      if (raw.isEmpty) return;
+      final List decoded = jsonDecode(raw);
+      final cached = decoded
+          .map((e) => GroupMessageResponseModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+      if (cached.isNotEmpty) {
+        groupMessageList.assignAll(cached);
+      }
+    } catch (e) {
+      debugPrint('Warning: _loadCachedGroupMessages failed: $e');
+    }
+  }
+
+  Future<void> _saveCachedGroupMessages(String roomId) async {
+    if (roomId.isEmpty) return;
+    try {
+      final toCache = groupMessageList
+          .take(_cachedMessagePageSize)
+          .map((m) => m.toJson())
+          .toList();
+      await SharePrefsHelper.setString('group_msg_cache_$roomId', jsonEncode(toCache));
+    } catch (e) {
+      debugPrint('Warning: _saveCachedGroupMessages failed: $e');
     }
   }
 
