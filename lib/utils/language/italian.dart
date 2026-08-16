@@ -176,7 +176,7 @@ final Map<String, String> italian = {
   AppStrings.locationPermissionPermanentlyDenied:
   "Autorizzazione alla posizione negata permanentemente.",
 
-  AppStrings.home: "Home",
+  AppStrings.home: "Casa",
   AppStrings.parking: "Parcheggio",
   AppStrings.chatNav: "Chat",
   AppStrings.welcomeTitle1: "Guida.\nChatta.\nParcheggia.\nRespira.",
