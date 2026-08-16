@@ -26,12 +26,13 @@ class AppColors {
   );
 
 
-  static const LinearGradient containerGradient = LinearGradient(
+  static  LinearGradient containerGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
     white,
-      blueShadeConBg
+      blueShadeConBg,
+    Color(0xFF88A0C0),
 
     ],
   );

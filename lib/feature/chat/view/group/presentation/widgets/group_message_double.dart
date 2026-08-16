@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -476,6 +476,7 @@ class _GroupVoiceBubble extends StatefulWidget {
 
 class _GroupVoiceBubbleState extends State<_GroupVoiceBubble> {
   final AudioPlayer _player = AudioPlayer();
+  final GlobalKey _waveformKey = GlobalKey();
 
   bool _isPlaying = false;
   bool _isLoading = false;
@@ -681,70 +682,73 @@ class _GroupVoiceBubbleState extends State<_GroupVoiceBubble> {
 
                 // Waveform with colour-split progress
                 SizedBox(
+                  key: _waveformKey,
                   height: ResponsiveHelper.height(28),
-                  child: LayoutBuilder(builder: (_, constraints) {
-                    return GestureDetector(
-                      onHorizontalDragUpdate: (details) async {
-                        if (_duration == Duration.zero) return;
-                        final frac =
-                            (details.localPosition.dx / constraints.maxWidth).clamp(0.0, 1.0);
-                        final target = Duration(
-                          milliseconds: (frac * _duration.inMilliseconds).toInt(),
-                        );
-                        await _player.seek(target);
-                        if (mounted) setState(() => _position = target);
-                      },
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
+                  child: GestureDetector(
+                    onHorizontalDragUpdate: (details) async {
+                      if (_duration == Duration.zero) return;
+                      final renderBox = _waveformKey.currentContext
+                          ?.findRenderObject() as RenderBox?;
+                      final width = renderBox?.size.width;
+                      if (width == null || width <= 0) return;
+                      final frac =
+                          (details.localPosition.dx / width).clamp(0.0, 1.0);
+                      final target = Duration(
+                        milliseconds: (frac * _duration.inMilliseconds).toInt(),
+                      );
+                      await _player.seek(target);
+                      if (mounted) setState(() => _position = target);
+                    },
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
 
-                          // Unplayed bars (muted)
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: _waveHeights
-                                .map((h) => Expanded(
-                                      child: Container(
-                                        margin: ResponsiveHelper.symmetric(horizontal: 1.2),
-                                        height: ResponsiveHelper.height(h),
-                                        decoration: BoxDecoration(
-                                          color: muted.withValues(alpha: 0.45),
-                                          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(3)),
-                                        ),
+                        // Unplayed bars (muted)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: _waveHeights
+                              .map((h) => Expanded(
+                                    child: Container(
+                                      margin: ResponsiveHelper.symmetric(horizontal: 1.2),
+                                      height: ResponsiveHelper.height(h),
+                                      decoration: BoxDecoration(
+                                        color: muted.withValues(alpha: 0.45),
+                                        borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(3)),
                                       ),
-                                    ))
-                                .toList(),
-                          ),
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
 
-                          // Played bars (accent)
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: ClipRect(
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                widthFactor: progress,
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: _waveHeights
-                                      .map((h) => Expanded(
-                                            child: Container(
-                                              margin: ResponsiveHelper.symmetric(horizontal: 1.2),
-                                              height: ResponsiveHelper.height(h),
-                                              decoration: BoxDecoration(
-                                                color: accent.withValues(alpha: 0.9),
-                                                borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(3)),
-                                              ),
+                        // Played bars (accent)
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: ClipRect(
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              widthFactor: progress,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: _waveHeights
+                                    .map((h) => Expanded(
+                                          child: Container(
+                                            margin: ResponsiveHelper.symmetric(horizontal: 1.2),
+                                            height: ResponsiveHelper.height(h),
+                                            decoration: BoxDecoration(
+                                              color: accent.withValues(alpha: 0.9),
+                                              borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(3)),
                                             ),
-                                          ))
-                                      .toList(),
-                                ),
+                                          ),
+                                        ))
+                                    .toList(),
                               ),
                             ),
                           ),
+                        ),
 
-                        ],
-                      ),
-                    );
-                  }),
+                      ],
+                    ),
+                  ),
                 ),
 
                 SizedBox(height: ResponsiveHelper.spacing(5)),

@@ -343,12 +343,9 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
       ),
       child: Container(
         decoration: BoxDecoration(
-          // à¦‡à¦®à§‡à¦œà§‡à¦° à¦®à¦¤à§‹ à¦¹à¦¾à¦²à¦•à¦¾ à¦—à§à¦°à§‡à¦¡à¦¿à§Ÿà§‡à¦¨à§à¦Ÿ à¦¬à§à¦¯à¦¾à¦•à¦—à§à¦°à¦¾à¦‰à¦¨à§à¦¡
-          gradient: LinearGradient(
-            colors: [AppColors.greyShade100, AppColors.blue],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
+
+
+          gradient: AppColors.containerGradient,
           borderRadius: BorderRadius.vertical(top: Radius.circular(ResponsiveHelper.borderRadius(32))),
           boxShadow: [
             BoxShadow(
