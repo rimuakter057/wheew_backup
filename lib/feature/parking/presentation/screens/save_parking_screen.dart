@@ -1,9 +1,12 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/parking_location_card.dart';
@@ -13,7 +16,6 @@ import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SaveParkingScreen extends StatefulWidget {
   const SaveParkingScreen({super.key});
@@ -132,8 +134,11 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
 
   String _distanceLabel(Map<String, dynamic> location) {
     if (_userPosition == null) return '--';
-    final lat = location['latitude'];
-    final lng = location['longitude'];
+    final area = location['parkingArea'] is Map
+        ? Map<String, dynamic>.from(location['parkingArea'])
+        : null;
+    final lat = location['latitude'] ?? area?['latitude'];
+    final lng = location['longitude'] ?? area?['longitude'];
     final double? destLat = lat is num ? lat.toDouble() : double.tryParse('$lat');
     final double? destLng = lng is num ? lng.toDouble() : double.tryParse('$lng');
     if (destLat == null || destLng == null) return '--';
@@ -255,9 +260,48 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
 
 
   void _openNavigation(Map<String, dynamic> location) {
-    final link = location['googleMapsWalkingLink']?.toString();
-    if (link == null || link.isEmpty) return;
-    launchUrl(Uri.parse(link), mode: LaunchMode.externalApplication);
+    final area = location['parkingArea'] is Map
+        ? Map<String, dynamic>.from(location['parkingArea'])
+        : null;
+
+    final latRaw = location['latitude'] ?? area?['latitude'];
+    final lngRaw = location['longitude'] ?? area?['longitude'];
+
+    double? destLat = latRaw is num ? latRaw.toDouble() : double.tryParse('$latRaw');
+    double? destLng = lngRaw is num ? lngRaw.toDouble() : double.tryParse('$lngRaw');
+
+    if (destLat == null || destLng == null) {
+      final link = location['googleMapsWalkingLink']?.toString();
+      if (link != null && link.isNotEmpty) {
+        final uri = Uri.tryParse(link);
+        if (uri != null) {
+          final destParam = uri.queryParameters['destination'];
+          if (destParam != null) {
+            final parts = destParam.split(',');
+            if (parts.length == 2) {
+              destLat = double.tryParse(parts[0].trim());
+              destLng = double.tryParse(parts[1].trim());
+            }
+          }
+        }
+      }
+    }
+
+    if (destLat != null && destLng != null) {
+      final label = area?['name']?.toString() ?? location['note']?.toString();
+      context.pushNamed(
+        RouteName.inAppNavigation,
+        extra: {
+          'destination': LatLng(destLat, destLng),
+          'destinationLabel': label,
+        },
+      );
+    } else {
+      CustomSnackbar.error(
+        context: context,
+        message: AppStrings.navigationLocationNotAvailable.tr,
+      );
+    }
   }
 
   @override
