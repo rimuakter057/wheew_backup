@@ -41,6 +41,10 @@ class ParkingLocationCard extends StatelessWidget {
   /// stats row — omit to hide it.
   final VoidCallback? onSavePark;
 
+  /// When true, highlights the card border/shadow so the user can tell this
+  /// is the currently active saved parking — same layout otherwise.
+  final bool isActive;
+
   const ParkingLocationCard({
     super.key,
     required this.title,
@@ -60,16 +64,20 @@ class ParkingLocationCard extends StatelessWidget {
     this.remainingTimeSubLabel,
     this.onNavigate,
     this.onSavePark,
+    this.isActive = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      // Outer container styling matching the rounded corners and subtle shadow
+      // Outer container styling matching the rounded corners and subtle shadow —
+      // active cards just get a blue border instead of white.
       decoration: BoxDecoration(
         color: const Color(0xFFE6ECF3),
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(32)),
-        border: Border.all(color: AppColors.white)
+        border: Border.all(
+          color: isActive ? AppColors.blue : AppColors.white,
+        ),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(32)),

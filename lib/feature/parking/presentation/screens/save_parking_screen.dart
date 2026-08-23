@@ -322,11 +322,35 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
                   controller: _scrollController,
                   padding: ResponsiveHelper.symmetric(horizontal: 20, vertical: 12),
                   children: [
-                    Center(
-                      child: Text(
-                        AppStrings.saveParking.tr,
-                        style: context.titleMedium.copyWith(color: AppColors.black),
-                      ),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => Navigator.of(context).pop(),
+                          child: Container(
+                            padding: ResponsiveHelper.all(10),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.white.withOpacity(0.5),
+                              border: Border.all(color: AppColors.white),
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              size: ResponsiveHelper.iconSize(20),
+                              color: AppColors.black,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              AppStrings.saveParking.tr,
+                              style: context.titleMedium.copyWith(color: AppColors.black,fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ),
+                        // Balances the back button's width so the title stays centered.
+                        SizedBox(width: ResponsiveHelper.width(40)),
+                      ],
                     ),
                     SizedBox(height: ResponsiveHelper.spacing(20)),
                     if (_locations.isEmpty)
@@ -371,6 +395,7 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
                             onNavigate: remaining == null
                                 ? () => _openNavigation(location)
                                 : null,
+                            isActive: location['isActive'] == true,
                           );
                         }),
                         SizedBox(height: ResponsiveHelper.spacing(8)),

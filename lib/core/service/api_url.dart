@@ -1,5 +1,6 @@
 class ApiUrl {
 
+
   static const appUrl="https://play.google.com/store/apps/details?id=me.platechat.app&pcampaignid=web_share";
 
   // Base URL - Replace with your actual API base URL
@@ -75,6 +76,7 @@ class ApiUrl {
   static const String handOfNearby = '/park-relay/handoffs/nearby';
   static const String searchGetArea = '/park-relay/parking-areas/search';
   static const String createHandoff = '/park-relay/handoffs';
+ // static const String saveMyParking = '/park-relay/saved-parking';
   static const String saveMyParking = '/park-relay/saved-parking';
   static const String parkingSearching = '/park-relay/parking-mode/searching';
   static const String statusIdle = '/park-relay/parking-mode/idle';

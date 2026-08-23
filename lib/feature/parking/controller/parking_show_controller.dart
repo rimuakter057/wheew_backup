@@ -693,12 +693,15 @@ class ParkingShowController extends GetxController {
   }
 
   Future<void> onLeavingPopupYes() async {
-    await getUserLocation();
+    // Must be a fresh fix taken right now, not whatever gpsPosition already
+    // held — if the fetch fails/times out, don't silently fall back to a
+    // stale position for the handoff call.
+    final gotFreshLocation = await getUserLocation();
 
     final lat = gpsPosition.value?.latitude;
     final lng = gpsPosition.value?.longitude;
 
-    if (lat == null || lng == null) {
+    if (!gotFreshLocation || lat == null || lng == null) {
       _showMessage(AppStrings.locationNotActiveOrAvailable.tr, isError: true);
       return;
     }
