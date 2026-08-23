@@ -14,6 +14,10 @@ class MapMarkerIcons {
   static BitmapDescriptor? _parkingPin;
   static BitmapDescriptor? _electricChargingPin;
   static BitmapDescriptor? _disabledFacilityPin;
+  static BitmapDescriptor? _disableAreaPin;
+  static BitmapDescriptor? _electricAreaPin;
+  static BitmapDescriptor? _paidAreaPin;
+  static BitmapDescriptor? _freeAreaPin;
 
   static Future<BitmapDescriptor> _loadSvgPin(String assetPath, {double size = 76}) async {
     try {
@@ -109,5 +113,70 @@ class MapMarkerIcons {
       return disabledFacilityPin(size: size);
     }
     return parkingPin(size: size);
+  }
+
+  // ── Parking-area pins (parking_show_screen's area markers) ──────────────
+  // Separate asset set from the handoff pins above — these are the
+  // disable/electric/paid/free pins used for the area-center marker.
+
+  static Future<BitmapDescriptor> disableAreaPin({double size = 76}) async {
+    final cached = _disableAreaPin;
+    if (cached != null) return cached;
+    final icon = await _loadSvgPin(AssetsPath.disablePin, size: size);
+    _disableAreaPin = icon;
+    return icon;
+  }
+
+  static Future<BitmapDescriptor> electricAreaPin({double size = 76}) async {
+    final cached = _electricAreaPin;
+    if (cached != null) return cached;
+    final icon = await _loadSvgPin(AssetsPath.electricPin, size: size);
+    _electricAreaPin = icon;
+    return icon;
+  }
+
+  static Future<BitmapDescriptor> paidAreaPin({double size = 76}) async {
+    final cached = _paidAreaPin;
+    if (cached != null) return cached;
+    final icon = await _loadSvgPin(AssetsPath.paidPin, size: size);
+    _paidAreaPin = icon;
+    return icon;
+  }
+
+  static Future<BitmapDescriptor> freeAreaPin({double size = 76}) async {
+    final cached = _freeAreaPin;
+    if (cached != null) return cached;
+    final icon = await _loadSvgPin(AssetsPath.freePin, size: size);
+    _freeAreaPin = icon;
+    return icon;
+  }
+
+  /// Parking-area pin, chosen by priority Disabled > Electric > Paid > Free.
+  /// parkingAreaTypes decides it when non-empty; parkingCost is only
+  /// consulted as the Paid/Free fallback when parkingAreaTypes has neither
+  /// DISABLED_FACILITY nor ELECTRIC_CHARGING (including when it's empty).
+  static Future<BitmapDescriptor> areaPinForData(
+    Map<String, dynamic>? area, {
+    double size = 76,
+  }) async {
+    if (area == null) return freeAreaPin(size: size);
+
+    final rawTypes = area['parkingAreaTypes'];
+    final types = rawTypes is List
+        ? rawTypes.map((e) => e.toString().toUpperCase()).toList()
+        : const <String>[];
+
+    if (types.contains('DISABLED_FACILITY')) {
+      return disableAreaPin(size: size);
+    }
+    if (types.contains('ELECTRIC_CHARGING')) {
+      return electricAreaPin(size: size);
+    }
+
+    final parkingCost = area['parkingCost']?.toString().toUpperCase() ?? '';
+    if (parkingCost == 'PAID') {
+      return paidAreaPin(size: size);
+    }
+    return freeAreaPin(size: size);
   }
 }

@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -659,8 +658,6 @@ class ParkingShowController extends GetxController {
     }
 
     _showExitLoadingDialog();
-    bool succeeded = false;
-    String? ratedAreaId;
 
     try {
       _logger.i(
@@ -719,16 +716,11 @@ class ParkingShowController extends GetxController {
         );
       }
 
-      // Captured before _resetSearchState() clears it — the rating dialog
-      // needs it to submit against the right parking area.
-      ratedAreaId = currentParkingAreaId.value;
-
       // Session ended -> back to the plain "not parked" search view.
       _resetSearchState();
       // Back to IDLE -> same auto-fetch checkParkingModeMe() does for a
       // fresh IDLE resolve, so the map isn't left blank after exiting.
       await fetchNearbyParkingAreasOnly(lat, lng);
-      succeeded = true;
     } catch (e) {
       _showMessage(
         AppStrings.networkErrorReportingSpotHandoffWithError.tr.replaceFirst(
@@ -739,12 +731,6 @@ class ParkingShowController extends GetxController {
       );
     } finally {
       _closeExitLoadingDialog();
-    }
-
-    // Rating dialog only opens once the loader is fully closed and the
-    // exit actually succeeded — never stacked on top of the loader dialog.
-    if (succeeded) {
-      _showRatingDialog(ratedAreaId);
     }
   }
 
@@ -789,172 +775,8 @@ class ParkingShowController extends GetxController {
     }
   }
 
-  // -- Post-exit parking experience rating. Submits via
-  //    POST /park-relay/parking-areas/{parkingAreaId}/ratings when a real
-  //    parkingAreaId was captured (see currentParkingAreaId) — no review
-  //    text field exists in the UI yet, so review is sent empty. Falls
-  //    back to the old "just acknowledge" behavior when no id is known. --
-  Future<void> _submitRating(String? parkingAreaId, double rating) async {
-    if (parkingAreaId == null || parkingAreaId.isEmpty) {
-      _showMessage(AppStrings.ratingSubmitted.tr, isError: false);
-      return;
-    }
-    try {
-      final response = await _repository.submitParkingAreaRating(
-        parkingAreaId: parkingAreaId,
-        rating: rating.toInt(),
-        review: '',
-      );
-      _logger.d(
-        'submitParkingAreaRating status: ${response.statusCode}\n'
-        'body: ${response.body}',
-      );
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        _showMessage(AppStrings.ratingSubmitted.tr, isError: false);
-      } else {
-        _showMessage(AppStrings.somethingWentWrong.tr, isError: true);
-      }
-    } catch (e, st) {
-      _logger.e('submitParkingAreaRating ERROR', error: e, stackTrace: st);
-      _showMessage(AppStrings.somethingWentWrong.tr, isError: true);
-    }
-  }
-
-
-  String _ratingLabel(double rating) {
-    if (rating <= 0) return '';
-    if (rating <= 1) return AppStrings.ratingPoor.tr;
-    if (rating <= 2) return AppStrings.ratingFair.tr;
-    if (rating <= 3) return AppStrings.ratingGood.tr;
-    if (rating <= 4) return AppStrings.ratingGreat.tr;
-    return AppStrings.ratingExcellent.tr;
-  }
-
-  void _showRatingDialog(String? parkingAreaId) {
-    final ctx = _dialogContext;
-    if (ctx == null) return;
-
-    double rating = 0;
-
-    showDialog(
-      context: ctx,
-      barrierDismissible: true,
-      barrierColor: AppColors.black.withValues(alpha: 0.4),
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (dialogContext, setState) => Dialog(
-          backgroundColor: AppColors.transparent,
-          insetPadding: EdgeInsets.symmetric(
-            horizontal: ResponsiveHelper.padding(24),
-          ),
-          child: Container(
-            padding: ResponsiveHelper.symmetric(horizontal: 24, vertical: 28),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(
-                ResponsiveHelper.borderRadius(24),
-              ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SvgPicture.asset(
-                  AssetsPath.ratingIcon,
-                  width: ResponsiveHelper.iconSize(64),
-                  height: ResponsiveHelper.iconSize(64),
-                ),
-                SizedBox(height: ResponsiveHelper.spacing(16)),
-                Text(
-                  'How was your parking experience?',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    fontSize: ResponsiveHelper.fontSize(17),
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF1A1A2E),
-                  ),
-                ),
-                SizedBox(height: ResponsiveHelper.spacing(18)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(5, (index) {
-                    final starValue = index + 1;
-                    final filled = rating >= starValue;
-                    return GestureDetector(
-                      onTap: () => setState(() {
-                        rating = rating == starValue.toDouble()
-                            ? 0
-                            : starValue.toDouble();
-                      }),
-                      child: Padding(
-                        padding: ResponsiveHelper.symmetric(horizontal: 2),
-                        child: Icon(
-                          filled ? Icons.star_rounded : Icons.star_outline_rounded,
-                          color: filled
-                              ? AppColors.amber
-                              : AppColors.black.withValues(alpha: 0.25),
-                          size: ResponsiveHelper.iconSize(36),
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-                if (rating > 0) ...[
-                  SizedBox(height: ResponsiveHelper.spacing(8)),
-                  Container(
-                    padding: ResponsiveHelper.symmetric(
-                      horizontal: 12,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF185FA5).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(
-                        ResponsiveHelper.borderRadius(20),
-                      ),
-                    ),
-                    child: Text(
-                      _ratingLabel(rating),
-                      style: GoogleFonts.poppins(
-                        fontSize: ResponsiveHelper.fontSize(13),
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF185FA5),
-                      ),
-                    ),
-                  ),
-                ],
-                SizedBox(height: ResponsiveHelper.spacing(22)),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CustomGradientButton(
-                        onPressed: () => Navigator.of(dialogContext).pop(),
-                        label: AppStrings.skip.tr,
-                        backgroundColor: AppColors.blueShadeConBg,
-                        shadowColor: AppColors.transparent,
-                        textColor: AppColors.black,
-                        borderColor: AppColors.white,
-                      ),
-                    ),
-                    SizedBox(width: ResponsiveHelper.spacing(14)),
-                    Expanded(
-                      child: CustomGradientButton(
-                        onPressed: rating < 1
-                            ? null
-                            : () {
-                                Navigator.of(dialogContext).pop();
-                                _submitRating(parkingAreaId, rating);
-                              },
-                        label: AppStrings.submitRating.tr,
-                        keepGradientWhenDisabled: true,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // Post-exit rating feature removed — Exit Parking now just runs the
+  // handoff/idle logic above with no rating dialog afterward.
 
   Future<void> _buildMarkersAndPolygons() async {
     final Set<Marker> newMarkers = {};
@@ -1019,7 +841,11 @@ class ParkingShowController extends GetxController {
       );
     }
 
-    // Parking areas — red polygon outline
+    // Parking areas — a single pin at the area's center point (no polygon
+    // outline). Icon priority: Disabled > Electric > Paid > Free —
+    // parkingAreaTypes decides it, falling back to parkingCost only when
+    // parkingAreaTypes has neither DISABLED_FACILITY nor ELECTRIC_CHARGING
+    // (including when it's empty). See MapMarkerIcons.areaPinForData.
     for (var idx = 0; idx < parkingAreaList.length; idx++) {
       final area = _asMap(parkingAreaList[idx]);
       if (area == null) {
@@ -1030,40 +856,27 @@ class ParkingShowController extends GetxController {
       }
 
       final areaId = area['id']?.toString() ?? 'area_$idx';
-      final polyPoints = area['polygon'];
-      final points = _parsePolygonPoints(polyPoints);
+      final lat = _toDouble(area['centerLat']);
+      final lng = _toDouble(area['centerLng']);
 
-      _logger.d(
-        'parkingArea[$idx] id=$areaId -> raw polygon: $polyPoints '
-        '-> parsed points: ${points.length}',
-      );
-
-      if (points.length >= 3) {
-        newPolygons.add(
-          Polygon(
-            polygonId: PolygonId(areaId),
-            points: points,
-            strokeWidth: ResponsiveHelper.borderWidth(3).round(),
-            // Blue — matches the map (home tab)'s parking-area outline.
-            strokeColor: const Color(0xFF1E88E5),
-            fillColor: const Color(0xFF1E88E5).withValues(alpha: 0.15),
-            consumeTapEvents: true,
-            onTap: () => showParkingAreaDetails(area),
-          ),
+      if (lat == null || lng == null) {
+        _logger.w(
+          'parkingArea[$idx] id=$areaId SKIPPED: missing centerLat/centerLng',
         );
-
-        newPolylines.add(
-          Polyline(
-            polylineId: PolylineId('outline_$areaId'),
-            points: [...points, points.first],
-            color: const Color(0xFF1E88E5),
-            width: ResponsiveHelper.borderWidth(3).round(),
-            jointType: JointType.round,
-            startCap: Cap.roundCap,
-            endCap: Cap.roundCap,
-          ),
-        );
+        continue;
       }
+
+      final areaPinIcon = await MapMarkerIcons.areaPinForData(area);
+      newMarkers.add(
+        Marker(
+          markerId: MarkerId('area_$areaId'),
+          position: LatLng(lat, lng),
+          icon: areaPinIcon,
+          anchor: const Offset(0.5, 0.5),
+          infoWindow: InfoWindow.noText,
+          onTap: () => showParkingAreaDetails(area),
+        ),
+      );
     }
 
     _applyOverlaySets(
@@ -1115,22 +928,6 @@ class ParkingShowController extends GetxController {
       await fetchNearbyHandoffsOnly(lat, lng);
     }
     _isRefreshing = false;
-  }
-
-  List<LatLng> _parsePolygonPoints(dynamic rawPoints) {
-    if (rawPoints is! List) return [];
-
-    final List<LatLng> points = [];
-    for (final rawPoint in rawPoints) {
-      final point = _asMap(rawPoint);
-      if (point == null) continue;
-      final lat = _toDouble(point['latitude']);
-      final lng = _toDouble(point['longitude']);
-      if (lat != null && lng != null) {
-        points.add(LatLng(lat, lng));
-      }
-    }
-    return points;
   }
 
   Map<String, dynamic>? _asMap(dynamic value) {

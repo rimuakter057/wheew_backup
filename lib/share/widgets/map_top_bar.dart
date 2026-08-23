@@ -18,7 +18,7 @@ class MapTopBar extends StatelessWidget {
   /// Optional controller — lets the parent pre-fill search hint text.
   final TextEditingController? searchController;
 
-  /// Left / right padding from screen edge (defaults match ParkingShowScreen).
+  /// Left / right padding from screen edge (defaults match ParkingMapScreen).
   final double horizontalPadding;
 
   const MapTopBar({

@@ -9,7 +9,7 @@ import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
 import 'package:platchatapp/feature/map/presentation/screens/simple_map_screen.dart';
-import 'package:platchatapp/feature/parking/presentation/screens/parking_show_screen.dart';
+import 'package:platchatapp/feature/parking/presentation/screens/parking_map_screen.dart';
 import 'package:platchatapp/feature/parking/controller/parking_show_controller.dart';
 import 'package:platchatapp/feature/parking/presentation/screens/save_parking_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_nav_screen.dart';
@@ -40,7 +40,7 @@ class _MainNavScreenState extends State<MainNavScreen> {
         return const MapScreen();
 
       case 1:
-        return ParkingShowScreen();
+        return ParkingMapScreen();
 
       case 2:
         return const ChatListScreen();
@@ -256,20 +256,10 @@ class _AppBottomNav extends StatelessWidget {
                 ),
               );
             }),
-            Row(
-              children: [
-                /// Parking — floating standalone circle (leftmost)
-                ScanNavItem(
-                  icon: AssetsPath.pNav,
-                  index: 1,
-                  currentIndex: currentIndex,
-                  onTap: onTap,
-                ),
-
-                SizedBox(width: ResponsiveHelper.spacing(12)),
-
-            Expanded(
-              child: Card(
+            Center(
+              child: SizedBox(
+                width: ResponsiveHelper.width(220),
+                child: Card(
                 margin: EdgeInsets.zero,
                 elevation: 3,
                 shadowColor: AppColors.black.withOpacity(0.08),
@@ -297,31 +287,11 @@ class _AppBottomNav extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          //home-scan-chat-profile
+                          //parking-chat-profile
                           _NavItem(
-                            icon: AssetsPath.homeNav,
-                            label: AppStrings.home.tr,
-                            index: 0,
-                            currentIndex: currentIndex,
-                            onTap: onTap,
-                          ),
-
-                          // Scanner nav icon disabled — replaced by the
-                          // plain Google Map tab below. Scan/OCR is still
-                          // reachable via the QR flow (_openQrScanner).
-                          // _NavItem(
-                          //   icon: AssetsPath.scannerNav,
-                          //   label: AppStrings.scan.tr,
-                          //   index: 4,
-                          //   currentIndex: currentIndex,
-                          //   onTap: onTap,
-                          // ),
-
-                          SizedBox(width: ResponsiveHelper.spacing(8)),
-                          _NavItem(
-                            icon: AssetsPath.savePNav,
+                            icon: AssetsPath.pNav,
                             label: AppStrings.parking.tr,
-                            index: 5,
+                            index: 1,
                             currentIndex: currentIndex,
                             onTap: onTap,
                           ),
@@ -350,13 +320,11 @@ class _AppBottomNav extends StatelessWidget {
                 ),
               ),
             ),
-
-          ],
-        ),
+          ),
       ],
     ),
-  ),
-);
+      ),
+    );
   }
 }
 

@@ -19,7 +19,7 @@ import 'package:platchatapp/feature/main/presentation/screens/main_nav-screen.da
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
 import 'package:platchatapp/feature/notification/presentation/screens/notification_screen.dart';
 import 'package:platchatapp/feature/ocr/presentation/screens/ocr_screen.dart';
-import 'package:platchatapp/feature/parking/presentation/screens/parking_show_screen.dart';
+import 'package:platchatapp/feature/parking/presentation/screens/parking_map_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/profile_nav_screen.dart';
 import 'package:platchatapp/feature/profile/view/screens/show_profile_screen.dart';
 import 'package:platchatapp/feature/useful_number/presentation/screens/useful_member_screen.dart';
@@ -313,7 +313,7 @@ class AppRouter {
         path: RoutePath.parkingShow,
         name: RouteName.parkingShow,
         builder: (context, state) {
-          return ParkingShowScreen();
+          return ParkingMapScreen();
         },
       ),
       GoRoute(

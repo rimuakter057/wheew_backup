@@ -381,11 +381,6 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     });
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-  // FLOW 2 — "Save my parking" (bottom sheet: FREE/PAID + duration) →
-  //          GET fetchMySavedParking / POST saveMyParking
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-
   void _showSavedParkingDetailsSheet(SavedParkingModel parking) {
     showTrackedBottomSheet(
       context: context,
@@ -442,9 +437,6 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     );
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-  // Shared "pick a location on the map" mechanics (used by both flows)
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
   void _startPickingLocation({required _PickingPurpose purpose}) {
     if (!mounted) return;
@@ -761,9 +753,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
               )),
 
 
-            /// -- Action buttons cluster (Report Spot / Save My Parking) -----
-            /// Bottom-centered above the nav bar, always — same position
-            /// whether or not a bottom sheet is open.
+         ///add parking===============================================
             BottomSheetAwarePositioned(
               defaultBottom: ResponsiveHelper.bottomNavOffset(context),
               gap: ResponsiveHelper.spacing(16),

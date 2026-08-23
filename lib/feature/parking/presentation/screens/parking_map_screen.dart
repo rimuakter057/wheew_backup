@@ -1,4 +1,4 @@
-﻿
+
 import 'dart:math';
 import 'dart:ui';
 
@@ -26,7 +26,6 @@ import 'package:platchatapp/feature/parking/presentation/screens/save_parking_sc
 import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_location_off_prompt.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/parking_location_card.dart';
-import 'package:platchatapp/feature/parking/presentation/widgets/parked_session_card.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_confirmation_overlay.dart';
 import 'package:platchatapp/share/widgets/bottom_sheet_aware/tracked_bottom_sheet.dart';
 import 'package:platchatapp/share/widgets/map_side_controls.dart';
@@ -40,18 +39,18 @@ import '../../../../utils/color/app_colors.dart';
 
 enum _AddParkingPurpose { report, save }
 
-class ParkingShowScreen extends StatefulWidget {
+class ParkingMapScreen extends StatefulWidget {
 
-  const ParkingShowScreen({super.key});
+  const ParkingMapScreen({super.key});
 
   static const LatLng kInitialMapTarget =
       ParkingShowController.kApproxDefaultLocation;
 
   @override
-  State<ParkingShowScreen> createState() => _ParkingShowScreenState();
+  State<ParkingMapScreen> createState() => _ParkingMapScreenState();
 }
 
-class _ParkingShowScreenState extends State<ParkingShowScreen>
+class _ParkingMapScreenState extends State<ParkingMapScreen>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   GoogleMapController? _mapController;
   MapType _selectedMapType = MapType.normal;
@@ -70,7 +69,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
   @override
   void initState() {
     super.initState();
-    print("PARKING_SHOW_SCREEN_INIT_STATE (screen mounted/re-mounted)");
+    print("PARKING_MAP_SCREEN_INIT_STATE (screen mounted/re-mounted)");
     WidgetsBinding.instance.addObserver(this);
 
     _parkingShowCtrl = Get.isRegistered<ParkingShowController>()
@@ -131,13 +130,6 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
     mapDebug('GoogleMap created');
   }
 
-  // ── "Add Parking" flow — ported as-is from the Home map screen ─────────
-  // (_MapScreenState._showAddParkingOptions / _toggleParkingPin /
-  // _showParkingDialog / _showSaveParkingSheet / _startPickingLocation),
-  // reusing the exact same ParkingReportController, ParkingInfoDialog and
-  // SaveParkingDialog — only the trigger (this screen's top-left button
-  // instead of Home's) and the picked-location plumbing (this screen's own
-  // fields/map instead of Home's) are new.
 
   void _showAddParkingOptions() {
     HapticFeedback.selectionClick();
@@ -426,7 +418,6 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
               // Empty until /parking-mode/me resolves & not loading — treat that as
               // "still loading" so nothing here defaults to the IDLE view or shows buttons while loading.
               final statusResolved = status.isNotEmpty && !isLoading;
-              final isParked = status == 'PARKED';
               final isSearching = status == 'SEARCHING';
               // Search bar / notification bell / layers+location header —
               // stays visible in every resolved state (including PARKED),
@@ -434,7 +425,6 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
               // loading window.
               final showHeader = statusResolved;
 
-              final showSearchUi = statusResolved && !isParked;
               final isTransitioningSearch =
                   _parkingShowCtrl.isTransitioningSearch.value;
 
@@ -459,7 +449,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       onMapCreated: _onMapCreated,
                       onTap: _onMapTappedForAddParking,
                       initialCameraPosition: CameraPosition(
-                        target: gpsPosition ?? ParkingShowScreen.kInitialMapTarget,
+                        target: gpsPosition ?? ParkingMapScreen.kInitialMapTarget,
                         zoom: 18,
                       ),
                       markers: currentMarkers,
@@ -530,7 +520,7 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                                       child: Container(
                                         height: barHeight,
                                         decoration: BoxDecoration(
-                                          color: AppColors.white, // <-- alpha à¦ªà§à¦°à§‹à¦ªà§à¦°à¦¿ à¦¬à¦¾à¦¦, solid à¦¸à¦¾à¦¦à¦¾
+                                          color: AppColors.white, // <-- alpha প্রোপ্রি বাদ, solid সাদা
                                           borderRadius: BorderRadius.circular(barHeight / 2),
                                           boxShadow: [
                                             BoxShadow(
@@ -607,44 +597,77 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       ),
                     ),
 
-                  if (isParked)
-                    Positioned(
-                      bottom: ResponsiveHelper.bottomNavOffset(context),
-                      left: ResponsiveHelper.padding(20),
-                      right: ResponsiveHelper.padding(20),
-                      child: Obx(() => ParkedSessionCard(
-                        locationName: _parkingShowCtrl.parkedLocationName.value.isNotEmpty
-                            ? _parkingShowCtrl.parkedLocationName.value
-                            : AppStrings.yourParkingSpot.tr,
-                        spotCode: _parkingShowCtrl.parkedSpotCode.value,
-                        onExitPressed: _showExitParkingConfirmation,
-                      )),
-                    )
-                  else if (showSearchUi)
-                    Positioned(
-                      bottom: ResponsiveHelper.bottomNavOffset(context),
-                      left: ResponsiveHelper.padding(80),
-                      right: ResponsiveHelper.padding(80),
-                      child: CustomGradientButton(
-                        onPressed: isSearching
-                            ? _parkingShowCtrl.stopSearching
-                            : _parkingShowCtrl.onLeavingPopupNo,
-                        isLoading: isTransitioningSearch,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (!isSearching) ...[
-                              CustomImage(imageSrc: AssetsPath.pNav),
-                              SizedBox(width: ResponsiveHelper.width(4)),
-                            ],
-                            Text(
-                             isSearching ? AppStrings.stopSearching.tr : AppStrings.findParkingSpot.tr,
-                              style: context.bodyMedium.copyWith(color: AppColors.white),
+                  // Both buttons always shown together now (no more
+                  // parked-vs-searching exclusivity) — Find Parking keeps
+                  // its exact previous logic/label switching; Exit Parking
+                  // reuses the exact same _showExitParkingConfirmation
+                  // logic as before, just as a pill button instead of the
+                  // full ParkedSessionCard (and with no rating dialog
+                  // afterward — see onLeavingPopupYes).
+                  Positioned(
+                    bottom: ResponsiveHelper.bottomNavOffset(context),
+                    left: ResponsiveHelper.padding(20),
+                    right: ResponsiveHelper.padding(20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: CustomGradientButton(
+                            onPressed: isSearching
+                                ? _parkingShowCtrl.stopSearching
+                                : _parkingShowCtrl.onLeavingPopupNo,
+                            isLoading: isTransitioningSearch,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (!isSearching) ...[
+                                  CustomImage(
+                                    imageSrc: AssetsPath.pNav,
+                                    width: ResponsiveHelper.iconSize(16),
+                                    height: ResponsiveHelper.iconSize(16),
+                                  ),
+                                  SizedBox(width: ResponsiveHelper.width(4)),
+                                ],
+                                Flexible(
+                                  child: Text(
+                                   isSearching ? AppStrings.stopSearching.tr : AppStrings.findParkingSpot.tr,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: context.bodyMedium.copyWith(color: AppColors.white),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+                        SizedBox(width: ResponsiveHelper.width(12)),
+                        Expanded(
+                          child: CustomGradientButton(
+                            gradient: AppColors.redGradient,
+                            onPressed: _showExitParkingConfirmation,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CustomImage(
+                                  imageSrc: AssetsPath.pNav,
+                                  width: ResponsiveHelper.iconSize(16),
+                                  height: ResponsiveHelper.iconSize(16),
+                                ),
+                                SizedBox(width: ResponsiveHelper.width(4)),
+                                Flexible(
+                                  child: Text(
+                                    AppStrings.exitParking.tr,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: context.bodyMedium.copyWith(color: AppColors.white),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                  ),
 
                   /// -- Active spot details card overlay (floating above bottom nav) --
                   Obx(() {
@@ -803,10 +826,6 @@ class _NotificationBellButton extends StatelessWidget {
   }
 }
 
-// -- SEARCHING-mode glow frame: gradient-colored (blue â†’ white â†’ purple),
-//    stroke width waves irregularly around the perimeter and the wave
-//    travels over time — same base pulsing width/timing as the old solid
-//    Border.all() version, just not a uniform line anymore. --
 class _WavyGradientBorderPainter extends CustomPainter {
   final double t; // 0..1 "breathing" phase — same as the old glowWidth calc
   final double wavePhase; // rotates the wave around the perimeter over time
@@ -849,9 +868,7 @@ class _WavyGradientBorderPainter extends CustomPainter {
       final wave = sin((d0 / length) * 2 * pi * waveCount + wavePhase);
       final strokeWidth = (baseWidth + wave * waveAmplitude).clamp(6.0, 30.0);
 
-      // Soft outer halo (blurred, wider) + a tighter, less-blurred core on
-      // top — this combo is what actually reads as "glow" instead of a
-      // crisp painted line, kept narrow so it hugs the edge.
+
       final haloPaint = Paint()
         ..shader = shader
         ..style = PaintingStyle.stroke
@@ -875,6 +892,4 @@ class _WavyGradientBorderPainter extends CustomPainter {
   bool shouldRepaint(covariant _WavyGradientBorderPainter oldDelegate) =>
       oldDelegate.t != t || oldDelegate.wavePhase != wavePhase;
 }
-
-
 
