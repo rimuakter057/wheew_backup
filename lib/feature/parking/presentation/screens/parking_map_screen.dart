@@ -1,43 +1,26 @@
 
 import 'dart:math';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:platchatapp/core/router/route_path.dart';
 import 'package:platchatapp/core/router/routes.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
-import 'package:platchatapp/feature/main/data/main_nav_.dart';
-import 'package:platchatapp/feature/map/controller/map_controller.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_initial_shimmer.dart';
-import 'package:platchatapp/feature/map/presentation/widgets/map_loading_banners.dart';
-import 'package:platchatapp/feature/map/presentation/widgets/parking_added_success_dialog.dart';
-import 'package:platchatapp/feature/map/presentation/widgets/parking_info_dialog.dart';
-import 'package:platchatapp/feature/map/presentation/widgets/save_parking_dialog.dart';
 import 'package:platchatapp/feature/map/utils/map_debug.dart';
-import 'package:platchatapp/feature/notification/controller/notification_controller.dart';
-import 'package:platchatapp/helper/custom_image/custom_image.dart';
-import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
+import 'package:platchatapp/feature/parking/controller/add_parking_flow_controller.dart';
 import 'package:platchatapp/feature/parking/controller/parking_show_controller.dart';
 import 'package:platchatapp/feature/parking/presentation/screens/save_parking_screen.dart';
-import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_location_off_prompt.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/parking_location_card.dart';
-import 'package:platchatapp/feature/parking/presentation/widgets/parking_confirmation_overlay.dart';
-import 'package:platchatapp/share/widgets/bottom_sheet_aware/tracked_bottom_sheet.dart';
+import 'package:platchatapp/feature/parking/presentation/widgets/parking_map_bottom_actions.dart';
+import 'package:platchatapp/feature/parking/presentation/widgets/parking_map_left_action_buttons.dart';
+import 'package:platchatapp/feature/parking/presentation/widgets/parking_map_loading_banner.dart';
+import 'package:platchatapp/feature/parking/presentation/widgets/wavy_gradient_border_painter.dart';
+import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/map_side_controls.dart';
-import 'package:platchatapp/utils/assets_path/assets_path.dart';
-import 'package:platchatapp/utils/extension/base_extension.dart';
+import 'package:platchatapp/share/widgets/map_top_bar.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
-import 'package:platchatapp/utils/toast_message/toast_message.dart';
-
-import '../../../../helper/custom_gradient_button/custom_gradient_button.dart';
 import '../../../../utils/color/app_colors.dart';
-
-enum _AddParkingPurpose { report, save }
 
 class ParkingMapScreen extends StatefulWidget {
 
@@ -52,352 +35,67 @@ class ParkingMapScreen extends StatefulWidget {
 
 class _ParkingMapScreenState extends State<ParkingMapScreen>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+  // -- Google Map instance for this screen --
   GoogleMapController? _mapController;
   MapType _selectedMapType = MapType.normal;
 
-  late final ParkingShowController _parkingShowCtrl;
+  // -- Logic lives in these controllers, not here --
+  // Map/status/markers/search/exit-parking logic.
+  late final ParkingShowController parkingShowCtrl;
+  // "Add Parking" flow (report-a-spot / park-my-car / pick-on-map).
+  late final AddParkingFlowController addParkingFlowCtrl;
 
-
-  late final ParkingReportController _parkingReportCtrl;
-  LatLng? _pickedAddParkingLocation;
-  bool _isPickingAddParkingLocation = false;
-  _AddParkingPurpose? _addParkingPickingPurpose;
-
+  // -- Location pulse animation + (read-only) search field controller --
   late AnimationController _pulseController;
   final TextEditingController _searchController = TextEditingController();
 
+  // -- Register controllers, start the pulse animation, run the initial
+  // parking-mode flow (approx map -> /parking-mode/me -> branch) --
   @override
   void initState() {
     super.initState();
-    print("PARKING_MAP_SCREEN_INIT_STATE (screen mounted/re-mounted)");
     WidgetsBinding.instance.addObserver(this);
 
-    _parkingShowCtrl = Get.isRegistered<ParkingShowController>()
+    parkingShowCtrl = Get.isRegistered<ParkingShowController>()
         ? Get.find<ParkingShowController>()
         : Get.put(ParkingShowController());
 
-    // Same controller instance Home's map screen uses for "Add Parking" —
-    // shared singleton via GetX, so the flow behaves identically.
-    _parkingReportCtrl = Get.isRegistered<ParkingReportController>()
-        ? Get.find<ParkingReportController>()
-        : Get.put(ParkingReportController());
+    addParkingFlowCtrl = Get.isRegistered<AddParkingFlowController>()
+        ? Get.find<AddParkingFlowController>()
+        : Get.put(AddParkingFlowController());
 
-    _parkingShowCtrl.clearSpotDetailsCard();
+    parkingShowCtrl.clearSpotDetailsCard();
 
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
     )..repeat();
 
-    // Runs the full flow (approx map -> /parking-mode/me -> branch)
-    // every time this screen is entered.
-    _initializeMap();
+    mapDebug('_initializeMap: running initializeFlow');
+    parkingShowCtrl.initializeFlow();
   }
 
+  // -- Release the map controller reference + dispose animation/text
+  // controllers owned by this screen --
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    // Clear the controller's reference so its existing `mapController != null`
-    // guards correctly skip animateCamera calls once this GoogleMap widget is
-    // gone — otherwise in-flight async work (e.g. fetchNearbyData) still
-    // holds a stale, non-null controller and crashes trying to use it.
-    if (_parkingShowCtrl.mapController == _mapController) {
-      _parkingShowCtrl.mapController = null;
+    if (parkingShowCtrl.mapController == _mapController) {
+      parkingShowCtrl.mapController = null;
     }
-    _parkingShowCtrl.clearSpotDetailsCard();
+    parkingShowCtrl.clearSpotDetailsCard();
     _mapController?.dispose();
     _pulseController.dispose();
     _searchController.dispose();
     super.dispose();
   }
 
+  // -- Re-check parking status whenever the app comes back to foreground --
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-
     if (state == AppLifecycleState.resumed) {
-      _parkingShowCtrl.refreshStatus();
+      parkingShowCtrl.refreshStatus();
     }
-  }
-
-  Future<void> _initializeMap() async {
-    mapDebug('_initializeMap: running initializeFlow');
-    await _parkingShowCtrl.initializeFlow();
-  }
-
-  void _onMapCreated(GoogleMapController controller) {
-    _mapController = controller;
-    _parkingShowCtrl.onMapCreated(controller);
-    mapDebug('GoogleMap created');
-  }
-
-
-  void _showAddParkingOptions() {
-    HapticFeedback.selectionClick();
-    showTrackedBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppColors.transparent,
-      builder: (sheetContext) {
-        return Container(
-          decoration: BoxDecoration(
-            gradient: AppColors.containerGradient,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(ResponsiveHelper.borderRadius(24)),
-            ),
-          ),
-          padding: EdgeInsets.only(
-            left: ResponsiveHelper.padding(16),
-            right: ResponsiveHelper.padding(16),
-            top: ResponsiveHelper.padding(12),
-            bottom: ResponsiveHelper.padding(24),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Center(
-                child: Container(
-                  width: ResponsiveHelper.width(40),
-                  height: ResponsiveHelper.height(4),
-                  margin: EdgeInsets.only(bottom: ResponsiveHelper.spacing(18)),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFD1D5DB),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              ),
-              CustomGradientButton(
-                prefixIcon: const Icon(
-                  Icons.add_location_alt_rounded,
-                  color: AppColors.white,
-                ),
-                label: AppStrings.addParkingSpot.tr,
-                onPressed: () {
-                  Navigator.of(sheetContext).pop();
-                  _toggleAddParkingPin();
-                },
-              ),
-              SizedBox(height: ResponsiveHelper.spacing(14)),
-              CustomGradientButton(
-                prefixIcon: const Icon(
-                  Icons.add_circle_outline,
-                  color: AppColors.white,
-                ),
-                label: AppStrings.parkMyCar.tr,
-                onPressed: () {
-                  Navigator.of(sheetContext).pop();
-                  _showSaveParkingSheet();
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _toggleAddParkingPin() {
-    HapticFeedback.mediumImpact();
-    _pickedAddParkingLocation = null;
-    _stopPickingAddParkingLocation();
-    _showParkingReportDialog();
-  }
-
-  void _showParkingReportDialog() {
-    _parkingReportCtrl.reset();
-
-    // Explicit actions (pick-on-map / submit) set this so the sheet-dismiss
-    // cleanup below doesn't double-run the same reset when they pop it.
-    bool handled = false;
-
-    showTrackedBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppColors.transparent,
-      builder: (_) => ParkingInfoDialog(
-        controller: _parkingReportCtrl,
-        pickedLocation: _pickedAddParkingLocation,
-        onPickOnMap: () {
-          handled = true;
-          Navigator.of(context).pop();
-          _startPickingAddParkingLocation(purpose: _AddParkingPurpose.report);
-        },
-        onSubmit: () async {
-          handled = true;
-          Navigator.of(context).pop();
-          _stopPickingAddParkingLocation();
-
-          final gps = _parkingShowCtrl.gpsPosition.value;
-          if (_pickedAddParkingLocation == null && gps == null) {
-            showCustomSnackBar(
-              AppStrings.locationNotAvailable.tr,
-              isError: true,
-            );
-            return;
-          }
-
-          final LatLng useLocation = _pickedAddParkingLocation ?? gps!;
-
-          final success = await _parkingReportCtrl.addParking(
-            latitude: useLocation.latitude,
-            longitude: useLocation.longitude,
-          );
-          if (!mounted) return;
-          if (success) {
-            await ParkingAddedSuccessDialog.show(context);
-            if (!mounted) return;
-            _pickedAddParkingLocation = null;
-          } else {
-            showCustomSnackBar(
-              _parkingReportCtrl.submitMessage.value.isNotEmpty
-                  ? _parkingReportCtrl.submitMessage.value
-                  : AppStrings.mapFailedToSubmitParkingReport.tr,
-              isError: true,
-            );
-          }
-        },
-      ),
-    ).whenComplete(() {
-      // User swiped the sheet down / tapped outside without picking a
-      // location or dropping the pin — same cleanup as the old Cancel button.
-      if (!handled) {
-        _pickedAddParkingLocation = null;
-        _stopPickingAddParkingLocation();
-      }
-    });
-  }
-
-  void _showSaveParkingSheet() {
-    showTrackedBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppColors.transparent,
-      builder: (context) {
-        return SaveParkingDialog(
-          pickedLocation: _pickedAddParkingLocation,
-          gpsPosition: _parkingShowCtrl.gpsPosition.value,
-          parkingCtrl: _parkingReportCtrl,
-          onPickOnMap: () {
-            Navigator.of(context).pop();
-            _startPickingAddParkingLocation(purpose: _AddParkingPurpose.save);
-          },
-          onSaveSuccess: (location) {
-            setState(() {
-              _pickedAddParkingLocation = null;
-            });
-          },
-          showCustomSnackBar: showCustomSnackBar,
-        );
-      },
-    );
-  }
-
-  void _startPickingAddParkingLocation({required _AddParkingPurpose purpose}) {
-    if (!mounted) return;
-
-    _addParkingPickingPurpose = purpose;
-
-    setState(() {
-      _isPickingAddParkingLocation = true;
-    });
-
-    showCustomSnackBar(
-      AppStrings.tapMapToSelectLocation.tr,
-      isError: false,
-    );
-  }
-
-  void _stopPickingAddParkingLocation() {
-    if (!mounted) return;
-    if (_isPickingAddParkingLocation) {
-      setState(() {
-        _isPickingAddParkingLocation = false;
-      });
-    }
-    _addParkingPickingPurpose = null;
-  }
-
-  void _onMapTappedForAddParking(LatLng position) {
-    if (!_isPickingAddParkingLocation) {
-      _parkingShowCtrl.clearSpotDetailsCard();
-      return;
-    }
-
-    if (!mounted) return;
-
-    final purpose = _addParkingPickingPurpose;
-
-    setState(() {
-      _pickedAddParkingLocation = position;
-      _isPickingAddParkingLocation = false;
-    });
-    _addParkingPickingPurpose = null;
-
-    HapticFeedback.selectionClick();
-
-    // Reopen whichever flow started the picking mode.
-    if (purpose == _AddParkingPurpose.save) {
-      _showSaveParkingSheet();
-    } else {
-      _showParkingReportDialog();
-    }
-  }
-
-  /// -- Left-side action buttons: Add Location / Save Parking -------------
-  /// Same circular buttonGradient style used elsewhere. "Add Location"
-  /// opens the report-a-spot / Park-My-Car choice sheet above; "Save
-  /// Parking" just navigates to SaveParkingScreen.
-  Widget _buildLeftActionButtons() {
-    return Positioned(
-      left: ResponsiveHelper.padding(16),
-      top: MediaQuery.of(context).padding.top + ResponsiveHelper.padding(68),
-      child: Column(
-        children: [
-          _circleGradientButton(
-            iconAsset: AssetsPath.addLocation,
-            onTap: _showAddParkingOptions,
-          ),
-          SizedBox(height: ResponsiveHelper.height(12)),
-          _circleGradientButton(
-            iconAsset: AssetsPath.savePNav,
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const SaveParkingScreen()),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _circleGradientButton({
-    required String iconAsset,
-    required VoidCallback? onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: ResponsiveHelper.width(52),
-        height: ResponsiveHelper.height(52),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: AppColors.buttonGradient,
-          border: Border.all(color: AppColors.darBlue, width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.black.withValues(alpha: 0.2),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: CustomImage(
-          imageSrc: iconAsset,
-          imageColor: AppColors.white,
-          width: ResponsiveHelper.iconSize(24),
-          height: ResponsiveHelper.iconSize(24),
-        ),
-      ),
-    );
   }
 
   @override
@@ -408,25 +106,22 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
         backgroundColor: AppColors.white,
         body: Stack(
           children: [
+            // -- Main reactive block: reads ParkingShowController's
+            // location/status state and decides which view to show --
             Obx(() {
 
-              final isLocating = _parkingShowCtrl.isLocating.value;
-              final gpsPosition = _parkingShowCtrl.gpsPosition.value;
-              final showLocationPulse = _parkingShowCtrl.showLocationPulse.value;
-              final isLoading = _parkingShowCtrl.isLoading.value;
-              final status = _parkingShowCtrl.status.value;
-              // Empty until /parking-mode/me resolves & not loading — treat that as
-              // "still loading" so nothing here defaults to the IDLE view or shows buttons while loading.
+              final isLocating = parkingShowCtrl.isLocating.value;
+              final gpsPosition = parkingShowCtrl.gpsPosition.value;
+              final showLocationPulse = parkingShowCtrl.showLocationPulse.value;
+              final isLoading = parkingShowCtrl.isLoading.value;
+              final status = parkingShowCtrl.status.value;
               final statusResolved = status.isNotEmpty && !isLoading;
               final isSearching = status == 'SEARCHING';
-              // Search bar / notification bell / layers+location header —
-              // stays visible in every resolved state (including PARKED),
-              // same as the map (home tab). Never shown during the initial
-              // loading window.
+
               final showHeader = statusResolved;
 
               final isTransitioningSearch =
-                  _parkingShowCtrl.isTransitioningSearch.value;
+                  parkingShowCtrl.isTransitioningSearch.value;
 
               if (!isLocating && gpsPosition == null) {
                 return const ParkingLocationOffPrompt();
@@ -437,17 +132,23 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
 
               return Stack(
                 children: [
+                  // -- Google Map: markers/polygons/circles/polylines from
+                  // ParkingShowController, tap-to-pick-location handled by
+                  // AddParkingFlowController --
                   Obx(() {
-                    final currentMarkers = _parkingShowCtrl.markers.toSet();
-                    final currentPolygons = _parkingShowCtrl.polygons.toSet();
-                    final currentCircles = _parkingShowCtrl.circles.toSet();
-                    final currentPolylines = _parkingShowCtrl.polylines.toSet();
+                    final currentMarkers = parkingShowCtrl.markers.toSet();
+                    final currentPolygons = parkingShowCtrl.polygons.toSet();
+                    final currentCircles = parkingShowCtrl.circles.toSet();
+                    final currentPolylines = parkingShowCtrl.polylines.toSet();
 
                     return GoogleMap(
                       mapType: _selectedMapType,
                       key: const ValueKey<Object>('wheew_google_map'),
-                      onMapCreated: _onMapCreated,
-                      onTap: _onMapTappedForAddParking,
+                      onMapCreated: (controller) {
+                        _mapController = controller;
+                        parkingShowCtrl.onMapCreated(controller);
+                      },
+                      onTap: addParkingFlowCtrl.onMapTappedForAddParking,
                       initialCameraPosition: CameraPosition(
                         target: gpsPosition ?? ParkingMapScreen.kInitialMapTarget,
                         zoom: 18,
@@ -456,7 +157,7 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
                       polygons: currentPolygons,
                       circles: currentCircles,
                       polylines: currentPolylines,
-                      myLocationEnabled: _parkingShowCtrl.isRealLocationLoaded.value,
+                      myLocationEnabled: parkingShowCtrl.isRealLocationLoaded.value,
                       myLocationButtonEnabled: false,
                       zoomControlsEnabled: false,
                       mapToolbarEnabled: false,
@@ -467,113 +168,22 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
                   }),
 
 
-                  if (isLocating) const LocatingBanner(),
+                  // -- Loading banner: only shown while fetching nearby
+                  // parking. "Getting location" keeps running in the
+                  // background (isLocating) but is never shown to the user. --
+                  if (isLoading) const ParkingMapLoadingBanner(),
 
-                  if (isLoading) const FetchingParkingBanner(),
-
-
-                  ///search=======================================================
+                  // -- Top search bar + notification bell (search opens the
+                  // radius filter sheet via ParkingShowController) --
                   if (showHeader)
-                    Positioned(
-                      top: MediaQuery.of(context).padding.top +
-                          ResponsiveHelper.padding(16),
-                      left: ResponsiveHelper.padding(16),
-                      right: ResponsiveHelper.padding(16),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap: () {
-                                // -- enter search mode: show the floating button --
-                                showFindParkingButton.value = true;
-
-                                RadiusFilterSheet.show(
-                                  context,
-                                  initialRadiusMeter: _parkingShowCtrl.selectedRadiusMeter.value,
-                                  onApply: (radius) {
-                                    _parkingShowCtrl.selectedRadiusMeter.value = radius;
-                                    final lat = _parkingShowCtrl.gpsPosition.value?.latitude;
-                                    final lng = _parkingShowCtrl.gpsPosition.value?.longitude;
-                                    if (lat != null && lng != null) {
-                                      // Radius filter only affects the handoffs
-                                      // radius — parking areas use a fixed radius.
-                                      _parkingShowCtrl.fetchNearbyHandoffsOnly(lat, lng);
-                                    }
-                                    // -- sheet applied: hide the floating button --
-                                    showFindParkingButton.value = false;
-
-                                  },
-                                ).then((_) {
-                                  // -- sheet dismissed (swipe/tap outside): hide button --
-                                  showFindParkingButton.value = false;
-                                });
-                              },
-                              child: Builder(
-                                builder: (context) {
-                                  final double barHeight = ResponsiveHelper.padding(50);
-                                  return ClipRRect(
-                                    borderRadius: BorderRadius.circular(barHeight / 2), // <-- height/2 = perfect pill
-                                    child: BackdropFilter(
-                                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), // frosted glass effect
-                                      child: Container(
-                                        height: barHeight,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.white, // <-- alpha প্রোপ্রি বাদ, solid সাদা
-                                          borderRadius: BorderRadius.circular(barHeight / 2),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: AppColors.black.withValues(alpha: 0.08),
-                                              blurRadius: 12,
-                                              offset: const Offset(0, 4),
-                                            ),
-                                          ],
-                                        ),
-                                        child: AbsorbPointer(
-                                          absorbing: true,
-                                          child: TextField(
-                                            readOnly: true,
-                                            controller: _searchController,
-                                            style: TextStyle(fontSize: ResponsiveHelper.fontSize(14)),
-                                            decoration: InputDecoration(
-                                              hintText: AppStrings.searchHere.tr,
-                                              hintStyle: TextStyle(
-                                                fontSize: ResponsiveHelper.fontSize(14),
-                                                color: AppColors.grey,
-                                              ),
-                                              prefixIcon: Icon(
-                                                Icons.search,
-                                                color: AppColors.black,
-                                                size: ResponsiveHelper.iconSize(20),
-                                              ),
-                                              suffixIcon: Icon(
-                                                Icons.tune,
-                                                color: AppColors.black,
-                                                size: ResponsiveHelper.iconSize(20),
-                                              ),
-                                              border: InputBorder.none,
-                                              contentPadding: ResponsiveHelper.symmetric(vertical: 12),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: ResponsiveHelper.spacing(8)),
-                          _NotificationBellButton(),
-                        ],
-                      ),
+                    MapTopBar(
+                      searchController: _searchController,
+                      onSearchTap: parkingShowCtrl.openRadiusFilterSheet,
                     ),
 
-                  // Same solid pulsing frame as before (width breathes the
-                  // same way), just: (1) gradient-colored instead of solid
-                  // blue, (2) the stroke width waves irregularly around the
-                  // perimeter instead of being uniform, per the reference.
+
+                  // -- Pulsing gradient glow around the map edge, shown
+                  // while status is SEARCHING --
                   if (showLocationPulse && gpsPosition != null)
                     Positioned.fill(
                       child: IgnorePointer(
@@ -587,7 +197,7 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
 
                             return CustomPaint(
                               size: Size.infinite,
-                              painter: _WavyGradientBorderPainter(
+                              painter: WavyGradientBorderPainter(
                                 t: t,
                                 wavePhase: wavePhase,
                               ),
@@ -597,81 +207,21 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
                       ),
                     ),
 
-                  // Both buttons always shown together now (no more
-                  // parked-vs-searching exclusivity) — Find Parking keeps
-                  // its exact previous logic/label switching; Exit Parking
-                  // reuses the exact same _showExitParkingConfirmation
-                  // logic as before, just as a pill button instead of the
-                  // full ParkedSessionCard (and with no rating dialog
-                  // afterward — see onLeavingPopupYes).
-                  Positioned(
-                    bottom: ResponsiveHelper.bottomNavOffset(context),
-                    left: ResponsiveHelper.padding(20),
-                    right: ResponsiveHelper.padding(20),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: CustomGradientButton(
-                            onPressed: isSearching
-                                ? _parkingShowCtrl.stopSearching
-                                : _parkingShowCtrl.onLeavingPopupNo,
-                            isLoading: isTransitioningSearch,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                if (!isSearching) ...[
-                                  CustomImage(
-                                    imageSrc: AssetsPath.pNav,
-                                    width: ResponsiveHelper.iconSize(16),
-                                    height: ResponsiveHelper.iconSize(16),
-                                  ),
-                                  SizedBox(width: ResponsiveHelper.width(4)),
-                                ],
-                                Flexible(
-                                  child: Text(
-                                   isSearching ? AppStrings.stopSearching.tr : AppStrings.findParkingSpot.tr,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                    style: context.bodyMedium.copyWith(color: AppColors.white),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: ResponsiveHelper.width(12)),
-                        Expanded(
-                          child: CustomGradientButton(
-                            gradient: AppColors.redGradient,
-                            onPressed: _showExitParkingConfirmation,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                CustomImage(
-                                  imageSrc: AssetsPath.pNav,
-                                  width: ResponsiveHelper.iconSize(16),
-                                  height: ResponsiveHelper.iconSize(16),
-                                ),
-                                SizedBox(width: ResponsiveHelper.width(4)),
-                                Flexible(
-                                  child: Text(
-                                    AppStrings.exitParking.tr,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                    style: context.bodyMedium.copyWith(color: AppColors.white),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+
+                  // -- Bottom row: Find Parking (or Stop Searching) + Exit
+                  // Parking, always shown together --
+                  ParkingMapBottomActions(
+                    isSearching: isSearching,
+                    isTransitioningSearch: isTransitioningSearch,
+                    onFindParkingTap: isSearching
+                        ? parkingShowCtrl.stopSearching
+                        : parkingShowCtrl.onLeavingPopupNo,
+                        onExitParkingTap: parkingShowCtrl.showExitParkingConfirmation,
                   ),
 
                   /// -- Active spot details card overlay (floating above bottom nav) --
                   Obx(() {
-                    final cardData = _parkingShowCtrl.activeSpotDetailsCard.value;
+                    final cardData = parkingShowCtrl.activeSpotDetailsCard.value;
                     if (cardData == null) return const SizedBox.shrink();
 
                     return Positioned(
@@ -696,14 +246,14 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
                             ? null
                             : () {
                                 final onSave = cardData.onSavePark!;
-                                _parkingShowCtrl.clearSpotDetailsCard();
+                                parkingShowCtrl.clearSpotDetailsCard();
                                 onSave();
                               },
                         onNavigate: cardData.destination == null
                             ? null
                             : () {
                                 final dest = cardData.destination!;
-                                _parkingShowCtrl.clearSpotDetailsCard();
+                                parkingShowCtrl.clearSpotDetailsCard();
                                 AppRouter.router.pushNamed(
                                   RouteName.inAppNavigation,
                                   extra: {'destination': dest},
@@ -719,7 +269,7 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
 
             ///map type and current location combined container =============================================================
             Obx(() {
-              final navStatus = _parkingShowCtrl.status.value;
+              final navStatus = parkingShowCtrl.status.value;
               if (navStatus.isEmpty) {
                 return const SizedBox.shrink();
               }
@@ -728,12 +278,17 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
                 onMapTypeChanged: (type) {
                   setState(() => _selectedMapType = type);
                 },
-                onLocationTap: () => _parkingShowCtrl.getUserLocation(),
+                onLocationTap: () => parkingShowCtrl.getUserLocation(),
               );
             }),
 
             /// -- Left-side action buttons: Add Location / Save Parking ----
-            _buildLeftActionButtons(),
+            ParkingMapLeftActionButtons(
+              onAddParkingTap: addParkingFlowCtrl.showAddParkingOptions,
+              onSaveParkingTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SaveParkingScreen()),
+              ),
+            ),
 
 
           ],
@@ -741,155 +296,4 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
       ),
     );
   }
-
-
-  // Triggered only by the "Exit Parking" button on the parked-session card.
-  // Yes reuses the existing "I'm leaving this spot" logic unchanged
-  // (createHandoff + set idle, then the rating dialog). No just closes the
-  // dialog and leaves the user on the parked-session view.
-  void _showExitParkingConfirmation() {
-    mapDebug('Showing Exit Parking Confirmation Dialog');
-
-    ParkingConfirmationDialog.show(
-      context,
-      onYes: _parkingShowCtrl.onLeavingPopupYes,
-      onNo: () {},
-    );
-  }
 }
-
-class _NotificationBellButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => context.push(RoutePath.notification),
-      child: Obx(() {
-        final notificationCtrl = Get.find<NotificationController>();
-        final count = notificationCtrl.unreadCount.value;
-        return Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
-          children: [
-            Container(
-              height: ResponsiveHelper.width(42),
-              width: ResponsiveHelper.width(42),
-              padding: ResponsiveHelper.all(10),
-              decoration: BoxDecoration(
-                border: Border.all(color: AppColors.white),
-                color: AppColors.white.withValues(alpha: 0.5),
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.black.withValues(alpha: 0.12),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Center(
-                child: CustomImage(
-
-                  imageSrc: AssetsPath.notificationMap,
-                  height: ResponsiveHelper.height(18),
-                  width: ResponsiveHelper.width(18),
-                  boxFit: BoxFit.contain,
-                ),
-              ),
-            ),
-            if (count > 0)
-              Positioned(
-                top: -2,
-                right: -2,
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF2F80ED),
-                    shape: BoxShape.circle,
-                    border: Border.fromBorderSide(
-                      BorderSide(color: AppColors.white, width: 1.5),
-                    ),
-                  ),
-                  child: Text(
-                    '$count',
-                    style: const TextStyle(
-                      fontSize: 9,
-                      color: AppColors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        );
-      }),
-    );
-  }
-}
-
-class _WavyGradientBorderPainter extends CustomPainter {
-  final double t; // 0..1 "breathing" phase — same as the old glowWidth calc
-  final double wavePhase; // rotates the wave around the perimeter over time
-
-  const _WavyGradientBorderPainter({
-    required this.t,
-    required this.wavePhase,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-    final metrics = (Path()..addRect(rect)).computeMetrics().first;
-    final length = metrics.length;
-
-    final gradient = const SweepGradient(
-      colors: [
-        Color(0xFF1E88E5), // blue
-        AppColors.white,
-        Color(0xFF1E88E5), // back to blue
-        AppColors.white,
-        Color(0xFF1E88E5), // back to blue
-      ],
-      stops: [0.0, 0.25, 0.5, 0.75, 1.0],
-    );
-    final shader = gradient.createShader(rect);
-
-    // Modulated by a traveling sine wave so it's thicker/thinner at
-    // different points around the frame instead of uniform.
-    final baseWidth = 14.0 + (t * 10.0);
-    const waveAmplitude = 5.0;
-    const waveCount = 3; // how many "bulges" travel around the perimeter
-
-    const segments = 160;
-    for (int i = 0; i < segments; i++) {
-      final d0 = length * i / segments;
-      final d1 = length * (i + 1) / segments;
-      final segmentPath = metrics.extractPath(d0, d1);
-
-      final wave = sin((d0 / length) * 2 * pi * waveCount + wavePhase);
-      final strokeWidth = (baseWidth + wave * waveAmplitude).clamp(6.0, 30.0);
-
-
-      final haloPaint = Paint()
-        ..shader = shader
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = strokeWidth * 1.4
-        ..strokeCap = StrokeCap.round
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, strokeWidth * 0.5);
-      canvas.drawPath(segmentPath, haloPaint);
-
-      final corePaint = Paint()
-        ..shader = shader
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = strokeWidth * 0.6
-        ..strokeCap = StrokeCap.round
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, strokeWidth * 0.15);
-      canvas.drawPath(segmentPath, corePaint);
-
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _WavyGradientBorderPainter oldDelegate) =>
-      oldDelegate.t != t || oldDelegate.wavePhase != wavePhase;
-}
-

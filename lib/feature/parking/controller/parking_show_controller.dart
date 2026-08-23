@@ -9,7 +9,10 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
+import 'package:platchatapp/feature/main/data/main_nav_.dart';
+import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
 import 'package:platchatapp/feature/map/utils/marker_icon_loader.dart';
+import 'package:platchatapp/feature/parking/presentation/widgets/parking_confirmation_overlay.dart';
 import 'package:platchatapp/feature/parking/repository/parking_repository.dart';
 import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
@@ -644,6 +647,49 @@ class ParkingShowController extends GetxController {
     } finally {
       isTransitioningSearch.value = false;
     }
+  }
+
+  // Triggered by tapping the search pill on ParkingMapScreen's top bar.
+  void openRadiusFilterSheet() {
+    final ctx = _dialogContext;
+    if (ctx == null) return;
+
+    // -- enter search mode: show the floating button --
+    showFindParkingButton.value = true;
+
+    RadiusFilterSheet.show(
+      ctx,
+      initialRadiusMeter: selectedRadiusMeter.value,
+      onApply: (radius) {
+        selectedRadiusMeter.value = radius;
+        final lat = gpsPosition.value?.latitude;
+        final lng = gpsPosition.value?.longitude;
+        if (lat != null && lng != null) {
+          // Radius filter only affects the handoffs radius — parking areas
+          // use a fixed radius.
+          fetchNearbyHandoffsOnly(lat, lng);
+        }
+        // -- sheet applied: hide the floating button --
+        showFindParkingButton.value = false;
+      },
+    ).then((_) {
+      // -- sheet dismissed (swipe/tap outside): hide button --
+      showFindParkingButton.value = false;
+    });
+  }
+
+  // Triggered by the "Exit Parking" button on ParkingMapScreen. Yes reuses
+  // the existing "I'm leaving this spot" logic unchanged (createHandoff +
+  // set idle). No just closes the dialog.
+  void showExitParkingConfirmation() {
+    final ctx = _dialogContext;
+    if (ctx == null) return;
+
+    ParkingConfirmationDialog.show(
+      ctx,
+      onYes: onLeavingPopupYes,
+      onNo: () {},
+    );
   }
 
   Future<void> onLeavingPopupYes() async {
