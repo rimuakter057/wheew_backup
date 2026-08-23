@@ -8,7 +8,7 @@ class ParkingRepository {
   }
 
   Future<http.Response> getSavedParkingMe() async {
-    return await ApiClient.getData(uri: ApiUrl.saveParkingRelay);
+    return await ApiClient.getData(uri: ApiUrl.saveParkingRelayGet);
   }
 
   Future<http.Response> getNearbyHandoffs({
@@ -98,7 +98,7 @@ class ParkingRepository {
     String? spotId,
     int? durationMin,
   }) async {
-    final uri = ApiUrl.saveMyParking;
+    final uri = ApiUrl.saveMyParkingPost;
     print("SAVE_MY_PARKING_URL: $uri (lat=$latitude, lng=$longitude, parkingType=$parkingType, spotId=$spotId, durationMin=$durationMin)");
     return await ApiClient.postData(
       uri: uri,

@@ -84,173 +84,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
     super.dispose();
   }
 
-  void _showMessageRequestBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppColors.transparent,
-      isScrollControlled: true,
-      builder: (ctx) => SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: AppColors.primaryBackgroundGradient,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(ResponsiveHelper.borderRadius(28)),
-            ),
-          ),
-          padding: EdgeInsets.symmetric(
-            horizontal: ResponsiveHelper.padding(20),
-            vertical: ResponsiveHelper.padding(16),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Handle bar
-              Center(
-                child: Container(
-                  width: ResponsiveHelper.width(40),
-                  height: ResponsiveHelper.height(4),
-                  decoration: BoxDecoration(
-                    color: AppColors.greyShade400,
-                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(2)),
-                  ),
-                ),
-              ),
-              SizedBox(height: ResponsiveHelper.spacing(16)),
-
-              Text(
-                AppStrings.messageRequests.tr,
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w700,
-                  fontSize: ResponsiveHelper.fontSize(20),
-                  color: AppColors.textBlack,
-                ),
-              ),
-
-              SizedBox(height: ResponsiveHelper.spacing(16)),
-
-              // Received Requests option
-              InkWell(
-                onTap: () {
-                  Navigator.pop(ctx);
-                  context.pushNamed(RouteName.messageRequests);
-                },
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.padding(10)),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(ResponsiveHelper.padding(10)),
-                        decoration: BoxDecoration(
-                          color: AppColors.blue.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.mail_outline_rounded,
-                          color: AppColors.blue,
-                          size: ResponsiveHelper.iconSize(20),
-                        ),
-                      ),
-                      SizedBox(width: ResponsiveHelper.spacing(14)),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              AppStrings.receiveRequestTab.tr,
-                              style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w600,
-                                fontSize: ResponsiveHelper.fontSize(15),
-                                color: AppColors.textBlack,
-                              ),
-                            ),
-                            SizedBox(height: ResponsiveHelper.spacing(2)),
-                            Text(
-                              AppStrings.requestsOthersSentToYou.tr,
-                              style: GoogleFonts.poppins(
-                                fontSize: ResponsiveHelper.fontSize(12),
-                                color: AppColors.greyShade600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(
-                        Icons.chevron_right_rounded,
-                        color: AppColors.greyShade400,
-                        size: ResponsiveHelper.iconSize(22),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              Divider(height: 1, thickness: 0.5, color: AppColors.greyShade300),
-
-              // Sent Requests option
-              InkWell(
-                onTap: () {
-                  Navigator.pop(ctx);
-                  context.pushNamed(RouteName.sendRequests);
-                },
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: ResponsiveHelper.padding(10)),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(ResponsiveHelper.padding(10)),
-                        decoration: BoxDecoration(
-                          color: AppColors.blue.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.send_outlined,
-                          color: AppColors.blue,
-                          size: ResponsiveHelper.iconSize(20),
-                        ),
-                      ),
-                      SizedBox(width: ResponsiveHelper.spacing(14)),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              AppStrings.sentRequests.tr,
-                              style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w600,
-                                fontSize: ResponsiveHelper.fontSize(15),
-                                color: AppColors.textBlack,
-                              ),
-                            ),
-                            SizedBox(height: ResponsiveHelper.spacing(2)),
-                            Text(
-                              AppStrings.requestsYouSentToOthers.tr,
-                              style: GoogleFonts.poppins(
-                                fontSize: ResponsiveHelper.fontSize(12),
-                                color: AppColors.greyShade600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(
-                        Icons.chevron_right_rounded,
-                        color: AppColors.greyShade400,
-                        size: ResponsiveHelper.iconSize(22),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              SizedBox(height: ResponsiveHelper.spacing(16)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildTabItem(int index, String title) {
     final bool isActive = _selectedTabIndex == index;
     return Expanded(
@@ -377,7 +210,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
         context.push(RoutePath.searchList);
 
       }, messageRequest: () {
-        _showMessageRequestBottomSheet(context);
+        context.pushNamed(RouteName.sendRequests);
       },
 
       ),
@@ -580,16 +413,21 @@ class _ChatListScreenState extends State<ChatListScreen> {
                               }
 
                               final Rooms room = displayChats[index];
+                              final bool isMessageRequest = room.isMessageRequest;
                               final bool isGroup = room.isGroup;
                               final bool isTyping = controller.inboxTypingMap[room.id] == true;
 
                               // Latest message text à¦¤à§ˆà¦°à¦¿ à¦•à¦°à§‹
                               final String lastMessage = isTyping
                                   ? AppStrings.typing.tr
-                                  : _buildLastMessage(room, isGroup);
+                                  : (isMessageRequest
+                                      ? (room.requestFirstMessage ?? '')
+                                      : _buildLastMessage(room, isGroup));
 
                               return GestureDetector(
-                                onLongPress: () => _showDeleteDialog(context, room),
+                                onLongPress: isMessageRequest
+                                    ? null
+                                    : () => _showDeleteDialog(context, room),
                                 child: ChatTile(
                                   name: room.displayName,
                                   imagePath: isGroup
@@ -605,12 +443,16 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                   message: lastMessage,
 
                                   // unread à¦¹à¦²à§‡ bold
-                                  fontWeight: room.latestMessage?.isUnread == true
+                                  fontWeight: (isMessageRequest
+                                          ? (room.unreadCount ?? 0) > 0
+                                          : room.latestMessage?.isUnread == true)
                                       ? FontWeight.w700
                                       : FontWeight.w400,
                                   time: room.latestMessage?.createdAt != null
                                       ? formatTime(room.latestMessage!.createdAt!)
-                                      : '',
+                                      : (isMessageRequest && room.createdAt != null
+                                          ? formatTime(room.createdAt!)
+                                          : ''),
                                   // group chat à¦ block à¦¨à§‡à¦‡
                                   isBlockedByMe: !isGroup && room.isBlockedByMe == true,
                                   isBlockedMe: !isGroup && room.isBlockedMe == true,
@@ -627,13 +469,34 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                   totalRating: isGroup ? null : (room.otherUser?.totalRatings ?? 0).toInt(),
                                   ratingColor: (room.otherUser?.rating ?? 0) > 0 ? null : AppColors.grey,
                                   // ✅ unread badge — নিজের message হলে 0 দেখাবে
-                                  unreadCount: room.latestMessage?.isMine == true
-                                      ? 0
-                                      : (room.unreadCount ?? 0),
+                                  unreadCount: isMessageRequest
+                                      ? (room.unreadCount ?? 0)
+                                      : (room.latestMessage?.isMine == true ? 0 : (room.unreadCount ?? 0)),
                                   isRead: room.latestMessage?.isRead,
                                   isDelivered: room.latestMessage?.isDelivered,
                                   isVehicleVerified: room.otherUser?.isVehicleVerified,
-                                  onTap: () => navigateToChat(context: context, room: room),
+                                  onTap: () {
+                                    if (isMessageRequest) {
+                                      // Pending request, no chat room yet —
+                                      // opens the same accept/reject flow as
+                                      // the Receive Requests screen.
+                                      context.pushNamed(
+                                        RouteName.message,
+                                        extra: {
+                                          'roomId': room.requestRoomId ?? '',
+                                          'otherUserName': room.displayName,
+                                          'otherUserAvatar': room.displayAvatar,
+                                          'receiverId': room.otherUser?.id ?? '',
+                                          'firstMessage': room.requestFirstMessage ?? '',
+                                          'requestId': room.requestId ?? room.id ?? '',
+                                          'licenceId': room.otherUser?.licenceId ?? '',
+                                          'isReceivedRequest': true,
+                                        },
+                                      );
+                                    } else {
+                                      navigateToChat(context: context, room: room);
+                                    }
+                                  },
                                 ),
                               );
                             },

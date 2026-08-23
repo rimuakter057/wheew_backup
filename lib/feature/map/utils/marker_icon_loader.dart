@@ -12,6 +12,7 @@ class MapMarkerIcons {
   MapMarkerIcons._();
 
   static BitmapDescriptor? _parkingPin;
+  static BitmapDescriptor? _myParkedPin;
   static BitmapDescriptor? _electricChargingPin;
   static BitmapDescriptor? _disabledFacilityPin;
   static BitmapDescriptor? _disableAreaPin;
@@ -64,6 +65,15 @@ class MapMarkerIcons {
 
     final icon = BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
     _parkingPin = icon;
+    return icon;
+  }
+
+  /// Pin for the user's own active parked spot (from /saved-parking/me).
+  static Future<BitmapDescriptor> myParkedPin({double size = 76}) async {
+    final cached = _myParkedPin;
+    if (cached != null) return cached;
+    final icon = await _loadSvgPin(AssetsPath.myParked, size: size);
+    _myParkedPin = icon;
     return icon;
   }
 

@@ -61,6 +61,15 @@ class SharePrefsHelper {
     return preferences.remove(key);
   }
 
+
+  static Future<void> removeWithPrefix(String prefix) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final keys = preferences.getKeys().where((k) => k.startsWith(prefix)).toList();
+    for (final key in keys) {
+      await preferences.remove(key);
+    }
+  }
+
   Future<void> clearUserData() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.remove(AppConst.token);

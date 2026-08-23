@@ -33,7 +33,7 @@ class Rooms {
   bool? isDeleted;
   bool? isBlockedByMe; // ONE_TO_ONE only
   bool? isBlockedMe; // ONE_TO_ONE only
-  String? type; // 'GROUP' | 'ONE_TO_ONE'
+  String? type; // 'GROUP' | 'ONE_TO_ONE' | 'MESSAGE_REQUEST'
   String? user1Id; // ONE_TO_ONE only
   String? user2Id; // ONE_TO_ONE only
   int? groupMembersCount; // GROUP only
@@ -46,6 +46,14 @@ class Rooms {
   OtherUser? otherUser; // ONE_TO_ONE only
   LatestMessage? latestMessage;
   List<GroupMessage>? groupMembers; // GROUP only
+
+  // MESSAGE_REQUEST only — a still-pending incoming request, no chat room yet.
+  String? requestId;
+  String? requestRoomId;
+  String? requestStatus;
+  String? requestFirstMessage;
+  bool? canAccept;
+  bool? canReject;
 
   Rooms({
     this.id,
@@ -65,6 +73,12 @@ class Rooms {
     this.otherUser,
     this.latestMessage,
     this.groupMembers,
+    this.requestId,
+    this.requestRoomId,
+    this.requestStatus,
+    this.requestFirstMessage,
+    this.canAccept,
+    this.canReject,
   });
 
   Rooms.fromJson(Map<String, dynamic> json) {
@@ -98,7 +112,20 @@ class Rooms {
 
       });
     }
+
+    requestId = json['requestId']?.toString();
+    requestStatus = json['status']?.toString();
+    canAccept = json['canAccept'];
+    canReject = json['canReject'];
+    final request = json['request'];
+    if (request is Map) {
+      requestRoomId = request['roomId']?.toString();
+      requestFirstMessage = request['firstMessage']?.toString();
+    }
   }
+
+  /// ✅ A still-pending incoming message request (no chat room yet)
+  bool get isMessageRequest => type == 'MESSAGE_REQUEST';
 
   /// ✅ UI তে name দেখানোর জন্য
   String get displayName {
@@ -133,6 +160,13 @@ class Rooms {
     data['updatedAt'] = updatedAt;
     if (otherUser != null) data['otherUser'] = otherUser!.toJson();
     if (latestMessage != null) data['latest_message'] = latestMessage!.toJson();
+    data['requestId'] = requestId;
+    data['status'] = requestStatus;
+    data['canAccept'] = canAccept;
+    data['canReject'] = canReject;
+    if (requestRoomId != null || requestFirstMessage != null) {
+      data['request'] = {'roomId': requestRoomId, 'firstMessage': requestFirstMessage};
+    }
     if (groupMembers != null) {
       data['group_members'] = groupMembers!.map((v) => v.toJson()).toList();
     }

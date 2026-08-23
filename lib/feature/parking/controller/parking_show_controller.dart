@@ -76,6 +76,10 @@ class ParkingShowController extends GetxController {
 
   // -- SavePark, ParkMode, and Parktime States ----------------------
   final Rxn<LatLng> savedParkingLocation = Rxn<LatLng>();
+
+  /// Coordinates of the user's real active parked session, from
+  /// GET /park-relay/saved-parking/me — drives the "myParked" pin on the map.
+  final Rxn<LatLng> myParkedLocation = Rxn<LatLng>();
   final RxInt confidenceLevel = 98.obs;
   final RxBool isParkModeActive = false.obs;
   final RxBool isPaidSpot = false.obs;
@@ -256,6 +260,10 @@ class ParkingShowController extends GetxController {
         if (modeStatus == 'PARKED') {
           // Fetch real active saved parking session details from /park-relay/saved-parking/me
           await fetchSavedParkingMe();
+        } else if (myParkedLocation.value != null) {
+          // No longer parked — drop the "myParked" pin.
+          myParkedLocation.value = null;
+          _buildMarkersAndPolygons();
         }
 
         print("CHECK_PARKING_MODE_ME_RESOLVED_STATUS: $modeStatus");
@@ -364,6 +372,13 @@ class ParkingShowController extends GetxController {
           final String? resolvedAreaId = (parkingArea?['id'] ?? data['spotId'] ?? data['parkingAreaId'])?.toString();
           if (resolvedAreaId != null && resolvedAreaId.isNotEmpty) {
             currentParkingAreaId.value = resolvedAreaId;
+          }
+
+          final double? lat = _toDouble(data['latitude']) ?? _toDouble(parkingArea?['latitude']);
+          final double? lng = _toDouble(data['longitude']) ?? _toDouble(parkingArea?['longitude']);
+          if (lat != null && lng != null) {
+            myParkedLocation.value = LatLng(lat, lng);
+            _buildMarkersAndPolygons();
           }
         }
       }
@@ -851,6 +866,25 @@ class ParkingShowController extends GetxController {
             snippet: 'Tap to see walking route',
           ),
           onTap: () => showSavedSpotDetails(),
+        ),
+      );
+    }
+
+    // "My Parked" pin — real active parked session from
+    // GET /park-relay/saved-parking/me.
+    if (myParkedLocation.value != null) {
+      final myParkedIcon = await MapMarkerIcons.myParkedPin();
+      newMarkers.add(
+        Marker(
+          markerId: const MarkerId('my_parked_location'),
+          position: myParkedLocation.value!,
+          icon: myParkedIcon,
+          anchor: const Offset(0.5, 0.5),
+          infoWindow: InfoWindow(
+            title: parkedLocationName.value.isNotEmpty
+                ? parkedLocationName.value
+                : 'Your Parked Spot',
+          ),
         ),
       );
     }

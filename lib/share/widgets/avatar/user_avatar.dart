@@ -3,7 +3,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:platchatapp/share/widgets/loading/loading_widget.dart';
-import 'package:platchatapp/share/widgets/network_image/custom_network_image.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
@@ -42,9 +41,16 @@ class UserAvatar extends StatelessWidget {
             placeholder: (context, url) => const LoadingWidget(
               color: AppColors.greyBg,
             ), // CircularProgressIndicator(),
+            // Falls back to a plain local icon — not another network fetch
+            // of the same (already-failing) unknown-avatar URL, which used
+            // to nest a second, mis-sized error icon inside this circle.
             errorWidget: (context, url, error) => isGroup
                 ? _groupIcon()
-                : CustomNetworkImage(imageUrl: AppConst.unknown),
+                : Icon(
+                    Icons.person,
+                    size: radius,
+                    color: AppColors.white,
+                  ),
           ),
         ),
       );

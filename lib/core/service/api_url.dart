@@ -72,12 +72,12 @@ class ApiUrl {
 
   static const String register = '/auth/register';
   static const String parkingMode = '/park-relay/parking-mode/me';
-  static const String saveParkingRelay = '/park-relay/saved-parking/me';
+  static const String saveParkingRelayGet = '/park-relay/saved-parking/me';
   static const String handOfNearby = '/park-relay/handoffs/nearby';
   static const String searchGetArea = '/park-relay/parking-areas/search';
   static const String createHandoff = '/park-relay/handoffs';
  // static const String saveMyParking = '/park-relay/saved-parking';
-  static const String saveMyParking = '/park-relay/saved-parking';
+  static const String saveMyParkingPost = '/park-relay/saved-parking';
   static const String parkingSearching = '/park-relay/parking-mode/searching';
   static const String statusIdle = '/park-relay/parking-mode/idle';
   static  String submitParkingArea(String parkingAreaId) => '/park-relay/parking-areas/$parkingAreaId/ratings';

@@ -1172,34 +1172,14 @@ class _MessageScreenState extends State<MessageScreen> {
                               isMine: true,
                             )
                           else
-                            Row(
-                              crossAxisAlignment:
-                              CrossAxisAlignment
-                                  .end,
-                              children: [
-                                UserAvatar(
-                                  imagePath:
-                                  _effectiveOtherUserAvatar ??
-                                      AppConst
-                                          .unknown,
-                                  radius:
-                                  landscape
-                                      ? 14
-                                      : 16,
-                                ),
-                                const SizedBox(
-                                  width: 8,
-                                ),
-                                Flexible(
-                                  child:
-                                  MessageBubble(
-                                    message:
-                                    sentText,
-                                    isMine:
-                                    false,
-                                  ),
-                                ),
-                              ],
+                            // MessageBubble already draws its own avatar for
+                            // non-mine messages (via avatarUrl) — wrapping it
+                            // in another Row+UserAvatar here rendered two
+                            // avatars side by side.
+                            MessageBubble(
+                              message: sentText,
+                              isMine: false,
+                              avatarUrl: _effectiveOtherUserAvatar,
                             ),
                         ],
                       ),
@@ -2098,34 +2078,14 @@ class _MessageScreenState extends State<MessageScreen> {
                             isMine: true,
                           )
                         else
-                          Row(
-                            crossAxisAlignment:
-                            CrossAxisAlignment
-                                .end,
-                            children: [
-                              UserAvatar(
-                                imagePath:
-                                _effectiveOtherUserAvatar ??
-                                    AppConst
-                                        .unknown,
-                                radius:
-                                landscape
-                                    ? 14
-                                    : 16,
-                              ),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              Flexible(
-                                child:
-                                MessageBubble(
-                                  message:
-                                  _effectiveFirstMessage,
-                                  isMine:
-                                  false,
-                                ),
-                              ),
-                            ],
+                          // MessageBubble already draws its own avatar for
+                          // non-mine messages (via avatarUrl) — wrapping it
+                          // in another Row+UserAvatar here rendered two
+                          // avatars side by side.
+                          MessageBubble(
+                            message: _effectiveFirstMessage,
+                            isMine: false,
+                            avatarUrl: _effectiveOtherUserAvatar,
                           ),
                       ],
                     ),

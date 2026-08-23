@@ -3,14 +3,10 @@ import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/feature/chat/view/message/controller/message_controller.dart';
+import 'package:platchatapp/feature/chat/view/message/presentation/widgets/message_request_tile.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
-import 'package:go_router/go_router.dart';
-import 'package:platchatapp/core/router/routes_name.dart';
-import 'package:platchatapp/utils/app_const/app_const.dart';
-import 'package:platchatapp/share/widgets/avatar/user_avatar.dart';
-import 'package:platchatapp/share/widgets/dialog/action_confirm_dialog.dart';
 
 class MessageRequestsScreen extends StatefulWidget {
   final bool showAppBar;
@@ -223,181 +219,15 @@ class _MessageRequestsScreenState extends State<MessageRequestsScreen> {
               final message = request['firstMessage'] ?? '';
               final requestId = request['id']?.toString() ?? '';
 
-              return GestureDetector(
-                onTap: () {
-                  context.pushNamed(
-                    RouteName.message,
-                    extra: {
-                      'roomId': request['chatRoom']?['id'] ?? '',
-                      'otherUserName': name,
-                      'otherUserAvatar': avatar,
-                      'receiverId': requester['id']?.toString() ?? '',
-                      'firstMessage': message,
-                      'requestId': requestId,
-                      'licenceId': requester['licence_id']?.toString() ?? '',
-                      'isReceivedRequest': true,
-                    },
-                  );
-                },
-                child: Container(
-                padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 14),
-                decoration: BoxDecoration(
-                 // color: AppColors.white.withValues(alpha: 0.85),
-                  gradient: AppColors.parkingContainerGradient,                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(24)),
-                  border: Border.all(color: AppColors.white.withValues(alpha: 0.8)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.black.withValues(alpha: 0.04),
-                      blurRadius: 15,
-                      offset: const Offset(0, 4),
-                    )
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    UserAvatar(
-                      imagePath: avatar.isNotEmpty ? avatar : AppConst.unknown,
-                      radius: 24,
-                    ),
-                    SizedBox(width: ResponsiveHelper.spacing(12)),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w700,
-                              fontSize: ResponsiveHelper.fontSize(15),
-                              color: const Color(0xFF1D2939),
-                            ),
-                          ),
-                          SizedBox(height: ResponsiveHelper.spacing(2)),
-                          if (requester['licence_id'] != null && requester['licence_id'].toString().isNotEmpty)
-                            Text(
-                              requester['licence_id'].toString(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.poppins(
-                                fontSize: ResponsiveHelper.fontSize(12),
-                                color: AppColors.greyShade600,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          if (message.isNotEmpty) ...[
-                            SizedBox(height: ResponsiveHelper.spacing(4)),
-                            Text(
-                              message,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.poppins(
-                                fontSize: ResponsiveHelper.fontSize(12),
-                                color: AppColors.greyShade700,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: ResponsiveHelper.spacing(8)),
-                    // Reject (Red X button)
-                    GestureDetector(
-                      onTap: () {
-                        ActionConfirmDialog.show(
-                          context,
-                          title: AppStrings.rejectRequestTitle.tr,
-                          message: AppStrings.rejectRequestFrom.tr.replaceAll('@name', name),
-                          confirmLabel: AppStrings.reject.tr,
-                          icon: Icons.cancel_outlined,
-                          iconColor: const Color(0xFFB02517),
-                          confirmGradient: const LinearGradient(
-                            colors: [Color(0xFFB02517), Color(0xFF7A1C15)],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
-                          onConfirm: () {
-                            messageController.rejectMessageRequest(
-                              requestId: requestId,
-                              context: context,
-                            );
-                          },
-                        );
-                      },
-                      child: Container(
-                        width: ResponsiveHelper.width(36),
-                        height: ResponsiveHelper.width(36),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(0xFFB02517),
-                        ),
-                        child: const Icon(
-                          Icons.close_rounded,
-                          color: AppColors.white,
-                          size: 18,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: ResponsiveHelper.spacing(8)),
-                    // Accept (Blue Pill button)
-                    GestureDetector(
-                      onTap: () {
-                        ActionConfirmDialog.show(
-                          context,
-                          title: AppStrings.acceptRequestTitle.tr,
-                          message: AppStrings.acceptRequestFromDesc.tr.replaceAll('@name', name),
-                          confirmLabel: AppStrings.accept.tr,
-                          icon: Icons.check_circle_outline_rounded,
-                          iconColor: AppColors.blue,
-                          onConfirm: () {
-                            messageController.acceptMessageRequest(
-                              requestId: requestId,
-                              context: context,
-                            );
-                          },
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: ResponsiveHelper.padding(16),
-                          vertical: ResponsiveHelper.padding(8),
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFF0062E0),
-                              Color(0xFF014495),
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
-                          borderRadius: BorderRadius.circular(
-                            ResponsiveHelper.borderRadius(25),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF014495).withValues(alpha: 0.35),
-                              blurRadius: 8,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          AppStrings.accept.tr,
-                          style: GoogleFonts.poppins(
-                            color: AppColors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: ResponsiveHelper.fontSize(13),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
+              return MessageRequestTile(
+                requestId: requestId,
+                name: name,
+                avatar: avatar,
+                licenceId: requester['licence_id']?.toString(),
+                firstMessage: message,
+                roomId: request['chatRoom']?['id'] ?? '',
+                receiverId: requester['id']?.toString() ?? '',
+              );
           },
         ),
       );

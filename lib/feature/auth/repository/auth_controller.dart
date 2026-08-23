@@ -304,6 +304,13 @@ class AuthController extends GetxController {
     await SharePrefsHelper.remove(AppConst.userID);
     await SharePrefsHelper.remove(AppConst.userData);
     await SharePrefsHelper.setBool(AppConst.isLoggedIn, false);
+
+    // Wipe cached chat data so logging into a different account never shows
+    // the previous account's chat list / messages before the fresh fetch.
+    await SharePrefsHelper.remove('chat_list_cache');
+    await SharePrefsHelper.remove('preset_message_cache');
+    await SharePrefsHelper.removeWithPrefix('msg_cache_');
+    await SharePrefsHelper.removeWithPrefix('group_msg_cache_');
   }
 
   // ================= LOGIN CHECK ======================
