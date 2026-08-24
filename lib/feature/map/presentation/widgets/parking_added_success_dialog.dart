@@ -6,8 +6,7 @@ import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
-/// Shown right after a parking spot is successfully submitted, so the user
-/// knows it's pending admin approval before it becomes visible on the map.
+/// Shown right after a parking spot is successfully submitted.
 class ParkingAddedSuccessDialog extends StatelessWidget {
   const ParkingAddedSuccessDialog({super.key});
 
@@ -64,14 +63,8 @@ class ParkingAddedSuccessDialog extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: ResponsiveHelper.spacing(12)),
-              Text(
-                AppStrings.mapParkingAddedSuccessMessage.tr,
-                style: context.bodySmall.copyWith(
-                  color: AppColors.black.withValues(alpha: 0.5),
-                ),
-                textAlign: TextAlign.center,
-              ),
+              // Subtitle (pending-admin-approval note) removed — new
+              // parking spots don't need admin approval anymore.
               SizedBox(height: ResponsiveHelper.spacing(28)),
               CustomGradientButton(
                 onPressed: () => Navigator.of(context).pop(),

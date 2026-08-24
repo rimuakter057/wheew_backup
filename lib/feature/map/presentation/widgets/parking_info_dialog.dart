@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -217,6 +218,50 @@ class ParkingInfoDialog extends StatelessWidget {
                   ),
                 ],
               ),
+
+              if (controller.parkingCost.value == 'PAID') ...[
+                SizedBox(height: ResponsiveHelper.spacing(16)),
+                Text(
+                  AppStrings.parkingFeePerHour.tr,
+                  style: GoogleFonts.poppins(
+                    fontSize: ResponsiveHelper.fontSize(15),
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF1A1A2E),
+                  ),
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(10)),
+                TextField(
+                  controller: controller.feeController,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                  ],
+                  style: GoogleFonts.poppins(fontSize: ResponsiveHelper.fontSize(14)),
+                  decoration: InputDecoration(
+                    hintText: '5.00',
+                    hintStyle: GoogleFonts.poppins(fontSize: ResponsiveHelper.fontSize(14)),
+                    filled: true,
+                    fillColor: const Color(0xFFF4F6FB),
+                    prefixText: '\$ ',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+                      borderSide: BorderSide(
+                        color: const Color(0xFF3D72E8),
+                        width: ResponsiveHelper.borderWidth(1.4),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
               // -- Electric Charging + Disabled Facility (grouped card) --

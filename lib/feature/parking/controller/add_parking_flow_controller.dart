@@ -159,6 +159,19 @@ class AddParkingFlowController extends GetxController {
             return;
           }
 
+          if (_parkingReportCtrl.parkingCost.value == 'PAID') {
+            final feeText = _parkingReportCtrl.feeController.text.trim();
+            final fee = num.tryParse(feeText);
+            if (feeText.isEmpty) {
+              showCustomSnackBar(AppStrings.fieldIsRequired.tr, isError: true);
+              return;
+            }
+            if (fee == null || fee < 0.01) {
+              showCustomSnackBar(AppStrings.enterValidNumber.tr, isError: true);
+              return;
+            }
+          }
+
           final LatLng useLocation = _pickedAddParkingLocation ?? gps!;
 
           final success = await _parkingReportCtrl.addParking(

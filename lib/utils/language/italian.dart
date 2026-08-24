@@ -1068,6 +1068,7 @@ final Map<String, String> italian = {
   // -------- Chat / Group --------
   AppStrings.leaveSuccessGroup: "Uscito dal gruppo con successo",
   AppStrings.fieldIsRequired: "Campo obbligatorio",
+  AppStrings.parkingFeePerHour: "Tariffa oraria (\$)",
 
   // -------- Auth --------
   AppStrings.loginSuccessful: "Accesso riuscito",

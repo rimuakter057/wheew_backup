@@ -1093,6 +1093,9 @@ class AppStrings {
   static const String leaveSuccessGroup = 'leave_success_group';
   static const String fieldIsRequired = 'field_is_required';
 
+  // -------- Parking Fee --------
+  static const String parkingFeePerHour = 'parking_fee_per_hour';
+
   // -------- Auth --------
   static const String loginSuccessful = 'login_successful';
 

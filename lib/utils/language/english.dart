@@ -1043,6 +1043,7 @@ AppStrings.group:"Group",
   // -------- Chat / Group --------
   AppStrings.leaveSuccessGroup: "Successfully left the group",
   AppStrings.fieldIsRequired: "Field is required",
+  AppStrings.parkingFeePerHour: "Fee per hour (\$)",
 
   // -------- Auth --------
   AppStrings.loginSuccessful: "Login Successful",

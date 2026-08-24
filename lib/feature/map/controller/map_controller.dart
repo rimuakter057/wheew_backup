@@ -33,6 +33,7 @@ class ParkingReportController extends GetxController {
 
 
   final TextEditingController nameController = TextEditingController();
+  final TextEditingController feeController = TextEditingController();
   final RxString parkingCost = 'FREE'.obs;
   final RxBool electricCharging = false.obs;
   final RxBool disabledFacility = false.obs;
@@ -47,6 +48,7 @@ class ParkingReportController extends GetxController {
   // -- Reset -----------------------------------------------------------------
   void reset() {
     nameController.clear();
+    feeController.clear();
     parkingCost.value = 'FREE';
     electricCharging.value = false;
     disabledFacility.value = false;
@@ -127,13 +129,17 @@ class ParkingReportController extends GetxController {
       if (disabledFacility.value) 'DISABLED_FACILITY',
     ];
 
+    final num? fee = parkingCost.value == 'PAID'
+        ? num.tryParse(feeController.text.trim())
+        : null;
+
     final Map<String, dynamic> body = {
       'name': areaName,
       // 'description': description, // no description input in the UI yet
       'centerLat': latitude,
       'centerLng': longitude,
       'parkingCost': parkingCost.value,
-      // 'parkingFee': parkingFee, // no fee input in the UI yet (PAID only)
+      if (fee != null) 'parkingFee': fee,
       'parkingAreaTypes': areaTypes,
       if (disabledFacility.value)
         'disabledFacilityLocation': disabledLocation.value.value,
@@ -153,10 +159,15 @@ class ParkingReportController extends GetxController {
         return true;
       } else {
         final decoded = jsonDecode(response.body);
-        final msg =
-        (decoded is Map<String, dynamic> && decoded['message'] != null)
-            ? decoded['message'].toString()
-            : AppStrings.somethingWentWrong.tr;
+        final rawMessage =
+        decoded is Map<String, dynamic> ? decoded['message'] : null;
+        // Backend sends validation errors as a List<String> — join them
+        // into readable text instead of Dart's raw "[a, b]" toString().
+        final msg = rawMessage is List
+            ? rawMessage.map((e) => e.toString()).join('\n')
+            : (rawMessage?.toString().isNotEmpty == true
+                ? rawMessage.toString()
+                : AppStrings.somethingWentWrong.tr);
         submitMessage.value = msg;
         mapDebug('parking area POST: failed ${response.statusCode} message=$msg');
         return false;

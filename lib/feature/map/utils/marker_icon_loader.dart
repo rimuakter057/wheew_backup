@@ -21,35 +21,23 @@ class MapMarkerIcons {
   static BitmapDescriptor? _paidAreaPin;
   static BitmapDescriptor? _freeAreaPin;
 
-  static Future<BitmapDescriptor> _loadSvgPin(String assetPath, {double size = 76}) async {
-    try {
-      final rawSvg = await rootBundle.loadString(assetPath);
-      final pictureInfo = await vg.vg.loadPicture(vg.SvgStringLoader(rawSvg), null);
-
-      final recorder = ui.PictureRecorder();
-      final canvas = ui.Canvas(recorder);
-      final scaleX = size / pictureInfo.size.width;
-      final scaleY = size / pictureInfo.size.height;
-      canvas.scale(scaleX, scaleY);
-      canvas.drawPicture(pictureInfo.picture);
-      pictureInfo.picture.dispose();
-
-      final picture = recorder.endRecording();
-      final image = await picture.toImage(size.round(), size.round());
-      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-
-      return BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
-    } catch (_) {
-      // Fallback to standard parking pin if SVG fails to load
-      return parkingPin(size: size);
-    }
-  }
-
-  static Future<BitmapDescriptor> parkingPin({double size = 76}) async {
-    final cached = _parkingPin;
-    if (cached != null) return cached;
-
-    final rawSvg = await rootBundle.loadString(AssetsPath.mapMarkerPin);
+  /// Renders [assetPath] into a bitmap of the given [size], then trims the
+  /// fully-transparent margin off the result.
+  ///
+  /// The trim matters for tap handling, not looks: Google Maps treats a
+  /// marker's WHOLE bitmap rectangle as its hit area, transparent pixels
+  /// included. These pin SVGs are drawn on a square canvas with a lot of
+  /// empty space around the teardrop (my_parked.svg's artwork only covers
+  /// roughly x 13-55, y 14-64 of its 76x76 box), so an untrimmed bitmap gave
+  /// every pin an invisible tap zone far wider than the pin itself — taps
+  /// "near" a pin opened its details sheet. Cropping to the artwork's real
+  /// bounds keeps the drawn pin pixel-for-pixel the same size on screen
+  /// while shrinking the hit area down to just the visible pin.
+  static Future<BitmapDescriptor> _renderSvgPin(
+    String assetPath, {
+    required double size,
+  }) async {
+    final rawSvg = await rootBundle.loadString(assetPath);
     final pictureInfo = await vg.vg.loadPicture(vg.SvgStringLoader(rawSvg), null);
 
     final recorder = ui.PictureRecorder();
@@ -61,10 +49,80 @@ class MapMarkerIcons {
     pictureInfo.picture.dispose();
 
     final picture = recorder.endRecording();
-    final image = await picture.toImage(size.round(), size.round());
-    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    final full = await picture.toImage(size.round(), size.round());
+    picture.dispose();
 
-    final icon = BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
+    final trimmed = await _trimTransparentEdges(full);
+    final byteData = await trimmed.toByteData(format: ui.ImageByteFormat.png);
+    trimmed.dispose();
+
+    return BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
+  }
+
+  /// Crops [src] to the bounding box of its non-transparent pixels.
+  /// Returns [src] unchanged if it's fully transparent or already tight.
+  static Future<ui.Image> _trimTransparentEdges(ui.Image src) async {
+    final raw = await src.toByteData(format: ui.ImageByteFormat.rawRgba);
+    if (raw == null) return src;
+
+    final bytes = raw.buffer.asUint8List();
+    final width = src.width;
+    final height = src.height;
+
+    int minX = width, minY = height, maxX = -1, maxY = -1;
+    for (var y = 0; y < height; y++) {
+      for (var x = 0; x < width; x++) {
+        // Ignore near-invisible antialiasing fringe so the crop stays tight.
+        if (bytes[(y * width + x) * 4 + 3] > 8) {
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+
+    if (maxX < minX || maxY < minY) return src;
+
+    final cropWidth = maxX - minX + 1;
+    final cropHeight = maxY - minY + 1;
+    if (cropWidth == width && cropHeight == height) return src;
+
+    final recorder = ui.PictureRecorder();
+    final canvas = ui.Canvas(recorder);
+    canvas.drawImageRect(
+      src,
+      ui.Rect.fromLTWH(
+        minX.toDouble(),
+        minY.toDouble(),
+        cropWidth.toDouble(),
+        cropHeight.toDouble(),
+      ),
+      ui.Rect.fromLTWH(0, 0, cropWidth.toDouble(), cropHeight.toDouble()),
+      ui.Paint(),
+    );
+
+    final picture = recorder.endRecording();
+    final out = await picture.toImage(cropWidth, cropHeight);
+    picture.dispose();
+    src.dispose();
+    return out;
+  }
+
+  static Future<BitmapDescriptor> _loadSvgPin(String assetPath, {double size = 76}) async {
+    try {
+      return await _renderSvgPin(assetPath, size: size);
+    } catch (_) {
+      // Fallback to standard parking pin if SVG fails to load
+      return parkingPin(size: size);
+    }
+  }
+
+  static Future<BitmapDescriptor> parkingPin({double size = 76}) async {
+    final cached = _parkingPin;
+    if (cached != null) return cached;
+
+    final icon = await _renderSvgPin(AssetsPath.mapMarkerPin, size: size);
     _parkingPin = icon;
     return icon;
   }

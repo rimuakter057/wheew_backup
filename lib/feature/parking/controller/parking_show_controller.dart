@@ -268,20 +268,15 @@ class ParkingShowController extends GetxController {
         final String modeStatus =
             data?['status']?.toString().toUpperCase() ?? 'IDLE';
 
-        currentParkingAreaId.value = modeStatus == 'PARKED'
-            ? (data?['spotId'] ?? data?['parkingAreaId'] ?? data?['areaId'])
-                ?.toString()
-            : null;
+        currentParkingAreaId.value =
+            (data?['spotId'] ?? data?['parkingAreaId'] ?? data?['areaId'])
+                ?.toString();
 
-        if (modeStatus == 'PARKED') {
-          // Fetch real active saved parking session details from /park-relay/saved-parking/me
-          await fetchSavedParkingMe();
-        } else if (myParkedLocation.value != null) {
-          // No longer parked — drop the "myParked" pin.
-          myParkedLocation.value = null;
-          _myParkedRawData = null;
-          _buildMarkersAndPolygons();
-        }
+        // Always check /park-relay/saved-parking/me directly for the
+        // "myParked" purple pin — don't gate it behind /parking-mode/me's
+        // status field, since that endpoint is the actual source of truth
+        // for whether there's an active saved-parking session to show.
+        await fetchSavedParkingMe();
 
         print("CHECK_PARKING_MODE_ME_RESOLVED_STATUS: $modeStatus");
 
@@ -351,12 +346,13 @@ class ParkingShowController extends GetxController {
   /// Calls GET /park-relay/saved-parking/me to parse real active parked session details:
   /// parkingArea['name'], parkingArea['description'], note, spotId, etc.
   Future<void> fetchSavedParkingMe() async {
+    bool resolvedMyParked = false;
     try {
       final response = await _repository.getSavedParkingMe();
       _logger.d('fetchSavedParkingMe status: ${response.statusCode}, body: ${response.body}');
       if (response.statusCode == 200) {
         final data = _asMap(jsonDecode(response.body));
-        if (data != null) {
+        if (data != null && data.isNotEmpty) {
           final parkingArea = _asMap(data['parkingArea']);
           final String name = parkingArea?['name']?.toString() ??
               data['areaName']?.toString() ??
@@ -396,12 +392,21 @@ class ParkingShowController extends GetxController {
           if (lat != null && lng != null) {
             myParkedLocation.value = LatLng(lat, lng);
             _myParkedRawData = data;
+            resolvedMyParked = true;
             _buildMarkersAndPolygons();
           }
         }
       }
     } catch (e) {
       _logger.e('Error fetching saved parking me', error: e);
+    } finally {
+      // No active saved-parking session (non-200, empty body, or no
+      // lat/lng) — drop a stale "myParked" pin left over from before.
+      if (!resolvedMyParked && myParkedLocation.value != null) {
+        myParkedLocation.value = null;
+        _myParkedRawData = null;
+        _buildMarkersAndPolygons();
+      }
     }
   }
 
@@ -657,6 +662,20 @@ class ParkingShowController extends GetxController {
   // SEARCHING (started from "Find Parking Spot", stopped on "Stop
   // Searching"), not for the whole lifetime of the screen.
   void _listenHandoffNearby() {
+    // AppSocket.socket can still be null (not connected yet) or holding a
+    // dead reference at the moment Find Parking Spot is tapped — .on() on a
+    // null socket silently no-ops, which looked like "listening" (the log
+    // line below still printed) but never actually registered a listener,
+    // so real events from the server were never received or logged.
+    // ensureConnected() creates/reconnects the socket first so .on() below
+    // has something real to attach to.
+    AppSocket.ensureConnected();
+
+    if (AppSocket.socket == null) {
+      _logger.w('=== [SOCKET] Could not attach "park-relay-handoff-nearby" listener — socket is still null ===');
+      return;
+    }
+
     AppSocket.socket?.off('park-relay-handoff-nearby');
     _logger.i('=== [SOCKET] LISTENING "park-relay-handoff-nearby" (search started) ===');
     AppSocket.socket?.on('park-relay-handoff-nearby', (data) {
@@ -948,10 +967,10 @@ class ParkingShowController extends GetxController {
           position: savedParkingLocation.value!,
           icon: parkingPinIcon,
           anchor: const Offset(0.5, 0.5),
-          infoWindow: const InfoWindow(
-            title: 'Your Saved Parking Spot',
-            snippet: 'Tap to see walking route',
-          ),
+          // Tapping the pin must ONLY open this spot's details sheet —
+          // consumeTapEvents suppresses the default info-window bubble.
+          infoWindow: InfoWindow.noText,
+          consumeTapEvents: true,
           onTap: () => showSavedSpotDetails(),
         ),
       );
@@ -967,11 +986,8 @@ class ParkingShowController extends GetxController {
           position: myParkedLocation.value!,
           icon: myParkedIcon,
           anchor: const Offset(0.5, 0.5),
-          infoWindow: InfoWindow(
-            title: parkedLocationName.value.isNotEmpty
-                ? parkedLocationName.value
-                : 'Your Parked Spot',
-          ),
+          infoWindow: InfoWindow.noText,
+          consumeTapEvents: true,
           onTap: () => showMyParkedDetails(),
         ),
       );
@@ -1015,6 +1031,7 @@ class ParkingShowController extends GetxController {
           icon: handoffIcon,
           anchor: const Offset(0.5, 0.5),
           infoWindow: InfoWindow.noText,
+          consumeTapEvents: true,
           onTap: () => showHandoffDetails(handoff),
         ),
       );
@@ -1024,7 +1041,7 @@ class ParkingShowController extends GetxController {
           Circle(
             circleId: CircleId('handoff_pulse_$id'),
             center: LatLng(lat, lng),
-            radius: _handoffBlinkOn ? 22 : 10,
+            radius: _handoffBlinkOn ? 34 : 16,
             fillColor: AppColors.red.withValues(alpha: _handoffBlinkOn ? 0.12 : 0.28),
             strokeColor: AppColors.red.withValues(alpha: 0.6),
             strokeWidth: 2,
@@ -1068,6 +1085,7 @@ class ParkingShowController extends GetxController {
           icon: areaPinIcon,
           anchor: const Offset(0.5, 0.5),
           infoWindow: InfoWindow.noText,
+          consumeTapEvents: true,
           onTap: () => showParkingAreaDetails(area),
         ),
       );
