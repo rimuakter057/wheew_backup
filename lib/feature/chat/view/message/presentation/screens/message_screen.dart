@@ -1195,6 +1195,11 @@ class _MessageScreenState extends State<MessageScreen> {
                     vertical:
                     landscape ? 6 : 16,
                   ),
+                  // Scrollable instead of a hard overflow when the avatar +
+                  // both texts + preset chips don't all fit in the space
+                  // Expanded above leaves (short/landscape screens, or many
+                  // presets wrapping to extra lines).
+                  child: SingleChildScrollView(
                   child: Column(
                     children: [
                       SizedBox(
@@ -1267,7 +1272,10 @@ class _MessageScreenState extends State<MessageScreen> {
                         ),
                       ),
 
-                      const Spacer(),
+                      // A Spacer can't live inside the SingleChildScrollView
+                      // above (needs bounded height, scroll views give
+                      // unbounded) — fixed gap instead.
+                      SizedBox(height: landscape ? 12 : 24),
 
                       Obx(() {
                         final presets =
@@ -1415,6 +1423,7 @@ class _MessageScreenState extends State<MessageScreen> {
                         );
                       }),
                     ],
+                  ),
                   ),
                 );
               }),

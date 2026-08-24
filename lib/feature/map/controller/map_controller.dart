@@ -180,6 +180,7 @@ class ParkingReportController extends GetxController {
     required double longitude,
     required String parkingType,
     int? durationMin,
+    String? name,
   }) async {
     isLoadingSaveParking.value = true;
     submitMessage.value = '';
@@ -193,6 +194,7 @@ class ParkingReportController extends GetxController {
       'source': 'AUTO',
       'parkingType': parkingType,
       if (parkingType == 'PAID' && durationMin != null) 'durationMin': durationMin,
+      if (name != null && name.trim().isNotEmpty) 'name': name.trim(),
     };
 
     try {
@@ -209,7 +211,9 @@ class ParkingReportController extends GetxController {
         submitMessage.value = 'Parking location saved successfully';
         mapDebug('save parking POST: success');
 
-        await fetchMySavedParking(); // Refresh the saved parking (will trigger parked API)
+        // Refresh the saved parking, but skip the parking-mode/parked POST —
+        // saving already establishes the parked state, no need to re-notify.
+        await fetchMySavedParking(notifyParkedMode: false);
         return true;
       } else {
         final decoded = jsonDecode(response.body);
@@ -229,7 +233,7 @@ class ParkingReportController extends GetxController {
     }
   }
 
-  Future<void> fetchMySavedParking() async {
+  Future<void> fetchMySavedParking({bool notifyParkedMode = true}) async {
     isLoadingGetSavedParking.value = true;
     try {
       final response = await ApiClient.getData(
@@ -247,7 +251,7 @@ class ParkingReportController extends GetxController {
           mapDebug('get saved parking GET: success');
 
           // POST /park-relay/parking-mode/parked is called upon GET success
-          if (model.latitude != null && model.longitude != null) {
+          if (notifyParkedMode && model.latitude != null && model.longitude != null) {
             try {
               final responseParked = await ApiClient.postData(
                 uri: ApiUrl.parkingModeParked,

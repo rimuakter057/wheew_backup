@@ -253,10 +253,15 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
                             ? null
                             : () {
                                 final dest = cardData.destination!;
+                                final knownDistanceMeters = cardData.distanceMeters;
                                 parkingShowCtrl.clearSpotDetailsCard();
                                 AppRouter.router.pushNamed(
                                   RouteName.inAppNavigation,
-                                  extra: {'destination': dest},
+                                  extra: {
+                                    'destination': dest,
+                                    if (knownDistanceMeters != null)
+                                      'knownDistanceMeters': knownDistanceMeters,
+                                  },
                                 );
                               },
                       ),

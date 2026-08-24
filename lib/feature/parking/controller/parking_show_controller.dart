@@ -9,9 +9,12 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
+import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
 import 'package:platchatapp/feature/map/utils/marker_icon_loader.dart';
+import 'package:platchatapp/feature/parking/presentation/screens/save_parking_screen.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_confirmation_overlay.dart';
 import 'package:platchatapp/feature/parking/repository/parking_repository.dart';
 import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
@@ -80,12 +83,21 @@ class ParkingShowController extends GetxController {
   /// Coordinates of the user's real active parked session, from
   /// GET /park-relay/saved-parking/me — drives the "myParked" pin on the map.
   final Rxn<LatLng> myParkedLocation = Rxn<LatLng>();
+
+  /// Raw GET /park-relay/saved-parking/me response — used to build the
+  /// "myParked" pin's tap-to-see-details card (badge/spots/price/etc).
+  Map<String, dynamic>? _myParkedRawData;
   final RxInt confidenceLevel = 98.obs;
   final RxBool isParkModeActive = false.obs;
   final RxBool isPaidSpot = false.obs;
   final RxString remainingTimeString = ''.obs;
   final RxBool isTimerActive = false.obs;
   Timer? _parkingCountdownTimer;
+
+  // Blink (alpha toggle) for AVAILABLE handoff pins — only runs while at
+  // least one AVAILABLE handoff is on the map.
+  Timer? _handoffBlinkTimer;
+  bool _handoffBlinkOn = true;
 
   final RxSet<Circle> circles = <Circle>{}.obs;
   final RxSet<Polyline> polylines = <Polyline>{}.obs;
@@ -110,6 +122,8 @@ class ParkingShowController extends GetxController {
   @override
   void onClose() {
     _parkingCountdownTimer?.cancel();
+    _handoffBlinkTimer?.cancel();
+    _stopListeningHandoffNearby();
     super.onClose();
   }
 
@@ -152,9 +166,11 @@ class ParkingShowController extends GetxController {
   }
 
   void _resetSearchState({bool setIdleStatus = true}) {
+    _handoffBlinkTimer?.cancel();
+    _handoffBlinkTimer = null;
     handoffList.clear();
-    parkingAreaList.clear();
-    polygons.clear();
+    // Parking areas persist across every status (IDLE/SEARCHING/PARKED) —
+    // fetched once, not re-fetched or cleared on search start/stop.
     polylines.clear();
     circles.clear();
     markers.removeWhere((m) => m.markerId.value != 'saved_car_location');
@@ -263,6 +279,7 @@ class ParkingShowController extends GetxController {
         } else if (myParkedLocation.value != null) {
           // No longer parked — drop the "myParked" pin.
           myParkedLocation.value = null;
+          _myParkedRawData = null;
           _buildMarkersAndPolygons();
         }
 
@@ -378,6 +395,7 @@ class ParkingShowController extends GetxController {
           final double? lng = _toDouble(data['longitude']) ?? _toDouble(parkingArea?['longitude']);
           if (lat != null && lng != null) {
             myParkedLocation.value = LatLng(lat, lng);
+            _myParkedRawData = data;
             _buildMarkersAndPolygons();
           }
         }
@@ -605,12 +623,15 @@ class ParkingShowController extends GetxController {
         return;
       }
 
-      // Parking area polygons stay visible across every status (IDLE,
-      // SEARCHING, PARKED) — not cleared here, so they carry over as-is
-      // into SEARCHING alongside the newly fetched handoffs below.
+      // Parking areas stay visible across every status (IDLE, SEARCHING,
+      // PARKED) — not cleared or re-fetched here, so they carry over as-is.
 
       try {
-        _logger.d('onLeavingPopupNo calling setParkingModeSearching');
+        _logger.i(
+          '=== FIND PARKING SPOT -> API CALL ===\n'
+          'POST ${ApiUrl.baseUrl}${ApiUrl.parkingSearching}\n'
+          'body: {"latitude": $lat, "longitude": $lng}',
+        );
         final response = await _repository.setParkingModeSearching(
           latitude: lat,
           longitude: lng,
@@ -622,11 +643,70 @@ class ParkingShowController extends GetxController {
       } catch (e, st) {
         _logger.e('Error setting searching mode', error: e, stackTrace: st);
       }
-      // SEARCHING -> fetch both nearby handoffs AND nearby parking areas (polygon search).
-      await fetchNearbyData(lat, lng);
+
+      // Only handoffs need a fresh nearby search — parking areas are not
+      // re-fetched here.
+      await fetchNearbyHandoffsOnly(lat, lng);
+      _listenHandoffNearby();
     } finally {
       isTransitioningSearch.value = false;
     }
+  }
+
+  // Real-time nearby-handoff updates — only listened to while actively
+  // SEARCHING (started from "Find Parking Spot", stopped on "Stop
+  // Searching"), not for the whole lifetime of the screen.
+  void _listenHandoffNearby() {
+    AppSocket.socket?.off('park-relay-handoff-nearby');
+    _logger.i('=== [SOCKET] LISTENING "park-relay-handoff-nearby" (search started) ===');
+    AppSocket.socket?.on('park-relay-handoff-nearby', (data) {
+      _logger.i('=== [SOCKET] EVENT RECEIVED "park-relay-handoff-nearby" ===\nbody: $data');
+
+      // Show the red blinking pin instantly from the event's own
+      // approximate lat/lng — don't wait for the follow-up API call.
+      final eventData = _asMap(data);
+      if (eventData != null) {
+        _showOptimisticHandoffPin(eventData);
+      }
+
+      // Then confirm with the real GET /handoffs/nearby — its response
+      // replaces handoffList wholesale, so the optimistic pin above is
+      // naturally swapped out for the authoritative one.
+      final lat = gpsPosition.value?.latitude;
+      final lng = gpsPosition.value?.longitude;
+      if (lat != null && lng != null) {
+        fetchNearbyHandoffsOnly(lat, lng);
+      }
+    });
+  }
+
+  // Optimistic handoff pin — built straight from the socket payload
+  // (handoffId, latitude, longitude, expiresAt, distanceMeters,
+  // hasExactLocation, type) so it shows the moment the event arrives,
+  // instead of waiting on the follow-up nearby-handoffs fetch.
+  void _showOptimisticHandoffPin(Map<String, dynamic> eventData) {
+    final id = eventData['handoffId']?.toString();
+    final lat = _toDouble(eventData['latitude']);
+    final lng = _toDouble(eventData['longitude']);
+    if (id == null || id.isEmpty || lat == null || lng == null) return;
+
+    final optimisticHandoff = <String, dynamic>{
+      'id': id,
+      'latitude': lat,
+      'longitude': lng,
+      'status': 'AVAILABLE',
+      'expiresAt': eventData['expiresAt'],
+      'distanceMeters': eventData['distanceMeters'],
+    };
+
+    handoffList.removeWhere((raw) => _asMap(raw)?['id']?.toString() == id);
+    handoffList.add(optimisticHandoff);
+    _buildMarkersAndPolygons();
+  }
+
+  void _stopListeningHandoffNearby() {
+    AppSocket.socket?.off('park-relay-handoff-nearby');
+    _logger.i('=== [SOCKET] STOPPED "park-relay-handoff-nearby" (search stopped) ===');
   }
 
   /// "Stop Searching" — sets parking mode back to idle and clears the
@@ -637,11 +717,17 @@ class ParkingShowController extends GetxController {
     isTransitioningSearch.value = true;
     try {
     _logger.i('=== stopSearching CLICKED ===');
+    _stopListeningHandoffNearby();
     final lat = gpsPosition.value?.latitude;
     final lng = gpsPosition.value?.longitude;
 
     try {
       if (lat != null && lng != null) {
+        _logger.i(
+          '=== STOP SEARCHING -> API CALL ===\n'
+          'POST ${ApiUrl.baseUrl}${ApiUrl.statusIdle}\n'
+          'body: {"latitude": $lat, "longitude": $lng}',
+        );
         final response = await _repository.setParkingModeIdle(
           latitude: lat,
           longitude: lng,
@@ -655,10 +741,11 @@ class ParkingShowController extends GetxController {
       _logger.e('Error stopping search / setting idle', error: e, stackTrace: st);
     }
 
+    // Parking areas were never cleared, so just clear the search-specific
+    // state (handoffs etc.) and rebuild markers locally from what's
+    // already in memory — no re-fetch of parking-areas/search.
     _resetSearchState();
-    // Back to IDLE -> same auto-fetch checkParkingModeMe() does for a
-    // fresh IDLE resolve, so the map isn't left blank after Stop Searching.
-    await fetchNearbyParkingAreasOnly(lat, lng);
+    await _buildMarkersAndPolygons();
     } finally {
       isTransitioningSearch.value = false;
     }
@@ -885,6 +972,7 @@ class ParkingShowController extends GetxController {
                 ? parkedLocationName.value
                 : 'Your Parked Spot',
           ),
+          onTap: () => showMyParkedDetails(),
         ),
       );
     }
@@ -902,7 +990,9 @@ class ParkingShowController extends GetxController {
       final handoffStatus = handoff['status']?.toString().toUpperCase() ?? '';
       final expiresAtStr = handoff['expiresAt']?.toString() ?? '';
 
-      if (handoffStatus == 'AVAILABLE' && expiresAtStr.isNotEmpty) {
+      final isAvailable = handoffStatus == 'AVAILABLE';
+
+      if (isAvailable && expiresAtStr.isNotEmpty) {
         try {
           final expiryTime = DateTime.parse(expiresAtStr).toLocal();
           if (!expiryTime.isAfter(now)) {
@@ -911,7 +1001,13 @@ class ParkingShowController extends GetxController {
         } catch (_) {}
       }
 
-      final handoffIcon = await MapMarkerIcons.iconForData(handoff, size: 56);
+      // AVAILABLE handoffs get the red pin (static, not blinking itself)
+      // plus a pulsing red circle shade around it (radius toggled by
+      // _handoffBlinkTimer) — everything else keeps the same icon/behavior
+      // as before.
+      final handoffIcon = isAvailable
+          ? await MapMarkerIcons.blinkingPin(size: 56)
+          : await MapMarkerIcons.iconForData(handoff, size: 56);
       newMarkers.add(
         Marker(
           markerId: MarkerId('handoff_$id'),
@@ -922,7 +1018,22 @@ class ParkingShowController extends GetxController {
           onTap: () => showHandoffDetails(handoff),
         ),
       );
+
+      if (isAvailable) {
+        newCircles.add(
+          Circle(
+            circleId: CircleId('handoff_pulse_$id'),
+            center: LatLng(lat, lng),
+            radius: _handoffBlinkOn ? 22 : 10,
+            fillColor: AppColors.red.withValues(alpha: _handoffBlinkOn ? 0.12 : 0.28),
+            strokeColor: AppColors.red.withValues(alpha: 0.6),
+            strokeWidth: 2,
+          ),
+        );
+      }
     }
+
+    _syncHandoffBlinkTimer();
 
     // Parking areas — a single pin at the area's center point (no polygon
     // outline). Icon priority: Disabled > Electric > Paid > Free —
@@ -976,6 +1087,27 @@ class ParkingShowController extends GetxController {
 
     if (needRefresh) {
       _refreshExpiredHandoffs();
+    }
+  }
+
+  // Starts the blink timer while at least one AVAILABLE handoff is on the
+  // map, stops it otherwise — self-correcting since this runs at the end of
+  // every _buildMarkersAndPolygons() pass.
+  void _syncHandoffBlinkTimer() {
+    final hasAvailableHandoff = handoffList.any((raw) {
+      final h = _asMap(raw);
+      return h?['status']?.toString().toUpperCase() == 'AVAILABLE';
+    });
+
+    if (hasAvailableHandoff) {
+      _handoffBlinkTimer ??= Timer.periodic(const Duration(milliseconds: 600), (_) {
+        _handoffBlinkOn = !_handoffBlinkOn;
+        _buildMarkersAndPolygons();
+      });
+    } else {
+      _handoffBlinkTimer?.cancel();
+      _handoffBlinkTimer = null;
+      _handoffBlinkOn = true;
     }
   }
 
@@ -1613,6 +1745,7 @@ class ParkingShowController extends GetxController {
       rightStatIcon: isFree ? Icons.money_off_rounded : Icons.monetization_on_outlined,
       isFree: isFree,
       destination: (lat != null && lng != null) ? LatLng(lat, lng) : null,
+      distanceMeters: _toDouble(handoff['distanceMeters']),
       // Save (accept-and-park) is only possible while actively searching.
       onSavePark: (status.value == 'SEARCHING' && handoffId != null)
           ? () => _acceptAndParkHandoff(handoffId)
@@ -1628,10 +1761,8 @@ class ParkingShowController extends GetxController {
     final meters = distanceMeters is num
         ? distanceMeters.toDouble()
         : double.tryParse(distanceMeters?.toString() ?? '');
-    if (meters == null) return '-- m away';
-    return meters >= 1000
-        ? '${(meters / 1000).toStringAsFixed(1)} km away'
-        : '${meters.round()} m away';
+    if (meters == null) return '-- km away';
+    return '${(meters / 1000).toStringAsFixed(1)} km away';
   }
 
   // ── Badge (label/icon/color) derived from parkingArea.parkingAreaTypes —
@@ -1729,9 +1860,84 @@ class ParkingShowController extends GetxController {
       rightStatIcon: isFree ? Icons.money_off_rounded : Icons.monetization_on_outlined,
       isFree: isFree,
       destination: (lat != null && lng != null) ? LatLng(lat, lng) : null,
-      onSavePark: (status.value != 'PARKED' && lat != null && lng != null)
+      distanceMeters: _toDouble(area['distanceMeters']),
+      // Always shown when the area has a location — no longer hidden while
+      // already PARKED, matching Find/Exit Parking always being visible too.
+      onSavePark: (lat != null && lng != null)
           ? () => _saveParkingAtArea(area, latitude: lat, longitude: lng)
           : null,
+    );
+  }
+
+  // -- "My Parked" pin details: same card as the other pins (title/badge/
+  //    distance/rating/spots/price) with Navigate, but no Save Park action —
+  //    this already IS the user's own active parked spot. --
+  void showMyParkedDetails() {
+    final loc = myParkedLocation.value;
+    if (loc == null) return;
+
+    final data = _myParkedRawData ?? const <String, dynamic>{};
+    final area = _asMap(data['parkingArea']);
+
+    final name = parkedLocationName.value.isNotEmpty
+        ? parkedLocationName.value
+        : (area?['name']?.toString() ?? 'Your Parked Spot');
+    final description = area?['description']?.toString().isNotEmpty == true
+        ? area!['description'].toString()
+        : parkedSpotCode.value;
+
+    final distanceDisplay = _formatDistance(data['distanceMeters']);
+
+    final ratingRaw = area?['rating'];
+    final ratingText = ratingRaw == null
+        ? '0.0'
+        : (ratingRaw is num ? ratingRaw.toStringAsFixed(1) : ratingRaw.toString());
+    final reviewCountRaw = area?['reviewCount'];
+    final reviewCount = reviewCountRaw is num
+        ? reviewCountRaw.toInt()
+        : int.tryParse(reviewCountRaw?.toString() ?? '');
+    final ratingLabel = (reviewCount != null && reviewCount > 0)
+        ? '$ratingText ($reviewCount)'
+        : ratingText;
+
+    final totalSpotsRaw = area?['totalSpots'];
+    final totalSpots = totalSpotsRaw is num
+        ? totalSpotsRaw.toInt()
+        : (int.tryParse(totalSpotsRaw?.toString() ?? '') ?? 0);
+
+    final parkingType = data['parkingType']?.toString().toUpperCase() ?? '';
+    final isFree = parkingType.isEmpty || parkingType == 'FREE';
+
+    String priceLabel;
+    if (isFree) {
+      priceLabel = 'Free';
+    } else {
+      final feeRaw = area?['parkingFee'] ?? data['parkingFee'];
+      final feeNum = feeRaw is num ? feeRaw : num.tryParse(feeRaw?.toString() ?? '');
+      priceLabel = feeNum != null
+          ? '\$${feeNum % 1 == 0 ? feeNum.toInt() : feeNum}'
+          : 'Paid';
+    }
+
+    final badge = _areaTypeBadge(area);
+
+    _showSpotDetailsCardSheet(
+      title: name,
+      subtitle: description,
+      badgeLabel: badge.label,
+      badgeIconAsset: badge.asset,
+      badgeIcon: badge.icon,
+      badgeColor: badge.color,
+      distanceLabel: distanceDisplay,
+      ratingLabel: ratingLabel,
+      leftStatLabel: '$totalSpots spots',
+      rightStatLabel: priceLabel,
+      rightStatIcon: isFree ? Icons.money_off_rounded : Icons.monetization_on_outlined,
+      isFree: isFree,
+      destination: loc,
+      distanceMeters: _toDouble(data['distanceMeters']),
+      // Already parked here — no Save action, just details + Navigate.
+      onSavePark: null,
     );
   }
 
@@ -1810,6 +2016,17 @@ class ParkingShowController extends GetxController {
         markers.removeWhere((m) => m.markerId.value != 'saved_car_location');
         mapOverlayVersion.value++;
         _showMessage('Parking spot saved', isError: false);
+
+        // Take the user straight to the Save Parking screen — its own
+        // initState fetches a fresh history list, so the just-saved spot
+        // shows up immediately (backend marks it isActive, which highlights
+        // it with a blue border).
+        final ctx = _dialogContext;
+        if (ctx != null) {
+          Navigator.of(ctx).push(
+            MaterialPageRoute(builder: (_) => const SaveParkingScreen()),
+          );
+        }
       } else {
         String errorMsg = AppStrings.somethingWentWrong.tr;
         try {
@@ -2018,6 +2235,7 @@ class ParkingShowController extends GetxController {
     IconData rightStatIcon = Icons.monetization_on_outlined,
     LatLng? destination,
     VoidCallback? onSavePark,
+    double? distanceMeters,
   }) {
     activeSpotDetailsCard.value = SpotDetailsCardData(
       title: title,
@@ -2034,6 +2252,7 @@ class ParkingShowController extends GetxController {
       rightStatIcon: rightStatIcon,
       destination: destination,
       onSavePark: onSavePark,
+      distanceMeters: distanceMeters,
     );
   }
 
@@ -2079,6 +2298,15 @@ class ParkingShowController extends GetxController {
         mapOverlayVersion.value++;
 
         _showMessage('Parking spot saved', isError: false);
+
+        // Same as the normal Save Park flow — take the user straight to
+        // the Save Parking screen with the updated list.
+        final ctx = _dialogContext;
+        if (ctx != null) {
+          Navigator.of(ctx).push(
+            MaterialPageRoute(builder: (_) => const SaveParkingScreen()),
+          );
+        }
       } else {
         String errorMsg = AppStrings.somethingWentWrong.tr;
         try {
@@ -2645,6 +2873,11 @@ class SpotDetailsCardData {
   final LatLng? destination;
   final VoidCallback? onSavePark;
 
+  /// Raw backend distanceMeters (when available) — passed through to
+  /// InAppNavigationScreen so Navigate shows the same distance as this card
+  /// instead of the Directions API's own (possibly ~0 in dev/mock GPS) value.
+  final double? distanceMeters;
+
   SpotDetailsCardData({
     required this.title,
     required this.subtitle,
@@ -2660,6 +2893,7 @@ class SpotDetailsCardData {
     this.rightStatIcon = Icons.monetization_on_outlined,
     this.destination,
     this.onSavePark,
+    this.distanceMeters,
   });
 }
 

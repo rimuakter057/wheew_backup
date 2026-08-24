@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/feature/map/controller/map_controller.dart';
+import 'package:platchatapp/feature/parking/presentation/screens/save_parking_screen.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 
 class SaveParkingDialog extends StatefulWidget {
@@ -31,13 +32,16 @@ class SaveParkingDialog extends StatefulWidget {
 }
 
 class _SaveParkingDialogState extends State<SaveParkingDialog> {
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _durationController = TextEditingController();
   String _selectedParkingType = 'FREE';
+  bool _nameHasError = false;
   bool _durationHasError = false;
   String _durationErrorText = '';
 
   @override
   void dispose() {
+    _nameController.dispose();
     _durationController.dispose();
     super.dispose();
   }
@@ -81,6 +85,12 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
       return;
     }
 
+    if (_nameController.text.trim().isEmpty) {
+      setState(() => _nameHasError = true);
+      widget.showCustomSnackBar(AppStrings.fieldIsRequired.tr, isError: true);
+      return;
+    }
+
     int? durationMin;
     if (_selectedParkingType == 'PAID') {
       final input = _durationController.text.trim();
@@ -110,16 +120,24 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
       longitude: location.longitude,
       parkingType: _selectedParkingType,
       durationMin: durationMin,
+      name: _nameController.text,
     );
 
     if (success) {
       if (mounted) {
         Navigator.of(context).pop();
+        // Take the user straight to the Save Parking screen — its own
+        // initState fetches a fresh history list, so the just-saved spot
+        // shows up immediately.
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const SaveParkingScreen()),
+        );
       }
       widget.showCustomSnackBar(
         AppStrings.parkingLocationSavedSuccessfully.tr,
         isError: false,
       );
+      _nameController.clear();
       _durationController.clear();
       widget.onSaveSuccess(location);
     } else {
@@ -202,64 +220,123 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
                 ),
               ],
             ),
-            SizedBox(height: ResponsiveHelper.spacing(4)),
-            Text(
-              widget.pickedLocation != null
-                  ? 'Using picked location'
-                  : 'Using current location',
-              style: GoogleFonts.poppins(
-                fontSize: ResponsiveHelper.fontSize(12),
-                color: AppColors.greyShade600,
-              ),
-            ),
-            SizedBox(height: ResponsiveHelper.spacing(16)),
+            SizedBox(height: ResponsiveHelper.spacing(18)),
 
-            // Location row with "Pick on map" action
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: ResponsiveHelper.padding(12),
-                vertical: ResponsiveHelper.padding(10),
-              ),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF4F6FB),
-                borderRadius: BorderRadius.circular(
-                  ResponsiveHelper.borderRadius(12),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    widget.pickedLocation != null
-                        ? Icons.location_on_rounded
-                        : Icons.gps_fixed_rounded,
-                    color: const Color(0xFF3D72E8),
-                    size: ResponsiveHelper.iconSize(18),
+            // Location source row — same widget/behavior as Add Parking
+            // Spot's ParkingInfoDialog: shows the picked lat/lng once set,
+            // with a "Change" link to pick again.
+            GestureDetector(
+              onTap: widget.onPickOnMap,
+              child: Container(
+                padding: ResponsiveHelper.symmetric(horizontal: 14, vertical: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF4F6FB),
+                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(30)),
+                  border: Border.all(
+                    color: widget.pickedLocation == null
+                        ? AppColors.transparent
+                        : const Color(0xFF3D72E8).withValues(alpha: 0.4),
                   ),
-                  SizedBox(width: ResponsiveHelper.spacing(8)),
-                  Expanded(
-                    child: Text(
-                      widget.pickedLocation != null
-                          ? 'Picked location set'
-                          : 'Using current location',
-                      style: GoogleFonts.poppins(
-                        fontSize: ResponsiveHelper.fontSize(13),
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF1A1A2E),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: ResponsiveHelper.width(32),
+                      height: ResponsiveHelper.height(32),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF3D72E8).withValues(alpha: 0.10),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Icon(
+                          widget.pickedLocation == null
+                              ? Icons.my_location_rounded
+                              : Icons.location_on_rounded,
+                          color: const Color(0xFF3D72E8),
+                          size: ResponsiveHelper.iconSize(16),
+                        ),
                       ),
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: widget.onPickOnMap,
-                    child: Text(
-                      AppStrings.pickOnMap.tr,
+                    SizedBox(width: ResponsiveHelper.spacing(10)),
+                    Expanded(
+                      child: Text(
+                        widget.pickedLocation == null
+                            ? AppStrings.usingCurrentLocation.tr
+                            : '${AppStrings.selectedLocation.tr}: ${widget.pickedLocation!.latitude.toStringAsFixed(5)}, '
+                                  '${widget.pickedLocation!.longitude.toStringAsFixed(5)}',
+                        style: GoogleFonts.poppins(
+                          fontSize: ResponsiveHelper.fontSize(12),
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF6B7280),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(width: ResponsiveHelper.spacing(8)),
+                    Text(
+                      widget.pickedLocation == null
+                          ? AppStrings.pickOnMap.tr
+                          : AppStrings.change.tr,
                       style: GoogleFonts.poppins(
-                        fontSize: ResponsiveHelper.fontSize(13),
+                        fontSize: ResponsiveHelper.fontSize(12),
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF3D72E8),
+                        decoration: TextDecoration.underline,
                       ),
                     ),
+                  ],
+                ),
+              ),
+            ),
+
+            SizedBox(height: ResponsiveHelper.spacing(20)),
+
+            Text(
+              AppStrings.name.tr,
+              style: GoogleFonts.poppins(
+                fontSize: ResponsiveHelper.fontSize(13),
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF1A1A2E),
+              ),
+            ),
+            SizedBox(height: ResponsiveHelper.spacing(8)),
+            TextField(
+              controller: _nameController,
+              onChanged: (_) {
+                if (_nameHasError) {
+                  setState(() => _nameHasError = false);
+                }
+              },
+              style: GoogleFonts.poppins(fontSize: ResponsiveHelper.fontSize(14)),
+              decoration: InputDecoration(
+                hintText: AppStrings.name.tr,
+                hintStyle: GoogleFonts.poppins(fontSize: ResponsiveHelper.fontSize(14)),
+                filled: true,
+                fillColor: const Color(0xFFF4F6FB),
+                errorText: _nameHasError ? AppStrings.fieldIsRequired.tr : null,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+                  borderSide: _nameHasError
+                      ? BorderSide(
+                          color: const Color(0xFFEF4444),
+                          width: ResponsiveHelper.borderWidth(1),
+                        )
+                      : BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+                  borderSide: BorderSide(
+                    color: _nameHasError
+                        ? const Color(0xFFEF4444)
+                        : const Color(0xFF3D72E8),
+                    width: ResponsiveHelper.borderWidth(1.4),
                   ),
-                ],
+                ),
               ),
             ),
 

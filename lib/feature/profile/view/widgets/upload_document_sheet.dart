@@ -1890,33 +1890,37 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
 
           //  SizedBox(height: ResponsiveHelper.spacing(16)),
 
-            _label(_isEdit ? AppStrings.replaceFile.tr : AppStrings.uploadFile.tr),
-            SizedBox(height: ResponsiveHelper.spacing(8)),
-            GestureDetector(
-              onTap: _pickFile,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: double.infinity,
-                height: ResponsiveHelper.height(110),
-                decoration: BoxDecoration(
-                  color: _selectedFile != null
-                      ? const Color(0xFFEFF6FF)
-                      : const Color(0xFFF9FAFB),
-                  borderRadius: BorderRadius.circular(
-                    ResponsiveHelper.borderRadius(12),
-                  ),
-                  border: Border.all(
-                    color: _selectedFile != null
-                        ? const Color(0xFF2563EB)
-                        : const Color(0xFFE5E7EB),
-                    width: 1.5,
-                  ),
-                ),
-                child: _selectedFile != null
-                    ? _selectedFileView()
-                    : _uploadPlaceholder(),
-              ),
-            ),
+            // Upload File field removed — not shown, and (see
+            // UploadDocumentController.uploadDocument/updateDocument)
+            // filePath/fileName stay null so the file field is never sent
+            // to the backend either.
+            // _label(_isEdit ? AppStrings.replaceFile.tr : AppStrings.uploadFile.tr),
+            // SizedBox(height: ResponsiveHelper.spacing(8)),
+            // GestureDetector(
+            //   onTap: _pickFile,
+            //   child: AnimatedContainer(
+            //     duration: const Duration(milliseconds: 200),
+            //     width: double.infinity,
+            //     height: ResponsiveHelper.height(110),
+            //     decoration: BoxDecoration(
+            //       color: _selectedFile != null
+            //           ? const Color(0xFFEFF6FF)
+            //           : const Color(0xFFF9FAFB),
+            //       borderRadius: BorderRadius.circular(
+            //         ResponsiveHelper.borderRadius(12),
+            //       ),
+            //       border: Border.all(
+            //         color: _selectedFile != null
+            //             ? const Color(0xFF2563EB)
+            //             : const Color(0xFFE5E7EB),
+            //         width: 1.5,
+            //       ),
+            //     ),
+            //     child: _selectedFile != null
+            //         ? _selectedFileView()
+            //         : _uploadPlaceholder(),
+            //   ),
+            // ),
 
             SizedBox(height: ResponsiveHelper.spacing(28)),
 
@@ -1943,7 +1947,7 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
                   ),
                 )
                     : Text(
-                  _isEdit ? AppStrings.update.tr : AppStrings.upload.tr,
+                  _isEdit ? AppStrings.update.tr : AppStrings.submit.tr,
                 ),
               ),
             )),

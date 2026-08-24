@@ -353,6 +353,7 @@ class AppRouter {
           return InAppNavigationScreen(
             destination: extra['destination'] as LatLng,
             destinationLabel: extra['destinationLabel'] as String?,
+            knownDistanceMeters: (extra['knownDistanceMeters'] as num?)?.toDouble(),
           );
         },
       ),

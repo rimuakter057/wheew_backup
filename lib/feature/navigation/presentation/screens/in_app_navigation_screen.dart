@@ -760,10 +760,6 @@ IconData _maneuverIcon(String? maneuver) {
 }
 
 String _formatMeters(int meters) {
-  if (meters < 1000) {
-    return '$meters m';
-  }
-
   return '${(meters / 1000).toStringAsFixed(1)} km';
 }
 
@@ -771,10 +767,17 @@ class InAppNavigationScreen extends StatefulWidget {
   final LatLng destination;
   final String? destinationLabel;
 
+  /// Distance already known from the backend (e.g. the saved-parking list's
+  /// distanceMeters) — shown instead of the Directions API's own route
+  /// distance, which can read ~0 when the mock/dev GPS position sits right
+  /// on top of the destination.
+  final double? knownDistanceMeters;
+
   const InAppNavigationScreen({
     super.key,
     required this.destination,
     this.destinationLabel,
+    this.knownDistanceMeters,
   });
 
   @override
@@ -883,15 +886,6 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
                   _buildModeSelector(),
                 ],
               ),
-            ),
-
-            MapTypeDropdown(
-              selectedType: _selectedMapType,
-              onChanged: (type) {
-                setState(() {
-                  _selectedMapType = type;
-                });
-              },
             ),
 
             Positioned(
@@ -1218,9 +1212,14 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
                   SizedBox(height: ResponsiveHelper.height(2)),
 
                   Text(
-                    eta != null
-                        ? '${info.distanceText} • $eta'
-                        : info.distanceText,
+                    () {
+                      final distanceLabel = widget.knownDistanceMeters != null
+                          ? _formatMeters(widget.knownDistanceMeters!.round())
+                          : info.distanceText;
+                      return eta != null
+                          ? '$distanceLabel • $eta'
+                          : distanceLabel;
+                    }(),
                     style: TextStyle(
                       color: AppColors.greyShade600,
                       fontSize: ResponsiveHelper.fontSize(13),
@@ -1247,6 +1246,17 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
   Widget _buildSideControls() {
     return Column(
       children: [
+        MapTypeLayersButton(
+          selectedType: _selectedMapType,
+          onChanged: (type) {
+            setState(() {
+              _selectedMapType = type;
+            });
+          },
+        ),
+
+        SizedBox(height: ResponsiveHelper.height(10)),
+
         _buildCompassButton(),
 
         SizedBox(height: ResponsiveHelper.height(10)),

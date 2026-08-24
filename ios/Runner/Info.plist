@@ -47,6 +47,10 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>We need your location to show the map.</string>
 
+	<!-- ══ Google Maps API key — value comes from Secrets.xcconfig (gitignored) ══ -->
+	<key>GMSApiKey</key>
+	<string>$(GOOGLE_MAPS_API_KEY)</string>
+
 	<!-- ══ Siri / App Intents ══ -->
 	<key>NSUserActivityTypes</key>
 	<array>

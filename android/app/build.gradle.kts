@@ -36,6 +36,11 @@ android {
         targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // Google Maps API key — kept out of AndroidManifest.xml (and out of
+        // git) by reading it from the gitignored key.properties instead.
+        manifestPlaceholders["MAPS_API_KEY"] =
+            keystoreProperties["MAPS_API_KEY"] as? String ?: ""
     }
 
     signingConfigs {

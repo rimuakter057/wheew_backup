@@ -185,79 +185,90 @@ class ParkingLocationCard extends StatelessWidget {
                             color: const Color(0xFF1E293B),
                           ),
                         ),
-                        SizedBox(width: ResponsiveHelper.spacing(16)),
-                        Icon(
-                          Icons.star_rounded,
-                          size: ResponsiveHelper.iconSize(18),
-                          color: (double.tryParse(ratingLabel) ?? 0.0) > 0
-                              ? const Color(0xFF1D4ED8)
-                              : AppColors.grey,
-                        ),
-                        SizedBox(width: ResponsiveHelper.spacing(4)),
-                        Text(
-                          ratingLabel,
-                          style: TextStyle(
-                            fontSize: ResponsiveHelper.fontSize(14),
-                            fontWeight: FontWeight.w500,
-                            color: const Color(0xFF1E293B),
-                          ),
-                        ),
+                        // Rating temporarily hidden — commented out, not removed.
+                        // SizedBox(width: ResponsiveHelper.spacing(16)),
+                        // Icon(
+                        //   Icons.star_rounded,
+                        //   size: ResponsiveHelper.iconSize(18),
+                        //   color: (double.tryParse(ratingLabel) ?? 0.0) > 0
+                        //       ? const Color(0xFF1D4ED8)
+                        //       : AppColors.grey,
+                        // ),
+                        // SizedBox(width: ResponsiveHelper.spacing(4)),
+                        // Text(
+                        //   ratingLabel,
+                        //   style: TextStyle(
+                        //     fontSize: ResponsiveHelper.fontSize(14),
+                        //     fontWeight: FontWeight.w500,
+                        //     color: const Color(0xFF1E293B),
+                        //   ),
+                        // ),
                       ],
                     ),
 
-                    if (remainingTimeLabel != null)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
+                    // Remaining time (paid spots) and Navigate are no longer
+                    // mutually exclusive — Navigate should always be
+                    // reachable even while a paid countdown is showing.
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        if (remainingTimeLabel != null)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Icon(
-                                Icons.timer_outlined,
-                                size: ResponsiveHelper.iconSize(14),
-                                color: const Color(0xFF1D4ED8),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.timer_outlined,
+                                    size: ResponsiveHelper.iconSize(14),
+                                    color: const Color(0xFF1D4ED8),
+                                  ),
+                                  SizedBox(width: ResponsiveHelper.spacing(4)),
+                                  Text(
+                                    remainingTimeLabel!,
+                                    style: TextStyle(
+                                      fontSize: ResponsiveHelper.fontSize(13),
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFF1D4ED8),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(width: ResponsiveHelper.spacing(4)),
-                              Text(
-                                remainingTimeLabel!,
-                                style: TextStyle(
-                                  fontSize: ResponsiveHelper.fontSize(13),
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF1D4ED8),
+                              if (remainingTimeSubLabel != null)
+                                Text(
+                                  remainingTimeSubLabel!,
+                                  style: context.bodySmall.copyWith(color: AppColors.black.withOpacity(0.6),)
                                 ),
-                              ),
                             ],
                           ),
-                          if (remainingTimeSubLabel != null)
-                            Text(
-                              remainingTimeSubLabel!,
-                              style: context.bodySmall.copyWith(color: AppColors.black.withOpacity(0.6),)
+                        if (remainingTimeLabel != null && onNavigate != null)
+                          SizedBox(height: ResponsiveHelper.spacing(4)),
+                        if (onNavigate != null)
+                          GestureDetector(
+                            onTap: onNavigate,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.near_me_outlined,
+                                  size: ResponsiveHelper.iconSize(16),
+                                  color: AppColors.blue,
+                                ),
+                                SizedBox(width: ResponsiveHelper.spacing(4)),
+                                Text(
+                                  AppStrings.navigate.tr,
+                                  style: TextStyle(
+                                    fontSize: ResponsiveHelper.fontSize(13),
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.blue,
+                                  ),
+                                ),
+                              ],
                             ),
-                        ],
-                      )
-                    else if (onNavigate != null)
-                      GestureDetector(
-                        onTap: onNavigate,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.near_me_outlined,
-                              size: ResponsiveHelper.iconSize(16),
-                              color: AppColors.blue,
-                            ),
-                            SizedBox(width: ResponsiveHelper.spacing(4)),
-                            Text(
-                              AppStrings.navigate.tr,
-                              style: TextStyle(
-                                fontSize: ResponsiveHelper.fontSize(13),
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.blue,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                          ),
+                      ],
+                    ),
                   ],
                 ),
                 SizedBox(height: ResponsiveHelper.spacing(8)),

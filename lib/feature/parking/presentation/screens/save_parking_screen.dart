@@ -10,6 +10,7 @@ import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/parking_location_card.dart';
+import 'package:platchatapp/feature/parking/presentation/widgets/save_parking_screen_shimmer.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
@@ -132,7 +133,29 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
 
   // -- Field mapping (real backend data, no design change) ------------------
 
+  String _titleLabel(Map<String, dynamic> location, Map<String, dynamic>? area) {
+    final String? savedName = location['name']?.toString().trim();
+    if (savedName != null && savedName.isNotEmpty) return savedName;
+
+    final String? areaName = area?['name']?.toString().trim();
+    if (areaName != null && areaName.isNotEmpty) return areaName;
+
+    return AppStrings.unknown.tr;
+  }
+
   String _distanceLabel(Map<String, dynamic> location) {
+    // Prefer the backend's own distanceMeters (server-computed against the
+    // user's location at fetch time) — only fall back to a local
+    // Geolocator calc when that field isn't present.
+    final rawDistance = location['distanceMeters'];
+    final double? backendMeters = rawDistance is num
+        ? rawDistance.toDouble()
+        : double.tryParse('$rawDistance');
+
+    if (backendMeters != null) {
+      return _formatMeters(backendMeters);
+    }
+
     if (_userPosition == null) return '--';
     final area = location['parkingArea'] is Map
         ? Map<String, dynamic>.from(location['parkingArea'])
@@ -149,9 +172,11 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
       destLat,
       destLng,
     );
-    return meters >= 1000
-        ? '${(meters / 1000).toStringAsFixed(1)} km away'
-        : '${meters.round()} m away';
+    return _formatMeters(meters);
+  }
+
+  String _formatMeters(double meters) {
+    return '${(meters / 1000).toStringAsFixed(1)} km away';
   }
 
   List<String> _areaTypes(Map<String, dynamic>? area) {
@@ -289,11 +314,16 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
 
     if (destLat != null && destLng != null) {
       final label = area?['name']?.toString() ?? location['note']?.toString();
+      final rawDistance = location['distanceMeters'];
+      final double? knownDistanceMeters = rawDistance is num
+          ? rawDistance.toDouble()
+          : double.tryParse('$rawDistance');
       context.pushNamed(
         RouteName.inAppNavigation,
         extra: {
           'destination': LatLng(destLat, destLng),
           'destinationLabel': label,
+          if (knownDistanceMeters != null) 'knownDistanceMeters': knownDistanceMeters,
         },
       );
     } else {
@@ -316,43 +346,54 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
           gradient: AppColors.primaryBackgroundGradient,
         ),
         child: SafeArea(
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : ListView(
-                  controller: _scrollController,
-                  padding: ResponsiveHelper.symmetric(horizontal: 20, vertical: 12),
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  ResponsiveHelper.padding(20),
+                  ResponsiveHelper.padding(12),
+                  ResponsiveHelper.padding(20),
+                  0,
+                ),
+                child: Row(
                   children: [
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () => Navigator.of(context).pop(),
-                          child: Container(
-                            padding: ResponsiveHelper.all(10),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColors.white.withOpacity(0.5),
-                              border: Border.all(color: AppColors.white),
-                            ),
-                            child: Icon(
-                              Icons.arrow_back,
-                              size: ResponsiveHelper.iconSize(20),
-                              color: AppColors.black,
-                            ),
-                          ),
+                    GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        padding: ResponsiveHelper.all(10),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.white.withOpacity(0.5),
+                          border: Border.all(color: AppColors.white),
                         ),
-                        Expanded(
-                          child: Center(
-                            child: Text(
-                              AppStrings.saveParking.tr,
-                              style: context.titleMedium.copyWith(color: AppColors.black,fontWeight: FontWeight.w500),
-                            ),
-                          ),
+                        child: Icon(
+                          Icons.arrow_back,
+                          size: ResponsiveHelper.iconSize(20),
+                          color: AppColors.black,
                         ),
-                        // Balances the back button's width so the title stays centered.
-                        SizedBox(width: ResponsiveHelper.width(40)),
-                      ],
+                      ),
                     ),
-                    SizedBox(height: ResponsiveHelper.spacing(20)),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          AppStrings.saveParking.tr,
+                          style: context.titleMedium.copyWith(color: AppColors.black,fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ),
+                    // Balances the back button's width so the title stays centered.
+                    SizedBox(width: ResponsiveHelper.width(40)),
+                  ],
+                ),
+              ),
+              SizedBox(height: ResponsiveHelper.spacing(20)),
+              Expanded(
+                child: _isLoading
+                    ? const SaveParkingScreenShimmer()
+                    : ListView(
+                  controller: _scrollController,
+                  padding: ResponsiveHelper.symmetric(horizontal: 20),
+                  children: [
                     if (_locations.isEmpty)
                       Padding(
                         padding: ResponsiveHelper.symmetric(vertical: 40),
@@ -377,7 +418,7 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
                           final remaining = _remainingTime(location);
 
                           return ParkingLocationCard(
-                            title: area?['name']?.toString() ?? '',
+                            title: _titleLabel(location, area),
                             subtitle: area?['description']?.toString() ??
                                 location['note']?.toString() ??
                                 '',
@@ -392,9 +433,9 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
                             rightStatIconAsset: priceStat.asset,
                             remainingTimeLabel: remaining?.label,
                             remainingTimeSubLabel: remaining?.sub,
-                            onNavigate: remaining == null
-                                ? () => _openNavigation(location)
-                                : null,
+                            // Navigate stays available even for paid spots
+                            // showing a remaining-time countdown.
+                            onNavigate: () => _openNavigation(location),
                             isActive: location['isActive'] == true,
                           );
                         }),
@@ -413,6 +454,9 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
                       ),
                   ],
                 ),
+              ),
+            ],
+          ),
         ),
       ),
     );

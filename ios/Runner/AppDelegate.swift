@@ -11,7 +11,10 @@ import UserNotifications
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    GMSServices.provideAPIKey("AIzaSyBatgvXrVXxNagCM5RDmd6aab0G-Z5DNdQ")
+    if let mapsApiKey = Bundle.main.object(forInfoDictionaryKey: "GMSApiKey") as? String,
+       !mapsApiKey.isEmpty {
+      GMSServices.provideAPIKey(mapsApiKey)
+    }
 
     let controller = window?.rootViewController as! FlutterViewController
     PlateChatVoiceBridge.shared.setup(with: controller)

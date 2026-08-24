@@ -13,6 +13,7 @@ class MapMarkerIcons {
 
   static BitmapDescriptor? _parkingPin;
   static BitmapDescriptor? _myParkedPin;
+  static BitmapDescriptor? _blinkingPin;
   static BitmapDescriptor? _electricChargingPin;
   static BitmapDescriptor? _disabledFacilityPin;
   static BitmapDescriptor? _disableAreaPin;
@@ -74,6 +75,16 @@ class MapMarkerIcons {
     if (cached != null) return cached;
     final icon = await _loadSvgPin(AssetsPath.myParked, size: size);
     _myParkedPin = icon;
+    return icon;
+  }
+
+  /// Red pin used for AVAILABLE handoffs — blinked on/off via Marker.alpha
+  /// by ParkingShowController, not by swapping bitmaps.
+  static Future<BitmapDescriptor> blinkingPin({double size = 76}) async {
+    final cached = _blinkingPin;
+    if (cached != null) return cached;
+    final icon = await _loadSvgPin(AssetsPath.blinkingPin, size: size);
+    _blinkingPin = icon;
     return icon;
   }
 

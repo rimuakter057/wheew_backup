@@ -100,6 +100,12 @@ class AddParkingFlowController extends GetxController {
                 label: AppStrings.parkMyCar.tr,
                 onPressed: () {
                   Navigator.of(sheetContext).pop();
+                  // Fresh open — same reset Add Parking Spot does: always
+                  // start from current location, never a location (or
+                  // leftover picking-mode) from a previous, already-
+                  // dismissed session of this sheet.
+                  _pickedAddParkingLocation = null;
+                  _stopPickingAddParkingLocation();
                   _showSaveParkingSheet();
                 },
               ),
@@ -190,6 +196,11 @@ class AddParkingFlowController extends GetxController {
     final ctx = _dialogContext;
     if (ctx == null) return;
 
+    // Explicit actions (pick-on-map / save) set this so the sheet-dismiss
+    // cleanup below doesn't wipe a location that's mid-handoff or already
+    // saved.
+    bool handled = false;
+
     showTrackedBottomSheet(
       context: ctx,
       isScrollControlled: true,
@@ -200,16 +211,25 @@ class AddParkingFlowController extends GetxController {
           gpsPosition: Get.find<ParkingShowController>().gpsPosition.value,
           parkingCtrl: _parkingReportCtrl,
           onPickOnMap: () {
+            handled = true;
             Navigator.of(sheetContext).pop();
             _startPickingAddParkingLocation(purpose: AddParkingPurpose.save);
           },
           onSaveSuccess: (location) {
+            handled = true;
             _pickedAddParkingLocation = null;
           },
           showCustomSnackBar: showCustomSnackBar,
         );
       },
-    );
+    ).whenComplete(() {
+      // User swiped the sheet down / tapped outside / hit Cancel without
+      // saving — next fresh open must default back to current location.
+      if (!handled) {
+        _pickedAddParkingLocation = null;
+        _stopPickingAddParkingLocation();
+      }
+    });
   }
 
   void _startPickingAddParkingLocation({required AddParkingPurpose purpose}) {

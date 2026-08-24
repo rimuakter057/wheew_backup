@@ -129,56 +129,66 @@ class MapTypeLayersButton extends StatelessWidget {
                     SizedBox(height: ResponsiveHelper.spacing(24)),
 
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _mapTypeCard(
-                          title: AppStrings.defaultMapType.tr,
-                          icon: Icons.map_outlined,
-                          value: MapType.normal,
-                          selectedType: currentType,
-                          onTap: (v) {
-                            setModalState(() {
-                              currentType = v;
-                            });
-                            onChanged(v);
-                          },
+                        Expanded(
+                          child: _mapTypeCard(
+                            title: AppStrings.defaultMapType.tr,
+                            icon: Icons.map_outlined,
+                            value: MapType.normal,
+                            selectedType: currentType,
+                            onTap: (v) {
+                              setModalState(() {
+                                currentType = v;
+                              });
+                              onChanged(v);
+                            },
+                          ),
                         ),
-                        _mapTypeCard(
-                          title: AppStrings.hybrid.tr,
-                          icon: Icons.map_outlined,
-                          value: MapType.hybrid,
-                          selectedType: currentType,
-                          onTap: (v) {
-                           setModalState(() {
-                              currentType = v;
-                            });
-                            onChanged(v);
-                          },
+                        SizedBox(width: ResponsiveHelper.spacing(10)),
+                        Expanded(
+                          child: _mapTypeCard(
+                            title: AppStrings.hybrid.tr,
+                            icon: Icons.map_outlined,
+                            value: MapType.hybrid,
+                            selectedType: currentType,
+                            onTap: (v) {
+                             setModalState(() {
+                                currentType = v;
+                              });
+                              onChanged(v);
+                            },
+                          ),
                         ),
-                        _mapTypeCard(
-                          title: AppStrings.satellite.tr,
-                          icon: Icons.satellite_alt_outlined,
-                          value: MapType.satellite,
-                          selectedType: currentType,
-                          onTap: (v) {
-                            setModalState(() {
-                              currentType = v;
-                            });
-                            onChanged(v);
-                          },
+                        SizedBox(width: ResponsiveHelper.spacing(10)),
+                        Expanded(
+                          child: _mapTypeCard(
+                            title: AppStrings.satellite.tr,
+                            icon: Icons.satellite_alt_outlined,
+                            value: MapType.satellite,
+                            selectedType: currentType,
+                            onTap: (v) {
+                              setModalState(() {
+                                currentType = v;
+                              });
+                              onChanged(v);
+                            },
+                          ),
                         ),
-                        _mapTypeCard(
-                          title: AppStrings.terrain.tr,
-                          icon: Icons.terrain_outlined,
-                          value: MapType.terrain,
-                          selectedType: currentType,
-                          onTap: (v) {
-                            setModalState(() {
-                              currentType = v;
+                        SizedBox(width: ResponsiveHelper.spacing(10)),
+                        Expanded(
+                          child: _mapTypeCard(
+                            title: AppStrings.terrain.tr,
+                            icon: Icons.terrain_outlined,
+                            value: MapType.terrain,
+                            selectedType: currentType,
+                            onTap: (v) {
+                              setModalState(() {
+                                currentType = v;
 
-                            });
-                            onChanged(v);
-                          },
+                              });
+                              onChanged(v);
+                            },
+                          ),
                         ),
                       ],
                     ),
@@ -206,10 +216,14 @@ class MapTypeLayersButton extends StatelessWidget {
     return GestureDetector(
       onTap: () => onTap(value),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             height: ResponsiveHelper.height(80),
-            width: ResponsiveHelper.width(80),
+            // Fills the Expanded slot the caller wraps this in — scales
+            // with screen width instead of a fixed size, so 4 cards in a
+            // row never overlap or touch on narrower devices.
+            width: double.infinity,
             decoration: BoxDecoration(
               color: const Color(0xFFF3F5F7),
               borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(16)),
@@ -236,6 +250,9 @@ class MapTypeLayersButton extends StatelessWidget {
           SizedBox(height: ResponsiveHelper.spacing(8)),
           Text(
             title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: ResponsiveHelper.fontSize(13),
               fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
