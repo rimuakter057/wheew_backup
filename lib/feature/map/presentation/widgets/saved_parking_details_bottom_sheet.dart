@@ -1,4 +1,4 @@
-﻿import 'package:get/get.dart';
+import 'package:get/get.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -149,10 +149,14 @@ class SavedParkingDetailsBottomSheet extends StatelessWidget {
                 final lat = parking.latitude ?? parking.parkingSession?.latitude;
                 final lng = parking.longitude ?? parking.parkingSession?.longitude;
                 if (lat != null && lng != null) {
+                  final isPaid = (parking.costType ?? parking.parkingSession?.costType)?.toUpperCase() == 'PAID';
                   Navigator.pop(context);
                   context.pushNamed(
                     RouteName.inAppNavigation,
-                    extra: {'destination': LatLng(lat, lng)},
+                    extra: {
+                      'destination': LatLng(lat, lng),
+                      'parkingAreaTypes': [isPaid ? 'PAID' : 'FREE'],
+                    },
                   );
                 } else {
                   showCustomSnackBar(

@@ -1,4 +1,4 @@
-﻿import 'dart:ui';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/map/presentation/screens/map_screen.dart';
-import 'package:platchatapp/feature/map/presentation/screens/simple_map_screen.dart';
 import 'package:platchatapp/feature/parking/presentation/screens/parking_map_screen.dart';
 import 'package:platchatapp/feature/parking/controller/parking_show_controller.dart';
 import 'package:platchatapp/feature/parking/presentation/screens/save_parking_screen.dart';
@@ -109,10 +108,14 @@ class _MainNavScreenState extends State<MainNavScreen> {
           ),
           bottomNavigationBar: currentIndex == 4
               ? null
-              : _AppBottomNav(
-                  currentIndex: currentIndex,
-                  onTap: _onTap,
-                ),
+              : Obx(() {
+                  if (isPickingOnMap.value) return const SizedBox.shrink();
+
+                  return _AppBottomNav(
+                    currentIndex: currentIndex,
+                    onTap: _onTap,
+                  );
+                }),
         );
       },
     );

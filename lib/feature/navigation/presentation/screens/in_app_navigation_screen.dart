@@ -1,4 +1,4 @@
-﻿// import 'dart:math' as math;
+// import 'dart:math' as math;
 //
 // import 'package:flutter/material.dart';
 // import 'package:geolocator/geolocator.dart';
@@ -773,22 +773,37 @@ class InAppNavigationScreen extends StatefulWidget {
   /// on top of the destination.
   final double? knownDistanceMeters;
 
+  /// Parking area types (DISABLED_FACILITY / ELECTRIC_CHARGING / PAID / FREE)
+  /// — used to pick the correct destination pin icon.
+  final List<String> parkingAreaTypes;
+
+  /// True when this navigation was started from a handoff (blinking red pin
+  /// in SEARCHING mode) — shows a red pulsing circle around the destination.
+  final bool isHandoff;
+
   const InAppNavigationScreen({
     super.key,
     required this.destination,
     this.destinationLabel,
     this.knownDistanceMeters,
+    this.parkingAreaTypes = const [],
+    this.isHandoff = false,
   });
 
   @override
   State<InAppNavigationScreen> createState() => _InAppNavigationScreenState();
 }
 
-class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
+class _InAppNavigationScreenState extends State<InAppNavigationScreen>
+    with SingleTickerProviderStateMixin {
   late final InAppNavigationController controller;
 
   MapType _selectedMapType = MapType.normal;
   BitmapDescriptor? _destinationIcon;
+
+  // Animation controller for the blinking circle (handoff pins only).
+  late final AnimationController _blinkController;
+  late final Animation<double> _blinkAnim;
 
   @override
   void initState() {
@@ -796,21 +811,48 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
 
     controller = Get.put(InAppNavigationController());
 
+    // Blinking circle animation — used only for handoff (red pin) destinations.
+    _blinkController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat(reverse: true);
+    _blinkAnim = Tween<double>(begin: 0.3, end: 1.0)
+        .chain(CurveTween(curve: Curves.easeInOut))
+        .animate(_blinkController);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.init(destination: widget.destination);
     });
 
-    MapMarkerIcons.parkingPin().then((icon) {
-      if (!mounted) return;
+    _loadDestinationIcon();
+  }
 
-      setState(() {
-        _destinationIcon = icon;
-      });
-    });
+  /// Picks the correct pin icon based on parking type / handoff flag.
+  Future<void> _loadDestinationIcon() async {
+    final types = widget.parkingAreaTypes.map((e) => e.toUpperCase()).toList();
+    BitmapDescriptor icon;
+
+    if (widget.isHandoff) {
+      // Handoff = red blinking pin (same asset as SEARCHING-mode pins).
+      icon = await MapMarkerIcons.blinkingPin();
+    } else if (types.any((t) => t.contains('DISABLE'))) {
+      icon = await MapMarkerIcons.disableAreaPin();
+    } else if (types.any((t) => t.contains('ELECTRIC'))) {
+      icon = await MapMarkerIcons.electricAreaPin();
+    } else if (types.any((t) => t.contains('PAID'))) {
+      icon = await MapMarkerIcons.paidAreaPin();
+    } else {
+      // FREE or anything else → free (green) pin.
+      icon = await MapMarkerIcons.freeAreaPin();
+    }
+
+    if (!mounted) return;
+    setState(() => _destinationIcon = icon);
   }
 
   @override
   void dispose() {
+    _blinkController.dispose();
     Get.delete<InAppNavigationController>();
     super.dispose();
   }
@@ -937,6 +979,33 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
     required LatLng? userPosition,
     required int selectedIndex,
   }) {
+    // For handoff destinations: wrap in AnimatedBuilder so the pulsing red
+    // circle around the pin updates on every animation tick.
+    if (widget.isHandoff) {
+      return AnimatedBuilder(
+        animation: _blinkAnim,
+        builder: (context, _) => _buildMap(
+          origin: origin,
+          userPosition: userPosition,
+          selectedIndex: selectedIndex,
+          blinkOpacity: _blinkAnim.value,
+        ),
+      );
+    }
+    return _buildMap(
+      origin: origin,
+      userPosition: userPosition,
+      selectedIndex: selectedIndex,
+      blinkOpacity: 0,
+    );
+  }
+
+  Widget _buildMap({
+    required LatLng origin,
+    required LatLng? userPosition,
+    required int selectedIndex,
+    required double blinkOpacity,
+  }) {
     return GoogleMap(
       mapType: _selectedMapType,
       onMapCreated: controller.onMapCreated,
@@ -946,13 +1015,43 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
       myLocationButtonEnabled: false,
       zoomControlsEnabled: false,
 
+      circles: widget.isHandoff
+          ? {
+              // Outer glow circle (large, low opacity).
+              Circle(
+                circleId: const CircleId('handoff_outer'),
+                center: widget.destination,
+                radius: 28,
+                fillColor: const Color(0xFFE53935)
+                    .withValues(alpha: blinkOpacity * 0.22),
+                strokeColor: const Color(0xFFE53935)
+                    .withValues(alpha: blinkOpacity * 0.5),
+                strokeWidth: 2,
+              ),
+              // Inner core circle (smaller, higher opacity).
+              Circle(
+                circleId: const CircleId('handoff_inner'),
+                center: widget.destination,
+                radius: 14,
+                fillColor: const Color(0xFFE53935)
+                    .withValues(alpha: blinkOpacity * 0.35),
+                strokeColor:
+                    const Color(0xFFE53935).withValues(alpha: blinkOpacity),
+                strokeWidth: 2,
+              ),
+            }
+          : const {},
+
       markers: {
         Marker(
           markerId: const MarkerId('destination'),
           position: widget.destination,
-          icon:
-              _destinationIcon ??
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+          icon: _destinationIcon ??
+              BitmapDescriptor.defaultMarkerWithHue(
+                widget.isHandoff
+                    ? BitmapDescriptor.hueRed
+                    : BitmapDescriptor.hueBlue,
+              ),
         ),
 
         if (userPosition != null)
@@ -1022,6 +1121,8 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
       },
     );
   }
+
+
 
   Widget _buildTurnBanner() {
     final step = controller.currentStep;

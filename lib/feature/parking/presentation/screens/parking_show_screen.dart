@@ -1,4 +1,4 @@
-﻿
+
 import 'dart:math';
 import 'dart:ui';
 
@@ -32,6 +32,8 @@ import 'package:platchatapp/share/widgets/bottom_sheet_aware/tracked_bottom_shee
 import 'package:platchatapp/share/widgets/map_side_controls.dart';
 import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import 'package:platchatapp/utils/extension/base_extension.dart';
+import 'package:platchatapp/feature/map/utils/marker_icon_loader.dart';
+import 'package:platchatapp/feature/parking/presentation/widgets/pick_on_map_confirmation_card.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:platchatapp/utils/toast_message/toast_message.dart';
 
@@ -301,27 +303,42 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
 
   void _startPickingAddParkingLocation({required _AddParkingPurpose purpose}) {
     if (!mounted) return;
-
-    _addParkingPickingPurpose = purpose;
-
+    isPickingOnMap.value = true;
     setState(() {
+      _addParkingPickingPurpose = purpose;
       _isPickingAddParkingLocation = true;
+      if (_pickedAddParkingLocation == null && _parkingShowCtrl.gpsPosition.value != null) {
+        _pickedAddParkingLocation = _parkingShowCtrl.gpsPosition.value;
+      }
     });
-
-    showCustomSnackBar(
-      AppStrings.tapMapToSelectLocation.tr,
-      isError: false,
-    );
   }
 
   void _stopPickingAddParkingLocation() {
     if (!mounted) return;
+    isPickingOnMap.value = false;
     if (_isPickingAddParkingLocation) {
       setState(() {
         _isPickingAddParkingLocation = false;
+        _pickedAddParkingLocation = null;
       });
     }
     _addParkingPickingPurpose = null;
+  }
+
+  void _confirmPickedLocation() {
+    if (!mounted) return;
+    isPickingOnMap.value = false;
+    final purpose = _addParkingPickingPurpose;
+    setState(() {
+      _isPickingAddParkingLocation = false;
+    });
+    _addParkingPickingPurpose = null;
+
+    if (purpose == _AddParkingPurpose.save) {
+      _showSaveParkingSheet();
+    } else {
+      _showParkingReportDialog();
+    }
   }
 
   void _onMapTappedForAddParking(LatLng position) {
@@ -332,22 +349,11 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
 
     if (!mounted) return;
 
-    final purpose = _addParkingPickingPurpose;
-
     setState(() {
       _pickedAddParkingLocation = position;
-      _isPickingAddParkingLocation = false;
     });
-    _addParkingPickingPurpose = null;
 
     HapticFeedback.selectionClick();
-
-    // Reopen whichever flow started the picking mode.
-    if (purpose == _AddParkingPurpose.save) {
-      _showSaveParkingSheet();
-    } else {
-      _showParkingReportDialog();
-    }
   }
 
   /// -- Left-side action buttons: Add Location / Save Parking -------------
@@ -367,9 +373,13 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
           SizedBox(height: ResponsiveHelper.height(12)),
           _circleGradientButton(
             iconAsset: AssetsPath.savePNav,
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const SaveParkingScreen()),
-            ),
+            onTap: () => Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => const SaveParkingScreen()))
+                .then((_) {
+              // Re-fetch saved-parking so the purple pin stays visible
+              // after the user presses back from SaveParkingScreen.
+              _parkingShowCtrl.fetchSavedParkingMe();
+            }),
           ),
         ],
       ),
@@ -449,6 +459,17 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                 children: [
                   Obx(() {
                     final currentMarkers = _parkingShowCtrl.markers.toSet();
+                    if (_pickedAddParkingLocation != null) {
+                      currentMarkers.add(
+                        Marker(
+                          markerId: const MarkerId('picked_add_parking_location'),
+                          position: _pickedAddParkingLocation!,
+                          icon: BitmapDescriptor.defaultMarkerWithHue(
+                            BitmapDescriptor.hueAzure,
+                          ),
+                        ),
+                      );
+                    }
                     final currentPolygons = _parkingShowCtrl.polygons.toSet();
                     final currentCircles = _parkingShowCtrl.circles.toSet();
                     final currentPolylines = _parkingShowCtrl.polylines.toSet();
@@ -607,7 +628,20 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                       ),
                     ),
 
-                  if (isParked)
+                  if (_isPickingAddParkingLocation)
+                    PickOnMapConfirmationCard(
+                      pickedLocation: _pickedAddParkingLocation,
+                      onConfirm: _confirmPickedLocation,
+                      onCancel: _stopPickingAddParkingLocation,
+                      onUseCurrentLocation: () {
+                        final gps = _parkingShowCtrl.gpsPosition.value;
+                        if (gps != null) {
+                          setState(() => _pickedAddParkingLocation = gps);
+                          HapticFeedback.selectionClick();
+                        }
+                      },
+                    )
+                  else if (isParked)
                     Positioned(
                       bottom: ResponsiveHelper.bottomNavOffset(context),
                       left: ResponsiveHelper.padding(20),
@@ -648,6 +682,9 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
 
                   /// -- Active spot details card overlay (floating above bottom nav) --
                   Obx(() {
+                    if (_isPickingAddParkingLocation) {
+                      return const SizedBox.shrink();
+                    }
                     final cardData = _parkingShowCtrl.activeSpotDetailsCard.value;
                     if (cardData == null) return const SizedBox.shrink();
 
@@ -683,7 +720,11 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
                                 _parkingShowCtrl.clearSpotDetailsCard();
                                 AppRouter.router.pushNamed(
                                   RouteName.inAppNavigation,
-                                  extra: {'destination': dest},
+                                  extra: {
+                                    'destination': dest,
+                                    'parkingAreaTypes': cardData.parkingAreaTypes,
+                                    'isHandoff': cardData.isHandoff,
+                                  },
                                 );
                               },
                       ),

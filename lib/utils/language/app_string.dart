@@ -1166,4 +1166,9 @@ class AppStrings {
   static const String couldNotLaunchDialer = 'couldNotLaunchDialer';
   static const String callNow = 'callNow';
 
+  static const String confirmLocation = 'confirmLocation';
+  static const String useThisLocationConfirmation = 'useThisLocationConfirmation';
+  static const String confirmAndProceed = 'confirmAndProceed';
+  static const String tapMapToChangeLocation = 'tapMapToChangeLocation';
+  static const String useCurrentLocation = 'useCurrentLocation';
 }

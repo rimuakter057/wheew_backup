@@ -350,10 +350,16 @@ class AppRouter {
         name: RouteName.inAppNavigation,
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>;
+          final rawTypes = extra['parkingAreaTypes'];
+          final types = rawTypes is List
+              ? rawTypes.map((e) => e.toString()).toList()
+              : const <String>[];
           return InAppNavigationScreen(
             destination: extra['destination'] as LatLng,
             destinationLabel: extra['destinationLabel'] as String?,
             knownDistanceMeters: (extra['knownDistanceMeters'] as num?)?.toDouble(),
+            parkingAreaTypes: types,
+            isHandoff: extra['isHandoff'] as bool? ?? false,
           );
         },
       ),

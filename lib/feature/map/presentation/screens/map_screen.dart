@@ -1,4 +1,4 @@
-﻿import 'dart:math';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -26,6 +26,8 @@ import 'package:platchatapp/share/widgets/bottom_sheet_aware/bottom_sheet_aware_
 import 'package:platchatapp/share/widgets/bottom_sheet_aware/tracked_bottom_sheet.dart';
 import 'package:platchatapp/share/widgets/map_side_controls.dart';
 import 'package:platchatapp/share/widgets/map_top_bar.dart';
+import 'package:platchatapp/feature/main/data/main_nav_.dart';
+import 'package:platchatapp/feature/parking/presentation/widgets/pick_on_map_confirmation_card.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:platchatapp/utils/toast_message/toast_message.dart';
 
@@ -442,25 +444,42 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     if (!mounted) return;
 
     _pickingPurpose = purpose;
+    isPickingOnMap.value = true;
 
     setState(() {
       _isPickingLocation = true;
+      if (_pickedLocation == null && _gpsPosition != null) {
+        _pickedLocation = _gpsPosition;
+      }
     });
-
-    showCustomSnackBar(
-      AppStrings.tapMapToSelectLocation.tr,
-      isError: false,
-    );
   }
 
   void _stopPickingLocation() {
     if (!mounted) return;
+    isPickingOnMap.value = false;
     if (_isPickingLocation) {
       setState(() {
         _isPickingLocation = false;
+        _pickedLocation = null;
       });
     }
     _pickingPurpose = null;
+  }
+
+  void _confirmPickedLocation() {
+    if (!mounted) return;
+    isPickingOnMap.value = false;
+    final purpose = _pickingPurpose;
+    setState(() {
+      _isPickingLocation = false;
+    });
+    _pickingPurpose = null;
+
+    if (purpose == _PickingPurpose.save) {
+      _showSaveParkingSheet();
+    } else {
+      _showParkingDialog();
+    }
   }
 
   void _onMapTapped(LatLng position) {
@@ -471,13 +490,9 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
 
     if (!mounted) return;
 
-    final purpose = _pickingPurpose;
-
     setState(() {
       _pickedLocation = position;
-      _isPickingLocation = false;
     });
-    _pickingPurpose = null;
 
     HapticFeedback.selectionClick();
 
@@ -486,13 +501,6 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
           'lat=${position.latitude.toStringAsFixed(6)} '
           'lng=${position.longitude.toStringAsFixed(6)}',
     );
-
-    // Reopen whichever flow started the picking mode.
-    if (purpose == _PickingPurpose.save) {
-      _showSaveParkingSheet();
-    } else {
-      _showParkingDialog();
-    }
   }
 
 
@@ -662,7 +670,8 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                       markerId: const MarkerId('picked_location'),
                       position: _pickedLocation!,
                       icon: BitmapDescriptor.defaultMarkerWithHue(
-                          BitmapDescriptor.hueGreen),
+                        BitmapDescriptor.hueAzure,
+                      ),
                     ),
                   if (mySaved != null &&
                       mySaved.latitude != null &&
@@ -708,8 +717,19 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
             /// -- GPS locating banner ---------------------------------------
             if (_isLocating) const LocatingBanner(),
 
-            /// -- Pick location mode banner ---------------------------------
-            if (_isPickingLocation) const PickingLocationBanner(),
+            /// -- Pick location mode confirmation card ---------------------
+            if (_isPickingLocation)
+              PickOnMapConfirmationCard(
+                pickedLocation: _pickedLocation,
+                onConfirm: _confirmPickedLocation,
+                onCancel: _stopPickingLocation,
+                onUseCurrentLocation: () {
+                  if (_gpsPosition != null) {
+                    setState(() => _pickedLocation = _gpsPosition);
+                    HapticFeedback.selectionClick();
+                  }
+                },
+              ),
 
             /// -- Parking fetching indicator --------------------------------
             Obx(

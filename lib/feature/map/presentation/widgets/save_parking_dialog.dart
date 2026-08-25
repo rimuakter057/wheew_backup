@@ -1,4 +1,4 @@
-﻿import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
 import 'package:platchatapp/feature/map/controller/map_controller.dart';
+import 'package:platchatapp/feature/parking/controller/parking_show_controller.dart';
 import 'package:platchatapp/feature/parking/presentation/screens/save_parking_screen.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 
@@ -124,14 +125,27 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
     );
 
     if (success) {
+      // Immediately update the purple "myParked" pin on the map so the user
+      // can see it right away (without waiting for a full re-init).
+      if (Get.isRegistered<ParkingShowController>()) {
+        Get.find<ParkingShowController>().fetchSavedParkingMe();
+      }
+
       if (mounted) {
         Navigator.of(context).pop();
         // Take the user straight to the Save Parking screen — its own
         // initState fetches a fresh history list, so the just-saved spot
-        // shows up immediately.
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const SaveParkingScreen()),
-        );
+        // shows up immediately. When the user presses back, refresh the
+        // purple pin again so it stays visible on the map.
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (_) => const SaveParkingScreen()))
+            .then((_) {
+          // Re-fetch when returning from SaveParkingScreen so the purple
+          // pin is still visible after the user presses back.
+          if (Get.isRegistered<ParkingShowController>()) {
+            Get.find<ParkingShowController>().fetchSavedParkingMe();
+          }
+        });
       }
       widget.showCustomSnackBar(
         AppStrings.parkingLocationSavedSuccessfully.tr,

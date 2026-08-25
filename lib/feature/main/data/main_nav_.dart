@@ -14,3 +14,7 @@ final ValueNotifier<int> previousMainNavIndex = ValueNotifier<int>(1);
 /// just above the bottom nav bar — triggered by ParkingMapScreen's
 /// search-mode entry.
 final RxBool showFindParkingButton = false.obs;
+
+/// When `true`, the bottom navigation bar is hidden while user is picking a
+/// location on the map.
+final RxBool isPickingOnMap = false.obs;

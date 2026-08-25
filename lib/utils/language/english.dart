@@ -1115,5 +1115,10 @@ AppStrings.group:"Group",
   AppStrings.couldNotLaunchDialer: 'Could not launch dialer.',
   AppStrings.callNow: 'Call Now',
 
+  AppStrings.confirmLocation: 'Confirm Location',
+  AppStrings.useThisLocationConfirmation: 'Do you want to use this location?',
+  AppStrings.confirmAndProceed: 'Confirm and Proceed',
+  AppStrings.tapMapToChangeLocation: 'Tap anywhere on the map to adjust pin position',
+  AppStrings.useCurrentLocation: 'Use Current Location',
 };
 

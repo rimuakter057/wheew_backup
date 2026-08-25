@@ -82,7 +82,7 @@ class ParkingRepository {
   }
 
   Future<http.Response> getHandoffById({required String handoffId}) async {
-    final uri =ApiUrl.getHandOff(handoffId:handoffId);
+    final uri = ApiUrl.getHandOff;
     print("GET_HANDOFF_BY_ID_URL: $uri (handoffId=$handoffId)");
     return await ApiClient.getData(uri: uri);
   }

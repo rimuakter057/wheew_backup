@@ -81,7 +81,7 @@ class ApiUrl {
   static const String parkingSearching = '/park-relay/parking-mode/searching';
   static const String statusIdle = '/park-relay/parking-mode/idle';
   static  String submitParkingArea(String parkingAreaId) => '/park-relay/parking-areas/$parkingAreaId/ratings';
-  static  String getHandOff( {required String handoffId}) =>  '/park-relay/handoffs/$handoffId';
+  static const String getHandOff = '/park-relay/handoffs';
   static  String acceptAndParkHandOff({required String handoffId}) =>  '/park-relay/handoffs/$handoffId/accept-and-park';
   static const String login = '/auth/signin';
   static const String chatList = '/auth/me';

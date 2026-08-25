@@ -20,6 +20,7 @@ class MapMarkerIcons {
   static BitmapDescriptor? _electricAreaPin;
   static BitmapDescriptor? _paidAreaPin;
   static BitmapDescriptor? _freeAreaPin;
+  static BitmapDescriptor? _greyPin;
 
   /// Renders [assetPath] into a bitmap of the given [size], then trims the
   /// fully-transparent margin off the result.
@@ -227,6 +228,14 @@ class MapMarkerIcons {
     if (cached != null) return cached;
     final icon = await _loadSvgPin(AssetsPath.freePin, size: size);
     _freeAreaPin = icon;
+    return icon;
+  }
+
+  static Future<BitmapDescriptor> greyPin({double size = 76}) async {
+    final cached = _greyPin;
+    if (cached != null) return cached;
+    final icon = await _loadSvgPin(AssetsPath.greyPin, size: size);
+    _greyPin = icon;
     return icon;
   }
 

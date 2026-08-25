@@ -20,6 +20,7 @@ class AssetsPath {
   static const String electricPin = '${_iconsBase}electric_pin.svg';
   static const String freePin = '${_iconsBase}free_pin.svg';
   static const String paidPin = '${_iconsBase}paid_pin.svg';
+  static const String greyPin = '${_iconsBase}grey_pin.svg';
   static const String myParked = '${_iconsBase}my_parked.svg';
   static const String addLocation = '${_iconsBase}add_location.svg';
   static const String standardIcon = '${_iconsBase}standard_icon.svg';

@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'dart:convert';
 
@@ -14,6 +14,7 @@ import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
 import 'package:platchatapp/feature/map/utils/marker_icon_loader.dart';
+import 'package:platchatapp/feature/parking/controller/add_parking_flow_controller.dart';
 import 'package:platchatapp/feature/parking/presentation/screens/save_parking_screen.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_confirmation_overlay.dart';
 import 'package:platchatapp/feature/parking/repository/parking_repository.dart';
@@ -882,7 +883,7 @@ class ParkingShowController extends GetxController {
 
       if (mapController != null) {
         await mapController!.animateCamera(
-          CameraUpdate.newLatLngZoom(LatLng(lat, lng), 17),
+          CameraUpdate.newLatLngZoom(LatLng(lat, lng), 18),
         );
       }
 
@@ -1747,6 +1748,17 @@ class ParkingShowController extends GetxController {
 
     final badge = _areaTypeBadge(area);
 
+    // Collect parkingAreaTypes from the area data for the navigation pin.
+    final rawTypes = area?['parkingAreaTypes'];
+    final areaTypes = rawTypes is List
+        ? rawTypes.map((e) => e.toString().toUpperCase()).toList()
+        : <String>[];
+    if (!isFree || (area?['parkingCost']?.toString().toUpperCase() == 'PAID')) {
+      if (!areaTypes.contains('PAID')) areaTypes.add('PAID');
+    } else {
+      if (!areaTypes.contains('FREE')) areaTypes.add('FREE');
+    }
+
     _showSpotDetailsCardSheet(
       title: name.isNotEmpty ? name : 'Handoff Spot',
       subtitle: description.isNotEmpty
@@ -1764,6 +1776,8 @@ class ParkingShowController extends GetxController {
       isFree: isFree,
       destination: (lat != null && lng != null) ? LatLng(lat, lng) : null,
       distanceMeters: _toDouble(handoff['distanceMeters']),
+      parkingAreaTypes: areaTypes,
+      isHandoff: true,
       // Save (accept-and-park) is only possible while actively searching.
       onSavePark: (status.value == 'SEARCHING' && handoffId != null)
           ? () => _acceptAndParkHandoff(handoffId)
@@ -1864,6 +1878,17 @@ class ParkingShowController extends GetxController {
 
     final badge = _areaTypeBadge(area);
 
+    // Collect parkingAreaTypes for the navigation pin.
+    final rawAreaTypes = area['parkingAreaTypes'];
+    final areaTypesList = rawAreaTypes is List
+        ? rawAreaTypes.map((e) => e.toString().toUpperCase()).toList()
+        : <String>[];
+    if (!isFree || (area['parkingCost']?.toString().toUpperCase() == 'PAID')) {
+      if (!areaTypesList.contains('PAID')) areaTypesList.add('PAID');
+    } else {
+      if (!areaTypesList.contains('FREE')) areaTypesList.add('FREE');
+    }
+
     _showSpotDetailsCardSheet(
       title: name.isNotEmpty ? name : 'Parking Area',
       subtitle: description.isNotEmpty ? description : 'Parking area',
@@ -1879,6 +1904,8 @@ class ParkingShowController extends GetxController {
       isFree: isFree,
       destination: (lat != null && lng != null) ? LatLng(lat, lng) : null,
       distanceMeters: _toDouble(area['distanceMeters']),
+      parkingAreaTypes: areaTypesList,
+      isHandoff: false,
       // Always shown when the area has a location — no longer hidden while
       // already PARKED, matching Find/Exit Parking always being visible too.
       onSavePark: (lat != null && lng != null)
@@ -1939,6 +1966,17 @@ class ParkingShowController extends GetxController {
 
     final badge = _areaTypeBadge(area);
 
+    // Collect parkingAreaTypes for the navigation pin (from the area sub-object).
+    final rawMyTypes = area?['parkingAreaTypes'];
+    final myAreaTypes = rawMyTypes is List
+        ? rawMyTypes.map((e) => e.toString().toUpperCase()).toList()
+        : <String>[];
+    if (!isFree || (parkingType == 'PAID') || (area?['parkingCost']?.toString().toUpperCase() == 'PAID')) {
+      if (!myAreaTypes.contains('PAID')) myAreaTypes.add('PAID');
+    } else {
+      if (!myAreaTypes.contains('FREE')) myAreaTypes.add('FREE');
+    }
+
     _showSpotDetailsCardSheet(
       title: name,
       subtitle: description,
@@ -1954,6 +1992,8 @@ class ParkingShowController extends GetxController {
       isFree: isFree,
       destination: loc,
       distanceMeters: _toDouble(data['distanceMeters']),
+      parkingAreaTypes: myAreaTypes,
+      isHandoff: false,
       // Already parked here — no Save action, just details + Navigate.
       onSavePark: null,
     );
@@ -2254,7 +2294,17 @@ class ParkingShowController extends GetxController {
     LatLng? destination,
     VoidCallback? onSavePark,
     double? distanceMeters,
+    List<String> parkingAreaTypes = const [],
+    bool isHandoff = false,
   }) {
+    if (Get.isRegistered<AddParkingFlowController>() &&
+        Get.find<AddParkingFlowController>().isPickingAddParkingLocation.value) {
+      if (destination != null) {
+        Get.find<AddParkingFlowController>().onMapTappedForAddParking(destination);
+      }
+      return;
+    }
+
     activeSpotDetailsCard.value = SpotDetailsCardData(
       title: title,
       subtitle: subtitle,
@@ -2271,6 +2321,8 @@ class ParkingShowController extends GetxController {
       destination: destination,
       onSavePark: onSavePark,
       distanceMeters: distanceMeters,
+      parkingAreaTypes: parkingAreaTypes,
+      isHandoff: isHandoff,
     );
   }
 
@@ -2896,6 +2948,16 @@ class SpotDetailsCardData {
   /// instead of the Directions API's own (possibly ~0 in dev/mock GPS) value.
   final double? distanceMeters;
 
+  /// Parking area types (DISABLED_FACILITY / ELECTRIC_CHARGING / PAID / FREE)
+  /// — forwarded to InAppNavigationScreen so the destination pin matches the
+  /// type shown on the info card.
+  final List<String> parkingAreaTypes;
+
+  /// True when this card was opened from a handoff (blinking red pin in
+  /// SEARCHING mode) — the navigation destination pin shows a red blinking
+  /// circle in that case.
+  final bool isHandoff;
+
   SpotDetailsCardData({
     required this.title,
     required this.subtitle,
@@ -2912,6 +2974,8 @@ class SpotDetailsCardData {
     this.destination,
     this.onSavePark,
     this.distanceMeters,
+    this.parkingAreaTypes = const [],
+    this.isHandoff = false,
   });
 }
 

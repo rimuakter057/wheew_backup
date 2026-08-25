@@ -1145,6 +1145,10 @@ final Map<String, String> italian = {
   AppStrings.couldNotLaunchDialer: 'Impossibile avviare il dialer.',
   AppStrings.callNow: 'Chiama ora',
 
-
+  AppStrings.confirmLocation: 'Conferma posizione',
+  AppStrings.useThisLocationConfirmation: 'Vuoi utilizzare questa posizione?',
+  AppStrings.confirmAndProceed: 'Conferma e procedi',
+  AppStrings.tapMapToChangeLocation: 'Tocca sulla mappa per spostare il pin',
+  AppStrings.useCurrentLocation: 'Usa la posizione attuale',
 };
 

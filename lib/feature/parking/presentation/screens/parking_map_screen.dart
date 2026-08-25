@@ -7,6 +7,7 @@ import 'package:platchatapp/core/router/routes.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_initial_shimmer.dart';
 import 'package:platchatapp/feature/map/utils/map_debug.dart';
+import 'package:platchatapp/feature/map/utils/marker_icon_loader.dart';
 import 'package:platchatapp/feature/parking/controller/add_parking_flow_controller.dart';
 import 'package:platchatapp/feature/parking/controller/parking_show_controller.dart';
 import 'package:platchatapp/feature/parking/presentation/screens/save_parking_screen.dart';
@@ -16,6 +17,7 @@ import 'package:platchatapp/feature/parking/presentation/widgets/parking_map_bot
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_map_left_action_buttons.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_map_loading_banner.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/wavy_gradient_border_painter.dart';
+import 'package:platchatapp/feature/parking/presentation/widgets/pick_on_map_confirmation_card.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/map_side_controls.dart';
 import 'package:platchatapp/share/widgets/map_top_bar.dart';
@@ -137,6 +139,18 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
                   // AddParkingFlowController --
                   Obx(() {
                     final currentMarkers = parkingShowCtrl.markers.toSet();
+                    final pickedLoc = addParkingFlowCtrl.pickedAddParkingLocation.value;
+                    if (pickedLoc != null) {
+                      currentMarkers.add(
+                        Marker(
+                          markerId: const MarkerId('picked_add_parking_location'),
+                          position: pickedLoc,
+                          icon: BitmapDescriptor.defaultMarkerWithHue(
+                            BitmapDescriptor.hueAzure,
+                          ),
+                        ),
+                      );
+                    }
                     final currentPolygons = parkingShowCtrl.polygons.toSet();
                     final currentCircles = parkingShowCtrl.circles.toSet();
                     final currentPolylines = parkingShowCtrl.polylines.toSet();
@@ -209,18 +223,42 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
 
 
                   // -- Bottom row: Find Parking (or Stop Searching) + Exit
-                  // Parking, always shown together --
-                  ParkingMapBottomActions(
-                    isSearching: isSearching,
-                    isTransitioningSearch: isTransitioningSearch,
-                    onFindParkingTap: isSearching
-                        ? parkingShowCtrl.stopSearching
-                        : parkingShowCtrl.onLeavingPopupNo,
-                        onExitParkingTap: parkingShowCtrl.showExitParkingConfirmation,
-                  ),
+                  // Parking, always shown together (hidden when picking location) --
+                  Obx(() {
+                    if (addParkingFlowCtrl.isPickingAddParkingLocation.value) {
+                      return const SizedBox.shrink();
+                    }
+                    return ParkingMapBottomActions(
+                      isSearching: isSearching,
+                      isTransitioningSearch: isTransitioningSearch,
+                      onFindParkingTap: isSearching
+                          ? parkingShowCtrl.stopSearching
+                          : parkingShowCtrl.onLeavingPopupNo,
+                      onExitParkingTap:
+                          parkingShowCtrl.showExitParkingConfirmation,
+                    );
+                  }),
+
+                  // -- Pick-on-map confirmation card overlay --
+                  Obx(() {
+                    if (!addParkingFlowCtrl.isPickingAddParkingLocation.value) {
+                      return const SizedBox.shrink();
+                    }
+                    return PickOnMapConfirmationCard(
+                      pickedLocation:
+                          addParkingFlowCtrl.pickedAddParkingLocation.value,
+                      onConfirm: addParkingFlowCtrl.confirmPickedLocation,
+                      onCancel: addParkingFlowCtrl.cancelPicking,
+                      onUseCurrentLocation:
+                          addParkingFlowCtrl.useCurrentLocation,
+                    );
+                  }),
 
                   /// -- Active spot details card overlay (floating above bottom nav) --
                   Obx(() {
+                    if (addParkingFlowCtrl.isPickingAddParkingLocation.value) {
+                      return const SizedBox.shrink();
+                    }
                     final cardData = parkingShowCtrl.activeSpotDetailsCard.value;
                     if (cardData == null) return const SizedBox.shrink();
 
@@ -261,6 +299,8 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
                                     'destination': dest,
                                     if (knownDistanceMeters != null)
                                       'knownDistanceMeters': knownDistanceMeters,
+                                    'parkingAreaTypes': cardData.parkingAreaTypes,
+                                    'isHandoff': cardData.isHandoff,
                                   },
                                 );
                               },
@@ -288,12 +328,17 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
             }),
 
             /// -- Left-side action buttons: Add Location / Save Parking ----
-            ParkingMapLeftActionButtons(
-              onAddParkingTap: addParkingFlowCtrl.showAddParkingOptions,
-              onSaveParkingTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SaveParkingScreen()),
-              ),
-            ),
+            Obx(() {
+              if (addParkingFlowCtrl.isPickingAddParkingLocation.value) {
+                return const SizedBox.shrink();
+              }
+              return ParkingMapLeftActionButtons(
+                onAddParkingTap: addParkingFlowCtrl.showAddParkingOptions,
+                onSaveParkingTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SaveParkingScreen()),
+                ),
+              );
+            }),
 
 
           ],

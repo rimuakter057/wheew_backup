@@ -318,12 +318,33 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
       final double? knownDistanceMeters = rawDistance is num
           ? rawDistance.toDouble()
           : double.tryParse('$rawDistance');
+
+      final parkingType = location['parkingType']?.toString().toUpperCase() ?? '';
+      final parkingCost = (area?['parkingCost'] ?? area?['parking_cost'])?.toString().toUpperCase() ?? '';
+      final isPaid = parkingType == 'PAID' || parkingCost == 'PAID';
+
+      final rawTypes = area?['parkingAreaTypes'] ?? area?['types'] ?? location['parkingAreaTypes'];
+      final List<String> types = rawTypes is List
+          ? rawTypes.map((e) => e.toString().toUpperCase()).toList()
+          : <String>[];
+
+      if (isPaid) {
+        if (!types.contains('PAID')) types.add('PAID');
+      } else {
+        if (!types.contains('FREE')) types.add('FREE');
+      }
+
+      final isHandoff = location['isHandoff'] == true ||
+          location['type']?.toString().toUpperCase() == 'HANDOFF';
+
       context.pushNamed(
         RouteName.inAppNavigation,
         extra: {
           'destination': LatLng(destLat, destLng),
           'destinationLabel': label,
           if (knownDistanceMeters != null) 'knownDistanceMeters': knownDistanceMeters,
+          'parkingAreaTypes': types,
+          'isHandoff': isHandoff,
         },
       );
     } else {

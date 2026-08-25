@@ -10,6 +10,7 @@ import 'package:platchatapp/feature/parking/controller/parking_show_controller.d
 import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/bottom_sheet_aware/tracked_bottom_sheet.dart';
+import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:platchatapp/utils/toast_message/toast_message.dart';
@@ -25,8 +26,9 @@ enum AddParkingPurpose { report, save }
 class AddParkingFlowController extends GetxController {
   late final ParkingReportController _parkingReportCtrl;
 
+  final Rxn<LatLng> pickedAddParkingLocation = Rxn<LatLng>();
+  final RxBool isPickingAddParkingLocation = false.obs;
   LatLng? _pickedAddParkingLocation;
-  bool _isPickingAddParkingLocation = false;
   AddParkingPurpose? _addParkingPickingPurpose;
 
   BuildContext? get _dialogContext =>
@@ -105,6 +107,7 @@ class AddParkingFlowController extends GetxController {
                   // leftover picking-mode) from a previous, already-
                   // dismissed session of this sheet.
                   _pickedAddParkingLocation = null;
+                  pickedAddParkingLocation.value = null;
                   _stopPickingAddParkingLocation();
                   _showSaveParkingSheet();
                 },
@@ -119,6 +122,7 @@ class AddParkingFlowController extends GetxController {
   void _toggleAddParkingPin() {
     HapticFeedback.mediumImpact();
     _pickedAddParkingLocation = null;
+    pickedAddParkingLocation.value = null;
     _stopPickingAddParkingLocation();
     _showParkingReportDialog();
   }
@@ -182,9 +186,10 @@ class AddParkingFlowController extends GetxController {
           final resultCtx = _dialogContext;
           if (success) {
             if (resultCtx != null) {
-              await ParkingAddedSuccessDialog.show(resultCtx);
+              await ParkingAddedSuccessDialog.show(ctx);
             }
             _pickedAddParkingLocation = null;
+            pickedAddParkingLocation.value = null;
           } else {
             showCustomSnackBar(
               _parkingReportCtrl.submitMessage.value.isNotEmpty
@@ -200,6 +205,7 @@ class AddParkingFlowController extends GetxController {
       // location or dropping the pin — same cleanup as the old Cancel button.
       if (!handled) {
         _pickedAddParkingLocation = null;
+        pickedAddParkingLocation.value = null;
         _stopPickingAddParkingLocation();
       }
     });
@@ -231,6 +237,7 @@ class AddParkingFlowController extends GetxController {
           onSaveSuccess: (location) {
             handled = true;
             _pickedAddParkingLocation = null;
+            pickedAddParkingLocation.value = null;
           },
           showCustomSnackBar: showCustomSnackBar,
         );
@@ -240,45 +247,71 @@ class AddParkingFlowController extends GetxController {
       // saving — next fresh open must default back to current location.
       if (!handled) {
         _pickedAddParkingLocation = null;
+        pickedAddParkingLocation.value = null;
         _stopPickingAddParkingLocation();
       }
     });
   }
 
   void _startPickingAddParkingLocation({required AddParkingPurpose purpose}) {
+    if (Get.isRegistered<ParkingShowController>()) {
+      Get.find<ParkingShowController>().clearSpotDetailsCard();
+    }
     _addParkingPickingPurpose = purpose;
-    _isPickingAddParkingLocation = true;
-
-    showCustomSnackBar(
-      AppStrings.tapMapToSelectLocation.tr,
-      isError: false,
-    );
+    isPickingAddParkingLocation.value = true;
+    isPickingOnMap.value = true;
+    final gps = Get.find<ParkingShowController>().gpsPosition.value;
+    if (pickedAddParkingLocation.value == null && gps != null) {
+      pickedAddParkingLocation.value = gps;
+      _pickedAddParkingLocation = gps;
+    }
   }
 
   void _stopPickingAddParkingLocation() {
-    _isPickingAddParkingLocation = false;
+    isPickingAddParkingLocation.value = false;
+    isPickingOnMap.value = false;
     _addParkingPickingPurpose = null;
   }
 
-  void onMapTappedForAddParking(LatLng position) {
-    if (!_isPickingAddParkingLocation) {
-      Get.find<ParkingShowController>().clearSpotDetailsCard();
-      return;
+  void cancelPicking() {
+    isPickingAddParkingLocation.value = false;
+    isPickingOnMap.value = false;
+    _addParkingPickingPurpose = null;
+    pickedAddParkingLocation.value = null;
+    _pickedAddParkingLocation = null;
+  }
+
+  void useCurrentLocation() {
+    final gps = Get.find<ParkingShowController>().gpsPosition.value;
+    if (gps != null) {
+      pickedAddParkingLocation.value = gps;
+      _pickedAddParkingLocation = gps;
+      HapticFeedback.selectionClick();
     }
+  }
 
+  void confirmPickedLocation() {
     final purpose = _addParkingPickingPurpose;
-
-    _pickedAddParkingLocation = position;
-    _isPickingAddParkingLocation = false;
+    isPickingAddParkingLocation.value = false;
+    isPickingOnMap.value = false;
     _addParkingPickingPurpose = null;
 
-    HapticFeedback.selectionClick();
-
-    // Reopen whichever flow started the picking mode.
     if (purpose == AddParkingPurpose.save) {
       _showSaveParkingSheet();
     } else {
       _showParkingReportDialog();
     }
+  }
+
+  void onMapTappedForAddParking(LatLng position) {
+    if (!isPickingAddParkingLocation.value) {
+      Get.find<ParkingShowController>().clearSpotDetailsCard();
+      return;
+    }
+
+    _pickedAddParkingLocation = position;
+    pickedAddParkingLocation.value = position;
+
+    HapticFeedback.selectionClick();
   }
 }
