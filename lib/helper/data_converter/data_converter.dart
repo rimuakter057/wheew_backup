@@ -1,4 +1,6 @@
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import '../../utils/language/app_string.dart';
 
 // Suppose createdAt language looks like: "2026-02-08T14:30:00.000Z"
 String formatTime(String createdAt) {
@@ -130,4 +132,45 @@ class DateConverter {
 
   /// Returns day of week → “Monday”, “Tuesday”, etc.
   static String dayOfWeek(DateTime date) => DateFormat('EEEE').format(date);
+
+  /// Formats date header for WhatsApp-style chat day divider
+  static String formatChatDateHeader(String? dateString) {
+    if (dateString == null || dateString.isEmpty) return '';
+    try {
+      final dt = DateTime.tryParse(dateString)?.toLocal();
+      if (dt == null) return '';
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final msgDate = DateTime(dt.year, dt.month, dt.day);
+      final diffDays = today.difference(msgDate).inDays;
+
+      if (diffDays == 0) {
+        return AppStrings.today.tr;
+      } else if (diffDays == 1) {
+        return AppStrings.yesterday.tr;
+      } else if (diffDays > 1 && diffDays < 7) {
+        return DateFormat('EEEE', Get.locale?.languageCode).format(dt);
+      } else if (dt.year == now.year) {
+        return DateFormat('d MMMM', Get.locale?.languageCode).format(dt);
+      } else {
+        return DateFormat('d MMMM yyyy', Get.locale?.languageCode).format(dt);
+      }
+    } catch (_) {
+      return '';
+    }
+  }
+
+  /// Checks if two date strings belong to different calendar days
+  static bool isDifferentDay(String? dateStr1, String? dateStr2) {
+    if (dateStr1 == null || dateStr1.isEmpty) return true;
+    if (dateStr2 == null || dateStr2.isEmpty) return true;
+    try {
+      final d1 = DateTime.tryParse(dateStr1)?.toLocal();
+      final d2 = DateTime.tryParse(dateStr2)?.toLocal();
+      if (d1 == null || d2 == null) return true;
+      return d1.year != d2.year || d1.month != d2.month || d1.day != d2.day;
+    } catch (_) {
+      return true;
+    }
+  }
 }

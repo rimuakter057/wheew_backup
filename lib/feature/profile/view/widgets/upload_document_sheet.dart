@@ -1,4 +1,4 @@
-﻿import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 // // import 'package:flutter/material.dart';
 // // import 'package:flutter/services.dart';
 // // import 'package:get/get.dart';
@@ -1450,16 +1450,16 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
               onTap: () => Navigator.pop(ctx, 0),
             ),
             ListTile(
-
               leading: const Icon(Icons.photo_library_outlined, color: Color(0xFF2563EB)),
               title: Text(AppStrings.chooseFromGallery.tr),
               onTap: () => Navigator.pop(ctx, 1),
             ),
-            ListTile(
-              leading: const Icon(Icons.insert_drive_file_outlined, color: Color(0xFF2563EB)),
-              title: Text(AppStrings.browseFiles.tr),
-              onTap: () => Navigator.pop(ctx, 2),
-            ),
+            if (!widget.isOwner)
+              ListTile(
+                leading: const Icon(Icons.insert_drive_file_outlined, color: Color(0xFF2563EB)),
+                title: Text(AppStrings.browseFiles.tr),
+                onTap: () => Navigator.pop(ctx, 2),
+              ),
             SizedBox(height: ResponsiveHelper.spacing(8)),
           ],
         ),
@@ -1529,9 +1529,12 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
   }
 
   Future<void> _pickFromFiles() async {
+    final allowedExt = widget.isOwner
+        ? ['jpg', 'jpeg', 'png', 'webp', 'heic']
+        : ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'];
     final result = await FilePicker.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'],
+      allowedExtensions: allowedExt,
       allowMultiple: false,
     );
     if (result != null && result.files.isNotEmpty) {
@@ -1648,6 +1651,32 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
       );
       debugPrint('🔴 [SUBMIT] CustomSnackbar.error() call finished (check if it appeared)');
       return;
+    }
+
+    if (widget.isOwner) {
+      if (_selectedFile == null || _selectedFile!.path == null) {
+        if (!_isEdit || (widget.existingDoc?.resolvedDocumentUrl.isEmpty ?? true)) {
+          CustomSnackbar.error(
+            context: context,
+            message: _isEdit
+                ? AppStrings.pleaseSelectNewFile.tr
+                : AppStrings.pleaseSelectFile.tr,
+          );
+          return;
+        }
+      }
+
+      if (_selectedFile != null && _selectedFile!.path != null) {
+        final ext = _selectedFile!.path!.split('.').last.toLowerCase();
+        const validImageExtensions = ['jpg', 'jpeg', 'png', 'webp', 'heic'];
+        if (!validImageExtensions.contains(ext)) {
+          CustomSnackbar.error(
+            context: context,
+            message: 'Please select a valid image file (JPG, PNG, WEBP)',
+          );
+          return;
+        }
+      }
     }
 
     debugPrint('🟢 [SUBMIT] Validation passed, calling controller...');
@@ -1833,7 +1862,7 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
 
             SizedBox(height: ResponsiveHelper.spacing(20)),
 
-            // ✅ FIX: isOwner হলে শুধু Unique Number field hide হবে
+            // Unique Number: Only for non-owner documents
             if (!widget.isOwner) ...[
               _label(AppStrings.uniqueNumber.tr),
               SizedBox(height: ResponsiveHelper.spacing(8)),
@@ -1841,33 +1870,12 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
                 controller: _uniqueNumberCtrl,
                 hint: '123456789',
                 keyboardType: TextInputType.text,
-                // Backend rejects unique_id on PATCH ("property unique_id
-                // should not exist") — it can only be set once at
-                // creation, so once a document exists this is read-only
-                // rather than silently ignoring whatever the user types.
                 enabled: !_isEdit,
               ),
               SizedBox(height: ResponsiveHelper.spacing(16)),
             ],
 
-            // ✅ FIX: Expire Date এখন isOwner true/false — দুই ক্ষেত্রেই দেখাবে
-            // _label(AppStrings.expireDate.tr),
-            // SizedBox(height: ResponsiveHelper.spacing(8)),
-            // GestureDetector(
-            //   onTap: _selectDate,
-            //   child: AbsorbPointer(
-            //     child: _textField(
-            //       controller: _expireDateCtrl,
-            //       hint: AppStrings.ddMmYyyy.tr,
-            //       suffixIcon: Icon(
-            //         Icons.calendar_today_outlined,
-            //         size: ResponsiveHelper.iconSize(18),
-            //         color: const Color(0xFF9CA3AF),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-
+            // Expire Date: Only for non-owner documents
             if (!widget.isOwner) ...[
               _label(AppStrings.expireDate.tr),
               SizedBox(height: ResponsiveHelper.spacing(8)),
@@ -1888,41 +1896,39 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
               SizedBox(height: ResponsiveHelper.spacing(16)),
             ],
 
-          //  SizedBox(height: ResponsiveHelper.spacing(16)),
+            // Image Upload Box: ONLY for ownership document (VEHICLE_OWNERSHIP / isOwner)
+            if (widget.isOwner) ...[
+              _label(_isEdit ? AppStrings.replaceFile.tr : AppStrings.uploadFile.tr),
+              SizedBox(height: ResponsiveHelper.spacing(8)),
+              GestureDetector(
+                onTap: _pickFile,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: double.infinity,
+                  height: ResponsiveHelper.height(130),
+                  decoration: BoxDecoration(
+                    color: _selectedFile != null
+                        ? const Color(0xFFEFF6FF)
+                        : const Color(0xFFF9FAFB),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.borderRadius(12),
+                    ),
+                    border: Border.all(
+                      color: _selectedFile != null
+                          ? const Color(0xFF2563EB)
+                          : const Color(0xFFE5E7EB),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: _selectedFile != null
+                      ? _selectedFileView()
+                      : _uploadPlaceholder(),
+                ),
+              ),
+              SizedBox(height: ResponsiveHelper.spacing(16)),
+            ],
 
-            // Upload File field removed — not shown, and (see
-            // UploadDocumentController.uploadDocument/updateDocument)
-            // filePath/fileName stay null so the file field is never sent
-            // to the backend either.
-            // _label(_isEdit ? AppStrings.replaceFile.tr : AppStrings.uploadFile.tr),
-            // SizedBox(height: ResponsiveHelper.spacing(8)),
-            // GestureDetector(
-            //   onTap: _pickFile,
-            //   child: AnimatedContainer(
-            //     duration: const Duration(milliseconds: 200),
-            //     width: double.infinity,
-            //     height: ResponsiveHelper.height(110),
-            //     decoration: BoxDecoration(
-            //       color: _selectedFile != null
-            //           ? const Color(0xFFEFF6FF)
-            //           : const Color(0xFFF9FAFB),
-            //       borderRadius: BorderRadius.circular(
-            //         ResponsiveHelper.borderRadius(12),
-            //       ),
-            //       border: Border.all(
-            //         color: _selectedFile != null
-            //             ? const Color(0xFF2563EB)
-            //             : const Color(0xFFE5E7EB),
-            //         width: 1.5,
-            //       ),
-            //     ),
-            //     child: _selectedFile != null
-            //         ? _selectedFileView()
-            //         : _uploadPlaceholder(),
-            //   ),
-            // ),
-
-            SizedBox(height: ResponsiveHelper.spacing(28)),
+            SizedBox(height: ResponsiveHelper.spacing(20)),
 
             Obx(() => SizedBox(
               width: double.infinity,
@@ -2027,84 +2033,116 @@ class _UploadDocumentSheetState extends State<UploadDocumentSheet> {
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
       Icon(
-        Icons.upload_outlined,
-        size: ResponsiveHelper.iconSize(32),
-        color: const Color(0xFF9CA3AF),
+        Icons.add_photo_alternate_outlined,
+        size: ResponsiveHelper.iconSize(34),
+        color: const Color(0xFF2563EB),
       ),
       SizedBox(height: ResponsiveHelper.spacing(6)),
       Text(
         AppStrings.tapToSelectFile.tr,
         style: TextStyle(
           fontSize: ResponsiveHelper.fontSize(13),
-          color: const Color(0xFF9CA3AF),
+          fontWeight: FontWeight.w500,
+          color: const Color(0xFF374151),
         ),
       ),
       SizedBox(height: ResponsiveHelper.spacing(2)),
       Text(
-        AppStrings.pdfJpgPngDocSupported.tr,
+        'JPG, PNG, JPEG, WEBP (Image only)',
         style: TextStyle(
           fontSize: ResponsiveHelper.fontSize(11),
-          color: const Color(0xFFD1D5DB),
+          color: const Color(0xFF9CA3AF),
         ),
       ),
     ],
   );
 
-  Widget _selectedFileView() => Padding(
-    padding:
-    EdgeInsets.symmetric(horizontal: ResponsiveHelper.padding(12)),
-    child: Row(
-      children: [
-        Container(
-          padding: EdgeInsets.all(ResponsiveHelper.padding(10)),
-          decoration: BoxDecoration(
-            color: const Color(0xFFDBEAFE),
+  Widget _selectedFileView() {
+    final path = _selectedFile?.path;
+    final isImage = path != null &&
+        (path.toLowerCase().endsWith('.jpg') ||
+            path.toLowerCase().endsWith('.jpeg') ||
+            path.toLowerCase().endsWith('.png') ||
+            path.toLowerCase().endsWith('.webp') ||
+            path.toLowerCase().endsWith('.heic'));
+
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: ResponsiveHelper.padding(12),
+        vertical: ResponsiveHelper.padding(8),
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
             borderRadius: BorderRadius.circular(
               ResponsiveHelper.borderRadius(8),
             ),
-          ),
-          child: Icon(
-            Icons.insert_drive_file_outlined,
-            color: const Color(0xFF2563EB),
-            size: ResponsiveHelper.iconSize(24),
-          ),
-        ),
-        SizedBox(width: ResponsiveHelper.spacing(12)),
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                _selectedFile!.name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: ResponsiveHelper.fontSize(13),
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF1D4ED8),
+            child: isImage
+                ? Image.file(
+              File(path),
+              width: ResponsiveHelper.width(60),
+              height: ResponsiveHelper.height(60),
+              fit: BoxFit.cover,
+            )
+                : Container(
+              padding: EdgeInsets.all(ResponsiveHelper.padding(10)),
+              decoration: BoxDecoration(
+                color: const Color(0xFFDBEAFE),
+                borderRadius: BorderRadius.circular(
+                  ResponsiveHelper.borderRadius(8),
                 ),
               ),
-              SizedBox(height: ResponsiveHelper.spacing(4)),
-              Text(
-                '${(_selectedFile!.size / 1024).toStringAsFixed(1)} KB',
-                style: TextStyle(
-                  fontSize: ResponsiveHelper.fontSize(12),
-                  color: const Color(0xFF6B7280),
-                ),
+              child: Icon(
+                Icons.image_outlined,
+                color: const Color(0xFF2563EB),
+                size: ResponsiveHelper.iconSize(24),
               ),
-            ],
+            ),
           ),
-        ),
-        GestureDetector(
-          onTap: () => setState(() => _selectedFile = null),
-          child: Icon(
-            Icons.close,
-            size: ResponsiveHelper.iconSize(18),
-            color: const Color(0xFF6B7280),
+          SizedBox(width: ResponsiveHelper.spacing(12)),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _selectedFile!.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: ResponsiveHelper.fontSize(13),
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF1D4ED8),
+                  ),
+                ),
+                SizedBox(height: ResponsiveHelper.spacing(4)),
+                Text(
+                  '${(_selectedFile!.size / 1024).toStringAsFixed(1)} KB',
+                  style: TextStyle(
+                    fontSize: ResponsiveHelper.fontSize(12),
+                    color: const Color(0xFF6B7280),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
-    ),
-  );
+          GestureDetector(
+            onTap: () => setState(() => _selectedFile = null),
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(
+                color: Color(0xFFFEE2E2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.close,
+                size: ResponsiveHelper.iconSize(16),
+                color: const Color(0xFFEF4444),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

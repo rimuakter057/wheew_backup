@@ -1,4 +1,4 @@
-﻿// import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+// import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
@@ -697,6 +697,7 @@ import 'package:platchatapp/feature/chat/view/group/presentation/widgets/group_p
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 
+import 'package:platchatapp/feature/chat/view/widgets/chat_date_divider.dart';
 import '../../../../../../helper/data_converter/data_converter.dart';
 
 class GroupMessageScreen extends StatefulWidget {
@@ -851,25 +852,44 @@ class _GroupMessageScreenState extends State<GroupMessageScreen> {
                       final msg = controller.groupMessageList[msgIndex];
                       final bool isMine = msg.isMine == true;
 
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          bottom: ResponsiveHelper.height(8),
-                        ),
-                        child: GestureDetector(
-                          onLongPress: () {
-                            if (isMine && msg.id != null) {
-                              _showDeleteMessageDialog(context, msg.id!);
-                            }
-                          },
-                          child: GroupMessageBubble(
-                            msg: msg,
-                            isMine: isMine,
-                            senderName: msg.sender?.nickName ?? '',
-                            senderAvatar: msg.sender?.avatar ?? '',
-                            text: msg.message ?? '',
-                            time: formatTime(msg.createdAt ?? ''),
+                      final bool isFirstMessageOfDay =
+                          msgIndex == controller.groupMessageList.length - 1 ||
+                              DateConverter.isDifferentDay(
+                                msg.createdAt,
+                                controller.groupMessageList[msgIndex + 1].createdAt,
+                              );
+
+                      final String dateHeader = isFirstMessageOfDay
+                          ? DateConverter.formatChatDateHeader(msg.createdAt)
+                          : '';
+
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (isFirstMessageOfDay && dateHeader.isNotEmpty)
+                            ChatDateDivider(text: dateHeader),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              bottom: ResponsiveHelper.height(8),
+                            ),
+                            child: GestureDetector(
+                              onLongPress: () {
+                                if (isMine && msg.id != null) {
+                                  _showDeleteMessageDialog(context, msg.id!);
+                                }
+                              },
+                              child: GroupMessageBubble(
+                                msg: msg,
+                                isMine: isMine,
+                                senderName: msg.sender?.nickName ?? '',
+                                senderAvatar: msg.sender?.avatar ?? '',
+                                text: msg.message ?? '',
+                                time: formatTime(msg.createdAt ?? ''),
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       );
                     },
                   );

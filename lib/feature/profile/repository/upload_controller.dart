@@ -679,6 +679,7 @@ import 'package:platchatapp/feature/profile/model/user_document.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 
 import '../../../utils/language/app_string.dart';
+import 'package:platchatapp/feature/profile/repository/profile_controller.dart';
 
 class UploadDocumentController extends GetxController {
   // ─────────────────────────────────────────────
@@ -899,6 +900,12 @@ class UploadDocumentController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         debugPrint('✅ UPLOAD SUCCESS');
 
+        if (isOwner && Get.isRegistered<ProfileController>()) {
+          try {
+            await Get.find<ProfileController>().fetchProfileFromApi();
+          } catch (_) {}
+        }
+
         if (context.mounted) {
           debugPrint('📥 Fetching documents after upload...');
           await fetchDocuments(context: context);
@@ -1031,6 +1038,12 @@ class UploadDocumentController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         debugPrint('✅ UPDATE SUCCESS');
+
+        if (isOwner && Get.isRegistered<ProfileController>()) {
+          try {
+            await Get.find<ProfileController>().fetchProfileFromApi();
+          } catch (_) {}
+        }
 
         if (context.mounted) {
           debugPrint('📥 Fetching documents after update...');

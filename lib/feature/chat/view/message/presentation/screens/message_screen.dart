@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:get/get.dart';
@@ -12,6 +12,7 @@ import 'package:platchatapp/feature/chat/view/message/presentation/widgets/messa
 import 'package:platchatapp/feature/chat/view/message/presentation/widgets/rating_dialog.dart';
 import 'package:platchatapp/feature/chat/view/widgets/block_by_me_widget.dart';
 import 'package:platchatapp/feature/chat/view/widgets/block_me_widget.dart';
+import 'package:platchatapp/feature/chat/view/widgets/chat_date_divider.dart';
 import 'package:platchatapp/feature/chat/view/widgets/message_screen_shimmer.dart';
 import 'package:platchatapp/feature/scan/presentation/widget/profile_card.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -588,40 +589,59 @@ class _MessageScreenState extends State<MessageScreen> {
                           msg.createdAt ?? '',
                         );
 
-                        return GestureDetector(
-                          onLongPress: () {
-                            if (isMine &&
-                                msg.id != null) {
-                              _showDeleteMessageDialog(
-                                context,
-                                msg.id!,
-                              );
-                            }
-                          },
-                          child: MessageBubble(
-                            message:
-                            msg.message ?? '',
-                            isMine: isMine,
-                            type: msg.type,
-                            fileUrl: msg.fileUrl,
-                            isRead: msg.isRead,
-                            fileName: msg.fileName,
-                            fileSize: msg.fileSize,
-                            fileMimeType:
-                            msg.fileMimeType,
-                            durationSeconds:
-                            msg.durationSeconds,
-                            isDelivered:
-                            msg.isDelivered,
-                            time: formattedTime
-                                .isNotEmpty
-                                ? formattedTime
-                                : '0:00 PM',
-                            avatarUrl:
-                            widget.otherUserAvatar,
-                            isSending: msg.isSending,
-                            localFilePath: msg.localFilePath,
-                          ),
+                        final bool isFirstMessageOfDay =
+                            msgIndex == messages.length - 1 ||
+                                DateConverter.isDifferentDay(
+                                  msg.createdAt,
+                                  messages[msgIndex + 1].createdAt,
+                                );
+
+                        final String dateHeader = isFirstMessageOfDay
+                            ? DateConverter.formatChatDateHeader(msg.createdAt)
+                            : '';
+
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if (isFirstMessageOfDay && dateHeader.isNotEmpty)
+                              ChatDateDivider(text: dateHeader),
+                            GestureDetector(
+                              onLongPress: () {
+                                if (isMine &&
+                                    msg.id != null) {
+                                  _showDeleteMessageDialog(
+                                    context,
+                                    msg.id!,
+                                  );
+                                }
+                              },
+                              child: MessageBubble(
+                                message:
+                                msg.message ?? '',
+                                isMine: isMine,
+                                type: msg.type,
+                                fileUrl: msg.fileUrl,
+                                isRead: msg.isRead,
+                                fileName: msg.fileName,
+                                fileSize: msg.fileSize,
+                                fileMimeType:
+                                msg.fileMimeType,
+                                durationSeconds:
+                                msg.durationSeconds,
+                                isDelivered:
+                                msg.isDelivered,
+                                time: formattedTime
+                                    .isNotEmpty
+                                    ? formattedTime
+                                    : '0:00 PM',
+                                avatarUrl:
+                                widget.otherUserAvatar,
+                                isSending: msg.isSending,
+                                localFilePath: msg.localFilePath,
+                              ),
+                            ),
+                          ],
                         );
                       },
                     ),
