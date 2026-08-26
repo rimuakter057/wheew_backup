@@ -1151,6 +1151,13 @@ class ParkingShowController extends GetxController {
     mapOverlayVersion.value++;
   }
 
+  /// Inserts a newly-created parking area into [parkingAreaList] and immediately
+  /// re-renders the map — no network call / page refresh needed.
+  Future<void> addParkingAreaInstantly(Map<String, dynamic> area) async {
+    parkingAreaList.add(area);
+    await _buildMarkersAndPolygons();
+  }
+
   void _refreshExpiredHandoffs() async {
     if (_isRefreshing) return;
     _isRefreshing = true;

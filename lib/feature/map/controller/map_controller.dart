@@ -1,4 +1,4 @@
-﻿import 'package:platchatapp/utils/color/app_colors.dart';
+import 'package:platchatapp/utils/color/app_colors.dart';
 
 import 'dart:convert';
 import 'package:platchatapp/utils/language/app_string.dart';
@@ -108,7 +108,9 @@ class ParkingReportController extends GetxController {
   // }
 
   /// POST /park-relay/parking-areas — home tab "Add Parking" flow.
-  Future<bool> addParking({
+  /// Returns the created area's data map on success (for instant map update),
+  /// or null on failure.
+  Future<Map<String, dynamic>?> addParking({
     required double latitude,
     required double longitude,
     String? name,
@@ -156,7 +158,29 @@ class ParkingReportController extends GetxController {
         submitSuccess.value = true;
         submitMessage.value = AppStrings.mapParkingReportSubmitted.tr;
         mapDebug('parking area POST: success');
-        return true;
+
+        // Decode the response to get the created area's server data.
+        // Fall back to a locally-built map when the body is empty/non-object.
+        try {
+          final decoded = jsonDecode(response.body);
+          if (decoded is Map<String, dynamic> && decoded.isNotEmpty) {
+            return decoded;
+          }
+        } catch (_) {}
+
+        // Construct a minimal local area map so the caller can still
+        // pin the spot on the map instantly even without a server ID.
+        return {
+          'id': 'local_${DateTime.now().millisecondsSinceEpoch}',
+          'name': areaName,
+          'centerLat': latitude,
+          'centerLng': longitude,
+          'parkingCost': parkingCost.value,
+          if (fee != null) 'parkingFee': fee,
+          'parkingAreaTypes': areaTypes,
+          'totalSpots': totalSpots,
+          'isActive': true,
+        };
       } else {
         final decoded = jsonDecode(response.body);
         final rawMessage =
@@ -170,12 +194,12 @@ class ParkingReportController extends GetxController {
                 : AppStrings.somethingWentWrong.tr);
         submitMessage.value = msg;
         mapDebug('parking area POST: failed ${response.statusCode} message=$msg');
-        return false;
+        return null;
       }
     } catch (e) {
       submitMessage.value = e.toString();
       mapDebug('parking area POST: exception $e');
-      return false;
+      return null;
     } finally {
       isLoading.value = false;
     }

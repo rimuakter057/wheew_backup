@@ -247,12 +247,17 @@ class _ParkingShowScreenState extends State<ParkingShowScreen>
 
           final LatLng useLocation = _pickedAddParkingLocation ?? gps!;
 
-          final success = await _parkingReportCtrl.addParking(
+          final createdArea = await _parkingReportCtrl.addParking(
             latitude: useLocation.latitude,
             longitude: useLocation.longitude,
           );
           if (!mounted) return;
-          if (success) {
+          if (createdArea != null) {
+            // Instantly pin the new spot on the map — no refresh needed.
+            if (Get.isRegistered<ParkingShowController>()) {
+              Get.find<ParkingShowController>()
+                  .addParkingAreaInstantly(createdArea);
+            }
             await ParkingAddedSuccessDialog.show(context);
             if (!mounted) return;
             _pickedAddParkingLocation = null;

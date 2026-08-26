@@ -178,13 +178,18 @@ class AddParkingFlowController extends GetxController {
 
           final LatLng useLocation = _pickedAddParkingLocation ?? gps!;
 
-          final success = await _parkingReportCtrl.addParking(
+          final createdArea = await _parkingReportCtrl.addParking(
             latitude: useLocation.latitude,
             longitude: useLocation.longitude,
           );
 
           final resultCtx = _dialogContext;
-          if (success) {
+          if (createdArea != null) {
+            // Instantly add the new spot's pin to the map — no refresh needed.
+            if (Get.isRegistered<ParkingShowController>()) {
+              Get.find<ParkingShowController>()
+                  .addParkingAreaInstantly(createdArea);
+            }
             if (resultCtx != null) {
               await ParkingAddedSuccessDialog.show(ctx);
             }

@@ -348,12 +348,12 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
 
           final LatLng useLocation = _pickedLocation ?? _gpsPosition!;
 
-          final success = await _parkingCtrl.addParking(
+          final createdArea = await _parkingCtrl.addParking(
             latitude: useLocation.latitude,
             longitude: useLocation.longitude,
           );
           if (!mounted) return;
-          if (success) {
+          if (createdArea != null) {
             await ParkingAddedSuccessDialog.show(context);
             if (!mounted) return;
             await _parkingCtrl.fetchParkingReport(
