@@ -647,13 +647,27 @@ class ParkingShowController extends GetxController {
   // fired overlapping API calls and made the UI flicker between states.
   final RxBool isTransitioningSearch = false.obs;
 
+  /// How far the user must have actually moved before a background GPS
+  /// refresh is worth re-running the nearby-handoff search for.
+  static const double _locationRefreshThresholdMeters = 50;
+
   Future<void> onLeavingPopupNo() async {
     if (isTransitioningSearch.value) return;
     isTransitioningSearch.value = true;
     try {
       _logger.i('=== onLeavingPopupNo CLICKED ===');
       status.value = 'SEARCHING';
-      await getUserLocation();
+
+      // Don't re-fetch GPS here. initializeFlow -> checkParkingModeMe already
+      // resolved a real fix seconds ago, and asking for another high-accuracy
+      // one blocked this button for up to 8s (its timeLimit) while the user
+      // stared at a disabled control. Reuse what we have and start straight
+      // away; a background refresh below corrects it if the user has actually
+      // moved. Only a still-unresolved location is worth waiting on.
+      if (!isRealLocationLoaded.value) {
+        await getUserLocation();
+      }
+
       showLocationPulse.value = true;
       final lat = gpsPosition.value?.latitude;
       final lng = gpsPosition.value?.longitude;
@@ -666,31 +680,72 @@ class ParkingShowController extends GetxController {
       // Parking areas stay visible across every status (IDLE, SEARCHING,
       // PARKED) — not cleared or re-fetched here, so they carry over as-is.
 
-      try {
-        _logger.i(
-          '=== FIND PARKING SPOT -> API CALL ===\n'
-          'POST ${ApiUrl.baseUrl}${ApiUrl.parkingSearching}\n'
-          'body: {"latitude": $lat, "longitude": $lng}',
-        );
-        final response = await _repository.setParkingModeSearching(
-          latitude: lat,
-          longitude: lng,
-        );
-        _logger.d(
-          'setParkingModeSearching response status: ${response.statusCode}\n'
-          'body: ${response.body}',
-        );
-      } catch (e, st) {
-        _logger.e('Error setting searching mode', error: e, stackTrace: st);
-      }
+      _logger.i(
+        '=== FIND PARKING SPOT -> API CALLS (parallel) ===\n'
+        'POST ${ApiUrl.baseUrl}${ApiUrl.parkingSearching}\n'
+        'body: {"latitude": $lat, "longitude": $lng}',
+      );
 
-      // Only handoffs need a fresh nearby search — parking areas are not
-      // re-fetched here.
-      await fetchNearbyHandoffsOnly(lat, lng);
+      // These two don't depend on each other — running them together saves a
+      // whole round trip off the disabled-button window.
+      await Future.wait([
+        _setParkingModeSearchingSafely(lat, lng),
+        fetchNearbyHandoffsOnly(lat, lng),
+      ]);
+
       _listenHandoffNearby();
     } finally {
       isTransitioningSearch.value = false;
     }
+
+    // Button is already usable again by this point — a fresh fix now only
+    // matters if the user turns out to be somewhere meaningfully different.
+    _refreshLocationInBackground();
+  }
+
+  Future<void> _setParkingModeSearchingSafely(double lat, double lng) async {
+    try {
+      final response = await _repository.setParkingModeSearching(
+        latitude: lat,
+        longitude: lng,
+      );
+      _logger.d(
+        'setParkingModeSearching response status: ${response.statusCode}\n'
+        'body: ${response.body}',
+      );
+    } catch (e, st) {
+      _logger.e('Error setting searching mode', error: e, stackTrace: st);
+    }
+  }
+
+  /// Refreshes GPS without blocking the UI, re-running the nearby-handoff
+  /// search only when the new fix is far enough from the one we just used.
+  Future<void> _refreshLocationInBackground() async {
+    final before = gpsPosition.value;
+    try {
+      await getUserLocation();
+    } catch (e) {
+      _logger.w('Background location refresh failed: $e');
+      return;
+    }
+
+    final after = gpsPosition.value;
+    if (before == null || after == null) return;
+    if (status.value != 'SEARCHING') return;
+
+    final movedMeters = Geolocator.distanceBetween(
+      before.latitude,
+      before.longitude,
+      after.latitude,
+      after.longitude,
+    );
+    if (movedMeters < _locationRefreshThresholdMeters) return;
+
+    _logger.i(
+      'Background location refresh moved ${movedMeters.toStringAsFixed(0)}m '
+      '— re-running nearby handoffs',
+    );
+    await fetchNearbyHandoffsOnly(after.latitude, after.longitude);
   }
 
   // Real-time nearby-handoff updates — only listened to while actively
@@ -770,38 +825,45 @@ class ParkingShowController extends GetxController {
     if (isTransitioningSearch.value) return;
     isTransitioningSearch.value = true;
     try {
-    _logger.i('=== stopSearching CLICKED ===');
-    _stopListeningHandoffNearby();
-    final lat = gpsPosition.value?.latitude;
-    final lng = gpsPosition.value?.longitude;
+      _logger.i('=== stopSearching CLICKED ===');
+      _stopListeningHandoffNearby();
 
-    try {
-      if (lat != null && lng != null) {
-        _logger.i(
-          '=== STOP SEARCHING -> API CALL ===\n'
-          'POST ${ApiUrl.baseUrl}${ApiUrl.statusIdle}\n'
-          'body: {"latitude": $lat, "longitude": $lng}',
-        );
-        final response = await _repository.setParkingModeIdle(
-          latitude: lat,
-          longitude: lng,
-        );
-        _logger.d(
-          'setParkingModeIdle (stopSearching) response status: ${response.statusCode}\n'
-          'body: ${response.body}',
-        );
-      }
-    } catch (e, st) {
-      _logger.e('Error stopping search / setting idle', error: e, stackTrace: st);
-    }
-
-    // Parking areas were never cleared, so just clear the search-specific
-    // state (handoffs etc.) and rebuild markers locally from what's
-    // already in memory — no re-fetch of parking-areas/search.
-    _resetSearchState();
-    await _buildMarkersAndPolygons();
+      // Clear locally FIRST so the screen returns to the idle view straight
+      // away — none of this needs the server's answer. Waiting on the POST
+      // before resetting is what made this button sit disabled through a
+      // whole network round trip.
+      //
+      // Parking areas were never cleared, so this only drops the
+      // search-specific state (handoffs etc.) and rebuilds from memory —
+      // no re-fetch of parking-areas/search.
+      _resetSearchState();
+      await _buildMarkersAndPolygons();
     } finally {
       isTransitioningSearch.value = false;
+    }
+
+    // Fire-and-forget: the backend just needs to know we went idle, and the
+    // UI above is already correct whether or not this succeeds.
+    final lat = gpsPosition.value?.latitude;
+    final lng = gpsPosition.value?.longitude;
+    if (lat == null || lng == null) return;
+
+    try {
+      _logger.i(
+        '=== STOP SEARCHING -> API CALL ===\n'
+        'POST ${ApiUrl.baseUrl}${ApiUrl.statusIdle}\n'
+        'body: {"latitude": $lat, "longitude": $lng}',
+      );
+      final response = await _repository.setParkingModeIdle(
+        latitude: lat,
+        longitude: lng,
+      );
+      _logger.d(
+        'setParkingModeIdle (stopSearching) response status: ${response.statusCode}\n'
+        'body: ${response.body}',
+      );
+    } catch (e, st) {
+      _logger.e('Error stopping search / setting idle', error: e, stackTrace: st);
     }
   }
 

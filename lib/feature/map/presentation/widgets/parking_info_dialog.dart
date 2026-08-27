@@ -249,6 +249,10 @@ class ParkingInfoDialog extends StatelessWidget {
                     child: _CostOption(
                       label: AppStrings.paid.tr,
                       selected: controller.parkingCost.value == 'PAID',
+                      // Disabled-facility spots are always free — toggling
+                      // that switch already forces FREE, so PAID is locked
+                      // out here to stop it being set back afterwards.
+                      disabled: controller.disabledFacility.value,
                       onTap: () => controller.parkingCost.value = 'PAID',
                     ),
                   ),
@@ -411,53 +415,67 @@ class _CostOption extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
+  /// Greys the pill out and ignores taps — used to lock PAID while
+  /// "Disabled Facility" is on, since those spots are always free.
+  final bool disabled;
+
   const _CostOption({
     required this.label,
     required this.selected,
     required this.onTap,
+    this.disabled = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          gradient: selected
-              ? AppColors.buttonGradient
-              : null,
-          color: selected ? null : const Color(0xFFF4F6FB),
-          borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(30)),
-          boxShadow: selected
-              ? [
-            BoxShadow(
-              color: AppColors.blu.withValues(
-                alpha: 0.28,
+    final Color contentColor = disabled
+        ? const Color(0xFFB6BCC7)
+        : (selected ? AppColors.white : const Color(0xFF6B7280));
+
+    return Opacity(
+      opacity: disabled ? 0.6 : 1,
+      child: GestureDetector(
+        onTap: disabled ? null : onTap,
+        child: Container(
+          padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            gradient: selected && !disabled
+                ? AppColors.buttonGradient
+                : null,
+            color: selected && !disabled ? null : const Color(0xFFF4F6FB),
+            borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(30)),
+            boxShadow: selected && !disabled
+                ? [
+              BoxShadow(
+                color: AppColors.blu.withValues(
+                  alpha: 0.28,
+                ),
+                blurRadius: 8,
+                spreadRadius: 0,
+                offset: const Offset(0, 4),
               ),
-              blurRadius: 8,
-              spreadRadius: 0,
-              offset: const Offset(0, 4),
-            ),
-          ]
-              : null,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CustomImage(imageSrc: AssetsPath.dolar,
-            imageColor: selected ? AppColors.white : AppColors.black,
-            ),
-            SizedBox(width: ResponsiveHelper.spacing(4)),
-            Text(
-              label,
-              style: GoogleFonts.poppins(
-                fontSize: ResponsiveHelper.fontSize(14),
-                fontWeight: FontWeight.w600,
-                color: selected ? AppColors.white : const Color(0xFF6B7280),
+            ]
+                : null,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomImage(imageSrc: AssetsPath.dolar,
+              imageColor: disabled
+                  ? contentColor
+                  : (selected ? AppColors.white : AppColors.black),
               ),
-            ),
-          ],
+              SizedBox(width: ResponsiveHelper.spacing(4)),
+              Text(
+                label,
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(14),
+                  fontWeight: FontWeight.w600,
+                  color: contentColor,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
