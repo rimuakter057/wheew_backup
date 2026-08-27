@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Cleartext HTTP allowed only for these hosts (WebView + Dio). Use HTTPS in production when possible. -->
+<!-- Network security: allow HTTPS for all hosts (default Android behaviour).
+     Cleartext HTTP is only allowed for local dev servers. -->
 <network-security-config>
+    <!-- Allow HTTPS everywhere (standard Android default, stated explicitly for clarity) -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+
+    <!-- Cleartext HTTP only for local dev/backend hosts -->
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">localhost</domain>
         <domain includeSubdomains="true">127.0.0.1</domain>
@@ -10,3 +19,4 @@
         <domain includeSubdomains="true">54.198.239.101</domain>
     </domain-config>
 </network-security-config>
+

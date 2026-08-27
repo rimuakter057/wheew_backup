@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:platchatapp/core/config/app_config.dart';
 import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/helper/custom_image/custom_image.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -33,6 +35,7 @@ import 'package:platchatapp/utils/toast_message/toast_message.dart';
 
 import '../../../../utils/color/app_colors.dart';
 import '../widgets/location_of_promt.dart';
+import '../widgets/location_search_overlay.dart';
 import '../widgets/picking-location_banner.dart';
 import '../widgets/save_parking_dialog.dart';
 import '../widgets/saved_parking_details_bottom_sheet.dart';
@@ -52,7 +55,12 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   GoogleMapController? _mapController;
-  int _selectedRadiusMeter = 250;
+  static const int _defaultRadiusMeter = 250;
+  int _selectedRadiusMeter = _defaultRadiusMeter;
+
+  /// True once the user has manually applied a radius from the filter sheet
+  /// — drives the sheet's "Clear Filter" action.
+  bool _isRadiusFilterActive = false;
   final TextEditingController _searchController = TextEditingController();
 
   LatLng _mapCenter = MapScreen.kInitialMapTarget;
@@ -67,6 +75,10 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   _PickingPurpose? _pickingPurpose;
 
   final Set<Marker> _markers = {};
+
+  /// Debounce timer for onCameraIdle — prevents repeated API calls while the
+  /// user is still dragging / zooming. Fires 600 ms after the camera settles.
+  Timer? _cameraIdleTimer;
 
   late final ParkingReportController _parkingCtrl;
 
@@ -104,6 +116,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _cameraIdleTimer?.cancel();
     _mapController?.dispose();
     _searchController.dispose();
     // Close the "Selected Report" dropdown when leaving this tab — otherwise
@@ -518,21 +531,128 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     }
   }
 
+  // ---------------------------------------------------------------------------
+  //  Camera-idle: debounced fetch for the current visible area
+  // ---------------------------------------------------------------------------
+
+  /// Called by [GoogleMap.onCameraIdle] every time the map camera finishes
+  /// moving (drag, zoom, programmatic animation).  Debounced 600 ms so
+  /// continuous gestures only trigger a single API call.
+  void _onCameraIdle() {
+    _cameraIdleTimer?.cancel();
+    _cameraIdleTimer = Timer(const Duration(milliseconds: 600), () async {
+      await _fetchParkingForVisibleBounds();
+    });
+  }
+
+  /// Reads the current visible map bounds, derives a center + radius (clamped
+  /// to 500 m – 20 000 m) and calls [fetchParkingReport].
+  Future<void> _fetchParkingForVisibleBounds() async {
+    final ctrl = _mapController;
+    if (ctrl == null || !mounted) return;
+
+    try {
+      final bounds = await ctrl.getVisibleRegion();
+
+      // Center of the visible region
+      final double centerLat =
+          (bounds.northeast.latitude + bounds.southwest.latitude) / 2;
+      final double centerLng =
+          (bounds.northeast.longitude + bounds.southwest.longitude) / 2;
+
+      // Approximate the visible radius using the Haversine formula for the
+      // distance from center to a corner of the bounding box.
+      const double earthRadius = 6371000; // metres
+      final double dLat = (bounds.northeast.latitude - bounds.southwest.latitude).abs();
+      final double dLng = (bounds.northeast.longitude - bounds.southwest.longitude).abs();
+
+      // Half-diagonal in degrees
+      final double halfDiagDeg = sqrt(dLat * dLat + dLng * dLng) / 2.0;
+      // Convert degrees to metres (1° ≈ 111 000 m at the equator)
+      final double latRad = centerLat * pi / 180;
+      final double metersPerDegLat = earthRadius * pi / 180;
+      final double metersPerDegLng = metersPerDegLat * cos(latRad);
+      final double halfDiagM = sqrt(
+        pow(halfDiagDeg * metersPerDegLat / 1.414, 2) +
+        pow(halfDiagDeg * metersPerDegLng / 1.414, 2),
+      );
+
+      // Clamp: minimum 500 m, maximum 20 000 m
+      final int radiusMeters = halfDiagM.clamp(500, 20000).toInt();
+
+      mapDebug(
+        'camera idle: center=(${centerLat.toStringAsFixed(5)},'
+        '${centerLng.toStringAsFixed(5)}) radius=${radiusMeters}m',
+      );
+
+      await _parkingCtrl.fetchParkingReport(
+        latitude: centerLat,
+        longitude: centerLng,
+        radius: radiusMeters,
+      );
+    } catch (e) {
+      mapDebug('_fetchParkingForVisibleBounds: error $e');
+    }
+  }
+
   void _showRadiusFilterSheet() {
     HapticFeedback.lightImpact();
 
     RadiusFilterSheet.show(
       context,
       initialRadiusMeter: _selectedRadiusMeter,
+      isFilterActive: _isRadiusFilterActive,
       onApply: (radiusMeter) {
         if (!mounted) return;
 
         setState(() {
           _selectedRadiusMeter = radiusMeter;
+          _isRadiusFilterActive = true;
         });
 
         _applyRadiusFilter();
       },
+      onClear: () {
+        if (!mounted) return;
+
+        setState(() {
+          _selectedRadiusMeter = _defaultRadiusMeter;
+          _isRadiusFilterActive = false;
+        });
+
+        _applyRadiusFilter();
+      },
+    );
+  }
+
+  LatLng? _searchedLocation;
+
+  // ── Location search ────────────────────────────────────────────────────────
+  Future<void> _openLocationSearch() async {
+    final result = await LocationSearchOverlay.show(
+      context,
+      apiKey: AppConfig.mapsApiKey,
+      userLocation: _gpsPosition,
+    );
+    if (result == null || !mounted) return;
+
+    final target = LatLng(result.latitude, result.longitude);
+
+    setState(() {
+      _searchedLocation = target;
+      _searchController.text = result.name;
+    });
+
+    // Animate camera to the selected place
+    await _mapController?.animateCamera(
+      CameraUpdate.newLatLngZoom(target, 16.5),
+    );
+
+    // Fetch parking around the selected location
+    await _parkingCtrl.fetchParkingReport(
+      latitude: target.latitude,
+      longitude: target.longitude,
+      radius: _selectedRadiusMeter.clamp(500, 20000),
     );
   }
 
@@ -665,6 +785,19 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                 final markers = {
                   ..._markers,
                   ...parkingMarkers,
+                  if (_searchedLocation != null)
+                    Marker(
+                      markerId: const MarkerId('searched_location_red_pin'),
+                      position: _searchedLocation!,
+                      icon: BitmapDescriptor.defaultMarkerWithHue(
+                        BitmapDescriptor.hueRed,
+                      ),
+                      infoWindow: InfoWindow(
+                        title: _searchController.text.isNotEmpty
+                            ? _searchController.text
+                            : 'Searched Location',
+                      ),
+                    ),
                   if (_pickedLocation != null)
                     Marker(
                       markerId: const MarkerId('picked_location'),
@@ -711,6 +844,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                   rotateGesturesEnabled: false,
                   tiltGesturesEnabled: false,
                   onTap: _onMapTapped,
+                  onCameraIdle: _onCameraIdle,
                 );
               }),
 
@@ -731,12 +865,8 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                 },
               ),
 
-            /// -- Parking fetching indicator --------------------------------
-            Obx(
-                  () => _parkingCtrl.isLoadingShowDetails.value
-                  ? const FetchingParkingBanner()
-                  : const SizedBox.shrink(),
-            ),
+            /// -- Parking fetching indicator (hidden — logic still runs) ----
+            const SizedBox.shrink(),
 
             /// -- Selected reported parking info card ---------------------
             Obx(() {
@@ -757,12 +887,12 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
               );
             }),
 
-            /// -- Top-bar: search pill + notification bell -----------------
-            if (_gpsPosition != null)
-              MapTopBar(
-                searchController: _searchController,
-                onSearchTap: _showRadiusFilterSheet,
-              ),
+            /// -- Top-bar: search pill + notification bell (Always static & visible) --
+            MapTopBar(
+              searchController: _searchController,
+              onSearchTap: _openLocationSearch,
+              onFilterTap: _showRadiusFilterSheet,
+            ),
 
             /// -- Side controls: map type + current location ----------------
             if (_gpsPosition != null)

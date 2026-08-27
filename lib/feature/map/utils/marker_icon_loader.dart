@@ -11,28 +11,44 @@ import 'package:platchatapp/utils/assets_path/assets_path.dart';
 class MapMarkerIcons {
   MapMarkerIcons._();
 
-  static BitmapDescriptor? _parkingPin;
-  static BitmapDescriptor? _myParkedPin;
-  static BitmapDescriptor? _blinkingPin;
-  static BitmapDescriptor? _electricChargingPin;
-  static BitmapDescriptor? _disabledFacilityPin;
-  static BitmapDescriptor? _disableAreaPin;
-  static BitmapDescriptor? _electricAreaPin;
-  static BitmapDescriptor? _paidAreaPin;
-  static BitmapDescriptor? _freeAreaPin;
-  static BitmapDescriptor? _greyPin;
+  /// On-screen size every pin is rendered at unless a caller overrides it.
+  /// The rendered bitmap is then cropped to the pin's solid body, so the
+  /// marker's tap area tracks this size instead of a fixed square canvas —
+  /// lower this to make pins (and their hit areas) smaller everywhere.
+  static const double defaultPinSize = 56;
 
-  /// Renders [assetPath] into a bitmap of the given [size], then trims the
-  /// fully-transparent margin off the result.
+  /// Cached rendered pins, keyed by asset + size.
   ///
-  /// The trim matters for tap handling, not looks: Google Maps treats a
+  /// Keying on size matters: the previous one-field-per-pin cache ignored
+  /// the `size` argument entirely, so whichever size was requested first won
+  /// and every later call got that bitmap back regardless of what it asked
+  /// for (e.g. parkingPin() at 76 poisoned the later size: 56 requests).
+  static final Map<String, BitmapDescriptor> _cache = {};
+
+  static Future<BitmapDescriptor> _cached(
+    String assetPath,
+    double size,
+    Future<BitmapDescriptor> Function() build,
+  ) async {
+    final key = '$assetPath@${size.round()}';
+    final hit = _cache[key];
+    if (hit != null) return hit;
+    final icon = await build();
+    _cache[key] = icon;
+    return icon;
+  }
+
+  /// Renders [assetPath] into a bitmap of the given [size], then crops it to
+  /// the pin's solid body (see [_opaqueAlphaThreshold]).
+  ///
+  /// The crop matters for tap handling, not looks: Google Maps treats a
   /// marker's WHOLE bitmap rectangle as its hit area, transparent pixels
   /// included. These pin SVGs are drawn on a square canvas with a lot of
-  /// empty space around the teardrop (my_parked.svg's artwork only covers
-  /// roughly x 13-55, y 14-64 of its 76x76 box), so an untrimmed bitmap gave
-  /// every pin an invisible tap zone far wider than the pin itself — taps
-  /// "near" a pin opened its details sheet. Cropping to the artwork's real
-  /// bounds keeps the drawn pin pixel-for-pixel the same size on screen
+  /// empty space plus a full-canvas drop shadow around the teardrop
+  /// (my_parked.svg's solid artwork only covers roughly x 13-55, y 14-64 of
+  /// its 76x76 box), so an uncropped bitmap gave every pin an invisible tap
+  /// zone far wider than the pin itself — taps "near" a pin opened its
+  /// details sheet. Cropping keeps the drawn pin the same size on screen
   /// while shrinking the hit area down to just the visible pin.
   static Future<BitmapDescriptor> _renderSvgPin(
     String assetPath, {
@@ -60,8 +76,20 @@ class MapMarkerIcons {
     return BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
   }
 
-  /// Crops [src] to the bounding box of its non-transparent pixels.
-  /// Returns [src] unchanged if it's fully transparent or already tight.
+  /// Alpha a pixel must reach to count as "part of the pin" when cropping.
+  ///
+  /// Deliberately high, not a near-zero "is it transparent" test. Every pin
+  /// SVG carries a full-canvas drop shadow (my_parked.svg: `<filter x="0"
+  /// y="0" width="76" height="76">` with `feGaussianBlur stdDeviation="4"`),
+  /// and that blur leaves faint non-zero alpha across almost the entire box.
+  /// A low threshold therefore trimmed practically nothing and the oversized
+  /// tap area survived. Cutting at ~25% alpha crops to the solid pin body,
+  /// discarding only the soft shadow halo.
+  static const int _opaqueAlphaThreshold = 64;
+
+  /// Crops [src] to the bounding box of its meaningfully-opaque pixels.
+  /// Returns [src] unchanged if nothing clears the threshold or it's already
+  /// tight.
   static Future<ui.Image> _trimTransparentEdges(ui.Image src) async {
     final raw = await src.toByteData(format: ui.ImageByteFormat.rawRgba);
     if (raw == null) return src;
@@ -73,8 +101,7 @@ class MapMarkerIcons {
     int minX = width, minY = height, maxX = -1, maxY = -1;
     for (var y = 0; y < height; y++) {
       for (var x = 0; x < width; x++) {
-        // Ignore near-invisible antialiasing fringe so the crop stays tight.
-        if (bytes[(y * width + x) * 4 + 3] > 8) {
+        if (bytes[(y * width + x) * 4 + 3] > _opaqueAlphaThreshold) {
           if (x < minX) minX = x;
           if (x > maxX) maxX = x;
           if (y < minY) minY = y;
@@ -110,7 +137,7 @@ class MapMarkerIcons {
     return out;
   }
 
-  static Future<BitmapDescriptor> _loadSvgPin(String assetPath, {double size = 76}) async {
+  static Future<BitmapDescriptor> _loadSvgPin(String assetPath, {double size = defaultPinSize}) async {
     try {
       return await _renderSvgPin(assetPath, size: size);
     } catch (_) {
@@ -119,51 +146,30 @@ class MapMarkerIcons {
     }
   }
 
-  static Future<BitmapDescriptor> parkingPin({double size = 76}) async {
-    final cached = _parkingPin;
-    if (cached != null) return cached;
-
-    final icon = await _renderSvgPin(AssetsPath.mapMarkerPin, size: size);
-    _parkingPin = icon;
-    return icon;
-  }
+  static Future<BitmapDescriptor> parkingPin({double size = defaultPinSize}) =>
+      _cached(AssetsPath.mapMarkerPin, size,
+          () => _renderSvgPin(AssetsPath.mapMarkerPin, size: size));
 
   /// Pin for the user's own active parked spot (from /saved-parking/me).
-  static Future<BitmapDescriptor> myParkedPin({double size = 76}) async {
-    final cached = _myParkedPin;
-    if (cached != null) return cached;
-    final icon = await _loadSvgPin(AssetsPath.myParked, size: size);
-    _myParkedPin = icon;
-    return icon;
-  }
+  static Future<BitmapDescriptor> myParkedPin({double size = defaultPinSize}) =>
+      _cached(AssetsPath.myParked, size,
+          () => _loadSvgPin(AssetsPath.myParked, size: size));
 
   /// Red pin used for AVAILABLE handoffs — blinked on/off via Marker.alpha
   /// by ParkingShowController, not by swapping bitmaps.
-  static Future<BitmapDescriptor> blinkingPin({double size = 76}) async {
-    final cached = _blinkingPin;
-    if (cached != null) return cached;
-    final icon = await _loadSvgPin(AssetsPath.blinkingPin, size: size);
-    _blinkingPin = icon;
-    return icon;
-  }
+  static Future<BitmapDescriptor> blinkingPin({double size = defaultPinSize}) =>
+      _cached(AssetsPath.blinkingPin, size,
+          () => _loadSvgPin(AssetsPath.blinkingPin, size: size));
 
-  static Future<BitmapDescriptor> electricChargingPin({double size = 76}) async {
-    final cached = _electricChargingPin;
-    if (cached != null) return cached;
-    final icon = await _loadSvgPin(AssetsPath.electricCarjingMarker, size: size);
-    _electricChargingPin = icon;
-    return icon;
-  }
+  static Future<BitmapDescriptor> electricChargingPin({double size = defaultPinSize}) =>
+      _cached(AssetsPath.electricCarjingMarker, size,
+          () => _loadSvgPin(AssetsPath.electricCarjingMarker, size: size));
 
-  static Future<BitmapDescriptor> disabledFacilityPin({double size = 76}) async {
-    final cached = _disabledFacilityPin;
-    if (cached != null) return cached;
-    final icon = await _loadSvgPin(AssetsPath.disable, size: size);
-    _disabledFacilityPin = icon;
-    return icon;
-  }
+  static Future<BitmapDescriptor> disabledFacilityPin({double size = defaultPinSize}) =>
+      _cached(AssetsPath.disable, size,
+          () => _loadSvgPin(AssetsPath.disable, size: size));
 
-  static Future<BitmapDescriptor> iconForData(Map<String, dynamic>? data, {double size = 76}) async {
+  static Future<BitmapDescriptor> iconForData(Map<String, dynamic>? data, {double size = defaultPinSize}) async {
     if (data == null) return parkingPin(size: size);
 
     final types = data['parkingAreaTypes'] ?? data['types'];
@@ -199,45 +205,25 @@ class MapMarkerIcons {
   // Separate asset set from the handoff pins above — these are the
   // disable/electric/paid/free pins used for the area-center marker.
 
-  static Future<BitmapDescriptor> disableAreaPin({double size = 76}) async {
-    final cached = _disableAreaPin;
-    if (cached != null) return cached;
-    final icon = await _loadSvgPin(AssetsPath.disablePin, size: size);
-    _disableAreaPin = icon;
-    return icon;
-  }
+  static Future<BitmapDescriptor> disableAreaPin({double size = defaultPinSize}) =>
+      _cached(AssetsPath.disablePin, size,
+          () => _loadSvgPin(AssetsPath.disablePin, size: size));
 
-  static Future<BitmapDescriptor> electricAreaPin({double size = 76}) async {
-    final cached = _electricAreaPin;
-    if (cached != null) return cached;
-    final icon = await _loadSvgPin(AssetsPath.electricPin, size: size);
-    _electricAreaPin = icon;
-    return icon;
-  }
+  static Future<BitmapDescriptor> electricAreaPin({double size = defaultPinSize}) =>
+      _cached(AssetsPath.electricPin, size,
+          () => _loadSvgPin(AssetsPath.electricPin, size: size));
 
-  static Future<BitmapDescriptor> paidAreaPin({double size = 76}) async {
-    final cached = _paidAreaPin;
-    if (cached != null) return cached;
-    final icon = await _loadSvgPin(AssetsPath.paidPin, size: size);
-    _paidAreaPin = icon;
-    return icon;
-  }
+  static Future<BitmapDescriptor> paidAreaPin({double size = defaultPinSize}) =>
+      _cached(AssetsPath.paidPin, size,
+          () => _loadSvgPin(AssetsPath.paidPin, size: size));
 
-  static Future<BitmapDescriptor> freeAreaPin({double size = 76}) async {
-    final cached = _freeAreaPin;
-    if (cached != null) return cached;
-    final icon = await _loadSvgPin(AssetsPath.freePin, size: size);
-    _freeAreaPin = icon;
-    return icon;
-  }
+  static Future<BitmapDescriptor> freeAreaPin({double size = defaultPinSize}) =>
+      _cached(AssetsPath.freePin, size,
+          () => _loadSvgPin(AssetsPath.freePin, size: size));
 
-  static Future<BitmapDescriptor> greyPin({double size = 76}) async {
-    final cached = _greyPin;
-    if (cached != null) return cached;
-    final icon = await _loadSvgPin(AssetsPath.greyPin, size: size);
-    _greyPin = icon;
-    return icon;
-  }
+  static Future<BitmapDescriptor> greyPin({double size = defaultPinSize}) =>
+      _cached(AssetsPath.greyPin, size,
+          () => _loadSvgPin(AssetsPath.greyPin, size: size));
 
   /// Parking-area pin, chosen by priority Disabled > Electric > Paid > Free.
   /// parkingAreaTypes decides it when non-empty; parkingCost is only
@@ -245,7 +231,7 @@ class MapMarkerIcons {
   /// DISABLED_FACILITY nor ELECTRIC_CHARGING (including when it's empty).
   static Future<BitmapDescriptor> areaPinForData(
     Map<String, dynamic>? area, {
-    double size = 76,
+    double size = defaultPinSize,
   }) async {
     if (area == null) return freeAreaPin(size: size);
 

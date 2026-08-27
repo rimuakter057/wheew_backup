@@ -936,6 +936,7 @@ AppStrings.group:"Group",
   AppStrings.searchParkingSpotWithin: "Search Parking Spot Within",
   AppStrings.chooseDistanceRange: "Choose the distance range around you",
   AppStrings.quickSelect: "Quick Select",
+  AppStrings.clearFilter: "Clear Filter",
   AppStrings.vehicleModelLabel: "Vehicle Model: ",
 
 

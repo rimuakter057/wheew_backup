@@ -986,6 +986,7 @@ class AppStrings {
   static const String searchParkingSpotWithin = 'search_parking_spot_within';
   static const String chooseDistanceRange = 'choose_distance_range';
   static const String quickSelect = 'quick_select';
+  static const String clearFilter = 'clear_filter';
   static const String vehicleModelLabel = 'vehicle_model_label';
   static const String theCarHasBeenParked = 'the_car_has_been_parked';
   static const String isItAFreeSpotOrIsItAPaidSpot = 'is_it_a_free_spot_or_is_it_a_paid_spot';

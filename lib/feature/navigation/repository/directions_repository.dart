@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import 'package:platchatapp/core/config/app_config.dart';
 
 class NavigationStep {
   final String instruction;
@@ -39,11 +40,10 @@ class DirectionsResult {
 }
 
 class DirectionsRepository {
-  // Same key already used for the Maps SDK in AndroidManifest.xml /
-  // AppDelegate.swift — the Directions API must be enabled (and billing
-  // active) for this key in Google Cloud Console for this to work.
-  static const String _googleMapsApiKey =
-      'AIzaSyBatgvXrVXxNagCM5RDmd6aab0G-Z5DNdQ';
+  // Injected at build time via --dart-define-from-file=dart_define.json (see
+  // AppConfig) — never hardcoded here. The Directions API must be enabled
+  // (and billing active) for this key in Google Cloud Console to work.
+  static const String _googleMapsApiKey = AppConfig.mapsApiKey;
 
   static final Logger _logger = Logger(
     printer: PrettyPrinter(methodCount: 0, errorMethodCount: 3, lineLength: 100),

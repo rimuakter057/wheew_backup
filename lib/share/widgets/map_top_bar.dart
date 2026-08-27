@@ -1,4 +1,4 @@
-﻿import 'dart:ui';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,8 +12,11 @@ import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
 class MapTopBar extends StatelessWidget {
-  /// Called when the search pill is tapped.
+  /// Called when the search area (left side) is tapped → location search.
   final VoidCallback? onSearchTap;
+
+  /// Called when the filter icon (right side) is tapped → radius sheet.
+  final VoidCallback? onFilterTap;
 
   /// Optional controller — lets the parent pre-fill search hint text.
   final TextEditingController? searchController;
@@ -24,6 +27,7 @@ class MapTopBar extends StatelessWidget {
   const MapTopBar({
     super.key,
     this.onSearchTap,
+    this.onFilterTap,
     this.searchController,
     this.horizontalPadding = 16,
   });
@@ -39,64 +43,82 @@ class MapTopBar extends StatelessWidget {
         children: [
           // -- Search pill --------------------------------------------
           Expanded(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: onSearchTap,
-              child: Builder(
-                builder: (context) {
-                  final double barHeight = ResponsiveHelper.padding(50);
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(barHeight / 2),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                      child: Container(
-                        height: barHeight,
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(barHeight / 2),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.black.withValues(alpha: 0.08),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: AbsorbPointer(
-                          absorbing: true,
-                          child: TextField(
-                            readOnly: true,
-                            controller: searchController,
-                            style: TextStyle(
-                              fontSize: ResponsiveHelper.fontSize(14),
-                            ),
-                            decoration: InputDecoration(
-                              hintText: AppStrings.searchHere.tr,
-                              hintStyle: TextStyle(
-                                fontSize: ResponsiveHelper.fontSize(14),
-                                color: AppColors.grey,
+            child: Builder(
+              builder: (context) {
+                final double barHeight = ResponsiveHelper.padding(50);
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(barHeight / 2),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      height: barHeight,
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(barHeight / 2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.black.withValues(alpha: 0.08),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          // Left: search area
+                          Expanded(
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: onSearchTap,
+                              child: Row(
+                                children: [
+                                  SizedBox(width: ResponsiveHelper.spacing(14)),
+                                  Icon(
+                                    Icons.search,
+                                    color: AppColors.black,
+                                    size: ResponsiveHelper.iconSize(20),
+                                  ),
+                                  SizedBox(width: ResponsiveHelper.spacing(8)),
+                                  Expanded(
+                                    child: Text(
+                                      searchController?.text.isNotEmpty == true
+                                          ? searchController!.text
+                                          : AppStrings.searchHere.tr,
+                                      style: TextStyle(
+                                        fontSize: ResponsiveHelper.fontSize(14),
+                                        color: searchController?.text.isNotEmpty == true
+                                            ? AppColors.black
+                                            : AppColors.grey,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              prefixIcon: Icon(
-                                Icons.search,
-                                color: AppColors.black,
-                                size: ResponsiveHelper.iconSize(20),
+                            ),
+                          ),
+                          // Right: filter icon
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: onFilterTap,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: ResponsiveHelper.spacing(14),
                               ),
-                              suffixIcon: Icon(
+                              child: Icon(
                                 Icons.tune,
                                 color: AppColors.black,
                                 size: ResponsiveHelper.iconSize(20),
                               ),
-                              border: InputBorder.none,
-                              contentPadding:
-                                  ResponsiveHelper.symmetric(vertical: 12),
                             ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
           ),
 

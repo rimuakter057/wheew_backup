@@ -263,16 +263,37 @@ class RadiusFilterSheet extends StatefulWidget {
   final int initialRadiusMeter;
   final ValueChanged<int> onApply;
 
+  /// True when a radius filter is currently applied (not the default) —
+  /// shows the "Clear Filter" action when true.
+  final bool isFilterActive;
+
+  /// Called when "Clear Filter" is tapped — resets to the default radius.
+  final VoidCallback? onClear;
+
+  /// Slider bounds. Injected by the caller rather than hardcoded in here, so
+  /// the end labels and the "clear" baseline always match whatever range the
+  /// calling screen actually uses.
+  final int minRadiusMeter;
+  final int maxRadiusMeter;
+
   const RadiusFilterSheet({
     super.key,
     required this.initialRadiusMeter,
     required this.onApply,
+    this.isFilterActive = false,
+    this.onClear,
+    this.minRadiusMeter = 100,
+    this.maxRadiusMeter = 20000,
   });
 
   static Future<void> show(
       BuildContext context, {
         required int initialRadiusMeter,
         required ValueChanged<int> onApply,
+        bool isFilterActive = false,
+        VoidCallback? onClear,
+        int minRadiusMeter = 100,
+        int maxRadiusMeter = 20000,
       }) {
     return showTrackedBottomSheet(
       context: context,
@@ -281,6 +302,10 @@ class RadiusFilterSheet extends StatefulWidget {
       builder: (_) => RadiusFilterSheet(
         initialRadiusMeter: initialRadiusMeter,
         onApply: onApply,
+        isFilterActive: isFilterActive,
+        onClear: onClear,
+        minRadiusMeter: minRadiusMeter,
+        maxRadiusMeter: maxRadiusMeter,
       ),
     );
   }
@@ -303,8 +328,9 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
   //   }
   // }
 
-  static const double _minRadius = 100;   // 100 m
-  static const double _maxRadius = 20000; // 20,000 m = 20 km
+  // Bounds come from the widget so nothing is hardcoded here.
+  double get _minRadius => widget.minRadiusMeter.toDouble();
+  double get _maxRadius => widget.maxRadiusMeter.toDouble();
 
   @override
   void initState() {
@@ -379,9 +405,42 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
             ),
 
             // -- title & subtitle ------------------------
-             Text(
-              AppStrings.searchParkingSpotWithin.tr,
-              style: context.bodyMedium.copyWith(color: AppColors.black)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  AppStrings.searchParkingSpotWithin.tr,
+                  style: context.bodyMedium.copyWith(color: AppColors.black),
+                ),
+                // Shown both when a filter is already applied AND the moment
+                // the user manually moves off the default inside the sheet,
+                // so there's always a way back to the unfiltered view.
+                if (widget.onClear != null &&
+                    (widget.isFilterActive ||
+                        _radius.round() != _minRadius.round()))
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      widget.onClear!();
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: ResponsiveHelper.spacing(4),
+                        horizontal: ResponsiveHelper.spacing(4),
+                      ),
+                      child: Text(
+                        AppStrings.clearFilter.tr,
+                        style: TextStyle(
+                          fontSize: ResponsiveHelper.fontSize(13),
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF0066C4),
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
             SizedBox(height: ResponsiveHelper.spacing(6)),
             Text(
@@ -422,8 +481,8 @@ class _RadiusFilterSheetState extends State<RadiusFilterSheet> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('100 m', style: TextStyle(fontSize: ResponsiveHelper.fontSize(13), color: AppColors.greyShade600, fontWeight: FontWeight.w500)),
-                  Text('20 km', style: TextStyle(fontSize: ResponsiveHelper.fontSize(13), color: AppColors.greyShade600, fontWeight: FontWeight.w500)),
+                  Text(_formatRadius(_minRadius), style: TextStyle(fontSize: ResponsiveHelper.fontSize(13), color: AppColors.greyShade600, fontWeight: FontWeight.w500)),
+                  Text(_formatRadius(_maxRadius), style: TextStyle(fontSize: ResponsiveHelper.fontSize(13), color: AppColors.greyShade600, fontWeight: FontWeight.w500)),
                 ],
               ),
             ),

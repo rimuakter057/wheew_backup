@@ -46,3 +46,7 @@ app.*.map.json
 # Google client secrets
 app/client_secret_release.json
 app/client_secret_web.json
+
+# API key(s) — real values live only here, never committed. Copy
+# app_config.example.dart to app_config.dart and fill in the real key.
+lib/core/config/app_config.dart

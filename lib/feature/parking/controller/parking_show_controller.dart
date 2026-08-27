@@ -50,8 +50,10 @@ class ParkingShowController extends GetxController {
   static const LatLng kApproxDefaultLocation = LatLng(34.052235, -118.243683);
 
   // Parking areas are queried with a fixed, wider radius; handoffs use
-  // the user-adjustable radius filter (default 300m).
+  // the user-adjustable radius filter (default 100m until the user picks
+  // one from the filter sheet).
   static const int _parkingAreaRadiusMeters = 20000;
+  static const int _defaultRadiusMeter = 100;
 
   // Zoom level the map rests at once nearby spots load — kept close so the
   // markers/red areas are visible immediately without any manual zoom.
@@ -66,7 +68,13 @@ class ParkingShowController extends GetxController {
   final Rxn<LatLng> gpsPosition = Rxn<LatLng>();
   final Rxn<LatLng> mapCenter = Rxn<LatLng>();
   final RxBool showLocationPulse = false.obs;
-  final RxInt selectedRadiusMeter = 100.obs;
+  final RxInt selectedRadiusMeter = RxInt(_defaultRadiusMeter);
+
+  /// True once the user has manually applied a radius via the filter
+  /// sheet — lets the sheet show a "Clear Filter" option, and reverts to
+  /// false (with selectedRadiusMeter reset) on clear or on a fresh screen
+  /// open (see initializeFlow).
+  final RxBool isRadiusFilterActive = false.obs;
   final RxInt mapOverlayVersion = 0.obs;
 
   final RxBool isRealLocationLoaded = false.obs;
@@ -74,8 +82,27 @@ class ParkingShowController extends GetxController {
   /// Active spot card data floating inline above the bottom navigation bar.
   final Rxn<SpotDetailsCardData> activeSpotDetailsCard = Rxn<SpotDetailsCardData>();
 
+  /// MarkerId of the pin whose details card is currently open.
+  ///
+  /// Drives the on-map "this is the one you tapped" highlight — with pins
+  /// sitting close together there was no way to tell which spot the details
+  /// card belonged to.
+  final RxnString selectedSpotMarkerId = RxnString();
+
   void clearSpotDetailsCard() {
     activeSpotDetailsCard.value = null;
+    if (selectedSpotMarkerId.value != null) {
+      selectedSpotMarkerId.value = null;
+      _buildMarkersAndPolygons();
+    }
+  }
+
+  /// Marks [markerId] as the selected pin and re-renders so the highlight
+  /// lands on it, then runs [showDetails] to open its card.
+  void _selectMarker(String markerId, VoidCallback showDetails) {
+    selectedSpotMarkerId.value = markerId;
+    _buildMarkersAndPolygons();
+    showDetails();
   }
 
   // -- SavePark, ParkMode, and Parktime States ----------------------
@@ -153,6 +180,13 @@ class ParkingShowController extends GetxController {
   ///    renders with no delay.
   /// 2. In the background, checks /parking-mode/me and branches the flow.
   Future<void> initializeFlow() async {
+    // A manually-applied radius filter doesn't carry over across a fresh
+    // screen open (leaving and coming back, or app foreground/background) —
+    // each open starts from the default radius again, same as before the
+    // filter sheet existed.
+    selectedRadiusMeter.value = _defaultRadiusMeter;
+    isRadiusFilterActive.value = false;
+
     // Don't assert IDLE yet — leave `status` empty ("still loading") until
     // checkParkingModeMe actually resolves the real status below, so the
     // screen never flashes the IDLE "Find Parking Spot" button by default.
@@ -525,7 +559,7 @@ class ParkingShowController extends GetxController {
 
   // IDLE -> nearby parking areas only, same endpoint/data the map (home
   // tab) shows. Single GET, no handoffs call.
-  Future<void> fetchNearbyParkingAreasOnly(double? lat, double? lng) async {
+  Future<void> fetchNearbyParkingAreasOnly(double? lat, double? lng, {bool animate = true}) async {
     if (lat == null || lng == null) {
       _logger.w('fetchNearbyParkingAreasOnly SKIPPED: lat/lng is null');
       return;
@@ -547,7 +581,7 @@ class ParkingShowController extends GetxController {
         _showMessage(AppStrings.failedToLoadNearbyParkingAreas.tr, isError: true);
       }
       await _buildMarkersAndPolygons();
-      if (mapController != null && gpsPosition.value != null) {
+      if (animate && mapController != null && gpsPosition.value != null) {
         await mapController!.animateCamera(
           CameraUpdate.newLatLngZoom(gpsPosition.value!, _initialSpotsZoom),
         );
@@ -567,7 +601,7 @@ class ParkingShowController extends GetxController {
   }
 
   // SEARCHING -> nearby handoffs only — just the 1 API call.
-  Future<void> fetchNearbyHandoffsOnly(double? lat, double? lng) async {
+  Future<void> fetchNearbyHandoffsOnly(double? lat, double? lng, {bool animate = true}) async {
     if (lat == null || lng == null) {
       _logger.w('fetchNearbyHandoffsOnly SKIPPED: lat/lng is null');
       return;
@@ -589,7 +623,7 @@ class ParkingShowController extends GetxController {
         _showMessage(AppStrings.failedToLoadNearbyHandoffSpots.tr, isError: true);
       }
       await _buildMarkersAndPolygons();
-      if (mapController != null && gpsPosition.value != null) {
+      if (animate && mapController != null && gpsPosition.value != null) {
         await mapController!.animateCamera(
           CameraUpdate.newLatLngZoom(gpsPosition.value!, _initialSpotsZoom),
         );
@@ -782,22 +816,72 @@ class ParkingShowController extends GetxController {
     RadiusFilterSheet.show(
       ctx,
       initialRadiusMeter: selectedRadiusMeter.value,
-      onApply: (radius) {
+      isFilterActive: isRadiusFilterActive.value,
+      onApply: (radius) async {
         selectedRadiusMeter.value = radius;
+        isRadiusFilterActive.value = true;
         final lat = gpsPosition.value?.latitude;
         final lng = gpsPosition.value?.longitude;
         if (lat != null && lng != null) {
-          // Radius filter only affects the handoffs radius — parking areas
-          // use a fixed radius.
-          fetchNearbyHandoffsOnly(lat, lng);
+          // Handoffs come back radius-limited straight from the backend.
+          // This also rebuilds the markers, which is what re-applies the
+          // radius gate to the already-loaded parking areas.
+          await fetchNearbyHandoffsOnly(lat, lng);
+        } else {
+          // No GPS to query with — still rebuild so the gate is applied.
+          await _buildMarkersAndPolygons();
         }
         // -- sheet applied: hide the floating button --
+        showFindParkingButton.value = false;
+      },
+      onClear: () {
+        clearRadiusFilter();
+        // -- filter cleared: hide the floating button --
         showFindParkingButton.value = false;
       },
     ).then((_) {
       // -- sheet dismissed (swipe/tap outside): hide button --
       showFindParkingButton.value = false;
     });
+  }
+
+  /// True when [lat]/[lng] falls outside a manually-applied radius filter.
+  ///
+  /// Only gates while `isRadiusFilterActive` is set, so the normal
+  /// (unfiltered) view still shows everything the APIs returned. Handoffs
+  /// already come back radius-limited from the backend, but parking areas
+  /// are fetched once at a fixed wide radius and deliberately never
+  /// re-fetched — so without this local check they'd keep showing spots far
+  /// outside whatever the user picked.
+  bool _isOutsideRadiusFilter(double lat, double lng) {
+    if (!isRadiusFilterActive.value) return false;
+    final origin = gpsPosition.value;
+    if (origin == null) return false;
+
+    final meters = Geolocator.distanceBetween(
+      origin.latitude,
+      origin.longitude,
+      lat,
+      lng,
+    );
+    return meters > selectedRadiusMeter.value;
+  }
+
+  /// Resets the handoff search radius back to default and re-runs the
+  /// nearby-handoffs fetch so the map immediately reflects the wider
+  /// (unfiltered) view — used by the sheet's "Clear Filter" action.
+  Future<void> clearRadiusFilter() async {
+    selectedRadiusMeter.value = _defaultRadiusMeter;
+    isRadiusFilterActive.value = false;
+    final lat = gpsPosition.value?.latitude;
+    final lng = gpsPosition.value?.longitude;
+    if (lat != null && lng != null) {
+      // Rebuilds the markers too, which drops the radius gate and brings the
+      // full set of parking areas back onto the map.
+      await fetchNearbyHandoffsOnly(lat, lng);
+    } else {
+      await _buildMarkersAndPolygons();
+    }
   }
 
   // Triggered by the "Exit Parking" button on ParkingMapScreen. Yes reuses
@@ -958,6 +1042,11 @@ class ParkingShowController extends GetxController {
 
     final parkingPinIcon = await MapMarkerIcons.parkingPin();
 
+    // The tapped pin simply renders larger (and above its neighbours) so
+    // it's obvious which of several nearby spots the details card describes.
+    final String? selectedId = selectedSpotMarkerId.value;
+    const double selectedPinSize = MapMarkerIcons.defaultPinSize * 1.45;
+
     bool needRefresh = false;
 
     // Saved parking location marker
@@ -966,13 +1055,17 @@ class ParkingShowController extends GetxController {
         Marker(
           markerId: const MarkerId('saved_car_location'),
           position: savedParkingLocation.value!,
-          icon: parkingPinIcon,
+          icon: selectedId == 'saved_car_location'
+              ? await MapMarkerIcons.parkingPin(size: selectedPinSize)
+              : parkingPinIcon,
           anchor: const Offset(0.5, 0.5),
+          zIndexInt: selectedId == 'saved_car_location' ? 10 : 0,
           // Tapping the pin must ONLY open this spot's details sheet —
           // consumeTapEvents suppresses the default info-window bubble.
           infoWindow: InfoWindow.noText,
           consumeTapEvents: true,
-          onTap: () => showSavedSpotDetails(),
+          onTap: () =>
+              _selectMarker('saved_car_location', showSavedSpotDetails),
         ),
       );
     }
@@ -980,16 +1073,21 @@ class ParkingShowController extends GetxController {
     // "My Parked" pin — real active parked session from
     // GET /park-relay/saved-parking/me.
     if (myParkedLocation.value != null) {
-      final myParkedIcon = await MapMarkerIcons.myParkedPin();
+      const id = 'my_parked_location';
+      final isSelected = selectedId == id;
+      final myParkedIcon = await MapMarkerIcons.myParkedPin(
+        size: isSelected ? selectedPinSize : MapMarkerIcons.defaultPinSize,
+      );
       newMarkers.add(
         Marker(
-          markerId: const MarkerId('my_parked_location'),
+          markerId: const MarkerId(id),
           position: myParkedLocation.value!,
           icon: myParkedIcon,
           anchor: const Offset(0.5, 0.5),
+          zIndexInt: isSelected ? 10 : 0,
           infoWindow: InfoWindow.noText,
           consumeTapEvents: true,
-          onTap: () => showMyParkedDetails(),
+          onTap: () => _selectMarker(id, showMyParkedDetails),
         ),
       );
     }
@@ -1002,6 +1100,7 @@ class ParkingShowController extends GetxController {
       final lat = _toDouble(handoff['latitude']);
       final lng = _toDouble(handoff['longitude']);
       if (lat == null || lng == null) continue;
+      if (_isOutsideRadiusFilter(lat, lng)) continue;
 
       final id = handoff['id']?.toString() ?? '';
       final handoffStatus = handoff['status']?.toString().toUpperCase() ?? '';
@@ -1022,18 +1121,23 @@ class ParkingShowController extends GetxController {
       // plus a pulsing red circle shade around it (radius toggled by
       // _handoffBlinkTimer) — everything else keeps the same icon/behavior
       // as before.
+      final markerId = 'handoff_$id';
+      final isSelected = selectedId == markerId;
+      final iconSize =
+          isSelected ? selectedPinSize : MapMarkerIcons.defaultPinSize;
       final handoffIcon = isAvailable
-          ? await MapMarkerIcons.blinkingPin(size: 56)
-          : await MapMarkerIcons.iconForData(handoff, size: 56);
+          ? await MapMarkerIcons.blinkingPin(size: iconSize)
+          : await MapMarkerIcons.iconForData(handoff, size: iconSize);
       newMarkers.add(
         Marker(
-          markerId: MarkerId('handoff_$id'),
+          markerId: MarkerId(markerId),
           position: LatLng(lat, lng),
           icon: handoffIcon,
           anchor: const Offset(0.5, 0.5),
+          zIndexInt: isSelected ? 10 : 0,
           infoWindow: InfoWindow.noText,
           consumeTapEvents: true,
-          onTap: () => showHandoffDetails(handoff),
+          onTap: () => _selectMarker(markerId, () => showHandoffDetails(handoff)),
         ),
       );
 
@@ -1078,16 +1182,25 @@ class ParkingShowController extends GetxController {
         continue;
       }
 
-      final areaPinIcon = await MapMarkerIcons.areaPinForData(area);
+      if (_isOutsideRadiusFilter(lat, lng)) continue;
+
+      final markerId = 'area_$areaId';
+      final isSelected = selectedId == markerId;
+      final areaPinIcon = await MapMarkerIcons.areaPinForData(
+        area,
+        size: isSelected ? selectedPinSize : MapMarkerIcons.defaultPinSize,
+      );
       newMarkers.add(
         Marker(
-          markerId: MarkerId('area_$areaId'),
+          markerId: MarkerId(markerId),
           position: LatLng(lat, lng),
           icon: areaPinIcon,
           anchor: const Offset(0.5, 0.5),
+          zIndexInt: isSelected ? 10 : 0,
           infoWindow: InfoWindow.noText,
           consumeTapEvents: true,
-          onTap: () => showParkingAreaDetails(area),
+          onTap: () =>
+              _selectMarker(markerId, () => showParkingAreaDetails(area)),
         ),
       );
     }

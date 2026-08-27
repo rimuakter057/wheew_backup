@@ -34,6 +34,16 @@ class ParkingReportController extends GetxController {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController feeController = TextEditingController();
+
+  /// Reactive mirrors for Obx-driven validation.
+  final RxString nameText = ''.obs;
+  final RxString feeText = ''.obs;
+
+  /// Set to true only after the user taps Submit with an empty field.
+  /// Resets to false as soon as the user starts typing.
+  final RxBool nameSubmitAttempted = false.obs;
+  final RxBool feeSubmitAttempted = false.obs;
+
   final RxString parkingCost = 'FREE'.obs;
   final RxBool electricCharging = false.obs;
   final RxBool disabledFacility = false.obs;
@@ -45,10 +55,34 @@ class ParkingReportController extends GetxController {
   final RxBool submitSuccess = false.obs;
 
 
+  @override
+  void onInit() {
+    super.onInit();
+    nameController.addListener(() {
+      nameText.value = nameController.text;
+      if (nameController.text.isNotEmpty) nameSubmitAttempted.value = false;
+    });
+    feeController.addListener(() {
+      feeText.value = feeController.text;
+      if (feeController.text.isNotEmpty) feeSubmitAttempted.value = false;
+    });
+  }
+
+  @override
+  void onClose() {
+    nameController.dispose();
+    feeController.dispose();
+    super.onClose();
+  }
+
   // -- Reset -----------------------------------------------------------------
   void reset() {
     nameController.clear();
     feeController.clear();
+    nameText.value = '';
+    feeText.value = '';
+    nameSubmitAttempted.value = false;
+    feeSubmitAttempted.value = false;
     parkingCost.value = 'FREE';
     electricCharging.value = false;
     disabledFacility.value = false;
@@ -377,34 +411,15 @@ class ParkingReportController extends GetxController {
   //     await _getLocationIcon(locationKey, pinColor);
   //
   //     // ✅ Offset নেই — exact lat/lng তে রাখো
-  //     // à¦à¦•à¦‡ position-à¦ à¦à¦•à¦¾à¦§à¦¿à¦• marker à¦¥à¦¾à¦•à¦²à§‡ à¦à¦•à¦Ÿà¦¾à¦° à¦‰à¦ªà¦° à¦†à¦°à§‡à¦•à¦Ÿà¦¾ stack à¦¹à¦¬à§‡
-  //     // MarkerId à¦†à¦²à¦¾à¦¦à¦¾ à¦°à¦¾à¦–à¦¤à§‡ parking id à¦¬à¦¾ index à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦•à¦°à§‹
-  //     newMarkers.add(
-  //       Marker(
-  //         markerId: MarkerId(parking['id']?.toString() ?? 'parking_$i'),
-  //         position: LatLng(lat, lng), // â† exact position, à¦•à§‹à¦¨à§‹ offset à¦¨à§‡à¦‡
-  //         icon: icon,
-  //         infoWindow: InfoWindow.noText,
-  //         onTap: () => _onMarkerTap(parking),
-  //       ),
-  //     );
+  //     // একই position-এ একাধিক marker থাকলে একটার উপর আরেকটা stack হবে
+  //     // MarkerId আলাদা রাখতে parking id বা index ব্যবহার করো
   //   }
   //
   //   markers.value = newMarkers;
   //   mapDebug('markers: built ${newMarkers.length} from parking list');
   // }
 
-  // --- Location â†’ Icon (cached) ---------------------------------------------
-
-
-
-
-
-
-
-
-
-
+  // --- Location → Icon (cached) ---------------------------------------------
 
   Future<void> _buildMarkers() async {
     final Set<Marker> newMarkers = {};
@@ -413,61 +428,30 @@ class ParkingReportController extends GetxController {
     for (int i = 0; i < parkingList.length; i++) {
       final parking = parkingList[i];
 
-      // isActive == false â†’ hide this area entirely (no marker, no polygon).
+      // isActive == false → hide this area entirely (no marker, no polygon).
       if (parking['isActive'] == false) continue;
 
-      // -- Center marker (SVG pin at centerLat/centerLng) ------------------
+      // -- Center lat/lng ---------------------------------------------------
       final double? lat = _toDouble(parking['latitude'] ?? parking['centerLat']);
       final double? lng = _toDouble(parking['longitude'] ?? parking['centerLng']);
       if (lat == null || lng == null) continue;
 
-      // Center icon commented out per user request when getting area
-      // final BitmapDescriptor icon = await MapMarkerIcons.parkingPin();
-      // final String areaId = parking['id']?.toString() ?? 'parking_$i';
-
-      // newMarkers.add(
-      //   Marker(
-      //     markerId: MarkerId(areaId),
-      //     position: LatLng(lat, lng),
-      //     icon: icon,
-      //     infoWindow: InfoWindow.noText,
-      //     onTap: () => _onMarkerTap(parking),
-      //   ),
-      // );
       final String areaId = parking['id']?.toString() ?? 'parking_$i';
 
-      // -- Blue polygon outline from polygon array --------------------------
-      // Old version used a closed Polyline for the outline, but Polyline
-      // has no tap support — only the center marker was tappable. Polygon
-      // renders the same blue outline (transparent fill) and is tappable
-      // anywhere inside the shape.
-      // final dynamic rawPolygon = parking['polygon'];
-      // if (rawPolygon is List && rawPolygon.isNotEmpty) {
-      //   final List<LatLng> polyPoints = [];
-      //   for (final point in rawPolygon) {
-      //     if (point is Map) {
-      //       final double? pLat = _toDouble(point['latitude']);
-      //       final double? pLng = _toDouble(point['longitude']);
-      //       if (pLat != null && pLng != null) {
-      //         polyPoints.add(LatLng(pLat, pLng));
-      //       }
-      //     }
-      //   }
-      //   if (polyPoints.isNotEmpty) {
-      //     // Close the polygon by repeating the first point
-      //     polyPoints.add(polyPoints.first);
-      //     newPolylines.add(
-      //       Polyline(
-      //         polylineId: PolylineId('area_poly_$areaId'),
-      //         points: polyPoints,
-      //         color: const Color(0xFF1E88E5),   // blue
-      //         width: 2,
-      //         patterns: [],
-      //       ),
-      //     );
-      //   }
-      // }
+      // -- SVG pin marker at the area center --------------------------------
+      final BitmapDescriptor icon =
+          await MapMarkerIcons.areaPinForData(parking);
+      newMarkers.add(
+        Marker(
+          markerId: MarkerId(areaId),
+          position: LatLng(lat, lng),
+          icon: icon,
+          infoWindow: InfoWindow.noText,
+          onTap: () => _onMarkerTap(parking),
+        ),
+      );
 
+      // -- Blue polygon outline from polygon array --------------------------
       final dynamic rawPolygon = parking['polygon'];
       if (rawPolygon is List && rawPolygon.isNotEmpty) {
         final List<LatLng> polyPoints = [];

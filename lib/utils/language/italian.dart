@@ -965,6 +965,7 @@ final Map<String, String> italian = {
   AppStrings.searchParkingSpotWithin: "Cerca parcheggio entro",
   AppStrings.chooseDistanceRange: "Scegli il raggio di distanza intorno a te",
   AppStrings.quickSelect: "Selezione rapida",
+  AppStrings.clearFilter: "Cancella filtro",
   AppStrings.vehicleModelLabel: "Modello veicolo: ",
 
 

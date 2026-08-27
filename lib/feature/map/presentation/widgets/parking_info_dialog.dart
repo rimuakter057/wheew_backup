@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -17,8 +17,8 @@ import 'package:platchatapp/utils/language/app_string.dart';
 class ParkingInfoDialog extends StatelessWidget {
   final ParkingReportController controller;
   final VoidCallback onSubmit;
-  final LatLng? pickedLocation; // âš ï¸ à¦®à§à¦¯à¦¾à¦ªà§‡ à¦ªà¦¿à¦• à¦•à¦°à¦¾ location (null à¦¹à¦²à§‡ current GPS à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦¹à¦¬à§‡)
-  final VoidCallback onPickOnMap; // âš ï¸ "Pick on map" à¦šà¦¾à¦ªà¦²à§‡ à¦•à¦² à¦¹à¦¬à§‡
+  final LatLng? pickedLocation; // ⚠️ ম্যাপে পিক করা location (null হলে current GPS ব্যবহার হবে)
+  final VoidCallback onPickOnMap; // ⚠️ "Pick on map" চাপলে কল হবে
 
   const ParkingInfoDialog({
     super.key,
@@ -27,6 +27,24 @@ class ParkingInfoDialog extends StatelessWidget {
     this.pickedLocation,
     required this.onPickOnMap,
   });
+
+  /// Returns true when the form is valid and submission can proceed.
+  bool _validate(BuildContext context) {
+    bool valid = true;
+
+    if (controller.nameController.text.trim().isEmpty) {
+      controller.nameSubmitAttempted.value = true;
+      valid = false;
+    }
+
+    if (controller.parkingCost.value == 'PAID' &&
+        controller.feeController.text.trim().isEmpty) {
+      controller.feeSubmitAttempted.value = true;
+      valid = false;
+    }
+
+    return valid;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -159,30 +177,48 @@ class ParkingInfoDialog extends StatelessWidget {
                 ),
               ),
               SizedBox(height: ResponsiveHelper.spacing(10)),
-              Container(
-                padding: ResponsiveHelper.symmetric(horizontal: 16, vertical: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF4F6FB),
-                  borderRadius: BorderRadius.circular(
-                    ResponsiveHelper.borderRadius(16),
-                  ),
-                  border: Border.all(
-                    color: const Color(0xFFE5E7EB),
-                  ),
+              TextField(
+                controller: controller.nameController,
+                style: GoogleFonts.poppins(
+                  fontSize: ResponsiveHelper.fontSize(14),
+                  color: const Color(0xFF1A1A2E),
                 ),
-                child: TextField(
-                  controller: controller.nameController,
-                  style: GoogleFonts.poppins(
+                decoration: InputDecoration(
+                  hintText: 'Required',
+                  hintStyle: GoogleFonts.poppins(
                     fontSize: ResponsiveHelper.fontSize(14),
-                    color: const Color(0xFF1A1A2E),
+                    color: const Color(0xFFB0B7C3),
                   ),
-                  decoration: InputDecoration(
-                    hintText: 'Enter parking area name',
-                    hintStyle: GoogleFonts.poppins(
-                      fontSize: ResponsiveHelper.fontSize(14),
-                      color: const Color(0xFF9CA3AF),
+                  filled: true,
+                  fillColor: const Color(0xFFF4F6FB),
+                  errorText: (controller.nameSubmitAttempted.value &&
+                          controller.nameText.value.trim().isEmpty)
+                      ? 'Parking name is required'
+                      : null,
+                  errorStyle: GoogleFonts.poppins(
+                    fontSize: ResponsiveHelper.fontSize(11),
+                    color: const Color(0xFFEF4444),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+                    borderSide: (controller.nameSubmitAttempted.value &&
+                            controller.nameText.value.trim().isEmpty)
+                        ? const BorderSide(color: Color(0xFFEF4444), width: 1.4)
+                        : BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
+                    borderSide: BorderSide(
+                      color: (controller.nameSubmitAttempted.value &&
+                              controller.nameText.value.trim().isEmpty)
+                          ? const Color(0xFFEF4444)
+                          : const Color(0xFF3D72E8),
+                      width: ResponsiveHelper.borderWidth(1.4),
                     ),
-                    border: InputBorder.none,
                   ),
                 ),
               ),
@@ -238,30 +274,52 @@ class ParkingInfoDialog extends StatelessWidget {
                   ],
                   style: GoogleFonts.poppins(fontSize: ResponsiveHelper.fontSize(14)),
                   decoration: InputDecoration(
-                    hintText: '5.00',
-                    hintStyle: GoogleFonts.poppins(fontSize: ResponsiveHelper.fontSize(14)),
+                    hintText: 'Required',
+                    hintStyle: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(14),
+                      color: const Color(0xFFB0B7C3),
+                    ),
                     filled: true,
                     fillColor: const Color(0xFFF4F6FB),
                     prefixText: '\$ ',
+                    prefixStyle: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(14),
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF1A1A2E),
+                    ),
+                    // Error only after a failed submit attempt
+                    errorText: (controller.feeSubmitAttempted.value &&
+                            controller.feeText.value.trim().isEmpty)
+                        ? 'Fee is required for paid parking'
+                        : null,
+                    errorStyle: GoogleFonts.poppins(
+                      fontSize: ResponsiveHelper.fontSize(11),
+                      color: const Color(0xFFEF4444),
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
                       borderSide: BorderSide.none,
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
-                      borderSide: BorderSide.none,
+                      borderSide: (controller.feeSubmitAttempted.value &&
+                              controller.feeText.value.trim().isEmpty)
+                          ? const BorderSide(color: Color(0xFFEF4444), width: 1.4)
+                          : BorderSide.none,
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(ResponsiveHelper.borderRadius(12)),
                       borderSide: BorderSide(
-                        color: const Color(0xFF3D72E8),
+                        color: (controller.feeSubmitAttempted.value &&
+                                controller.feeText.value.trim().isEmpty)
+                            ? const Color(0xFFEF4444)
+                            : const Color(0xFF3D72E8),
                         width: ResponsiveHelper.borderWidth(1.4),
                       ),
                     ),
                   ),
                 ),
               ],
-
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
               // -- Electric Charging + Disabled Facility (grouped card) --
@@ -321,7 +379,9 @@ class ParkingInfoDialog extends StatelessWidget {
 
               // -- Drop Pin ----------------------------------------------
               CustomGradientButton(
-                onPressed: onSubmit,
+                onPressed: () {
+                  if (_validate(context)) onSubmit();
+                },
                 isLoading: controller.isLoading.value,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,

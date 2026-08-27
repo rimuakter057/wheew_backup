@@ -1,10 +1,13 @@
 
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:platchatapp/core/config/app_config.dart';
 import 'package:platchatapp/core/router/routes.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
+import 'package:platchatapp/feature/map/presentation/widgets/location_search_overlay.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_initial_shimmer.dart';
 import 'package:platchatapp/feature/map/utils/map_debug.dart';
 import 'package:platchatapp/feature/map/utils/marker_icon_loader.dart';
@@ -50,6 +53,69 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
   // -- Location pulse animation + (read-only) search field controller --
   late AnimationController _pulseController;
   final TextEditingController _searchController = TextEditingController();
+  Timer? _cameraIdleTimer;
+  LatLng? _searchedLocation;
+
+  Future<void> _openLocationSearch() async {
+    final result = await LocationSearchOverlay.show(
+      context,
+      apiKey: AppConfig.mapsApiKey,
+      userLocation: parkingShowCtrl.gpsPosition.value,
+    );
+    if (result == null || !mounted) return;
+
+    final target = LatLng(result.latitude, result.longitude);
+
+    setState(() {
+      _searchedLocation = target;
+      _searchController.text = result.name;
+    });
+
+    await _mapController?.animateCamera(
+      CameraUpdate.newLatLngZoom(target, 16.5),
+    );
+
+    await parkingShowCtrl.fetchNearbyParkingAreasOnly(
+      result.latitude,
+      result.longitude,
+      animate: false,
+    );
+    if (parkingShowCtrl.status.value == 'SEARCHING') {
+      await parkingShowCtrl.fetchNearbyHandoffsOnly(
+        result.latitude,
+        result.longitude,
+        animate: false,
+      );
+    }
+  }
+
+  void _onCameraIdle() {
+    _cameraIdleTimer?.cancel();
+    _cameraIdleTimer = Timer(const Duration(milliseconds: 600), () async {
+      final ctrl = _mapController;
+      if (ctrl == null || !mounted) return;
+      try {
+        final bounds = await ctrl.getVisibleRegion();
+        final double centerLat =
+            (bounds.northeast.latitude + bounds.southwest.latitude) / 2;
+        final double centerLng =
+            (bounds.northeast.longitude + bounds.southwest.longitude) / 2;
+
+        await parkingShowCtrl.fetchNearbyParkingAreasOnly(
+          centerLat,
+          centerLng,
+          animate: false,
+        );
+        if (parkingShowCtrl.status.value == 'SEARCHING') {
+          await parkingShowCtrl.fetchNearbyHandoffsOnly(
+            centerLat,
+            centerLng,
+            animate: false,
+          );
+        }
+      } catch (_) {}
+    });
+  }
 
   // -- Register controllers, start the pulse animation, run the initial
   // parking-mode flow (approx map -> /parking-mode/me -> branch) --
@@ -82,6 +148,7 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _cameraIdleTimer?.cancel();
     if (parkingShowCtrl.mapController == _mapController) {
       parkingShowCtrl.mapController = null;
     }
@@ -117,10 +184,7 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
               final showLocationPulse = parkingShowCtrl.showLocationPulse.value;
               final isLoading = parkingShowCtrl.isLoading.value;
               final status = parkingShowCtrl.status.value;
-              final statusResolved = status.isNotEmpty && !isLoading;
               final isSearching = status == 'SEARCHING';
-
-              final showHeader = statusResolved;
 
               final isTransitioningSearch =
                   parkingShowCtrl.isTransitioningSearch.value;
@@ -139,6 +203,25 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
                   // AddParkingFlowController --
                   Obx(() {
                     final currentMarkers = parkingShowCtrl.markers.toSet();
+
+                    // ── Searched Location: Standard RED pin marker ────
+                    if (_searchedLocation != null) {
+                      currentMarkers.add(
+                        Marker(
+                          markerId: const MarkerId('searched_location_red_pin'),
+                          position: _searchedLocation!,
+                          icon: BitmapDescriptor.defaultMarkerWithHue(
+                            BitmapDescriptor.hueRed,
+                          ),
+                          infoWindow: InfoWindow(
+                            title: _searchController.text.isNotEmpty
+                                ? _searchController.text
+                                : 'Searched Location',
+                          ),
+                        ),
+                      );
+                    }
+
                     final pickedLoc = addParkingFlowCtrl.pickedAddParkingLocation.value;
                     if (pickedLoc != null) {
                       currentMarkers.add(
@@ -163,6 +246,7 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
                         parkingShowCtrl.onMapCreated(controller);
                       },
                       onTap: addParkingFlowCtrl.onMapTappedForAddParking,
+                      onCameraIdle: _onCameraIdle,
                       initialCameraPosition: CameraPosition(
                         target: gpsPosition ?? ParkingMapScreen.kInitialMapTarget,
                         zoom: 18,
@@ -182,18 +266,15 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
                   }),
 
 
-                  // -- Loading banner: only shown while fetching nearby
-                  // parking. "Getting location" keeps running in the
-                  // background (isLocating) but is never shown to the user. --
-                  if (isLoading) const ParkingMapLoadingBanner(),
+                  // -- Loading banner hidden as per requirement --
+                  const SizedBox.shrink(),
 
-                  // -- Top search bar + notification bell (search opens the
-                  // radius filter sheet via ParkingShowController) --
-                  if (showHeader)
-                    MapTopBar(
-                      searchController: _searchController,
-                      onSearchTap: parkingShowCtrl.openRadiusFilterSheet,
-                    ),
+                  // -- Top search bar + notification bell (Always static & permanently visible) --
+                  MapTopBar(
+                    searchController: _searchController,
+                    onSearchTap: _openLocationSearch,
+                    onFilterTap: parkingShowCtrl.openRadiusFilterSheet,
+                  ),
 
 
                   // -- Pulsing gradient glow around the map edge, shown
