@@ -33,27 +33,36 @@ class MainNavScreen extends StatefulWidget {
 class _MainNavScreenState extends State<MainNavScreen> {
   bool _showScanOptions = false;
 
-  Widget _bodyForIndex(int index) {
+  // Tabs 0-3 are built ONCE here and kept alive underneath via IndexedStack
+  // (see build()) instead of being recreated by _bodyForIndex on every tab
+  // switch. Rebuilding ParkingMapScreen from scratch each time destroyed and
+  // recreated the native GoogleMap platform view, which is what produced the
+  // grey "reloading" flash on every return to the Parking tab even though its
+  // data was already cached locally — the map view itself had no memory of
+  // ever having rendered before. Keeping the same four widget instances alive
+  // means each screen's own state (and its GoogleMapController) persists
+  // across switches, so re-entering a tab only redraws what's already there;
+  // it does not reload.
+  static const List<Widget> _persistentTabs = [
+    MapScreen(),
+    ParkingMapScreen(),
+    ChatListScreen(),
+    ProfileNavScreen(),
+  ];
+
+  // Scan (camera) and Save-Parking are NOT included above on purpose: Scan
+  // holds a live camera feed that shouldn't stay resident in memory while
+  // some other tab is showing, and Save-Parking isn't reachable from the
+  // bottom nav at all (nothing ever sets mainNavIndex to 5) — both are built
+  // fresh on demand, same as before.
+  Widget? _transientBodyForIndex(int index) {
     switch (index) {
-      case 0:
-        return const MapScreen();
-
-      case 1:
-        return ParkingMapScreen();
-
-      case 2:
-        return const ChatListScreen();
-
-      case 3:
-        return ProfileNavScreen();
       case 4:
         return ScanScreen();
       case 5:
-      //  return const SimpleMapScreen(); //SaveParkingScreen
-
         return SaveParkingScreen();
       default:
-        return const SizedBox.shrink();
+        return null;
     }
   }
 
@@ -92,12 +101,23 @@ class _MainNavScreenState extends State<MainNavScreen> {
     return ValueListenableBuilder<int>(
       valueListenable: mainNavIndex,
       builder: (context, currentIndex, _) {
+        final transientBody = _transientBodyForIndex(currentIndex);
+
         return Scaffold(
           extendBody: true,
           backgroundColor: const Color(0xFFD2DCF0),
           body: Stack(
             children: [
-              _bodyForIndex(currentIndex),
+              // Always mounted, index clamped so it keeps showing whichever
+              // persistent tab was last active while a transient screen
+              // (Scan / Save-Parking) is on top — clamping just picks a safe
+              // fallback to paint underneath, it doesn't affect what's
+              // visible once the opaque transient screen covers it.
+              IndexedStack(
+                index: currentIndex.clamp(0, _persistentTabs.length - 1),
+                children: _persistentTabs,
+              ),
+              ?transientBody,
               if (_showScanOptions)
                 _ScanOptionsOverlay(
                   onClose: _closeScanOptions,

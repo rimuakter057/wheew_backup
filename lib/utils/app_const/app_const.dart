@@ -11,6 +11,11 @@ class AppConst {
   /// instead of waiting on GET /parking-mode/me.
   static const String parkingSearchStatus = 'parking_search_status';
 
+  /// Last resolved GPS fix as "lat,lng". Lets the map open on the user's own
+  /// location right away instead of a loading state (or a hardcoded default)
+  /// every time the Parking tab is opened.
+  static const String lastKnownLocation = 'last_known_location';
+
   static String unknown =
       'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/500px-Unknown_person.jpg';
 

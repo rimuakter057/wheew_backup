@@ -192,6 +192,32 @@ class ParkingShowController extends GetxController {
     return cached.isEmpty ? null : cached;
   }
 
+  // ── Locally cached last GPS fix ───────────────────────────────────────────
+  // Stored as "lat,lng" so re-opening the Parking tab can show the user's own
+  // location immediately, instead of the loading shimmer (or the hardcoded
+  // kApproxDefaultLocation) each time.
+
+  Future<void> _cacheLastLocation(LatLng position) async {
+    await SharePrefsHelper.setString(
+      AppConst.lastKnownLocation,
+      '${position.latitude},${position.longitude}',
+    );
+  }
+
+  Future<LatLng?> _readCachedLocation() async {
+    final raw = await SharePrefsHelper.getString(AppConst.lastKnownLocation);
+    if (raw.isEmpty) return null;
+
+    final parts = raw.split(',');
+    if (parts.length != 2) return null;
+
+    final lat = double.tryParse(parts[0]);
+    final lng = double.tryParse(parts[1]);
+    if (lat == null || lng == null) return null;
+
+    return LatLng(lat, lng);
+  }
+
   /// Entry point every time the screen opens.
   /// 1. Shows an approximate default location immediately so the map
   ///    renders with no delay.
@@ -216,10 +242,33 @@ class ParkingShowController extends GetxController {
       showLocationPulse.value = previousStatus == 'SEARCHING';
     }
 
-    isLocating.value = false;
     isRealLocationLoaded.value = false;
-    gpsPosition.value = kApproxDefaultLocation;
-    mapCenter.value = kApproxDefaultLocation;
+
+    // Where the map starts, in order of preference. kApproxDefaultLocation is
+    // deliberately NOT used here anymore — showing a hardcoded city the user
+    // isn't in, then jumping away from it, was the "wrong map flashes first"
+    // problem.
+    final inMemory = gpsPosition.value;
+    if (inMemory != null) {
+      // Tab switch: this singleton still holds the last fix, so reopen right
+      // where the user left off with no loading state at all.
+      isLocating.value = false;
+    } else {
+      final cachedLocation = await _readCachedLocation();
+      if (cachedLocation != null) {
+        // Cold start, but a previous session saved a fix — open there
+        // immediately rather than making the user watch the shimmer again.
+        gpsPosition.value = cachedLocation;
+        mapCenter.value = cachedLocation;
+        isLocating.value = false;
+      } else {
+        // Genuinely the first run: nothing to show yet, so hold the loading
+        // shimmer until the real GPS fix lands.
+        gpsPosition.value = null;
+        mapCenter.value = null;
+        isLocating.value = true;
+      }
+    }
 
     // Restore the last Find/Stop choice from local storage so the button is
     // correct the moment the tab opens — switching tabs and coming back no
@@ -236,16 +285,29 @@ class ParkingShowController extends GetxController {
       await getUserLocation();
       final lat = gpsPosition.value?.latitude;
       final lng = gpsPosition.value?.longitude;
+      final hasLocation = lat != null && lng != null;
+
+      // _resetSearchState above wiped the pins off the map, so every branch
+      // here has to put them back — either by fetching, or (when the data is
+      // still in memory from before the tab switch) by just redrawing it.
+      // Missing this left the map blank on re-entry.
+      bool didRebuild = false;
 
       if (cachedStatus == 'SEARCHING') {
         // Re-attach the live handoff feed and repopulate the pins the search
         // was showing before the tab switch.
-        if (lat != null && lng != null) {
+        if (hasLocation) {
           await fetchNearbyHandoffsOnly(lat, lng);
+          didRebuild = true;
         }
         _listenHandoffNearby();
-      } else if (parkingAreaList.isEmpty && lat != null && lng != null) {
+      } else if (parkingAreaList.isEmpty && hasLocation) {
         await fetchNearbyParkingAreasOnly(lat, lng);
+        didRebuild = true;
+      }
+
+      if (!didRebuild) {
+        await _buildMarkersAndPolygons();
       }
       return;
     }
@@ -324,6 +386,9 @@ class ParkingShowController extends GetxController {
       mapCenter.value = latLng;
       isLocating.value = false;
       isRealLocationLoaded.value = true;
+      // Remember it so the next Parking-tab open starts here instead of on a
+      // loading state.
+      unawaited(_cacheLastLocation(latLng));
 
       if (mapController != null) {
         // Not awaited — callers of getUserLocation() want the coordinates,
@@ -379,13 +444,19 @@ class ParkingShowController extends GetxController {
         print("CHECK_PARKING_MODE_ME_RESOLVED_STATUS: $modeStatus");
 
         // getUserLocation() may fail/timeout (permissions, hung GPS fix,
-        // etc.) — that's fine, gpsPosition already holds at least the
-        // approx default set by initializeFlow(), so it's never null here.
-        // The nearby-data GET below must fire unconditionally once we know
-        // the mode, the same way for SEARCHING as it already does for IDLE.
+        // etc.). initializeFlow no longer seeds a placeholder position, so
+        // gpsPosition really can be null here — in that case skip the nearby
+        // fetches rather than querying around a hardcoded city the user isn't
+        // in. The screen shows the location-off prompt in that state anyway.
         await getUserLocation();
-        final lat = gpsPosition.value?.latitude ?? kApproxDefaultLocation.latitude;
-        final lng = gpsPosition.value?.longitude ?? kApproxDefaultLocation.longitude;
+        final lat = gpsPosition.value?.latitude;
+        final lng = gpsPosition.value?.longitude;
+        if (lat == null || lng == null) {
+          _logger.w('checkParkingModeMe: no location available, skipping nearby fetches');
+          status.value = modeStatus;
+          unawaited(_cacheSearchStatus(modeStatus));
+          return;
+        }
 
         if (modeStatus == 'IDLE') {
           // IDLE -> same nearby parking areas the map (home tab) shows,

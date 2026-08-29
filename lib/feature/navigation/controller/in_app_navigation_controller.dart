@@ -487,6 +487,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
 import 'package:platchatapp/feature/navigation/repository/directions_repository.dart';
+import 'package:platchatapp/language/language_controller.dart';
 import 'package:platchatapp/utils/color/app_colors.dart';
 import 'package:platchatapp/utils/language/app_string.dart';
 
@@ -523,8 +524,19 @@ class InAppNavigationController extends GetxController {
   final FlutterTts _tts = FlutterTts();
   bool _ttsReady = false;
 
+  /// Maps the app's selected language (English/Italiano, from
+  /// LanguageController — the same toggle used for every other translated
+  /// string) to the BCP-47 code the TTS engine expects. Falls back to
+  /// English for any locale that isn't one of the app's two supported ones.
+  String get _ttsLanguageCode {
+    final languageCode = Get.isRegistered<LanguageController>()
+        ? Get.find<LanguageController>().currentLocale.value.languageCode
+        : 'en';
+    return languageCode == 'it' ? 'it-IT' : 'en-US';
+  }
+
   Future<void> _initTts() async {
-    await _tts.setLanguage('en-US');
+    await _tts.setLanguage(_ttsLanguageCode);
     await _tts.setSpeechRate(0.5);
     _ttsReady = true;
   }
@@ -699,6 +711,9 @@ class InAppNavigationController extends GetxController {
         origin: currentOrigin,
         destination: destination,
         travelMode: selectedMode.value.apiValue,
+        // So the turn-by-turn instructions TTS reads out loud come back in
+        // the same language the voice will speak, not just the voice.
+        languageCode: _ttsLanguageCode.split('-').first,
       );
 
       if (results == null || results.isEmpty) {

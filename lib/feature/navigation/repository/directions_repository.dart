@@ -56,12 +56,18 @@ class DirectionsRepository {
     required LatLng origin,
     required LatLng destination,
     required String travelMode,
+    // Google Directions' `language` param — e.g. 'en' or 'it'. Controls the
+    // language of `html_instructions` (what TTS actually reads aloud), not
+    // just distance/duration text. Defaults to English so existing callers
+    // that don't pass this see no change.
+    String languageCode = 'en',
   }) async {
     final uri = Uri.https('maps.googleapis.com', '/maps/api/directions/json', {
       'origin': '${origin.latitude},${origin.longitude}',
       'destination': '${destination.latitude},${destination.longitude}',
       'mode': travelMode,
       'alternatives': 'true',
+      'language': languageCode,
       'key': _googleMapsApiKey,
     });
 
