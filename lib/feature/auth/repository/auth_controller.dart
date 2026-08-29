@@ -311,6 +311,10 @@ class AuthController extends GetxController {
     await SharePrefsHelper.remove('preset_message_cache');
     await SharePrefsHelper.removeWithPrefix('msg_cache_');
     await SharePrefsHelper.removeWithPrefix('group_msg_cache_');
+
+    // Same reason: the cached Find/Stop Parking state belongs to the account
+    // that set it, so the next login resolves its own status from the API.
+    await SharePrefsHelper.remove(AppConst.parkingSearchStatus);
   }
 
   // ================= LOGIN CHECK ======================

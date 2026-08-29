@@ -13,6 +13,13 @@ import '../../../../helper/custom_image/custom_image.dart';
 import '../../../../helper/responsive_helper/responsive_helper.dart';
 import '../../../../share/widgets/button/toggle_button.dart';
 
+/// The brand tagline shown as the welcome headline.
+///
+/// Deliberately a literal instead of AppStrings.welcomeTitle1.tr — it's part
+/// of the brand (it's set in the logo artwork itself), so it stays English in
+/// every language. The translated key is left in place for reference.
+const String _kWelcomeHeadline = 'Drive.\nChat.\nPark.\nBreathe.';
+
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
@@ -60,7 +67,10 @@ class WelcomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ...AppStrings.welcomeTitle1.tr
+                    // Brand tagline — always English, never translated, so it
+                    // matches the wordmark on the logo/splash regardless of
+                    // the app language.
+                    ..._kWelcomeHeadline
                         .split('\n')
                         .map((word) => _headlineLine(word)),
 

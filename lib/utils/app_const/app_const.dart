@@ -6,6 +6,11 @@ class AppConst {
   static const String rememberMe = "remember_me";
   static const String avatar = 'avatar'; // ✅ add this
 
+  /// Last Find/Stop Parking choice ('SEARCHING' or 'IDLE'), cached so
+  /// re-entering the Parking tab restores the button from local state
+  /// instead of waiting on GET /parking-mode/me.
+  static const String parkingSearchStatus = 'parking_search_status';
+
   static String unknown =
       'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/500px-Unknown_person.jpg';
 

@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 
 import 'package:platchatapp/core/router/routes.dart';
@@ -29,7 +30,13 @@ late VoiceActionRouter _voiceRouter; // নতুন
 List<CameraDescription> cameras = []; // ── OCR Camera ──
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final binding = WidgetsFlutterBinding.ensureInitialized();
+
+  // Hold the native splash on screen past the first frame, so the heavy
+  // startup below (Firebase, cameras, socket, translations) happens behind it
+  // instead of behind a second, in-app splash. SplashScreen calls
+  // FlutterNativeSplash.remove() once it knows where to navigate.
+  FlutterNativeSplash.preserve(widgetsBinding: binding);
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

@@ -79,6 +79,7 @@ dependencies:
   glassmorphism: ^3.0.0
   google_sign_in: ^7.2.0
   device_info_plus: ^12.4.0
+  flutter_native_splash: ^2.4.6
 
 
   #flutter_localizations:
@@ -98,6 +99,49 @@ flutter_launcher_icons:
 # image_path: "assets/images/appIcon.png"
   image_path: "assets/logo/app_logo_update.png"
   adaptive_icon_background: "#ffffff"
+
+# Native (OS-drawn) splash screen. Replaces the plain white system splash so
+# there is only ONE splash: this one shows from process start until
+# FlutterNativeSplash.remove() is called in SplashScreen, right before it
+# navigates away.
+#
+# Re-run after ANY change here:  dart run flutter_native_splash:create
+flutter_native_splash:
+  color: "#ffffff"
+  # NOT the raw app_logo_update.png (4042x4840): this file is used as-is for
+  # xxxhdpi and only divided down for lower densities, so the full-size logo
+  # came out ~3x wider than the screen and got centre-cropped. splash_logo.png
+  # is the same artwork trimmed and sized in 4x terms (800px -> ~200dp).
+  image: assets/logo/splash_logo.png
+
+  # Keep the dark-mode splash identical — the logo artwork is light-only, so
+  # letting the OS pick a dark background would leave it unreadable.
+  color_dark: "#ffffff"
+  image_dark: assets/logo/splash_logo.png
+
+  # Android 12+ draws its splash itself and ignores the keys above, so the
+  # same artwork/background is repeated here in the form it accepts (its dark
+  # variants nest here too — there is no top-level android_12_dark key).
+  # Android 12 circle-masks the icon on a 1152px canvas, so this variant has
+  # the whole logo (wordmark included) fitted inside the 768px safe area
+  # instead of spilling out and being clipped by the mask.
+  android_12:
+    color: "#ffffff"
+    image: assets/logo/splash_logo_android12.png
+    icon_background_color: "#ffffff"
+    color_dark: "#ffffff"
+    image_dark: assets/logo/splash_logo_android12.png
+    icon_background_color_dark: "#ffffff"
+
+  android: true
+  ios: true
+  web: false
+
+  # Draw behind the status/navigation bars so the splash is truly full-screen
+  # and doesn't jump when the Flutter UI takes over.
+  fullscreen: false
+  android_gravity: center
+  ios_content_mode: center
 
 
 flutter:

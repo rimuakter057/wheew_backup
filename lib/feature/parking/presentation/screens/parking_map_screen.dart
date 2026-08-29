@@ -1,6 +1,7 @@
 
 import 'dart:async';
-import 'dart:math';
+// Only used by the commented-out pulsing border (pi).
+// import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -19,7 +20,8 @@ import 'package:platchatapp/feature/map/presentation/widgets/parking_location_ca
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_map_bottom_actions.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_map_left_action_buttons.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_map_loading_banner.dart';
-import 'package:platchatapp/feature/parking/presentation/widgets/wavy_gradient_border_painter.dart';
+// Only used by the commented-out pulsing border.
+// import 'package:platchatapp/feature/parking/presentation/widgets/wavy_gradient_border_painter.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/pick_on_map_confirmation_card.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/map_side_controls.dart';
@@ -181,7 +183,8 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
 
               final isLocating = parkingShowCtrl.isLocating.value;
               final gpsPosition = parkingShowCtrl.gpsPosition.value;
-              final showLocationPulse = parkingShowCtrl.showLocationPulse.value;
+              // Only used by the commented-out pulsing border below.
+              // final showLocationPulse = parkingShowCtrl.showLocationPulse.value;
               final isLoading = parkingShowCtrl.isLoading.value;
               final status = parkingShowCtrl.status.value;
               final isSearching = status == 'SEARCHING';
@@ -279,34 +282,52 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
 
                   // -- Pulsing gradient glow around the map edge, shown
                   // while status is SEARCHING --
-                  if (showLocationPulse && gpsPosition != null)
-                    Positioned.fill(
-                      child: IgnorePointer(
-                        child: AnimatedBuilder(
-                          animation: _pulseController,
-                          builder: (context, child) {
-                            final t = _pulseController.value < 0.5
-                                ? _pulseController.value * 2
-                                : (1.0 - _pulseController.value) * 2;
-                            final wavePhase = _pulseController.value * 2 * pi;
-
-                            return CustomPaint(
-                              size: Size.infinite,
-                              painter: WavyGradientBorderPainter(
-                                t: t,
-                                wavePhase: wavePhase,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
+                  // COMMENTED OUT: kept off for performance. The
+                  // RepaintBoundary / painter caching below stay in place, so
+                  // uncommenting this block restores the optimised version.
+                  // if (showLocationPulse && gpsPosition != null)
+                  //   Positioned.fill(
+                  //     child: IgnorePointer(
+                  //       // RepaintBoundary gives the glow its own layer. The
+                  //       // GoogleMap underneath is an expensive platform view;
+                  //       // without this, repainting the glow every animation
+                  //       // frame dragged the map into the same repaint and made
+                  //       // the whole screen feel sluggish.
+                  //       child: RepaintBoundary(
+                  //         child: AnimatedBuilder(
+                  //           animation: _pulseController,
+                  //           builder: (context, child) {
+                  //             final t = _pulseController.value < 0.5
+                  //                 ? _pulseController.value * 2
+                  //                 : (1.0 - _pulseController.value) * 2;
+                  //             final wavePhase = _pulseController.value * 2 * pi;
+                  //
+                  //             return CustomPaint(
+                  //               size: Size.infinite,
+                  //               isComplex: true,
+                  //               willChange: true,
+                  //               painter: WavyGradientBorderPainter(
+                  //                 t: t,
+                  //                 wavePhase: wavePhase,
+                  //               ),
+                  //             );
+                  //           },
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
 
 
                   // -- Bottom row: Find Parking (or Stop Searching) + Exit
                   // Parking, always shown together (hidden when picking location) --
                   Obx(() {
                     if (addParkingFlowCtrl.isPickingAddParkingLocation.value) {
+                      return const SizedBox.shrink();
+                    }
+                    // Cold start: status not resolved yet. Showing the row now
+                    // would default to "Find Parking Spot" and then swap once
+                    // the real state arrives, so wait instead of guessing.
+                    if (status.isEmpty) {
                       return const SizedBox.shrink();
                     }
                     return ParkingMapBottomActions(

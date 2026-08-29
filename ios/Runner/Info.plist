@@ -1,95 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-    <string>We need access to save your QR card to your photo library</string>
-	<key>CFBundleDisplayName</key>
-	<string>Wheew</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>platchatapp</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
-	<key>NSMicrophoneUsageDescription</key>
-        <string>Some message to describe why you need this permission</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-
-	<!-- ══ Permissions ══ -->
-	<key>NSCameraUsageDescription</key>
-	<string>PlateChat uses the camera to scan QR codes</string>
-
-	<key>NSMicrophoneUsageDescription</key>
-	<string>PlateChat uses the microphone to send voice messages</string>
-
-	<key>NSSiriUsageDescription</key>
-	<string>PlateChat uses Siri to send messages with your voice</string>
-
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need your location to show the map.</string>
-
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We need your location to show the map.</string>
-
-	<!-- ══ Google Maps API key — value comes from Secrets.xcconfig (gitignored) ══ -->
-	<key>GMSApiKey</key>
-	<string>$(GOOGLE_MAPS_API_KEY)</string>
-
-	<!-- ══ Siri / App Intents ══ -->
-	<key>NSUserActivityTypes</key>
-	<array>
-		<string>com.platechat.sendMessage</string>
-		<string>com.platechat.openChat</string>
-		<string>com.platechat.findUser</string>
-	</array>
-
-	<!-- ══ URL Schemes ══ -->
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>mailto</string>
-		<string>tel</string>
-		<string>sms</string>
-		<string>https</string>
-		<string>instagram</string>
-	</array>
-
-	<!-- ══ UI ══ -->
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-</dict>
+	<dict>
+		<key>CADisableMinimumFrameDurationOnPhone</key>
+		<true/>
+		<key>CFBundleDevelopmentRegion</key>
+		<string>$(DEVELOPMENT_LANGUAGE)</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>We need access to save your QR card to your photo library</string>
+		<key>CFBundleDisplayName</key>
+		<string>Wheew</string>
+		<key>CFBundleExecutable</key>
+		<string>$(EXECUTABLE_NAME)</string>
+		<key>CFBundleIdentifier</key>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+		<key>CFBundleInfoDictionaryVersion</key>
+		<string>6.0</string>
+		<key>CFBundleName</key>
+		<string>platchatapp</string>
+		<key>CFBundlePackageType</key>
+		<string>APPL</string>
+		<key>CFBundleShortVersionString</key>
+		<string>$(FLUTTER_BUILD_NAME)</string>
+		<key>CFBundleSignature</key>
+		<string>????</string>
+		<key>CFBundleVersion</key>
+		<string>$(FLUTTER_BUILD_NUMBER)</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Some message to describe why you need this permission</string>
+		<key>LSRequiresIPhoneOS</key>
+		<true/>
+		<!-- ══ Permissions ══ -->
+		<key>NSCameraUsageDescription</key>
+		<string>PlateChat uses the camera to scan QR codes</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>PlateChat uses the microphone to send voice messages</string>
+		<key>NSSiriUsageDescription</key>
+		<string>PlateChat uses Siri to send messages with your voice</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>We need your location to show the map.</string>
+		<key>NSLocationAlwaysUsageDescription</key>
+		<string>We need your location to show the map.</string>
+		<!-- ══ Google Maps API key — value comes from Secrets.xcconfig (gitignored) ══ -->
+		<key>GMSApiKey</key>
+		<string>$(GOOGLE_MAPS_API_KEY)</string>
+		<!-- ══ Siri / App Intents ══ -->
+		<key>NSUserActivityTypes</key>
+		<array>
+			<string>com.platechat.sendMessage</string>
+			<string>com.platechat.openChat</string>
+			<string>com.platechat.findUser</string>
+		</array>
+		<!-- ══ URL Schemes ══ -->
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>mailto</string>
+			<string>tel</string>
+			<string>sms</string>
+			<string>https</string>
+			<string>instagram</string>
+		</array>
+		<!-- ══ UI ══ -->
+		<key>CADisableMinimumFrameDurationOnPhone</key>
+		<true/>
+		<key>UIApplicationSupportsIndirectInputEvents</key>
+		<true/>
+		<key>UILaunchStoryboardName</key>
+		<string>LaunchScreen</string>
+		<key>UIMainStoryboardFile</key>
+		<string>Main</string>
+		<key>UISupportedInterfaceOrientations</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationLandscapeLeft</string>
+			<string>UIInterfaceOrientationLandscapeRight</string>
+		</array>
+		<key>UISupportedInterfaceOrientations~ipad</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationPortraitUpsideDown</string>
+			<string>UIInterfaceOrientationLandscapeLeft</string>
+			<string>UIInterfaceOrientationLandscapeRight</string>
+		</array>
+		<key>UIStatusBarHidden</key>
+		<false/>
+	</dict>
 </plist>

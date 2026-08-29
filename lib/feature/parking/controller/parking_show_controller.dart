@@ -10,6 +10,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
 import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/core/service/storage_service.dart';
+import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
 import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/raduis_filter_sheet.dart';
@@ -175,6 +177,21 @@ class ParkingShowController extends GetxController {
     }
   }
 
+  // ── Locally cached Find/Stop Parking choice ───────────────────────────────
+  // Whatever the user last tapped is written to local storage, so coming back
+  // to the Parking tab can restore the button from that instead of blocking
+  // on GET /parking-mode/me. The API is still the source of truth on a cold
+  // start (no cached value yet) and after PARKED sessions.
+
+  Future<void> _cacheSearchStatus(String value) async {
+    await SharePrefsHelper.setString(AppConst.parkingSearchStatus, value);
+  }
+
+  Future<String?> _readCachedSearchStatus() async {
+    final cached = await SharePrefsHelper.getString(AppConst.parkingSearchStatus);
+    return cached.isEmpty ? null : cached;
+  }
+
   /// Entry point every time the screen opens.
   /// 1. Shows an approximate default location immediately so the map
   ///    renders with no delay.
@@ -187,16 +204,54 @@ class ParkingShowController extends GetxController {
     selectedRadiusMeter.value = _defaultRadiusMeter;
     isRadiusFilterActive.value = false;
 
-    // Don't assert IDLE yet — leave `status` empty ("still loading") until
-    // checkParkingModeMe actually resolves the real status below, so the
-    // screen never flashes the IDLE "Find Parking Spot" button by default.
+    // This controller is a GetX singleton, so on a tab switch it still holds
+    // the status resolved last time. Keep it and let the screen paint the
+    // correct button immediately; blanking it here is what made "Find Parking
+    // Spot" flash in before the real state loaded. Only a genuine cold start
+    // (status still empty) stays blank until it resolves below.
+    final previousStatus = status.value;
     _resetSearchState(setIdleStatus: false);
+    if (previousStatus.isNotEmpty) {
+      status.value = previousStatus;
+      showLocationPulse.value = previousStatus == 'SEARCHING';
+    }
 
     isLocating.value = false;
     isRealLocationLoaded.value = false;
     gpsPosition.value = kApproxDefaultLocation;
     mapCenter.value = kApproxDefaultLocation;
 
+    // Restore the last Find/Stop choice from local storage so the button is
+    // correct the moment the tab opens — switching tabs and coming back no
+    // longer waits on (or re-issues) GET /parking-mode/me for this.
+    //
+    // PARKED is deliberately excluded: an active parked session's name, spot
+    // code and coordinates only exist server-side, so that one still goes
+    // through the API path below.
+    final cachedStatus = await _readCachedSearchStatus();
+    if (cachedStatus == 'SEARCHING' || cachedStatus == 'IDLE') {
+      status.value = cachedStatus!;
+      showLocationPulse.value = cachedStatus == 'SEARCHING';
+
+      await getUserLocation();
+      final lat = gpsPosition.value?.latitude;
+      final lng = gpsPosition.value?.longitude;
+
+      if (cachedStatus == 'SEARCHING') {
+        // Re-attach the live handoff feed and repopulate the pins the search
+        // was showing before the tab switch.
+        if (lat != null && lng != null) {
+          await fetchNearbyHandoffsOnly(lat, lng);
+        }
+        _listenHandoffNearby();
+      } else if (parkingAreaList.isEmpty && lat != null && lng != null) {
+        await fetchNearbyParkingAreasOnly(lat, lng);
+      }
+      return;
+    }
+
+    // No usable cached choice (first run, after logout, or PARKED) — fall
+    // back to the API.
     await checkParkingModeMe();
   }
 
@@ -213,7 +268,11 @@ class ParkingShowController extends GetxController {
     clearSpotDetailsCard();
     if (setIdleStatus) {
       status.value = 'IDLE';
+      // Covers the exit-parking path too, so a finished session doesn't come
+      // back as SEARCHING/PARKED on the next tab switch.
+      unawaited(_cacheSearchStatus('IDLE'));
     } else {
+      // Transient "still loading" state — deliberately not cached.
       status.value = '';
     }
 
@@ -267,8 +326,12 @@ class ParkingShowController extends GetxController {
       isRealLocationLoaded.value = true;
 
       if (mapController != null) {
-        await mapController!.animateCamera(
-          CameraUpdate.newLatLngZoom(latLng, 15),
+        // Not awaited — callers of getUserLocation() want the coordinates,
+        // not the end of a ~1s camera flight.
+        unawaited(
+          mapController!.animateCamera(
+            CameraUpdate.newLatLngZoom(latLng, 15),
+          ),
         );
       }
       return true;
@@ -354,6 +417,9 @@ class ParkingShowController extends GetxController {
         // (or the parked card) flash in while location/nearby-data was
         // still loading underneath it.
         status.value = modeStatus;
+        // Seed the local cache from the server on this cold-start path, so
+        // later tab switches can restore from it.
+        unawaited(_cacheSearchStatus(modeStatus));
       } else {
         String errorMsg = AppStrings.failedToRetrieveParkingStatus.tr;
         try {
@@ -520,9 +586,13 @@ class ParkingShowController extends GetxController {
       // Settle the camera at a fixed close zoom centered on the user's
       // location so the map opens already zoomed-in (matching the manual
       // zoom-in look) instead of fitting every far-away parking area.
+      // Not awaited — the markers are already drawn, so nothing downstream
+      // needs to wait out the camera animation.
       if (mapController != null && gpsPosition.value != null) {
-        await mapController!.animateCamera(
-          CameraUpdate.newLatLngZoom(gpsPosition.value!, _initialSpotsZoom),
+        unawaited(
+          mapController!.animateCamera(
+            CameraUpdate.newLatLngZoom(gpsPosition.value!, _initialSpotsZoom),
+          ),
         );
       }
 
@@ -582,8 +652,11 @@ class ParkingShowController extends GetxController {
       }
       await _buildMarkersAndPolygons();
       if (animate && mapController != null && gpsPosition.value != null) {
-        await mapController!.animateCamera(
-          CameraUpdate.newLatLngZoom(gpsPosition.value!, _initialSpotsZoom),
+        // Not awaited — see fetchNearbyHandoffsOnly.
+        unawaited(
+          mapController!.animateCamera(
+            CameraUpdate.newLatLngZoom(gpsPosition.value!, _initialSpotsZoom),
+          ),
         );
       }
     } catch (e, st) {
@@ -624,8 +697,15 @@ class ParkingShowController extends GetxController {
       }
       await _buildMarkersAndPolygons();
       if (animate && mapController != null && gpsPosition.value != null) {
-        await mapController!.animateCamera(
-          CameraUpdate.newLatLngZoom(gpsPosition.value!, _initialSpotsZoom),
+        // Deliberately not awaited: animateCamera's Future only completes
+        // once the ~1s camera flight has finished playing, and awaiting it
+        // held the Find/Stop button in its loading state long after the data
+        // was already on screen. The pins are drawn above; the camera can
+        // glide into place on its own.
+        unawaited(
+          mapController!.animateCamera(
+            CameraUpdate.newLatLngZoom(gpsPosition.value!, _initialSpotsZoom),
+          ),
         );
       }
     } catch (e, st) {
@@ -657,6 +737,9 @@ class ParkingShowController extends GetxController {
     try {
       _logger.i('=== onLeavingPopupNo CLICKED ===');
       status.value = 'SEARCHING';
+      // Remember the choice locally so returning to this tab restores it
+      // without an API round trip.
+      unawaited(_cacheSearchStatus('SEARCHING'));
 
       // Don't re-fetch GPS here. initializeFlow -> checkParkingModeMe already
       // resolved a real fix seconds ago, and asking for another high-accuracy
@@ -826,6 +909,7 @@ class ParkingShowController extends GetxController {
     isTransitioningSearch.value = true;
     try {
       _logger.i('=== stopSearching CLICKED ===');
+      unawaited(_cacheSearchStatus('IDLE'));
       _stopListeningHandoffNearby();
 
       // Clear locally FIRST so the screen returns to the idle view straight
@@ -1028,8 +1112,12 @@ class ParkingShowController extends GetxController {
       );
 
       if (mapController != null) {
-        await mapController!.animateCamera(
-          CameraUpdate.newLatLngZoom(LatLng(lat, lng), 18),
+        // Not awaited — the exit flow's remaining state reset shouldn't sit
+        // behind the camera animation.
+        unawaited(
+          mapController!.animateCamera(
+            CameraUpdate.newLatLngZoom(LatLng(lat, lng), 18),
+          ),
         );
       }
 
@@ -2247,6 +2335,7 @@ class ParkingShowController extends GetxController {
         // "You're Parked" card never has to fall back to placeholder text.
         await fetchSavedParkingMe();
         status.value = 'PARKED';
+        unawaited(_cacheSearchStatus('PARKED'));
         showLocationPulse.value = false;
         handoffList.clear();
         parkingAreaList.clear();
@@ -2540,6 +2629,7 @@ class ParkingShowController extends GetxController {
         // "You're Parked" card never has to fall back to placeholder text.
         await fetchSavedParkingMe();
         status.value = 'PARKED';
+        unawaited(_cacheSearchStatus('PARKED'));
         showLocationPulse.value = false;
         handoffList.clear();
         parkingAreaList.clear();
