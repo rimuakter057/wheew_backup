@@ -126,7 +126,10 @@ class ChatTile extends StatelessWidget {
                               vertical: ResponsiveHelper.padding(4),
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.blue,
+                              // Was a flat blue fill with blue text on top,
+                              // i.e. an unreadable solid block. Same button
+                              // gradient the app uses elsewhere, white label.
+                              gradient: AppColors.buttonGradient,
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
@@ -134,7 +137,7 @@ class ChatTile extends StatelessWidget {
                               style: GoogleFonts.poppins(
                                 fontSize: ResponsiveHelper.fontSize(11),
                                 fontWeight: FontWeight.w500,
-                                color: AppColors.blue,
+                                color: AppColors.white,
                               ),
                             ),
                           ),
@@ -146,7 +149,9 @@ class ChatTile extends StatelessWidget {
                             vertical: ResponsiveHelper.padding(4),
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.red,
+                            // Same fix as the Unblock chip above: red text on
+                            // a red fill was invisible.
+                            gradient: AppColors.redGradient,
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -154,7 +159,7 @@ class ChatTile extends StatelessWidget {
                             style: GoogleFonts.poppins(
                               fontSize: ResponsiveHelper.fontSize(11),
                               fontWeight: FontWeight.w500,
-                              color: AppColors.red,
+                              color: AppColors.white,
                             ),
                           ),
                         )

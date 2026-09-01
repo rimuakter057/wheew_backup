@@ -16,6 +16,11 @@ class AppConst {
   /// every time the Parking tab is opened.
   static const String lastKnownLocation = 'last_known_location';
 
+  /// First page of the saved-parking history, cached as JSON so the Save
+  /// Parking screen can render its list instantly on open and refresh in the
+  /// background, instead of showing a shimmer on every single visit.
+  static const String savedParkingHistoryCache = 'saved_parking_history_cache';
+
   static String unknown =
       'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/500px-Unknown_person.jpg';
 

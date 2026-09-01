@@ -459,6 +459,7 @@ class _CostOption extends StatelessWidget {
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               CustomImage(imageSrc: AssetsPath.dolar,
               imageColor: disabled
@@ -466,12 +467,16 @@ class _CostOption extends StatelessWidget {
                   : (selected ? AppColors.white : AppColors.black),
               ),
               SizedBox(width: ResponsiveHelper.spacing(4)),
-              Text(
-                label,
-                style: GoogleFonts.poppins(
-                  fontSize: ResponsiveHelper.fontSize(14),
-                  fontWeight: FontWeight.w600,
-                  color: contentColor,
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(
+                    fontSize: ResponsiveHelper.fontSize(14),
+                    fontWeight: FontWeight.w600,
+                    color: contentColor,
+                  ),
                 ),
               ),
             ],

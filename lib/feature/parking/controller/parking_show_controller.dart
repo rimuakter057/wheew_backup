@@ -62,6 +62,11 @@ class ParkingShowController extends GetxController {
   static const double _initialSpotsZoom = 17;
 
   final RxBool isLoading = false.obs;
+
+  /// True only while a Save Park request is in flight. Separate from
+  /// [isLoading] so the card's Save button doesn't spin for unrelated
+  /// background fetches that happen to share that flag.
+  final RxBool isSavingPark = false.obs;
   final RxBool isLocating = true.obs;
   // Empty until /parking-mode/me resolves — the screen treats an empty
   // status as "still loading" so it never falls back to showing IDLE's
@@ -1134,7 +1139,7 @@ class ParkingShowController extends GetxController {
     try {
       _logger.i(
         '=== YES CLICK -> 1 API CALL ===\n'
-        '1. POST /park-relay/handoffs (spotId: ${currentParkingAreaId.value})\n'
+        '1. POST /park-relay/handoffs\n'
         'body: {"latitude": $lat, "longitude": $lng}',
       );
 
@@ -1144,7 +1149,6 @@ class ParkingShowController extends GetxController {
       final responseHandoff = await _repository.createHandoff(
         latitude: lat,
         longitude: lng,
-        spotId: currentParkingAreaId.value,
       );
 
       debugPrint('Handoffs Response Status: ${responseHandoff.statusCode}');
@@ -2388,6 +2392,7 @@ class ParkingShowController extends GetxController {
     int? durationMin,
   }) async {
     isLoading.value = true;
+    isSavingPark.value = true;
     try {
       final response = await _repository.saveMyParking(
         latitude: latitude,
@@ -2409,12 +2414,20 @@ class ParkingShowController extends GetxController {
         unawaited(_cacheSearchStatus('PARKED'));
         showLocationPulse.value = false;
         handoffList.clear();
-        parkingAreaList.clear();
+        // Parking areas deliberately NOT cleared: they persist across every
+        // status (IDLE/SEARCHING/PARKED). Wiping them here left the map blank
+        // when the user came back from the Save Parking screen, because
+        // nothing refetches them on the way back — the pins only reappeared
+        // once an unrelated camera-idle happened to fire.
         polygons.clear();
         polylines.clear();
         circles.clear();
         markers.removeWhere((m) => m.markerId.value != 'saved_car_location');
+        await _buildMarkersAndPolygons();
         mapOverlayVersion.value++;
+        // The card stays up during the save (so its button can spin); it's
+        // dismissed here now that the save actually succeeded.
+        clearSpotDetailsCard();
         _showMessage('Parking spot saved', isError: false);
 
         // Take the user straight to the Save Parking screen — its own
@@ -2440,6 +2453,7 @@ class ParkingShowController extends GetxController {
       _showMessage(AppStrings.somethingWentWrong.tr, isError: true);
     } finally {
       isLoading.value = false;
+      isSavingPark.value = false;
     }
   }
 
@@ -2678,6 +2692,7 @@ class ParkingShowController extends GetxController {
   Future<void> _acceptAndParkHandoff(String handoffId) async {
     print("ACCEPT_AND_PARK_HANDOFF_ID (Save Park tapped): $handoffId");
     isLoading.value = true;
+    isSavingPark.value = true;
     try {
       final response = await _repository.acceptAndParkHandoff(handoffId: handoffId);
       print(
@@ -2703,12 +2718,20 @@ class ParkingShowController extends GetxController {
         unawaited(_cacheSearchStatus('PARKED'));
         showLocationPulse.value = false;
         handoffList.clear();
-        parkingAreaList.clear();
+        // Parking areas deliberately NOT cleared: they persist across every
+        // status (IDLE/SEARCHING/PARKED). Wiping them here left the map blank
+        // when the user came back from the Save Parking screen, because
+        // nothing refetches them on the way back — the pins only reappeared
+        // once an unrelated camera-idle happened to fire.
         polygons.clear();
         polylines.clear();
         circles.clear();
         markers.removeWhere((m) => m.markerId.value != 'saved_car_location');
+        await _buildMarkersAndPolygons();
         mapOverlayVersion.value++;
+        // The card stays up during the save (so its button can spin); it's
+        // dismissed here now that the save actually succeeded.
+        clearSpotDetailsCard();
 
         _showMessage('Parking spot saved', isError: false);
 
@@ -2733,6 +2756,7 @@ class ParkingShowController extends GetxController {
       _showMessage(AppStrings.somethingWentWrong.tr, isError: true);
     } finally {
       isLoading.value = false;
+      isSavingPark.value = false;
     }
   }
 

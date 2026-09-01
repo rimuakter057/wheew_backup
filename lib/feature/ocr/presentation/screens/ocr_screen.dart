@@ -1,4 +1,4 @@
-﻿
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -316,28 +316,34 @@ class _OcrScannerScreenState extends State<OcrScannerScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                           Text(
-                            AppStrings.automaticDetection.tr,
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                             Text(
+                              AppStrings.automaticDetection.tr,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            _autoScan
-                                ? AppStrings.autoScanningInProgress.tr
-                                : AppStrings.manualScanModeActive.tr,
-                            style: TextStyle(
-                              color: _autoScan ? AppColors.greenAccent : AppColors.grey,
-                              fontSize: 14,
+                            const SizedBox(height: 4),
+                            Text(
+                              _autoScan
+                                  ? AppStrings.autoScanningInProgress.tr
+                                  : AppStrings.manualScanModeActive.tr,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: _autoScan ? AppColors.greenAccent : AppColors.grey,
+                                fontSize: 14,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                       Switch(
                         value: _autoScan,

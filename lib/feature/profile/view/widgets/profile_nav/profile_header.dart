@@ -1,4 +1,4 @@
-﻿import 'dart:ui';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -188,16 +188,18 @@ class ProfileHeaderCard extends StatelessWidget {
               /// Name + Verify
               Row(
                 children: [
-                  Text(
-                    user?.nickName.isNotEmpty == true
-                        ? user!.nickName
-                        : AppStrings.unknown.tr,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.black,
-                      fontSize: ResponsiveHelper.fontSize(22),
+                  Flexible(
+                    child: Text(
+                      user?.nickName.isNotEmpty == true
+                          ? user!.nickName
+                          : AppStrings.unknown.tr,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.black,
+                        fontSize: ResponsiveHelper.fontSize(22),
+                      ),
                     ),
                   ),
 
@@ -236,21 +238,35 @@ class ProfileHeaderCard extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      AppStrings.vehicleModel.tr,
-                      style: GoogleFonts.poppins(
-                        fontSize: ResponsiveHelper.fontSize(13),
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF555555),
+                    // Flexible, not a bare Text: the label is translated, and
+                    // Italian ("Modello di veicolo: ") is much longer than
+                    // English ("Vehicle Model: "). With a fixed-width label
+                    // only the value could shrink, so the row overflowed.
+                    // Now the label gives way first and the value keeps its
+                    // space, since the value is the part worth reading.
+                    Flexible(
+                      child: Text(
+                        AppStrings.vehicleModel.tr,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.poppins(
+                          fontSize: ResponsiveHelper.fontSize(13),
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF555555),
+                        ),
                       ),
                     ),
 
-                    Text(
-                      user?.vehicleModel ?? "N/A",
-                      style: GoogleFonts.poppins(
-                        fontSize: ResponsiveHelper.fontSize(13),
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.black,
+                    Flexible(
+                      child: Text(
+                        user?.vehicleModel ?? "N/A",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.poppins(
+                          fontSize: ResponsiveHelper.fontSize(13),
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.black,
+                        ),
                       ),
                     ),
                   ],

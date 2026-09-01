@@ -316,6 +316,7 @@ class AuthController extends GetxController {
     // to the account that set them, so the next login starts clean.
     await SharePrefsHelper.remove(AppConst.parkingSearchStatus);
     await SharePrefsHelper.remove(AppConst.lastKnownLocation);
+    await SharePrefsHelper.remove(AppConst.savedParkingHistoryCache);
   }
 
   // ================= LOGIN CHECK ======================

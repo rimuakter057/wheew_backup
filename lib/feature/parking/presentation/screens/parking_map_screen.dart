@@ -382,13 +382,12 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
                         leftStatLabel: cardData.leftStatLabel,
                         rightStatLabel: cardData.rightStatLabel,
                         rightStatIcon: cardData.rightStatIcon,
-                        onSavePark: cardData.onSavePark == null
-                            ? null
-                            : () {
-                                final onSave = cardData.onSavePark!;
-                                parkingShowCtrl.clearSpotDetailsCard();
-                                onSave();
-                              },
+                        // Keep the card on screen while the save runs so the
+                        // button can show its spinner — clearing it up front
+                        // made the tap look like nothing had happened until
+                        // the Save Parking screen appeared.
+                        isSavingPark: parkingShowCtrl.isSavingPark.value,
+                        onSavePark: cardData.onSavePark,
                         onNavigate: cardData.destination == null
                             ? null
                             : () {

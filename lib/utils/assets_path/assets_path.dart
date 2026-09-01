@@ -88,6 +88,7 @@ class AssetsPath {
   // Images
   static const String person0 = '${_imagesBase}person0.png';
   static const String onboardingScreen = '${_imagesBase}onboarding_screen.png';
+  static const String getStarted = '${_imagesBase}get_started_bg_image.png';
   static const String person1 = '${_imagesBase}person1.png';
   static const String person2 = '${_imagesBase}person2.png';
   static const String person3 = '${_imagesBase}person3.png';

@@ -55,14 +55,12 @@ class ParkingRepository {
   Future<http.Response> createHandoff({
     required double latitude,
     required double longitude,
-    String? spotId,
   }) async {
     return await ApiClient.postData(
-      uri:ApiUrl.createHandoff ,
+      uri: ApiUrl.createHandoff,
       body: {
         'latitude': latitude,
         'longitude': longitude,
-        if (spotId != null) 'spotId': spotId,
       },
     );
   }

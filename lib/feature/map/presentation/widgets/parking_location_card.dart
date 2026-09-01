@@ -41,6 +41,9 @@ class ParkingLocationCard extends StatelessWidget {
   /// stats row — omit to hide it.
   final VoidCallback? onSavePark;
 
+  /// Shows a spinner inside the Save Park button while the save is in flight.
+  final bool isSavingPark;
+
   /// When true, highlights the card border/shadow so the user can tell this
   /// is the currently active saved parking — same layout otherwise.
   final bool isActive;
@@ -64,6 +67,7 @@ class ParkingLocationCard extends StatelessWidget {
     this.remainingTimeSubLabel,
     this.onNavigate,
     this.onSavePark,
+    this.isSavingPark = false,
     this.isActive = false,
   });
 
@@ -342,6 +346,10 @@ class ParkingLocationCard extends StatelessWidget {
                     width: double.infinity,
                     child: CustomGradientButton(
                       label: AppStrings.savePark.tr,
+                      // Spins in place while the save request is running, so
+                      // the tap has visible feedback instead of the card just
+                      // sitting there until the screen changes.
+                      isLoading: isSavingPark,
                       onPressed: onSavePark,
                     ),
                   ),

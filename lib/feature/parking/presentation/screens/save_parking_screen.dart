@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -9,6 +10,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
+import 'package:platchatapp/core/service/storage_service.dart';
+import 'package:platchatapp/utils/app_const/app_const.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/parking_location_card.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/save_parking_screen_shimmer.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
@@ -42,7 +45,61 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
     super.initState();
     _scrollController.addListener(_onScroll);
     _loadUserPosition();
-    _fetchHistory(page: 1);
+    _loadCachedThenRefresh();
+  }
+
+  /// Renders the last-seen list from local storage first, then refreshes from
+  /// the API in the background.
+  ///
+  /// The shimmer only appears when there's genuinely nothing to show (first
+  /// ever visit) — otherwise the user sees their list immediately and it
+  /// quietly updates in place if anything new came back. Previously every
+  /// single visit started from an empty list and a full-screen shimmer, even
+  /// when the data hadn't changed at all.
+  Future<void> _loadCachedThenRefresh() async {
+    final cached = await _readCachedHistory();
+
+    if (cached != null && cached.isNotEmpty && mounted) {
+      setState(() {
+        _locations
+          ..clear()
+          ..addAll(cached);
+        _isLoading = false;
+      });
+    }
+
+    await _fetchHistory(page: 1, silent: _locations.isNotEmpty);
+  }
+
+  Future<List<Map<String, dynamic>>?> _readCachedHistory() async {
+    try {
+      final raw = await SharePrefsHelper.getString(
+        AppConst.savedParkingHistoryCache,
+      );
+      if (raw.isEmpty) return null;
+
+      final decoded = jsonDecode(raw);
+      if (decoded is! List) return null;
+
+      return decoded
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+    } catch (_) {
+      // Corrupt/stale cache is not worth surfacing — just fetch fresh.
+      return null;
+    }
+  }
+
+  Future<void> _cacheHistory(List<Map<String, dynamic>> locations) async {
+    try {
+      await SharePrefsHelper.setString(
+        AppConst.savedParkingHistoryCache,
+        jsonEncode(locations),
+      );
+    } catch (_) {
+      // Caching is a nicety; failing to write it must not break the screen.
+    }
   }
 
   @override
@@ -83,14 +140,18 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
     }
   }
 
-  Future<void> _fetchHistory({required int page}) async {
-    setState(() {
-      if (page == 1) {
-        _isLoading = true;
-      } else {
-        _isLoadingMore = true;
-      }
-    });
+  /// [silent] refreshes in the background without flipping the screen back to
+  /// the shimmer — used when cached rows are already on screen.
+  Future<void> _fetchHistory({required int page, bool silent = false}) async {
+    if (!silent) {
+      setState(() {
+        if (page == 1) {
+          _isLoading = true;
+        } else {
+          _isLoadingMore = true;
+        }
+      });
+    }
 
     try {
       final response = await ApiClient.getData(
@@ -111,6 +172,11 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
           _totalPages =
               decoded is Map<String, dynamic> ? (decoded['totalPages'] ?? 1) : 1;
         });
+
+        // Only page 1 is cached — that's what the next open renders first.
+        if (page == 1) {
+          unawaited(_cacheHistory(List<Map<String, dynamic>>.from(_locations)));
+        }
       } else if (mounted) {
         CustomSnackbar.error(
           context: context,
