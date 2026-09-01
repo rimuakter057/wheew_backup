@@ -155,34 +155,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // Logo with subtle frosted pill background
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                            ResponsiveHelper.borderRadius(14),
-                          ),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: ResponsiveHelper.padding(8),
-                                vertical: ResponsiveHelper.padding(4),
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.10),
-                                borderRadius: BorderRadius.circular(
-                                  ResponsiveHelper.borderRadius(14),
-                                ),
-                                border: Border.all(
-                                  color: Colors.white.withOpacity(0.18),
-                                  width: 1,
-                                ),
-                              ),
-                              child: CustomImage(
-                                imageSrc: AssetsPath.appLogoUpdate,
-                                height: ResponsiveHelper.height(46),
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ),
+                        CustomImage(
+                          imageSrc: AssetsPath.appLogoUpdate,
+                          height: ResponsiveHelper.height(52),
+                          fit: BoxFit.contain,
                         ),
                         const LanguageToggleWidget(),
                       ],
