@@ -186,7 +186,7 @@ final Map<String, String> english = {
   AppStrings.unknown: "Unknown",
   AppStrings.vehicleModel: "Vehicle Model:",
   AppStrings.welcomeTitle1: "Drive.\nChat.\nPark.\nBreathe.",
-  AppStrings.welcomeSubtitle1: "Connect with nearby drivers using just a license plate.",
+  AppStrings.welcomeSubtitle1: "Connect with nearby drivers using\njust a license plate.",
   AppStrings.tapOnTheMapToSelectParkingLocation:
   "Tap on the map to select a parking location.",
   AppStrings.addParkingSpot: "Add Parking Spot",

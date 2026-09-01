@@ -180,7 +180,7 @@ final Map<String, String> italian = {
   AppStrings.parking: "Parcheggio",
   AppStrings.chatNav: "Chat",
   AppStrings.welcomeTitle1: "Guida.\nChatta.\nParcheggia.\nRespira.",
-  AppStrings.welcomeSubtitle1: "Connettiti con i conducenti vicini usando solo una targa.",
+  AppStrings.welcomeSubtitle1: "Connettiti con i conducenti vicini usando\nsolo una targa.",
   AppStrings.getStarted: "Inizia",
   AppStrings.alreadyHaveAccount: "Hai già un account?",
   AppStrings.accountAndSettings: "Account e Impostazioni",
