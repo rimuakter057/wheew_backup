@@ -284,7 +284,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                   CustomTextField(
                     controller: emailController,
-                    title: AppStrings.email.tr + " (" + AppStrings.onlyForRecovery.tr + ")",
+                    title: AppStrings.email.tr ,
                     hintText: AppStrings.typeHere1.tr,
                     keyboardType: TextInputType.emailAddress,
                     fillColor: AppColors.white.withOpacity(0.55),
