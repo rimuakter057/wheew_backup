@@ -33,6 +33,13 @@ class MainNavScreen extends StatefulWidget {
 class _MainNavScreenState extends State<MainNavScreen> {
   bool _showScanOptions = false;
 
+  @override
+  void initState() {
+    super.initState();
+    mainNavIndex.value = 2;
+    previousMainNavIndex.value = 2;
+  }
+
   // Tabs 0-3 are built ONCE here and kept alive underneath via IndexedStack
   // (see build()) instead of being recreated by _bodyForIndex on every tab
   // switch. Rebuilding ParkingMapScreen from scratch each time destroyed and

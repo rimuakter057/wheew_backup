@@ -1,9 +1,10 @@
-﻿
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/core/router/route_path.dart';
 import 'package:platchatapp/feature/auth/repository/vihecal_controller.dart';
+import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/auth/view/widgets/vehicle_model_field.dart';
 import 'package:platchatapp/feature/auth/view/widgets/vihele_type.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
@@ -137,7 +138,11 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
           ),
         ),
         TextButton(
-          onPressed: () => context.go(RoutePath.mainNavScreen),
+          onPressed: () {
+            mainNavIndex.value = 2;
+            previousMainNavIndex.value = 2;
+            context.go(RoutePath.mainNavScreen);
+          },
           style: TextButton.styleFrom(
             backgroundColor: AppColors.white.withValues(alpha: 0.6),
             padding: ResponsiveHelper.symmetric(horizontal: 18, vertical: 10),

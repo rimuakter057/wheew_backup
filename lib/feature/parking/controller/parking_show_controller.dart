@@ -391,6 +391,9 @@ class ParkingShowController extends GetxController {
       mapCenter.value = latLng;
       isLocating.value = false;
       isRealLocationLoaded.value = true;
+      _logger.i(
+        '📍 [GPS] Current Position: Lat: ${position.latitude}, Lng: ${position.longitude}, Accuracy: ${position.accuracy}m',
+      );
       // Remember it so the next Parking-tab open starts here instead of on a
       // loading state.
       unawaited(_cacheLastLocation(latLng));
@@ -1121,6 +1124,8 @@ class ParkingShowController extends GetxController {
   }
 
   Future<void> onLeavingPopupYes() async {
+    _logger.i('👉 [Exit Parking Confirmation] User clicked "YES"');
+
     // Must be a fresh fix taken right now, not whatever gpsPosition already
     // held — if the fetch fails/times out, don't silently fall back to a
     // stale position for the handoff call.
@@ -1129,7 +1134,15 @@ class ParkingShowController extends GetxController {
     final lat = gpsPosition.value?.latitude;
     final lng = gpsPosition.value?.longitude;
 
+    _logger.i(
+      '📍 [CURRENT USER LOCATION]\n'
+      '• Latitude: $lat\n'
+      '• Longitude: $lng\n'
+      '• Fresh Location Fetched: $gotFreshLocation',
+    );
+
     if (!gotFreshLocation || lat == null || lng == null) {
+      _logger.e('❌ Cannot proceed with Handoff: Location is not available (lat: $lat, lng: $lng)');
       _showMessage(AppStrings.locationNotActiveOrAvailable.tr, isError: true);
       return;
     }
@@ -1138,9 +1151,10 @@ class ParkingShowController extends GetxController {
 
     try {
       _logger.i(
-        '=== YES CLICK -> 1 API CALL ===\n'
-        '1. POST /park-relay/handoffs\n'
-        'body: {"latitude": $lat, "longitude": $lng}',
+        '🚀 [CREATING HANDOFF WITH CURRENT LOCATION]\n'
+        '• Endpoint: POST ${ApiUrl.createHandoff}\n'
+        '• Current Location: Latitude: $lat, Longitude: $lng\n'
+        '• Request Body: {"latitude": $lat, "longitude": $lng}',
       );
 
       // Create Handoff — the backend now handles the idle transition as
@@ -1151,14 +1165,14 @@ class ParkingShowController extends GetxController {
         longitude: lng,
       );
 
-      debugPrint('Handoffs Response Status: ${responseHandoff.statusCode}');
-
-      debugPrint('Handoffs Response Body: ${responseHandoff.body}');
-
-      _logger.d(
-        'createHandoff status: ${responseHandoff.statusCode}\n'
-        'body: ${responseHandoff.body}',
+      _logger.i(
+        '📥 [HANDOFF RESPONSE RECEIVED]\n'
+        '• Status Code: ${responseHandoff.statusCode}\n'
+        '• Response Body: ${responseHandoff.body}',
       );
+
+      debugPrint('Handoffs Response Status: ${responseHandoff.statusCode}');
+      debugPrint('Handoffs Response Body: ${responseHandoff.body}');
 
       final handoffSuccess =
           responseHandoff.statusCode == 200 ||

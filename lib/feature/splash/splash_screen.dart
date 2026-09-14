@@ -7,6 +7,7 @@ import 'package:platchatapp/core/service/socket_service.dart';
 // import 'package:platchatapp/utils/assets_path/assets_path.dart';
 import '../../core/router/routes_name.dart';
 import '../../core/service/storage_service.dart';
+import '../../feature/main/data/main_nav_.dart';
 // import '../../helper/responsive_helper/responsive_helper.dart';
 // import '../../share/widgets/custom_image/custom_image.dart';
 import '../../utils/app_const/app_const.dart';
@@ -35,6 +36,10 @@ class _SplashScreenState extends State<SplashScreen> {
   void _leaveSplash(String routeName) {
     if (_isNavigated || !mounted) return;
     _isNavigated = true;
+    if (routeName == RouteName.mainNavScreen) {
+      mainNavIndex.value = 2;
+      previousMainNavIndex.value = 2;
+    }
     FlutterNativeSplash.remove();
     context.goNamed(routeName);
   }

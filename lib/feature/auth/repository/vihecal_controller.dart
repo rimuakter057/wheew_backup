@@ -71,6 +71,7 @@ import 'package:platchatapp/core/router/route_path.dart';
 import 'package:platchatapp/core/service/api_service.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/feature/auth/repository/vehicle_type_info.dart';
+import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
 
 import '../../../utils/language/app_string.dart';
@@ -141,6 +142,8 @@ class VehicleController extends GetxController {
           message: AppStrings.vehicleInfoSaved.tr,
         );
 
+        mainNavIndex.value = 2;
+        previousMainNavIndex.value = 2;
         context.go(RoutePath.mainNavScreen);
       } else {
         CustomSnackbar.error(

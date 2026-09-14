@@ -12,6 +12,7 @@ import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
+import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/notification/controller/notification_controller.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
 import '../../../core/service/api_checker.dart';
@@ -189,6 +190,8 @@ class AuthController extends GetxController {
           onSocketConnect: () {
             debugPrint('🔌 Socket connected - going to mainNavScreen');
             if (context.mounted) {
+              mainNavIndex.value = 2;
+              previousMainNavIndex.value = 2;
               context.goNamed(RouteName.mainNavScreen);
 
 
@@ -317,6 +320,9 @@ class AuthController extends GetxController {
     await SharePrefsHelper.remove(AppConst.parkingSearchStatus);
     await SharePrefsHelper.remove(AppConst.lastKnownLocation);
     await SharePrefsHelper.remove(AppConst.savedParkingHistoryCache);
+
+    mainNavIndex.value = 2;
+    previousMainNavIndex.value = 2;
   }
 
   // ================= LOGIN CHECK ======================
@@ -488,5 +494,8 @@ class AuthController extends GetxController {
     await SharePrefsHelper.remove(AppConst.loginPass);
     await SharePrefsHelper.remove(AppConst.licenseNoVerified);
     await SharePrefsHelper.setBool(AppConst.isLoggedIn, false);
+
+    mainNavIndex.value = 2;
+    previousMainNavIndex.value = 2;
   }
 }
