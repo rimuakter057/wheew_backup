@@ -170,7 +170,7 @@ class ParkingReportController extends GetxController {
         : null;
 
     final Map<String, dynamic> body = {
-      'name': areaName,
+      // 'name': areaName,
       // 'description': description, // no description input in the UI yet
       'centerLat': latitude,
       'centerLng': longitude,
@@ -263,7 +263,7 @@ class ParkingReportController extends GetxController {
       'source': 'AUTO',
       'parkingType': parkingType,
       if (parkingType == 'PAID' && durationMin != null) 'durationMin': durationMin,
-      if (name != null && name.trim().isNotEmpty) 'name': name.trim(),
+      // if (name != null && name.trim().isNotEmpty) 'name': name.trim(),
     };
 
     try {

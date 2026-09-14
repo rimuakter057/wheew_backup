@@ -11,6 +11,9 @@ class AppConst {
   /// instead of waiting on GET /parking-mode/me.
   static const String parkingSearchStatus = 'parking_search_status';
 
+  /// Last selected radius filter for parking spots / handoffs in meters.
+  static const String selectedParkingRadius = 'selected_parking_radius';
+
   /// Last resolved GPS fix as "lat,lng". Lets the map open on the user's own
   /// location right away instead of a loading state (or a hardcoded default)
   /// every time the Parking tab is opened.

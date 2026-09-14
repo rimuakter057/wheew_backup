@@ -38,8 +38,6 @@ class AddParkingFlowController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Same controller instance Home's map screen uses for "Add Parking" —
-    // shared singleton via GetX, so the flow behaves identically.
     _parkingReportCtrl = Get.isRegistered<ParkingReportController>()
         ? Get.find<ParkingReportController>()
         : Get.put(ParkingReportController());
@@ -102,10 +100,7 @@ class AddParkingFlowController extends GetxController {
                 label: AppStrings.parkMyCar.tr,
                 onPressed: () {
                   Navigator.of(sheetContext).pop();
-                  // Fresh open — same reset Add Parking Spot does: always
-                  // start from current location, never a location (or
-                  // leftover picking-mode) from a previous, already-
-                  // dismissed session of this sheet.
+
                   _pickedAddParkingLocation = null;
                   pickedAddParkingLocation.value = null;
                   _stopPickingAddParkingLocation();

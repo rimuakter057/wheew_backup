@@ -35,7 +35,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _durationController = TextEditingController();
   String _selectedParkingType = 'FREE';
-  bool _nameHasError = false;
+  // bool _nameHasError = false;
   bool _durationHasError = false;
   String _durationErrorText = '';
 
@@ -85,11 +85,11 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
       return;
     }
 
-    if (_nameController.text.trim().isEmpty) {
-      setState(() => _nameHasError = true);
-      widget.showCustomSnackBar(AppStrings.fieldIsRequired.tr, isError: true);
-      return;
-    }
+    // if (_nameController.text.trim().isEmpty) {
+    //   setState(() => _nameHasError = true);
+    //   widget.showCustomSnackBar(AppStrings.fieldIsRequired.tr, isError: true);
+    //   return;
+    // }
 
     int? durationMin;
     if (_selectedParkingType == 'PAID') {
@@ -120,7 +120,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
       longitude: location.longitude,
       parkingType: _selectedParkingType,
       durationMin: durationMin,
-      name: _nameController.text,
+      // name: _nameController.text,
     );
 
     if (success) {
@@ -292,6 +292,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
 
             SizedBox(height: ResponsiveHelper.spacing(20)),
 
+            /*
             Text(
               AppStrings.name.tr,
               style: GoogleFonts.poppins(
@@ -341,6 +342,7 @@ class _SaveParkingDialogState extends State<SaveParkingDialog> {
             ),
 
             SizedBox(height: ResponsiveHelper.spacing(20)),
+            */
 
             Text(
               AppStrings.parkingType.tr,

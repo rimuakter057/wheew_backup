@@ -1,7 +1,5 @@
 
 import 'dart:async';
-// Only used by the commented-out pulsing border (pi).
-// import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,7 +9,6 @@ import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/location_search_overlay.dart';
 import 'package:platchatapp/feature/map/presentation/widgets/map_initial_shimmer.dart';
 import 'package:platchatapp/feature/map/utils/map_debug.dart';
-import 'package:platchatapp/feature/map/utils/marker_icon_loader.dart';
 import 'package:platchatapp/feature/parking/controller/add_parking_flow_controller.dart';
 import 'package:platchatapp/feature/parking/controller/parking_show_controller.dart';
 import 'package:platchatapp/feature/parking/presentation/screens/save_parking_screen.dart';
@@ -19,9 +16,6 @@ import 'package:platchatapp/feature/parking/presentation/widgets/parking_locatio
 import 'package:platchatapp/feature/map/presentation/widgets/parking_location_card.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_map_bottom_actions.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/parking_map_left_action_buttons.dart';
-import 'package:platchatapp/feature/parking/presentation/widgets/parking_map_loading_banner.dart';
-// Only used by the commented-out pulsing border.
-// import 'package:platchatapp/feature/parking/presentation/widgets/wavy_gradient_border_painter.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/pick_on_map_confirmation_card.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/share/widgets/map_side_controls.dart';
@@ -46,13 +40,10 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
   GoogleMapController? _mapController;
   MapType _selectedMapType = MapType.normal;
 
-  // -- Logic lives in these controllers, not here --
-  // Map/status/markers/search/exit-parking logic.
   late final ParkingShowController parkingShowCtrl;
-  // "Add Parking" flow (report-a-spot / park-my-car / pick-on-map).
+
   late final AddParkingFlowController addParkingFlowCtrl;
 
-  // -- Location pulse animation + (read-only) search field controller --
   late AnimationController _pulseController;
   final TextEditingController _searchController = TextEditingController();
   Timer? _cameraIdleTimer;
@@ -119,8 +110,7 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
     });
   }
 
-  // -- Register controllers, start the pulse animation, run the initial
-  // parking-mode flow (approx map -> /parking-mode/me -> branch) --
+
   @override
   void initState() {
     super.initState();
@@ -145,8 +135,7 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
     parkingShowCtrl.initializeFlow();
   }
 
-  // -- Release the map controller reference + dispose animation/text
-  // controllers owned by this screen --
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -382,10 +371,7 @@ class _ParkingMapScreenState extends State<ParkingMapScreen>
                         leftStatLabel: cardData.leftStatLabel,
                         rightStatLabel: cardData.rightStatLabel,
                         rightStatIcon: cardData.rightStatIcon,
-                        // Keep the card on screen while the save runs so the
-                        // button can show its spinner — clearing it up front
-                        // made the tap look like nothing had happened until
-                        // the Save Parking screen appeared.
+
                         isSavingPark: parkingShowCtrl.isSavingPark.value,
                         onSavePark: cardData.onSavePark,
                         onNavigate: cardData.destination == null

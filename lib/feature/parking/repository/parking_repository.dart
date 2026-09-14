@@ -16,6 +16,9 @@ class ParkingRepository {
     required double longitude,
     required int radiusMeters,
   }) async {
+    print(
+      "GET_NEARBY_HANDOFFS_REQUEST: /park-relay/handoffs/nearby?latitude=$latitude&longitude=$longitude&radiusMeters=$radiusMeters",
+    );
     return await ApiClient.getData(
       uri: ApiUrl.handOfNearby,
 

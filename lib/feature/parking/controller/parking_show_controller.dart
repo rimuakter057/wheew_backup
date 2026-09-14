@@ -228,12 +228,14 @@ class ParkingShowController extends GetxController {
   ///    renders with no delay.
   /// 2. In the background, checks /parking-mode/me and branches the flow.
   Future<void> initializeFlow() async {
-    // A manually-applied radius filter doesn't carry over across a fresh
-    // screen open (leaving and coming back, or app foreground/background) —
-    // each open starts from the default radius again, same as before the
-    // filter sheet existed.
-    selectedRadiusMeter.value = _defaultRadiusMeter;
-    isRadiusFilterActive.value = false;
+    final cachedRadius = await SharePrefsHelper.getInt(AppConst.selectedParkingRadius);
+    if (cachedRadius > 0) {
+      selectedRadiusMeter.value = cachedRadius;
+      isRadiusFilterActive.value = true;
+    } else {
+      selectedRadiusMeter.value = _defaultRadiusMeter;
+      isRadiusFilterActive.value = false;
+    }
 
     // This controller is a GetX singleton, so on a tab switch it still holds
     // the status resolved last time. Keep it and let the screen paint the
@@ -760,6 +762,12 @@ class ParkingShowController extends GetxController {
     }
     isLoading.value = true;
     try {
+      _logger.i(
+        'GET /handoffs/nearby -> lat: $lat, lng: $lng, radiusMeters: ${selectedRadiusMeter.value}',
+      );
+      print(
+        "GET_NEARBY_HANDOFFS_API_CALL: /park-relay/handoffs/nearby?latitude=$lat&longitude=$lng&radiusMeters=${selectedRadiusMeter.value}",
+      );
       final response = await _repository.getNearbyHandoffs(
         latitude: lat,
         longitude: lng,
@@ -1045,8 +1053,15 @@ class ParkingShowController extends GetxController {
       onApply: (radius) async {
         selectedRadiusMeter.value = radius;
         isRadiusFilterActive.value = true;
-        final lat = gpsPosition.value?.latitude;
-        final lng = gpsPosition.value?.longitude;
+        await SharePrefsHelper.setInt(AppConst.selectedParkingRadius, radius);
+        print("RADIUS_FILTER_APPLIED: radius=$radius meters");
+        double? lat = gpsPosition.value?.latitude;
+        double? lng = gpsPosition.value?.longitude;
+        if (lat == null || lng == null) {
+          final cached = await _readCachedLocation();
+          lat = cached?.latitude;
+          lng = cached?.longitude;
+        }
         if (lat != null && lng != null) {
           // Handoffs come back radius-limited straight from the backend.
           // This also rebuilds the markers, which is what re-applies the
@@ -1098,6 +1113,7 @@ class ParkingShowController extends GetxController {
   Future<void> clearRadiusFilter() async {
     selectedRadiusMeter.value = _defaultRadiusMeter;
     isRadiusFilterActive.value = false;
+    await SharePrefsHelper.remove(AppConst.selectedParkingRadius);
     final lat = gpsPosition.value?.latitude;
     final lng = gpsPosition.value?.longitude;
     if (lat != null && lng != null) {

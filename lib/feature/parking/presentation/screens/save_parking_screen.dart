@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,6 +14,7 @@ import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/core/service/storage_service.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
+// ignore: unused_import
 import 'package:platchatapp/feature/map/presentation/widgets/parking_location_card.dart';
 import 'package:platchatapp/feature/parking/presentation/widgets/save_parking_screen_shimmer.dart';
 import 'package:platchatapp/helper/custom_snack_bar/custom_snack_bar.dart';
@@ -199,6 +202,7 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
 
   // -- Field mapping (real backend data, no design change) ------------------
 
+  // ignore: unused_element
   String _titleLabel(Map<String, dynamic> location, Map<String, dynamic>? area) {
     final String? savedName = location['name']?.toString().trim();
     if (savedName != null && savedName.isNotEmpty) return savedName;
@@ -295,6 +299,7 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
     );
   }
 
+  // ignore: unused_element
   String _ratingLabel(Map<String, dynamic>? area) {
     final rating = area?['rating'];
     if (rating == null) return '0.0';
@@ -303,6 +308,7 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
     return numVal.toStringAsFixed(1);
   }
 
+  // ignore: unused_element
   String _spotsLabel(Map<String, dynamic>? area) {
     final totalSpots = area?['totalSpots'];
     final int spots = totalSpots is num
@@ -504,26 +510,293 @@ class _SaveParkingScreenState extends State<SaveParkingScreen> {
                           final priceStat = _priceStat(area);
                           final remaining = _remainingTime(location);
 
-                          return ParkingLocationCard(
-                            title: _titleLabel(location, area),
-                            subtitle: area?['description']?.toString() ??
-                                location['note']?.toString() ??
-                                '',
-                            badgeLabel: badge.label,
-                            badgeIcon: badge.icon,
-                            badgeIconAsset: badge.asset,
-                            badgeColor: badge.color,
-                            distanceLabel: _distanceLabel(location),
-                            ratingLabel: _ratingLabel(area),
-                            leftStatLabel: _spotsLabel(area),
-                            rightStatLabel: priceStat.label,
-                            rightStatIconAsset: priceStat.asset,
-                            remainingTimeLabel: remaining?.label,
-                            remainingTimeSubLabel: remaining?.sub,
-                            // Navigate stays available even for paid spots
-                            // showing a remaining-time countdown.
-                            onNavigate: () => _openNavigation(location),
-                            isActive: location['isActive'] == true,
+                          // ==================== OLD DESIGN (COMMENTED OUT) ====================
+                          // return ParkingLocationCard(
+                          //   title: _titleLabel(location, area),
+                          //   subtitle: area?['description']?.toString() ??
+                          //       location['note']?.toString() ??
+                          //       '',
+                          //   badgeLabel: badge.label,
+                          //   badgeIcon: badge.icon,
+                          //   badgeIconAsset: badge.asset,
+                          //   badgeColor: badge.color,
+                          //   distanceLabel: _distanceLabel(location),
+                          //   ratingLabel: _ratingLabel(area),
+                          //   leftStatLabel: _spotsLabel(area),
+                          //   rightStatLabel: priceStat.label,
+                          //   rightStatIconAsset: priceStat.asset,
+                          //   remainingTimeLabel: remaining?.label,
+                          //   remainingTimeSubLabel: remaining?.sub,
+                          //   // Navigate stays available even for paid spots
+                          //   // showing a remaining-time countdown.
+                          //   onNavigate: () => _openNavigation(location),
+                          //   isActive: location['isActive'] == true,
+                          // );
+                          // ====================================================================
+
+                          // ==================== MODIFIED DESIGN (WITHOUT NAME & SPOT) ====================
+                          final bool isActive = location['isActive'] == true;
+
+                          return GestureDetector(
+                            onTap: () => _openNavigation(location),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE6ECF3),
+                                borderRadius: BorderRadius.circular(
+                                  ResponsiveHelper.borderRadius(24),
+                                ),
+                                border: Border.all(
+                                  color: isActive ? AppColors.blue : AppColors.white,
+                                  width: isActive
+                                      ? ResponsiveHelper.borderWidth(1.5)
+                                      : ResponsiveHelper.borderWidth(1),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: isActive
+                                        ? AppColors.blue.withOpacity(0.18)
+                                        : AppColors.black.withOpacity(0.04),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(
+                                  ResponsiveHelper.borderRadius(24),
+                                ),
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                  child: Padding(
+                                    padding: ResponsiveHelper.all(16),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        // Top Row: Distance on left, Badge on right
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            // Distance Info
+                                            Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Icons.location_on_outlined,
+                                                  size: ResponsiveHelper.iconSize(20),
+                                                  color: AppColors.blue,
+                                                ),
+                                                SizedBox(width: ResponsiveHelper.spacing(6)),
+                                                Text(
+                                                  _distanceLabel(location),
+                                                  style: TextStyle(
+                                                    fontSize: ResponsiveHelper.fontSize(15),
+                                                    fontWeight: FontWeight.w600,
+                                                    color: const Color(0xFF1E293B),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+
+                                            // Status Badge
+                                            Container(
+                                              padding: ResponsiveHelper.symmetric(
+                                                horizontal: 14,
+                                                vertical: 8,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                gradient: AppColors.containerGradient,
+                                                borderRadius: BorderRadius.circular(
+                                                  ResponsiveHelper.borderRadius(20),
+                                                ),
+                                                border: Border.all(
+                                                  color: AppColors.white,
+                                                  width: ResponsiveHelper.borderWidth(1),
+                                                ),
+                                              ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  badge.asset != null
+                                                      ? SvgPicture.asset(
+                                                          badge.asset!,
+                                                          width: ResponsiveHelper.iconSize(14),
+                                                          height: ResponsiveHelper.iconSize(14),
+                                                          colorFilter: ColorFilter.mode(
+                                                            badge.color,
+                                                            BlendMode.srcIn,
+                                                          ),
+                                                        )
+                                                      : Icon(
+                                                          badge.icon,
+                                                          size: ResponsiveHelper.iconSize(14),
+                                                          color: badge.color,
+                                                        ),
+                                                  SizedBox(width: ResponsiveHelper.spacing(5)),
+                                                  Text(
+                                                    badge.label,
+                                                    style: context.bodySmall.copyWith(
+                                                      color: badge.color,
+                                                      fontWeight: FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+
+                                        // Remaining time if active paid parking
+                                        if (remaining != null) ...[
+                                          SizedBox(height: ResponsiveHelper.spacing(10)),
+                                          Container(
+                                            padding: ResponsiveHelper.symmetric(
+                                              horizontal: 12,
+                                              vertical: 6,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFF1D4ED8).withOpacity(0.08),
+                                              borderRadius: BorderRadius.circular(
+                                                ResponsiveHelper.borderRadius(12),
+                                              ),
+                                              border: Border.all(
+                                                color: const Color(0xFF1D4ED8).withOpacity(0.2),
+                                                width: 1,
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Icons.timer_outlined,
+                                                  size: ResponsiveHelper.iconSize(14),
+                                                  color: const Color(0xFF1D4ED8),
+                                                ),
+                                                SizedBox(width: ResponsiveHelper.spacing(6)),
+                                                Text(
+                                                  '${remaining.label} ${remaining.sub}',
+                                                  style: TextStyle(
+                                                    fontSize: ResponsiveHelper.fontSize(12),
+                                                    fontWeight: FontWeight.w600,
+                                                    color: const Color(0xFF1D4ED8),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+
+                                        SizedBox(height: ResponsiveHelper.spacing(14)),
+
+                                        // Bottom Row: Price Info on left, Navigate Button on right
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            // Pricing Pill
+                                            Container(
+                                              padding: ResponsiveHelper.symmetric(
+                                                horizontal: 14,
+                                                vertical: 7,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.white.withOpacity(0.55),
+                                                borderRadius: BorderRadius.circular(
+                                                  ResponsiveHelper.borderRadius(20),
+                                                ),
+                                                border: Border.all(
+                                                  color: AppColors.white,
+                                                  width: ResponsiveHelper.borderWidth(1),
+                                                ),
+                                              ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  priceStat.asset.isNotEmpty
+                                                      ? SvgPicture.asset(
+                                                          priceStat.asset,
+                                                          width: ResponsiveHelper.iconSize(16),
+                                                          height: ResponsiveHelper.iconSize(16),
+                                                          colorFilter: const ColorFilter.mode(
+                                                            Color(0xFF1E293B),
+                                                            BlendMode.srcIn,
+                                                          ),
+                                                        )
+                                                      : Icon(
+                                                          Icons.monetization_on_outlined,
+                                                          size: ResponsiveHelper.iconSize(16),
+                                                          color: const Color(0xFF1E293B),
+                                                        ),
+                                                  SizedBox(width: ResponsiveHelper.spacing(6)),
+                                                  Text(
+                                                    priceStat.label,
+                                                    style: context.bodySmall.copyWith(
+                                                      color: const Color(0xFF1E293B),
+                                                      fontWeight: FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+
+                                            // Navigate Action Button
+                                            GestureDetector(
+                                              onTap: () => _openNavigation(location),
+                                              child: Container(
+                                                padding: ResponsiveHelper.symmetric(
+                                                  horizontal: 18,
+                                                  vertical: 8.5,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  gradient: const LinearGradient(
+                                                    colors: [
+                                                      Color(0xFF0C7DC9),
+                                                      Color(0xFF014495),
+                                                    ],
+                                                    begin: Alignment.topCenter,
+                                                    end: Alignment.bottomCenter,
+                                                  ),
+                                                  borderRadius: BorderRadius.circular(
+                                                    ResponsiveHelper.borderRadius(20),
+                                                  ),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: const Color(0xFF014495).withOpacity(0.3),
+                                                      blurRadius: 8,
+                                                      offset: const Offset(0, 3),
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.near_me_outlined,
+                                                      size: ResponsiveHelper.iconSize(16),
+                                                      color: AppColors.white,
+                                                    ),
+                                                    SizedBox(width: ResponsiveHelper.spacing(6)),
+                                                    Text(
+                                                      AppStrings.navigate.tr,
+                                                      style: TextStyle(
+                                                        fontSize: ResponsiveHelper.fontSize(13),
+                                                        fontWeight: FontWeight.w600,
+                                                        color: AppColors.white,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           );
                         }),
                         SizedBox(height: ResponsiveHelper.spacing(8)),

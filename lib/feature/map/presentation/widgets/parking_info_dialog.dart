@@ -32,10 +32,10 @@ class ParkingInfoDialog extends StatelessWidget {
   bool _validate(BuildContext context) {
     bool valid = true;
 
-    if (controller.nameController.text.trim().isEmpty) {
-      controller.nameSubmitAttempted.value = true;
-      valid = false;
-    }
+    // if (controller.nameController.text.trim().isEmpty) {
+    //   controller.nameSubmitAttempted.value = true;
+    //   valid = false;
+    // }
 
     if (controller.parkingCost.value == 'PAID' &&
         controller.feeController.text.trim().isEmpty) {
@@ -167,6 +167,7 @@ class ParkingInfoDialog extends StatelessWidget {
 
               SizedBox(height: ResponsiveHelper.spacing(20)),
 
+              /*
               // -- Parking Name ------------------------------------------
               Text(
                 'Parking Name',
@@ -224,6 +225,7 @@ class ParkingInfoDialog extends StatelessWidget {
               ),
 
               SizedBox(height: ResponsiveHelper.spacing(20)),
+              */
 
               // -- Parking Cost ------------------------------------------
               Text(
