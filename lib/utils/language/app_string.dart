@@ -871,6 +871,16 @@ class AppStrings {
   static const String passwordChanged = 'password_changed';
   static const String country = 'country';
   static const String countryIsRequired = 'country_is_required';
+
+  // Sign-up: gender + birth year (required by POST /auth/register).
+  static const String gender = 'gender';
+  static const String genderMale = 'gender_male';
+  static const String genderFemale = 'gender_female';
+  static const String genderPreferNotToSay = 'gender_prefer_not_to_say';
+  static const String pleaseSelectGender = 'please_select_gender';
+  static const String birthYear = 'birth_year';
+  static const String birthYearIsRequired = 'birth_year_is_required';
+  static const String enterValidBirthYear = 'enter_valid_birth_year';
   static const String city = 'city';
   static const String optional = 'optional';
   static const String typing = 'typing';

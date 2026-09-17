@@ -1377,6 +1377,24 @@ class ChatController extends GetxController {
 
   bool _isFetching = false; // ✅ simple bool, reactive না
 
+  /// Drops every in-memory trace of the previously signed-in account.
+  ///
+  /// This controller is a GetX singleton, so it outlives a logout/login:
+  /// wiping the stored caches alone still left the old user's rooms in
+  /// [userChatList], which is what the next account saw until the network
+  /// answered. Called from AuthController whenever the account changes.
+  void resetForAccountSwitch() {
+    userChatList.clear();
+    onlineUsersMap.clear();
+    page.value = 1;
+    total = 0;
+    _isFetching = false;
+    isLoadingMore.value = false;
+    // Back to the shimmer, same as a cold start — never the "no chats"
+    // empty state before the new account's list has actually loaded.
+    isLoadingChat.value = true;
+  }
+
   Future<void> fetchChatList({
     bool refresh = false,
     bool loadMore = false,
@@ -1441,6 +1459,14 @@ class ChatController extends GetxController {
           if (isFirstChatPage) {
             await _saveCachedChatList();
           }
+        } else if (page.value == 1) {
+          // An empty first page is a real answer ("this account has no
+          // chats"), not a missing one. Previously this case fell through
+          // and left whatever was already in userChatList on screen — so a
+          // freshly signed-up user kept seeing the cached list of whoever
+          // used the app before them, even though the API said [].
+          userChatList.clear();
+          await _saveCachedChatList();
         }
       } else {
         if (refresh) userChatList.clear();

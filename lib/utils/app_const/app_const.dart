@@ -24,6 +24,11 @@ class AppConst {
   /// background, instead of showing a shimmer on every single visit.
   static const String savedParkingHistoryCache = 'saved_parking_history_cache';
 
+  /// Id of the account the locally cached chat/parking data belongs to.
+  /// Compared on every login/signup so another account's cache is never
+  /// shown — the caches themselves use global keys, not per-user ones.
+  static const String cacheOwnerUserId = 'cache_owner_user_id';
+
   static String unknown =
       'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/500px-Unknown_person.jpg';
 

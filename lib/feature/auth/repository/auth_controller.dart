@@ -12,6 +12,7 @@ import 'package:platchatapp/core/router/routes_name.dart';
 import 'package:platchatapp/core/service/api_client.dart';
 import 'package:platchatapp/core/service/api_url.dart';
 import 'package:platchatapp/core/service/socket_service.dart';
+import 'package:platchatapp/feature/chat/repository/chat_controller.dart';
 import 'package:platchatapp/feature/main/data/main_nav_.dart';
 import 'package:platchatapp/feature/notification/controller/notification_controller.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
@@ -158,6 +159,11 @@ class AuthController extends GetxController {
 
         await SharePrefsHelper.setString(AppConst.token, data['token'] ?? '');
         await SharePrefsHelper.setString(AppConst.userID, data['id']?.toString() ?? '');
+
+        // Before anything reads the caches: drop them if they belong to a
+        // different account than the one that just signed in.
+        await adoptCachesFor(data['id']?.toString() ?? '');
+
         await SharePrefsHelper.setString(AppConst.licenceId, data['licence_id'] ?? '');
         await SharePrefsHelper.setString(AppConst.nickName, data['nick_name'] ?? '');
        // await SharePrefsHelper.setString(AppConst.licenseNoVerified, data['license_no_verified'] ?? '');
@@ -300,6 +306,54 @@ class AuthController extends GetxController {
   }
 */
 
+  // ================= ACCOUNT-SCOPED CACHE ==================
+
+  /// Wipes everything cached locally that belongs to one specific account.
+  ///
+  /// These caches all use global keys (`chat_list_cache`, `msg_cache_<room>`,
+  /// …) rather than per-user ones, so they have to be cleared whenever the
+  /// signed-in account changes or there is nobody signed in.
+  Future<void> clearAccountScopedCaches() async {
+    // Stored caches are only half of it — ChatController is a singleton that
+    // survives logout, so its in-memory rooms have to go too or the next
+    // account still sees the previous one's list until the network answers.
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().resetForAccountSwitch();
+    }
+
+    await SharePrefsHelper.remove('chat_list_cache');
+    await SharePrefsHelper.remove('preset_message_cache');
+    await SharePrefsHelper.removeWithPrefix('msg_cache_');
+    await SharePrefsHelper.removeWithPrefix('group_msg_cache_');
+
+    await SharePrefsHelper.remove(AppConst.parkingSearchStatus);
+    await SharePrefsHelper.remove(AppConst.lastKnownLocation);
+    await SharePrefsHelper.remove(AppConst.savedParkingHistoryCache);
+
+    await SharePrefsHelper.remove(AppConst.cacheOwnerUserId);
+  }
+
+  /// Drops the cached data if it belongs to a different account than
+  /// [userId], then records [userId] as the new owner.
+  ///
+  /// Call this on every successful login AND signup. Clearing only on logout
+  /// wasn't enough: a fresh signup (or logging straight into another account)
+  /// never passes through logout, so the previous user's chat list stayed on
+  /// screen until the network replaced it. Re-entering the same account keeps
+  /// its cache, so the instant-load benefit is preserved.
+  Future<void> adoptCachesFor(String userId) async {
+    if (userId.isEmpty) return;
+
+    final previousOwner =
+        await SharePrefsHelper.getString(AppConst.cacheOwnerUserId);
+
+    if (previousOwner != userId) {
+      await clearAccountScopedCaches();
+    }
+
+    await SharePrefsHelper.setString(AppConst.cacheOwnerUserId, userId);
+  }
+
   // ======================= LOGOUT ======================
 
   Future<void> logout() async {
@@ -308,18 +362,7 @@ class AuthController extends GetxController {
     await SharePrefsHelper.remove(AppConst.userData);
     await SharePrefsHelper.setBool(AppConst.isLoggedIn, false);
 
-    // Wipe cached chat data so logging into a different account never shows
-    // the previous account's chat list / messages before the fresh fetch.
-    await SharePrefsHelper.remove('chat_list_cache');
-    await SharePrefsHelper.remove('preset_message_cache');
-    await SharePrefsHelper.removeWithPrefix('msg_cache_');
-    await SharePrefsHelper.removeWithPrefix('group_msg_cache_');
-
-    // Same reason: the cached Find/Stop Parking state and last GPS fix belong
-    // to the account that set them, so the next login starts clean.
-    await SharePrefsHelper.remove(AppConst.parkingSearchStatus);
-    await SharePrefsHelper.remove(AppConst.lastKnownLocation);
-    await SharePrefsHelper.remove(AppConst.savedParkingHistoryCache);
+    await clearAccountScopedCaches();
 
     mainNavIndex.value = 2;
     previousMainNavIndex.value = 2;

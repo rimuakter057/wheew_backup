@@ -72,6 +72,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController countryController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
+  final TextEditingController birthYearController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
@@ -81,6 +82,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   String? selectedDesignation;
   String? selectedCountry;
+
+  /// Sent verbatim as the API's `gender` — it only accepts MALE, FEMALE or
+  /// PREFER_NOT_TO_SAY, so the enum value is the dropdown's value and only
+  /// the visible label is translated.
+  String? selectedGender;
+
+  /// Upper bound for `birth_year`; the API rejects anything in the future.
+  static final int _currentYear = DateTime.now().year;
 
   @override
   void initState() {
@@ -97,6 +106,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     emailController.dispose();
     countryController.dispose();
     cityController.dispose();
+    birthYearController.dispose();
     confirmPasswordController.dispose();
     super.dispose();
   }
@@ -470,6 +480,118 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
               SizedBox(height: ResponsiveHelper.spacing(16)),
 
+              /// Gender + Birth year (both required by POST /auth/register)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Gender
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppStrings.gender.tr,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.black,
+                            fontSize: ResponsiveHelper.fontSize(14),
+                          ),
+                        ),
+                        SizedBox(height: ResponsiveHelper.spacing(8)),
+                        DropdownButtonFormField2<String>(
+                          value: selectedGender,
+                          isExpanded: true,
+                          hint: Text(
+                            AppStrings.select.tr,
+                            style: TextStyle(
+                              fontSize: ResponsiveHelper.fontSize(16),
+                            ),
+                          ),
+                          decoration: _dropdownDecoration(),
+                          // Values are the API's enum, labels are translated.
+                          items: [
+                            DropdownMenuItem(
+                              value: 'MALE',
+                              child: Text(
+                                AppStrings.genderMale.tr,
+                                style: context.bodySmall,
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'FEMALE',
+                              child: Text(
+                                AppStrings.genderFemale.tr,
+                                style: context.bodySmall,
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'PREFER_NOT_TO_SAY',
+                              child: Text(
+                                AppStrings.genderPreferNotToSay.tr,
+                                style: context.bodySmall,
+                              ),
+                            ),
+                          ],
+                          onChanged: (value) =>
+                              setState(() => selectedGender = value),
+                          validator: (value) => value == null
+                              ? AppStrings.pleaseSelectGender.tr
+                              : null,
+                          dropdownStyleData: DropdownStyleData(
+                            maxHeight: 250,
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(width: ResponsiveHelper.width(12)),
+
+                  /// Birth year
+                  Expanded(
+                    child: CustomTextField(
+                      controller: birthYearController,
+                      title: AppStrings.birthYear.tr,
+                      hintText: 'YYYY',
+                      keyboardType: TextInputType.number,
+                      maxLength: 4,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      fillColor: AppColors.white.withOpacity(0.55),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveHelper.padding(16),
+                        vertical: ResponsiveHelper.padding(16),
+                      ),
+                      border: _fieldBorder(AppColors.transparent, 1),
+                      enabledBorder: _fieldBorder(AppColors.transparent, 1),
+                      focusedBorder: _fieldBorder(AppColors.blue, 1.5),
+                      validator: (value) {
+                        final raw = value?.trim() ?? '';
+                        if (raw.isEmpty) {
+                          return AppStrings.birthYearIsRequired.tr;
+                        }
+                        // Mirrors the API's own bounds so an invalid year is
+                        // caught here instead of coming back as a 400.
+                        final year = int.tryParse(raw);
+                        if (year == null ||
+                            year < 1000 ||
+                            year > _currentYear) {
+                          return AppStrings.enterValidBirthYear.tr;
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: ResponsiveHelper.spacing(16)),
+
               /// Password
               CustomTextField(
                 controller: passwordController,
@@ -655,6 +777,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     return;
                   }
 
+                  if (selectedGender == null) {
+                    showErrorSnackBar(AppStrings.pleaseSelectGender.tr);
+                    return;
+                  }
+
+                  final birthYear = int.tryParse(
+                    birthYearController.text.trim(),
+                  );
+                  if (birthYear == null ||
+                      birthYear < 1000 ||
+                      birthYear > _currentYear) {
+                    showErrorSnackBar(AppStrings.enterValidBirthYear.tr);
+                    return;
+                  }
+
                   if (!agree) {
                     showWarningSnackBar(AppStrings.pleaseAcceptTerms.tr);
                     return;
@@ -675,6 +812,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       designation: selectedDesignation!,
                       country: selectedCountry ?? '',
                       city: cityController.text.trim(),
+                      gender: selectedGender!,
+                      birthYear: birthYear,
                     );
 
                     developer.log(
@@ -699,6 +838,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           AppConst.token,
                           token.toString(),
                         );
+                      }
+
+                      // A brand-new account can never own the data cached on
+                      // this device, so wipe it unconditionally — signup does
+                      // not pass through logout, which is why the previous
+                      // user's chat list was still showing here. Cleared
+                      // before recording the new owner so it also works when
+                      // the response carries no id.
+                      await authController.clearAccountScopedCaches();
+                      final newUserId = body?['id']?.toString() ?? '';
+                      if (newUserId.isNotEmpty) {
+                        await authController.adoptCachesFor(newUserId);
                       }
 
                       ScaffoldMessenger.of(context)

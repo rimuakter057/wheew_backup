@@ -281,15 +281,22 @@ class _SearchListScreenState extends State<SearchListScreen> {
                                   }
                                 },
                                 child: Container(
-                                  padding: ResponsiveHelper.all(20),
+                                  // Was all(20) with a 32 radius, which made
+                                  // every row ~90px tall for a 48px avatar —
+                                  // mostly empty space. Tighter padding and a
+                                  // radius proportional to the new height.
+                                  padding: ResponsiveHelper.symmetric(
+                                    horizontal: 14,
+                                    vertical: 10,
+                                  ),
                                   margin: ResponsiveHelper.symmetric(
-                                    horizontal: 16,
-                                    vertical: 3,
+                                    horizontal: 12,
+                                    vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
                                     gradient:AppColors.containerGradient,
                                     borderRadius: BorderRadius.circular(
-                                      ResponsiveHelper.borderRadius(32),
+                                      ResponsiveHelper.borderRadius(20),
                                     ),
                                     border: Border.all(color: AppColors.white,width: 0.5),
                                     boxShadow: [

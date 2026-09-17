@@ -10,8 +10,8 @@ class ApiUrl {
   // static const baseSocketUrl = 'ws://10.10.28.200:8003';
 
   // // live url
-  static const String baseUrl = 'http://54.198.239.101:8003';
-     //static const String baseUrl = 'https://wj0qph4g-8003.inc1.devtunnels.ms';
+ // static const String baseUrl = 'http://54.198.239.101:8003';
+     static const String baseUrl = 'http://10.10.28.200:8003';
 
    static const baseSocketUrl = 'ws://54.198.239.101:8003';
 

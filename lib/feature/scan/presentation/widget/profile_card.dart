@@ -4,6 +4,7 @@ import 'package:platchatapp/utils/language/app_string.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:platchatapp/feature/chat/model/view_user_profile_model.dart';
+import 'package:platchatapp/helper/custom_gradient_button/custom_gradient_button.dart';
 import 'package:platchatapp/helper/image_handler/image_handler.dart';
 import 'package:platchatapp/helper/responsive_helper/responsive_helper.dart';
 import 'package:platchatapp/utils/app_const/app_const.dart';
@@ -45,6 +46,19 @@ class ProfileCard extends StatelessWidget {
 
     final hasLocation = (profile.city != null && profile.city!.isNotEmpty) ||
         (profile.country != null && profile.country!.isNotEmpty);
+
+    final hasPlate =
+        profile.licenceId != null && profile.licenceId!.isNotEmpty;
+
+    // API enum -> translated label. Anything unrecognised is shown as-is
+    // rather than dropped, so a new backend value still surfaces.
+    final String? genderLabel = switch (profile.gender) {
+      'MALE' => AppStrings.genderMale.tr,
+      'FEMALE' => AppStrings.genderFemale.tr,
+      'PREFER_NOT_TO_SAY' => AppStrings.genderPreferNotToSay.tr,
+      null => null,
+      final other => other.isEmpty ? null : other,
+    };
 
 
     final location = [profile.city, profile.country]
@@ -203,10 +217,70 @@ class ProfileCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-          
+
                 ],
               ),
-          
+
+              // -- Plate number + age + gender row ------------
+              // Age/gender are null for accounts created before those fields
+              // were collected, so each part is shown only when it has a
+              // value and the whole row disappears when none do.
+              if (hasPlate || profile.age != null || genderLabel != null) ...[
+                SizedBox(height: ResponsiveHelper.spacing(8)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (hasPlate) ...[
+                      Icon(
+                        Icons.badge_outlined,
+                        color: AppColors.black,
+                        size: ResponsiveHelper.iconSize(16),
+                      ),
+                      SizedBox(width: ResponsiveHelper.width(4)),
+                      Flexible(
+                        child: Text(
+                          profile.licenceId!,
+                          style: context.bodySmall,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                    if (hasPlate && profile.age != null)
+                      SizedBox(width: ResponsiveHelper.width(10)),
+                    if (profile.age != null) ...[
+                      Icon(
+                        Icons.cake_outlined,
+                        color: AppColors.black,
+                        size: ResponsiveHelper.iconSize(16),
+                      ),
+                      SizedBox(width: ResponsiveHelper.width(4)),
+                      Text(
+                        '${profile.age}',
+                        style: context.bodySmall,
+                      ),
+                    ],
+                    if (genderLabel != null &&
+                        (hasPlate || profile.age != null))
+                      SizedBox(width: ResponsiveHelper.width(10)),
+                    if (genderLabel != null) ...[
+                      Icon(
+                        Icons.person_outline,
+                        color: AppColors.black,
+                        size: ResponsiveHelper.iconSize(16),
+                      ),
+                      SizedBox(width: ResponsiveHelper.width(4)),
+                      Flexible(
+                        child: Text(
+                          genderLabel,
+                          style: context.bodySmall,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ],
+
               // -- Vehicle info card --------------------------
               if (hasVehicleInfo) ...[
                 SizedBox(height: ResponsiveHelper.spacing(16)),
@@ -289,36 +363,24 @@ class ProfileCard extends StatelessWidget {
               SizedBox(height: ResponsiveHelper.spacing(20)),
           
               // -- Start Chat / Rate Button ------------------
+              // CustomGradientButton, not a flat-blue ElevatedButton, so this
+              // matches the primary button used everywhere else in the app.
               SizedBox(
                 width: double.infinity,
-                height: ResponsiveHelper.buttonHeight(55),
-                child: ElevatedButton.icon(
+                child: CustomGradientButton(
                   onPressed: () {
                     if (showRating) {
                       onRatingTap?.call();
                     }
                   },
-                  icon: Icon(
+                  prefixIcon: Icon(
                     showRating ? Icons.star_outline : Icons.chat_bubble_outline,
                     size: ResponsiveHelper.iconSize(20),
+                    color: AppColors.white,
                   ),
-                  label: Text(
-                    showRating ? AppStrings.giveRating.tr : AppStrings.startChat.tr,
-                    style: TextStyle(
-                      fontSize: ResponsiveHelper.fontSize(18),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.blue,
-                    foregroundColor: AppColors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        ResponsiveHelper.borderRadius(15),
-                      ),
-                    ),
-                    elevation: 0,
-                  ),
+                  label: showRating
+                      ? AppStrings.giveRating.tr
+                      : AppStrings.startChat.tr,
                 ),
               ),
             ],

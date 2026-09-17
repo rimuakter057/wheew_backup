@@ -14,6 +14,11 @@ class AuthRepository {
     required String email,
     required String country,   // ✅ নতুন
     required String city,      // ✅ নতুন
+    // Backend rejects the request without these two:
+    //   gender     -> MALE | FEMALE | PREFER_NOT_TO_SAY
+    //   birth_year -> integer between 1000 and the current year
+    required String gender,
+    required int birthYear,
   }) async {
     return await ApiClient.postData(
       uri: ApiUrl.register,
@@ -26,6 +31,10 @@ class AuthRepository {
         "email": email,
         "country": country,   // ✅ নতুন
         "city": city,         // ✅ নতুন
+        "gender": gender,
+        // Sent as a real int, not a string — the API validates it with
+        // "birth_year must be an integer number".
+        "birth_year": birthYear,
       },
     );
   }
