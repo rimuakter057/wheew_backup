@@ -44,8 +44,13 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 # Google client secrets
-app/client_secret_release.json
-app/client_secret_web.json
+# A pattern containing a slash is anchored to this file's directory, so the
+# old "app/client_secret_web.json" only ever matched <repo>/app/... — never
+# the real android/app/... path. That mismatch is why these files stayed
+# tracked even after the "remove and ignore" commit.
+**/client_secret.json
+**/client_secret_release.json
+**/client_secret_web.json
 
 # API key(s) — real values live only here, never committed. Copy
 # app_config.example.dart to app_config.dart and fill in the real key.
