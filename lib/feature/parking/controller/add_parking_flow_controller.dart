@@ -19,10 +19,7 @@ import '../../../core/router/routes.dart';
 
 enum AddParkingPurpose { report, save }
 
-/// Owns the whole "Add Parking" flow (report-a-spot / park-my-car, including
-/// the pick-location-on-map handoff) so ParkingMapScreen only has to call
-/// into it — no flow logic lives in the screen itself. Same singleton
-/// pattern as ParkingShowController / ParkingReportController.
+
 class AddParkingFlowController extends GetxController {
   late final ParkingReportController _parkingReportCtrl;
 
