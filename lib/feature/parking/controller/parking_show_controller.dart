@@ -375,41 +375,64 @@ class ParkingShowController extends GetxController {
         return false;
       }
 
-      // timeLimit guards against a hung GPS fetch (seen after returning to
-      // this tab from another screen) stalling checkParkingModeMe() forever
-      // — without it, a SEARCHING session that can't get a quick fix never
-      // reaches fetchNearbyHandoffsOnly or re-asserts `status`, so the
-      // screen looks stuck instead of falling back to the last known /
-      // approx position.
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-          timeLimit: Duration(seconds: 8),
-        ),
-      );
-
-      final latLng = LatLng(position.latitude, position.longitude);
-      gpsPosition.value = latLng;
-      mapCenter.value = latLng;
-      isLocating.value = false;
-      isRealLocationLoaded.value = true;
-      _logger.i(
-        '📍 [GPS] Current Position: Lat: ${position.latitude}, Lng: ${position.longitude}, Accuracy: ${position.accuracy}m',
-      );
-      // Remember it so the next Parking-tab open starts here instead of on a
-      // loading state.
-      unawaited(_cacheLastLocation(latLng));
-
-      if (mapController != null) {
-        // Not awaited — callers of getUserLocation() want the coordinates,
-        // not the end of a ~1s camera flight.
-        unawaited(
-          mapController!.animateCamera(
-            CameraUpdate.newLatLngZoom(latLng, 15),
+      // Increased timeout to 15s to allow for Android system Location Accuracy dialog interaction,
+      // with fallbacks to getLastKnownPosition and locally cached location so it never hangs or fails prematurely.
+      Position? position;
+      try {
+        position = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+            timeLimit: Duration(seconds: 15),
           ),
         );
+      } catch (e) {
+        _logger.w('getCurrentPosition timed out or failed ($e), falling back to getLastKnownPosition');
+        try {
+          position = await Geolocator.getLastKnownPosition();
+        } catch (_) {}
+
+        // If device has no last known position yet (e.g. freshly turned on), do a quick 6s retry
+        if (position == null) {
+          try {
+            position = await Geolocator.getCurrentPosition(
+              locationSettings: const LocationSettings(
+                accuracy: LocationAccuracy.medium,
+                timeLimit: Duration(seconds: 6),
+              ),
+            );
+          } catch (_) {}
+        }
       }
-      return true;
+
+      LatLng? latLng;
+      if (position != null) {
+        latLng = LatLng(position.latitude, position.longitude);
+      } else {
+        latLng = await _readCachedLocation();
+      }
+
+      if (latLng != null) {
+        gpsPosition.value = latLng;
+        mapCenter.value = latLng;
+        isLocating.value = false;
+        isRealLocationLoaded.value = true;
+        _logger.i(
+          '📍 [GPS] Resolved Position: Lat: ${latLng.latitude}, Lng: ${latLng.longitude}',
+        );
+        unawaited(_cacheLastLocation(latLng));
+
+        if (mapController != null) {
+          unawaited(
+            mapController!.animateCamera(
+              CameraUpdate.newLatLngZoom(latLng, 15),
+            ),
+          );
+        }
+        return true;
+      }
+
+      isLocating.value = false;
+      return false;
     } catch (e) {
       isLocating.value = false;
       _logger.e('Error getting location', error: e);

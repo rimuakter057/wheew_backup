@@ -919,6 +919,10 @@ class AppStrings {
   static const String searchParking = 'search_parking';
   static const String parkingConfirmation = 'parking_confirmation';
   static const String areYouLeavingAParkingSpotRightNow = 'are_you_leaving_a_parking_spot_right_now';
+  static const String areYouLookingForAParkingSpace = 'are_you_looking_for_a_parking_space';
+  static const String letNearbyDriversKnowLeavingSpot = 'let_nearby_drivers_know_leaving_spot';
+  static const String privateParkingSpace = 'private_parking_space';
+  static const String privateSpotsArentVisibleToOthers = 'private_spots_arent_visible_to_others';
   static const String contactUsAt = 'contact_us_at';
   static const String cropImage = 'crop_image';
   static const String failedToLoadDocuments = 'failed_to_load_documents';

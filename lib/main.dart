@@ -32,10 +32,6 @@ List<CameraDescription> cameras = []; // ── OCR Camera ──
 void main() async {
   final binding = WidgetsFlutterBinding.ensureInitialized();
 
-  // Hold the native splash on screen past the first frame, so the heavy
-  // startup below (Firebase, cameras, socket, translations) happens behind it
-  // instead of behind a second, in-app splash. SplashScreen calls
-  // FlutterNativeSplash.remove() once it knows where to navigate.
   FlutterNativeSplash.preserve(widgetsBinding: binding);
 
   await SystemChrome.setPreferredOrientations([
